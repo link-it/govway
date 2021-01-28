@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="statoAllarmePnl">
+    
+    	<style>
+			#legendPanel_body  { padding: 0px !important; }
+		</style>
+		<rich:panel id="legendPanel" rendered="#{(allarmiBean.allarme.id != -1 and ((allarmiBean.allarme.mail.ackMode==1 and allarmiBean.allarme.mail.inviaAlert==1) or (allarmiBean.allarme.script.ackMode==1 and allarmiBean.allarme.script.invocaAlert==1)))}">
+			<p class="legend">
+				<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+			</p>
+		</rich:panel>
+		
+		<div class="form-container noborder nopadding">
+			<a4j:form>
+			
+				<link:fieldset legend="Stato" rendered="#{true}" collapsible="false" closed="false">
+				
+					<link:prop label="Stato Attuale">
+						<a4j:outputPanel layout="block" styleClass="divNoEdit">
+							<h:outputText value="#{allarmiBean.labelStato}" rendered="#{(allarmiBean.allarme.enabled == 1)}"/>
+							<h:outputText value="Disabilitato" readonly="true" style="width: 416px" rendered="#{allarmiBean.allarme.enabled == 0}"/>
+						</a4j:outputPanel>
+					</link:prop>
+										
+					<link:prop label="Nuovo Stato">
+						<rich:comboBox id="idStatoAttuale" value="#{allarmiBean.modificaStato}" 
+										rendered="#{ (allarmiBean.allarme.enabled == 1) and (allarmiBean.allarmiConsultazioneModificaStatoAbilitata) }"
+										converter="selectItemConverter" width="412" enableManualInput="false">
+							<f:selectItem itemValue="0" itemLabel="Ok"/>
+							<f:selectItem itemValue="1" itemLabel="Warning"/>
+							<f:selectItem itemValue="2" itemLabel="Error"/>
+							<a4j:support event="onselect" reRender="idAcknowledge" ajaxSingle="true"/>
+						</rich:comboBox>
+					</link:prop>
+													
+					<link:prop label="Dettaglio">
+						<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" readonly="#{allarmiConsultazioneModificaStatoAbilitata==false}" styleClass="inputLinkLong" 
+							rows="7"/>
+					</link:prop>
+												
+					<a4j:outputPanel id="idAcknowledge" layout="block" rendered="#{allarmiBean.visualizzaAck}">
+						<link:prop label="Acknowledge">
+							<h:selectOneRadio id="idAcknowledgeAbilitato" styleClass="controlset" value="#{allarmiBean.modificaAcknowledged}" 
+								disabled="#{(allarmiBean.allarme.enabled == 0) or (allarmiBean.allarme.stato == 0)}">
+								<f:selectItem itemValue="1" itemLabel="Si"/>
+								<f:selectItem itemValue="0" itemLabel="No"/>
+							</h:selectOneRadio>
+						</link:prop>
+					</a4j:outputPanel>
+					<a4j:outputPanel id="idAcknowledgeHidden" layout="block" rendered="#{not allarmiBean.visualizzaAck}">
+						<h:inputHidden value="#{allarmiBean.modificaAcknowledged}" rendered="#{not allarmiBean.visualizzaAck}" />
+					</a4j:outputPanel>
+		
+				</link:fieldset>
+				<div class="buttonrow">
+					<h:commandButton styleClass="icon-save positive" value="Salva" action="#{allarmiBean.salva}" 
+						rendered="#{
+							(allarmiBean.allarme.mail.ackMode==1 and allarmiBean.allarme.mail.inviaAlert==1) 
+							or
+							(allarmiBean.allarme.script.ackMode==1 and allarmiBean.allarme.script.invocaAlert==1)
+							or
+							(allarmiBean.allarmiConsultazioneModificaStatoAbilitata)
+							}"/>
+				</div>
+			</a4j:form>	
+    	</div>
+    </a4j:outputPanel>
+ 
+</ui:composition>

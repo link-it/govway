@@ -25,11 +25,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.IdAllarme;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryServiceSearch;
@@ -42,10 +45,21 @@ import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
+import org.openspcoop2.core.commons.search.model.PortaApplicativaModel;
+import org.openspcoop2.core.commons.search.model.PortaDelegataModel;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -70,12 +84,18 @@ import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceEngine;
 import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
+import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.slf4j.Logger;
 
 /**     
@@ -90,6 +110,7 @@ public class AllarmiService implements IAllarmiService {
 	private static Logger log = LoggerManager.getPddMonitorSqlLogger();
 
 	private int LIMIT_SEARCH = 10000;
+	private static String TIPOLOGIA_SOLO_ASSOCIATE = "SOLO_ASSOCIATE";
 	
 	private IServiceManager pluginsServiceManager;
 	private IAllarmeService allarmeDAO;
@@ -98,6 +119,10 @@ public class AllarmiService implements IAllarmiService {
 	private IAllarmeHistoryService allarmeHistoryDAO;
 	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseServiceManager;
 	private IPluginServiceSearch pluginsServiceSearchDAO;
+	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	protected DynamicPdDBeanUtils dynamicUtils = null;
+	private IPortaDelegataServiceSearch portaDelegataDAO = null;
+	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
 
 	private AllarmiSearchForm searchForm;
 
@@ -122,6 +147,14 @@ public class AllarmiService implements IAllarmiService {
 
 			this.LIMIT_SEARCH = pddMonitorProperties.getSearchFormLimit();
 			
+			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
+					.getInstance(log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), AllarmiService.log);
+			
+			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
+			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
+			
+			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, log);
+			
 		} catch (Exception e) {
 			AllarmiService.log.error(e.getMessage(), e);
 		}
@@ -144,6 +177,14 @@ public class AllarmiService implements IAllarmiService {
 
 			AllarmiSearchForm search = (AllarmiSearchForm) this.searchForm.clone();
 
+			if(Utility.isAmministratore()) { // amministratore vede tutti gli allarmi, indipendentemente dai filtri di ricerca
+				search.ripulisci(); 
+				search.setTipologiaAllarme("*"); // i risultati devono mostrare tutti gli allarmi
+			} else {
+				search.ripulisci(); 
+				search.setTipologiaAllarme(TIPOLOGIA_SOLO_ASSOCIATE); // i risultati devono mostrare tutti gli allarmi
+			}
+			
 			search.setStatoSelezionato(stato);
 
 			IExpression e = createQuery(true, search);
@@ -154,14 +195,8 @@ public class AllarmiService implements IAllarmiService {
 
 			NonNegativeNumber nnn = this.allarmeSearchDAO.count(e);
 
-			//			IPaginatedExpression pagExpr = this.allarmeSearchDAO
-			//					.toPaginatedExpression(e);
-			//
-			//			List<ConfigurazioneAllarme> lst = this.allarmeSearchDAO
-			//					.findAll(pagExpr);
-
 			if (nnn != null) {
-				retValue = nnn.longValue();//new Long(lst.size());
+				retValue = nnn.longValue();
 			}
 		} catch (ServiceException e) {
 			AllarmiService.log.error(e.getMessage(), e);
@@ -177,11 +212,7 @@ public class AllarmiService implements IAllarmiService {
 			AllarmiService.log.error(e.getMessage(), e);
 		}
 
-		// Long res =
-		// (Long)this.em.createQuery("select count(a) from Allarme a where a.stato=:stato").setParameter("stato",
-		// stato).getSingleResult();
 		return retValue;
-		// res!=null ? res : 0L;
 	}
 
 	@Override
@@ -210,7 +241,9 @@ public class AllarmiService implements IAllarmiService {
 					IdPlugin idPlugin = new IdPlugin();
 					idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 					idPlugin.setTipo(al.getTipo());
-					toRet.add(new ConfigurazioneAllarmeBean(al, this.pluginsServiceSearchDAO.get(idPlugin)));
+					ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(al, this.pluginsServiceSearchDAO.get(idPlugin));
+					this.valorizzaDettaglioAPI(allarmeBean);
+					toRet.add(allarmeBean);
 				}
 
 				return toRet;
@@ -233,6 +266,28 @@ public class AllarmiService implements IAllarmiService {
 		}
 
 		return new ArrayList<ConfigurazioneAllarmeBean>();
+	}
+
+	private void valorizzaDettaglioAPI(ConfigurazioneAllarmeBean allarmeBean) throws DriverRegistroServiziException, Exception {
+		if(!allarmeBean.isAllarmeConfigurazione()) { // se non e' un allarme configurazione risolvo l'api collegata alla porta
+			String nomePorta = allarmeBean.getFiltro().getNomePorta();
+			String labelServizio =  null;
+			String erogatore = null, fruitore = null;
+			String tipoProtocollo = allarmeBean.getFiltro().getProtocollo();
+			if(allarmeBean.isRuoloPortaDelegata()) {
+				PortaDelegata portaDelegata = this.dynamicUtils.getPortaDelegata(nomePorta);
+				labelServizio = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getVersioneServizio());
+				erogatore = NamingUtils.getLabelSoggetto(tipoProtocollo, portaDelegata.getTipoSoggettoErogatore(),portaDelegata.getNomeSoggettoErogatore());
+				fruitore = NamingUtils.getLabelSoggetto(tipoProtocollo, portaDelegata.getIdSoggetto().getTipo(),portaDelegata.getIdSoggetto().getNome());
+			} else if(allarmeBean.isRuoloPortaApplicativa()) {
+				PortaApplicativa portaApplicativa = this.dynamicUtils.getPortaApplicativa(nomePorta);
+				labelServizio = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(allarmeBean.getFiltro().getProtocollo(), portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(), portaApplicativa.getVersioneServizio());
+				erogatore = NamingUtils.getLabelSoggetto(tipoProtocollo, portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome());
+			}
+			allarmeBean.setDettaglioAPI(labelServizio);
+			allarmeBean.setDettaglioFruitore(fruitore);
+			allarmeBean.setDettaglioErogatore(erogatore);
+		}
 	}
 
 	@Override
@@ -306,7 +361,9 @@ public class AllarmiService implements IAllarmiService {
 					IdPlugin idPlugin = new IdPlugin();
 					idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 					idPlugin.setTipo(al.getTipo());
-					toRet.add(new ConfigurazioneAllarmeBean(al, this.pluginsServiceSearchDAO.get(idPlugin)));
+					ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(al, this.pluginsServiceSearchDAO.get(idPlugin));
+					this.valorizzaDettaglioAPI(allarmeBean);
+					toRet.add(allarmeBean);
 				}
 
 				return toRet;
@@ -336,7 +393,9 @@ public class AllarmiService implements IAllarmiService {
 				IdPlugin idPlugin = new IdPlugin();
 				idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 				idPlugin.setTipo(configurazioneAllarme.getTipo());
-				return new ConfigurazioneAllarmeBean(configurazioneAllarme, this.pluginsServiceSearchDAO.get(idPlugin));
+				ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(configurazioneAllarme, this.pluginsServiceSearchDAO.get(idPlugin));
+				this.valorizzaDettaglioAPI(allarmeBean);
+				return allarmeBean;
 			}
 		} catch (ServiceException e) {
 			AllarmiService.log.error("Errore durante la ricerca dell'Allarme con id:" + key, e);
@@ -346,7 +405,9 @@ public class AllarmiService implements IAllarmiService {
 			AllarmiService.log.error("Errore durante la ricerca dell'Allarme con id:" + key, e);
 		} catch (NotImplementedException e) {
 			AllarmiService.log.error("Errore durante la ricerca dell'Allarme con id:" + key, e);
-		}
+		} catch (Exception e) {
+			AllarmiService.log.error("Errore durante la ricerca dell'Allarme con id:" + key, e);
+		} 
 
 		return null;
 	}
@@ -374,12 +435,113 @@ public class AllarmiService implements IAllarmiService {
 		IExpression expr = null;
 		try {
 			expr = this.allarmeSearchDAO.newExpression();
+			
+			String gruppo = formRicerca.getGruppo();
+			String tipoProtocollo = formRicerca.getProtocollo();
+			
+			String tipoSoggetto = formRicerca.getTipoSoggettoLocale();
+			String nomeSoggetto = formRicerca.getSoggettoLocale();
+			
+			String input = null;
+			
+			boolean apiImplSelected = StringUtils.isNotBlank(formRicerca.getNomeServizio());
+			
+			IDAccordo idAccordo = null;
+			IDAccordoFactory idAccordoFactory = null;
+			String api = formRicerca.getApi();
+			if( !apiImplSelected && (api!=null && !"".equals(api)) ) {
+				idAccordoFactory = IDAccordoFactory.getInstance();
+				idAccordo = idAccordoFactory.getIDAccordoFromUri(api);
+			}
+			
+			List<IDServizio> listIDServizio = null;
+			if(!apiImplSelected && ( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) ) {
+				listIDServizio = new ArrayList<IDServizio>();
+				List<SelectItem> list = null;
+				boolean distinct = true;
+				
+				if(PddRuolo.DELEGATA.equals(formRicerca.getTipologiaAllarme())) {
+					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, formRicerca.getPermessiUtenteOperatore(), distinct);
+				}else {
+					// bisogna filtrare per soggetti operativi
+					list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, formRicerca.getPermessiUtenteOperatore(), distinct);
+				}
+				if(list!=null && list.size()>0) {
+					for (SelectItem selectItem : list) {
+						String servizioString = (String) selectItem.getValue();
+						IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+						listIDServizio.add(idServizio);
+					}
+				}
+				else {
+					// creo un servizio non esistente per fornire 0 dati
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues("-", "-", "-", "-", -1);
+					listIDServizio.add(idServizio);
+				}
+			}
 
 			boolean addAnd = false;
-
-			if (formRicerca.getNomeAzione() != null && StringUtils.isNotEmpty(formRicerca.getNomeAzione()) && !formRicerca.getNomeAzione().equals("*")) {
-				expr.equals(Allarme.model().FILTRO.AZIONE,	formRicerca.getNomeAzione());
+			
+			if(formRicerca.getTipologiaAllarme().equals(AllarmiSearchForm.TIPOLOGIA_CONFIGURAZIONE)) {
+				expr.isNull(Allarme.model().FILTRO.NOME_PORTA);
 				addAnd = true;
+			} else if(formRicerca.getTipologiaAllarme().equals(AllarmiSearchForm.TIPOLOGIA_APPLICATIVA)) {
+				List<PortaApplicativa> findAll = estraiPAAssociate(formRicerca, apiImplSelected, listIDServizio);
+				
+				
+				List<IExpression> exprOrList = new ArrayList<IExpression>();
+				for (PortaApplicativa portaApplicativa : findAll) {
+					IExpression exprNomePorta = this.allarmeSearchDAO.newExpression();
+					exprNomePorta.equals(Allarme.model().FILTRO.NOME_PORTA, portaApplicativa.getNome());
+					exprOrList.add(exprNomePorta);
+				}
+				
+				expr.or(exprOrList.toArray(new IExpression[1]));
+				expr.isNotNull(Allarme.model().FILTRO.NOME_PORTA).and().equals(Allarme.model().FILTRO.RUOLO_PORTA,RuoloPorta.APPLICATIVA.getValue());
+				
+				addAnd = true;
+			} else if(formRicerca.getTipologiaAllarme().equals(AllarmiSearchForm.TIPOLOGIA_DELEGATA)) {
+				List<PortaDelegata> findAll = estraiPDAssociate(formRicerca, apiImplSelected, listIDServizio);
+				
+				List<IExpression> exprOrList = new ArrayList<IExpression>();
+				for (PortaDelegata portaDelegata : findAll) {
+					IExpression exprNomePorta = this.allarmeSearchDAO.newExpression();
+					exprNomePorta.equals(Allarme.model().FILTRO.NOME_PORTA, portaDelegata.getNome());
+					exprOrList.add(exprNomePorta);
+				}
+				
+				expr.or(exprOrList.toArray(new IExpression[1]));
+				expr.isNotNull(Allarme.model().FILTRO.NOME_PORTA).and().equals(Allarme.model().FILTRO.RUOLO_PORTA,RuoloPorta.DELEGATA.getValue());
+				addAnd = true;
+			} else if(formRicerca.getTipologiaAllarme().equals(TIPOLOGIA_SOLO_ASSOCIATE)) {
+				List<PortaApplicativa> findAllPA = estraiPAAssociate(formRicerca, apiImplSelected, listIDServizio);
+				List<PortaDelegata> findAllPD = estraiPDAssociate(formRicerca, apiImplSelected, listIDServizio);
+				
+				List<IExpression> exprOrListPA = new ArrayList<IExpression>();
+				for (PortaApplicativa portaApplicativa : findAllPA) {
+					IExpression exprNomePorta = this.allarmeSearchDAO.newExpression();
+					exprNomePorta.equals(Allarme.model().FILTRO.NOME_PORTA, portaApplicativa.getNome());
+					exprOrListPA.add(exprNomePorta);
+				}
+				
+				IExpression exprRuoloPortaPA = this.allarmeSearchDAO.newExpression();
+				exprRuoloPortaPA.equals(Allarme.model().FILTRO.RUOLO_PORTA,RuoloPorta.APPLICATIVA.getValue());
+				exprRuoloPortaPA.and().or(exprOrListPA.toArray(new IExpression[1]));
+				
+				List<IExpression> exprOrListPD = new ArrayList<IExpression>();
+				for (PortaDelegata portaDelegata : findAllPD) {
+					IExpression exprNomePorta = this.allarmeSearchDAO.newExpression();
+					exprNomePorta.equals(Allarme.model().FILTRO.NOME_PORTA, portaDelegata.getNome());
+					exprOrListPD.add(exprNomePorta);
+				}
+				
+				IExpression exprRuoloPortaPD = this.allarmeSearchDAO.newExpression();
+				exprRuoloPortaPD.equals(Allarme.model().FILTRO.RUOLO_PORTA,RuoloPorta.DELEGATA.getValue());
+				exprRuoloPortaPD.and().or(exprOrListPD.toArray(new IExpression[1]));
+				
+				
+				expr.or(exprRuoloPortaPA,exprRuoloPortaPD);
+				expr.and().isNotNull(Allarme.model().FILTRO.NOME_PORTA).and();
 			}
 
 			if (StringUtils.isNotEmpty(formRicerca.getNomeAllarme())) {
@@ -387,33 +549,14 @@ public class AllarmiService implements IAllarmiService {
 					expr.and();
 				}
 
-				expr.ilike(Allarme.model().NOME,
-						formRicerca.getNomeAllarme(), LikeMode.ANYWHERE);
-				addAnd = true;
-			}
-
-			if (formRicerca.getNomeServizio() != null
-					&& StringUtils.isNotEmpty(formRicerca.getNomeServizio()) && !formRicerca.getNomeServizio().equals("*")) {
-				if (addAnd) {
-					expr.and();
-				}
-
-				IDServizio idServizio = ParseUtility.parseServizioSoggetto(formRicerca.getNomeServizio());
-				
-				expr.and().
-					equals(Allarme.model().FILTRO.TIPO_EROGATORE,	idServizio.getSoggettoErogatore().getTipo()).
-					equals(Allarme.model().FILTRO.NOME_EROGATORE,	idServizio.getSoggettoErogatore().getNome()).
-					equals(Allarme.model().FILTRO.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(Allarme.model().FILTRO.NOME_SERVIZIO,	idServizio.getNome()).
-					equals(Allarme.model().FILTRO.VERSIONE_SERVIZIO,	idServizio.getVersione());
-
+				expr.ilike(Allarme.model().ALIAS, formRicerca.getNomeAllarme(), LikeMode.ANYWHERE);
 				addAnd = true;
 			}
 
 			// se e' stato selezionato uno stato != all allora imposto il filtro
 			if (StringUtils.isNotEmpty(formRicerca.getStatoSelezionato())
 					&& !StringUtils.equals(
-							formRicerca.getStatoSelezionato(), "All")) {
+							formRicerca.getStatoSelezionato(), "Qualsiasi")) {
 				if (addAnd) {
 					expr.and();
 				}
@@ -467,56 +610,6 @@ public class AllarmiService implements IAllarmiService {
 				addAnd = true;
 			}
 
-
-			// Se la lista degli identificativi e' popolata vuol dire che non sono admin, in questo caso devo impostare il filtro su soggetti e IdPorta.
-			
-			// permessi utente operatore
-			if(formRicerca.getPermessiUtenteOperatore()!=null){
-				IExpression permessi = formRicerca.getPermessiUtenteOperatore().
-						toExpressionAllarmi(this.allarmeSearchDAO, 
-								Allarme.model().FILTRO.TIPO_FRUITORE, 
-								Allarme.model().FILTRO.NOME_FRUITORE, 
-								Allarme.model().FILTRO.TIPO_EROGATORE, 
-								Allarme.model().FILTRO.NOME_EROGATORE, 
-								Allarme.model().FILTRO.TIPO_SERVIZIO, 
-								Allarme.model().FILTRO.NOME_SERVIZIO,
-								Allarme.model().FILTRO.VERSIONE_SERVIZIO);
-				expr.and(permessi);
-				addAnd = true;
-			}
-			
-
-			// Soggetto selezionato dall'elenco soggetti disponibili
-			boolean tipoNomeSoggettoLocale = StringUtils
-					.isNotBlank(formRicerca.getSoggettoLocale());
-			List<Soggetto> soggettiGestione = formRicerca.getSoggettiGestione();
-			if(soggettiGestione != null && soggettiGestione.size() ==1){
-				tipoNomeSoggettoLocale=false;
-			}
-
-			if (tipoNomeSoggettoLocale) {
-				IExpression erogatore = this.allarmeSearchDAO.newExpression();
-
-				erogatore
-				.equals(Allarme.model().FILTRO.NOME_EROGATORE,	formRicerca.getSoggettoLocale())
-				.and()
-				.equals(Allarme.model().FILTRO.TIPO_EROGATORE, 	formRicerca.getTipoSoggettoLocale());
-
-				// tipo e nome fruitore
-				IExpression fruitore = this.allarmeSearchDAO.newExpression();
-
-				fruitore
-				.equals(Allarme.model().FILTRO.NOME_FRUITORE,	formRicerca.getSoggettoLocale())
-				.and()
-				.equals(Allarme.model().FILTRO.TIPO_FRUITORE, 	formRicerca.getTipoSoggettoLocale());
-
-				IExpression soggetti = this.allarmeSearchDAO.newExpression();
-
-				soggetti.or(erogatore, fruitore);
-
-				expr.and(soggetti);
-			}
-
 			// se non e' una count inserisco l'ordinamento
 			if (!isCount) {
 				expr.sortOrder(SortOrder.ASC).addOrder(Allarme.model().NOME);
@@ -541,6 +634,286 @@ public class AllarmiService implements IAllarmiService {
 		}
 
 		return expr;
+	}
+
+	private List<PortaDelegata> estraiPDAssociate(AllarmiSearchForm formRicerca, boolean apiImplSelected,
+			List<IDServizio> listIDServizio) throws ExpressionNotImplementedException, ExpressionException,
+			ServiceException, NotImplementedException, CoreException, UserInvalidException {
+		IExpression exprPD = this.createPDExpression(this.portaDelegataDAO, formRicerca, false);
+		IPaginatedExpression pagExpr = this.portaDelegataDAO.toPaginatedExpression(exprPD);
+		pagExpr.offset(0).limit(this.LIMIT_SEARCH); 
+
+		if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
+
+			List<IExpression> exprOrList = new ArrayList<IExpression>();
+			for (IDServizio idServizio : listIDServizio) {
+				
+				IExpression exprIdServizio = this.portaDelegataDAO.newExpression();
+				exprIdServizio.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getTipo());
+				exprIdServizio.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
+				exprIdServizio.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipo());
+				exprIdServizio.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
+				exprIdServizio.equals(PortaDelegata.model().VERSIONE_SERVIZIO,idServizio.getVersione());
+				exprOrList.add(exprIdServizio);
+				
+			}
+			pagExpr.or(exprOrList.toArray(new IExpression[1]));
+
+		}
+		List<PortaDelegata> findAll = this.portaDelegataDAO.findAll(pagExpr);
+		return findAll;
+	}
+
+	private List<PortaApplicativa> estraiPAAssociate(AllarmiSearchForm formRicerca, boolean apiImplSelected,
+			List<IDServizio> listIDServizio) throws ExpressionNotImplementedException, ExpressionException,
+			ServiceException, NotImplementedException, CoreException, UserInvalidException {
+		IExpression exprPA = this.createPAExpression(this.portaApplicativaDAO, formRicerca, false);
+		IPaginatedExpression pagExpr = this.portaApplicativaDAO.toPaginatedExpression(exprPA);
+		pagExpr.offset(0).limit(this.LIMIT_SEARCH);  
+
+		if(!apiImplSelected && listIDServizio!=null && !listIDServizio.isEmpty()) {
+
+			List<IExpression> exprOrList = new ArrayList<IExpression>();
+			for (IDServizio idServizio : listIDServizio) {
+				IExpression exprIdServizio = this.portaApplicativaDAO.newExpression();
+				exprIdServizio.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipo());
+				exprIdServizio.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
+				exprIdServizio.equals(PortaApplicativa.model().VERSIONE_SERVIZIO,idServizio.getVersione());
+				boolean setSoggettoProprietario = false;
+				if(formRicerca.getTipoNomeSoggettoLocale()!=null && 
+						!StringUtils.isEmpty(formRicerca.getTipoNomeSoggettoLocale()) && !"--".equals(formRicerca.getTipoNomeSoggettoLocale())){
+					setSoggettoProprietario = true; // impostato dentro createPAExpression
+				}
+				if(setSoggettoProprietario==false){
+					exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
+					exprIdServizio.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
+				}
+				exprOrList.add(exprIdServizio);
+				
+			}
+			pagExpr.or(exprOrList.toArray(new IExpression[1]));
+
+		}
+		
+		List<PortaApplicativa> findAll = this.portaApplicativaDAO.findAll(pagExpr);
+		return findAll;
+	}
+	
+	private IExpression createPDExpression(IServiceSearchWithId<?, ?> dao, AllarmiSearchForm searchForm, boolean count)
+			throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, CoreException, UserInvalidException {
+		IExpression expr = dao.newExpression();
+
+		if(searchForm == null)
+			return expr;
+
+		expr.and();
+		PortaDelegataModel model = PortaDelegata.model();
+		expr.isNotNull(model.TIPO_SOGGETTO_EROGATORE);
+		expr.isNotNull(model.NOME_SOGGETTO_EROGATORE);
+		expr.isNotNull(model.TIPO_SERVIZIO);
+		expr.isNotNull(model.NOME_SERVIZIO);
+		expr.isNotNull(model.VERSIONE_SERVIZIO);
+
+		if(searchForm.getPermessiUtenteOperatore()!=null){
+			IExpression permessi = searchForm.getPermessiUtenteOperatore().toExpressionConfigurazioneServizi(dao, 
+					model.ID_SOGGETTO.TIPO, model.ID_SOGGETTO.NOME, 
+					model.TIPO_SOGGETTO_EROGATORE, model.NOME_SOGGETTO_EROGATORE, 
+					model.TIPO_SERVIZIO, model.NOME_SERVIZIO, model.VERSIONE_SERVIZIO,
+					false);
+			expr.and(permessi);
+		}
+
+		// Protocollo
+		String protocollo = null;
+		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
+		// protocollo e' impostato anche scegliendo la modalita'
+		//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		if (searchForm.isSetFiltroProtocollo()) {
+			protocollo = searchForm.getProtocollo();
+			impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
+		}
+
+
+		if(searchForm.getTipoNomeSoggettoLocale()!=null && 
+				!StringUtils.isEmpty(searchForm.getTipoNomeSoggettoLocale()) && !"--".equals(searchForm.getTipoNomeSoggettoLocale())){
+
+			String tipoSoggettoDestinatario = searchForm.getTipoSoggettoLocale();
+			String nomeSoggettoDestinatario = searchForm.getSoggettoLocale();
+
+			expr.equals(model.ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
+			expr.equals(model.ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+		}
+		if (StringUtils.isNotBlank(searchForm.getNomeServizio())) {
+
+			String servizioString = searchForm.getNomeServizio();
+			IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+
+			expr.equals(model.TIPO_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getTipo());
+			expr.equals(model.NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
+			expr.equals(model.TIPO_SERVIZIO,idServizio.getTipo());
+			expr.equals(model.NOME_SERVIZIO,idServizio.getNome());
+			expr.equals(model.VERSIONE_SERVIZIO,idServizio.getVersione());
+		}
+		
+		// seleziono solo le porte di default
+		expr.notEquals(model.MODE_AZIONE, CostantiConfigurazioni.VALUE_PORTE_DELEGATED_BY);
+
+		if(!count) {
+			expr.sortOrder(SortOrder.ASC);
+			expr.addOrder(model.ID_SOGGETTO.TIPO);
+			expr.addOrder(model.ID_SOGGETTO.NOME);
+			expr.addOrder(model.TIPO_SOGGETTO_EROGATORE);
+			expr.addOrder(model.NOME_SOGGETTO_EROGATORE);
+			expr.addOrder(model.TIPO_SERVIZIO);
+			expr.addOrder(model.NOME_SERVIZIO);
+			expr.addOrder(model.VERSIONE_SERVIZIO);
+			expr.addOrder(model.NOME_AZIONE);
+		}
+		return expr;
+	}
+
+	private IExpression createPAExpression(IServiceSearchWithId<?, ?> dao, AllarmiSearchForm searchForm, boolean count) 
+			throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, CoreException, UserInvalidException{
+		IExpression expr = dao.newExpression();
+
+		if(searchForm == null)
+			return expr;
+
+		PortaApplicativaModel model = PortaApplicativa.model();
+		expr.isNotNull(model.TIPO_SERVIZIO);
+		expr.isNotNull(model.NOME_SERVIZIO);
+		expr.isNotNull(model.VERSIONE_SERVIZIO);
+
+		if(searchForm.getPermessiUtenteOperatore()!=null){
+			IExpression permessi = searchForm.getPermessiUtenteOperatore().toExpressionConfigurazioneServizi(dao, 
+					model.ID_SOGGETTO.TIPO, model.ID_SOGGETTO.NOME, 
+					model.ID_SOGGETTO.TIPO, model.ID_SOGGETTO.NOME, 
+					model.TIPO_SERVIZIO, model.NOME_SERVIZIO,model.VERSIONE_SERVIZIO,
+					false);
+			expr.and(permessi);
+		}
+
+		// Protocollo
+		String protocollo = null;
+		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
+		// protocollo e' impostato anche scegliendo la modalita'
+		//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		if (searchForm.isSetFiltroProtocollo()) {
+			protocollo = searchForm.getProtocollo();
+			impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
+		}
+
+		boolean setSoggettoProprietario = false;
+		if(searchForm.getTipoNomeSoggettoLocale()!=null && 
+				!StringUtils.isEmpty(searchForm.getTipoNomeSoggettoLocale()) && !"--".equals(searchForm.getTipoNomeSoggettoLocale())){
+
+			String tipoSoggettoDestinatario = searchForm.getTipoSoggettoLocale();
+			String nomeSoggettoDestinatario = searchForm.getSoggettoLocale();
+
+			expr.equals(model.ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
+			expr.equals(model.ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			setSoggettoProprietario = true;
+		}
+
+		if (StringUtils.isNotBlank(searchForm.getNomeServizio())) {
+
+			String servizioString = searchForm.getNomeServizio();
+			IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+
+			expr.equals(model.TIPO_SERVIZIO,idServizio.getTipo());
+			expr.equals(model.NOME_SERVIZIO,idServizio.getNome());
+			expr.equals(model.VERSIONE_SERVIZIO,idServizio.getVersione());
+			if(setSoggettoProprietario==false){
+				expr.equals(model.ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
+				expr.equals(model.ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
+			}
+		}
+		
+		// seleziono solo le porte di default
+		expr.notEquals(model.MODE_AZIONE, CostantiConfigurazioni.VALUE_PORTE_DELEGATED_BY);
+
+		if(!count){
+			expr.sortOrder(SortOrder.ASC);
+			expr.addOrder(model.ID_SOGGETTO.TIPO);
+			expr.addOrder(model.ID_SOGGETTO.NOME);
+			expr.addOrder(model.TIPO_SERVIZIO);
+			expr.addOrder(model.NOME_SERVIZIO);
+			expr.addOrder(model.VERSIONE_SERVIZIO);
+			expr.addOrder(model.NOME_AZIONE);
+		}
+
+		return expr;		
+
+	}
+	
+	private void impostaTipiCompatibiliConProtocollo(IServiceSearchWithId<?, ?> dao, PortaDelegataModel model,	IExpression expr, String protocollo) throws ExpressionNotImplementedException, ExpressionException {
+		// Se ho selezionato il protocollo il tipo dei servizi da includere nei risultati deve essere compatibile col protocollo scelto.
+		IExpression expressionTipoServiziCompatibili = null;
+		try {
+			if(protocollo != null) {
+				expressionTipoServiziCompatibili = DynamicUtilsServiceEngine.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
+			}
+		} catch (Exception e) {
+			log.error("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
+		}
+
+		if(expressionTipoServiziCompatibili != null)
+			expr.and(expressionTipoServiziCompatibili);
+
+		// Se ho selezionato il protocollo il tipo dei servizi da includere nei risultati deve essere compatibile col protocollo scelto.
+		IExpression expressionTipoSoggettiMittenteCompatibili = null;
+		try {
+			if(protocollo != null) {
+				expressionTipoSoggettiMittenteCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.ID_SOGGETTO.TIPO, protocollo);
+			}
+		} catch (Exception e) {
+			log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto mittente compatibili con il protocollo scelto: "+ e.getMessage(), e);
+		}
+
+		if(expressionTipoSoggettiMittenteCompatibili != null)
+			expr.and(expressionTipoSoggettiMittenteCompatibili);
+
+
+		// Se ho selezionato il protocollo il tipo dei servizi da includere nei risultati deve essere compatibile col protocollo scelto.
+		IExpression expressionTipoSoggettiDestinatarioCompatibili = null;
+		try {
+			if(protocollo != null) {
+				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_SOGGETTO_EROGATORE, protocollo);
+			}
+		} catch (Exception e) {
+			log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);
+		}
+
+		if(expressionTipoSoggettiDestinatarioCompatibili != null)
+			expr.and(expressionTipoSoggettiDestinatarioCompatibili);
+	}
+
+	private void impostaTipiCompatibiliConProtocollo(IServiceSearchWithId<?, ?> dao, PortaApplicativaModel model,	IExpression expr, String protocollo) throws ExpressionNotImplementedException, ExpressionException {
+		// Se ho selezionato il protocollo il tipo dei servizi da includere nei risultati deve essere compatibile col protocollo scelto.
+		IExpression expressionTipoServiziCompatibili = null;
+		try {
+			if(protocollo != null) {
+				expressionTipoServiziCompatibili = DynamicUtilsServiceEngine.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
+			}
+		} catch (Exception e) {
+			log.error("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
+		}
+
+		if(expressionTipoServiziCompatibili != null)
+			expr.and(expressionTipoServiziCompatibili);
+
+		// Se ho selezionato il protocollo il tipo dei servizi da includere nei risultati deve essere compatibile col protocollo scelto.
+		IExpression expressionTipoSoggettiDestinatarioCompatibili = null;
+		try {
+			if(protocollo != null) {
+				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.ID_SOGGETTO.TIPO, protocollo);
+			}
+		} catch (Exception e) {
+			log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);
+		}
+
+		if(expressionTipoSoggettiDestinatarioCompatibili != null)
+			expr.and(expressionTipoSoggettiDestinatarioCompatibili);
 	}
 
 	@Override
@@ -731,7 +1104,7 @@ public class AllarmiService implements IAllarmiService {
 					input = input.substring(idx + 1, input.length());
 				}
 
-				expr.ilike(Allarme.model().NOME, input.toLowerCase() , LikeMode.ANYWHERE);
+				expr.ilike(Allarme.model().ALIAS, input.toLowerCase() , LikeMode.ANYWHERE);
 			}
 
 			// Ordinamento gia' presente nella query standard

@@ -1,12 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition template="/templates/defaultTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j" xmlns:link="http://www.link.it">
-
-<ui:composition template="/templates/defaultTemplate.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:link="http://www.link.it"
+	xmlns:fc="http://www.fusioncharts.com"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" />
+    
 	<ui:define name="navbar">
 		<ul>
 			<li>
@@ -17,12 +20,13 @@
 	<ui:define name="navbar">
 			<ul>
 				<li>
-					<h:commandLink action="allarmi" value="/Monitoraggio Allarmi" rendered="#{true}"/>
+					<h:commandLink action="allarmi" value="Monitoraggio Allarmi" rendered="#{true}"/>
 				</li>
 				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
 				<li>
-					<a4j:htmlCommandLink id="dettaglioAllarmeStato" action="#{allarmiBean.dettaglioHistoryAllarme}" value="Stato Allarme (#{allarmiBean.allarme.nome})" rendered="#{true}">
+					<a4j:htmlCommandLink id="dettaglioAllarmeStato" action="#{allarmiBean.dettaglioAllarme}" value="Dettagli Allarme (#{allarmiBean.allarme.alias})" rendered="#{true}">
 						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+						<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
 	                </a4j:htmlCommandLink>
 				</li>
 				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
@@ -96,5 +100,3 @@
 
 	</ui:define>
 </ui:composition>
-
-</html>

@@ -7,69 +7,55 @@
      xmlns:c="http://java.sun.com/jstl/core"
      xmlns:link="http://www.link.it">
 	<c:forEach var="param" items="#{formParameters}">
-		<a4j:outputPanel id="#{param.containerId}" layout="block">
-			<link:prop label="#{param.rendering.label}" styleClass="labelLunga" >
-			
-				<c:if test="#{'INPUT_TEXT'==param.type}">
-					<a4j:outputPanel layout="block" styleClass="divNoEdit">
-						<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
-						<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
-					</a4j:outputPanel>
-				</c:if>
-				
-				<c:if test="#{'OUTPUT_TEXT'==param.type}">
-					<a4j:outputPanel layout="block" styleClass="divNoEdit">
-						<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
-						<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
-					</a4j:outputPanel>
-				</c:if>
-				
-				<c:if test="#{'INPUT_SECRET'==param.type}">
-					<a4j:outputPanel layout="block" styleClass="divNoEdit">
-						<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
-						<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
-					</a4j:outputPanel>
-				</c:if>
-				
-				<c:if test="#{'TEXT_AREA'==param.type}">
-					<a4j:outputPanel layout="block" styleClass="divNoEdit">
-						<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}" rows="#{param.rendering.rows}" cols="#{param.rendering.columns}"/>
-						<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
-					</a4j:outputPanel>
-				</c:if>
-				
-				<c:if test="#{'SELECT_LIST'==param.type}">
-					<a4j:outputPanel layout="block" styleClass="divNoEdit">
-						<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
-						<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
-					</a4j:outputPanel>
-				</c:if>
-				
-				<c:if test="#{'RADIO_BUTTON'==param.type}">
-					<a4j:outputPanel layout="block" styleClass="divNoEdit">
-						<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
-						<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
-					</a4j:outputPanel>
-				</c:if>
-				
-				<c:if test="#{'CHECK_BOX'==param.type}">
-					<a4j:outputPanel layout="block" styleClass="divNoEdit">
-						<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
-						<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
-					</a4j:outputPanel>
-				</c:if>
-				
-				<c:if test="#{'CALENDAR'==param.type}">
-					<a4j:outputPanel layout="block" styleClass="divNoEdit">
-						<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}">
-							<f:convertDateTime pattern="yyyy-MM-dd HH:mm.ss.SSS" defaultTime="00:00" timeZone="Europe/Rome" />
-						</h:outputText>
-						<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
-					</a4j:outputPanel>
-				</c:if>
-			</link:prop>
-		</a4j:outputPanel>
+	
+		<c:if test="#{'INPUT_TEXT'==param.type}">
+			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{true}"/>
+			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
+			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
+		</c:if>
+		
+		<c:if test="#{'OUTPUT_TEXT'==param.type}">
+			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{true}"/>
+			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
+			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
+		</c:if>
+		
+		<c:if test="#{'INPUT_SECRET'==param.type}">
+			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{true}"/>
+			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
+			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
+		</c:if>
+		
+		<c:if test="#{'TEXT_AREA'==param.type}">
+			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{true}"/>
+			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}" rows="#{param.rendering.rows}" cols="#{param.rendering.columns}"/>
+			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
+		</c:if>
+		
+		<c:if test="#{'SELECT_LIST'==param.type}">
+			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{true}"/>
+			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
+			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
+		</c:if>
+		
+		<c:if test="#{'RADIO_BUTTON'==param.type}">
+			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{true}"/>
+			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
+			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
+		</c:if>
+		
+		<c:if test="#{'CHECK_BOX'==param.type}">
+			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{true}"/>
+			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}"/>
+			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
+		</c:if>
+		
+		<c:if test="#{'CALENDAR'==param.type}">
+			<h:outputLabel styleClass="outputFieldLabel" id="#{param.id}_Label" value="#{param.rendering.label}" rendered="#{true}"/>
+			<h:outputText id="#{param.id}_val" value="#{param.value}" style=" width : 412px;" rendered="#{not empty param.value}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm.ss.SSS" defaultTime="00:00" timeZone="Europe/Rome" />
+			</h:outputText>
+			<h:outputText id="#{param.id}_noVal" value="-" style=" width : 412px;" rendered="#{empty param.value}"/>
+		</c:if>
 	</c:forEach>
-
-
 </ui:composition>

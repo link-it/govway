@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    
+    <a4j:outputPanel layout="block" id="parametriConfigurazionePnl">
+		<h:panelGrid id="panelGridParametriAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" rendered="#{allarmiBean.visualizzaParametri}">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Parametri" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<ui:include src="/commons/includes/dynamicOutputComponent.xhtml">
+				<ui:param value="#{allarmiBean.parameters}" name="formParameters" />
+			</ui:include>
+			
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelGridNotificaEmail" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{allarmiBean.visualizzaParametri}" />
+			<h:outputText value="&#160;&#160;" rendered="#{allarmiBean.visualizzaParametri}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Notifica via Email" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaEmailAbilitato" value="Stato" rendered="#{true}"/>
+			<h:outputText id="outNotificaEmailAbilitato" value="#{allarmiBean.allarme.mail.inviaAlert==1 ? 'abilitato' : 'disabilitato'}" rendered="#{true}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaEmailDestinatari" value="Destinatari Email" rendered="#{allarmiBean.allarme.mail.inviaAlert==1}"/>
+			<h:outputText id="outNotificaEmailDestinatari" value="#{allarmiBean.allarme.mail.destinatari}" rendered="#{allarmiBean.allarme.mail.inviaAlert==1}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaEmailNotificaWarning" value="Notifica Warning" rendered="#{allarmiBean.allarme.mail.inviaAlert==1}"/>
+			<h:outputText id="outNotificaEmailNotificaWarning" value="#{allarmiBean.allarme.mail.inviaWarning==1 ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.mail.inviaAlert==1}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaEmailAcknowledge" value="Acknowledge" rendered="#{allarmiBean.allarme.mail.inviaAlert==1 and allarmiBean.allarmiNotificaMailVisualizzazioneCompleta }"/>
+			<h:outputText id="outNotificaEmailAcknowledge" value="#{allarmiBean.allarme.mail.ackMode==1 ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.mail.inviaAlert==1 and allarmiBean.allarmiNotificaMailVisualizzazioneCompleta}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaEmailSubject" value="Subject" rendered="#{allarmiBean.allarme.mail.inviaAlert==1 and allarmiBean.allarmiNotificaMailVisualizzazioneCompleta }"/>
+			<h:outputText id="outNotificaEmailSubject" value="#{allarmiBean.allarme.subject}" rendered="#{allarmiBean.allarme.mail.inviaAlert==1 and allarmiBean.allarmiNotificaMailVisualizzazioneCompleta}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaEmailBody" value="Body" rendered="#{allarmiBean.allarme.mail.inviaAlert==1 and allarmiBean.allarmiNotificaMailVisualizzazioneCompleta }"/>
+			<h:outputText id="outNotificaEmailBody" value="#{allarmiBean.allarme.body}" rendered="#{allarmiBean.allarme.mail.inviaAlert==1 and allarmiBean.allarmiNotificaMailVisualizzazioneCompleta}"/>
+			
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelGridNotificaMonitoraggioEsterno" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<h:outputText value="&#160;&#160;" rendered="#{true}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Notifica Monitoraggio Esterno" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaMonitoraggioEsternoAbilitato" value="Stato" rendered="#{true}"/>
+			<h:outputText id="outNotificaMonitoraggioEsternoAbilitato" value="#{allarmiBean.allarme.script.invocaAlert==1 ? 'abilitato' : 'disabilitato'}" rendered="#{true}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaMonitoraggioEsternoNotificaWarning" value="Notifica Warning" rendered="#{allarmiBean.allarme.script.invocaAlert==1}"/>
+			<h:outputText id="outNotificaMonitoraggioEsternoNotificaWarning" value="#{allarmiBean.allarme.script.invocaWarning==1 ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.script.invocaAlert==1}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaMonitoraggioEsternoAcknowledge" value="Acknowledge" rendered="#{allarmiBean.allarme.script.invocaAlert==1 and allarmiBean.allarmiMonitoraggioEsternoVisualizzazioneCompleta}"/>
+			<h:outputText id="outNotificaMonitoraggioEsternoAcknowledge" value="#{allarmiBean.allarme.script.ackMode==1 ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.script.invocaAlert==1 and allarmiBean.allarmiMonitoraggioEsternoVisualizzazioneCompleta}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaMonitoraggioEsternoScriptPath" value="Script Path" rendered="#{allarmiBean.allarme.script.invocaAlert==1 and allarmiBean.allarmiMonitoraggioEsternoVisualizzazioneCompleta}"/>
+			<h:outputText id="outNotificaMonitoraggioEsternoScriptPath" value="#{allarmiBean.allarme.script.command}" rendered="#{allarmiBean.allarme.script.invocaAlert==1 and allarmiBean.allarmiMonitoraggioEsternoVisualizzazioneCompleta}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNotificaMonitoraggioEsternoScriptArgs" value="Script Arguments" rendered="#{allarmiBean.allarme.script.invocaAlert==1 and allarmiBean.allarmiMonitoraggioEsternoVisualizzazioneCompleta}"/>
+			<h:outputText id="outNotificaMonitoraggioEsternoScriptArgs" value="#{allarmiBean.allarme.script.args}" rendered="#{allarmiBean.allarme.script.invocaAlert==1 and allarmiBean.allarmiMonitoraggioEsternoVisualizzazioneCompleta}"/>
+			
+		</h:panelGrid>
+	</a4j:outputPanel>
+</ui:composition>

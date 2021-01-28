@@ -258,6 +258,8 @@ public interface IDynamicUtilsService {
 	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String val,Boolean searchTipo);
 	public int countServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto);
 	
+	public List<IDServizio> getServizi(String protocolloSelezionato,List<String> protocolliSupportati, String tipoServizio, String nomeServizio, Integer versioneServizio, String tag);
+	
 	public List<Soggetto> getSoggettiErogatoreAutoComplete(String tipoProtocollo,String uriAccordoServizio, String input);
 	
 	public List<Soggetto> getSoggettiFruitoreAutoComplete(String tipoProtocollo,String uriAccordoServizio  , String input);

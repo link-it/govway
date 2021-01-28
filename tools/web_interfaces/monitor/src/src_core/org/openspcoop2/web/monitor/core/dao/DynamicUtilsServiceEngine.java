@@ -2753,4 +2753,25 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		} 
 		return portaDelegata;
 	}
+	
+	@Override
+	public List<IDServizio> getServizi(String protocolloSelezionato, List<String> protocolliSupportati, String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String tag) {
+		log.debug("Get Servizi [Protocollo: " + protocolloSelezionato + "], [Protocolli supportati: " + protocolliSupportati 
+				+ "], [TipoServizio: " + tipoServizio + "], [NomeServizio: " + nomeServizio + "], [VersioneServizio: " + versioneServizio + "], [Tag: " + tag + "]");
+
+		try {
+			
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getServizi((JDBCServiceManager) this.utilsServiceManager, protocolloSelezionato, tipoServizio, nomeServizio, versioneServizio, tag);
+			}
+			else{
+				return RegistroCore.getServizi((JDBCServiceManager) this.utilsServiceManager, protocolliSupportati, tipoServizio, nomeServizio, versioneServizio, tag);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+
+		return new ArrayList<IDServizio>();
+	}
 }

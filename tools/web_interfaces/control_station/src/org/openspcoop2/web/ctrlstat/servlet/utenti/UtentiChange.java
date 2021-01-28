@@ -510,7 +510,17 @@ public final class UtentiChange extends Action {
 				
 				if (ServletUtils.isCheckBoxEnabled(isDiagnostica) || ServletUtils.isCheckBoxEnabled(isReportistica)) {
 					user.setPermitAllSoggetti(ServletUtils.isCheckBoxEnabled(isSoggettiAll));
+					// se seleziono il permitall devo cancellare i soggetti selezionati
+					if(user.isPermitAllSoggetti()) {
+						if(user.getSoggetti() != null && !user.getSoggetti().isEmpty())
+						user.getSoggetti().clear();
+					}
 					user.setPermitAllServizi(ServletUtils.isCheckBoxEnabled(isServiziAll));
+					// se seleziono il permitall devo cancellare i servizi selezionati
+					if(user.isPermitAllServizi()) {
+						if(user.getServizi() != null && !user.getServizi().isEmpty())
+						user.getServizi().clear();
+					}
 				}
 
 				// Se singleSu != null, devo recuperare gli oggetti
