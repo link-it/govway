@@ -37,6 +37,8 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
+import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
@@ -1210,5 +1212,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 			this.log.error("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore+ "]");
 		}
 		return servizi;
+	}
+	
+	public PortaDelegata getPortaDelegata(String nomePorta) {
+		return this.dynamicUtilsService.getPortaDelegata(nomePorta);
+	}
+	
+	public PortaApplicativa getPortaApplicativa(String nomePorta) {
+		return this.dynamicUtilsService.getPortaApplicativa(nomePorta);
 	}
 }

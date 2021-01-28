@@ -59,7 +59,7 @@ public class AllarmeStatus extends BaseSondaPdd implements ISondaPdd{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final String PATH_ALLARMI = "/pages/list/statoAllarmi.jsf";
+	private static final String PATH_ALLARMI = "/allarmi/pages/list/statoAllarmi.jsf";
 
 	private int totOk = 0;
 	private int totAllWarn = 0;

@@ -1032,4 +1032,7 @@ public class LoginBean extends AbstractLoginBean {
 		return this.listaNomiGruppi;
 	}
 	
+	public boolean isAmministratore() {
+		return this.getLoggedUser().isAdmin();
+	}
 }

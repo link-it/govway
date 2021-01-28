@@ -371,10 +371,10 @@ public class PermessiUtenteOperatore {
 
 			// L'invocazione serve solamente a verificare i permessi
 			// Poi gli oggetti ritornati DEVONO corrispondere esattamente ai permessi impostati sul database
-			@SuppressWarnings("unused")
-			PermessiUtenteOperatore soggLocale = PermessiUtenteOperatore.getPermessiUtenteOperatore(u, tipoSoggettoLocale, nomeSoggettoLocale, null, null,null);
-			@SuppressWarnings("unused")
-			PermessiUtenteOperatore servizio = PermessiUtenteOperatore.getPermessiUtenteOperatore(u, null, null, null, null,null);
+			//@SuppressWarnings("unused")
+			//PermessiUtenteOperatore soggLocale = PermessiUtenteOperatore.getPermessiUtenteOperatore(u, tipoSoggettoLocale, nomeSoggettoLocale, null, null,null);
+			//@SuppressWarnings("unused")
+		//	PermessiUtenteOperatore servizio = PermessiUtenteOperatore.getPermessiUtenteOperatore(u, null, null, null, null,null);
 			//			soggLocale.addPermessiServizi(servizio);
 			//			return soggLocale;
 			//			

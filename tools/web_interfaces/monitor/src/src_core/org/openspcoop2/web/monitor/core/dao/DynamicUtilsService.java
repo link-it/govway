@@ -885,6 +885,28 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			return this.driver.getServizi(tipoProtocollo, uriAccordoServizio , tipoSoggetto, nomeSoggetto);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IDServizio> getServizi(String protocolloSelezionato, 
+			List<String> protocolliSupportati, String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String tag) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey(protocolloSelezionato, protocolliSupportati , tipoServizio, nomeServizio, versioneServizio, tag);
+			String methodName = "getServizi";
+			try {
+				return (List<IDServizio>) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, 
+						AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName, 
+						new Class<?>[] {String.class, List.class, String.class, String.class, Integer.class, String.class },
+						protocolloSelezionato, protocolliSupportati, tipoServizio, nomeServizio, versioneServizio, tag);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		}else {
+			return this.driver.getServizi(protocolloSelezionato, protocolliSupportati, tipoServizio, nomeServizio, versioneServizio, tag);
+		}
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String val){

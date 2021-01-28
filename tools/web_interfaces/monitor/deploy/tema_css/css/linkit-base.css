@@ -373,6 +373,14 @@ a.titleLinkRight:hover {
 	line-height: 24px;
 }
 
+.labelAllineataTopDxFixedWidth130 {
+	text-align: right;
+	padding: 0px 10px;
+	width: 160px;
+	line-height: 24px;
+	vertical-align: top;
+}
+
 .labelAllineataDxFixedWidth270 {
     text-align: right;
     padding: 0px 10px;
@@ -429,6 +437,15 @@ span.iconLinkie{
 
 .divNoEdit {
 	padding-top: 6px;
+}
+
+.edit-link {
+	float: right;
+	padding: 0px 8px 0px 0px;
+}
+
+.edit-link span.icon-box {
+	vertical-align: middle;
 }
 
 

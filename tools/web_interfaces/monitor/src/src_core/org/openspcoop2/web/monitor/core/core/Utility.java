@@ -55,6 +55,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
@@ -1070,5 +1071,15 @@ public class Utility {
 		}
 
 		return new ArrayList<String>();
+	}
+	
+	public static boolean isAmministratore() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.isAmministratore();
+		}
+		
+		return false;
 	}
 }

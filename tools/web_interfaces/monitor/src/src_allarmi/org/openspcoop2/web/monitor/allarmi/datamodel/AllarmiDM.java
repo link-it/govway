@@ -51,4 +51,8 @@ public class AllarmiDM extends BaseDataModelWithSearchForm<Long, ConfigurazioneA
 			return object.getId();
 		return null;
 	}
+	
+	public boolean isExecuteQuery(){
+		return ((AllarmiSearchForm)this.getDataProvider().getSearch()).isExecuteQuery();
+	}	
 }

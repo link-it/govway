@@ -31,6 +31,8 @@ import org.openspcoop2.core.allarmi.AllarmeFiltro;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
@@ -38,6 +40,7 @@ import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.beans.BeanUtils;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -261,10 +264,30 @@ public class AllarmiUtils {
 		return null;
 	}
 	
-	public static String getTipoNomeServizio(AllarmeFiltro configurazioneFiltro) {
+	
+	@SuppressWarnings("deprecation")
+	public static String getTipoNomeServizio(AllarmeFiltro configurazioneFiltro, Logger log, boolean controlloAllarmiFiltroApiSoggettoErogatore) {
 		if (configurazioneFiltro != null && StringUtils.isNotEmpty(configurazioneFiltro.getNomeServizio()) && !"*".equals(configurazioneFiltro.getNomeServizio())) {
-			String res = configurazioneFiltro.getTipoServizio() + "/" + configurazioneFiltro.getNomeServizio();
-			return res;
+			
+			IDServizio idServizio = new IDServizio();
+			idServizio.setNome(configurazioneFiltro.getNomeServizio());
+			idServizio.setTipo(configurazioneFiltro.getTipoServizio());
+			idServizio.setVersione(configurazioneFiltro.getVersioneServizio());
+			String res;
+			try {
+				if(controlloAllarmiFiltroApiSoggettoErogatore) {
+					IDSoggetto erogatore = new IDSoggetto(configurazioneFiltro.getTipoErogatore(), configurazioneFiltro.getNomeErogatore());
+					idServizio.setSoggettoErogatore(erogatore );
+					
+					res = NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+				}
+				else {
+					res = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio );
+				}
+				return res;
+			} catch (Exception e) {
+				log.error(e.getMessage(),e);
+			}
 		}
 		return null;
 	}

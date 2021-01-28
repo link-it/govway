@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.utils.beans.BeanUtils;
 import org.openspcoop2.utils.beans.BlackListElement;
@@ -43,6 +44,9 @@ public class ConfigurazioneAllarmeBean extends Allarme{
 	private static final long serialVersionUID = 1L;
 	
 	private Plugin plugin;
+	private String dettaglioAPI = null;
+	private String dettaglioFruitore = null;
+	private String dettaglioErogatore = null;
 	
 	public void setPlugin(Plugin plugin) {
 		this.plugin = plugin;
@@ -60,6 +64,12 @@ public class ConfigurazioneAllarmeBean extends Allarme{
 				0);
 		metodiEsclusi.add(new BlackListElement("setPlugin",
 				Plugin.class));
+		metodiEsclusi.add(new BlackListElement("setDettaglioAPI",
+				String.class));
+		metodiEsclusi.add(new BlackListElement("setDettaglioFruitore",
+				String.class));
+		metodiEsclusi.add(new BlackListElement("setDettaglioErogatore",
+				String.class));
 		
 		BeanUtils.copy(this, allarme, metodiEsclusi);
 		
@@ -112,6 +122,57 @@ public class ConfigurazioneAllarmeBean extends Allarme{
 		}
 		
 		return tmp;
+	}
+	
+	public String getDettaglioAPI() {
+		if(this.dettaglioAPI == null) {
+			this.dettaglioAPI = "-";
+		}
+		return this.dettaglioAPI;
+	}
+	
+	public void setDettaglioAPI(String dettaglioAPI) {
+		this.dettaglioAPI = dettaglioAPI;
+	}
+	
+	public boolean isRuoloPortaApplicativa() {
+		boolean applicativa = false;
+		
+		if(this.getFiltro() != null && this.getFiltro().getRuoloPorta() != null) {
+			if(RuoloPorta.APPLICATIVA.equals(this.getFiltro().getRuoloPorta())) {
+				applicativa = (this.getFiltro().getNomePorta()!=null);
+			}
+		}
+		
+		return applicativa;
+	}
+	
+	public boolean isRuoloPortaDelegata() {
+		boolean delegata = false;
+		
+		if(this.getFiltro() != null && this.getFiltro().getRuoloPorta() != null) {
+			if(RuoloPorta.DELEGATA.equals(this.getFiltro().getRuoloPorta())) {
+				delegata = (this.getFiltro().getNomePorta()!=null);
+			}
+		}
+		
+		return delegata;
+	}
+	
+	public boolean isAllarmeConfigurazione() {
+		return !this.isRuoloPortaDelegata() && !this.isRuoloPortaApplicativa();
+	}
+	public String getDettaglioFruitore() {
+		return this.dettaglioFruitore;
+	}
+	public void setDettaglioFruitore(String dettaglioFruitore) {
+		this.dettaglioFruitore = dettaglioFruitore;
+	}
+	public String getDettaglioErogatore() {
+		return this.dettaglioErogatore;
+	}
+	public void setDettaglioErogatore(String dettaglioErogatore) {
+		this.dettaglioErogatore = dettaglioErogatore;
 	}
 	
 //	@Override

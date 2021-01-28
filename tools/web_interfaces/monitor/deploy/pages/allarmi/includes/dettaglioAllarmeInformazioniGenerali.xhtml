@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniGeneraliPnl">
+		<h:panelGrid id="panelGridInformazioniGeneraliAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Informazioni Generali" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipo" value="Plugin" rendered="#{true}"/>
+			<h:outputText id="outTipo" value="#{allarmiBean.allarme.tipo}" rendered="#{true}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelModalita" value="Modalità" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme}"/>
+			<h:outputText id="outModalitaAttiva" value="Attiva" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and allarmiBean.allarme._value_tipoAllarme == 'ATTIVO'}"/>
+			<h:outputText id="outModalitaPassiva" value="Passiva" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and allarmiBean.allarme._value_tipoAllarme == 'PASSIVO'}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelNome" value="Nome" rendered="#{true}"/>
+			<h:outputText id="outNome" value="#{allarmiBean.allarme.alias}" rendered="#{true}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelDescrizione" value="Descrizione" rendered="#{not empty allarmiBean.descrizione}"/>
+			<h:outputText id="outDescrizione" value="#{allarmiBean.descrizione}" rendered="#{not empty allarmiBean.descrizione}"/>
+		
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFrequenza" value="Frequenza" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and (allarmiBean.allarme._value_tipoAllarme=='ATTIVO' or allarmiBean.allarme._value_tipoAllarme=='ATTIVO_PASSIVO')}"/>
+			<h:panelGrid columns="3" id="outPnlFrequenza" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and (allarmiBean.allarme._value_tipoAllarme=='ATTIVO' or allarmiBean.allarme._value_tipoAllarme=='ATTIVO_PASSIVO')}">
+				<h:outputText id="periodo" value="#{allarmiBean.allarme.periodo}" style="margin-left: 0px;"/>
+				<rich:spacer width="1"/>
+				<h:outputText id="tipoPeriodoCombo" value="#{allarmiBean.tipoPeriodo}" style="width: 152px; margin-left: 0px;"/>
+			</h:panelGrid>
+			
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelGridFiltro" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx" >
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<h:outputText value="&#160;&#160;" rendered="#{true}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Filtro" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroStato" value="Stato" rendered="#{true}"/>
+			<h:outputText id="outFiltroStato" value="#{allarmiBean.allarme.filtro.enabled ? 'abilitato' : 'disabilitato'}" rendered="#{true}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroRuoloPorta" value="Tipologia" rendered="#{not empty allarmiBean.ruoloPortaFiltro}"/>
+			<h:outputText id="outFiltroRuoloPorta" value="#{allarmiBean.ruoloPortaFiltro}" rendered="#{not empty allarmiBean.ruoloPortaFiltro}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroNomePorta" value="Nome Porta" rendered="#{false}"/>
+			<h:outputText id="outFiltroNomePorta" value="#{allarmiBean.nomePortaFiltro}" rendered="#{false}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroProfilo" value="Profilo" rendered="#{allarmiBean.visualizzaProfiloFiltro}"/>
+			<h:outputText id="outFiltroProfilo" value="#{allarmiBean.protocolloFiltro}" rendered="#{allarmiBean.visualizzaProfiloFiltro}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroRuoloErogatore" value="Ruolo Erogatore" rendered="#{allarmiBean.visualizzaRuoloErogatoreFiltro and not empty allarmiBean.allarme.filtro.ruoloErogatore}"/>
+			<h:outputText id="outFiltroRuoloErogatore" value="#{allarmiBean.allarme.filtro.ruoloErogatore}" rendered="#{allarmiBean.visualizzaRuoloErogatoreFiltro and not empty allarmiBean.allarme.filtro.ruoloErogatore}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroSoggettoErogatore" value="Soggetto Erogatore" rendered="#{allarmiBean.visualizzaSoggettoErogatoreFiltro and not empty allarmiBean.tipoNomeDestinatarioFiltro}"/>
+			<h:outputText id="outFiltroSoggettoErogatore" value="#{allarmiBean.tipoNomeDestinatarioFiltro}" rendered="#{allarmiBean.visualizzaSoggettoErogatoreFiltro and not empty allarmiBean.tipoNomeDestinatarioFiltro}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroTag" value="Tag" rendered="#{allarmiBean.visualizzaTagFiltro and not empty allarmiBean.allarme.filtro.tag}"/>
+			<h:outputText id="outFiltroTag" value="#{allarmiBean.allarme.filtro.ruoloErogatore}" rendered="#{allarmiBean.visualizzaTagFiltro and not empty allarmiBean.allarme.filtro.tag}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroServizio" value="API" rendered="#{allarmiBean.visualizzaServizioFiltro and not empty allarmiBean.tipoNomeServizioFiltro}"/>
+			<h:outputText id="outFiltroServizio" value="#{allarmiBean.tipoNomeServizioFiltro}" rendered="#{allarmiBean.visualizzaServizioFiltro and not empty allarmiBean.tipoNomeServizioFiltro}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroAzione" value="#{allarmiBean.labelAzioneFiltro}" rendered="#{allarmiBean.visualizzaAzioneFiltro and not empty allarmiBean.allarme.filtro.azione}"/>
+			<h:outputText id="outFiltroAzione" value="#{allarmiBean.azioneFiltroHTML}" escape="false" rendered="#{allarmiBean.visualizzaAzioneFiltro and not empty allarmiBean.allarme.filtro.azione}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroRuoloFruitore" value="Ruolo Richiedente" rendered="#{allarmiBean.visualizzaRuoloFruitoreFiltro and not empty allarmiBean.allarme.filtro.ruoloFruitore}"/>
+			<h:outputText id="outFiltroRuoloFruitore" value="#{allarmiBean.allarme.filtro.ruoloFruitore}" rendered="#{allarmiBean.visualizzaRuoloFruitoreFiltro and not empty allarmiBean.allarme.filtro.ruoloFruitore}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroSoggettoFruitore" value="Soggetto Fruitore" rendered="#{allarmiBean.visualizzaSoggettoFruitoreFiltro and not empty allarmiBean.tipoNomeMittenteFiltro}"/>
+			<h:outputText id="outFiltroSoggettoFruitore" value="#{allarmiBean.tipoNomeMittenteFiltro}" rendered="#{allarmiBean.visualizzaSoggettoFruitoreFiltro and not empty allarmiBean.tipoNomeMittenteFiltro}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroSAFruitore" value="Applicativo Fruitore" rendered="#{allarmiBean.visualizzaSaFruitoreFiltro and not empty allarmiBean.allarme.filtro.servizioApplicativoFruitore}"/>
+			<h:outputText id="outFiltroSAFruitore" value="#{allarmiBean.saFruitoreFiltro}" rendered="#{allarmiBean.visualizzaSaFruitoreFiltro and not empty allarmiBean.allarme.filtro.servizioApplicativoFruitore}"/>
+			
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelGridGroupBy" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx" >
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<h:outputText value="&#160;&#160;" rendered="#{true}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Raggruppamento" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByStato" value="Stato" rendered="#{true}"/>
+			<h:outputText id="outGroupByStato" value="#{allarmiBean.allarme.groupBy.enabled ? 'abilitato' : 'disabilitato'}" rendered="#{true}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByRuoloPorta" value="Tipologia" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaRuoloPortaGroupBy}"/>
+			<h:outputText id="outGroupByRuoloPorta" value="#{allarmiBean.allarme.groupBy.ruoloPorta ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaRuoloPortaGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByProfilo" value="Profilo" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaProtocolloGroupBy}"/>
+			<h:outputText id="outGroupByProfilo" value="#{allarmiBean.allarme.groupBy.protocollo ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaProtocolloGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupBySoggettoErogatore" value="Soggetto Erogatore" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaSoggettoErogatoreGroupBy}"/>
+			<h:outputText id="outGroupBySoggettoErogatore" value="#{allarmiBean.allarme.groupBy.erogatore ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaSoggettoErogatoreGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByServizio" value="API" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaServizioGroupBy}"/>
+			<h:outputText id="outGroupByServizio" value="#{allarmiBean.allarme.groupBy.servizio ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaServizioGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByAzione" value="#{allarmiBean.labelAzioneGroupBy}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaAzioneGroupBy}"/>
+			<h:outputText id="outGroupByAzione" value="#{allarmiBean.allarme.groupBy.azione ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaAzioneGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupBySoggettoFruitore" value="Soggetto Fruitore" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaSoggettoFruitoreGroupBy}"/>
+			<h:outputText id="outGroupBySoggettoFruitore" value="#{allarmiBean.allarme.groupBy.fruitore ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaSoggettoFruitoreGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupBySAFruitore" value="Applicativo Fruitore" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaServizioApplicativoFruitoreGroupBy}"/>
+			<h:outputText id="outGroupBySAFruitore" value="#{allarmiBean.allarme.groupBy.servizioApplicativoFruitore ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaServizioApplicativoFruitoreGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByToken" value="Token" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaTokenGroupBy}"/>
+			<h:outputText id="outGroupByToken" value="#{not empty allarmiBean.allarme.groupBy.token ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaTokenGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByTokenClaims" value="Claims" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaTokenGroupBy and not empty allarmiBean.allarme.groupBy.token}"/>
+			<h:outputText id="outGroupByTokenClaims" value="#{allarmiBean.claimsGroupByHTML}" escape="false" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaTokenGroupBy and not empty allarmiBean.allarme.groupBy.token}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByRichiedente" value="Richiedente" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaIdentificativoAutenticatoGroupBy}"/>
+			<h:outputText id="outGroupByRichiedente" value="#{not empty allarmiBean.allarme.groupBy.identificativoAutenticato ? 'Si' : 'No'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaIdentificativoAutenticatoGroupBy}"/>
+			
+		</h:panelGrid>
+		
+	</a4j:outputPanel>
+</ui:composition>
