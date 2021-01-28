@@ -556,7 +556,7 @@ public class AllarmiService implements IAllarmiService {
 			// se e' stato selezionato uno stato != all allora imposto il filtro
 			if (StringUtils.isNotEmpty(formRicerca.getStatoSelezionato())
 					&& !StringUtils.equals(
-							formRicerca.getStatoSelezionato(), "All")) {
+							formRicerca.getStatoSelezionato(), "Qualsiasi")) {
 				if (addAnd) {
 					expr.and();
 				}

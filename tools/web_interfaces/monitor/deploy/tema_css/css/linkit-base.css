@@ -618,3 +618,21 @@ span.iconLinkie{
 .entryRuoloConsegna {
     padding: 0px 16px 0px 16px;
 }
+
+
+.icona-allarme-error {
+	color: #FF2D39 !important;
+}
+
+.icona-allarme-warning {
+	color: #FFAB4D !important;
+}
+
+.icona-allarme-ok {
+	color: #00B658 !important;
+}
+
+.icona-allarme-disabilitato {
+	color: #C2C2C9 !important;
+}
+

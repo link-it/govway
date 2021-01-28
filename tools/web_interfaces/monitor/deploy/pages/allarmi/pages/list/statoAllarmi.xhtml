@@ -24,7 +24,7 @@
 						<h:outputText value="Ok:" styleClass="outputFieldLabel"/>
 						<h:panelGrid columns="2">
 							<h:outputText value="#{allarmiBean.totOk}" />
-							<h:graphicImage value="/images/tema_link/verified_green.png"/>
+							<h:graphicImage value="/images/tema_link/status_green.png"/>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
@@ -33,7 +33,7 @@
 						<h:outputText value="Warn:" styleClass="outputFieldLabel" />
 						<h:panelGrid columns="2">
 							<h:outputText value="#{allarmiBean.totWarn}" />
-							<h:graphicImage value="/images/tema_link/alert_yellow.png" />
+							<h:graphicImage value="/images/tema_link/status_yellow.png" />
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
@@ -42,7 +42,7 @@
 						<h:outputText value="Error:" styleClass="outputFieldLabel" />
 						<h:panelGrid columns="2">
 							<h:outputText value="#{allarmiBean.totError}" />
-							<h:graphicImage value="/images/tema_link/alert_red.png"/>
+							<h:graphicImage value="/images/tema_link/status_red.png"/>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
@@ -63,33 +63,46 @@
 				<h:panelGrid columns="7">
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
 						<h:outputText value="Ok:" styleClass="outputFieldLabel"/>
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="3">
 							<h:outputText value="#{allarmiBean.totOk}" />
-							<h:graphicImage value="/images/tema_link/verified_green.png"/>
+							<h:outputText value="&#160;" />
+							<h:graphicImage value="/images/tema_link/status_green.png"/>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 					
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
 						<h:outputText value="Warn:" styleClass="outputFieldLabel" />
-						<h:panelGrid columns="5">
+						<h:panelGrid columns="7">
 							<h:outputText value="#{allarmiBean.totWarnNoAck}" />
-							<h:graphicImage value="/images/tema_link/alert_yellow.png" />
+							<h:outputText value="&#160;" />
+							<a4j:outputPanel styleClass="icona-allarme-warning">
+								<i class="material-icons md-18" id="iconaSearchOpen">error</i>
+							</a4j:outputPanel>
 							<h:outputText value="&#160;&#160;" />
 							<h:outputText value="#{allarmiBean.totWarnAck}" />
-							<h:graphicImage value="/images/tema_link/verified_yellow.png" />
+							<h:outputText value="&#160;" />
+							<a4j:outputPanel styleClass="icona-allarme-warning">
+								<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
+							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 					
 					<h:panelGrid columns="2" columnClasses="labelAllineataDx,valueAllineataSx" styleClass="borderSpacingTable">
 						<h:outputText value="Error:" styleClass="outputFieldLabel" />
-						<h:panelGrid columns="5">
+						<h:panelGrid columns="7">
 							<h:outputText value="#{allarmiBean.totErrorNoAck}" />
-							<h:graphicImage value="/images/tema_link/alert_red.png"/>
+							<h:outputText value="&#160;" />
+							<a4j:outputPanel styleClass="icona-allarme-error">
+								<i class="material-icons md-18" id="iconaSearchOpen">error</i>
+							</a4j:outputPanel>
 							<h:outputText value="&#160;&#160;" />
 							<h:outputText value="#{allarmiBean.totErrorAck}" />
-							<h:graphicImage value="/images/tema_link/verified_red.png"/>
+							<h:outputText value="&#160;" />
+							<a4j:outputPanel styleClass="icona-allarme-error">
+								<i class="material-icons md-18" id="iconaSearchOpen">check_circle</i>
+							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
 					<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
@@ -98,7 +111,9 @@
 						<h:outputText value="Disabilitati:" styleClass="outputFieldLabel" />
 						<h:panelGrid columns="2">
 							<h:outputText value="#{allarmiBean.totDisabilitati}" />
-							<h:graphicImage value="/images/tema_link/circle_light_grey.png"/>
+							<a4j:outputPanel styleClass="icona-allarme-disabilitato">
+								<i class="material-icons md-20" id="iconaSearchOpen">fiber_manual_record</i>
+							</a4j:outputPanel>
 						</h:panelGrid>
 					</h:panelGrid>
 					
@@ -236,9 +251,10 @@
 								<h:outputText value="Stato" id="outStato"/>
 							</f:facet>
 							<h:panelGroup layout="block" style="width: 40px;">
-								<h:graphicImage id="alarmDisabled" value="/images/tema_link/circle_light_grey.png" rendered="#{item.enabled==0}">
-									<rich:toolTip for="alarmDisabled" mode="client" value="Disabilitato"/>
-								</h:graphicImage>
+								<a4j:outputPanel rendered="#{item.enabled==0}" id="alarmDisabledPnl" styleClass="icona-allarme-disabilitato">
+									<i class="material-icons md-20" id="iconaSearchOpen">fiber_manual_record</i>
+									<rich:toolTip for="alarmDisabledPnl" mode="client" value="Disabilitato"/>
+								</a4j:outputPanel>
 								<a4j:outputPanel rendered="#{ 
 										(item.enabled>0) 
 										and 
@@ -250,7 +266,7 @@
 											(item.invocaScriptAlert==1 and item.scriptAckMode==1)
 										) 
 									}">
-									<h:graphicImage value="/images/tema_link/verified_green.png" rendered="#{item.stato==0}" id="imgStatoOk">
+									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{item.stato==0}" id="imgStatoOk">
 										<rich:toolTip mode="client" for="imgStatoOk">
 											<h:outputText value="Ok" />
 										</rich:toolTip>
@@ -261,21 +277,19 @@
 									<rich:toolTip mode="client" for="ackLinkF">
 										<h:outputText value="Click to Un-Acknowledge." />
 									</rich:toolTip>
-									<a4j:commandLink id="ackLinkT" styleClass="link-plain"
+									<a4j:commandLink id="ackLinkT" styleClass="#{item.stato==1 ? 'icona-allarme-warning' : 'icona-allarme-error'}"
 										rendered="#{item.acknowledged==0 and item.stato>0}"
 										 reRender="allarmiTbl,statusPnlWithAcknoledged">
 										<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 										<a4j:actionparam name="ack" value="true" assignTo="#{allarmiBean.ack}" actionListener="#{allarmiBean.toggleAck}"/>
-										<h:graphicImage value="/images/tema_link/alert_red.png" rendered="#{item.stato==2}"/>
-										<h:graphicImage value="/images/tema_link/alert_yellow.png" rendered="#{item.stato==1}"/>
+										<i class="material-icons md-16" id="iconaSearchOpen">error</i>
 									</a4j:commandLink>					
-									<a4j:commandLink id="ackLinkF" styleClass="link-plain"
+									<a4j:commandLink id="ackLinkF" styleClass="#{item.stato==1 ? 'icona-allarme-warning' : 'icona-allarme-error'}"
 										rendered="#{(item.acknowledged==1) and (item.stato>0)}"
 										 reRender="allarmiTbl,statusPnlWithAcknoledged">
 										<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 										<a4j:actionparam name="ack" value="false" assignTo="#{allarmiBean.ack}" actionListener="#{allarmiBean.toggleAck}"/>
-										<h:graphicImage value="/images/tema_link/verified_red.png" rendered="#{item.stato==2}"/>
-										<h:graphicImage value="/images/tema_link/verified_yellow.png" rendered="#{item.stato==1}"/>
+										<i class="material-icons md-16" id="iconaSearchOpen">check_circle</i>
 									</a4j:commandLink>
 								</a4j:outputPanel> 
 								<a4j:outputPanel rendered="#{ 
@@ -289,9 +303,9 @@
 											(item.invocaScriptAlert==1 and item.scriptAckMode==1)
 										) 
 									}">
-									<h:graphicImage value="/images/tema_link/verified_green.png" rendered="#{item.stato==0}" title="Ok"/>
-									<h:graphicImage value="/images/tema_link/alert_red.png" rendered="#{item.stato==2}" title="Error"/>
-									<h:graphicImage value="/images/tema_link/alert_yellow.png" rendered="#{item.stato==1}" title="Warn"/>
+									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{item.stato==0}" title="Ok"/>
+									<h:graphicImage value="/images/tema_link/status_red.png" rendered="#{item.stato==2}" title="Error"/>
+									<h:graphicImage value="/images/tema_link/status_yellow.png" rendered="#{item.stato==1}" title="Warn"/>
 								</a4j:outputPanel> 
 							</h:panelGroup>
 						</rich:column>
