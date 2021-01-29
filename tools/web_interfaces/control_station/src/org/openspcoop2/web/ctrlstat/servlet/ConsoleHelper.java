@@ -2356,8 +2356,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public boolean checkNCNameAndSerial(String name, String object) throws Exception{
 		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*#[0-9]*$")) {
-			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.', infine deve terminare con # e numeri interi");
+		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*@[0-9]*$")) {
+			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.', infine deve terminare con @ e numeri interi");
 			return false;
 		}
 		return true;

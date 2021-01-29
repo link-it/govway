@@ -67,6 +67,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
@@ -81,13 +83,8 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
-import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.core.plugins.Plugin;
-import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -2308,12 +2305,10 @@ public class AccordiServizioParteSpecificaUtilities {
 		/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO (per Allarmi) *************** */
 		
 		if(!confAllarmi.isEmpty() && !ControlStationCore.isAPIMode()) {
-			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
 			StringBuilder bfError = new StringBuilder();
 			for (ConfigurazioneAllarmeBean allarme : confAllarmi) {
 				try {
-					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), alarmEngineConfig);
+					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), apsCore.getAllarmiConfig());
 				} catch(Exception e) {
 					if(bfError.length()>0) {
 						bfError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
@@ -2652,12 +2647,10 @@ public class AccordiServizioParteSpecificaUtilities {
 		/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO (per Allarmi) *************** */
 		
 		if(!confAllarmi.isEmpty() && !ControlStationCore.isAPIMode()) {
-			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
 			StringBuilder bfError = new StringBuilder();
 			for (ConfigurazioneAllarmeBean allarme : confAllarmi) {
 				try {
-					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), alarmEngineConfig);
+					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), apsCore.getAllarmiConfig());
 				} catch(Exception e) {
 					if(bfError.length()>0) {
 						bfError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);

@@ -18546,7 +18546,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					allarme.getMail().setInviaWarning(Integer.parseInt(notificaWarningEmailS));
 				}
 				
-				if(this.confCore.getAllarmiConfig().isAllarmiNotificaMailVisualizzazioneCompleta()) {
+				if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {
 					//Acknowledge
 					String ackModeEmailS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE);
 					if(StringUtils.isNotBlank(ackModeEmailS)) {
@@ -18576,7 +18576,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					allarme.getScript().setInvocaWarning(Integer.parseInt(notificaWarningScriptS));
 				}
 				
-				if(this.confCore.getAllarmiConfig().isAllarmiMonitoraggioEsternoVisualizzazioneCompleta()) {
+				if(this.confCore.getAllarmiConfig().isScriptShowAllOptions()) {
 					//Acknowledge
 					String ackModeEmailS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE);
 					if(StringUtils.isNotBlank(ackModeEmailS)) {
@@ -19270,7 +19270,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);	
 			
 			// Acknowledge
-			if(this.confCore.getAllarmiConfig().isAllarmiAssociazioneAcknowledgedStatoAllarme() || 
+			if(this.confCore.getAllarmiConfig().isOptionsAcknowledgedStatusAssociation() || 
 					( allarme.getMail().getInviaAlert() == 1 && allarme.getMail().getAckMode() == 1) ||
 					( allarme.getScript().getInvocaAlert() == 1 && allarme.getScript().getAckMode() == 1) ) {
 				
@@ -19475,7 +19475,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			dati.addElement(de);
 			
-			if(this.confCore.getAllarmiConfig().isAllarmiNotificaMailVisualizzazioneCompleta()) {
+			if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {
 				//Acknowledge
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE); 
@@ -19570,7 +19570,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			dati.addElement(de);
 			
-			if(this.confCore.getAllarmiConfig().isAllarmiMonitoraggioEsternoVisualizzazioneCompleta()) {
+			if(this.confCore.getAllarmiConfig().isScriptShowAllOptions()) {
 				//Acknowledge
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE); 
@@ -19859,7 +19859,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// servizio
 			if(configurazione) {
-				boolean controlloAllarmiFiltroApiSoggettoErogatore = this.core.getAllarmiConfig().isAllarmiFiltroApiSoggettoErogatore();
+				boolean controlloAllarmiFiltroApiSoggettoErogatore = this.core.getAllarmiConfig().isOptionsFilterApiOrganization();
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					IDServizio idServizio = null;
 					if(allarme.getFiltro().getTipoServizio()!=null && allarme.getFiltro().getNomeServizio()!=null && allarme.getFiltro().getVersioneServizio()!=null &&
@@ -20618,7 +20618,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG);
 			de.setValue(datiIdentificativiTagSelezionatoValue);
-			boolean allarmiFiltroApi = this.core.getAllarmiConfig().isAllarmiFiltroApi();
+			boolean allarmiFiltroApi = this.core.getAllarmiConfig().isOptionsFilterApi();
 			if(!configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
@@ -21091,7 +21091,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(configurazione) {
 			
-				if(this.core.getAllarmiConfig().isAllarmiGroupByApi()) {
+				if(this.core.getAllarmiConfig().isOptionsGroupByApi()) {
 					showServizio = allarme.getFiltro()==null || 
 							allarme.getFiltro().isEnabled()==false || 
 							allarme.getFiltro().getTipoServizio()==null ||

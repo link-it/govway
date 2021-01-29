@@ -50,14 +50,12 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
-import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
-import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -133,8 +131,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			PorteDelegateCore pdCore = new PorteDelegateCore(confCore);
 			PorteApplicativeCore paCore = new PorteApplicativeCore(confCore);
 			
-			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
+			AlarmEngineConfig alarmEngineConfig = confCore.getAllarmiConfig();
 			
 			ConfigurazioneAllarmeBean allarme = new ConfigurazioneAllarmeBean();
 			allarme.setEnabled(1);

@@ -46,6 +46,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -57,10 +58,8 @@ import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.AlarmImpl;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.monitor.engine.alarm.AlarmStatusWithAck;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.AlarmStateValues;
@@ -71,7 +70,6 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiContext;
-import org.openspcoop2.web.monitor.allarmi.bean.AllarmiMonitorConfig;
 import org.openspcoop2.web.monitor.allarmi.dao.IAllarmiService;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -116,8 +114,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	private StatoAllarme statoAllarmePrimaModifica = null;
 	
 	private AlarmEngineConfig alarmEngineConfig;
-	private AllarmiConfig allarmiConfig;
-
+	
 	private boolean showFilter = true;
 	private boolean showGroupBy = true;
 	private boolean controlloAllarmiFiltroApiSoggettoErogatore = false;
@@ -156,14 +153,16 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	public AllarmiBean() {
 		super();
 		try {
-			this.allarmiConfig = new AllarmiMonitorConfig(PddMonitorProperties.getInstance(log));
-			this.alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, PddMonitorProperties.getInstance(log).getAllarmiConfigurazione());
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
+			
+			this.alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, pddMonitorProperties.getAllarmiConfigurazione());
 			
 			if(AlarmManager.getAlarmEngineConfig() == null) {
 				AlarmManager.setAlarmEngineConfig(this.alarmEngineConfig);
 			}
 			
-			this.controlloAllarmiFiltroApiSoggettoErogatore = this.allarmiConfig.isAllarmiFiltroApiSoggettoErogatore();
+			this.controlloAllarmiFiltroApiSoggettoErogatore = this.alarmEngineConfig.isOptionsFilterApiOrganization();
+			
 		} catch (Throwable e) {
 			AllarmiBean.log.error(e.getMessage(), e);
 		}
@@ -195,19 +194,19 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 	
 	public boolean isAllarmiConsultazioneModificaStatoAbilitata() {
-		return this.allarmiConfig.isAllarmiConsultazioneModificaStatoAbilitata();
+		return this.alarmEngineConfig.isOptionsUpdateState();
 	}
 	
 	public boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() {
-		return this.allarmiConfig.isAllarmiAssociazioneAcknowledgedStatoAllarme();
+		return this.alarmEngineConfig.isOptionsAcknowledgedStatusAssociation();
 	}
 	
 	public boolean isAllarmiNotificaMailVisualizzazioneCompleta() {
-		return this.allarmiConfig.isAllarmiNotificaMailVisualizzazioneCompleta();
+		return this.alarmEngineConfig.isMailShowAllOptions();
 	}
 
 	public boolean isAllarmiMonitoraggioEsternoVisualizzazioneCompleta() {
-		return this.allarmiConfig.isAllarmiMonitoraggioEsternoVisualizzazioneCompleta();
+		return this.alarmEngineConfig.isScriptShowAllOptions();
 	}
 
 	public String getLabelStato(){
@@ -792,7 +791,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	
 	public boolean isVisualizzaServizioGroupBy() {
 		if(this.allarme.isAllarmeConfigurazione()) {
-			if(this.allarmiConfig.isAllarmiGroupByApi()) {
+			if(this.alarmEngineConfig.isOptionsGroupByApi()) {
 				return this.allarme.getFiltro()==null || 
 						this.allarme.getFiltro().isEnabled()==false || 
 								this.allarme.getFiltro().getTipoServizio()==null ||

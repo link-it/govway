@@ -47,9 +47,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
@@ -126,8 +124,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 			PorteDelegateCore pdCore = new PorteDelegateCore(confCore);
 			PorteApplicativeCore paCore = new PorteApplicativeCore(confCore);
 			
-			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
+			AlarmEngineConfig alarmEngineConfig = confCore.getAllarmiConfig();
 			
 			Long idAllarme = Long.parseLong(idAllarmeS);
 			ConfigurazioneAllarmeBean allarme = confCore.getAllarme(idAllarme);

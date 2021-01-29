@@ -69,12 +69,20 @@ public class AlarmEngineConfig implements Serializable {
 	private boolean mailAckMode;
 	private boolean mailDebug;
 	private boolean mailSendChangeStatusOk;
+	private boolean mailShowAllOptions;
 	
 	private String defaultScriptPath;
 	private String defaultScriptArgs;
 	private boolean scriptAckMode;
 	private boolean scriptDebug;
 	private boolean scriptSendChangeStatusOk;
+	private boolean scriptShowAllOptions;
+	
+	private boolean optionsUpdateState;
+	private boolean optionsAcknowledgedStatusAssociation;
+	private boolean optionsGroupByApi;
+	private boolean optionsFilterApi;
+	private boolean optionsFilterApiOrganization;
 	
 	public boolean isHistoryEnabled() {
 		return this.historyEnabled;
@@ -212,6 +220,14 @@ public class AlarmEngineConfig implements Serializable {
 		this.mailSendChangeStatusOk = mailSendChangeStatusOk;
 	}
 	
+	public boolean isMailShowAllOptions() {
+		return this.mailShowAllOptions;
+	}
+
+	public void setMailShowAllOptions(boolean mailShowAllOptions) {
+		this.mailShowAllOptions = mailShowAllOptions;
+	}
+	
 	public boolean isScriptAckMode() {
 		return this.scriptAckMode;
 	}
@@ -242,6 +258,14 @@ public class AlarmEngineConfig implements Serializable {
 
 	public void setScriptSendChangeStatusOk(boolean scriptSendChangeStatusOk) {
 		this.scriptSendChangeStatusOk = scriptSendChangeStatusOk;
+	}
+	
+	public boolean isScriptShowAllOptions() {
+		return this.scriptShowAllOptions;
+	}
+
+	public void setScriptShowAllOptions(boolean scriptShowAllOptions) {
+		this.scriptShowAllOptions = scriptShowAllOptions;
 	}
 	
 	public String getActiveAlarm_serviceUrl() {
@@ -318,6 +342,46 @@ public class AlarmEngineConfig implements Serializable {
 	public void setActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm(
 			String activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm) {
 		this.activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm = activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm;
+	}
+	
+	public boolean isOptionsUpdateState() {
+		return this.optionsUpdateState;
+	}
+
+	public void setOptionsUpdateState(boolean optionsUpdateState) {
+		this.optionsUpdateState = optionsUpdateState;
+	}
+
+	public boolean isOptionsAcknowledgedStatusAssociation() {
+		return this.optionsAcknowledgedStatusAssociation;
+	}
+
+	public void setOptionsAcknowledgedStatusAssociation(boolean optionsAcknowledgedStatusAssociation) {
+		this.optionsAcknowledgedStatusAssociation = optionsAcknowledgedStatusAssociation;
+	}
+
+	public boolean isOptionsGroupByApi() {
+		return this.optionsGroupByApi;
+	}
+
+	public void setOptionsGroupByApi(boolean optionsGroupByApi) {
+		this.optionsGroupByApi = optionsGroupByApi;
+	}
+
+	public boolean isOptionsFilterApi() {
+		return this.optionsFilterApi;
+	}
+
+	public void setOptionsFilterApi(boolean optionsFilterApi) {
+		this.optionsFilterApi = optionsFilterApi;
+	}
+
+	public boolean isOptionsFilterApiOrganization() {
+		return this.optionsFilterApiOrganization;
+	}
+
+	public void setOptionsFilterApiOrganization(boolean optionsFilterApiOrganization) {
+		this.optionsFilterApiOrganization = optionsFilterApiOrganization;
 	}
 	
 	protected static AlarmEngineConfig readAlarmEngineConfig(Logger log,AlarmConfigProperties alarmConfigProperties) throws Exception{
@@ -420,6 +484,8 @@ public class AlarmEngineConfig implements Serializable {
 			config.setMailDebug(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_DEBUG, true, true)));
 			
 			config.setMailSendChangeStatusOk(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SEND_CHANGE_STATUS_OK, true, true)));
+			
+			config.setMailShowAllOptions(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SHOW_ALL_OPTIONS, true, true)));
 
 		}
 		
@@ -432,7 +498,15 @@ public class AlarmEngineConfig implements Serializable {
 		config.setScriptAckMode(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_ACK_MODE, true, true)));
 		config.setScriptDebug(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_DEBUG, true, true)));
 		config.setScriptSendChangeStatusOk(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_SEND_CHANGE_STATUS_OK, true, true)));
+		config.setScriptShowAllOptions(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_SHOW_ALL_OPTIONS, true, true)));
 
+		
+		config.setOptionsUpdateState(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_UPDATE_STATE, true, true)));
+		config.setOptionsAcknowledgedStatusAssociation(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_ACK_STATUS_ASSOCIATION, true, true)));
+		config.setOptionsGroupByApi(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_GROUP_BY_API, true, true)));
+		config.setOptionsFilterApi(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_FILTER_API, true, true)));
+		config.setOptionsFilterApiOrganization(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_FILTER_API_ORGANIZATION, true, true)));
+		
 		return config;
 	}
 }

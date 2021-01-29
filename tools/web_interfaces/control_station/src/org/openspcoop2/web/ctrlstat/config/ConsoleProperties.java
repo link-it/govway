@@ -450,35 +450,7 @@ public class ConsoleProperties {
 	public String getAllarmiConfigurazione() throws Exception{
 		return this.readProperty(true, "allarmi.configurazione");
 	}
-	
-	public Boolean isAllarmiConsultazioneModificaStatoAbilitata() throws Exception{
-		return this.readBooleanProperty(true, "allarmi.consultazione.modificaStatoAbilitata");
-	}
-	
-	public Boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() throws Exception{
-		return this.readBooleanProperty(true, "allarmi.acknowledged.associazioneStatoAllarme");
-	}
-	
-	public Boolean isAllarmiNotificaMailVisualizzazioneCompleta() throws Exception{
-		return this.readBooleanProperty(true, "allarmi.notificaMail.visualizzazioneCompleta");
-	}
-	
-	public Boolean isAllarmiMonitoraggioEsternoVisualizzazioneCompleta() throws Exception{
-		return this.readBooleanProperty(true, "allarmi.monitoraggioEsterno.visualizzazioneCompleta");
-	}
-	
-	public boolean isAllarmiGroupByApi() throws Exception {
-		return this.readBooleanProperty(true, "allarmi.groupBy.api");
-	}
-	
-	public boolean isAllarmiFiltroApi() throws Exception {
-		return this.readBooleanProperty(true, "allarmi.filtro.api");
-	}
-	
-	public boolean isAllarmiFiltroApiSoggettoErogatore() throws Exception {
-		return this.readBooleanProperty(true, "allarmi.filtro.api.soggettoErogatore");
-	}
-	
+
 	
 	/* ----- Gestione Password ------- */
 	

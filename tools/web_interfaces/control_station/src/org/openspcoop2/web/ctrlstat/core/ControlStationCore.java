@@ -117,8 +117,9 @@ import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
@@ -158,7 +159,6 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.openspcoop2.web.ctrlstat.config.AllarmiConsoleConfig;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -892,8 +892,8 @@ public class ControlStationCore {
 	public boolean isConfigurazioneAllarmiEnabled() {
 		return this.configurazioneAllarmiEnabled;
 	}
-	private AllarmiConfig allarmiConfig = null;
-	public AllarmiConfig getAllarmiConfig() {
+	private AlarmEngineConfig allarmiConfig = null;
+	public AlarmEngineConfig getAllarmiConfig() {
 		return this.allarmiConfig;
 	}
 	
@@ -2751,7 +2751,9 @@ public class ControlStationCore {
 			this.configurazionePluginsEnabled = consoleProperties.isConfigurazionePluginsEnabled();
 			this.configurazionePluginsSeconds = consoleProperties.getPluginsSeconds();
 			this.configurazioneAllarmiEnabled = consoleProperties.isConfigurazioneAllarmiEnabled();
-			this.allarmiConfig = new AllarmiConsoleConfig(consoleProperties);
+			if(this.configurazioneAllarmiEnabled) {
+				this.allarmiConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), consoleProperties.getAllarmiConfigurazione());
+			}
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

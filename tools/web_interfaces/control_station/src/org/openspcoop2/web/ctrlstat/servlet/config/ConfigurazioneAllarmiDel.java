@@ -38,9 +38,7 @@ import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -137,8 +135,7 @@ public final class ConfigurazioneAllarmiDel extends Action {
 			try {
 				if(!allarmi.isEmpty()) {
 					
-					AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-					AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
+					AlarmEngineConfig alarmEngineConfig = confCore.getAllarmiConfig();
 					
 					AllarmiUtils.stopActiveThreads(allarmi, ControlStationCore.getLog(), alarmEngineConfig);
 				}

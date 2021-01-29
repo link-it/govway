@@ -57,13 +57,10 @@ import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.protocol.sdk.archive.Archive;
-import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneUtilities;
@@ -82,7 +79,6 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	private boolean smista;
 	private String userLogin;
 	
-	private AllarmiConfig allarmiConfig;
 	private AlarmEngineConfig alarmEngineConfig;
 	private ConfigurazioneCore allarmiConfigurazioneCore;
 	
@@ -100,9 +96,8 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 		this.smista = smista;
 		this.userLogin = userLogin;
 		if(this.archiviCore.isConfigurazioneAllarmiEnabled()) {
-			this.allarmiConfig = this.archiviCore.getAllarmiConfig();
-			this.alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), this.allarmiConfig.getAllarmiConfigurazione());
 			this.allarmiConfigurazioneCore = new ConfigurazioneCore(archiviCore);
+			this.alarmEngineConfig = this.allarmiConfigurazioneCore.getAllarmiConfig();
 		}
 	}
 	

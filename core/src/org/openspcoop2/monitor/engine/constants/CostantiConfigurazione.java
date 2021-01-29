@@ -97,13 +97,22 @@ public class CostantiConfigurazione {
 	public static final String ALARM_MAIL_ACK_MODE = "org.openspcoop2.monitor.alarm.mail.ackMode";
 	public static final String ALARM_MAIL_DEBUG = "org.openspcoop2.monitor.alarm.mail.debug";
 	public static final String ALARM_MAIL_SEND_CHANGE_STATUS_OK = "org.openspcoop2.monitor.alarm.mail.sendChangeStatusOk";
+	public static final String ALARM_MAIL_SHOW_ALL_OPTIONS = "org.openspcoop2.monitor.alarm.mail.showAllOptions";
 	
 	public static final String ALARM_SCRIPT_PATH = "org.openspcoop2.monitor.alarm.script.path";
 	public static final String ALARM_SCRIPT_ARGS = "org.openspcoop2.monitor.alarm.script.args";
 	public static final String ALARM_SCRIPT_ACK_MODE = "org.openspcoop2.monitor.alarm.script.ackMode";
 	public static final String ALARM_SCRIPT_DEBUG = "org.openspcoop2.monitor.alarm.script.debug";
 	public static final String ALARM_SCRIPT_SEND_CHANGE_STATUS_OK = "org.openspcoop2.monitor.alarm.script.sendChangeStatusOk";
+	public static final String ALARM_SCRIPT_SHOW_ALL_OPTIONS = "org.openspcoop2.monitor.alarm.script.showAllOptions";
 
+	public static final String ALARM_ADVANCED_OPTIONS_UPDATE_STATE = "org.openspcoop2.monitor.alarm.govwayMonitor.updateState";
+	public static final String ALARM_ADVANCED_OPTIONS_ACK_STATUS_ASSOCIATION = "org.openspcoop2.monitor.alarm.acknowledged.statusAssociation";
+	public static final String ALARM_ADVANCED_OPTIONS_GROUP_BY_API = "org.openspcoop2.monitor.alarm.groupBy.api";
+	public static final String ALARM_ADVANCED_OPTIONS_FILTER_API = "org.openspcoop2.monitor.alarm.filter.api";
+	public static final String ALARM_ADVANCED_OPTIONS_FILTER_API_ORGANIZATION = "org.openspcoop2.monitor.alarm.filter.api.organization";
+	
+	
 	public static final String ALARM_KEYWORD_TEMPLATE_STATO_ALLARME = "@STATO_ALLARME@";
 	public static final String ALARM_KEYWORD_TEMPLATE_NOME_ALLARME = "@NOME_ALLARME@";
 	public static final String ALARM_KEYWORD_TEMPLATE_DETTAGLIO_ALLARME = "@DETTAGLIO_ALLARME@";

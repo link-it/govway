@@ -46,7 +46,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
-import org.openspcoop2.web.ctrlstat.config.AllarmiConsoleConfig;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.config.RegistroServiziRemotoProperties;
@@ -332,8 +331,7 @@ public class InitListener implements ServletContextListener {
 			}
 			
 			if(consoleProperties.isConfigurazioneAllarmiEnabled()) {
-				AllarmiConsoleConfig allarmiConsoleConfig = new AllarmiConsoleConfig(consoleProperties);
-				AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(InitListener.log, allarmiConsoleConfig.getAllarmiConfigurazione());
+				AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(InitListener.log, consoleProperties.getAllarmiConfigurazione());
 				AlarmManager.setAlarmEngineConfig(alarmEngineConfig);
 				CostantiDB.ALLARMI_ENABLED=true;
 			}

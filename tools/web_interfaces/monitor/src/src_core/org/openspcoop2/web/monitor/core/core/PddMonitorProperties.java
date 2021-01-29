@@ -1024,31 +1024,4 @@ public class PddMonitorProperties {
 		return this.appProperties.getProperty("allarmi.configurazione", true, true);
 	}
 	
-	public boolean isAllarmiConsultazioneModificaStatoAbilitata() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.consultazione.modificaStatoAbilitata", true, false));
-	}
-	
-	public boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.acknowledged.associazioneStatoAllarme", true, false));
-	}
-	
-	public boolean isAllarmiNotificaMailVisualizzazioneCompleta() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.notificaMail.visualizzazioneCompleta", true, false));
-	}
-	
-	public boolean isAllarmiMonitoraggioEsternoVisualizzazioneCompleta() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.monitoraggioEsterno.visualizzazioneCompleta", true, false));
-	}
-
-	public boolean isAllarmiGroupByApi() throws Exception {
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.groupBy.api", true, false));
-	}
-	
-	public boolean isAllarmiFiltroApi() throws Exception {
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.filtro.api", true, false));
-	}
-	
-	public boolean isAllarmiFiltroApiSoggettoErogatore() throws Exception {
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.filtro.api.soggettoErogatore", true, false));
-	}
 }
