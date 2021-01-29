@@ -2914,7 +2914,7 @@ public class ControlStationCore {
 					this.jmxPdD_aliases = new ArrayList<String>();
 					PddCore pddCore = new PddCore(this);
 					try{
-						List<PdDControlStation> pddList = pddCore.pddList(null, new Search());
+						List<PdDControlStation> pddList = pddCore.pddList(null, new Search(true));
 						for (PdDControlStation pddControlStation : pddList) {
 							if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
 								this.jmxPdD_aliases.add(pddControlStation.getNome());

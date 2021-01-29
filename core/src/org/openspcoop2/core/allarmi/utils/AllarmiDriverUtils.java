@@ -370,8 +370,8 @@ public class AllarmiDriverUtils {
 		} 
 	}
 	
-	private static String FREE_COUNTER_SEPARATOR_CHAR = "#"; 
-	private static int FREE_COUNTER_SEPARATOR_CHAR_PAD = 10; 
+	private static String FREE_COUNTER_SEPARATOR_CHAR = "@"; 
+	private static int FREE_COUNTER_SEPARATOR_CHAR_PAD = 19; // colonna che memorizza l'info ha dimensione 275
 	public static String buildIdAlarm(String tipoPlugin, String serialId) {
 		String idAlarm = tipoPlugin+AllarmiDriverUtils.FREE_COUNTER_SEPARATOR_CHAR+serialId;
 		return idAlarm;

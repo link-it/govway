@@ -1153,8 +1153,8 @@ public class ControlloTrafficoDriverUtils {
 	
 	// OLD private static String FREE_COUNTER_SEPARATOR_CHAR = ":";
 	// Modifico per implementare nuovo meccanismo di ordinamento
-	private static String FREE_COUNTER_SEPARATOR_CHAR = "#";
-	private static int FREE_COUNTER_SEPARATOR_CHAR_PAD = 10; 
+	private static String FREE_COUNTER_SEPARATOR_CHAR = "@";
+	private static int FREE_COUNTER_SEPARATOR_CHAR_PAD = 19; // colonna che memorizza l'info ha dimensione 275
 	public static String buildIdActivePolicy(String idPolicy, String serialId) {
 		String idActive = idPolicy+ControlloTrafficoDriverUtils.FREE_COUNTER_SEPARATOR_CHAR+serialId;
 		return idActive;
@@ -1244,6 +1244,29 @@ public class ControlloTrafficoDriverUtils {
 						if(last<(s.length()-1)){
 							String actualMaxValue = s.substring(s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR)+1,s.length());
 							return incrementPolicyInstanceSerialId(actualMaxValue);
+						}
+					}
+					else {	
+						// backward compatibility
+						// si tratta di un valore vecchio registrato con il precedente formato, devo considerare solo quelli con il nuovo formato.
+						pagExpr.like(AttivazionePolicy.model().ID_ACTIVE_POLICY, FREE_COUNTER_SEPARATOR_CHAR, LikeMode.ANYWHERE);
+							
+						maxValue = null;
+						try {
+							maxValue = serviceManager.getAttivazionePolicyServiceSearch().aggregate(pagExpr, ff);
+						}catch(NotFoundException notFound) {
+						}
+						if(maxValue!=null){
+							if(maxValue instanceof String){
+								s = (String)maxValue;
+								if(s.contains(FREE_COUNTER_SEPARATOR_CHAR)){
+									int last = s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR);
+									if(last<(s.length()-1)){
+										String actualMaxValue = s.substring(s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR)+1,s.length());
+										return incrementPolicyInstanceSerialId(actualMaxValue);
+									}
+								}
+							}	
 						}
 					}
 				}	

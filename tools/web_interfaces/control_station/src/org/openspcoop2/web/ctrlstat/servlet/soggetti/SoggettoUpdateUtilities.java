@@ -1150,11 +1150,12 @@ public class SoggettoUpdateUtilities {
 				// Tutte le porte applicativa di questo soggetto con nome "di default"
 				// devono essere cambiate
 				// Nome della Porta: 
-				List<PortaApplicativa> tmpList = this.porteApplicativeCore.porteAppList(this.sog.getId().intValue(), new Search());
+				List<PortaApplicativa> tmpList = this.porteApplicativeCore.porteAppList(this.sog.getId().intValue(), new Search(true));
 				for (PortaApplicativa portaApplicativa : tmpList) {
 					
 					IDPortaApplicativa oldIDPortaApplicativaForUpdate = null;
 					String nomeAttuale = portaApplicativa.getNome();
+
 					// se il nome e' quello di default cioe' (erogatore)/(servizio)/(versioneServizio) o (erogatore)/(servizio)/(versioneServizio)/azione
 					String regex = "(.*)\\/(.*)\\/(.*)";
 					String newNome = null;
@@ -1479,7 +1480,7 @@ public class SoggettoUpdateUtilities {
 				
 				if(listDaVerificare!=null && !listDaVerificare.isEmpty()) {
 					for (IDPortaApplicativa idPortaApplicativa : listDaVerificare) {
-						
+												
 						if(listaPA.containsKey(idPortaApplicativa.getNome())) {
 							continue; // modifica gia' effettuata
 						}
@@ -1499,7 +1500,7 @@ public class SoggettoUpdateUtilities {
 							}
 							
 							_updateSoggettoInliste(pa);
-														
+							
 							listaPA.put(pa.getNome(), pa);
 						}
 					}

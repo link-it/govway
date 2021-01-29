@@ -342,7 +342,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// Prendo la lista di soggetti dell'utente connesso
 			/*List<Long> idsSogg = new ArrayList<Long>();
-					List<Soggetto> listaSog = this.core.soggettiRegistroList(superUser, new Search());
+					List<Soggetto> listaSog = this.core.soggettiRegistroList(superUser, new Search(true));
 					Iterator<Soggetto> itS = listaSog.iterator();
 					while (itS.hasNext()) {
 						Soggetto ss = (Soggetto) itS.next();
@@ -351,7 +351,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// Prendo la lista di servizi dell'utente connesso
 			/*List<Long> idsServ = new ArrayList<Long>();
-					List<AccordoServizioParteSpecifica> listaServ = this.core.soggettiAccordoServizioParteSpecificaoList(superUser, new Search());
+					List<AccordoServizioParteSpecifica> listaServ = this.core.soggettiAccordoServizioParteSpecificaoList(superUser, new Search(true));
 					Iterator<AccordoServizioParteSpecifica> itServ = listaServ.iterator();
 					while (itServ.hasNext()) {
 						AccordoServizioParteSpecifica ss = (AccordoServizioParteSpecifica) itServ.next();

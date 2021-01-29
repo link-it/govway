@@ -3421,8 +3421,8 @@ public class ImporterArchiveUtils {
 						StringUtils.isNotEmpty(attivazionePolicy.getFiltro().getInformazioneApplicativaTipo())) {
 					TipoFiltroApplicativo tipoFiltro = TipoFiltroApplicativo.toEnumConstant(attivazionePolicy.getFiltro().getInformazioneApplicativaTipo(), false);
 					if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipoFiltro)) {
-						if(this.importerEngine.existsPluginClasse(TipoPlugin.RATE_LIMITING.getValue(), attivazionePolicy.getFiltro().getInformazioneApplicativaTipo()) == false ){
-							throw new Exception("Plugin '"+TipoPlugin.RATE_LIMITING.getValue()+"' ["+attivazionePolicy.getFiltro().getInformazioneApplicativaTipo()+"] non esistente nel registro");
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.RATE_LIMITING.getValue(), attivazionePolicy.getFiltro().getInformazioneApplicativaNome()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.RATE_LIMITING.getValue()+"' ["+attivazionePolicy.getFiltro().getInformazioneApplicativaNome()+"] non esistente nel registro");
 						}
 					}
 				}
@@ -3431,8 +3431,8 @@ public class ImporterArchiveUtils {
 						StringUtils.isNotEmpty(attivazionePolicy.getGroupBy().getInformazioneApplicativaTipo())) {
 					TipoFiltroApplicativo tipoFiltro = TipoFiltroApplicativo.toEnumConstant(attivazionePolicy.getGroupBy().getInformazioneApplicativaTipo(), false);
 					if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipoFiltro)) {
-						if(this.importerEngine.existsPluginClasse(TipoPlugin.RATE_LIMITING.getValue(), attivazionePolicy.getGroupBy().getInformazioneApplicativaTipo()) == false ){
-							throw new Exception("Plugin '"+TipoPlugin.RATE_LIMITING.getValue()+"' ["+attivazionePolicy.getGroupBy().getInformazioneApplicativaTipo()+"] non esistente nel registro");
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.RATE_LIMITING.getValue(), attivazionePolicy.getGroupBy().getInformazioneApplicativaNome()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.RATE_LIMITING.getValue()+"' ["+attivazionePolicy.getGroupBy().getInformazioneApplicativaNome()+"] non esistente nel registro");
 						}
 					}
 				}
@@ -3467,6 +3467,7 @@ public class ImporterArchiveUtils {
 					// ricalcolo
 					attivazionePolicy.setIdActivePolicy(this.buildIdActivePolicy(instanceSerialIdsForPolicy, attivazionePolicy.getIdPolicy()));
 				}
+				attivazionePolicy.setPosizione(old.getPosizione()); // in caso di aggiornamento non devo influenzare la posizione
 				
 				// visibilita' oggetto stesso per update
 				// non esistenti
@@ -3502,7 +3503,8 @@ public class ImporterArchiveUtils {
 		String serialId = null;
 		if(instanceSerialIdsForPolicy.containsKey(idPolicy)) {
 			serialId = instanceSerialIdsForPolicy.remove(idPolicy);
-			instanceSerialIdsForPolicy.put(idPolicy, ControlloTrafficoDriverUtils.incrementPolicyInstanceSerialId(serialId));
+			serialId = ControlloTrafficoDriverUtils.incrementPolicyInstanceSerialId(serialId);
+			instanceSerialIdsForPolicy.put(idPolicy, serialId);
 		}
 		else {
 			serialId = this.importerEngine.getNextPolicyInstanceSerialId(idPolicy, this.log);
@@ -3617,7 +3619,8 @@ public class ImporterArchiveUtils {
 		String serialId = null;
 		if(instanceSerialIdsForAlarm.containsKey(tipoPlugin)) {
 			serialId = instanceSerialIdsForAlarm.remove(tipoPlugin);
-			instanceSerialIdsForAlarm.put(tipoPlugin, AllarmiDriverUtils.incrementAlarmInstanceSerialId(serialId));
+			serialId = AllarmiDriverUtils.incrementAlarmInstanceSerialId(serialId);
+			instanceSerialIdsForAlarm.put(tipoPlugin, serialId);
 		}
 		else {
 			serialId = this.importerEngine.getNextAlarmInstanceSerialId(tipoPlugin, this.log);
@@ -3751,6 +3754,8 @@ public class ImporterArchiveUtils {
 				RegistroPlugin old = this.importerEngine.getPluginArchivio(nome);
 				archivePlugin.getPlugin().setId(old.getId());
 				archivePlugin.getPlugin().setOldNome(old.getNome());
+				
+				archivePlugin.getPlugin().setPosizione(old.getPosizione()); // in caso di aggiornamento non devo influenzare la posizione
 				
 				// visibilita' oggetto stesso per update
 				// non esistenti
@@ -3909,6 +3914,8 @@ public class ImporterArchiveUtils {
 				ConfigurazioneUrlInvocazioneRegola old = this.importerEngine.getUrlInvocazioneRegola(nome);
 				archiveRegola.getRegola().setId(old.getId());
 				archiveRegola.getRegola().setOldNome(old.getNome());
+				
+				archiveRegola.getRegola().setPosizione(old.getPosizione()); // in caso di aggiornamento non devo influenzare la posizione
 				
 				// visibilita' oggetto stesso per update
 				// non esistenti

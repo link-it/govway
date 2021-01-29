@@ -270,9 +270,13 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 											attivazionePolicy = configPdDManager.getAttivazionePolicy(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), 
 												UniqueIdentifierUtilities.getUniqueId(idActive));
 										}catch(DriverConfigurazioneNotFound notFound) {
+											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS, idActive.getNome());
+											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, "");
 											throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente: "+notFound.getMessage(),notFound);
 										}
 										if(attivazionePolicy==null){
+											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS, idActive.getNome());
+											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_TIPO, "");
 											throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente?");
 										}
 										

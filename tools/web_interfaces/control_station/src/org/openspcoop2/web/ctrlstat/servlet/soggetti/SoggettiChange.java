@@ -38,6 +38,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
@@ -86,6 +87,7 @@ import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * soggettiChange
@@ -1209,17 +1211,24 @@ public final class SoggettiChange extends Action {
 			
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 			
+			// preparo lista
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+						
 			if (!oldnomeprov.equals(this.nomeprov) || !oldtipoprov.equals(this.tipoprov)) {
 				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SOGGETTI);
+				
+				User user = ServletUtils.getUserFromSession(session);
+				String oldSog = oldtipoprov+"/"+oldnomeprov;
+				if(user!=null && oldSog.equals(user.getSoggettoSelezionatoPddConsole())) {
+					user.setSoggettoSelezionatoPddConsole(this.tipoprov+"/"+this.nomeprov);
+					ricerca.clearFilter(Liste.SERVIZI, Filtri.FILTRO_SOGGETTO); // re-inizializzo per far vedere il nuovo nome
+				}
 			}
 			
 			// Messaggio 'Please Copy'
 			if(secret) {
 				soggettiHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, this.tipoauthSoggetto, OggettoDialogEnum.SOGGETTO, sog.getNome());
 			}
-			
-			// preparo lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
 			if(this.modificaOperativo!=null && !"".equals(this.modificaOperativo)) {
 				
@@ -1235,8 +1244,7 @@ public final class SoggettiChange extends Action {
 				// sempre, anche quando passo da operativo ad esterno
 				generalHelper = new GeneralHelper(session);
 				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
-				//}
-				
+				//}		
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping,

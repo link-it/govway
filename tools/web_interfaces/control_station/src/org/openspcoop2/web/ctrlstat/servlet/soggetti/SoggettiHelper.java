@@ -1121,7 +1121,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			// Prendo la lista di pdd dell'utente connesso
 			/*List<String> nomiPdd = new ArrayList<String>();
-			List<PdDControlStation> listaPdd = this.core.pddList(superUser, new Search());
+			List<PdDControlStation> listaPdd = this.core.pddList(superUser, new Search(true));
 			Iterator<PdDControlStation> itP = listaPdd.iterator();
 			while (itP.hasNext()) {
 				PdDControlStation pds = (PdDControlStation) itP.next();

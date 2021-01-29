@@ -2225,7 +2225,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// Prendo la lista di accordi dell'utente connesso
 			/*List<Long> idsAcc = new ArrayList<Long>();
-			List<AccordoServizio> listaAcc = this.core.accordiList(superUser, new Search());
+			List<AccordoServizio> listaAcc = this.core.accordiList(superUser, new Search(true));
 			Iterator<AccordoServizio> itA = listaAcc.iterator();
 			while (itA.hasNext()) {
 				AccordoServizio as = (AccordoServizio) itA.next();

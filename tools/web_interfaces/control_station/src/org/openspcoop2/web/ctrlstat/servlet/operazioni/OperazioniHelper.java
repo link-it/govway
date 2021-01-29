@@ -361,7 +361,7 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			if(permessi.isUtenti()) {
 				utenteTmp = OperazioniCostanti.PARAMETRO_OPERAZIONI_UTENTE_ALL;
-				userList = this.utentiCore.userList(new Search());
+				userList = this.utentiCore.userList(new Search(true));
 			} else {
 				utenteTmp = user.getLogin();
 				userList = new ArrayList<User>();

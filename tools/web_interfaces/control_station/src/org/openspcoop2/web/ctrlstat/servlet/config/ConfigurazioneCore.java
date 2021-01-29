@@ -512,7 +512,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		DriverControlStationDB driver = null;
 
 		try {
-			ISearch ricercaPlugin = new Search();
+			ISearch ricercaPlugin = new Search(true);
 			ricercaPlugin.addFilter( Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.ALLARME.toString());
 			ricercaPlugin.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_APPLICABILITA_NOME, applicabilita);
 			if(soloAbilitati) {

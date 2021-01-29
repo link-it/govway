@@ -163,7 +163,7 @@ public final class ConnettorePropList extends Action {
 				}
 			}
 
-			connettoriHelper.prepareConnettorePropList(lista, new Search(), 0, tipoAccordo);
+			connettoriHelper.prepareConnettorePropList(lista, new Search(true), 0, tipoAccordo);
 	
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

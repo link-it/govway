@@ -2,6 +2,8 @@ Export Regole di proxy pass
 Export ...TokenPolicy
 Export 
 
+Corretto bug nella modifica del soggetto non venivano modificate tutte le porte applciative se erano > 1000
+
 Add filtro per tag sul controllo del traffico
 
 2021-01-20  Andrea Poli <apoli@link.it>

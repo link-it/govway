@@ -530,7 +530,7 @@ public final class UtentiChange extends Action {
 				if (singleSuServizi != null && !singleSuServizi.equals("")) {
 					if(soggettiCore.isRegistroServiziLocale()){
 						// Recupero le pdd dell'utente
-						List<PdDControlStation> pdsLista = pddCore.pddList(nomesu, new Search());
+						List<PdDControlStation> pdsLista = pddCore.pddList(nomesu, new Search(true));
 						Iterator<PdDControlStation> itPds = pdsLista.iterator();
 						while (itPds.hasNext()) {
 							PdDControlStation pds = itPds.next();
@@ -539,7 +539,7 @@ public final class UtentiChange extends Action {
 							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
 						}
 						// Recupero gli accordi servizio dell'utente
-						List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search());
+						List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search(true));
 						Iterator<AccordoServizioParteComuneSintetico> itAs = asLista.iterator();
 						while (itAs.hasNext()) {
 							AccordoServizioParteComuneSintetico asSintetico = itAs.next();
@@ -549,7 +549,7 @@ public final class UtentiChange extends Action {
 							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
 						}
 						// Recupero i soggetti dell'utente
-						List<Soggetto> soggLista = soggettiCore.soggettiRegistroList(nomesu, new Search());
+						List<Soggetto> soggLista = soggettiCore.soggettiRegistroList(nomesu, new Search(true));
 						Iterator<Soggetto> itSs = soggLista.iterator();
 						while (itSs.hasNext()) {					
 							Soggetto sogg = itSs.next();
@@ -563,7 +563,7 @@ public final class UtentiChange extends Action {
 					}
 					else{
 						// Recupero i soggetti dell'utente
-						List<org.openspcoop2.core.config.Soggetto> soggLista = soggettiCore.soggettiList(nomesu, new Search());
+						List<org.openspcoop2.core.config.Soggetto> soggLista = soggettiCore.soggettiList(nomesu, new Search(true));
 						Iterator<org.openspcoop2.core.config.Soggetto> itSs = soggLista.iterator();
 						while (itSs.hasNext()) {					
 							org.openspcoop2.core.config.Soggetto sogg = itSs.next();
@@ -577,7 +577,7 @@ public final class UtentiChange extends Action {
 				if(soggettiCore.isRegistroServiziLocale()){
 					if ((singleSuAccordiCooperazione != null && !singleSuAccordiCooperazione.equals("")) || checkOggettiAccordi) {
 						// Recupero gli accordi di cooperazione dell'utente
-						List<AccordoCooperazione> acLista = acCore.accordiCooperazioneList(nomesu, new Search());
+						List<AccordoCooperazione> acLista = acCore.accordiCooperazioneList(nomesu, new Search(true));
 						Iterator<AccordoCooperazione> itAc = acLista.iterator();
 						while (itAc.hasNext()) {
 							AccordoCooperazione ac = itAc.next();
@@ -586,7 +586,7 @@ public final class UtentiChange extends Action {
 							tipoModifica.add(org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation.PERFORM_OPERATION_UPDATE);
 						}
 						// Recupero gli accordi servizio composto dell'utente
-						List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search());
+						List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search(true));
 						Iterator<AccordoServizioParteComuneSintetico> itAs = asLista.iterator();
 						while (itAs.hasNext()) {
 							AccordoServizioParteComuneSintetico asSintetico = itAs.next();

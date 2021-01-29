@@ -347,7 +347,7 @@ public final class ConnettorePropAdd extends Action {
 				}
 			}
 
-			connettoriHelper.prepareConnettorePropList(lista, new Search(), newMyId, tipoAccordo);
+			connettoriHelper.prepareConnettorePropList(lista, new Search(true), newMyId, tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
