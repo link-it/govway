@@ -2300,8 +2300,9 @@ public class ConfigurazioneCostanti {
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE = "Il nome indicato è già stato associato ad un allarme registrato nella configurazione generale";
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_EROGAZIONE = "Il nome indicato è già stato associato ad un allarme registrato nell''erogazione {0}";
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_FRUIZIONE = "Il nome indicato è già stato associato ad un allarme registrato nella fruizione ${0}";
-	public final static String MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA = "Allarme {0} salvato correttamente, ma invio notifica terminato con errore: {1}";
-	public final static String MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA = "Allarmi eliminati correttamente, ma invio notifica terminato con errore: {0}";
+	public final static String MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA = "Allarme {0} salvato correttamente, ma invio notifica terminata con errore: {1}";
+	public final static String MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA = "Allarmi eliminati correttamente, ma invio notifica terminata con errore: {0}";
+	public final static String MESSAGGIO_ERRORE_ALLARME_SINGOLO_ELIMINATO_NOTIFICA_FALLITA = "Allarme {0} eliminato correttamente, ma invio notifica terminata con errore: {1}";
 
 	public final static String MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_FILTRO_NON_SELEZIONATO = "Non è stato selezionato nessun plugin da utilizzare come filtro per chiave";
 	public final static String MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_GROUP_BY_NON_SELEZIONATO = "Non è stato selezionato nessun plugin da utilizzare come criterio di raggruppamento per chiave";

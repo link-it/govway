@@ -1024,42 +1024,6 @@ public class PddMonitorProperties {
 		return this.appProperties.getProperty("allarmi.configurazione", true, true);
 	}
 	
-	public String getAllarmiActiveServiceUrl() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixStartAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.startAlarm", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixStopAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.stopAlarm", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixReStartAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.restartAlarm", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.ok", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.warning", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.error", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateAcknoledgement.enabled", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateAcknoledgement.disabled", true, true);
-	}
-	
 	public boolean isAllarmiConsultazioneModificaStatoAbilitata() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.consultazione.modificaStatoAbilitata", true, false));
 	}

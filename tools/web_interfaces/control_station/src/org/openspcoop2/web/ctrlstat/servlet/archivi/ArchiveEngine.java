@@ -21,7 +21,12 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
@@ -52,7 +57,16 @@ import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneUtilities;
 import org.slf4j.Logger;
 
 /**
@@ -68,12 +82,16 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	private boolean smista;
 	private String userLogin;
 	
+	private AllarmiConfig allarmiConfig;
+	private AlarmEngineConfig alarmEngineConfig;
+	private ConfigurazioneCore allarmiConfigurazioneCore;
+	
 	public ArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,
 			DriverConfigurazioneDB driverConfigurazione,
 			org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager serviceManagerPlugins,
 			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManagerControlloTraffico, 
 			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager serviceManagerAllarmi,
-			ArchiviCore archiviCore,boolean smista,String userLogin) {
+			ArchiviCore archiviCore,boolean smista,String userLogin) throws Exception {
 		super(driverRegistroServizi, driverConfigurazione, 
 				serviceManagerPlugins,
 				serviceManagerControlloTraffico, 
@@ -81,6 +99,11 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 		this.archiviCore = archiviCore;
 		this.smista = smista;
 		this.userLogin = userLogin;
+		if(this.archiviCore.isConfigurazioneAllarmiEnabled()) {
+			this.allarmiConfig = this.archiviCore.getAllarmiConfig();
+			this.alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), this.allarmiConfig.getAllarmiConfigurazione());
+			this.allarmiConfigurazioneCore = new ConfigurazioneCore(archiviCore);
+		}
 	}
 	
 	// --- Users ---
@@ -645,29 +668,84 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	// --- Allarmi ---
 	
 	@Override
-	public void createAllarme(Allarme allarme) throws DriverConfigurazioneException {
+	public void createAllarme(Allarme allarme, Logger log) throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, allarme);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
+		
+		/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
+		try {
+			ConfigurazioneAllarmeBean allarmeWrap = this.allarmiConfigurazioneCore.getAllarme(allarme);
+			AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarmeWrap, log, this.alarmEngineConfig);
+		} catch(Exception e) {
+			throw new DriverConfigurazioneException(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
+		}
 	}
 	
 	@Override
-	public void updateAllarme(Allarme allarme) throws DriverConfigurazioneException {
+	public void updateAllarme(Allarme allarme, Logger log) throws DriverConfigurazioneException {
+		
+		ConfigurazioneAllarmeBean allarmeWrap = null;
+		ConfigurazioneAllarmeBean oldAllarmeWrap = null;
+		try {
+			allarmeWrap = this.allarmiConfigurazioneCore.getAllarme(allarme);
+			oldAllarmeWrap = this.allarmiConfigurazioneCore.getAllarme(allarme.getId());
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, allarme);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
+		
+		boolean modificatoInformazioniHistory = false;
+		// se ho modificato l'abilitato devo registrare la modifica nella tabella history
+		if(allarme.getEnabled().intValue() != oldAllarmeWrap.getEnabled().intValue()) {
+			modificatoInformazioniHistory = true;
+		}
+		if(modificatoInformazioniHistory && this.alarmEngineConfig.isHistoryEnabled()) {
+			// registro la modifica
+			AllarmeHistory history = ConfigurazioneUtilities.createAllarmeHistory(allarme, this.userLogin);
+			try{
+				this.allarmiConfigurazioneCore.performCreateOperation(this.userLogin, this.smista, history);
+			}catch(Throwable e) {
+				String json = "";
+				try {
+					json = history.toJson();
+				}catch(Throwable t) {}
+				log.error("Registrazione stato allarme nell'hitstory non riuscita ["+json+"]: "+e.getMessage(),e);
+			}
+		}
+		
+		/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
+		try {
+			AllarmiUtils.notifyStateActiveThread(false, false, false, null, allarmeWrap, log, this.alarmEngineConfig);
+		} catch(Exception e) {
+			throw new DriverConfigurazioneException(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
+		}
+		
 	}
 	
 	@Override
-	public void deleteAllarme(Allarme allarme) throws DriverConfigurazioneException {
+	public void deleteAllarme(Allarme allarme, Logger log) throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, allarme);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		/* ******** INVIO NOTIFICHE *************** */
+		try {
+			List<String> allarmeList = new ArrayList<String>();
+			allarmeList.add(allarme.getNome());
+				
+			AllarmiUtils.stopActiveThreads(allarmeList, log, this.alarmEngineConfig);
+		} catch(Exception e) {
+			throw new DriverConfigurazioneException(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SINGOLO_ELIMINATO_NOTIFICA_FALLITA,e.getMessage()));
 		}
 	}
 	

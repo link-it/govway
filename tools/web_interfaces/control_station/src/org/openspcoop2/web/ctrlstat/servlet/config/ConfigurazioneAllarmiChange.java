@@ -36,7 +36,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
-import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.commons.Filtri;
@@ -45,14 +44,14 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.core.plugins.Plugin;
-import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -379,7 +378,6 @@ public class ConfigurazioneAllarmiChange extends Action {
 			// data modifica
 			allarme.setLasttimestampUpdate(new Date());
 			
-			boolean historyCreatoTramiteNotificaCambioStato = false;
 			boolean modificatoInformazioniHistory = false;
 			boolean modificatoStato = false;
 			boolean modificatoAckwoldegment = false;
@@ -392,24 +390,15 @@ public class ConfigurazioneAllarmiChange extends Action {
 			// insert sul db
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), allarme);
 			
-			if(modificatoInformazioniHistory && !historyCreatoTramiteNotificaCambioStato) {
+			if(modificatoInformazioniHistory && alarmEngineConfig.isHistoryEnabled()) {
 				// registro la modifica
-				AllarmeHistory history = new AllarmeHistory();
-				history.setEnabled(allarme.getEnabled());
-				history.setAcknowledged(allarme.getAcknowledged());
-				history.setDettaglioStato(allarme.getDettaglioStato());
-				IdAllarme idConfigurazioneAllarme = new IdAllarme();
-				idConfigurazioneAllarme.setNome(allarme.getNome());
-				history.setIdAllarme(idConfigurazioneAllarme);
-				history.setStato(allarme.getStato());
-				history.setTimestampUpdate(allarme.getLasttimestampUpdate());
-				history.setUtente(userLogin);
+				AllarmeHistory history = ConfigurazioneUtilities.createAllarmeHistory(oldConfigurazioneAllarme, userLogin);
 				confCore.performCreateOperation(userLogin, confHelper.smista(), history);
 			}
 			
 			/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
 			try {
-				AllarmiUtils.notifyStateActiveThread(false, modificatoStato, modificatoAckwoldegment, oldConfigurazioneAllarme, allarme, ControlStationCore.getLog(), allarmiConfig);
+				AllarmiUtils.notifyStateActiveThread(false, modificatoStato, modificatoAckwoldegment, oldConfigurazioneAllarme, allarme, ControlStationCore.getLog(), alarmEngineConfig);
 			} catch(Exception e) {
 				pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
 			}

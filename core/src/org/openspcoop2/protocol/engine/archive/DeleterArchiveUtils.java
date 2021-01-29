@@ -790,7 +790,7 @@ public class DeleterArchiveUtils {
 			
 			
 			// --- delete ---
-			this.importerEngine.deleteAllarme(archiveAllarme.getAllarme());
+			this.importerEngine.deleteAllarme(archiveAllarme.getAllarme(), this.log);
 			detail.setState(ArchiveStatoImport.DELETED);				
 
 						

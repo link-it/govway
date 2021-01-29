@@ -57,7 +57,27 @@ public class CostantiConfigurazione {
 	public final static String PDD_MONITOR_FW_CONF_DIR = "org.openspcoop2.monitor.config_dir";
 	public final static String PDD_MONITOR_DEFAULT_PROTOCOL = "org.openspcoop2.monitor.defaultProtocol";
 	
+	public static final String ALARM_ACTIVE_SERVICE_URL = "org.openspcoop2.monitor.alarm.active.service.url";
+	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_START_ALARM = "org.openspcoop2.monitor.alarm.active.service.url.suffix.startAlarm";
+	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_STOP_ALARM = "org.openspcoop2.monitor.alarm.active.service.url.suffix.stopAlarm";
+	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_RESTART_ALARM = "org.openspcoop2.monitor.alarm.active.service.url.suffix.restartAlarm";
+	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_OK = "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateStateAlarm.ok";
+	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_WARNING = "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateStateAlarm.warning";
+	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_ERROR = "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateStateAlarm.error";
+	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_ACK_ENABLED= "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateAcknoledgement.enabled";
+	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_ACK_DISABLED= "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateAcknoledgement.disabled";
+	
+	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_START_ALARM = "startAlarm=true";
+	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_STOP_ALARM = "stopAlarm=true";
+	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_RESTART_ALARM = "restartAlarm=true";
+	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_OK = "updateStateAlarm=OK";
+	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_WARNING = "updateStateAlarm=WARNING";
+	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_ERROR = "updateStateAlarm=ERROR";
+	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_ACK_ENABLED= "updateAcknoledgement=true";
+	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_ACK_DISABLED= "updateAcknoledgement=false";
+	
 	public static final String ALARM_HISTORY_ENABLED = "org.openspcoop2.monitor.alarm.history.enabled";
+	
 	public static final String ALARM_MAIL_SENDER_TYPE = "org.openspcoop2.monitor.alarm.mailSender.type";
 	public static final String ALARM_MAIL_SENDER_CONNECTION_TIMEOUT = "org.openspcoop2.monitor.alarm.mailSender.connectionTimeout";
 	public static final String ALARM_MAIL_SENDER_READ_TIMEOUT = "org.openspcoop2.monitor.alarm.mailSender.readTimeout";
@@ -77,6 +97,7 @@ public class CostantiConfigurazione {
 	public static final String ALARM_MAIL_ACK_MODE = "org.openspcoop2.monitor.alarm.mail.ackMode";
 	public static final String ALARM_MAIL_DEBUG = "org.openspcoop2.monitor.alarm.mail.debug";
 	public static final String ALARM_MAIL_SEND_CHANGE_STATUS_OK = "org.openspcoop2.monitor.alarm.mail.sendChangeStatusOk";
+	
 	public static final String ALARM_SCRIPT_PATH = "org.openspcoop2.monitor.alarm.script.path";
 	public static final String ALARM_SCRIPT_ARGS = "org.openspcoop2.monitor.alarm.script.args";
 	public static final String ALARM_SCRIPT_ACK_MODE = "org.openspcoop2.monitor.alarm.script.ackMode";

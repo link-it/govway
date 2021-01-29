@@ -81,6 +81,8 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
@@ -2307,10 +2309,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		if(!confAllarmi.isEmpty() && !ControlStationCore.isAPIMode()) {
 			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
+			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
 			StringBuilder bfError = new StringBuilder();
 			for (ConfigurazioneAllarmeBean allarme : confAllarmi) {
 				try {
-					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), allarmiConfig);
+					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), alarmEngineConfig);
 				} catch(Exception e) {
 					if(bfError.length()>0) {
 						bfError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
@@ -2650,10 +2653,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		if(!confAllarmi.isEmpty() && !ControlStationCore.isAPIMode()) {
 			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
+			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
 			StringBuilder bfError = new StringBuilder();
 			for (ConfigurazioneAllarmeBean allarme : confAllarmi) {
 				try {
-					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), allarmiConfig);
+					AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), alarmEngineConfig);
 				} catch(Exception e) {
 					if(bfError.length()>0) {
 						bfError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);

@@ -33,8 +33,9 @@ import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -151,14 +152,14 @@ public class AllarmiUtils {
 	}
 	
 	public static void notifyStateActiveThread(boolean isAdd, boolean modificatoStato, boolean modificatoAckwoldegment,
-			ConfigurazioneAllarmeBean oldAllarmePrimaModifica, ConfigurazioneAllarmeBean allarme, Logger log, AllarmiConfig allarmiConfig) throws Exception{
+			ConfigurazioneAllarmeBean oldAllarmePrimaModifica, ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
 		if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
 			// NOTA: il tipo di allarme non è modificabile.
 			log.debug("Allarme ["+allarme.getNome()+"] è passivo. Non viene attivato alcun thread");
 			return;
 		}
 		
-		String prefixUrl = allarmiConfig.getAllarmiActiveServiceUrl();
+		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}
@@ -167,7 +168,7 @@ public class AllarmiUtils {
 		if(isAdd){
 			if(allarme.getEnabled()==1){
 				// invoco servlet start
-				urls.add(prefixUrl+allarmiConfig.getAllarmiActiveServiceUrl_SuffixStartAlarm());
+				urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixStartAlarm());
 			}
 		}
 		else{
@@ -208,22 +209,22 @@ public class AllarmiUtils {
 					StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(allarme.getStato());
 					switch (statoAllarme) {
 					case OK:
-						urls.add(prefixUrl+allarmiConfig.getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm());
+						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateStateOkAlarm());
 						break;
 					case WARNING:
-						urls.add(prefixUrl+allarmiConfig.getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm());
+						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateStateWarningAlarm());
 						break;
 					case ERROR:
-						urls.add(prefixUrl+allarmiConfig.getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm());
+						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateStateErrorAlarm());
 						break;
 					}
 				}
 				if(modificatoAckwoldegment){
 					if(allarme.getAcknowledged()==1){
-						urls.add(prefixUrl+allarmiConfig.getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm());
+						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm());
 					}
 					else{
-						urls.add(prefixUrl+allarmiConfig.getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm());
+						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm());
 					}
 				}
 				//else{
@@ -237,15 +238,36 @@ public class AllarmiUtils {
 				
 				if(allarme.getEnabled()==0){
 					// invoco servlet stop
-					urls.add(prefixUrl+allarmiConfig.getAllarmiActiveServiceUrl_SuffixStopAlarm());
+					urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixStopAlarm());
 				}
 				else{
 					// invoco servlet restart
-					urls.add(prefixUrl+allarmiConfig.getAllarmiActiveServiceUrl_SuffixReStartAlarm());
+					urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixReStartAlarm());
 				}
 			}
 		}
 		AllarmiUtils.sendToAllarmi(urls, log);
+	}
+	
+	public static void stopActiveThreads(List<String> allarmi, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		
+		List<String> urls = new ArrayList<String>();
+		if(!allarmi.isEmpty()) {
+			for (String nomeAllarme : urls) {
+				
+				String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+				if(prefixUrl.endsWith("/")==false){
+					prefixUrl = prefixUrl + "/";
+				}
+				prefixUrl = prefixUrl + nomeAllarme + "?";
+				urls.add(prefixUrl + allarmiConfig.getActiveAlarm_serviceUrl_SuffixStopAlarm());
+			}
+		}
+		
+		if(!urls.isEmpty()) {
+			AllarmiUtils.sendToAllarmi(urls, log);
+		}
+		
 	}
 	
 	public static String getTipoNomeMittente(AllarmeFiltro configurazioneFiltro) {

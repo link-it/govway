@@ -1803,7 +1803,7 @@ public abstract class AbstractArchiveEngine {
 	}
 	
 	
-	public void createAllarme(Allarme allarme) throws DriverConfigurazioneException {
+	public void createAllarme(Allarme allarme, Logger log) throws DriverConfigurazioneException {
 		try {
 			this.serviceManagerAllarmi.getAllarmeService().create(allarme);
 		}catch(Exception e) {
@@ -1811,7 +1811,7 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	public void updateAllarme(Allarme allarme) throws DriverConfigurazioneException {
+	public void updateAllarme(Allarme allarme, Logger log) throws DriverConfigurazioneException {
 		try {
 			IdAllarme oldId = new IdAllarme();
 			oldId.setNome(allarme.getNome());
@@ -1824,7 +1824,7 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
-	public void deleteAllarme(Allarme policy) throws DriverConfigurazioneException {
+	public void deleteAllarme(Allarme policy, Logger log) throws DriverConfigurazioneException {
 		try {
 			this.serviceManagerAllarmi.getAllarmeService().delete(policy);
 		}catch(Exception e) {

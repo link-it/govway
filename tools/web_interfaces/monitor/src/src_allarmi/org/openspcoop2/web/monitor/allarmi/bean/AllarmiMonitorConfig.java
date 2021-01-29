@@ -36,15 +36,6 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 public class AllarmiMonitorConfig implements AllarmiConfig{
 
 	private String allarmiConfigurazione;
-	private String allarmiActiveServiceUrl;
-	private String allarmiActiveServiceUrl_SuffixStartAlarm;
-	private String allarmiActiveServiceUrl_SuffixStopAlarm;
-	private String allarmiActiveServiceUrl_SuffixReStartAlarm;
-	private String allarmiActiveServiceUrl_SuffixUpdateStateOkAlarm;
-	private String allarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm;
-	private String allarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm;
-	private String allarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm;
-	private String allarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm;
 	private boolean allarmiConsultazioneModificaStatoAbilitata;
 	private boolean allarmiAssociazioneAcknowledgedStatoAllarme;
 	private boolean allarmiNotificaMailVisualizzazioneCompleta;
@@ -55,15 +46,6 @@ public class AllarmiMonitorConfig implements AllarmiConfig{
 
 	public AllarmiMonitorConfig (PddMonitorProperties monitorProperties) throws Exception {
 		this.allarmiConfigurazione = monitorProperties.getAllarmiConfigurazione();
-		this.allarmiActiveServiceUrl = monitorProperties.getAllarmiActiveServiceUrl();
-		this.allarmiActiveServiceUrl_SuffixStartAlarm = monitorProperties.getAllarmiActiveServiceUrl_SuffixStartAlarm();
-		this.allarmiActiveServiceUrl_SuffixStopAlarm = monitorProperties.getAllarmiActiveServiceUrl_SuffixStopAlarm();
-		this.allarmiActiveServiceUrl_SuffixReStartAlarm = monitorProperties.getAllarmiActiveServiceUrl_SuffixReStartAlarm();
-		this.allarmiActiveServiceUrl_SuffixUpdateStateOkAlarm = monitorProperties.getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm();
-		this.allarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm = monitorProperties.getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm();
-		this.allarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm = monitorProperties.getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm();
-		this.allarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm = monitorProperties.getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm();
-		this.allarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm = monitorProperties.getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm();
 		this.allarmiConsultazioneModificaStatoAbilitata = monitorProperties.isAllarmiConsultazioneModificaStatoAbilitata();
 		this.allarmiAssociazioneAcknowledgedStatoAllarme = monitorProperties.isAllarmiAssociazioneAcknowledgedStatoAllarme();
 		this.allarmiNotificaMailVisualizzazioneCompleta = monitorProperties.isAllarmiNotificaMailVisualizzazioneCompleta();
@@ -77,51 +59,6 @@ public class AllarmiMonitorConfig implements AllarmiConfig{
 	@Override
 	public String getAllarmiConfigurazione() {
 		return this.allarmiConfigurazione;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl() {
-		return this.allarmiActiveServiceUrl;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl_SuffixStartAlarm() {
-		return this.allarmiActiveServiceUrl_SuffixStartAlarm;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl_SuffixStopAlarm() {
-		return this.allarmiActiveServiceUrl_SuffixStopAlarm;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl_SuffixReStartAlarm() {
-		return this.allarmiActiveServiceUrl_SuffixReStartAlarm;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm() {
-		return this.allarmiActiveServiceUrl_SuffixUpdateStateOkAlarm;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm() {
-		return this.allarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm() {
-		return this.allarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm() {
-		return this.allarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm;
-	}
-
-	@Override
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm() {
-		return this.allarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm;
 	}
 
 	@Override

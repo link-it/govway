@@ -23,6 +23,9 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -176,5 +179,20 @@ public class ConfigurazioneUtilities {
 	
 	public static int getProssimaPosizioneUrlInvocazioneRegola(Configurazione config) {
 		return ConfigurazionePdDUtils.getProssimaPosizioneUrlInvocazioneRegola(config);
+	}
+	
+	public static AllarmeHistory createAllarmeHistory(Allarme allarme, String userLogin) {
+		// registro la modifica
+		AllarmeHistory history = new AllarmeHistory();
+		history.setEnabled(allarme.getEnabled());
+		history.setAcknowledged(allarme.getAcknowledged());
+		history.setDettaglioStato(allarme.getDettaglioStato());
+		IdAllarme idConfigurazioneAllarme = new IdAllarme();
+		idConfigurazioneAllarme.setNome(allarme.getNome());
+		history.setIdAllarme(idConfigurazioneAllarme);
+		history.setStato(allarme.getStato());
+		history.setTimestampUpdate(allarme.getLasttimestampUpdate());
+		history.setUtente(userLogin);
+		return history;
 	}
 }

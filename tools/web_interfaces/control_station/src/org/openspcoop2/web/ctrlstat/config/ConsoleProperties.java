@@ -451,42 +451,6 @@ public class ConsoleProperties {
 		return this.readProperty(true, "allarmi.configurazione");
 	}
 	
-	public String getAllarmiActiveServiceUrl() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixStartAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.startAlarm");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixStopAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.stopAlarm");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixReStartAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.restartAlarm");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.ok");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.warning");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.error");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateAcknoledgement.enabled");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateAcknoledgement.disabled");
-	}
-	
 	public Boolean isAllarmiConsultazioneModificaStatoAbilitata() throws Exception{
 		return this.readBooleanProperty(true, "allarmi.consultazione.modificaStatoAbilitata");
 	}

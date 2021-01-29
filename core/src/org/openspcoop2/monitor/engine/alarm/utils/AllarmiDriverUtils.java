@@ -96,6 +96,16 @@ public class AllarmiDriverUtils {
 			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		}
 	}
+	public static ConfigurazioneAllarmeBean getAllarme(Allarme allarme, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "convertAllarme";
+		
+		try {
+			Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), allarme.getTipo(), true, con, log, tipoDB);
+			return new ConfigurazioneAllarmeBean(allarme, plugin);
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		}
+	}
 
 	public static List<ConfigurazioneAllarmeHistoryBean> allarmiHistoryList(ISearch ricerca, Long idAllarme, Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "allarmiHistoryList";

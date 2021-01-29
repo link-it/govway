@@ -3589,7 +3589,7 @@ public class ImporterArchiveUtils {
 				// non esistenti
 
 				// update
-				this.importerEngine.updateAllarme(allarme);
+				this.importerEngine.updateAllarme(allarme, this.log);
 				create = false;
 			}
 			// --- create ---
@@ -3597,7 +3597,7 @@ public class ImporterArchiveUtils {
 				// calcolo in maniera dinamica l'id
 				allarme.setNome(this.buildIdAllarme(instanceSerialIdsForAlarm, allarme.getTipo()));
 				
-				this.importerEngine.createAllarme(allarme);
+				this.importerEngine.createAllarme(allarme, this.log);
 				create = true;
 			}
 				

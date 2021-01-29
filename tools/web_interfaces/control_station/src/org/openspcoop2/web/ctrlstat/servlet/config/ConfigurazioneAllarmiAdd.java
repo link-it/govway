@@ -420,7 +420,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
 			
 			try {
-				AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), allarmiConfig);
+				AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), alarmEngineConfig);
 			} catch(Exception e) {
 				pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
 			}

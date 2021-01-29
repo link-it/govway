@@ -23,6 +23,7 @@ package org.openspcoop2.monitor.engine.alarm;
 import java.io.Serializable;
 
 import org.slf4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 import org.openspcoop2.utils.mail.SenderType;
 import org.openspcoop2.utils.transport.http.SSLConfig;
@@ -40,6 +41,16 @@ public class AlarmEngineConfig implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private String activeAlarm_serviceUrl;
+	private String activeAlarm_serviceUrl_SuffixStartAlarm = CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_START_ALARM;
+	private String activeAlarm_serviceUrl_SuffixStopAlarm = CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_STOP_ALARM;
+	private String activeAlarm_serviceUrl_SuffixReStartAlarm = CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_RESTART_ALARM;
+	private String activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm = CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_OK;
+	private String activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm = CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_WARNING;
+	private String activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm = CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_ERROR;
+	private String activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm = CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_ACK_ENABLED;
+	private String activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm = CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_ACK_DISABLED;
 	
 	private boolean historyEnabled = true;
 	
@@ -233,9 +244,123 @@ public class AlarmEngineConfig implements Serializable {
 		this.scriptSendChangeStatusOk = scriptSendChangeStatusOk;
 	}
 	
+	public String getActiveAlarm_serviceUrl() {
+		return this.activeAlarm_serviceUrl;
+	}
+
+	public void setActiveAlarm_serviceUrl(String activeAlarm_serviceUrl) {
+		this.activeAlarm_serviceUrl = activeAlarm_serviceUrl;
+	}
+
+	public String getActiveAlarm_serviceUrl_SuffixStartAlarm() {
+		return this.activeAlarm_serviceUrl_SuffixStartAlarm;
+	}
+
+	public void setActiveAlarm_serviceUrl_SuffixStartAlarm(String activeAlarm_serviceUrl_SuffixStartAlarm) {
+		this.activeAlarm_serviceUrl_SuffixStartAlarm = activeAlarm_serviceUrl_SuffixStartAlarm;
+	}
+
+	public String getActiveAlarm_serviceUrl_SuffixStopAlarm() {
+		return this.activeAlarm_serviceUrl_SuffixStopAlarm;
+	}
+
+	public void setActiveAlarm_serviceUrl_SuffixStopAlarm(String activeAlarm_serviceUrl_SuffixStopAlarm) {
+		this.activeAlarm_serviceUrl_SuffixStopAlarm = activeAlarm_serviceUrl_SuffixStopAlarm;
+	}
+
+	public String getActiveAlarm_serviceUrl_SuffixReStartAlarm() {
+		return this.activeAlarm_serviceUrl_SuffixReStartAlarm;
+	}
+
+	public void setActiveAlarm_serviceUrl_SuffixReStartAlarm(String activeAlarm_serviceUrl_SuffixReStartAlarm) {
+		this.activeAlarm_serviceUrl_SuffixReStartAlarm = activeAlarm_serviceUrl_SuffixReStartAlarm;
+	}
+
+	public String getActiveAlarm_serviceUrl_SuffixUpdateStateOkAlarm() {
+		return this.activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm;
+	}
+
+	public void setActiveAlarm_serviceUrl_SuffixUpdateStateOkAlarm(String activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm) {
+		this.activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm = activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm;
+	}
+
+	public String getActiveAlarm_serviceUrl_SuffixUpdateStateWarningAlarm() {
+		return this.activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm;
+	}
+
+	public void setActiveAlarm_serviceUrl_SuffixUpdateStateWarningAlarm(
+			String activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm) {
+		this.activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm = activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm;
+	}
+
+	public String getActiveAlarm_serviceUrl_SuffixUpdateStateErrorAlarm() {
+		return this.activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm;
+	}
+
+	public void setActiveAlarm_serviceUrl_SuffixUpdateStateErrorAlarm(
+			String activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm) {
+		this.activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm = activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm;
+	}
+
+	public String getActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm() {
+		return this.activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm;
+	}
+
+	public void setActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm(
+			String activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm) {
+		this.activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm = activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm;
+	}
+
+	public String getActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm() {
+		return this.activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm;
+	}
+
+	public void setActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm(
+			String activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm) {
+		this.activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm = activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm;
+	}
+	
 	protected static AlarmEngineConfig readAlarmEngineConfig(Logger log,AlarmConfigProperties alarmConfigProperties) throws Exception{
 		
 		AlarmEngineConfig config = new AlarmEngineConfig();
+		
+		config.setActiveAlarm_serviceUrl(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL, true, true));
+		
+		String activeAlarm_serviceUrl_SuffixStartAlarm = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_SUFFIX_START_ALARM, false, true);
+		if(activeAlarm_serviceUrl_SuffixStartAlarm!=null && StringUtils.isNotEmpty(activeAlarm_serviceUrl_SuffixStartAlarm)) {
+			config.setActiveAlarm_serviceUrl_SuffixStartAlarm(activeAlarm_serviceUrl_SuffixStartAlarm);
+		}
+		String activeAlarm_serviceUrl_SuffixStopAlarm = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_SUFFIX_STOP_ALARM, false, true);
+		if(activeAlarm_serviceUrl_SuffixStopAlarm!=null && StringUtils.isNotEmpty(activeAlarm_serviceUrl_SuffixStopAlarm)) {
+			config.setActiveAlarm_serviceUrl_SuffixStopAlarm(activeAlarm_serviceUrl_SuffixStopAlarm);
+		}
+		String activeAlarm_serviceUrl_SuffixReStartAlarm = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_SUFFIX_RESTART_ALARM, false, true);
+		if(activeAlarm_serviceUrl_SuffixReStartAlarm!=null && StringUtils.isNotEmpty(activeAlarm_serviceUrl_SuffixReStartAlarm)) {
+			config.setActiveAlarm_serviceUrl_SuffixReStartAlarm(activeAlarm_serviceUrl_SuffixReStartAlarm);
+		}
+		
+		String activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_OK, false, true);
+		if(activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm!=null && StringUtils.isNotEmpty(activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm)) {
+			config.setActiveAlarm_serviceUrl_SuffixUpdateStateOkAlarm(activeAlarm_serviceUrl_SuffixUpdateStateOkAlarm);
+		}
+		String activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_WARNING, false, true);
+		if(activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm!=null && StringUtils.isNotEmpty(activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm)) {
+			config.setActiveAlarm_serviceUrl_SuffixUpdateStateWarningAlarm(activeAlarm_serviceUrl_SuffixUpdateStateWarningAlarm);
+		}
+		String activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_ERROR, false, true);
+		if(activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm!=null && StringUtils.isNotEmpty(activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm)) {
+			config.setActiveAlarm_serviceUrl_SuffixUpdateStateErrorAlarm(activeAlarm_serviceUrl_SuffixUpdateStateErrorAlarm);
+		}
+		
+		String activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_ACK_ENABLED, false, true);
+		if(activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm!=null && StringUtils.isNotEmpty(activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm)) {
+			config.setActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm(activeAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm);
+		}
+		String activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_ACK_DISABLED, false, true);
+		if(activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm!=null && StringUtils.isNotEmpty(activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm)) {
+			config.setActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm(activeAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm);
+		}
+		
 		
 		String alarmHistoryEnabled = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_HISTORY_ENABLED, false, true);
 		if(alarmHistoryEnabled!=null) {

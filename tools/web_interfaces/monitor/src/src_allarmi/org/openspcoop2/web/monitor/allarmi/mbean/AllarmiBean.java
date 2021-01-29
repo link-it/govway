@@ -541,7 +541,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
 			
 			try {
-				AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, oldConfigurazioneAllarme, this.allarme, AllarmiBean.log, this.allarmiConfig);
+				AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, oldConfigurazioneAllarme, this.allarme, AllarmiBean.log, this.alarmEngineConfig);
 				MessageUtils.addInfoMsg("Allarme salvato con successo.");
 			} catch (Exception e) {
 				MessageUtils.addErrorMsg("Allarme salvato con successo, ma invio notifica terminato con errore: " + e.getMessage());
@@ -555,18 +555,20 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 
 	private void addHistory() throws ServiceException, NotImplementedException{
-		// registro la modifica
-		AllarmeHistory history = new AllarmeHistory();
-		history.setEnabled(this.allarme.getEnabled());
-		history.setAcknowledged(this.allarme.getAcknowledged());
-		history.setDettaglioStato(this.allarme.getDettaglioStato());
-		IdAllarme idConfigurazioneAllarme = new IdAllarme();
-		idConfigurazioneAllarme.setNome(this.allarme.getNome());
-		history.setIdAllarme(idConfigurazioneAllarme);
-		history.setStato(this.allarme.getStato());
-		history.setTimestampUpdate(new Date());
-		history.setUtente(Utility.getLoggedUtente().getLogin());
-		((IAllarmiService)this.service).addHistory(history);
+		if(this.alarmEngineConfig.isHistoryEnabled()) {
+			// registro la modifica
+			AllarmeHistory history = new AllarmeHistory();
+			history.setEnabled(this.allarme.getEnabled());
+			history.setAcknowledged(this.allarme.getAcknowledged());
+			history.setDettaglioStato(this.allarme.getDettaglioStato());
+			IdAllarme idConfigurazioneAllarme = new IdAllarme();
+			idConfigurazioneAllarme.setNome(this.allarme.getNome());
+			history.setIdAllarme(idConfigurazioneAllarme);
+			history.setStato(this.allarme.getStato());
+			history.setTimestampUpdate(new Date());
+			history.setUtente(Utility.getLoggedUtente().getLogin());
+			((IAllarmiService)this.service).addHistory(history);
+		}
 	}
 	
 
@@ -621,7 +623,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			this.addHistory();
 			
 			// notifico avvio thread o stop
-			AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, this.allarme, this.allarme, AllarmiBean.log, this.allarmiConfig);
+			AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, this.allarme, this.allarme, AllarmiBean.log, this.alarmEngineConfig);
 			
 		} catch (Exception e) {
 			AllarmiBean.log.error(e.getMessage(), e);
@@ -644,7 +646,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			this.addHistory();
 			
 			// notifico avvio thread o stop
-			AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, null, this.allarme, AllarmiBean.log, this.allarmiConfig);
+			AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, null, this.allarme, AllarmiBean.log, this.alarmEngineConfig);
 
 		} catch (Exception e) {
 			AllarmiBean.log.error(e.getMessage(), e);
