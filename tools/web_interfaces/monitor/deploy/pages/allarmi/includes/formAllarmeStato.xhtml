@@ -32,8 +32,7 @@
 					</link:prop>
 										
 					<link:prop label="Nuovo Stato">
-						<rich:comboBox id="idStatoAttuale" value="#{allarmiBean.modificaStato}" 
-										rendered="#{ (allarmiBean.allarme.enabled == 1) and (allarmiBean.allarmiConsultazioneModificaStatoAbilitata) }"
+						<rich:comboBox id="idStatoAttuale" value="#{allarmiBean.modificaStato}" rendered="#{true}"
 										converter="selectItemConverter" width="412" enableManualInput="false">
 							<f:selectItem itemValue="0" itemLabel="Ok"/>
 							<f:selectItem itemValue="1" itemLabel="Warning"/>
@@ -43,8 +42,7 @@
 					</link:prop>
 													
 					<link:prop label="Dettaglio">
-						<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" readonly="#{allarmiConsultazioneModificaStatoAbilitata==false}" styleClass="inputLinkLong" 
-							rows="7"/>
+						<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" styleClass="inputLinkLong" rows="7"/>
 					</link:prop>
 												
 					<a4j:outputPanel id="idAcknowledge" layout="block" rendered="#{allarmiBean.visualizzaAck}">
@@ -62,14 +60,7 @@
 		
 				</link:fieldset>
 				<div class="buttonrow">
-					<h:commandButton styleClass="icon-save positive" value="Salva" action="#{allarmiBean.salva}" 
-						rendered="#{
-							(allarmiBean.allarme.mail.ackMode==1 and allarmiBean.allarme.mail.inviaAlert==1) 
-							or
-							(allarmiBean.allarme.script.ackMode==1 and allarmiBean.allarme.script.invocaAlert==1)
-							or
-							(allarmiBean.allarmiConsultazioneModificaStatoAbilitata)
-							}"/>
+					<h:commandButton styleClass="icon-save positive" value="Salva" action="#{allarmiBean.salva}" rendered="#{true}"/>
 				</div>
 			</a4j:form>	
     	</div>

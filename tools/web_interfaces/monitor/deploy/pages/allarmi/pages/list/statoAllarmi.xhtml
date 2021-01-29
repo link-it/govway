@@ -347,7 +347,8 @@
 									<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
 									<f:setPropertyActionListener value="#{false}" target="#{allarmiBean.editMode}"/>
 								</a4j:htmlCommandLink>
-								<a4j:htmlCommandLink id="edit-iconLink" styleClass="edit-link" value="" action="#{allarmiBean.dettaglioAllarme}" rendered="#{item.enabled == 1}">
+								<a4j:htmlCommandLink id="edit-iconLink" styleClass="edit-link" value="" action="#{allarmiBean.dettaglioAllarme}" 
+									rendered="#{item.enabled == 1 and allarmiBean.allarmiConsultazioneModificaStatoAbilitata}">
 									<i class="material-icons md-18" id="iconaSearchOpen">edit</i>
 									<rich:toolTip id="editToolLink" for="edit-iconLink" mode="client" value="Modifica Stato" />
 									<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
