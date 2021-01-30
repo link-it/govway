@@ -1037,6 +1037,7 @@ public class CostantiControlStation {
 	/** VALUES **/
 	
 	public final static int MAX_LENGTH_VALORE_STATO_RATE_LIMITING = 80;
+	public final static int MAX_LENGTH_VALORE_STATO_ALLARMI = 80;
 	
 	public final static String DEFAULT_VALUE_ABILITATO = "abilitato";
 	public final static String DEFAULT_VALUE_DISABILITATO = "disabilitato";

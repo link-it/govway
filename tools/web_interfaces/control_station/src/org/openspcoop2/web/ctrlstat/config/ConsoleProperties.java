@@ -450,7 +450,24 @@ public class ConsoleProperties {
 	public String getAllarmiConfigurazione() throws Exception{
 		return this.readProperty(true, "allarmi.configurazione");
 	}
+	
+	public Boolean isShowAllarmiIdentificativoRuntime() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.identificativoRuntime");
+	}
+	public Boolean isShowAllarmiFormStatoAllarme() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.form.statoAllarme");
+	}
+	public Boolean isShowAllarmiFormStatoAllarmeHistory() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.form.statoAllarme.history");
+	}
+	public Boolean isShowAllarmiSearchStatiAllarmi() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.search.statoAllarme");
+	}
+	public Boolean isShowAllarmiElenchiStatiAllarmi() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.elenchi.statoAllarme");
+	}
 
+	
 	
 	/* ----- Gestione Password ------- */
 	

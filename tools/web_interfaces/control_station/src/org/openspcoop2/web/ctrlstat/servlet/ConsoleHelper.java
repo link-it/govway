@@ -214,6 +214,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.DynamicStringReplace;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
@@ -7778,7 +7779,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setToolTip(canaleTooltip);
 	}
 	
-	public void setStatoAllarmi(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound {
+	public void setStatoAllarmi(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound, UtilsException {
+		if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+			setStatoAllarmi_showStati(de, listaAllarmi);
+		}
+		else {
+			setStatoAllarmi_showTipi(de, listaAllarmi);
+		}
+	}
+	public void setStatoAllarmi_showStati(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound {
+		
 		de.setType(DataElementType.CHECKBOX);
 		if(listaAllarmi!=null && listaAllarmi.size()>0) {
 			Integer countOk = 0;
@@ -7841,6 +7851,67 @@ public class ConsoleHelper implements IConsoleHelper {
 					bf.append(" (").append(countError).append(")");
 					de.addStatus(bf.toString(), CheckboxStatusType.CONFIG_ERROR);
 				}
+			}
+			else {
+				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+				de.setStatusToolTip("Sull'API sono registrati "+listaAllarmi.size()+" allarmi tutti con stato disabilitato");
+			}
+			
+		}
+		else {
+			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+		}
+	}
+	public void setStatoAllarmi_showTipi(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound {
+		de.setType(DataElementType.CHECKBOX);
+		if(listaAllarmi!=null && listaAllarmi.size()>0) {
+			Hashtable<String, Integer> mapActive = new Hashtable<>();
+			for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+				if(allarme.getEnabled().intValue()==0) {
+					continue;
+				}
+				//String tipoPlugin = allarme.getPlugin().getLabel();
+				String tipoPlugin = allarme.getPlugin().getTipo(); // più compatto
+				
+				Integer count = null;
+				if(mapActive.containsKey(tipoPlugin)){
+					count = mapActive.remove(tipoPlugin);
+				}
+				else {
+					count = 0;
+				}
+				count ++;
+				mapActive.put(tipoPlugin, count);	
+			}
+			
+			if(mapActive.size()>0) {
+				
+				if(mapActive.size()>0) {
+					StringBuilder bf = new StringBuilder();
+					Enumeration<String> enKeys = mapActive.keys();
+					while (enKeys.hasMoreElements()) {
+						String risorsa = (String) enKeys.nextElement();
+						Integer count = mapActive.get(risorsa);
+						if(bf.length()>0) {
+							bf.append(", ");
+						}
+						bf.append(risorsa);
+						if(count>1) {
+							bf.append("(").append(count).append(")");
+						}
+					}
+					if(bf.length()>0 && bf.length()<CostantiControlStation.MAX_LENGTH_VALORE_STATO_ALLARMI) {
+						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [ "+bf.toString()+" ]";
+						de.addStatus(value, CheckboxStatusType.CONFIG_ENABLE);
+					}
+					else {
+						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO);
+						de.addStatus(bf.toString(), value, CheckboxStatusType.CONFIG_ENABLE);
+					}
+				} 
+				
 			}
 			else {
 				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);

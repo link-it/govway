@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.AllarmeFiltro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoPeriodo;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
@@ -17877,7 +17878,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
 			String filterStato = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO);
-			this.addFilterStato(filterStato, true, false);
+			boolean addStatiAllarme = this.confCore.isShowAllarmiSearchStatiAllarmi();
+			this.addFilterStato(filterStato, addStatiAllarme, false);
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -17954,20 +17956,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setWidthPx(10);
 					de.setType(DataElementType.CHECKBOX);
 					if(allarme.getEnabled() == 1){
-//						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+						if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+							if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+								de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+								de.setSelected(CheckboxStatusType.CONFIG_ERROR);
+							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+								de.setSelected(CheckboxStatusType.CONFIG_WARNING);
+							}
+						}
+						else {
+							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 							de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
-						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-							de.setSelected(CheckboxStatusType.CONFIG_ERROR);
-						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-							de.setSelected(CheckboxStatusType.CONFIG_WARNING);
 						}
 					}
 					else{
@@ -19002,6 +19009,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters, RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding
 			) throws Exception { 
 		
+		boolean allarmeAttivo = allarme.getTipoAllarme() != null && (allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO));
+		
 		boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FIRST_TIME);
 		DataElement de;
 		
@@ -19125,7 +19134,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRequired(true);
 		}
 		else{
-			if(!this.isModalitaStandard()) {
+			if(!this.isModalitaStandard() && this.confCore.isShowAllarmiIdentificativoRuntime()) {
 				de.setType(DataElementType.TEXT);
 			}
 			else {
@@ -19200,7 +19209,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		// frequenza
-		if(allarme.getTipoAllarme() != null && (allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO))) {
+		if(allarmeAttivo) {
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI_FREQUENZA);
@@ -19248,7 +19257,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		// field da visualizzare in modifica
-		if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+		if(tipoOperazione.equals(TipoOperazione.CHANGE) && this.confCore.isShowAllarmiFormStatoAllarme()) {
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
@@ -19277,7 +19286,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED);
-				de.setType(DataElementType.TEXT);
+				if(allarme.getEnabled() == 1 && 
+						(
+								allarme.getStato().intValue() == org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils.toIntegerValue(StatoAllarme.WARNING)
+								||
+								allarme.getStato().intValue() == org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils.toIntegerValue(StatoAllarme.ERROR)
+						) 
+						) {
+					de.setType(DataElementType.TEXT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
 				if(allarme.getAcknowledged() == 1) { 
 					de.setValue(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_SI); 
 				}
@@ -19289,12 +19309,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			// Archivio Stati
-			de = new DataElement();
-//			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI);
-			de.setType(DataElementType.LINK);
-			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_HISTORY_LIST, pIdAllarme);
-			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI); 
-			dati.addElement(de);
+			if(this.confCore.isShowAllarmiFormStatoAllarmeHistory() && this.confCore.getAllarmiConfig().isHistoryEnabled()) {
+				de = new DataElement();
+	//			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI);
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_HISTORY_LIST, pIdAllarme);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI); 
+				dati.addElement(de);
+			}
 		}
 		
 		

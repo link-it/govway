@@ -1774,7 +1774,7 @@ public class ConfigurazioneCostanti {
 	
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME = "Id";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME = "Identificativo Unico";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME = "Identificativo Runtime";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO = "Stato";

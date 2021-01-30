@@ -896,6 +896,26 @@ public class ControlStationCore {
 	public AlarmEngineConfig getAllarmiConfig() {
 		return this.allarmiConfig;
 	}
+	private boolean showAllarmiIdentificativoRuntime = false;
+	public Boolean isShowAllarmiIdentificativoRuntime() throws UtilsException{
+		return this.showAllarmiIdentificativoRuntime;
+	}
+	private boolean showAllarmiFormStatoAllarme = false;
+	public Boolean isShowAllarmiFormStatoAllarme() throws UtilsException{
+		return this.showAllarmiFormStatoAllarme;
+	}
+	private boolean showAllarmiFormStatoAllarmeHistory = false;
+	public Boolean isShowAllarmiFormStatoAllarmeHistory() throws UtilsException{
+		return this.showAllarmiFormStatoAllarmeHistory;
+	}
+	private boolean showAllarmiSearchStatiAllarmi = false;
+	public Boolean isShowAllarmiSearchStatiAllarmi() throws UtilsException{
+		return this.showAllarmiSearchStatiAllarmi;
+	}
+	private boolean showAllarmiElenchiStatiAllarmi = false;
+	public Boolean isShowAllarmiElenchiStatiAllarmi() throws UtilsException{
+		return this.showAllarmiElenchiStatiAllarmi;
+	}
 	
 	/** Parametri pdd */
 	private int portaPubblica = 80;
@@ -2385,6 +2405,11 @@ public class ControlStationCore {
 		/** Configurazione Allarmi */
 		this.configurazioneAllarmiEnabled = core.configurazioneAllarmiEnabled;
 		this.allarmiConfig = core.allarmiConfig;
+		this.showAllarmiIdentificativoRuntime = core.showAllarmiIdentificativoRuntime;
+		this.showAllarmiFormStatoAllarme = core.showAllarmiFormStatoAllarme;
+		this.showAllarmiFormStatoAllarmeHistory = core.showAllarmiFormStatoAllarmeHistory;
+		this.showAllarmiSearchStatiAllarmi = core.showAllarmiSearchStatiAllarmi;
+		this.showAllarmiElenchiStatiAllarmi = core.showAllarmiElenchiStatiAllarmi;
 		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
@@ -2753,6 +2778,11 @@ public class ControlStationCore {
 			this.configurazioneAllarmiEnabled = consoleProperties.isConfigurazioneAllarmiEnabled();
 			if(this.configurazioneAllarmiEnabled) {
 				this.allarmiConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), consoleProperties.getAllarmiConfigurazione());
+				this.showAllarmiIdentificativoRuntime = consoleProperties.isShowAllarmiIdentificativoRuntime();
+				this.showAllarmiFormStatoAllarme = consoleProperties.isShowAllarmiFormStatoAllarme();
+				this.showAllarmiFormStatoAllarmeHistory = consoleProperties.isShowAllarmiFormStatoAllarmeHistory();
+				this.showAllarmiSearchStatiAllarmi = consoleProperties.isShowAllarmiSearchStatiAllarmi();
+				this.showAllarmiElenchiStatiAllarmi = consoleProperties.isShowAllarmiElenchiStatiAllarmi();
 			}
 		
 			// Impostazioni grafiche
