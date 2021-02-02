@@ -30,6 +30,8 @@ tags:
     description: Test su body vuoti
   - name: date
     description: Test su date
+  - name: enum
+    description: test su enumeration
     
 paths:
           
@@ -106,7 +108,7 @@ paths:
       tags:
         - in-line
       description: Esempio di invio dei documenti (in-line) nella richiesta
-      operationId: SendDocumentInLine
+      operationId: SendDocumentInLineOptional
       requestBody:
         required: false
         content:
@@ -141,7 +143,7 @@ paths:
       tags:
         - in-line
       description: Esempio di invio dei documenti (in-line) nella richiesta
-      operationId: SendDocumentInLine
+      operationId: SendDocumentInLineRequired
       requestBody:
         required: true
         content:
@@ -635,7 +637,7 @@ paths:
       tags:
         - document-retrieve
       description: Consente di recuperare un oggetto, per il quale si è ricevuto un riferimento
-      operationId: DownloadDocument
+      operationId: oggetti_id
       parameters:
       - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
       - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
@@ -668,7 +670,7 @@ paths:
       tags:
         - document-retrieve
       description: Consente di recuperare un oggetto, per il quale si è ricevuto un riferimento
-      operationId: DownloadDocument
+      operationId: problem_id
       responses:
         "204":
           description: |-
@@ -692,7 +694,7 @@ paths:
       tags:
         - document-retrieve
       description: Consente di recuperare un oggetto, per il quale si è ricevuto un riferimento
-      operationId: DownloadDocument
+      operationId: oggettislashfinale
       responses:
         "200":
           description: |-
@@ -707,7 +709,7 @@ paths:
       tags:
         - document-retrieve
       description: Consente di recuperare un oggetto, per il quale si è ricevuto un riferimento
-      operationId: DownloadDocument
+      operationId: slash
       responses:
         "200":
           description: |-
@@ -724,7 +726,7 @@ paths:
       tags:
         - document-retrieve
       description: Consente di recuperare un documento, per il quale si è ricevuto un riferimento
-      operationId: DownloadDocument
+      operationId: qualsiasi_doc_id
       parameters:
       - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
       - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
@@ -768,6 +770,108 @@ paths:
             '*/*':
               schema:
                 type: object
+  
+  /test-enum-no-yes:
+    post:
+      tags:
+        - enum
+      description: Esempio di scambio di messaggi che contengono enumeration con valori no e yes
+      operationId: testOggettoConEnumNoYes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConEnumNoYes'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConEnumNoYes'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'  
+          
+  /test-enum-no-yes-yaml1:
+    post:
+      tags:
+        - enum
+      description: Esempio di scambio di messaggi che contengono enumeration con valori no e yes
+      operationId: testOggettoConEnumNoYesYaml1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-enum-no-yes-yaml1-onOff:
+    post:
+      tags:
+        - enum
+      description: Esempio di scambio di messaggi che contengono enumeration con valori no e yes
+      operationId: testOggettoConEnumNoYesYaml1_onOff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1OnOff'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1OnOff'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
           
 components:
 
@@ -1181,6 +1285,85 @@ components:
           data:
              type: string
              format: date-time
+
+    OggettoConEnumNoYes:
+      type: object
+      required:
+        - stato1
+        - stato2
+      properties:
+        stato1:
+          type: string
+          enum:
+            - "SI"
+            - "NO"
+            - "YES"
+            - 'S'
+            - 'N'
+            - 'Y'
+            - '0'
+            - '1'
+            - "ON"
+            - "OFF"
+        stato2:
+          type: string
+          enum:
+            - "si"
+            - "no"
+            - "yes"
+            - 's'
+            - 'n'
+            - 'y'
+            - '0'
+            - '1'
+            - "on"
+            - "off"
+
+    OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1:
+      type: object
+      required:
+        - stato1
+        - stato2
+      properties:
+        stato1:
+          type: string
+          enum:
+            - SI
+            - NO
+            - YES
+            - S
+            - N
+            - Y
+            - 0
+            - 1
+        stato2:
+          type: string
+          enum:
+            - si
+            - no
+            - yes
+            - s
+            - n
+            - y
+            - 0
+            - 1
+            
+    OggettoConEnumNoYesNonQuotatiBugEreditatoYaml1OnOff:
+      type: object
+      required:
+        - stato1
+        - stato2
+      properties:
+        stato1:
+          type: string
+          enum:
+            - ON
+            - OFF
+        stato2:
+          type: string
+          enum:
+            - on
+            - off
 
     ProblemInLineOriginaleTeamDigitale:
       type: object
