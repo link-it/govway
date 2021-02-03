@@ -48,22 +48,25 @@ import org.slf4j.Logger;
  */
 public class AlarmImpl implements IAlarm {
 
-	private Logger logger = LoggerWrapperFactory.getLogger(AlarmImpl.class);
+	private Logger _logger = LoggerWrapperFactory.getLogger(AlarmImpl.class);
 	private DAOFactory daoFactory = null;
 	private String threadName;
 	private String username;
+	private AlarmLogger alarmLogger;
 	
 	public AlarmImpl(Allarme configAllarme,Logger log, DAOFactory daoFactory) {
 		this.id = configAllarme.getNome();
 		this.nome = configAllarme.getAlias();
 		this.configAllarme = configAllarme;
-		this.logger = log;
+		this._logger = log;
 		this.daoFactory = daoFactory;
 		this.threadName = "SDK";
+		this.alarmLogger = new AlarmLogger(this.nome, this.id, this.threadName, this._logger);
 	}
 	
 	protected void setThreadName(String threadName) {
 		this.threadName = threadName;
+		this.alarmLogger.setThreadName(this.threadName);
 	}
 	
 	public void setUsername(String username) {
@@ -71,8 +74,8 @@ public class AlarmImpl implements IAlarm {
 	}
 	
 	@Override
-	public Logger getLogger(){
-		return this.logger;
+	public AlarmLogger getLogger(){
+		return this.alarmLogger;
 	}
 	
 	@Override
@@ -84,7 +87,7 @@ public class AlarmImpl implements IAlarm {
 	public void changeStatus(AlarmStatus nuovoStatoAllarme) throws AlarmException {
 		
 		// Cambio stato sul database degli allarmi
-		AlarmManager.changeStatus(nuovoStatoAllarme, this, this.logger, this.daoFactory, this.username);
+		AlarmManager.changeStatus(nuovoStatoAllarme, this, this.daoFactory, this.username);
 		
 		
 		// Switch stato nell'attuale implementazione
@@ -108,11 +111,11 @@ public class AlarmImpl implements IAlarm {
 			
 			// Notifico cambio di stato all'interfaccia		
 			try {
-				IDynamicLoader cPlugin = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME,this.configAllarme.getTipo(),this.pluginClassName, this.logger);
+				IDynamicLoader cPlugin = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME,this.configAllarme.getTipo(),this.pluginClassName, this._logger);
 				IAlarmProcessing alarmProc = (IAlarmProcessing) cPlugin.newInstance();
 				alarmProc.changeStatusNotify(this, oldStatus, this.status);
 			} catch( Exception e) {
-				this.logger.error("AlarmImpl.changeStatus() ha rilevato un errore: "+e.getMessage(),e);
+				this.alarmLogger.error("AlarmImpl.changeStatus() ha rilevato un errore: "+e.getMessage(),e);
 				throw new AlarmException(e);
 			}
 			
@@ -207,21 +210,21 @@ public class AlarmImpl implements IAlarm {
 				
 				if(sendMail){
 					List<String> logEvents = new ArrayList<String>();
-					AlarmManager.sendMail(this.getConfigAllarme(), this.logger, logEvents);
+					AlarmManager.sendMail(this.getConfigAllarme(), this.alarmLogger, logEvents);
 					if(logEvents!=null && !logEvents.isEmpty()) {
 						for (String logEvent : logEvents) {
-							String prefix = AlarmThread.buildPrefix(this.threadName,this.configAllarme.getAlias(),this.configAllarme.getNome());
-							this.logger.debug(prefix+logEvent);
+							String prefix = AlarmLogger.buildPrefix(this.threadName,this.configAllarme.getAlias(),this.configAllarme.getNome());
+							this.alarmLogger.debug(prefix+logEvent);
 						}
 					}
 				}
 				if(invokeScript){
 					List<String> logEvents = new ArrayList<String>();
-					AlarmManager.invokeScript(this.getConfigAllarme(), this.logger, logEvents);
+					AlarmManager.invokeScript(this.getConfigAllarme(), this.alarmLogger, logEvents);
 					if(logEvents!=null && !logEvents.isEmpty()) {
 						for (String logEvent : logEvents) {
-							String prefix = AlarmThread.buildPrefix(this.threadName,this.configAllarme.getAlias(),this.configAllarme.getNome());
-							this.logger.debug(prefix+logEvent);
+							String prefix = AlarmLogger.buildPrefix(this.threadName,this.configAllarme.getAlias(),this.configAllarme.getNome());
+							this.alarmLogger.debug(prefix+logEvent);
 						}
 					}
 				}

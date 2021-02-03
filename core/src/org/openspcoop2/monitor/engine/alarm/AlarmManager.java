@@ -46,6 +46,7 @@ import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
+import org.openspcoop2.monitor.sdk.alarm.IAlarmLogger;
 import org.openspcoop2.monitor.sdk.constants.AlarmStateValues;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
@@ -197,7 +198,7 @@ public class AlarmManager {
 		return alarm;
 	}
 	
-	protected static void changeStatus(AlarmStatus newStatoAllarme,IAlarm allarme,Logger log,DAOFactory  daoFactory,String username) throws AlarmException {
+	protected static void changeStatus(AlarmStatus newStatoAllarme,IAlarm allarme,DAOFactory daoFactory,String username) throws AlarmException {
 		try {
 			
 			Allarme oldConfig = allarme.getConfigAllarme();
@@ -311,7 +312,7 @@ public class AlarmManager {
 						+ "- non esistente");
 			
 		} catch (Exception e) {
-			log.error(
+			allarme.getLogger().error(
 					"AlarmManager.changeStatus() ha rilevato un errore: "
 							+ e.getMessage(), e);
 			throw new AlarmException(e);
@@ -382,7 +383,7 @@ public class AlarmManager {
 		return false;
 	}
 	
-	protected static void sendMail(Allarme configAllarme, Logger log, List<String> logEvents) throws Exception{
+	protected static void sendMail(Allarme configAllarme, IAlarmLogger alarmLog, List<String> logEvents) throws Exception{
 		
 		AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
 		if(alarmEngineConfig==null){
@@ -406,7 +407,7 @@ public class AlarmManager {
 				throw new Exception("Configurazione mail errata [Parametro 'SenderType' non definito]");
 			}
 			else{
-				sender = SenderFactory.newSender(alarmEngineConfig.getMailSenderType(), log);
+				sender = SenderFactory.newSender(alarmEngineConfig.getMailSenderType(), alarmLog.getInternalLogger());
 			}
 			
 			if(alarmEngineConfig.getMailSenderConnectionTimeout()!=null){
@@ -493,7 +494,7 @@ public class AlarmManager {
 		}
 	}
 	
-	protected static void invokeScript(Allarme configAllarme, Logger log, List<String> logEvents) throws Exception{
+	protected static void invokeScript(Allarme configAllarme, IAlarmLogger alarmLog, List<String> logEvents) throws Exception{
 		
 		AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
 		if(alarmEngineConfig==null){

@@ -19,45 +19,29 @@
  */
 package org.openspcoop2.monitor.sdk.alarm;
 
-import java.util.Map;
-
-import org.openspcoop2.core.allarmi.Allarme;
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
-import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.slf4j.Logger;
 
 /**     
- * IAlarm
+ * IAlarmLogger
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IAlarm {
-	
-	public String getId();
-	
-	public String getNome();
-	
-	public Allarme getConfigAllarme();
-	
-	public AlarmStatus getStatus();
-	
-	public Parameter<?> getParameter(String paramID);
-	
-	public Map<String, Parameter<?>> getParameters();
-		
-	public IAlarmLogger getLogger();
-	
-	public DAOFactory getDAOFactory();
+public interface IAlarmLogger {
 
-	/**
-	 * Permette di modificare lo stato di un allarme 'passivo' identificato tramite il parametro idAllarme
-	 * 
-	 * @param statoAllarme Nuovo stato dell'allarme
-	 * @throws AlarmException
-	 */
+	public void debug(String messaggio);
+	public void debug(String messaggio, Throwable t);
 	
-	public void changeStatus(AlarmStatus statoAllarme) throws AlarmException;
-
+	public void info(String messaggio);
+	public void info(String messaggio, Throwable t);
+	
+	public void warn(String messaggio);
+	public void warn(String messaggio, Throwable t);
+	
+	public void error(String messaggio);
+	public void error(String messaggio, Throwable t);
+	
+	public Logger getInternalLogger();
+	
 }
