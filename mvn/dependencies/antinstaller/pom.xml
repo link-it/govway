@@ -20,7 +20,7 @@
 		<jgoodies.gov4j.version>1.2.2-gov4j-1</jgoodies.gov4j.version>
 		<antinstaller.version>0.8b</antinstaller.version>
 
-		<ant.version>1.10.8</ant.version>
+		<ant.version>1.10.9</ant.version>
 		<jakarta.regexp.version>1.5</jakarta.regexp.version>
 
 	</properties>
