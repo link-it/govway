@@ -20,7 +20,9 @@
 
 package org.openspcoop2.monitor.engine.alarm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.allarmi.Allarme;
@@ -53,6 +55,7 @@ public class AlarmImpl implements IAlarm {
 	
 	public AlarmImpl(Allarme configAllarme,Logger log, DAOFactory daoFactory) {
 		this.id = configAllarme.getNome();
+		this.nome = configAllarme.getAlias();
 		this.configAllarme = configAllarme;
 		this.logger = log;
 		this.daoFactory = daoFactory;
@@ -203,10 +206,24 @@ public class AlarmImpl implements IAlarm {
 				}
 				
 				if(sendMail){
-					AlarmManager.sendMail(this.getConfigAllarme(), this.logger, this.threadName);
+					List<String> logEvents = new ArrayList<String>();
+					AlarmManager.sendMail(this.getConfigAllarme(), this.logger, logEvents);
+					if(logEvents!=null && !logEvents.isEmpty()) {
+						for (String logEvent : logEvents) {
+							String prefix = AlarmThread.buildPrefix(this.threadName,this.configAllarme.getAlias(),this.configAllarme.getNome());
+							this.logger.debug(prefix+logEvent);
+						}
+					}
 				}
 				if(invokeScript){
-					AlarmManager.invokeScript(this.getConfigAllarme(), this.logger, this.threadName);
+					List<String> logEvents = new ArrayList<String>();
+					AlarmManager.invokeScript(this.getConfigAllarme(), this.logger, logEvents);
+					if(logEvents!=null && !logEvents.isEmpty()) {
+						for (String logEvent : logEvents) {
+							String prefix = AlarmThread.buildPrefix(this.threadName,this.configAllarme.getAlias(),this.configAllarme.getNome());
+							this.logger.debug(prefix+logEvent);
+						}
+					}
 				}
 				
 			}catch(Exception e){
@@ -228,6 +245,11 @@ public class AlarmImpl implements IAlarm {
 	@Override
 	public String getId() {
 		return this.id;
+	}
+	
+	@Override
+	public String getNome() {
+		return this.nome;
 	}
 
 	@Override
@@ -263,6 +285,7 @@ public class AlarmImpl implements IAlarm {
 	}
 
 	private String id = null;
+	private String nome = null;
 	private Allarme configAllarme;
 	private HashMap<String, Parameter<?>> parameters = null;
 	private AlarmStatus status = null;

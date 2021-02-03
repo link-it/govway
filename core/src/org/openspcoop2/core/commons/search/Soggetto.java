@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>Java class for soggetto complex type.
@@ -39,6 +41,7 @@ import java.io.Serializable;
  * 			&lt;element name="tipo-soggetto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="server" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="soggetto-ruolo" type="{http://www.openspcoop2.org/core/commons/search}soggetto-ruolo" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -55,7 +58,8 @@ import java.io.Serializable;
   	"nomeSoggetto",
   	"tipoSoggetto",
   	"server",
-  	"identificativoPorta"
+  	"identificativoPorta",
+  	"soggettoRuolo"
   }
 )
 
@@ -111,6 +115,30 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.identificativoPorta = identificativoPorta;
   }
 
+  public void addSoggettoRuolo(SoggettoRuolo soggettoRuolo) {
+    this.soggettoRuolo.add(soggettoRuolo);
+  }
+
+  public SoggettoRuolo getSoggettoRuolo(int index) {
+    return this.soggettoRuolo.get( index );
+  }
+
+  public SoggettoRuolo removeSoggettoRuolo(int index) {
+    return this.soggettoRuolo.remove( index );
+  }
+
+  public List<SoggettoRuolo> getSoggettoRuoloList() {
+    return this.soggettoRuolo;
+  }
+
+  public void setSoggettoRuoloList(List<SoggettoRuolo> soggettoRuolo) {
+    this.soggettoRuolo=soggettoRuolo;
+  }
+
+  public int sizeSoggettoRuoloList() {
+    return this.soggettoRuolo.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -145,5 +173,35 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="identificativo-porta",required=false,nillable=false)
   protected java.lang.String identificativoPorta;
+
+  @XmlElement(name="soggetto-ruolo",required=true,nillable=false)
+  protected List<SoggettoRuolo> soggettoRuolo = new ArrayList<SoggettoRuolo>();
+
+  /**
+   * @deprecated Use method getSoggettoRuoloList
+   * @return List&lt;SoggettoRuolo&gt;
+  */
+  @Deprecated
+  public List<SoggettoRuolo> getSoggettoRuolo() {
+  	return this.soggettoRuolo;
+  }
+
+  /**
+   * @deprecated Use method setSoggettoRuoloList
+   * @param soggettoRuolo List&lt;SoggettoRuolo&gt;
+  */
+  @Deprecated
+  public void setSoggettoRuolo(List<SoggettoRuolo> soggettoRuolo) {
+  	this.soggettoRuolo=soggettoRuolo;
+  }
+
+  /**
+   * @deprecated Use method sizeSoggettoRuoloList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeSoggettoRuolo() {
+  	return this.soggettoRuolo.size();
+  }
 
 }

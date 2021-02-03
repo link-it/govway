@@ -283,7 +283,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 			
 			List<Parameter> lstParamPorta = null;
 			if(ruoloPorta!=null) {
-				lstParamPorta = confHelper.getTitleListAllarmi(ruoloPorta, nomePorta, serviceBinding, allarme.getNome());
+				lstParamPorta = confHelper.getTitleListAllarmi(ruoloPorta, nomePorta, serviceBinding, allarme.getAlias());
 			}
 			
 			// setto la barra del titolo
@@ -303,7 +303,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 				}
 //				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 //				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST));
-				lstParam.add(new Parameter(allarme.getNome(), null));
+				lstParam.add(new Parameter(allarme.getAlias(), null));
 			}
 			
 			// Se tipo = null, devo visualizzare la pagina per l'inserimento
@@ -397,7 +397,9 @@ public class ConfigurazioneAllarmiChange extends Action {
 			try {
 				AllarmiUtils.notifyStateActiveThread(false, modificatoStato, modificatoAckwoldegment, oldConfigurazioneAllarme, allarme, ControlStationCore.getLog(), alarmEngineConfig);
 			} catch(Exception e) {
-				pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
+				String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+				ControlStationCore.getLog().error(errorMsg, e);
+				pd.setMessage(errorMsg);
 			}
 				
 			// Preparo la lista

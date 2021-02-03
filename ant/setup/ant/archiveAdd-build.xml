@@ -539,6 +539,25 @@
 						</elseif>
 					</if>
 
+					<!-- Autenticazione Utenze -->
+					<antcall target="set_property">
+					    <param name="file" value="${configFile}"/>
+						<param name="token" value="utenti.password"/>
+						<param name="value" value="${work_dir}/consolePassword.properties"/>
+					</antcall>
+
+					<!-- LOG (servizi rest) -->
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="transaction"/>
+						<param name="value" value="true"/>
+					</antcall>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="dump"/>
+						<param name="value" value="false"/>
+					</antcall>
+
 					<echo message="Processed config service [${configFileName}]"/>
 				</then>
 			</elseif>

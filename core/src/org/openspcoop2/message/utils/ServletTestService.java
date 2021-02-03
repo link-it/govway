@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -865,6 +866,46 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			
+			// opzioni throttling
+			Integer throttlingBytes = null;
+			Integer throttlingMs = null;
+			String throttlingTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingBytes");
+			if(throttlingTmp!=null){
+				throttlingTmp = throttlingTmp.trim();
+				throttlingBytes = Integer.valueOf(throttlingTmp);
+			}
+			throttlingTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingMs");
+			if(throttlingTmp!=null){
+				throttlingTmp = throttlingTmp.trim();
+				throttlingMs = Integer.valueOf(throttlingTmp);
+			}
+			String throttlingType = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingType");
+			boolean sendThrottling = false;
+			boolean receiveThrottling = false;
+			if(throttlingBytes!=null && throttlingBytes>0 && 
+					throttlingMs!=null && throttlingMs>0) {
+				if(throttlingType!=null) {
+					throttlingType = throttlingType.trim();
+				}
+				if("receive".equalsIgnoreCase(throttlingType)) {
+					receiveThrottling = true;
+				}
+				else if("send".equalsIgnoreCase(throttlingType)) {
+					sendThrottling = true;
+				}
+				else if("both".equalsIgnoreCase(throttlingType)) {
+					receiveThrottling = true;
+					sendThrottling = true;
+				}
+				else {
+					sendThrottling = true;
+				}
+			}
+			
+			
+			
+			
+			
 			
 			
 			// opzioni save msg
@@ -890,23 +931,33 @@ public class ServletTestService extends HttpServlet {
 			
 			byte[] contenuto = null;
 			if(logMessage || saveMessageDir!=null){
-				ServletInputStream sin = req.getInputStream();
-				ByteArrayOutputStream outStr = new ByteArrayOutputStream();
-				int read;
-				while( (read = sin.read()) != -1)
-					outStr.write(read);
-				contenuto = outStr.toByteArray();
+				if(receiveThrottling) {
+					contenuto = this.readThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
+				}
+				else {
+					ServletInputStream sin = req.getInputStream();
+					ByteArrayOutputStream outStr = new ByteArrayOutputStream();
+					int read;
+					while( (read = sin.read()) != -1)
+						outStr.write(read);
+					contenuto = outStr.toByteArray();
+				}
 			}
 			else if(consumeRequest) {
 				// serve per avere funzionalità di sleep sicuramente dopo aver ricevuto tutta la richiesta
-				ServletInputStream sin = req.getInputStream();
-				int read;
-				NullOutputStream outStr = new NullOutputStream();
-				while( (read = sin.read()) != -1) {
-					outStr.write(read);
+				if(receiveThrottling) {
+					this.consumeThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
 				}
-				outStr.flush();
-				outStr.close();
+				else {
+					ServletInputStream sin = req.getInputStream();
+					int read;
+					NullOutputStream outStr = new NullOutputStream();
+					while( (read = sin.read()) != -1) {
+						outStr.write(read);
+					}
+					outStr.flush();
+					outStr.close();
+				}
 			}
 			
 			String contentTypeRichiesta = req.getContentType();
@@ -953,27 +1004,8 @@ public class ServletTestService extends HttpServlet {
 
 			
 			
-			// opzioni throttling
-			Integer throttlingBytes = null;
-			Integer throttlingMs = null;
-			String throttlingTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingBytes");
-			if(throttlingTmp!=null){
-				throttlingTmp = throttlingTmp.trim();
-				throttlingBytes = Integer.valueOf(throttlingTmp);
-			}
-			throttlingTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingMs");
-			if(throttlingTmp!=null){
-				throttlingTmp = throttlingTmp.trim();
-				throttlingMs = Integer.valueOf(throttlingTmp);
-			}
-			boolean sendThrottling = false;
-			if(throttlingBytes!=null && throttlingBytes>0 && 
-					throttlingMs!=null && throttlingMs>0) {
-				sendThrottling = true;
-			}
-			
-			
-			
+
+						
 			
 			// sleep
 			String sleep = getParameter_checkWhiteList(req, this.whitePropertiesList, "sleep");
@@ -1251,12 +1283,17 @@ public class ServletTestService extends HttpServlet {
 							contenutoInteroDaSpedire = contenuto;
 						}
 					}else{
+						byte[] contenutoRequest = null;
+						if(receiveThrottling) {
+							contenutoRequest = this.readThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
+						}
+						else {
+							contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
+						}
 						if(replaceMap!=null && replaceMap.size()>0){
-							byte[] contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
 							contenutoInteroDaSpedire = this.replace(contenutoRequest, replaceMap);
 						}
 						else{
-							byte[] contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
 							contenutoInteroDaSpedire = contenutoRequest;
 						}
 					}
@@ -1289,11 +1326,23 @@ public class ServletTestService extends HttpServlet {
 						}
 					}else{
 						if(replaceMap!=null && replaceMap.size()>0){
-							byte[] contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
+							byte[] contenutoRequest = null;
+							if(receiveThrottling) {
+								contenutoRequest = this.readThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
+							}
+							else {
+								contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
+							}
 							res.getOutputStream().write(this.replace(contenutoRequest, replaceMap));
 						}
 						else{
-							FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+							if(receiveThrottling) {
+								byte[] contenutoRequest = this.readThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
+								res.getOutputStream().write(contenutoRequest);
+							}
+							else {
+								FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+							}
 						}
 					}
 				}
@@ -1419,4 +1468,29 @@ public class ServletTestService extends HttpServlet {
 		return s.getBytes();
 	}
 
+	private byte[] readThrottling(InputStream is, int throttlingBytes, int throttlingMs) throws Exception {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		byte [] buffer = new byte[throttlingBytes];
+		int letti = 0;
+		while((letti = is.read(buffer))!=-1) {
+			bout.write(buffer, 0, letti);
+			bout.flush();
+			this.log.info("received "+letti+" bytes");
+			Utilities.sleep(throttlingMs);
+		}
+		bout.close();
+		return bout.toByteArray();
+	}
+	private void consumeThrottling(InputStream is, int throttlingBytes, int throttlingMs) throws Exception {
+		NullOutputStream bout = new NullOutputStream();
+		byte [] buffer = new byte[throttlingBytes];
+		int letti = 0;
+		while((letti = is.read(buffer))!=-1) {
+			bout.write(buffer, 0, letti);
+			bout.flush();
+			this.log.info("received "+letti+" bytes");
+			Utilities.sleep(throttlingMs);
+		}
+		bout.close();
+	}
 }

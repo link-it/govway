@@ -382,7 +382,7 @@ public class AlarmManager {
 		return false;
 	}
 	
-	protected static void sendMail(Allarme configAllarme, Logger log, String threadName) throws Exception{
+	protected static void sendMail(Allarme configAllarme, Logger log, List<String> logEvents) throws Exception{
 		
 		AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
 		if(alarmEngineConfig==null){
@@ -485,15 +485,15 @@ public class AlarmManager {
 				sender.send(mail, alarmEngineConfig.isMailDebug());
 				
 				if(alarmEngineConfig.isMailDebug()){
-					log.debug("["+threadName+"] Allarme - " + configAllarme.getNome()
-						+ " - inviata mail per notifica stato ["+configAllarme.getStato()+"] al destinatario ["+destinatario+"]");
+					logEvents.add("eMail per notifica stato ["+configAllarme.getStato()+"] inviata correttamente al destinatario ["+destinatario+"]");
 				}
+				
 			}
 			
 		}
 	}
 	
-	protected static void invokeScript(Allarme configAllarme, Logger log, String threadName) throws Exception{
+	protected static void invokeScript(Allarme configAllarme, Logger log, List<String> logEvents) throws Exception{
 		
 		AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
 		if(alarmEngineConfig==null){
@@ -575,8 +575,7 @@ public class AlarmManager {
 		}
 		else{
 			if(alarmEngineConfig.isScriptDebug()){
-				log.debug("["+threadName+"] Allarme - " + configAllarme.getNome()
-				+	 " - "+msg);
+				logEvents.add(msg);
 			}
 		}
 		

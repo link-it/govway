@@ -31,6 +31,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -99,7 +100,7 @@ public class AccordoServizioParteComuneAzioneFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(AccordoServizioParteComuneAzione.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("accordi_azioni","id","seq_accordi_azioni","accordi_azioni_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.ACCORDI_AZIONI,"id","seq_"+CostantiDB.ACCORDI_AZIONI,CostantiDB.ACCORDI_AZIONI+"_init_seq");
 			}
 			
 			else{

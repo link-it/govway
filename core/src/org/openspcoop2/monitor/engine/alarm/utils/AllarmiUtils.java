@@ -44,6 +44,9 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.beans.BeanUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -133,11 +136,38 @@ public class AllarmiUtils {
 		}
 	}
 	
-	public static void sendToAllarmi(List<String> urls, Logger log) throws Exception{
-		if(urls!=null && urls.size()>0){
-			for (String url : urls) {
-				log.debug("Invoke ["+url+"] ...");
-				HttpResponse response = HttpUtilities.getHTTPResponse(url);
+	public static void sendToAllarmi(AlarmEngineConfig allarmiConfig, List<String> post_urls, List<String> post_contents, Logger log) throws Exception{
+		if(post_urls!=null && post_urls.size()>0){
+			for (int i = 0; i < post_urls.size(); i++) {
+				String url = post_urls.get(i);
+				String content = post_contents.get(i);
+
+				log.debug("Invoke ["+post_urls+"] ...");
+				
+				HttpRequest request = new HttpRequest();
+				request.setUrl(url);
+				request.setContent(content.getBytes());
+				request.setMethod(HttpRequestMethod.POST);
+				request.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+				request.setUsername(allarmiConfig.getActiveAlarm_serviceUrl_manager_username());
+				request.setPassword(allarmiConfig.getActiveAlarm_serviceUrl_manager_password());
+				
+				request.setConnectTimeout(allarmiConfig.getActiveAlarm_serviceUrl_connectionTimeout());
+				request.setReadTimeout(allarmiConfig.getActiveAlarm_serviceUrl_readConnectionTimeout());
+				
+				if(allarmiConfig.isActiveAlarm_serviceUrl_https()) {
+					request.setHostnameVerifier(allarmiConfig.isActiveAlarm_serviceUrl_https_verificaHostName());
+					if(allarmiConfig.isActiveAlarm_serviceUrl_https_autenticazioneServer()) {
+						request.setTrustStorePath(allarmiConfig.getActiveAlarm_serviceUrl_https_truststorePath());
+						request.setTrustStoreType(allarmiConfig.getActiveAlarm_serviceUrl_https_truststoreType());
+						request.setTrustStorePassword(allarmiConfig.getActiveAlarm_serviceUrl_https_truststorePassword());
+					}
+					else {
+						request.setTrustAllCerts(true);
+					}
+				}
+				
+				HttpResponse response = HttpUtilities.httpInvoke(request);
 				if(response.getContent()!=null){
 					log.debug("Invoked ["+url+"] Status["+response.getResultHTTPOperation()+"] Message["+new String(response.getContent())+"]");	
 				}
@@ -163,12 +193,14 @@ public class AllarmiUtils {
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}
-		prefixUrl = prefixUrl + allarme.getNome() + "?";
-		List<String> urls = new ArrayList<String>();
+		prefixUrl = prefixUrl + "gestione/attivi/"+allarme.getNome();
+		List<String> post_urls = new ArrayList<String>();
+		List<String> post_contents = new ArrayList<String>();
 		if(isAdd){
 			if(allarme.getEnabled()==1){
-				// invoco servlet start
-				urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixStartAlarm());
+				// start allarme
+				post_urls.add(prefixUrl);
+				post_contents.add("{\"operazione\": \"start\"}");
 			}
 		}
 		else{
@@ -207,24 +239,26 @@ public class AllarmiUtils {
 			if(equals){			
 				if(modificatoStato){
 					StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(allarme.getStato());
+					post_urls.add(prefixUrl+"/stato");
 					switch (statoAllarme) {
 					case OK:
-						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateStateOkAlarm());
+						post_contents.add("{\"stato\": \"OK\"}");
 						break;
 					case WARNING:
-						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateStateWarningAlarm());
+						post_contents.add("{\"stato\": \"WARNING\"}");
 						break;
 					case ERROR:
-						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateStateErrorAlarm());
+						post_contents.add("{\"stato\": \"ERROR\"}");
 						break;
 					}
 				}
 				if(modificatoAckwoldegment){
+					post_urls.add(prefixUrl+"/acknoledgement");
 					if(allarme.getAcknowledged()==1){
-						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementEnabledAlarm());
+						post_contents.add("{\"acknoledgement\": true}");
 					}
 					else{
-						urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixUpdateAcknoledgementDisabledAlarm());
+						post_contents.add("{\"acknoledgement\": false}");
 					}
 				}
 				//else{
@@ -237,35 +271,40 @@ public class AllarmiUtils {
 				}
 				
 				if(allarme.getEnabled()==0){
-					// invoco servlet stop
-					urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixStopAlarm());
+					// stop allarme
+					post_urls.add(prefixUrl);
+					post_contents.add("{\"operazione\": \"stop\"}");
 				}
 				else{
-					// invoco servlet restart
-					urls.add(prefixUrl+allarmiConfig.getActiveAlarm_serviceUrl_SuffixReStartAlarm());
+					// restart allarme
+					post_urls.add(prefixUrl);
+					post_contents.add("{\"operazione\": \"restart\"}");
 				}
 			}
 		}
-		AllarmiUtils.sendToAllarmi(urls, log);
+		AllarmiUtils.sendToAllarmi(allarmiConfig, post_urls, post_contents, log);
 	}
 	
 	public static void stopActiveThreads(List<String> allarmi, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
 		
-		List<String> urls = new ArrayList<String>();
+		List<String> post_urls = new ArrayList<String>();
+		List<String> post_contents = new ArrayList<String>();
 		if(!allarmi.isEmpty()) {
-			for (String nomeAllarme : urls) {
+			for (String nomeAllarme : allarmi) {
 				
 				String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
 				if(prefixUrl.endsWith("/")==false){
 					prefixUrl = prefixUrl + "/";
 				}
-				prefixUrl = prefixUrl + nomeAllarme + "?";
-				urls.add(prefixUrl + allarmiConfig.getActiveAlarm_serviceUrl_SuffixStopAlarm());
+				prefixUrl = prefixUrl + "gestione/attivi/"+nomeAllarme;
+				post_urls.add(prefixUrl);
+				post_contents.add("{\"operazione\": \"stop\"}");
+				
 			}
 		}
 		
-		if(!urls.isEmpty()) {
-			AllarmiUtils.sendToAllarmi(urls, log);
+		if(!post_urls.isEmpty()) {
+			AllarmiUtils.sendToAllarmi(allarmiConfig, post_urls, post_contents, log);
 		}
 		
 	}

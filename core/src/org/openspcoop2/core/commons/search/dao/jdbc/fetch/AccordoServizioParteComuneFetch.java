@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.Resource;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -200,22 +201,22 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(AccordoServizioParteComune.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("accordi","id","seq_accordi","accordi_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.ACCORDI,"id","seq_"+CostantiDB.ACCORDI,CostantiDB.ACCORDI+"_init_seq");
 			}
 			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("accordi_azioni","id","seq_accordi_azioni","accordi_azioni_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.ACCORDI_AZIONI,"id","seq_"+CostantiDB.ACCORDI_AZIONI,CostantiDB.ACCORDI_AZIONI+"_init_seq");
 			}
 			if(model.equals(AccordoServizioParteComune.model().PORT_TYPE)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("port_type","id","seq_port_type","port_type_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORT_TYPE,"id","seq_"+CostantiDB.PORT_TYPE,CostantiDB.PORT_TYPE+"_init_seq");
 			}
 			if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("port_type_azioni","id","seq_port_type_azioni","port_type_azioni_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORT_TYPE_AZIONI,"id","seq_"+CostantiDB.PORT_TYPE_AZIONI,CostantiDB.PORT_TYPE_AZIONI+"_init_seq");
 			}
 			if(model.equals(AccordoServizioParteComune.model().RESOURCE)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("api_resources","id","seq_api_resources","api_resources_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.API_RESOURCES,"id","seq_"+CostantiDB.API_RESOURCES,CostantiDB.API_RESOURCES+"_init_seq");
 			}
 			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("accordi_gruppi","id","seq_accordi_gruppi","accordi_gruppi_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.ACCORDI_GRUPPI,"id","seq_"+CostantiDB.ACCORDI_GRUPPI,CostantiDB.ACCORDI_GRUPPI+"_init_seq");
 			}
 			
 			else{

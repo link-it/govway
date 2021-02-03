@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.Operation;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -163,16 +164,16 @@ public class OperationFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(Operation.model())){
-			return "port_type_azioni";
+			return CostantiDB.PORT_TYPE_AZIONI;
 		}
 		if(model.equals(Operation.model().ID_PORT_TYPE)){
-			return "port_type";
+			return CostantiDB.PORT_TYPE;
 		}
 		if(model.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 
 

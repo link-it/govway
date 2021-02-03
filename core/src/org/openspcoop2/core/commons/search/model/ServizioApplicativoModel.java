@@ -46,6 +46,7 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.TIPO = new Field("tipo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.AS_CLIENT = new Field("as_client",java.lang.Integer.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new Field("id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"servizio-applicativo",ServizioApplicativo.class));
+		this.SERVIZIO_APPLICATIVO_RUOLO = new org.openspcoop2.core.commons.search.model.ServizioApplicativoRuoloModel(new Field("servizio-applicativo-ruolo",org.openspcoop2.core.commons.search.ServizioApplicativoRuolo.class,"servizio-applicativo",ServizioApplicativo.class));
 	
 	}
 	
@@ -59,6 +60,7 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.AS_CLIENT = new ComplexField(father,"as_client",java.lang.Integer.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new ComplexField(father,"id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"servizio-applicativo",ServizioApplicativo.class));
+		this.SERVIZIO_APPLICATIVO_RUOLO = new org.openspcoop2.core.commons.search.model.ServizioApplicativoRuoloModel(new ComplexField(father,"servizio-applicativo-ruolo",org.openspcoop2.core.commons.search.ServizioApplicativoRuolo.class,"servizio-applicativo",ServizioApplicativo.class));
 	
 	}
 	
@@ -75,6 +77,8 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	public IField AS_CLIENT = null;
 	 
 	public org.openspcoop2.core.commons.search.model.IdSoggettoModel ID_SOGGETTO = null;
+	 
+	public org.openspcoop2.core.commons.search.model.ServizioApplicativoRuoloModel SERVIZIO_APPLICATIVO_RUOLO = null;
 	 
 
 	@Override

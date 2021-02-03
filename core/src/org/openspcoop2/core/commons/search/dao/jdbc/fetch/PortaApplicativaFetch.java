@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.commons.search.PortaApplicativaAzione;
 
 
@@ -161,13 +162,13 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(PortaApplicativa.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("porte_applicative","id","seq_porte_applicative","porte_applicative_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORTE_APPLICATIVE,"id","seq_"+CostantiDB.PORTE_APPLICATIVE,CostantiDB.PORTE_APPLICATIVE+"_init_seq");
 			}
 			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("porte_applicative_sa","id","seq_porte_applicative_sa","porte_applicative_sa_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORTE_APPLICATIVE_SA,"id","seq_"+CostantiDB.PORTE_APPLICATIVE_SA,CostantiDB.PORTE_APPLICATIVE_SA+"_init_seq");
 			}
 			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("pa_azioni","id","seq_pa_azioni","pa_azioni_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORTE_APPLICATIVE_AZIONI,"id","seq_"+CostantiDB.PORTE_APPLICATIVE_AZIONI,CostantiDB.PORTE_APPLICATIVE_AZIONI+"_init_seq");
 			}
 			
 			else{

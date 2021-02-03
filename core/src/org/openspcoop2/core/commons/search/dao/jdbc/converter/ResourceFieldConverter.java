@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.Resource;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -173,13 +174,13 @@ public class ResourceFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(Resource.model())){
-			return "api_resources";
+			return CostantiDB.API_RESOURCES;
 		}
 		if(model.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 
 

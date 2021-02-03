@@ -419,7 +419,9 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			try {
 				AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), alarmEngineConfig);
 			} catch(Exception e) {
-				pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
+				String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+				ControlStationCore.getLog().error(errorMsg, e);
+				pd.setMessage(errorMsg);
 			}
 				
 			// Preparo la lista

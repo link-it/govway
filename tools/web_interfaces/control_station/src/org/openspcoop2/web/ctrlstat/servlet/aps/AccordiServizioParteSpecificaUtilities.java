@@ -2313,7 +2313,9 @@ public class AccordiServizioParteSpecificaUtilities {
 					if(bfError.length()>0) {
 						bfError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
-					bfError.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage()));
+					String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+					ControlStationCore.getLog().error(errorMsg, e);
+					bfError.append(errorMsg);
 				}		
 			}
 			if(bfError.length()>0) {
@@ -2655,7 +2657,9 @@ public class AccordiServizioParteSpecificaUtilities {
 					if(bfError.length()>0) {
 						bfError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
-					bfError.append(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage()));
+					String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+					ControlStationCore.getLog().error(errorMsg, e);
+					bfError.append(errorMsg);
 				}		
 			}
 			if(bfError.length()>0) {

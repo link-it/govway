@@ -57,24 +57,19 @@ public class CostantiConfigurazione {
 	public final static String PDD_MONITOR_FW_CONF_DIR = "org.openspcoop2.monitor.config_dir";
 	public final static String PDD_MONITOR_DEFAULT_PROTOCOL = "org.openspcoop2.monitor.defaultProtocol";
 	
-	public static final String ALARM_ACTIVE_SERVICE_URL = "org.openspcoop2.monitor.alarm.active.service.url";
-	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_START_ALARM = "org.openspcoop2.monitor.alarm.active.service.url.suffix.startAlarm";
-	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_STOP_ALARM = "org.openspcoop2.monitor.alarm.active.service.url.suffix.stopAlarm";
-	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_RESTART_ALARM = "org.openspcoop2.monitor.alarm.active.service.url.suffix.restartAlarm";
-	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_OK = "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateStateAlarm.ok";
-	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_WARNING = "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateStateAlarm.warning";
-	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_STATE_ALARM_ERROR = "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateStateAlarm.error";
-	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_ACK_ENABLED= "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateAcknoledgement.enabled";
-	public static final String ALARM_ACTIVE_SERVICE_URL_SUFFIX_UPDATE_ACK_DISABLED= "org.openspcoop2.monitor.alarm.active.service.url.suffix.updateAcknoledgement.disabled";
+	public static final String ALARM_ACTIVE_SERVICE_URL = "org.openspcoop2.monitor.alarm.active.service.url";		
+	public static final String ALARM_ACTIVE_SERVICE_URL_MANAGER_USERNAME = "org.openspcoop2.monitor.alarm.active.service.manager.username";
+	public static final String ALARM_ACTIVE_SERVICE_URL_MANAGER_PASSWORD = "org.openspcoop2.monitor.alarm.active.service.manager.password";
 	
-	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_START_ALARM = "startAlarm=true";
-	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_STOP_ALARM = "stopAlarm=true";
-	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_RESTART_ALARM = "restartAlarm=true";
-	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_OK = "updateStateAlarm=OK";
-	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_WARNING = "updateStateAlarm=WARNING";
-	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_STATE_ALARM_ERROR = "updateStateAlarm=ERROR";
-	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_ACK_ENABLED= "updateAcknoledgement=true";
-	public static final String ALARM_ACTIVE_SERVICE_URL_DEFAULT_VALUE_UPDATE_ACK_DISABLED= "updateAcknoledgement=false";
+	public static final String ALARM_ACTIVE_SERVICE_URL_HTTPS = "org.openspcoop2.monitor.alarm.active.service.https";	
+	public static final String ALARM_ACTIVE_SERVICE_URL_HTTPS_HOSTNAME_VERIFIER = "org.openspcoop2.monitor.alarm.active.service.https.hostnameVerifier";	
+	public static final String ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH = "org.openspcoop2.monitor.alarm.active.service.https.serverAuth";	
+	public static final String ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_PATH = "org.openspcoop2.monitor.alarm.active.service.https.serverAuth.truststorePath";	
+	public static final String ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_TYPE = "org.openspcoop2.monitor.alarm.active.service.https.serverAuth.truststoreType";
+	public static final String ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_PASSWORD = "org.openspcoop2.monitor.alarm.active.service.https.serverAuth.truststorePassword";
+
+	public static final String ALARM_ACTIVE_SERVICE_READ_CONNECTION_TIMEOUT = "org.openspcoop2.monitor.alarm.active.service.readConnectionTimeout";	
+	public static final String ALARM_ACTIVE_SERVICE_CONNECTION_TIMEOUT = "org.openspcoop2.monitor.alarm.active.service.connectionTimeout";	
 	
 	public static final String ALARM_HISTORY_ENABLED = "org.openspcoop2.monitor.alarm.history.enabled";
 	

@@ -101,6 +101,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Ruolo }
+     */
+    public Ruolo createRuolo() {
+        return new Ruolo();
+    }
+
+    /**
      * Create an instance of {@link IdServizioApplicativo }
      */
     public IdServizioApplicativo createIdServizioApplicativo() {
@@ -126,6 +133,13 @@ public class ObjectFactory {
      */
     public IdAccordoServizioParteComuneAzione createIdAccordoServizioParteComuneAzione() {
         return new IdAccordoServizioParteComuneAzione();
+    }
+
+    /**
+     * Create an instance of {@link ServizioApplicativoRuolo }
+     */
+    public ServizioApplicativoRuolo createServizioApplicativoRuolo() {
+        return new ServizioApplicativoRuolo();
     }
 
     /**
@@ -199,6 +213,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IdSoggettoRuolo }
+     */
+    public IdSoggettoRuolo createIdSoggettoRuolo() {
+        return new IdSoggettoRuolo();
+    }
+
+    /**
      * Create an instance of {@link Gruppo }
      */
     public Gruppo createGruppo() {
@@ -241,6 +262,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IdRuolo }
+     */
+    public IdRuolo createIdRuolo() {
+        return new IdRuolo();
+    }
+
+    /**
      * Create an instance of {@link PortaApplicativaServizioApplicativo }
      */
     public PortaApplicativaServizioApplicativo createPortaApplicativaServizioApplicativo() {
@@ -259,6 +287,13 @@ public class ObjectFactory {
      */
     public IdPortaApplicativa createIdPortaApplicativa() {
         return new IdPortaApplicativa();
+    }
+
+    /**
+     * Create an instance of {@link SoggettoRuolo }
+     */
+    public SoggettoRuolo createSoggettoRuolo() {
+        return new SoggettoRuolo();
     }
 
     /**

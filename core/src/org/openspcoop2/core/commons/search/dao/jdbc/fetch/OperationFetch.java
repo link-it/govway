@@ -31,6 +31,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.Operation;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -99,7 +100,7 @@ public class OperationFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(Operation.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("port_type_azioni","id","seq_port_type_azioni","port_type_azioni_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORT_TYPE_AZIONI,"id","seq_"+CostantiDB.PORT_TYPE_AZIONI,CostantiDB.PORT_TYPE_AZIONI+"_init_seq");
 			}
 			
 			else{

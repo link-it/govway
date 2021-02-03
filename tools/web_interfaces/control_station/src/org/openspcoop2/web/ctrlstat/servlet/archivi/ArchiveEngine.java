@@ -675,7 +675,9 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			ConfigurazioneAllarmeBean allarmeWrap = this.allarmiConfigurazioneCore.getAllarme(allarme);
 			AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarmeWrap, log, this.alarmEngineConfig);
 		} catch(Exception e) {
-			throw new DriverConfigurazioneException(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
+			String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+			log.error(errorMsg, e);
+			throw new DriverConfigurazioneException(errorMsg, e);
 		}
 	}
 	
@@ -720,7 +722,9 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 		try {
 			AllarmiUtils.notifyStateActiveThread(false, false, false, null, allarmeWrap, log, this.alarmEngineConfig);
 		} catch(Exception e) {
-			throw new DriverConfigurazioneException(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
+			String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+			log.error(errorMsg, e);
+			throw new DriverConfigurazioneException(errorMsg, e);
 		}
 		
 	}
@@ -740,7 +744,9 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 				
 			AllarmiUtils.stopActiveThreads(allarmeList, log, this.alarmEngineConfig);
 		} catch(Exception e) {
-			throw new DriverConfigurazioneException(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SINGOLO_ELIMINATO_NOTIFICA_FALLITA,e.getMessage()));
+			String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SINGOLO_ELIMINATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+			log.error(errorMsg,e);
+			throw new DriverConfigurazioneException(errorMsg);
 		}
 	}
 	

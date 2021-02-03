@@ -25,6 +25,8 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.dao.ISoggettoRuoloServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IRuoloServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaDominioServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IGruppoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
@@ -174,6 +176,48 @@ public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc
 	@Override
 	public ISoggettoServiceSearch getSoggettoServiceSearch() throws ServiceException,NotImplementedException{
 		return new JDBCSoggettoServiceSearch(this);
+	}
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:soggetto-ruolo type:soggetto-ruolo
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.SoggettoRuolo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.SoggettoRuolo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ISoggettoRuoloServiceSearch getSoggettoRuoloServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCSoggettoRuoloServiceSearch(this);
+	}
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:ruolo type:ruolo
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Ruolo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Ruolo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IRuoloServiceSearch getRuoloServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCRuoloServiceSearch(this);
 	}
 	
 	

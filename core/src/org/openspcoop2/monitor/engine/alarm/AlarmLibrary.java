@@ -20,6 +20,8 @@
 
 package org.openspcoop2.monitor.engine.alarm;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -206,6 +208,53 @@ public class AlarmLibrary {
 			alarmThread.updateAcknowledged(acknoledgement);
 		}catch(Exception e){
 			throw new AlarmException(e.getMessage(),e);
+		}
+	}
+	
+	
+	/* Utiltiies per get image threads */
+	
+	public String getAlarmImage(String name) throws AlarmException{
+		if(this.activeThreads!=null && this.activeThreads.size()>0 && this.activeThreads.containsKey(name)){
+			AlarmThread alarmThread = this.activeThreads.get(name);
+			return alarmThread.getStatoAllarme();
+		}
+		else{
+			throw new AlarmException("Alarm ["+name+"] not exists");
+		}
+	}
+	
+	public String getAlarmsImages() throws AlarmException{
+		if(this.activeThreads!=null && this.activeThreads.size()>0){
+			List<String> list = new ArrayList<String>();
+			for (String idAllarme : this.activeThreads.keySet()) {
+				list.add(idAllarme);
+			}
+			Collections.sort(list);
+			StringBuilder sb = new StringBuilder();
+			for (String idAllarme : list) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(idAllarme);
+			}
+			return sb.toString();
+		}
+		else{
+			return "";
+		}
+	}
+	
+	
+	
+	/* Utiltiies per exists threads */
+	
+	public boolean existsAlarm(String name) throws AlarmException{
+		if(this.activeThreads!=null && this.activeThreads.size()>0 && this.activeThreads.containsKey(name)){
+			return true;
+		}
+		else{
+			return false;
 		}
 	}
 	

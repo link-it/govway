@@ -38,6 +38,8 @@ public interface IAlarm {
 	
 	public String getId();
 	
+	public String getNome();
+	
 	public Allarme getConfigAllarme();
 	
 	public AlarmStatus getStatus();

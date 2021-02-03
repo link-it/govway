@@ -53,6 +53,42 @@ public interface IServiceManager {
 	
 	/*
 	 =====================================================================================================================
+	 Services relating to the object with name:soggetto-ruolo type:soggetto-ruolo
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.SoggettoRuolo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.SoggettoRuolo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public ISoggettoRuoloServiceSearch getSoggettoRuoloServiceSearch() throws ServiceException,NotImplementedException;
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:ruolo type:ruolo
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Ruolo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Ruolo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IRuoloServiceSearch getRuoloServiceSearch() throws ServiceException,NotImplementedException;
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
 	 Services relating to the object with name:porta-dominio type:porta-dominio
 	 =====================================================================================================================
 	*/

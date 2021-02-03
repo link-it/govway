@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.commons.search.PortaDelegataAzione;
 
 
@@ -169,13 +170,13 @@ public class PortaDelegataFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(PortaDelegata.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("porte_delegate","id","seq_porte_delegate","porte_delegate_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORTE_DELEGATE,"id","seq_"+CostantiDB.PORTE_DELEGATE,CostantiDB.PORTE_DELEGATE+"_init_seq");
 			}
 			if(model.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("porte_delegate_sa","id","seq_porte_delegate_sa","porte_delegate_sa_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORTE_DELEGATE_SA,"id","seq_"+CostantiDB.PORTE_DELEGATE_SA,CostantiDB.PORTE_DELEGATE_SA+"_init_seq");
 			}
 			if(model.equals(PortaDelegata.model().PORTA_DELEGATA_AZIONE)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("pd_azioni","id","seq_pd_azioni","pd_azioni_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORTE_DELEGATE_AZIONI,"id","seq_"+CostantiDB.PORTE_DELEGATE_AZIONI,CostantiDB.PORTE_DELEGATE_AZIONI+"_init_seq");
 			}
 			
 			else{

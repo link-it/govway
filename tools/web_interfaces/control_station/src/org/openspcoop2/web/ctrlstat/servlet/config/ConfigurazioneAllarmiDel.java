@@ -140,7 +140,9 @@ public final class ConfigurazioneAllarmiDel extends Action {
 					AllarmiUtils.stopActiveThreads(allarmi, ControlStationCore.getLog(), alarmEngineConfig);
 				}
 			} catch(Exception e) {
-				pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA,e.getMessage()));
+				String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA,e.getMessage());
+				ControlStationCore.getLog().error(errorMsg, e);
+				pd.setMessage(errorMsg);
 			}
 			
 			

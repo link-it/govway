@@ -31,6 +31,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.Resource;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -107,7 +108,7 @@ public class ResourceFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(Resource.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("api_resources","id","seq_api_resources","api_resources_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.API_RESOURCES,"id","seq_"+CostantiDB.API_RESOURCES,CostantiDB.API_RESOURCES+"_init_seq");
 			}
 			
 			else{

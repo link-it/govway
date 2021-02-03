@@ -15848,21 +15848,28 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (AttivazionePolicy policy : listPolicies) {
 				if(policy.getFiltro()!=null && policy.getFiltro().getAzione()!=null) {
 					for (String azioneTmp : azioni) {
-						if(azioneTmp.equals(policy.getFiltro().getAzione())) {
-							String nomePolicy = policy.getAlias();
-							if(nomePolicy==null || "".equals(nomePolicy)) {
-								nomePolicy = policy.getIdActivePolicy();
+						
+						String [] tmp = policy.getFiltro().getAzione().split(",");
+						if(tmp!=null && tmp.length>0) {
+							for (String az : tmp) {
+								if(azioneTmp.equals(az)) {
+									String nomePolicy = policy.getAlias();
+									if(nomePolicy==null || "".equals(nomePolicy)) {
+										nomePolicy = policy.getIdActivePolicy();
+									}
+									if(sizeGruppi>1) {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING_GRUPPO, 
+												azioneTmp, nomePolicy, descrizioneGruppo));
+									}
+									else {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING, 
+												azioneTmp, nomePolicy, descrizioneGruppo));
+									}
+									return false;	
+								}
 							}
-							if(sizeGruppi>1) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING_GRUPPO, 
-										azioneTmp, nomePolicy, descrizioneGruppo));
-							}
-							else {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING, 
-										azioneTmp, nomePolicy, descrizioneGruppo));
-							}
-							return false;	
 						}
+						
 					}
 				}
 			}
@@ -15873,21 +15880,28 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (Allarme allarme : listAllarmi) {
 				if(allarme.getFiltro()!=null && allarme.getFiltro().getAzione()!=null) {
 					for (String azioneTmp : azioni) {
-						if(azioneTmp.equals(allarme.getFiltro().getAzione())) {
-							String nomeAllarme = allarme.getAlias();
-							if(nomeAllarme==null || "".equals(nomeAllarme)) {
-								nomeAllarme = allarme.getNome();
+						
+						String [] tmp = allarme.getFiltro().getAzione().split(",");
+						if(tmp!=null && tmp.length>0) {
+							for (String az : tmp) {
+								if(azioneTmp.equals(az)) {
+									String nomeAllarme = allarme.getAlias();
+									if(nomeAllarme==null || "".equals(nomeAllarme)) {
+										nomeAllarme = allarme.getNome();
+									}
+									if(sizeGruppi>1) {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME_GRUPPO, 
+												azioneTmp, nomeAllarme, descrizioneGruppo));
+									}
+									else {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME, 
+												azioneTmp, nomeAllarme, descrizioneGruppo));
+									}
+									return false;	
+								}
 							}
-							if(sizeGruppi>1) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME_GRUPPO, 
-										azioneTmp, nomeAllarme, descrizioneGruppo));
-							}
-							else {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME, 
-										azioneTmp, nomeAllarme, descrizioneGruppo));
-							}
-							return false;	
 						}
+						
 					}
 				}
 			}
