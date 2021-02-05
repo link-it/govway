@@ -22,6 +22,7 @@
 package org.openspcoop2.core.config.constants;
 
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.utils.TipiDatabase;
 
 /**
@@ -353,4 +354,10 @@ public class CostantiConfigurazione {
 	public static final String CONSEGNA_CON_NOTIFICHE = "__notify";
 	
 	public static final String CONSEGNA_CUSTOM = "__custom";
+	
+	
+	public static final String ALLARMI_TIPOLOGIA_CONFIGURAZIONE = "configurazione";
+	public static final String ALLARMI_TIPOLOGIA_DELEGATA = TipoPdD.DELEGATA.toString(); 
+	public static final String ALLARMI_TIPOLOGIA_APPLICATIVA = TipoPdD.APPLICATIVA.toString(); 
+	public static final String ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE = "SOLO_ASSOCIATE";
 }

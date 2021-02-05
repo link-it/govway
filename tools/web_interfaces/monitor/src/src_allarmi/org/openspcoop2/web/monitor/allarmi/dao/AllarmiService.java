@@ -53,7 +53,9 @@ import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
 import org.openspcoop2.core.commons.search.model.PortaApplicativaModel;
 import org.openspcoop2.core.commons.search.model.PortaDelegataModel;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -82,6 +84,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
@@ -92,7 +95,10 @@ import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiSearchForm;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -118,7 +124,7 @@ public class AllarmiService implements IAllarmiService {
 	private static Logger log = LoggerManager.getPddMonitorSqlLogger();
 
 	private int LIMIT_SEARCH = 10000;
-	private static String TIPOLOGIA_SOLO_ASSOCIATE = "SOLO_ASSOCIATE";
+	private static String TIPOLOGIA_SOLO_ASSOCIATE = CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE;
 	
 	private IServiceManager pluginsServiceManager;
 	private transient DriverConfigurazioneDB driverConfigDB = null;
@@ -135,6 +141,8 @@ public class AllarmiService implements IAllarmiService {
 
 	private AllarmiSearchForm searchForm;
 
+	private static final boolean useDriverConfig = true; 
+	
 	public AllarmiService() {
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
@@ -185,6 +193,189 @@ public class AllarmiService implements IAllarmiService {
 		this.searchForm = search;
 	}
 
+	private AllarmiDriverParams buildDriverParams(AllarmiSearchForm search) throws Exception {
+		
+		AllarmiDriverParams driverParams = new AllarmiDriverParams();
+		
+		String tipologiaRicerca = search.getTipologiaAllarme();
+		driverParams.setTipologiaRicerca(tipologiaRicerca);
+		
+		Boolean enabledParam = null;
+		StatoAllarme statoParam = null;
+		Boolean acknowledgedParam = null;				
+		if (StringUtils.isNotEmpty(search.getStatoSelezionato())
+				&& !StringUtils.equals(
+						search.getStatoSelezionato(), "Qualsiasi")) {
+			if (StringUtils.equals(search.getStatoSelezionato(),
+					"Disabilitato")) {
+				enabledParam=false;
+			} else {
+				enabledParam=true;
+				if (StringUtils.equals(search.getStatoSelezionato(),
+						"Non Disabilitato")) {
+					// nop
+				} else {		
+					// voglio quelli abilitati con un determinato stato
+					String statoCheck = search.getStatoSelezionato();
+					if ("Ok".equals(statoCheck)){
+						statoParam = StatoAllarme.OK;
+					}
+					
+					if ("Warn".equals(statoCheck)){
+						statoParam = StatoAllarme.WARNING;
+					}
+					if ("Warn (Acknowledged)".equals(statoCheck)){
+						statoParam = StatoAllarme.WARNING;
+						acknowledgedParam=true;
+					}
+					if ("Warn (Unacknowledged)".equals(statoCheck)){
+						statoParam = StatoAllarme.WARNING;
+						acknowledgedParam=false;
+					}
+					
+					if ("Error".equals(statoCheck)){
+						statoParam = StatoAllarme.ERROR;
+					}
+					if ("Error (Acknowledged)".equals(statoCheck)){
+						statoParam = StatoAllarme.ERROR;
+						acknowledgedParam=true;
+					}
+					if ("Error (Unacknowledged)".equals(statoCheck)){
+						statoParam = StatoAllarme.ERROR;
+						acknowledgedParam=false;
+					}
+				
+				}
+				
+			}
+		}
+		driverParams.setEnabled(enabledParam);
+		driverParams.setStato(statoParam);
+		driverParams.setAcknowledged(acknowledgedParam);
+		
+		String nomeAllarme = null;
+		if (StringUtils.isNotEmpty(search.getNomeAllarme())) {
+			nomeAllarme = search.getNomeAllarme();
+		}
+		driverParams.setNomeAllarme(nomeAllarme);
+		
+		
+		// Utenze
+		
+		List<IDSoggetto> listSoggettiProprietariAbilitati = null;
+		List<IDServizio> listIDServizioAbilitati = null;
+		if(search.getPermessiUtenteOperatore()!=null) {
+			if(search.getPermessiUtenteOperatore().getListIDSoggetti()!=null && !search.getPermessiUtenteOperatore().getListIDSoggetti().isEmpty()) {
+				listSoggettiProprietariAbilitati = search.getPermessiUtenteOperatore().getListIDSoggetti();
+			}
+			if(search.getPermessiUtenteOperatore().getListIDServizi()!=null && !search.getPermessiUtenteOperatore().getListIDServizi().isEmpty()) {
+				listIDServizioAbilitati = search.getPermessiUtenteOperatore().getListIDServizi();
+			}
+		}
+		driverParams.setListSoggettiProprietariAbilitati(listSoggettiProprietariAbilitati);
+		driverParams.setListIDServizioAbilitati(listIDServizioAbilitati);
+		
+		
+		// Protocollo
+		
+		List<String> tipoSoggettiByProtocollo = null;
+		List<String> tipoServiziByProtocollo = null;
+		String protocollo = null;
+		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
+		// protocollo e' impostato anche scegliendo la modalita'
+		//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		if (search.isSetFiltroProtocollo()) {
+			protocollo = search.getProtocollo();
+			if(StringUtils.isNotEmpty(protocollo)) {
+				
+				IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+				IProtocolConfiguration pConfig = protocolFactory.createProtocolConfiguration();
+				
+				tipoSoggettiByProtocollo = pConfig.getTipiSoggetti();
+				
+				tipoServiziByProtocollo = new ArrayList<String>();
+				tipoServiziByProtocollo.addAll(pConfig.getTipiServizi(ServiceBinding.SOAP));
+				tipoServiziByProtocollo.addAll(pConfig.getTipiServizi(ServiceBinding.REST));
+			}
+		}
+		driverParams.setTipoSoggettiByProtocollo(tipoSoggettiByProtocollo);
+		driverParams.setTipoServiziByProtocollo(tipoServiziByProtocollo);
+		
+		
+		// ID Soggetto Propriatario
+		
+		IDSoggetto idSoggettoProprietario= null;
+		if(search.getTipoNomeSoggettoLocale()!=null && 
+				!StringUtils.isEmpty(search.getTipoNomeSoggettoLocale()) && !"--".equals(search.getTipoNomeSoggettoLocale())){
+			String tipoSoggetto = search.getTipoSoggettoLocale();
+			String nomeSoggetto = search.getSoggettoLocale();
+			if(tipoSoggetto!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(tipoSoggetto) &&
+					nomeSoggetto!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggetto)) {
+				idSoggettoProprietario = new IDSoggetto(tipoSoggetto, nomeSoggetto);
+			}
+		}
+		driverParams.setIdSoggettoProprietario(idSoggettoProprietario);
+		
+		
+		
+		// list IDServizi
+		
+		String gruppo = search.getGruppo();
+		String tipoProtocollo = search.getProtocollo();
+		
+		String tipoSoggetto = search.getTipoSoggettoLocale();
+		String nomeSoggetto = search.getSoggettoLocale();
+		
+		String input = null;
+		
+		boolean apiImplSelected = StringUtils.isNotBlank(search.getNomeServizio());
+		
+		IDAccordo idAccordo = null;
+		IDAccordoFactory idAccordoFactory = null;
+		String api = search.getApi();
+		if( !apiImplSelected && (api!=null && !"".equals(api)) ) {
+			idAccordoFactory = IDAccordoFactory.getInstance();
+			idAccordo = idAccordoFactory.getIDAccordoFromUri(api);
+		}
+		
+		List<IDServizio> listIDServizio = null;
+		if(!apiImplSelected && ( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) ) {
+			listIDServizio = new ArrayList<IDServizio>();
+			List<SelectItem> list = null;
+			boolean distinct = true;
+			
+			if(PddRuolo.DELEGATA.equals(search.getTipologiaAllarme())) {
+				list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,null,null,input, false, search.getPermessiUtenteOperatore(), distinct);
+			}else {
+				// bisogna filtrare per soggetti operativi
+				list = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true, search.getPermessiUtenteOperatore(), distinct);
+			}
+			if(list!=null && list.size()>0) {
+				for (SelectItem selectItem : list) {
+					String servizioString = (String) selectItem.getValue();
+					IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+					listIDServizio.add(idServizio);
+				}
+			}
+			else {
+				// creo un servizio non esistente per fornire 0 dati
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues("-", "-", "-", "-", -1);
+				listIDServizio.add(idServizio);
+			}
+		}
+		
+		if (apiImplSelected) {
+			listIDServizio = new ArrayList<IDServizio>();
+			String servizioString = search.getNomeServizio();
+			IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+			listIDServizio.add(idServizio);
+		}
+		
+		driverParams.setListIDServizio(listIDServizio);
+		
+		return driverParams;
+	}
+	
 	@Override
 	public Long getCountAllarmiByStato(String stato, Integer acknowledged) {
 		Long retValue = 0L;
@@ -202,16 +393,45 @@ public class AllarmiService implements IAllarmiService {
 			
 			search.setStatoSelezionato(stato);
 
-			IExpression e = createQuery(true, search);
-			
-			if(acknowledged!=null){
-				e.equals(Allarme.model().ACKNOWLEDGED,acknowledged);
+			if(useDriverConfig) {
+				
+				AllarmiDriverParams params = this.buildDriverParams(search);
+				
+				String tipologiaRicerca = params.getTipologiaRicerca();
+				Boolean enabledParam = params.getEnabled();
+				StatoAllarme statoParam = params.getStato();
+				Boolean acknowledgedParam = params.getAcknowledged();
+				String nomeAllarme = params.getNomeAllarme();
+				List<IDSoggetto> listSoggettiProprietariAbilitati = params.getListSoggettiProprietariAbilitati();
+				List<IDServizio> listIDServizioAbilitati = params.getListIDServizioAbilitati();
+				List<String> tipoSoggettiByProtocollo = params.getTipoSoggettiByProtocollo();
+				List<String> tipoServiziByProtocollo = params.getTipoServiziByProtocollo(); 
+				IDSoggetto idSoggettoProprietario = params.getIdSoggettoProprietario();
+				List<IDServizio> listIDServizio = params.getListIDServizio();
+				
+				// Solo per questo metodo
+				if(acknowledged!=null){
+					acknowledgedParam = acknowledged.intValue() == CostantiDB.TRUE;
+				}
+				
+				retValue = this.driverConfigDB.countAllarmi(tipologiaRicerca, enabledParam, statoParam, acknowledgedParam, nomeAllarme, 
+						listSoggettiProprietariAbilitati, listIDServizioAbilitati, tipoSoggettiByProtocollo, tipoServiziByProtocollo, idSoggettoProprietario, listIDServizio);
+				
 			}
-
-			NonNegativeNumber nnn = this.allarmeSearchDAO.count(e);
-
-			if (nnn != null) {
-				retValue = nnn.longValue();
+			else {
+			
+				IExpression e = createQuery(true, search);
+				
+				if(acknowledged!=null){
+					e.equals(Allarme.model().ACKNOWLEDGED,acknowledged);
+				}
+	
+				NonNegativeNumber nnn = this.allarmeSearchDAO.count(e);
+	
+				if (nnn != null) {
+					retValue = nnn.longValue();
+				}
+				
 			}
 		} catch (ServiceException e) {
 			AllarmiService.log.error(e.getMessage(), e);
@@ -242,12 +462,38 @@ public class AllarmiService implements IAllarmiService {
 			return new ArrayList<ConfigurazioneAllarmeBean>();
 
 		try {
-			IExpression e = createQuery(false,this.searchForm);
-			IPaginatedExpression pagExpr = this.allarmeSearchDAO
-					.toPaginatedExpression(e);
-
-			List<Allarme> findAll = this.allarmeSearchDAO.findAll(pagExpr.offset(start)
-					.limit(limit));
+			
+			List<Allarme> findAll = null;
+			if(useDriverConfig) {
+				
+				AllarmiDriverParams params = this.buildDriverParams(this.searchForm);
+				
+				String tipologiaRicerca = params.getTipologiaRicerca();
+				Boolean enabledParam = params.getEnabled();
+				StatoAllarme statoParam = params.getStato();
+				Boolean acknowledgedParam = params.getAcknowledged();
+				String nomeAllarme = params.getNomeAllarme();
+				List<IDSoggetto> listSoggettiProprietariAbilitati = params.getListSoggettiProprietariAbilitati();
+				List<IDServizio> listIDServizioAbilitati = params.getListIDServizioAbilitati();
+				List<String> tipoSoggettiByProtocollo = params.getTipoSoggettiByProtocollo();
+				List<String> tipoServiziByProtocollo = params.getTipoServiziByProtocollo(); 
+				IDSoggetto idSoggettoProprietario = params.getIdSoggettoProprietario();
+				List<IDServizio> listIDServizio = params.getListIDServizio();
+				
+				findAll = this.driverConfigDB.findAllAllarmi(tipologiaRicerca, enabledParam, statoParam, acknowledgedParam, nomeAllarme, 
+						listSoggettiProprietariAbilitati, listIDServizioAbilitati, tipoSoggettiByProtocollo, tipoServiziByProtocollo, idSoggettoProprietario, listIDServizio,
+						start,limit);
+				
+			}
+			else {
+			
+				IExpression e = createQuery(false,this.searchForm);
+				IPaginatedExpression pagExpr = this.allarmeSearchDAO
+						.toPaginatedExpression(e);
+				
+				findAll = this.allarmeSearchDAO.findAll(pagExpr.offset(start)
+						.limit(limit));
+			}
 
 			if(findAll != null && findAll.size() > 0){
 				List<ConfigurazioneAllarmeBean> toRet = new ArrayList<ConfigurazioneAllarmeBean>();
@@ -332,10 +578,36 @@ public class AllarmiService implements IAllarmiService {
 		if (this.searchForm == null)
 			return 0;
 
-		NonNegativeNumber nnn = null;
 		try {
-			IExpression e = createQuery(true,this.searchForm);
-			nnn = this.allarmeSearchDAO.count(e);
+			if(useDriverConfig) {
+				
+				AllarmiDriverParams params = this.buildDriverParams(this.searchForm);
+				
+				String tipologiaRicerca = params.getTipologiaRicerca();
+				Boolean enabledParam = params.getEnabled();
+				StatoAllarme statoParam = params.getStato();
+				Boolean acknowledgedParam = params.getAcknowledged();
+				String nomeAllarme = params.getNomeAllarme();
+				List<IDSoggetto> listSoggettiProprietariAbilitati = params.getListSoggettiProprietariAbilitati();
+				List<IDServizio> listIDServizioAbilitati = params.getListIDServizioAbilitati();
+				List<String> tipoSoggettiByProtocollo = params.getTipoSoggettiByProtocollo();
+				List<String> tipoServiziByProtocollo = params.getTipoServiziByProtocollo(); 
+				IDSoggetto idSoggettoProprietario = params.getIdSoggettoProprietario();
+				List<IDServizio> listIDServizio = params.getListIDServizio();
+				
+				long retValue = this.driverConfigDB.countAllarmi(tipologiaRicerca, enabledParam, statoParam, acknowledgedParam, nomeAllarme, 
+						listSoggettiProprietariAbilitati, listIDServizioAbilitati, tipoSoggettiByProtocollo, tipoServiziByProtocollo, idSoggettoProprietario, listIDServizio);
+				
+				return  Long.valueOf(retValue).intValue();
+			}
+			else {
+			
+				IExpression e = createQuery(true,this.searchForm);
+				NonNegativeNumber nnn = this.allarmeSearchDAO.count(e);
+			
+				// Long res = (Long) this.createQuery(true).getSingleResult();
+				return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+			}
 		} catch (ServiceException e1) {
 			AllarmiService.log.error("Errore durante il calcolo del numero dei record", e1);
 		} catch (NotImplementedException e1) {
@@ -344,8 +616,7 @@ public class AllarmiService implements IAllarmiService {
 			AllarmiService.log.error("Errore durante il calcolo del numero dei record", e1);
 		}
 
-		// Long res = (Long) this.createQuery(true).getSingleResult();
-		return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
+		return 0;
 	}
 
 	@Override
@@ -385,11 +656,37 @@ public class AllarmiService implements IAllarmiService {
 			return new ArrayList<ConfigurazioneAllarmeBean>();
 
 		try {
-			IExpression e = createQuery(false,this.searchForm);
-
-			IPaginatedExpression pagExpr = this.allarmeSearchDAO
-					.toPaginatedExpression(e);
-			List<Allarme> findAll =  this.allarmeSearchDAO.findAll(pagExpr);
+			List<Allarme> findAll = null;
+			if(useDriverConfig) {
+				
+				AllarmiDriverParams params = this.buildDriverParams(this.searchForm);
+				
+				String tipologiaRicerca = params.getTipologiaRicerca();
+				Boolean enabledParam = params.getEnabled();
+				StatoAllarme statoParam = params.getStato();
+				Boolean acknowledgedParam = params.getAcknowledged();
+				String nomeAllarme = params.getNomeAllarme();
+				List<IDSoggetto> listSoggettiProprietariAbilitati = params.getListSoggettiProprietariAbilitati();
+				List<IDServizio> listIDServizioAbilitati = params.getListIDServizioAbilitati();
+				List<String> tipoSoggettiByProtocollo = params.getTipoSoggettiByProtocollo();
+				List<String> tipoServiziByProtocollo = params.getTipoServiziByProtocollo(); 
+				IDSoggetto idSoggettoProprietario = params.getIdSoggettoProprietario();
+				List<IDServizio> listIDServizio = params.getListIDServizio();
+				
+				findAll = this.driverConfigDB.findAllAllarmi(tipologiaRicerca, enabledParam, statoParam, acknowledgedParam, nomeAllarme, 
+						listSoggettiProprietariAbilitati, listIDServizioAbilitati, tipoSoggettiByProtocollo, tipoServiziByProtocollo, idSoggettoProprietario, listIDServizio,
+						null,null);
+				
+			}
+			else {
+			
+				IExpression e = createQuery(false,this.searchForm);
+	
+				IPaginatedExpression pagExpr = this.allarmeSearchDAO
+						.toPaginatedExpression(e);
+				findAll =  this.allarmeSearchDAO.findAll(pagExpr);
+				
+			}
 
 			if(findAll != null && findAll.size() > 0){
 				List<ConfigurazioneAllarmeBean> toRet = new ArrayList<ConfigurazioneAllarmeBean>();
@@ -652,7 +949,7 @@ public class AllarmiService implements IAllarmiService {
 
 			// se non e' una count inserisco l'ordinamento
 			if (!isCount) {
-				expr.sortOrder(SortOrder.ASC).addOrder(Allarme.model().NOME);
+				expr.sortOrder(SortOrder.ASC).addOrder(Allarme.model().ALIAS);
 
 			}
 
@@ -1156,7 +1453,7 @@ public class AllarmiService implements IAllarmiService {
 					.toPaginatedExpression(expr);
 			pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
-			List<Object> select = this.allarmeSearchDAO.select(pagExpr, Allarme.model().ALIAS);
+			List<Object> select = this.allarmeSearchDAO.select(pagExpr, true, Allarme.model().ALIAS);
 
 			if(select != null && select.size() > 0)
 				for (Object object : select) {

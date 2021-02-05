@@ -28,7 +28,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -52,9 +52,9 @@ public class AllarmiSearchForm extends BaseSearchForm implements Cloneable {
 	private static final String statoDefaultPaginaStatoAllarmi = "Non Disabilitato";
 	private static final String statoDefaultPaginaConfAllarmi = "All";
 	
-	public static final String TIPOLOGIA_CONFIGURAZIONE = "configurazione";
-	public static final String TIPOLOGIA_DELEGATA = PddRuolo.DELEGATA.toString(); 
-	public static final String TIPOLOGIA_APPLICATIVA = PddRuolo.APPLICATIVA.toString(); 
+	public static final String TIPOLOGIA_CONFIGURAZIONE = CostantiConfigurazione.ALLARMI_TIPOLOGIA_CONFIGURAZIONE;
+	public static final String TIPOLOGIA_DELEGATA = CostantiConfigurazione.ALLARMI_TIPOLOGIA_DELEGATA;
+	public static final String TIPOLOGIA_APPLICATIVA = CostantiConfigurazione.ALLARMI_TIPOLOGIA_APPLICATIVA;
 	
 	private String statoDefault; 
 	
