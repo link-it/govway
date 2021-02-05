@@ -124,10 +124,10 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 					e);
 		}
 	}
-	public DynamicPdDBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
-		super(serviceManager);
+	public DynamicPdDBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
+		super(serviceManager, pluginsServiceManager);
 		try {
-			this.dynamicUtils = new DynamicPdDBeanUtils(serviceManager,log);
+			this.dynamicUtils = new DynamicPdDBeanUtils(serviceManager, pluginsServiceManager,log);
 		} catch (Exception e) {
 			DynamicPdDBean.log.error("lettura delle properties fallita.....",
 					e);

@@ -78,8 +78,8 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		super();
 		this.init();
 	}
-	public DistribuzionePerSABean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
-		super(serviceManager);
+	public DistribuzionePerSABean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager) {
+		super(serviceManager, pluginsServiceManager);
 		this.init();
 	}
 	private void init() {

@@ -66,7 +66,6 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
-import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -126,15 +125,15 @@ public class AllarmiService implements IAllarmiService {
 	private int LIMIT_SEARCH = 10000;
 	private static String TIPOLOGIA_SOLO_ASSOCIATE = CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE;
 	
-	private IServiceManager pluginsServiceManager;
+	private transient IServiceManager pluginsServiceManager;
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 	private IAllarmeService allarmeDAO;
 	private IAllarmeServiceSearch allarmeSearchDAO;
 	private IAllarmeHistoryServiceSearch allarmeHistorySearchDAO;
 	private IAllarmeHistoryService allarmeHistoryDAO;
-	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseServiceManager;
-	private IPluginServiceSearch pluginsServiceSearchDAO;
-	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	private transient org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseServiceManager;
+//	private IPluginServiceSearch pluginsServiceSearchDAO;
+	private transient org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
 	protected DynamicPdDBeanUtils dynamicUtils = null;
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
@@ -160,7 +159,7 @@ public class AllarmiService implements IAllarmiService {
 			// init Service Manager plugins
 			this.pluginsBaseServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
 					.getInstance(AllarmiService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),AllarmiService.log);
-			this.pluginsServiceSearchDAO = this.pluginsBaseServiceManager.getPluginServiceSearch();
+//			this.pluginsServiceSearchDAO = this.pluginsBaseServiceManager.getPluginServiceSearch();
 
 			this.LIMIT_SEARCH = pddMonitorProperties.getSearchFormLimit();
 			
@@ -170,7 +169,7 @@ public class AllarmiService implements IAllarmiService {
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 			
-			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, log);
+			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, this.pluginsBaseServiceManager, log);
 			
 			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
@@ -502,7 +501,8 @@ public class AllarmiService implements IAllarmiService {
 					IdPlugin idPlugin = new IdPlugin();
 					idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 					idPlugin.setTipo(al.getTipo());
-					ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(al, this.pluginsServiceSearchDAO.get(idPlugin));
+					Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
+					ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(al, plugin);
 					this.valorizzaDettaglioAPI(allarmeBean);
 					toRet.add(allarmeBean);
 				}
@@ -547,7 +547,7 @@ public class AllarmiService implements IAllarmiService {
 				IDSoggetto idFruitore = new IDSoggetto(portaDelegata.getIdSoggetto().getTipo(), portaDelegata.getIdSoggetto().getNome());
 				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
 				idPortaDelegata.setNome(portaDelegata.getNome());
-				MappingFruizionePortaDelegata mapping = this.driverConfigDB.getMappingFruizione(idServizio, idFruitore, idPortaDelegata);
+				MappingFruizionePortaDelegata mapping = this.dynamicUtils.getMappingFruizione(idServizio, idFruitore, idPortaDelegata);
 				if(mapping!=null && !mapping.isDefault()) {
 					labelServizio = labelServizio + " (gruppo: "+mapping.getDescrizione()+")";
 				}
@@ -562,7 +562,7 @@ public class AllarmiService implements IAllarmiService {
 						portaApplicativa.getVersioneServizio());
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 				idPortaApplicativa.setNome(portaApplicativa.getNome());
-				MappingErogazionePortaApplicativa mapping = this.driverConfigDB.getMappingErogazione(idServizio, idPortaApplicativa);
+				MappingErogazionePortaApplicativa mapping = this.dynamicUtils.getMappingErogazione(idServizio, idPortaApplicativa);
 				if(mapping!=null && !mapping.isDefault()) {
 					labelServizio = labelServizio + " (gruppo: "+mapping.getDescrizione()+")";
 				}
@@ -695,7 +695,8 @@ public class AllarmiService implements IAllarmiService {
 					IdPlugin idPlugin = new IdPlugin();
 					idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 					idPlugin.setTipo(al.getTipo());
-					ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(al, this.pluginsServiceSearchDAO.get(idPlugin));
+					Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
+					ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(al, plugin);
 					this.valorizzaDettaglioAPI(allarmeBean);
 					toRet.add(allarmeBean);
 				}
@@ -727,7 +728,8 @@ public class AllarmiService implements IAllarmiService {
 				IdPlugin idPlugin = new IdPlugin();
 				idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 				idPlugin.setTipo(configurazioneAllarme.getTipo());
-				ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(configurazioneAllarme, this.pluginsServiceSearchDAO.get(idPlugin));
+				Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
+				ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(configurazioneAllarme, plugin);
 				this.valorizzaDettaglioAPI(allarmeBean);
 				return allarmeBean;
 			}
@@ -1265,7 +1267,7 @@ public class AllarmiService implements IAllarmiService {
 			idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 			idPlugin.setTipo(configurazioneAllarme.getTipo());
 			
-			Plugin plugin = this.pluginsServiceSearchDAO.get(idPlugin);
+			Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
 			
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
 			List<Parameter<?>> sdkParameters = bl.getParameters(context);
@@ -1305,7 +1307,7 @@ public class AllarmiService implements IAllarmiService {
 			idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 			idPlugin.setTipo(configurazioneAllarme.getTipo());
 			
-			Plugin plugin = this.pluginsServiceSearchDAO.get(idPlugin);
+			Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
 			
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
 			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
@@ -1315,24 +1317,6 @@ public class AllarmiService implements IAllarmiService {
 			AllarmiService.log.error(e.getMessage(), e);
 			throw e;
 		}
-	}
-	
-	@Override
-	public List<Plugin> plugins() throws Exception{
-		
-		try {
-		
-			IPaginatedExpression pagExpr = this.pluginsServiceSearchDAO.newPaginatedExpression();
-			pagExpr.limit(this.LIMIT_SEARCH); // non esisteranno cosi tanti plugin 
-			pagExpr.and();
-			pagExpr.equals(Plugin.model().TIPO, TipoPlugin.ALLARME);
-			List<Plugin> listSearch = this.pluginsServiceSearchDAO.findAll(pagExpr);
-			return listSearch;
-		} catch (Exception e) {
-			AllarmiService.log.error(e.getMessage(), e);
-			throw e;
-		}
-		
 	}
 
 	
@@ -1354,7 +1338,8 @@ public class AllarmiService implements IAllarmiService {
 				IdPlugin idPlugin = new IdPlugin();
 				idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
 				idPlugin.setTipo(find.getTipo());
-				return new ConfigurazioneAllarmeBean(find, this.pluginsServiceSearchDAO.get(idPlugin));
+				Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
+				return new ConfigurazioneAllarmeBean(find, plugin);
 			}
 		} catch (ServiceException e) {
 			AllarmiService.log.error(e.getMessage(), e);

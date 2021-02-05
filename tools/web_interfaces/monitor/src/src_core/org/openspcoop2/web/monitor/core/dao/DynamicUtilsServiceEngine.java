@@ -66,10 +66,19 @@ import org.openspcoop2.core.commons.search.utils.ExpressionProperties;
 import org.openspcoop2.core.commons.search.utils.ProjectInfo;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
@@ -141,12 +150,17 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
 
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager;
+	
+	private IPluginServiceSearch pluginsServiceSearchDAO;
+	
 	private transient DriverRegistroServiziDB driverRegistroDB = null;
+	private transient DriverConfigurazioneDB driverConfigDB = null;
 	
 	public DynamicUtilsServiceEngine(){
-		this(null);
+		this(null, null);
 	}
-	public DynamicUtilsServiceEngine(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
+	public DynamicUtilsServiceEngine(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
 		try{
 			if(serviceManager==null) {
 				this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
@@ -174,11 +188,24 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
+			
+			if(pluginsServiceManager==null) {
+				this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+						.getInstance( log).getServiceManager(ProjectInfo.getInstance(), DynamicUtilsServiceEngine.log);
+			}
+			else {
+				this.pluginsServiceManager = pluginsServiceManager;
+			}
+			
+			this.pluginsServiceSearchDAO = this.pluginsServiceManager.getPluginServiceSearch();
+			
+			
 			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 						
 			this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
 			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
 			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
@@ -219,9 +246,17 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
+			
+			this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
+			
+			this.pluginsServiceSearchDAO = this.pluginsServiceManager.getPluginServiceSearch();
+			
+			
 			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			
 			this.driverRegistroDB = new DriverRegistroServiziDB(con, log, tipoDatabase);
+			this.driverConfigDB = new DriverConfigurazioneDB(con, log, tipoDatabase);
 			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
 			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
@@ -2783,5 +2818,42 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 
 		return new ArrayList<IDServizio>();
 	}
+
+	@Override
+	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata) {
+		log.debug("getMappingFruizione [idServizio:" + idServizio + ", idSoggetto:"+idSoggetto+", idPortaDelegata:"+idPortaDelegata+"]");
+		try {
+			return this.driverConfigDB.getMappingFruizione(idServizio, idSoggetto, idPortaDelegata);
+		} catch (DriverConfigurazioneNotFound e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return null;
+	}
+	@Override
+	public MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) {
+		log.debug("MappingErogazionePortaApplicativa [idServizio:" + idServizio + ", idPortaApplicativa:"+idPortaApplicativa+"]");
+		try {
+			return this.driverConfigDB.getMappingErogazione(idServizio, idPortaApplicativa);
+		} catch (DriverConfigurazioneNotFound e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return null;
+	}
 	
+	@Override
+	public Plugin getPlugin(IdPlugin idPlugin) {
+		log.debug("getPlugin [tipoPlugin:" + idPlugin.getTipoPlugin()+", ClassName:" + idPlugin.getClassName()+", Tipo:" + idPlugin.getTipo()+", Label:" + idPlugin.getLabel()+"]");
+		try {
+			return this.pluginsServiceSearchDAO.get(idPlugin);
+		} catch (NotFoundException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return null;
+	}
 }

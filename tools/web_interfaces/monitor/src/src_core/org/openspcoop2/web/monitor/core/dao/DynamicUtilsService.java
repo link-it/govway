@@ -35,8 +35,14 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
@@ -62,10 +68,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	private static Logger log = LoggerManager.getPddMonitorSqlLogger(); 
 
 	public DynamicUtilsService(){
-		this(null);
+		this(null, null);
 	}
-	public DynamicUtilsService(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
-		this.driver = new DynamicUtilsServiceEngine(serviceManager);
+	public DynamicUtilsService(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
+		this.driver = new DynamicUtilsServiceEngine(serviceManager, pluginsServiceManager);
 	}
 	public DynamicUtilsService(Connection con, boolean autoCommit){
 		this(con, autoCommit, null, DynamicUtilsService.log);
@@ -1410,11 +1416,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public PortaDelegata getPortaDelegata(String nomePorta) {
-		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione!=null) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
 			String key = buildKey("PD", nomePorta);
 			String methodName = "getPortaDelegata";
 			try {
-				return (PortaDelegata) AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_ricercheConfigurazione, key, methodName,
+				return (PortaDelegata) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
 						new Class<?>[] {String.class }, nomePorta);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
@@ -1427,11 +1433,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	
 	@Override
 	public PortaApplicativa getPortaApplicativa(String nomePorta) {
-		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione!=null) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
 			String key = buildKey("PA", nomePorta);
 			String methodName = "getPortaApplicativa";
 			try {
-				return (PortaApplicativa) AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_ricercheConfigurazione, key, methodName,
+				return (PortaApplicativa) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
 						new Class<?>[] {String.class }, nomePorta);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
@@ -1439,6 +1445,59 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			}
 		} else {
 			return this.driver.getPortaApplicativa(nomePorta);
+		}
+	}
+	
+	@Override
+	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("MappingFruizionePD", "idServizio:"+idServizio , "idSoggetto:"+idSoggetto, "idPD:"+idPortaDelegata);
+			String methodName = "getMappingFruizione";
+			try {
+				return (MappingFruizionePortaDelegata) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {IDServizio.class, IDSoggetto.class, IDPortaDelegata.class }, 
+						idServizio, idSoggetto, idPortaDelegata);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		} else {
+			return this.driver.getMappingFruizione(idServizio, idSoggetto, idPortaDelegata);
+		}
+	}
+	@Override
+	public MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("MappingErogazionePA", "idServizio:"+idServizio , "idPA:"+idPortaApplicativa);
+			String methodName = "getMappingErogazione";
+			try {
+				return (MappingErogazionePortaApplicativa) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {IDServizio.class, IDPortaApplicativa.class }, 
+						idServizio, idPortaApplicativa);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		} else {
+			return this.driver.getMappingErogazione(idServizio, idPortaApplicativa);
+		}
+	}
+	
+	@Override
+	public Plugin getPlugin(IdPlugin idPlugin) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("Plugin", "tipoPlugin:"+idPlugin.getTipoPlugin() , "tipo:"+idPlugin.getTipo());
+			String methodName = "getPlugin";
+			try {
+				return (Plugin) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {IdPlugin.class }, 
+						idPlugin);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		} else {
+			return this.driver.getPlugin(idPlugin);
 		}
 	}
 }

@@ -134,6 +134,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
 	
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager;
+	
 	private org.openspcoop2.core.statistiche.dao.IServiceManager transazioniStatisticheServiceManager;
 
 	private IStatisticaGiornalieraServiceSearch statGiornaliereSearchDAO;
@@ -158,6 +160,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance(StatisticheGiornaliereService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), StatisticheGiornaliereService.log);
+			
+			this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance(StatisticheGiornaliereService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(), StatisticheGiornaliereService.log);
 			
 			this.transazioniStatisticheServiceManager = (org.openspcoop2.core.statistiche.dao.IServiceManager) DAOFactory
 					.getInstance(StatisticheGiornaliereService.log).getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),StatisticheGiornaliereService.log);
@@ -199,6 +204,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance(log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
 			
+			this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance(log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
+			
 			this.transazioniStatisticheServiceManager = (org.openspcoop2.core.statistiche.dao.IServiceManager) DAOFactory
 					.getInstance(log).getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties,log);
 
@@ -239,6 +247,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance(log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),conConfig,autoCommit,serviceManagerProperties,log);
 			
+			this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance(log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),conConfig,autoCommit,serviceManagerProperties,log);
+			
 			this.transazioniStatisticheServiceManager = (org.openspcoop2.core.statistiche.dao.IServiceManager) DAOFactory
 					.getInstance(log).getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),conStatistiche,autoCommit,serviceManagerProperties,log);
 
@@ -266,6 +277,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	
 	public org.openspcoop2.core.commons.search.dao.IServiceManager getUtilsServiceManager() {
 		return this.utilsServiceManager;
+	}
+	
+	public org.openspcoop2.core.plugins.dao.IServiceManager getPluginsServiceManager() {
+		return this.pluginsServiceManager;
 	}
 	
 	public void setAndamentoTemporaleSearch(

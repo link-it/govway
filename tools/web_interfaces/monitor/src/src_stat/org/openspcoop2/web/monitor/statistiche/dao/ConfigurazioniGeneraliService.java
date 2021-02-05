@@ -116,6 +116,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	private transient IDynamicUtilsService dynamicService = null;
 
 	private transient org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	private transient org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseServiceManager;
 
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
@@ -134,6 +135,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), ConfigurazioniGeneraliService.log);
 		
+			this.pluginsBaseServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),ConfigurazioniGeneraliService.log);
+			
 			this._init(null, null);
 			
 		}catch(Exception e){
@@ -156,6 +160,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
 		
+			this.pluginsBaseServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
+			
 			this._init(con, serviceManagerProperties);
 			
 		}catch(Exception e){
@@ -192,7 +199,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				this.configurazioneUrlInvocazione = config.getUrlInvocazione();
 			}
 			
-			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager,log);
+			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, this.pluginsBaseServiceManager,log);
 
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante la creazione del Service: " + e.getMessage(),e);

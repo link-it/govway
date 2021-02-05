@@ -43,7 +43,14 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -102,14 +109,14 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 	public DynamicPdDBeanUtils(Logger log) throws Exception{
-		this(null, log);
+		this(null, null, log);
 	}
-	public DynamicPdDBeanUtils(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, Logger log) throws Exception{
+	public DynamicPdDBeanUtils(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager, Logger log) throws Exception{
 		this.log = log;
 		try{
 			this.log.debug("Init Dynamic Utils in corso...");
 			if(serviceManager!=null) {
-				this.dynamicUtilsService = new DynamicUtilsService(serviceManager);
+				this.dynamicUtilsService = new DynamicUtilsService(serviceManager, pluginsServiceManager);
 			}
 			else {
 				this.dynamicUtilsService = new DynamicUtilsService();
@@ -1412,5 +1419,16 @@ public class DynamicPdDBeanUtils implements Serializable {
 	
 	public PortaApplicativa getPortaApplicativa(String nomePorta) {
 		return this.dynamicUtilsService.getPortaApplicativa(nomePorta);
+	}
+	
+	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata) {
+		return this.dynamicUtilsService.getMappingFruizione(idServizio, idSoggetto, idPortaDelegata);
+	}
+	public MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) {
+		return this.dynamicUtilsService.getMappingErogazione(idServizio, idPortaApplicativa);
+	}
+	
+	public Plugin getPlugin(IdPlugin idPlugin) {
+		return this.dynamicUtilsService.getPlugin(idPlugin);
 	}
 }
