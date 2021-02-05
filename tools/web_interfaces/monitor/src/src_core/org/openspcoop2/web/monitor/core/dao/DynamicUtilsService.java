@@ -1070,7 +1070,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,Boolean searchTipo, Boolean distinct){
+	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1084,26 +1084,26 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 		
 		if(cache!=null) {
-			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, "VAL:"+val, "searchTipo:"+searchTipo, "distinct:"+distinct);
+			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, "VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore, "distinct:"+distinct);
 			String methodName = "getServiziErogazione";
 			try {
 				return (List<IDServizio>) cache.getObjectCache(this.driver, debug, key, methodName, 
-						new Class<?>[] {String.class, String.class, String.class, String.class, Boolean.class, Boolean.class },
-						tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, distinct);
+						new Class<?>[] {String.class, String.class, String.class, String.class, Boolean.class, PermessiUtenteOperatore.class, Boolean.class },
+						tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, permessiUtenteOperatore, distinct);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
 			}
 		}
 		else {
-			return this.driver.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, distinct);
+			return this.driver.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, permessiUtenteOperatore, distinct);
 		}
 	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, 
 			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
-			String val,Boolean searchTipo, Boolean distinct){
+			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1119,16 +1119,16 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		if(cache!=null) {
 			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, 
 					tipoServizio ,nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, 
-					"VAL:"+val, "searchTipo:"+searchTipo, "distinct:"+distinct);
+					"VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore,  "distinct:"+distinct);
 			String methodName = "getServiziErogazione";
 			try {
 				return (List<IDServizio>) cache.getObjectCache(this.driver, debug, key, methodName, 
 						new Class<?>[] {String.class, String.class, String.class,
 								String.class, String.class, String.class, String.class, Integer.class, String.class,
-								String.class, Boolean.class, Boolean.class },
+								String.class, Boolean.class, PermessiUtenteOperatore.class, Boolean.class },
 						tipoProtocollo, tipoSoggetto, nomeSoggetto, 
 						tipoServizio ,nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, 
-						val, searchTipo, distinct);
+						val, searchTipo, permessiUtenteOperatore, distinct);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
@@ -1137,11 +1137,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		else {
 			return this.driver.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, 
 					tipoServizio ,nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, 
-					val, searchTipo, distinct);
+					val, searchTipo, permessiUtenteOperatore, distinct);
 		}
 	}
 	@Override
-	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,Boolean searchTipo){
+	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1155,19 +1155,19 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 		
 		if(cache!=null) {
-			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, "VAL:"+val, "searchTipo:"+searchTipo);
+			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, "VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore);
 			String methodName = "countServiziErogazione";
 			try {
 				return (Integer) cache.getObjectCache(this.driver, debug, key, methodName, 
-						new Class<?>[] {String.class, String.class, String.class, String.class, Boolean.class },
-						tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo);
+						new Class<?>[] {String.class, String.class, String.class, String.class, Boolean.class, PermessiUtenteOperatore.class },
+						tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, permessiUtenteOperatore);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return 0;
 			}
 		}
 		else {
-			return this.driver.countServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo);
+			return this.driver.countServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, permessiUtenteOperatore);
 		}
 	}
 	@SuppressWarnings("unchecked")
@@ -1247,7 +1247,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, Boolean distinct){
+	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, 
+			PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1261,19 +1262,20 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 		
 		if(cache!=null) {
-			String key = buildKey(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, "VAL:"+val, "searchTipo:"+searchTipo, "distinct:"+distinct);
+			String key = buildKey(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, "VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore, "distinct:"+distinct);
 			String methodName = "getServiziFruizione";
 			try {
 				return (List<IDServizio>) cache.getObjectCache(this.driver, debug, key, methodName, 
-						new Class<?>[] {String.class, String.class, String.class, String.class ,Boolean.class, Boolean.class},
-						tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, distinct);
+						new Class<?>[] {String.class, String.class, String.class, String.class ,Boolean.class, 
+						PermessiUtenteOperatore.class, Boolean.class},
+						tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, permessiUtenteOperatore, distinct);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
 			}
 		}
 		else {
-			return this.driver.getServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, distinct);
+			return this.driver.getServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, permessiUtenteOperatore, distinct);
 		}
 	}
 	@SuppressWarnings("unchecked")
@@ -1282,7 +1284,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			String tipoSoggetto, String nomeSoggetto, 
 			String tipoSoggettoErogatore , String nomeSoggettoErogatore, 
 			String tipoServizio ,String nomeServizio, Integer versioneServizio, String nomeAzione, 
-			String val,Boolean searchTipo, Boolean distinct){
+			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1300,19 +1302,19 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					tipoSoggetto, nomeSoggetto, 
 					tipoSoggettoErogatore, nomeSoggettoErogatore, 
 					tipoServizio , nomeServizio, versioneServizio, nomeAzione, 
-					"VAL:"+val, "searchTipo:"+searchTipo, "distinct:"+distinct);
+					"VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore, "distinct:"+distinct);
 			String methodName = "getServiziFruizione";
 			try {
 				return (List<IDServizio>) cache.getObjectCache(this.driver, debug, key, methodName, 
 						new Class<?>[] {String.class, String.class, String.class, 
 							String.class, String.class,
 							String.class, String.class, Integer.class, String.class, 
-							String.class ,Boolean.class, Boolean.class},
+							String.class ,Boolean.class, PermessiUtenteOperatore.class, Boolean.class},
 						tipoProtocollo, 
 						tipoSoggetto, nomeSoggetto, 
 						tipoSoggettoErogatore, nomeSoggettoErogatore, 
 						tipoServizio ,nomeServizio, versioneServizio, nomeAzione, 
-						val, searchTipo, distinct);
+						val, searchTipo, permessiUtenteOperatore, distinct);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
@@ -1323,11 +1325,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					tipoSoggetto, nomeSoggetto, 
 					tipoSoggettoErogatore, nomeSoggettoErogatore, 
 					tipoServizio ,nomeServizio, versioneServizio, nomeAzione, 
-					val, searchTipo, distinct);
+					val, searchTipo, permessiUtenteOperatore, distinct);
 		}
 	}
 	@Override
-	public int countServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo){
+	public int countServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1341,19 +1343,19 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 		
 		if(cache!=null) {
-			String key = buildKey(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, "VAL:"+val, "searchTipo:"+searchTipo);
+			String key = buildKey(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, "VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore);
 			String methodName = "countServiziFruizione";
 			try {
 				return (Integer) cache.getObjectCache(this.driver, debug, key, methodName,
-						new Class<?>[] {String.class, String.class, String.class, String.class ,Boolean.class},
-						tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo);
+						new Class<?>[] {String.class, String.class, String.class, String.class ,Boolean.class, PermessiUtenteOperatore.class},
+						tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, permessiUtenteOperatore);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return 0;
 			}
 		}
 		else {
-			return this.driver.countServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo);
+			return this.driver.countServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, permessiUtenteOperatore);
 		}
 	}
 	@SuppressWarnings("unchecked")

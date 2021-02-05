@@ -24,6 +24,7 @@ package org.openspcoop2.web.monitor.allarmi.dao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import javax.faces.model.SelectItem;
 
@@ -45,14 +46,25 @@ import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
 import org.openspcoop2.core.commons.search.model.PortaApplicativaModel;
 import org.openspcoop2.core.commons.search.model.PortaDelegataModel;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -73,10 +85,6 @@ import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
-import org.openspcoop2.core.plugins.IdPlugin;
-import org.openspcoop2.core.plugins.Plugin;
-import org.openspcoop2.core.plugins.constants.TipoPlugin;
-import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
@@ -86,6 +94,7 @@ import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiSearchForm;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceEngine;
@@ -95,7 +104,6 @@ import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
-import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.slf4j.Logger;
 
 /**     
@@ -113,6 +121,7 @@ public class AllarmiService implements IAllarmiService {
 	private static String TIPOLOGIA_SOLO_ASSOCIATE = "SOLO_ASSOCIATE";
 	
 	private IServiceManager pluginsServiceManager;
+	private transient DriverConfigurazioneDB driverConfigDB = null;
 	private IAllarmeService allarmeDAO;
 	private IAllarmeServiceSearch allarmeSearchDAO;
 	private IAllarmeHistoryServiceSearch allarmeHistorySearchDAO;
@@ -154,6 +163,12 @@ public class AllarmiService implements IAllarmiService {
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 			
 			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, log);
+			
+			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+
+			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
 			
 		} catch (Exception e) {
 			AllarmiService.log.error(e.getMessage(), e);
@@ -279,10 +294,32 @@ public class AllarmiService implements IAllarmiService {
 				labelServizio = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getVersioneServizio());
 				erogatore = NamingUtils.getLabelSoggetto(tipoProtocollo, portaDelegata.getTipoSoggettoErogatore(),portaDelegata.getNomeSoggettoErogatore());
 				fruitore = NamingUtils.getLabelSoggetto(tipoProtocollo, portaDelegata.getIdSoggetto().getTipo(),portaDelegata.getIdSoggetto().getNome());
+				
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), 
+						portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(),
+						portaDelegata.getVersioneServizio());
+				IDSoggetto idFruitore = new IDSoggetto(portaDelegata.getIdSoggetto().getTipo(), portaDelegata.getIdSoggetto().getNome());
+				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
+				idPortaDelegata.setNome(portaDelegata.getNome());
+				MappingFruizionePortaDelegata mapping = this.driverConfigDB.getMappingFruizione(idServizio, idFruitore, idPortaDelegata);
+				if(mapping!=null && !mapping.isDefault()) {
+					labelServizio = labelServizio + " (gruppo: "+mapping.getDescrizione()+")";
+				}
+				
 			} else if(allarmeBean.isRuoloPortaApplicativa()) {
 				PortaApplicativa portaApplicativa = this.dynamicUtils.getPortaApplicativa(nomePorta);
 				labelServizio = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(allarmeBean.getFiltro().getProtocollo(), portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(), portaApplicativa.getVersioneServizio());
 				erogatore = NamingUtils.getLabelSoggetto(tipoProtocollo, portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome());
+				
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(), 
+						portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), 
+						portaApplicativa.getVersioneServizio());
+				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+				idPortaApplicativa.setNome(portaApplicativa.getNome());
+				MappingErogazionePortaApplicativa mapping = this.driverConfigDB.getMappingErogazione(idServizio, idPortaApplicativa);
+				if(mapping!=null && !mapping.isDefault()) {
+					labelServizio = labelServizio + " (gruppo: "+mapping.getDescrizione()+")";
+				}
 			}
 			allarmeBean.setDettaglioAPI(labelServizio);
 			allarmeBean.setDettaglioFruitore(fruitore);
@@ -539,8 +576,11 @@ public class AllarmiService implements IAllarmiService {
 				exprRuoloPortaPD.equals(Allarme.model().FILTRO.RUOLO_PORTA,RuoloPorta.DELEGATA.getValue());
 				exprRuoloPortaPD.and().or(exprOrListPD.toArray(new IExpression[1]));
 				
+				IExpression exprPortOr = this.allarmeSearchDAO.newExpression();
+				exprPortOr.or();
+				exprPortOr.or(exprRuoloPortaPA,exprRuoloPortaPD);
 				
-				expr.or(exprRuoloPortaPA,exprRuoloPortaPD);
+				expr.and(exprPortOr);
 				expr.and().isNotNull(Allarme.model().FILTRO.NOME_PORTA).and();
 			}
 
@@ -740,8 +780,12 @@ public class AllarmiService implements IAllarmiService {
 			String tipoSoggettoDestinatario = searchForm.getTipoSoggettoLocale();
 			String nomeSoggettoDestinatario = searchForm.getSoggettoLocale();
 
-			expr.equals(model.ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
-			expr.equals(model.ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			if(tipoSoggettoDestinatario!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(tipoSoggettoDestinatario)) {
+				expr.equals(model.ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
+			}
+			if(nomeSoggettoDestinatario!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggettoDestinatario)) {
+				expr.equals(model.ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			}
 		}
 		if (StringUtils.isNotBlank(searchForm.getNomeServizio())) {
 
@@ -754,9 +798,6 @@ public class AllarmiService implements IAllarmiService {
 			expr.equals(model.NOME_SERVIZIO,idServizio.getNome());
 			expr.equals(model.VERSIONE_SERVIZIO,idServizio.getVersione());
 		}
-		
-		// seleziono solo le porte di default
-		expr.notEquals(model.MODE_AZIONE, CostantiConfigurazioni.VALUE_PORTE_DELEGATED_BY);
 
 		if(!count) {
 			expr.sortOrder(SortOrder.ASC);
@@ -810,8 +851,12 @@ public class AllarmiService implements IAllarmiService {
 			String tipoSoggettoDestinatario = searchForm.getTipoSoggettoLocale();
 			String nomeSoggettoDestinatario = searchForm.getSoggettoLocale();
 
-			expr.equals(model.ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
-			expr.equals(model.ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			if(tipoSoggettoDestinatario!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(tipoSoggettoDestinatario)) {
+				expr.equals(model.ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
+			}
+			if(nomeSoggettoDestinatario!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggettoDestinatario)) {
+				expr.equals(model.ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			}
 			setSoggettoProprietario = true;
 		}
 
@@ -828,9 +873,6 @@ public class AllarmiService implements IAllarmiService {
 				expr.equals(model.ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
 			}
 		}
-		
-		// seleziono solo le porte di default
-		expr.notEquals(model.MODE_AZIONE, CostantiConfigurazioni.VALUE_PORTE_DELEGATED_BY);
 
 		if(!count){
 			expr.sortOrder(SortOrder.ASC);
@@ -1114,7 +1156,7 @@ public class AllarmiService implements IAllarmiService {
 					.toPaginatedExpression(expr);
 			pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
-			List<Object> select = this.allarmeSearchDAO.select(pagExpr, Allarme.model().NOME);
+			List<Object> select = this.allarmeSearchDAO.select(pagExpr, Allarme.model().ALIAS);
 
 			if(select != null && select.size() > 0)
 				for (Object object : select) {

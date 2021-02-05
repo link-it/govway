@@ -351,7 +351,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			}
 			
 			if (TipologiaRicerca.uscita.equals(this.search.getTipologiaRicercaEnum())) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, false);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true);
 			} else if (TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum())) {
 				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true);
 			} else {

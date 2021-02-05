@@ -95,7 +95,10 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
+import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
@@ -30958,4 +30961,79 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return config;
 	}
 
+	
+	
+	
+	
+	
+	
+	public MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getMappingErogazione");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getMappingErogazione] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+			
+			return DBMappingUtils.getMappingErogazione(idServizio, idPortaApplicativa, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getCanaliConfigurazione] Exception: " + se.getMessage(),se);
+		} finally {
+			
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
+	
+	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getMappingFruizione");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getMappingFruizione] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+			
+			return DBMappingUtils.getMappingFruizione(idServizio, idSoggetto, idPortaDelegata, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getCanaliConfigurazione] Exception: " + se.getMessage(),se);
+		} finally {
+			
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
 }

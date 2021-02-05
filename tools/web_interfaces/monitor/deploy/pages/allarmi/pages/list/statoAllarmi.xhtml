@@ -310,6 +310,18 @@
 							</h:panelGroup>
 						</rich:column>
 						
+						<rich:column  align="center" width="30px">
+							<f:facet name="header">
+								<h:outputText value="Modalità" id="outModalita" />
+							</f:facet>
+							<h:panelGroup layout="block" style="width: 30px;">
+								<a4j:outputPanel rendered="#{true}" id="alarmModalitaPnl">
+									<i class="material-icons md-18" id="iconaModalitaOpen">#{item.modalitaAttiva ? 'alarm' : 'alarm_off'}</i>
+									<rich:toolTip for="alarmModalitaPnl" mode="client" value="#{item.modalitaAttiva ? 'Attiva' : 'Passiva'}"/>
+								</a4j:outputPanel>
+							</h:panelGroup>
+						</rich:column>
+						
 						<rich:column id="colAlias">
 							<f:facet name="header">
 								<h:outputText id="outNome" value="Nome" />
@@ -341,15 +353,15 @@
 							</f:facet>
 							<h:panelGroup layout="block" style="width: 60px;">
 								<a4j:htmlCommandLink id="dettaglio-iconLink" styleClass="edit-link" value="" action="#{allarmiBean.dettaglioAllarme}">
-									<i class="material-icons md-18" id="iconaSearchOpen">&#xE8B6;</i>
+									<i class="material-icons md-18" id="iconaDettaglioOpen">&#xE8B6;</i>
 									<rich:toolTip id="dettaglioToolLink" for="dettaglio-iconLink" mode="client" value="Visualizza Dettaglio" />
 									<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 									<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
 									<f:setPropertyActionListener value="#{false}" target="#{allarmiBean.editMode}"/>
 								</a4j:htmlCommandLink>
 								<a4j:htmlCommandLink id="edit-iconLink" styleClass="edit-link" value="" action="#{allarmiBean.dettaglioAllarme}" 
-									rendered="#{item.enabled == 1 and allarmiBean.allarmiConsultazioneModificaStatoAbilitata}">
-									<i class="material-icons md-18" id="iconaSearchOpen">edit</i>
+									rendered="#{item.enabled == 1 and (item.modalitaAttiva ? allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmeAttivo : allarmiBean.allarmiConsultazioneModificaStatoAbilitataAllarmePassivo)}">
+									<i class="material-icons md-18" id="iconaModificaOpen">edit</i>
 									<rich:toolTip id="editToolLink" for="edit-iconLink" mode="client" value="Modifica Stato" />
 									<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarme}" />
 									<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>

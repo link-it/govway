@@ -55,7 +55,8 @@ public class AlarmThread implements Runnable {
 	private String threadName;
 	private boolean stop = false;
 	private boolean terminated = false;
-
+	private boolean forceNewCheck = false;
+	
 	private AlarmLogger alarmLogger;
 	
 	public boolean isTerminated() {
@@ -64,6 +65,10 @@ public class AlarmThread implements Runnable {
 
 	public void setStop(boolean stop) {
 		this.stop = stop;
+	}
+	
+	public void forceNewCheck() {
+		this.forceNewCheck = true;
 	}
 
 	public AlarmThread(Logger log,String tipo, String classname, IAlarm alarm, AlarmEngineConfig alarmEngineConfig)
@@ -240,8 +245,17 @@ public class AlarmThread implements Runnable {
 				while(sleep<this.periodMillis && this.stop==false){
 					Utilities.sleep(timeSleep);
 					sleep = sleep+timeSleep;
+					if(this.forceNewCheck) {
+						break;
+					}
 				}
-				this.alarmLogger.debug("Sleep "+this.periodMillis+"ms terminato");
+				if(this.forceNewCheck) {
+					this.alarmLogger.debug("Sleep terminata prematuramente; è stato richiesto un nuovo controllo senza attendere il normale intervallo temporale");
+					this.forceNewCheck = false;
+				}
+				else {
+					this.alarmLogger.debug("Sleep "+this.periodMillis+"ms terminato");
+				}
 			}
 			
 			this.alarmLogger.debug("Thread terminato");

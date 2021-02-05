@@ -26,6 +26,7 @@ import java.util.List;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.utils.beans.BeanUtils;
 import org.openspcoop2.utils.beans.BlackListElement;
 
@@ -174,6 +175,12 @@ public class ConfigurazioneAllarmeBean extends Allarme{
 	public void setDettaglioErogatore(String dettaglioErogatore) {
 		this.dettaglioErogatore = dettaglioErogatore;
 	}
+	
+	public boolean isModalitaAttiva() {
+		boolean attivo = TipoAllarme.ATTIVO.equals(this.getTipoAllarme());
+		return attivo;
+	}
+	
 	
 //	@Override
 //	public String getTipo() {

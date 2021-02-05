@@ -31,6 +31,7 @@ import java.util.Properties;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -2095,6 +2096,47 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	public boolean existsAllarmi(TipoAllarme tipoAllarme) throws DriverControlStationException{ 
+		String nomeMetodo = "existsAllarmi";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.existsAllarmi(tipoAllarme);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public long countAllarmi(TipoAllarme tipoAllarme) throws DriverControlStationException{ 
+		String nomeMetodo = "countAllarmi";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.countAllarmi(tipoAllarme);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public boolean existsAllarme(String nome) throws DriverControlStationException{
 		Connection con = null;
 		String nomeMetodo = "existsAllarme";

@@ -32,8 +32,6 @@ import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneGruppo;
-import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
@@ -83,7 +81,7 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
-import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceEngine;
@@ -368,10 +366,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		int count = 0; 
 		String value = null;
 		boolean isErogatore = false;
-		boolean isReferente = true;
-		String tipoSoggetto = null;
-		String nomeSoggetto =  null;
-
+		
 		String tipoProtocollo = this.search.getProtocollo();
 		String gruppo = this.search.getGruppo();
 
@@ -407,60 +402,39 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			}else {
 				ConfigurazioniGeneraliService.log.debug("Calcolo numero " + CostantiConfigurazioni.CONF_ASPC_LABEL);
 				if(this.getSearch().getTipoNomeSoggettoLocale()!=null && !StringUtils.isEmpty(this.getSearch().getTipoNomeSoggettoLocale()) 
-						&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())){
-					tipoSoggetto = this.getSearch().getTipoSoggettoLocale();
-					nomeSoggetto = this.getSearch().getSoggettoLocale();
-					count =   this.dynamicService.countAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore, gruppo);
-				}else {
-					// non ho selezionato ne servizio ne soggetto
-					UserDetailsBean user = Utility.getLoggedUser();
-
-					if(!user.isAdmin()) {
-						List<AccordoServizioParteComune> accordiServizio = this.dynamicService.getAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore, gruppo);
-
-						for (AccordoServizioParteComune accordoServizioParteComune : accordiServizio) {
-							// controllo sul soggetto
-							boolean existsPermessoSoggetto = false;
-							if(user.getSizeSoggetti()>0){
-								for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
-									if(accordoServizioParteComune.getIdReferente().getTipo().equals(utenteSoggetto.getTipo()) &&
-											accordoServizioParteComune.getIdReferente().getNome().equals(utenteSoggetto.getNome())){
-										existsPermessoSoggetto = true;
-										break;
-									}
-								}
-							}
-
-							boolean existsPermessoServizio = false;
-							if(!existsPermessoSoggetto){
-								if(user.getSizeServizio()>0){
-									for (IDServizio idServizio : user.getUtenteServizioList()) {
-										AccordoServizioParteSpecifica asps = this.dynamicService.getAspsFromValues(idServizio.getTipo(), idServizio.getNome(),
-												idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome(), idServizio.getVersione());
-
-										IdAccordoServizioParteComune idAccordoServizioParteComune = asps.getIdAccordoServizioParteComune();
-
-										// l'accordo parte comune deve coincidere con l'erogazione associata all'utente 
-										if(idAccordoServizioParteComune.getIdSoggetto().getTipo().equals(accordoServizioParteComune.getIdReferente().getTipo()) &&
-												idAccordoServizioParteComune.getIdSoggetto().getNome().equals(accordoServizioParteComune.getIdReferente().getNome()) &&
-												idAccordoServizioParteComune.getVersione().equals(accordoServizioParteComune.getVersione()) &&
-												idAccordoServizioParteComune.getNome().equals(accordoServizioParteComune.getNome()) ){
-											existsPermessoServizio = true;
-											break;
-										}
-									}
-								}
-							}
-
-							// colleziono le entry visibili all'operatore
-							if(existsPermessoServizio || existsPermessoSoggetto)
-								count ++;
-						}
-
-					}  else {
-						// utente amministratore
-						count =   this.dynamicService.countAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, isReferente, isErogatore, gruppo);
+						&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())
+						&& !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.getSearch().getTipoNomeSoggettoLocale())){
+					String tipoSoggetto = this.getSearch().getTipoSoggettoLocale();
+					String nomeSoggetto = this.getSearch().getSoggettoLocale();
+					
+					boolean supportoReferente = false;
+					try{
+						supportoReferente = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(tipoSoggetto).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+					}catch(Throwable e) {
+						log.error("Comprensione se il protocollo supporta il soggetto referente: "+e.getMessage());
 					}
+					if(supportoReferente) {
+						count =   this.dynamicService.countAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, true, isErogatore, gruppo);
+					}
+					else {
+						count =   this.dynamicService.countAccordiServizio(tipoProtocollo,null, null, false, isErogatore, gruppo);
+					}
+				}else {
+
+					String protocollo = Utility.getLoggedUtenteModalita();
+					boolean supportoReferente = false;
+					try{
+						if(protocollo!=null && !StringUtils.isEmpty(protocollo) 
+								&& !"--".equals(protocollo)
+								&& !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(protocollo)) {
+							supportoReferente = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+						}
+					}catch(Throwable e) {
+						log.error("Comprensione se il protocollo supporta il soggetto referente: "+e.getMessage());
+					}
+					
+					count =   this.dynamicService.countAccordiServizio(tipoProtocollo,null, null, supportoReferente, isErogatore, gruppo);
+
 				}
 				ConfigurazioniGeneraliService.log.debug("Trovati " + (count) + " " + CostantiConfigurazioni.CONF_ASPC_LABEL);
 				value = ""+count;
@@ -1358,8 +1332,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			String tipoSoggettoDestinatario = searchForm.getTipoSoggettoLocale();
 			String nomeSoggettoDestinatario = searchForm.getSoggettoLocale();
 
-			expr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
-			expr.equals(PortaDelegata.model().ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			if(tipoSoggettoDestinatario!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(tipoSoggettoDestinatario)) {
+				expr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
+			}
+			if(nomeSoggettoDestinatario!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggettoDestinatario)) {
+				expr.equals(PortaDelegata.model().ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			}
 		}
 		if (StringUtils.isNotBlank(searchForm.getNomeServizio())) {
 
@@ -1427,8 +1405,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			String tipoSoggettoDestinatario = searchForm.getTipoSoggettoLocale();
 			String nomeSoggettoDestinatario = searchForm.getSoggettoLocale();
 
-			expr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
-			expr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			if(tipoSoggettoDestinatario!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(tipoSoggettoDestinatario)) {
+				expr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,tipoSoggettoDestinatario);
+			}
+			if(nomeSoggettoDestinatario!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggettoDestinatario)) {
+				expr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,nomeSoggettoDestinatario);
+			}
 			setSoggettoProprietario = true;
 		}
 

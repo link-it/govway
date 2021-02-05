@@ -32,6 +32,7 @@ import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
+import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IAllarmeService;
@@ -295,6 +296,55 @@ public class AllarmiDriverUtils {
 		}
 	}
 	
+	public static boolean existsAllarmi(TipoAllarme tipoAllarme, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "existsAllarmi";
+		
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
+			
+			IAllarmeServiceSearch allarmiServiceSearch = jdbcServiceManager.getAllarmeServiceSearch();
+			
+			IExpression expr = allarmiServiceSearch.newExpression();
+			
+			if(tipoAllarme!=null) {
+				expr.equals(Allarme.model().TIPO_ALLARME, tipoAllarme.getValue());
+			}
+			
+			NonNegativeNumber count = allarmiServiceSearch.count(expr);
+			
+			return count.longValue() > 0;
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} 
+	}
+	
+	public static long countAllarmi(TipoAllarme tipoAllarme, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "countAllarmi";
+		
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
+			
+			IAllarmeServiceSearch allarmiServiceSearch = jdbcServiceManager.getAllarmeServiceSearch();
+			
+			IExpression expr = allarmiServiceSearch.newExpression();
+			
+			if(tipoAllarme!=null) {
+				expr.equals(Allarme.model().TIPO_ALLARME, tipoAllarme.getValue());
+			}
+			
+			NonNegativeNumber count = allarmiServiceSearch.count(expr);
+			
+			return count.longValue();
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} 
+	}
 	
 	public static void createHistoryAllarme(AllarmeHistory allarme, Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "createHistoryAllarme";

@@ -143,6 +143,7 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.AlarmContext;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
@@ -162,6 +163,7 @@ import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.archive.ExportMode;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
@@ -6871,6 +6873,82 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD);
 
+		if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			AlarmEngineConfig alarmEngineConfig = this.confCore.getAllarmiConfig();
+			stato = null;
+			try{
+				stato = AllarmiUtils.getActiveThreadImages(this.log, alarmEngineConfig);
+			}catch(Exception e){
+				this.log.error("Riscontrato errore durante la lettura dello stato degli allarmi attivi: "+e.getMessage(),e);
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			
+			
+			if(stato !=null && !"".equals(stato)) {
+			
+				de = newDataElementStyleRuntime();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP);
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP);
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP);
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+				
+				de = newDataElementStyleRuntime();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART);
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART);
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART);
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+
+			}
+			else {
+				
+				boolean existsAllarmi = this.confCore.existsAllarmi(TipoAllarme.ATTIVO);
+				if(existsAllarmi) {
+					de = newDataElementStyleRuntime();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START);
+					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START);
+					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START);
+					de.setType(DataElementType.LINK);
+					dati.addElement(de);
+				}
+				
+			}
+			
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STATO);
+			if("".equals(stato)) {
+				stato = "Nessun allarme attivo";
+			}
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI);
+			de.setSize(this.getSize());
+			de.setRows(5);
+			de.setCols(80);
+			dati.addElement(de);
+			
+		}
 		
 		return dati;
 	}
@@ -17929,9 +18007,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<String> lstLabels = new ArrayList<>();
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
@@ -18011,6 +18091,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de.setValue(allarme.getTipo());
 //					e.addElement(de);
 					
+					// TipoAllarme
+					
+					de = new DataElement();
+					de.setWidthPx(24);
+					de.setType(DataElementType.IMAGE);
+					DataElementImage imageUp = new DataElementImage();
+					String mode = TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme()) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA;
+					if(TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme())) {
+						imageUp.setImage(CostantiControlStation.ICONA_ALARM_ACTIVE);
+						imageUp.setToolTip(mode);
+					}
+					else {
+						imageUp.setImage(CostantiControlStation.ICONA_ALARM_PASSIVE);
+						imageUp.setToolTip(mode);
+					}
+					de.addImage(imageUp);
+					de.allineaTdAlCentro();
+					de.setValue(mode);
+					e.addElement(de);
+					
 					// Nome 
 					de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
@@ -18025,6 +18125,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setToolTip(allarme.getDescrizione()); 
 					e.addElement(de);
 					
+					// Runtime
+					boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
+					de = new DataElement();
+					if(isActive){
+						de.setValue("Visualizza");
+					}
+					else{
+						de.setValue("-");
+					}
+					de.allineaTdAlCentro();
+					de.setWidthPx(60);
+					if(isActive){
+						Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+						List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+						lstParamEntryState.addAll(lstParamEntry);
+						lstParamEntryState.add(pState);
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState.toArray(new Parameter[lstParamEntryState.size()]));
+					}
+					e.addElement(de);
+										
 					dati.addElement(e);
 				}
 			}
@@ -19047,6 +19167,200 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 		}
 		
+		String stateParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE);
+		boolean state = stateParam!=null && "true".equals(stateParam);
+		
+		if(state) {
+			
+			String refreshParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_REFRESH);
+			boolean refresh = refreshParam!=null && "true".equals(refreshParam);
+			
+			String stopParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_STOP);
+			boolean stop = stopParam!=null && "true".equals(stopParam);
+			
+			String startParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_START);
+			boolean start = startParam!=null && "true".equals(startParam);
+			
+			String restartParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_RESTART);
+			boolean restart = restartParam!=null && "true".equals(restartParam);
+			
+			if(refresh || stop || start || restart) {
+				try {
+					String label = "";
+					if(refresh) {
+						AllarmiUtils.refreshActiveThreadState(allarme, this.log, alarmEngineConfig);
+						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH;
+					}
+					else if(stop) {
+						AllarmiUtils.stopActiveThread(allarme, this.log, alarmEngineConfig);
+						label = "Stop allarme";
+					}
+					else if(start) {
+						AllarmiUtils.startActiveThread(allarme, this.log, alarmEngineConfig);
+						label = "Start allarme";
+					}
+					else if(restart) {
+						AllarmiUtils.restartActiveThread(allarme, this.log, alarmEngineConfig);
+						label = "Restart allarme";
+					}
+					
+					// Dormo qualche secondo per dare il tempo di fare il recheck o stop/start dell'allarme
+					Utilities.sleep(3000);
+					
+					this.pd.setMessage(label+" effettuato con successo", MessageType.INFO);
+					
+				} catch(Exception e) {
+					String errorMsg = "Richiesta di aggiornamento dello stato dell'allarme '"+allarme.getAlias()+"' fallita: "+e.getMessage();
+					ControlStationCore.getLog().error(errorMsg, e);
+					this.pd.setMessage(errorMsg, MessageType.ERROR);
+				}
+			}
+			
+			
+			
+			List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+			if(ruoloPorta!=null) {
+				Parameter parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA, ruoloPorta.getValue());
+				lstParamEntry.add(parRuoloPorta);
+			}
+			if(nomePorta!=null) {
+				Parameter parNomePorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA, nomePorta);
+				lstParamEntry.add(parNomePorta);
+			}
+			if(serviceBinding!=null) {
+				Parameter parServiceBinding = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING, serviceBinding.name());
+				lstParamEntry.add(parServiceBinding);
+			}
+			Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+			lstParamEntry.add(pId);
+			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+			lstParamEntry.add(pState);
+			
+			boolean existsActiveThread = false;
+			try {
+				existsActiveThread = AllarmiUtils.existsActiveThread(allarme, this.log, alarmEngineConfig);
+			} catch(Exception e) {
+				String errorMsg = "Lettura stato del thread dell'allarme '"+allarme.getAlias()+"' fallita: "+e.getMessage();
+				ControlStationCore.getLog().error(errorMsg, e);
+			}
+			
+			
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			// Link refresh
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH);
+			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+			de.setType(DataElementType.LINK);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setRows(20);
+			de.setCols(100);
+			String result = null; 
+			try {
+				if(existsActiveThread) {
+					result = AllarmiUtils.getActiveThreadImage(allarme, this.log, alarmEngineConfig);
+				}
+				else {
+					result = "Il thread di gestione dell'allarme non è attivo";
+				}
+			} catch(Exception e) {
+				String errorMsg = "Lettura stato dell'allarme '"+allarme.getAlias()+"' fallita: "+e.getMessage();
+				ControlStationCore.getLog().error(errorMsg, e);
+				result = errorMsg;
+			}
+			de.setValue(result);
+			dati.addElement(de);
+			
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GESTIONE_THREAD);
+			dati.add(de);
+			
+			// Link ricalcola stato
+			
+			if(existsActiveThread) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH);
+				List<Parameter> lstParamEntryRecheck = new ArrayList<Parameter>();
+				lstParamEntryRecheck.addAll(lstParamEntry);
+				Parameter pRecheck = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_REFRESH, true+"");
+				lstParamEntryRecheck.add(pRecheck);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryRecheck.toArray(new Parameter[lstParamEntryRecheck.size()]));
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
+			
+			// Link restart
+			
+			if(existsActiveThread) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
+				List<Parameter> lstParamEntryRestart = new ArrayList<Parameter>();
+				lstParamEntryRestart.addAll(lstParamEntry);
+				Parameter pRestart = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_RESTART, true+"");
+				lstParamEntryRestart.add(pRestart);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryRestart.toArray(new Parameter[lstParamEntryRestart.size()]));
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
+			
+			// Link stop
+			
+			if(existsActiveThread) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
+				List<Parameter> lstParamEntryStop = new ArrayList<Parameter>();
+				lstParamEntryStop.addAll(lstParamEntry);
+				Parameter pStop = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_STOP, true+"");
+				lstParamEntryStop.add(pStop);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryStop.toArray(new Parameter[lstParamEntryStop.size()]));
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
+			
+			// Link start
+			
+			if(!existsActiveThread) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
+				List<Parameter> lstParamEntryStart = new ArrayList<Parameter>();
+				lstParamEntryStart.addAll(lstParamEntry);
+				Parameter pStart = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_START, true+"");
+				lstParamEntryStart.add(pStart);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryStart.toArray(new Parameter[lstParamEntryStart.size()]));
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
+			
+
+				
+			this.pd.disableEditMode();
+
+			
+			return;
+		}
+		
 		// Informazioni Generali
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
@@ -19317,6 +19631,39 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI); 
 				dati.addElement(de);
 			}
+		}
+		
+		if(tipoOperazione.equals(TipoOperazione.CHANGE) && allarmeAttivo) {
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+			dati.add(de);		
+			
+			List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+			if(ruoloPorta!=null) {
+				Parameter parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA, ruoloPorta.getValue());
+				lstParamEntry.add(parRuoloPorta);
+			}
+			if(nomePorta!=null) {
+				Parameter parNomePorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA, nomePorta);
+				lstParamEntry.add(parNomePorta);
+			}
+			if(serviceBinding!=null) {
+				Parameter parServiceBinding = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING, serviceBinding.name());
+				lstParamEntry.add(parServiceBinding);
+			}
+			Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+			lstParamEntry.add(pId);
+			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+			lstParamEntry.add(pState);
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_EDIT); 
+			dati.addElement(de);
+			
 		}
 		
 		

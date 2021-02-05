@@ -36,6 +36,7 @@ import javax.sql.DataSource;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
@@ -4546,6 +4547,76 @@ public class DriverControlStationDB  {
 		
 		try {
 			return org.openspcoop2.monitor.engine.alarm.utils.AllarmiDriverUtils.allarmiList(ricerca, ruoloPorta, nomePorta, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsAllarmi(TipoAllarme tipoAllarme) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsAllarmi";
+		
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.existsAllarmi(tipoAllarme, con, this.log, this.tipoDB);
+		} catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public long countAllarmi(TipoAllarme tipoAllarme) throws DriverConfigurazioneException {
+		String nomeMetodo = "countAllarmi";
+		
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			return org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.countAllarmi(tipoAllarme, con, this.log, this.tipoDB);
 		} catch (Exception qe) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {

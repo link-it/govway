@@ -136,37 +136,40 @@ public class AllarmiUtils {
 		}
 	}
 	
+	private static HttpRequest buildHttpRequest(AlarmEngineConfig allarmiConfig, String url, HttpRequestMethod method, byte [] content, String contentType) {
+		HttpRequest request = new HttpRequest();
+		request.setUrl(url);
+		request.setContent(content);
+		request.setMethod(method);
+		request.setContentType(contentType);
+		request.setUsername(allarmiConfig.getActiveAlarm_serviceUrl_manager_username());
+		request.setPassword(allarmiConfig.getActiveAlarm_serviceUrl_manager_password());
+		
+		request.setConnectTimeout(allarmiConfig.getActiveAlarm_serviceUrl_connectionTimeout());
+		request.setReadTimeout(allarmiConfig.getActiveAlarm_serviceUrl_readConnectionTimeout());
+		
+		if(allarmiConfig.isActiveAlarm_serviceUrl_https()) {
+			request.setHostnameVerifier(allarmiConfig.isActiveAlarm_serviceUrl_https_verificaHostName());
+			if(allarmiConfig.isActiveAlarm_serviceUrl_https_autenticazioneServer()) {
+				request.setTrustStorePath(allarmiConfig.getActiveAlarm_serviceUrl_https_truststorePath());
+				request.setTrustStoreType(allarmiConfig.getActiveAlarm_serviceUrl_https_truststoreType());
+				request.setTrustStorePassword(allarmiConfig.getActiveAlarm_serviceUrl_https_truststorePassword());
+			}
+			else {
+				request.setTrustAllCerts(true);
+			}
+		}
+		return request;
+	}
+	
 	public static void sendToAllarmi(AlarmEngineConfig allarmiConfig, List<String> post_urls, List<String> post_contents, Logger log) throws Exception{
 		if(post_urls!=null && post_urls.size()>0){
 			for (int i = 0; i < post_urls.size(); i++) {
 				String url = post_urls.get(i);
 				String content = post_contents.get(i);
 
-				log.debug("Invoke ["+post_urls+"] ...");
-				
-				HttpRequest request = new HttpRequest();
-				request.setUrl(url);
-				request.setContent(content.getBytes());
-				request.setMethod(HttpRequestMethod.POST);
-				request.setContentType(HttpConstants.CONTENT_TYPE_JSON);
-				request.setUsername(allarmiConfig.getActiveAlarm_serviceUrl_manager_username());
-				request.setPassword(allarmiConfig.getActiveAlarm_serviceUrl_manager_password());
-				
-				request.setConnectTimeout(allarmiConfig.getActiveAlarm_serviceUrl_connectionTimeout());
-				request.setReadTimeout(allarmiConfig.getActiveAlarm_serviceUrl_readConnectionTimeout());
-				
-				if(allarmiConfig.isActiveAlarm_serviceUrl_https()) {
-					request.setHostnameVerifier(allarmiConfig.isActiveAlarm_serviceUrl_https_verificaHostName());
-					if(allarmiConfig.isActiveAlarm_serviceUrl_https_autenticazioneServer()) {
-						request.setTrustStorePath(allarmiConfig.getActiveAlarm_serviceUrl_https_truststorePath());
-						request.setTrustStoreType(allarmiConfig.getActiveAlarm_serviceUrl_https_truststoreType());
-						request.setTrustStorePassword(allarmiConfig.getActiveAlarm_serviceUrl_https_truststorePassword());
-					}
-					else {
-						request.setTrustAllCerts(true);
-					}
-				}
-				
+				log.debug("Invoke ["+url+"] ...");
+				HttpRequest request = buildHttpRequest(allarmiConfig, url, HttpRequestMethod.POST, content.getBytes(), HttpConstants.CONTENT_TYPE_JSON);				
 				HttpResponse response = HttpUtilities.httpInvoke(request);
 				if(response.getContent()!=null){
 					log.debug("Invoked ["+url+"] Status["+response.getResultHTTPOperation()+"] Message["+new String(response.getContent())+"]");	
@@ -179,6 +182,29 @@ public class AllarmiUtils {
 				}	
 			}
 		}
+	}
+	
+	public static String sendToAllarme(AlarmEngineConfig allarmiConfig, String get_url, Logger log) throws Exception{
+
+		log.debug("Invoke ["+get_url+"] ...");
+		HttpRequest request = buildHttpRequest(allarmiConfig, get_url, HttpRequestMethod.GET, null, null);				
+		HttpResponse response = HttpUtilities.httpInvoke(request);
+		String responseS = null;
+		if(response.getContent()!=null){
+			responseS = new String(response.getContent());
+			log.debug("Invoked ["+get_url+"] Status["+response.getResultHTTPOperation()+"] Payload["+responseS+"]");	
+		}
+		else{
+			log.debug("Invoked ["+get_url+"] Status["+response.getResultHTTPOperation()+"]");
+			responseS = "";
+		}
+		if(response.getResultHTTPOperation()>202){
+			throw new Exception("Error occurs during invoke url["+get_url+"] Status["+response.getResultHTTPOperation()+"] Payload["+responseS+"]");	
+		}
+		else {
+			return responseS;
+		}
+
 	}
 	
 	public static void notifyStateActiveThread(boolean isAdd, boolean modificatoStato, boolean modificatoAckwoldegment,
@@ -306,6 +332,116 @@ public class AllarmiUtils {
 		if(!post_urls.isEmpty()) {
 			AllarmiUtils.sendToAllarmi(allarmiConfig, post_urls, post_contents, log);
 		}
+		
+	}
+	
+	public static void startActiveThread(ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		_manageActiveThreads(allarme, log, allarmiConfig, "start");	
+	}
+	public static void restartActiveThread(ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		_manageActiveThreads(allarme, log, allarmiConfig, "restart");	
+	}
+	public static void stopActiveThread(ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		_manageActiveThreads(allarme, log, allarmiConfig, "stop");	
+	}
+	public static void _manageActiveThreads(ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig, String operazione) throws Exception{
+		
+		List<String> post_urls = new ArrayList<String>();
+		List<String> post_contents = new ArrayList<String>();
+				
+		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		if(prefixUrl.endsWith("/")==false){
+			prefixUrl = prefixUrl + "/";
+		}
+		prefixUrl = prefixUrl + "gestione/attivi/"+allarme.getNome();
+		post_urls.add(prefixUrl);
+		post_contents.add("{\"operazione\": \""+operazione+"\"}");
+				
+		AllarmiUtils.sendToAllarmi(allarmiConfig, post_urls, post_contents, log);
+		
+	}
+	
+	public static boolean existsActiveThread(ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
+			// NOTA: il tipo di allarme non è modificabile.
+			log.debug("Allarme ["+allarme.getNome()+"] è passivo. Non contiene una immagine");
+			return false;
+		}
+		
+		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		if(prefixUrl.endsWith("/")==false){
+			prefixUrl = prefixUrl + "/";
+		}
+		prefixUrl = prefixUrl + "gestione/attivi/"+allarme.getNome()+"/image";
+		log.debug("Invoke ["+prefixUrl+"] ...");
+		HttpRequest request = buildHttpRequest(allarmiConfig, prefixUrl, HttpRequestMethod.GET, null, null);				
+		HttpResponse response = HttpUtilities.httpInvoke(request);
+		return response.getResultHTTPOperation()==200;
+	}
+	
+	public static String getActiveThreadImage(ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
+			// NOTA: il tipo di allarme non è modificabile.
+			log.debug("Allarme ["+allarme.getNome()+"] è passivo. Non contiene una immagine");
+			return "L'allarme è passivo";
+		}
+		
+		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		if(prefixUrl.endsWith("/")==false){
+			prefixUrl = prefixUrl + "/";
+		}
+		prefixUrl = prefixUrl + "gestione/attivi/"+allarme.getNome()+"/image";
+		return AllarmiUtils.sendToAllarme(allarmiConfig, prefixUrl.toString(), log);
+	}
+	
+	public static void refreshActiveThreadState(ConfigurazioneAllarmeBean allarme, Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
+			// NOTA: il tipo di allarme non è modificabile.
+			log.debug("Allarme ["+allarme.getNome()+"] è passivo. Non contiene una immagine");
+			return;
+		}
+		
+		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		if(prefixUrl.endsWith("/")==false){
+			prefixUrl = prefixUrl + "/";
+		}
+		prefixUrl = prefixUrl + "gestione/attivi/"+allarme.getNome()+"/refresh";
+		AllarmiUtils.sendToAllarme(allarmiConfig, prefixUrl.toString(), log);
+	}
+	
+	public static String getActiveThreadImages(Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+
+		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		if(prefixUrl.endsWith("/")==false){
+			prefixUrl = prefixUrl + "/";
+		}
+		prefixUrl = prefixUrl + "gestione/attivi/image";
+		return AllarmiUtils.sendToAllarme(allarmiConfig, prefixUrl.toString(), log);
+	}
+	
+	public static void startActiveThreads(Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		_manageActiveThreads(log, allarmiConfig, "start");	
+	}
+	public static void restartActiveThreads(Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		_manageActiveThreads(log, allarmiConfig, "restart");	
+	}
+	public static void stopActiveThreads(Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
+		_manageActiveThreads(log, allarmiConfig, "stop");	
+	}
+	public static void _manageActiveThreads(Logger log, AlarmEngineConfig allarmiConfig, String operazione) throws Exception{
+		
+		List<String> post_urls = new ArrayList<String>();
+		List<String> post_contents = new ArrayList<String>();
+				
+		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		if(prefixUrl.endsWith("/")==false){
+			prefixUrl = prefixUrl + "/";
+		}
+		prefixUrl = prefixUrl + "gestione/attivi";
+		post_urls.add(prefixUrl);
+		post_contents.add("{\"operazione\": \""+operazione+"\"}");
+				
+		AllarmiUtils.sendToAllarmi(allarmiConfig, post_urls, post_contents, log);
 		
 	}
 	

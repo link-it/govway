@@ -172,6 +172,25 @@ public class AlarmLibrary {
 		}
 	}
 	
+	/* Utiltiies per refresh threads */
+	
+	public void forceNewCheckAlarm(String name) throws AlarmException{
+		try{
+			Allarme conf = null;
+			try{
+				conf = this.getActiveAlarmThread(this.allarmeSearchDAO, name);
+			}catch(Exception e){
+				throw new AlarmException(e.getMessage(),e);
+			}
+			if(conf==null){
+				throw new AlarmException("Alarm ["+name+"] not exists");
+			}
+			AlarmThread alarmThread = this.activeThreads.get(name);
+			alarmThread.forceNewCheck();
+		}catch(Exception e){
+			throw new AlarmException(e.getMessage(),e);
+		}
+	}
 	
 	/* Utiltiies per update stato threads */
 	

@@ -101,7 +101,8 @@ public class CostantiConfigurazione {
 	public static final String ALARM_SCRIPT_SEND_CHANGE_STATUS_OK = "org.openspcoop2.monitor.alarm.script.sendChangeStatusOk";
 	public static final String ALARM_SCRIPT_SHOW_ALL_OPTIONS = "org.openspcoop2.monitor.alarm.script.showAllOptions";
 
-	public static final String ALARM_ADVANCED_OPTIONS_UPDATE_STATE = "org.openspcoop2.monitor.alarm.govwayMonitor.updateState";
+	public static final String ALARM_ADVANCED_OPTIONS_UPDATE_STATE_ACTIVE_ALARM = "org.openspcoop2.monitor.alarm.govwayMonitor.updateStateActiveAlarm";
+	public static final String ALARM_ADVANCED_OPTIONS_UPDATE_STATE_PASSIVE_ALARM = "org.openspcoop2.monitor.alarm.govwayMonitor.updateStatePassiveAlarm";
 	public static final String ALARM_ADVANCED_OPTIONS_ACK_STATUS_ASSOCIATION = "org.openspcoop2.monitor.alarm.acknowledged.statusAssociation";
 	public static final String ALARM_ADVANCED_OPTIONS_GROUP_BY_API = "org.openspcoop2.monitor.alarm.groupBy.api";
 	public static final String ALARM_ADVANCED_OPTIONS_FILTER_API = "org.openspcoop2.monitor.alarm.filter.api";

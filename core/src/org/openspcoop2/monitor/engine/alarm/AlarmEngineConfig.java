@@ -83,7 +83,8 @@ public class AlarmEngineConfig implements Serializable {
 	private boolean scriptSendChangeStatusOk;
 	private boolean scriptShowAllOptions;
 	
-	private boolean optionsUpdateState;
+	private boolean optionsUpdateStateActiveAlarm;
+	private boolean optionsUpdateStatePassiveAlarm;
 	private boolean optionsAcknowledgedStatusAssociation;
 	private boolean optionsGroupByApi;
 	private boolean optionsFilterApi;
@@ -362,12 +363,20 @@ public class AlarmEngineConfig implements Serializable {
 		this.activeAlarm_serviceUrl_https_truststorePassword = activeAlarm_serviceUrl_https_truststorePassword;
 	}
 	
-	public boolean isOptionsUpdateState() {
-		return this.optionsUpdateState;
+	public boolean isOptionsUpdateStateActiveAlarm() {
+		return this.optionsUpdateStateActiveAlarm;
 	}
 
-	public void setOptionsUpdateState(boolean optionsUpdateState) {
-		this.optionsUpdateState = optionsUpdateState;
+	public void setOptionsUpdateStateActiveAlarm(boolean optionsUpdateState) {
+		this.optionsUpdateStateActiveAlarm = optionsUpdateState;
+	}
+	
+	public boolean isOptionsUpdateStatePassiveAlarm() {
+		return this.optionsUpdateStatePassiveAlarm;
+	}
+
+	public void setOptionsUpdateStatePassiveAlarm(boolean optionsUpdateState) {
+		this.optionsUpdateStatePassiveAlarm = optionsUpdateState;
 	}
 
 	public boolean isOptionsAcknowledgedStatusAssociation() {
@@ -517,7 +526,8 @@ public class AlarmEngineConfig implements Serializable {
 		config.setScriptShowAllOptions(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_SHOW_ALL_OPTIONS, true, true)));
 
 		
-		config.setOptionsUpdateState(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_UPDATE_STATE, true, true)));
+		config.setOptionsUpdateStateActiveAlarm(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_UPDATE_STATE_ACTIVE_ALARM, true, true)));
+		config.setOptionsUpdateStatePassiveAlarm(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_UPDATE_STATE_PASSIVE_ALARM, true, true)));
 		config.setOptionsAcknowledgedStatusAssociation(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_ACK_STATUS_ASSOCIATION, true, true)));
 		config.setOptionsGroupByApi(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_GROUP_BY_API, true, true)));
 		config.setOptionsFilterApi(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ADVANCED_OPTIONS_FILTER_API, true, true)));

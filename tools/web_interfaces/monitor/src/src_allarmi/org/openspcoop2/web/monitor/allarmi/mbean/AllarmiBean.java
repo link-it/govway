@@ -33,7 +33,6 @@ import org.openspcoop2.core.allarmi.AllarmeMail;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.AllarmeScript;
 import org.openspcoop2.core.allarmi.IdAllarme;
-import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoPeriodo;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
@@ -193,10 +192,13 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		this.allarme.setPlugin(infoPlugin);
 	}
 	
-	public boolean isAllarmiConsultazioneModificaStatoAbilitata() {
-		return this.alarmEngineConfig.isOptionsUpdateState();
+	public boolean isAllarmiConsultazioneModificaStatoAbilitataAllarmeAttivo() {
+		return this.alarmEngineConfig.isOptionsUpdateStateActiveAlarm();
 	}
-	
+	public boolean isAllarmiConsultazioneModificaStatoAbilitataAllarmePassivo() {
+		return this.alarmEngineConfig.isOptionsUpdateStatePassiveAlarm();
+	}
+		
 	public boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() {
 		return this.alarmEngineConfig.isOptionsAcknowledgedStatusAssociation();
 	}
@@ -758,10 +760,20 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		return null;
 	}
 	
+	private boolean isAllarmeGlobale() {
+		boolean isGlobale = this.allarme.getFiltro()==null || this.allarme.getFiltro().isEnabled()==false || 
+				this.allarme.getFiltro().getNomePorta()==null;
+		return isGlobale;
+	}
+	
+	private boolean isGroupByEnabled() {
+		return this.allarme.getGroupBy()!=null && this.allarme.getGroupBy().isEnabled();
+	}
+	
 	public boolean isVisualizzaRuoloPortaGroupBy() {
+		
 		if(this.allarme.isAllarmeConfigurazione()) {
-			return this.allarme.getFiltro()==null || this.allarme.getFiltro().isEnabled()==false || 
-					this.allarme.getFiltro().getRuoloPorta()==null || RuoloPorta.ENTRAMBI.equals(this.allarme.getFiltro().getRuoloPorta());
+			return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isRuoloPorta();
 		}
 		
 		return false;
@@ -770,9 +782,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	public boolean isVisualizzaProtocolloGroupBy() throws Exception {
 		if(this.allarme.isAllarmeConfigurazione()) {
 			List<String> protocolli = Utility.getProtocolli(Utility.getLoggedUtente());
-			return protocolli.size()>1 && (this.allarme.getFiltro()==null || 
-					this.allarme.getFiltro().isEnabled()==false || 
-							this.allarme.getFiltro().getProtocollo()==null);
+			return this.isAllarmeGlobale() && protocolli.size()>1 && this.isGroupByEnabled() && this.allarme.getGroupBy().isProtocollo();
 		}
 		
 		return false;
@@ -780,10 +790,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	
 	public boolean isVisualizzaSoggettoErogatoreGroupBy() {
 		if(this.allarme.isAllarmeConfigurazione()) {
-			return this.allarme.getFiltro()==null || 
-					this.allarme.getFiltro().isEnabled()==false || 
-							this.allarme.getFiltro().getTipoErogatore()==null ||
-							this.allarme.getFiltro().getNomeErogatore()==null;
+			return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isErogatore();
 		}
 		
 		return false;
@@ -791,27 +798,14 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	
 	public boolean isVisualizzaServizioGroupBy() {
 		if(this.allarme.isAllarmeConfigurazione()) {
-			if(this.alarmEngineConfig.isOptionsGroupByApi()) {
-				return this.allarme.getFiltro()==null || 
-						this.allarme.getFiltro().isEnabled()==false || 
-								this.allarme.getFiltro().getTipoServizio()==null ||
-										this.allarme.getFiltro().getNomeServizio()==null;
-			}
+			return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isServizio();
 		}
 		
 		return false;
 	}
 	
 	public boolean isVisualizzaAzioneGroupBy() {
-		boolean showAzione = this.allarme.getFiltro()==null || 
-				this.allarme.getFiltro().isEnabled()==false || 
-				this.allarme.getFiltro().getAzione()==null;
-		
-		if(showAzione) {
-			showAzione = this.isVisualizzaServizioGroupBy() && this.allarme.getGroupBy().isServizio(); // l'azione la scelgo se ho prima selezionato una API
-		}
-		
-		return showAzione;
+		return this.isGroupByEnabled() && this.allarme.getGroupBy().isAzione();
 	}
 	
 	public String getLabelAzioneGroupBy() {
@@ -861,68 +855,23 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 	
 	public boolean isVisualizzaSoggettoFruitoreGroupBy() {
-		if(this.allarme.isAllarmeConfigurazione()) {
-			return this.allarme.getFiltro()==null || 
-					this.allarme.getFiltro().isEnabled()==false || 
-							this.allarme.getFiltro().getTipoFruitore()==null ||
-									this.allarme.getFiltro().getNomeFruitore()==null;
-		}
-		
-		return false;
+		return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isFruitore();
 	}
 	
 	public boolean isVisualizzaServizioApplicativoFruitoreGroupBy() {
-		if(this.allarme.isAllarmeConfigurazione()) {
-			return this.allarme.getFiltro()==null || 
-					this.allarme.getFiltro().isEnabled()==false || 
-							this.allarme.getFiltro().getRuoloPorta()==null ||
-							this.allarme.getFiltro().getServizioApplicativoFruitore()==null;
-		}
-		
-		return false;
+		return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isServizioApplicativoFruitore();
 	}
 	
 	public boolean isVisualizzaIdentificativoAutenticatoGroupBy() {
-		return !this.allarme.isAllarmeConfigurazione();
+		return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isIdentificativoAutenticato();
+	}
+	
+	public boolean isVisualizzaRichiedenteGroupBy() {
+		return !this.isAllarmeGlobale() && this.isGroupByEnabled() && (this.allarme.getGroupBy().isFruitore() || this.allarme.getGroupBy().isServizioApplicativoFruitore() || this.allarme.getGroupBy().isIdentificativoAutenticato());
 	}
 	
 	public boolean isVisualizzaTokenGroupBy() {
-		boolean visualizzaToken = true;
-		
-		// TODO mancano i field per poter decidere lo stato del token
-//		if(this.allarme.getFiltro() != null && this.allarme.getFiltro().getRuoloPorta() != null) {
-//			if(this.isRuoloPortaApplicativa()) {
-//				PortaApplicativa portaApplicativa = this.dynamicUtilsService.getPortaApplicativa(this.allarme.getFiltro().getNomePorta());
-//				
-//				if(portaApplicativa.getGestioneToken()!=null) {
-//					String gestioneTokenPolicy = portaApplicativa.getGestioneToken().getPolicy();
-//					if(	gestioneTokenPolicy == null ||
-//							gestioneTokenPolicy.equals("") ||
-//							gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-//						visualizzaToken = false;
-//					}						
-//				}
-//				else {
-//					visualizzaToken = false;
-//				}
-//			}
-//			if(this.isRuoloPortaDelegata()) {
-//				PortaDelegata portaDelegata = this.dynamicUtilsService.getPortaDelegata(this.allarme.getFiltro().getNomePorta());
-//				
-//				if(portaDelegata.getGestioneToken()!=null) {
-//					String gestioneTokenPolicy = portaDelegata.getGestioneToken().getPolicy();
-//					if(	gestioneTokenPolicy == null ||
-//							gestioneTokenPolicy.equals("") ||
-//							gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-//						visualizzaToken = false;
-//					}						
-//				}
-//				else {
-//					visualizzaToken = false;
-//				}
-//			}
-//		}
-		return visualizzaToken;
+		return this.isGroupByEnabled() && StringUtils.isNotEmpty(this.allarme.getGroupBy().getToken());
 	}
 	
 	public boolean isVisualizzaProfiloFiltro() {

@@ -2616,6 +2616,18 @@ public class TransazioniService implements ITransazioniService {
 //				idegov.equals(Transazione.model().ID_MESSAGGIO_RICHIESTA,	value);
 //				idegov.equals(Transazione.model().ID_MESSAGGIO_RISPOSTA,	value);
 //				filter.and(idegov);
+				
+				
+				// permessi utente operatore
+				if(this.searchForm.getPermessiUtenteOperatore()!=null){
+					IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
+							Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
+							Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
+					filter.and(permessi);
+					filter.and();
+				}
+				
+				
 				return;
 			}
 			else{
@@ -2628,6 +2640,16 @@ public class TransazioniService implements ITransazioniService {
 			if (StringUtils.isNotEmpty(this.searchForm.getIdTransazione())) {
 				String value = this.searchForm.getIdTransazione().trim();
 				filter.equals(Transazione.model().ID_TRANSAZIONE,	value);
+				
+				// permessi utente operatore
+				if(this.searchForm.getPermessiUtenteOperatore()!=null){
+					IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
+							Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
+							Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
+					filter.and(permessi);
+					filter.and();
+				}
+				
 				return;
 			}
 			else{

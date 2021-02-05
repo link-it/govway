@@ -6,6 +6,8 @@ Corretto bug nella modifica del soggetto non venivano modificate tutte le porte 
 
 Add filtro per tag sul controllo del traffico
 
+Corretto bug sulle ricerche del monitoraggio che non aggiungevano il filtro sui permessi
+
 2021-01-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

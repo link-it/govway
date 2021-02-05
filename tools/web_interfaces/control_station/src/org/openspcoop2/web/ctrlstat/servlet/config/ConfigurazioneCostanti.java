@@ -740,6 +740,11 @@ public class ConfigurazioneCostanti {
 	
 	
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI = "Allarmi";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI = "Allarmi Attivi";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STATO = "Stato";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START = "Avvia tutti gli allarmi";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP = "Termina tutti gli allarmi";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART = "Riavvia tutti gli allarmi";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_DI = "Allarmi di ";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ALLARME = "Allarme";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_FILTRO = "Filtro";
@@ -926,6 +931,11 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI = "timerStatisticheSettimanali";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI = "timerStatisticheMensili";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD = "timerThresholdThread";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI = "allarmiAttivi";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER = "allarmiAttiviManager";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START = "allarmiAttiviStart";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP = "allarmiAttiviStop";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART = "allarmiAttiviRestart";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
@@ -1295,6 +1305,29 @@ public class ConfigurazioneCostanti {
 			LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE_PUNTUALE_ALL_VALUE_TRUE,
 			LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE_PUNTUALE_RISORSE_ALL_VALUE_FALSE
 	};
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE = "AlarmViewState";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_REFRESH = "AlarmRefreshOp";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_STOP = "AlarmStopOp";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_START = "AlarmStartOp";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_RESTART = "AlarmRestartOp";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO = "AlarmStateView";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH = "Refresh";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_EDIT = "Visualizza Informazioni";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO = "AlarmStateUpdate";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH = "Ricalcola Stato";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME = "AlarmStop";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME = "Ferma l'allarme";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME = "AlarmStart";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME = "Avvia l'allarme";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME = "AlarmRestart";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME = "Riavvia l'allarme";
+	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE = "Stato Runtime";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GESTIONE_THREAD = "Gestione Thread";
 	
 	
 	/* LABEL PARAMETRI */

@@ -584,7 +584,7 @@ public class AlarmManager {
 	
 	public static String replaceKeywordTemplate(String original, Allarme configAllarme, boolean script){
 		
-		String newS = original.replace(CostantiConfigurazione.ALARM_KEYWORD_TEMPLATE_NOME_ALLARME, configAllarme.getNome());
+		String newS = original.replace(CostantiConfigurazione.ALARM_KEYWORD_TEMPLATE_NOME_ALLARME, configAllarme.getAlias());
 		
 		StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(configAllarme.getStato());
 		switch ( statoAllarme ) {
