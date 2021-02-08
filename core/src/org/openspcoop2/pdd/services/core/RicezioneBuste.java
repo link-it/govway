@@ -9000,12 +9000,42 @@ public class RicezioneBuste {
 		try{
 			IFiltroDuplicati gestoreFiltroDuplicati = Sbustamento.getGestoreFiltroDuplicati(properties, loader, 
 					openspcoopstate, this.msgContext.getPddContext(), historyBuste, repositoryBuste, oneWayVersione11);
+			
+			boolean oldGestioneConnessione = false;
+			if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+//				System.out.println("[BUSTE] rilascio!!");
+				msgDiag.mediumDebug("Rilascio connessione al database prima di verificare se la richiesta è duplicata ...");
+				oldGestioneConnessione = ((OpenSPCoopStateless)openspcoopstate).isUseConnection();
+				((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
+				openspcoopstate.commit();
+				openspcoopstate.releaseResource();
+//				System.out.println("[BUSTE] rilasciata: "+
+//						(((org.openspcoop2.pdd.core.state.OpenSPCoopState)openspcoopstate).getConnectionDB()==null || ((OpenSPCoopState)openspcoopstate).getConnectionDB().isClosed()));
+			}
+			
 			gestoreFiltroDuplicati.isDuplicata(protocolFactory, bustaRichiesta.getID()); // lo invoco lo stesso per eventuali implementazioni che utilzzano il worflow
 			// Aggiorno duplicati
 			if(printMsg){
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"ricezioneBustaDuplicata.count");
 			}
 			gestoreFiltroDuplicati.incrementaNumeroDuplicati(protocolFactory,bustaRichiesta.getID());
+			
+			if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+//				System.out.println("[BUSTE] rinegozio!!");
+				msgDiag.mediumDebug("Rinegozio connessione dopo la verifica di richiesta duplicata ...");
+				try{
+					openspcoopstate.updateResource(idTransazione);
+					((OpenSPCoopStateless)openspcoopstate).setUseConnection(oldGestioneConnessione);
+//					// Aggiorno risorse
+//					ejbUtils.updateOpenSPCoopState(openspcoopstate);
+//					msgRequest.updateOpenSPCoopState(openspcoopstate);							
+//					System.out.println("[BUSTE] rinegoziata: "+
+//							(((org.openspcoop2.pdd.core.state.OpenSPCoopState)openspcoopstate).getConnectionDB()!=null && !((OpenSPCoopState)openspcoopstate).getConnectionDB().isClosed()));
+				}catch(Exception e){
+					throw new ProtocolException("Rinegoziazione connessione dopo la verifica di richiesta duplicata fallita: "+e.getMessage(),e);
+				} 
+			}
+			
 			openspcoopstate.commit();
 		}catch(Exception e){
 			log.error("Aggiornamento numero duplicati per busta ["+bustaRichiesta.getID()+"] non riuscito: "+e.getMessage(),e);

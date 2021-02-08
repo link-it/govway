@@ -43,4 +43,6 @@ public interface IFiltroDuplicati {
 	
 	public void registraBusta(IProtocolFactory<?> protocolFactory, Busta busta) throws ProtocolException;
 	
+	public boolean releaseRuntimeResourceBeforeCheck();
+	
 }

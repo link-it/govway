@@ -66,6 +66,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	private boolean isDirectConnection = false;
 	@SuppressWarnings("unused")
 	private String modeGetConnection = null;
+	private boolean releaseRuntimeResourceBeforeCheck = false;
 	private String tipoDatabaseRuntime = null; 
 	private Logger log = null;
 	private Logger logSql = null;
@@ -107,6 +108,11 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			}
 		}
 		
+	}
+	
+	@Override
+	public boolean releaseRuntimeResourceBeforeCheck() {
+		return this.releaseRuntimeResourceBeforeCheck;
 	}
 	
 	@Override
@@ -277,6 +283,8 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 //					}
 					this.initDsResource = true;
 					this.modeGetConnection = "DatasourceRuntime";
+					
+					this.releaseRuntimeResourceBeforeCheck = true; // per evitare deadlock
 					
 					// Inizializzazione datasource
 //					GestoreJNDI jndi = new GestoreJNDI();

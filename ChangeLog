@@ -1,3 +1,9 @@
+2021-02-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1139
+	La funzione di filtro delle richieste duplicate poteva far scaturire un deadlock tra le richieste su architetture dove il tracciamento è dispiegato su un database differente da quello di runtime.
+	
 2021-01-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

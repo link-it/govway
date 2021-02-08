@@ -44,6 +44,12 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	public void init(Object context) throws ProtocolException{
 	}
 	
+
+	@Override
+	public boolean releaseRuntimeResourceBeforeCheck() {
+		return false;
+	}
+	
 	@Override
 	public boolean isDuplicata(IProtocolFactory<?> protocolFactory, String id) throws ProtocolException{
 		return this.historyBuste.bustaRicevutaPrecedentemente(id);

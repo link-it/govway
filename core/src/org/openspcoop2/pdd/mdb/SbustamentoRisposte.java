@@ -850,6 +850,19 @@ public class SbustamentoRisposte extends GenericLib {
 						((FiltroDuplicati)gestoreFiltroDuplicati).setGestioneStateless(openspcoopstate instanceof OpenSPCoopStateless);
 						((FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryIntervalloScadenzaMessaggi(this.propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
 					}
+					
+					boolean oldGestioneConnessione = false;
+					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+//						System.out.println("[RISPOSTA] rilascio!!");
+						msgDiag.mediumDebug("Rilascio connessione al database prima di verificare se la risposta è duplicata ...");
+						oldGestioneConnessione = ((OpenSPCoopStateless)openspcoopstate).isUseConnection();
+						((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
+						openspcoopstate.commit();
+						openspcoopstate.releaseResource();
+//						System.out.println("[RISPOSTA] rilasciata: "+
+//								(((org.openspcoop2.pdd.core.state.OpenSPCoopState)openspcoopstate).getConnectionDB()==null || ((OpenSPCoopState)openspcoopstate).getConnectionDB().isClosed()));
+					}
+					
 					boolean bustaDuplicata = gestoreFiltroDuplicati.isDuplicata(protocolFactory, bustaRisposta.getID());
 				
 					// BUSTA GIA' PRECEDENTEMENTE RICEVUTA
@@ -860,8 +873,32 @@ public class SbustamentoRisposte extends GenericLib {
 						// Aggiorno duplicati
 						msgDiag.logPersonalizzato("ricezioneBustaDuplicata.count");
 						gestoreFiltroDuplicati.incrementaNumeroDuplicati(protocolFactory, bustaRisposta.getID());
-						
 						msgDiag.logPersonalizzato("ricezioneBustaDuplicata");
+						
+					}else {
+		
+						// REGISTRAZIONE BUSTA RICEVUTA NELL'HISTORY
+						gestoreFiltroDuplicati.registraBusta(protocolFactory, bustaRisposta);
+						msgDiag.logPersonalizzato("ricezioneBusta.registrazionePerFiltroDuplicati");
+					}
+					
+					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+//						System.out.println("[RISPOSTA] rinegozio!!");
+						msgDiag.mediumDebug("Rinegozio connessione dopo la verifica di risposta duplicata ...");
+						try{
+							openspcoopstate.updateResource(idTransazione);
+							((OpenSPCoopStateless)openspcoopstate).setUseConnection(oldGestioneConnessione);
+//							// Aggiorno risorse
+//							ejbUtils.updateOpenSPCoopState(openspcoopstate);
+//							msgRequest.updateOpenSPCoopState(openspcoopstate);							
+//							System.out.println("[RISPOSTA] rinegoziata: "+
+//									(((org.openspcoop2.pdd.core.state.OpenSPCoopState)openspcoopstate).getConnectionDB()!=null && !((OpenSPCoopState)openspcoopstate).getConnectionDB().isClosed()));
+						}catch(Exception e){
+							throw new Exception("Rinegoziazione connessione dopo la verifica di risposta duplicata fallita: "+e.getMessage(),e);
+						} 
+					}
+					
+					if (bustaDuplicata){
 		
 						if(sendRispostaApplicativa){
 							/*this.xmlBuilder.msgErroreApplicativo_Processamento(proprietaErroreAppl,
@@ -887,11 +924,6 @@ public class SbustamentoRisposte extends GenericLib {
 						esito.setEsitoInvocazione(true); 
 						return esito;
 		
-					}else {
-		
-						// REGISTRAZIONE BUSTA RICEVUTA NELL'HISTORY
-						gestoreFiltroDuplicati.registraBusta(protocolFactory, bustaRisposta);
-						msgDiag.logPersonalizzato("ricezioneBusta.registrazionePerFiltroDuplicati");
 					}
 					
 				}catch(Exception e) {

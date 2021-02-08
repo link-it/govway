@@ -934,8 +934,21 @@ public class Sbustamento extends GenericLib{
 					// Istanzio gestore filtro duplicati
 					IFiltroDuplicati gestoreFiltroDuplicati = getGestoreFiltroDuplicati(this.propertiesReader, this.loader, 
 							openspcoopstate, pddContext, historyBuste, repositoryBuste, oneWayVersione11);
-					boolean bustaDuplicata = gestoreFiltroDuplicati.isDuplicata(protocolFactory, bustaRichiesta.getID());
 					
+					boolean oldGestioneConnessione = false;
+					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+//						System.out.println("[RICHIESTA] rilascio!!");
+						msgDiag.mediumDebug("Rilascio connessione al database prima di verificare se la richiesta è duplicata ...");
+						oldGestioneConnessione = ((OpenSPCoopStateless)openspcoopstate).isUseConnection();
+						((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
+						openspcoopstate.commit();
+						openspcoopstate.releaseResource();
+//						System.out.println("[RICHIESTA] rilasciata: "+
+//								(((org.openspcoop2.pdd.core.state.OpenSPCoopState)openspcoopstate).getConnectionDB()==null || ((OpenSPCoopState)openspcoopstate).getConnectionDB().isClosed()));
+					}
+					
+					boolean bustaDuplicata = gestoreFiltroDuplicati.isDuplicata(protocolFactory, bustaRichiesta.getID());
+									
 					// BUSTA GIA' PRECEDENTEMENTE RICEVUTA
 					if (bustaDuplicata){
 	
@@ -944,8 +957,33 @@ public class Sbustamento extends GenericLib{
 						// Aggiorno duplicati
 						msgDiag.logPersonalizzato("ricezioneBustaDuplicata.count");
 						gestoreFiltroDuplicati.incrementaNumeroDuplicati(protocolFactory,bustaRichiesta.getID());
-							
 						msgDiag.logPersonalizzato("ricezioneBustaDuplicata");
+						
+					}else { 
+	
+						// REGISTRAZIONE BUSTA RICEVUTA NELL'HISTORY
+						gestoreFiltroDuplicati.registraBusta(protocolFactory, bustaRichiesta);
+						msgDiag.logPersonalizzato("ricezioneBusta.registrazionePerFiltroDuplicati");
+						
+					}  
+					
+					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+//						System.out.println("[RICHIESTA] rinegozio!!");
+						msgDiag.mediumDebug("Rinegozio connessione dopo la verifica di richiesta duplicata ...");
+						try{
+							openspcoopstate.updateResource(idTransazione);
+							((OpenSPCoopStateless)openspcoopstate).setUseConnection(oldGestioneConnessione);
+//							// Aggiorno risorse
+//							ejbUtils.updateOpenSPCoopState(openspcoopstate);
+//							msgRequest.updateOpenSPCoopState(openspcoopstate);							
+//							System.out.println("[RICHIESTA] rinegoziata: "+
+//									(((org.openspcoop2.pdd.core.state.OpenSPCoopState)openspcoopstate).getConnectionDB()!=null && !((OpenSPCoopState)openspcoopstate).getConnectionDB().isClosed()));
+						}catch(Exception e){
+							throw new Exception("Rinegoziazione connessione dopo la verifica di richiesta duplicata fallita: "+e.getMessage(),e);
+						} 
+					}
+					
+					if (bustaDuplicata){
 	
 						// 1) 
 						if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione()) && consegnaAffidabile){
@@ -1151,13 +1189,7 @@ public class Sbustamento extends GenericLib{
 						esito.setStatoInvocazione(EsitoLib.OK,null); 
 						return esito;
 	
-					}else { 
-	
-						// REGISTRAZIONE BUSTA RICEVUTA NELL'HISTORY
-						gestoreFiltroDuplicati.registraBusta(protocolFactory, bustaRichiesta);
-						msgDiag.logPersonalizzato("ricezioneBusta.registrazionePerFiltroDuplicati");
-						
-					}  
+					}
 					
 				}catch(Exception e) {
 					msgDiag.logErroreGenerico(e, "GestioneHistoryBusteRicevute");
