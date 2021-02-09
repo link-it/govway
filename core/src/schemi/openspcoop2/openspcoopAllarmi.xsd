@@ -751,6 +751,10 @@
 							<linkit:sql-table-index-column name="id_allarme"/>
 							<linkit:sql-table-index-column name="timestamp_update" order="DESC" ignoreTypeCompatibility="true"/>
 						</linkit:sql-table-index>
+						<linkit:sql-table-index>
+							<!-- per svecchiamento -->
+							<linkit:sql-table-index-column name="timestamp_update" ignoreTypeCompatibility="true"/>
+						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>

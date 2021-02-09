@@ -113,5 +113,6 @@ CREATE TABLE allarmi_history
 
 -- index
 CREATE INDEX index_allarmi_history_1 ON allarmi_history (id_allarme,timestamp_update DESC);
+CREATE INDEX index_allarmi_history_2 ON allarmi_history (timestamp_update);
 
 
