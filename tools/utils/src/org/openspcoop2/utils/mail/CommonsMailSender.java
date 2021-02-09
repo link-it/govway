@@ -23,16 +23,17 @@ package org.openspcoop2.utils.mail;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
-import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
+import org.slf4j.Logger;
 
 /**
  * CommonsMailSender
@@ -120,6 +121,18 @@ public class CommonsMailSender extends Sender {
 			}
 			
 			email.setDebug(debug);
+						
+			if(mail.getUserAgent()!=null) {
+				email.addHeader("User-Agent", mail.getUserAgent());
+			}
+			
+			if(mail.getMessageIdDomain()!=null) {
+				email.addHeader("Message-ID", "<"+UUID.randomUUID().toString()+"@"+mail.getMessageIdDomain()+">");
+			}
+			
+			if(mail.getContentLanguage()!=null) {
+				email.addHeader("Content-Language", mail.getContentLanguage());
+			}
 			
 			if(attach){
 				email.buildMimeMessage();

@@ -81,6 +81,10 @@ public class Test {
 		mail.setSslConfig(sslConfig);
 		mail.setStartTls(false);
 		
+		mail.setUserAgent("GovWay");
+		//mail.setContentLanguage("it-IT");
+		//mail.setMessageIdDomain("link.it");
+		
 		mail.setFrom(from);
 		mail.setTo(to);
 		mail.getCc().add(cc);

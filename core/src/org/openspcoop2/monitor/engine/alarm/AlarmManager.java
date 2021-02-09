@@ -49,8 +49,10 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.alarm.IAlarmLogger;
 import org.openspcoop2.monitor.sdk.constants.AlarmStateValues;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
+import org.openspcoop2.monitor.sdk.exceptions.AlarmNotifyException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.mail.Mail;
 import org.openspcoop2.utils.mail.Sender;
@@ -421,6 +423,9 @@ public class AlarmManager {
 				
 				Mail mail = new Mail();
 			
+				// agent
+				mail.setUserAgent(alarmEngineConfig.getMailAgent());
+				
 				// from
 				if(alarmEngineConfig.getMailFrom()==null){ 
 					throw new Exception("Configurazione mail errata [Parametro 'From' non definito]");
@@ -611,4 +616,211 @@ public class AlarmManager {
 		return newS;
 	}
 
+	public static void notifyChangeStatus(AlarmEngineConfig alarmEngineConfig, Allarme allarme,
+			IAlarm alarm, String pluginClassName,String threadName,
+			AlarmLogger alarmLogger,
+			AlarmStatus oldStatus, AlarmStatus nuovoStatoAllarme,
+			boolean checkAcknowledState) throws AlarmException, AlarmNotifyException {
+		
+		boolean statusChanged = false;
+		String prefix = null;
+		try{
+			
+			// Cambio di stato effettivo ?
+			if(oldStatus==null || oldStatus.getStatus()==null){
+				statusChanged = true;
+			}
+			else{
+				statusChanged = !oldStatus.getStatus().equals(nuovoStatoAllarme.getStatus());
+			}
+			
+			// Gestione invocazione script, mail e notifiche a plugin
+			boolean statusWarningError = AlarmStateValues.WARNING.equals(nuovoStatoAllarme) || AlarmStateValues.ERROR.equals(nuovoStatoAllarme);
+			if(!statusChanged && (!statusWarningError || !checkAcknowledState)){
+				alarmLogger.debug("Cambio di stato non rilevato (old:"+oldStatus+" new:"+nuovoStatoAllarme+")");
+				return;
+			}
+			
+			if(statusChanged) {
+				prefix = "Cambio di stato rilevato (old:"+oldStatus+" new:"+nuovoStatoAllarme+"); ";
+			}
+			else {
+				prefix = "Cambio di stato non rilevato; ";
+			}
+			
+		}catch(Exception e){
+			throw new AlarmException(e.getMessage(),e);
+		}
+		
+		boolean invokePlugin = statusChanged;
+		boolean sendMail = false;
+		boolean invokeScript = false;
+		try {
+			alarmLogger.debug(prefix+"lettura configurazione in corso ...");
+			
+			boolean mailCheckAcknowledgedStatus = alarmEngineConfig.isMailCheckAcknowledgedStatus();
+			boolean mailSendChangeStatusOk = alarmEngineConfig.isMailSendChangeStatusOk();
+			
+			boolean scriptCheckAcknowledgedStatus = alarmEngineConfig.isScriptCheckAcknowledgedStatus();
+			boolean scriptSendChangeStatusOk = alarmEngineConfig.isScriptSendChangeStatusOk();
+			
+			boolean acknowledged = (allarme.getAcknowledged()==null || allarme.getAcknowledged()==1);
+			
+			
+			alarmLogger.debug(prefix+"comprensione se è necessario una notifica di cambio stato per mail/script (acknowledged:"+acknowledged+") ...");
+			
+			alarmLogger.debug(prefix+"mail sendChangeStatusOk:"+mailSendChangeStatusOk+" checkAcknowledgedStatus:"+mailCheckAcknowledgedStatus+"");
+			alarmLogger.debug(prefix+"script sendChangeStatusOk:"+scriptSendChangeStatusOk+" checkAcknowledgedStatus:"+scriptCheckAcknowledgedStatus+"");
+			
+			if(nuovoStatoAllarme!=null) {
+				
+				if(AlarmStateValues.OK.equals(nuovoStatoAllarme.getStatus())){
+					if(mailSendChangeStatusOk){
+						// sia in ack mode che non in ack mode viene spedito da questo metodo.
+						// tanto deve essere spedita solo la prima volta e non continuamente
+						sendMail = (allarme.getMail()!=null &&
+								allarme.getMail().getInvia()!=null && 
+								allarme.getMail().getInvia()==1);
+					}
+					if(scriptSendChangeStatusOk){
+						// sia in ack mode che non in ack mode viene spedito da questo metodo.
+						// tanto deve essere spedita solo la prima volta e non continuamente
+						invokeScript = (allarme.getScript()!=null &&
+								allarme.getScript().getInvoca()!=null && 
+								allarme.getScript().getInvoca()==1);
+					}
+					
+				}
+				
+				
+				else if(AlarmStateValues.WARNING.equals(nuovoStatoAllarme.getStatus())){
+					
+					if( (statusChanged) || (mailCheckAcknowledgedStatus && !acknowledged) ){
+						// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
+						sendMail = (
+									allarme.getMail()!=null && 
+									allarme.getMail().getInvia()!=null && 
+									allarme.getMail().getInvia()==1
+								) 
+								&& 
+								(
+									allarme.getMail()!=null &&
+									allarme.getMail().getInviaWarning()!=null && 
+									allarme.getMail().getInviaWarning()==1
+								);
+					}
+					if( (statusChanged) || (scriptCheckAcknowledgedStatus && !acknowledged) ){
+						// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
+						invokeScript = (
+									allarme.getScript()!=null &&
+									allarme.getScript().getInvoca()!=null && 
+									allarme.getScript().getInvoca()==1
+								) 
+								&&
+								(
+									allarme.getScript()!=null && 
+									allarme.getScript().getInvocaWarning()!=null && 
+									allarme.getScript().getInvocaWarning()==1
+								);
+					}
+					
+				}
+				else if(AlarmStateValues.ERROR.equals(nuovoStatoAllarme.getStatus())){
+					
+					if( (statusChanged) || (mailCheckAcknowledgedStatus && !acknowledged) ){
+						sendMail = allarme.getMail()!=null &&
+								allarme.getMail().getInvia()!=null && 
+								allarme.getMail().getInvia()==1; // note: Alert rappresenta l'invio della mail nel db e non veramente solo il livello error
+					}
+					if( (statusChanged) || (scriptCheckAcknowledgedStatus && !acknowledged) ){
+						invokeScript = allarme.getScript()!=null &&
+								allarme.getScript().getInvoca()!=null && 
+								allarme.getScript().getInvoca()==1; // note: Alert rappresenta l'invio via script nel db e non veramente solo il livello error
+					}
+					
+				}
+			}
+			
+		}catch(Exception e){
+			throw new AlarmException(e.getMessage(),e);
+		}
+		
+		List<Exception> listExceptions = new ArrayList<Exception>();
+		
+		// Notifico cambio di stato all'interfaccia	
+		String pluginInvocationError = null;
+		try {
+			if(invokePlugin) {
+				alarmLogger.debug(prefix+"notifica plugin ...");
+				IDynamicLoader cPlugin = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME,allarme.getTipo(),pluginClassName, alarmLogger.getInternalLogger());
+				IAlarmProcessing alarmProc = (IAlarmProcessing) cPlugin.newInstance();
+				alarmProc.changeStatusNotify(alarm, oldStatus, nuovoStatoAllarme);
+				alarmLogger.debug(prefix+"notifica plugin terminata");
+			}
+		} catch( Exception e) {
+			alarmLogger.error(prefix+"notifica plugin fallita: "+e.getMessage(),e);
+			pluginInvocationError = e.getMessage();
+			listExceptions.add(e);
+		}
+		
+		// Notifico cambio di stato via mail
+		String sendMailError = null;
+		try {
+			if(sendMail){
+				alarmLogger.debug(prefix+"notifica mail ...");
+				List<String> logEvents = new ArrayList<String>();
+				AlarmManager.sendMail(allarme, alarmLogger, logEvents);
+				if(logEvents!=null && !logEvents.isEmpty()) {
+					for (String logEvent : logEvents) {
+						String prefixLog = AlarmLogger.buildPrefix(threadName,allarme.getAlias(),allarme.getNome());
+						alarmLogger.debug(prefixLog+logEvent);
+					}
+				}
+				alarmLogger.debug(prefix+"notifica mail completata");
+			}
+		}	
+		catch( Exception e) {
+			alarmLogger.error(prefix+"notifica mail fallita: "+e.getMessage(),e);
+			sendMailError = e.getMessage();
+			listExceptions.add(e);
+		}
+		
+		// Notifico cambio di stato via script
+		String scriptInvocationError = null;
+		try {
+			if(invokeScript){
+				alarmLogger.debug(prefix+"notifica via script ...");
+				List<String> logEvents = new ArrayList<String>();
+				AlarmManager.invokeScript(allarme, alarmLogger, logEvents);
+				if(logEvents!=null && !logEvents.isEmpty()) {
+					for (String logEvent : logEvents) {
+						String prefixLog = AlarmLogger.buildPrefix(threadName,allarme.getAlias(),allarme.getNome());
+						alarmLogger.debug(prefixLog+logEvent);
+					}
+				}
+				alarmLogger.debug(prefix+"notifica via script completata");
+			}
+		}	
+		catch( Exception e) {
+			alarmLogger.error(prefix+"notifica via script fallita: "+e.getMessage(),e);
+			scriptInvocationError = e.getMessage();
+			listExceptions.add(e);
+		}
+		
+		if(!listExceptions.isEmpty()) {
+			AlarmNotifyException ane = null;
+			if(listExceptions.size()==1) {
+				Exception e = listExceptions.get(0);
+				ane = new AlarmNotifyException(e.getMessage(),e);
+			}
+			else {
+				org.openspcoop2.utils.UtilsMultiException multi = new UtilsMultiException(listExceptions.toArray(new Exception[listExceptions.size()]));
+				ane = new AlarmNotifyException("Notifiche di cambio stato fallite",multi);
+			}
+			ane.setPluginInvocationError(pluginInvocationError);
+			ane.setSendMailError(sendMailError);
+			ane.setScriptInvocationError(scriptInvocationError);
+			throw ane;
+		}
+	}
 }

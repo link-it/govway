@@ -20,17 +20,15 @@ CREATE TABLE allarmi
 	acknowledged INT NOT NULL,
 	periodo_tipo VARCHAR(255),
 	periodo INT,
+	mail_invia INT,
 	-- Informazioni sull'invio di e-mail
-	mail_ack_mode INT,
 	mail_invia_warning INT,
-	mail_invia_alert INT,
 	mail_destinatari VARCHAR(max),
 	mail_subject VARCHAR(255),
 	mail_body VARCHAR(max),
+	script_invoke INT,
 	-- Informazioni sull'invocazione di script esterni
-	script_ack_mode INT,
 	script_invoke_warning INT,
-	script_invoke_alert INT,
 	script_command VARCHAR(max),
 	script_args VARCHAR(max),
 	-- Filtro

@@ -514,15 +514,13 @@ public class JDBCAllarmeServiceSearchImpl implements IJDBCServiceSearchWithId<Al
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().DESCRIZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_ALLARME,true));
-		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.ACK_MODE,true));
+		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA_WARNING,true));
-		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA_ALERT,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.DESTINATARI,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.SUBJECT,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.BODY,true));
-		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.ACK_MODE,true));
+		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA_WARNING,true));
-		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA_ALERT,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.COMMAND,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.ARGS,true));
 		sqlQueryObjectGet.addSelectField(this.getAllarmeFieldConverter().toColumn(Allarme.model().STATO_PRECEDENTE,true));

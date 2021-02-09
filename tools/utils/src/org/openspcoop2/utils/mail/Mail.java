@@ -48,6 +48,10 @@ public class Mail {
 	private List<String> cc = new ArrayList<String>();	
 	private String subject;
 	
+	private String userAgent;
+	private String contentLanguage;
+	private String messageIdDomain;
+	
 	private MailBody body = new MailBody();
 	
 	public String getServerHost() {
@@ -144,5 +148,29 @@ public class Mail {
 
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
+	}
+	
+	public String getUserAgent() {
+		return this.userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+	
+	public String getContentLanguage() {
+		return this.contentLanguage;
+	}
+
+	public void setContentLanguage(String contentLanguage) {
+		this.contentLanguage = contentLanguage;
+	}
+	
+	public String getMessageIdDomain() {
+		return this.messageIdDomain;
+	}
+
+	public void setMessageIdDomain(String messageIdDomain) {
+		this.messageIdDomain = messageIdDomain;
 	}
 }

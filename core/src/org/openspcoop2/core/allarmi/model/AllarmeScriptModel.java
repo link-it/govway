@@ -40,9 +40,8 @@ public class AllarmeScriptModel extends AbstractModel<AllarmeScript> {
 	
 		super();
 	
-		this.ACK_MODE = new Field("ack-mode",java.lang.Integer.class,"allarme-script",AllarmeScript.class);
+		this.INVOCA = new Field("invoca",java.lang.Integer.class,"allarme-script",AllarmeScript.class);
 		this.INVOCA_WARNING = new Field("invoca-warning",java.lang.Integer.class,"allarme-script",AllarmeScript.class);
-		this.INVOCA_ALERT = new Field("invoca-alert",java.lang.Integer.class,"allarme-script",AllarmeScript.class);
 		this.COMMAND = new Field("command",java.lang.String.class,"allarme-script",AllarmeScript.class);
 		this.ARGS = new Field("args",java.lang.String.class,"allarme-script",AllarmeScript.class);
 	
@@ -52,9 +51,8 @@ public class AllarmeScriptModel extends AbstractModel<AllarmeScript> {
 	
 		super(father);
 	
-		this.ACK_MODE = new ComplexField(father,"ack-mode",java.lang.Integer.class,"allarme-script",AllarmeScript.class);
+		this.INVOCA = new ComplexField(father,"invoca",java.lang.Integer.class,"allarme-script",AllarmeScript.class);
 		this.INVOCA_WARNING = new ComplexField(father,"invoca-warning",java.lang.Integer.class,"allarme-script",AllarmeScript.class);
-		this.INVOCA_ALERT = new ComplexField(father,"invoca-alert",java.lang.Integer.class,"allarme-script",AllarmeScript.class);
 		this.COMMAND = new ComplexField(father,"command",java.lang.String.class,"allarme-script",AllarmeScript.class);
 		this.ARGS = new ComplexField(father,"args",java.lang.String.class,"allarme-script",AllarmeScript.class);
 	
@@ -62,11 +60,9 @@ public class AllarmeScriptModel extends AbstractModel<AllarmeScript> {
 	
 	
 
-	public IField ACK_MODE = null;
+	public IField INVOCA = null;
 	 
 	public IField INVOCA_WARNING = null;
-	 
-	public IField INVOCA_ALERT = null;
 	 
 	public IField COMMAND = null;
 	 

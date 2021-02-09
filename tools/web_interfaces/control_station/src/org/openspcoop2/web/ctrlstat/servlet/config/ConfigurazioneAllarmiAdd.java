@@ -138,22 +138,11 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			allarme.setTipo(null);
 			allarme.setTipoAllarme(null);
 			allarme.setMail(new AllarmeMail());
-			allarme.getMail().setInviaAlert(0);
+			allarme.getMail().setInvia(0);
 			allarme.getMail().setInviaWarning(0);
-			if(alarmEngineConfig.isMailAckMode()){
-				allarme.getMail().setAckMode(1);
-			}else{
-				allarme.getMail().setAckMode(0);
-			}
-
 			allarme.setScript(new AllarmeScript());
-			allarme.getScript().setInvocaAlert(0);
+			allarme.getScript().setInvoca(0);
 			allarme.getScript().setInvocaWarning(0);
-			if(alarmEngineConfig.isScriptAckMode()){
-				allarme.getScript().setAckMode(1);
-			}else{
-				allarme.getScript().setAckMode(0);
-			}
 			allarme.setFiltro(new AllarmeFiltro());
 			allarme.setGroupBy(new AllarmeRaggruppamento());
 			

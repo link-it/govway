@@ -56,9 +56,8 @@
 
 	<xsd:complexType name="allarme-mail">
 		<xsd:sequence>
-			<xsd:element name="ack-mode" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="invia" type="xsd:integer" minOccurs="0"/>
 			<xsd:element name="invia-warning" type="xsd:integer" minOccurs="0"/>
-			<xsd:element name="invia-alert" type="xsd:integer" minOccurs="0"/>
 			<xsd:element name="destinatari" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="subject" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="body" type="xsd:string" minOccurs="0"/>
@@ -68,9 +67,8 @@
 	
 	<xsd:complexType name="allarme-script">
 		<xsd:sequence>
-			<xsd:element name="ack-mode" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="invoca" type="xsd:integer" minOccurs="0"/>
 			<xsd:element name="invoca-warning" type="xsd:integer" minOccurs="0"/>
-			<xsd:element name="invoca-alert" type="xsd:integer" minOccurs="0"/>
 			<xsd:element name="command" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="args" type="xsd:string" minOccurs="0"/>			
 		</xsd:sequence>

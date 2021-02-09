@@ -102,11 +102,11 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 				return "tipo_allarme";
 			}
 		}
-		if(field.equals(Allarme.model().MAIL.ACK_MODE)){
+		if(field.equals(Allarme.model().MAIL.INVIA)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".mail_ack_mode";
+				return this.toAliasTable(field)+".mail_invia";
 			}else{
-				return "mail_ack_mode";
+				return "mail_invia";
 			}
 		}
 		if(field.equals(Allarme.model().MAIL.INVIA_WARNING)){
@@ -114,13 +114,6 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".mail_invia_warning";
 			}else{
 				return "mail_invia_warning";
-			}
-		}
-		if(field.equals(Allarme.model().MAIL.INVIA_ALERT)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".mail_invia_alert";
-			}else{
-				return "mail_invia_alert";
 			}
 		}
 		if(field.equals(Allarme.model().MAIL.DESTINATARI)){
@@ -144,11 +137,11 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 				return "mail_body";
 			}
 		}
-		if(field.equals(Allarme.model().SCRIPT.ACK_MODE)){
+		if(field.equals(Allarme.model().SCRIPT.INVOCA)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".script_ack_mode";
+				return this.toAliasTable(field)+".script_invoke";
 			}else{
-				return "script_ack_mode";
+				return "script_invoke";
 			}
 		}
 		if(field.equals(Allarme.model().SCRIPT.INVOCA_WARNING)){
@@ -156,13 +149,6 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".script_invoke_warning";
 			}else{
 				return "script_invoke_warning";
-			}
-		}
-		if(field.equals(Allarme.model().SCRIPT.INVOCA_ALERT)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".script_invoke_alert";
-			}else{
-				return "script_invoke_alert";
 			}
 		}
 		if(field.equals(Allarme.model().SCRIPT.COMMAND)){
@@ -466,13 +452,10 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Allarme.model().TIPO_ALLARME)){
 			return this.toTable(Allarme.model(), returnAlias);
 		}
-		if(field.equals(Allarme.model().MAIL.ACK_MODE)){
+		if(field.equals(Allarme.model().MAIL.INVIA)){
 			return this.toTable(Allarme.model().MAIL, returnAlias);
 		}
 		if(field.equals(Allarme.model().MAIL.INVIA_WARNING)){
-			return this.toTable(Allarme.model().MAIL, returnAlias);
-		}
-		if(field.equals(Allarme.model().MAIL.INVIA_ALERT)){
 			return this.toTable(Allarme.model().MAIL, returnAlias);
 		}
 		if(field.equals(Allarme.model().MAIL.DESTINATARI)){
@@ -484,13 +467,10 @@ public class AllarmeFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Allarme.model().MAIL.BODY)){
 			return this.toTable(Allarme.model().MAIL, returnAlias);
 		}
-		if(field.equals(Allarme.model().SCRIPT.ACK_MODE)){
+		if(field.equals(Allarme.model().SCRIPT.INVOCA)){
 			return this.toTable(Allarme.model().SCRIPT, returnAlias);
 		}
 		if(field.equals(Allarme.model().SCRIPT.INVOCA_WARNING)){
-			return this.toTable(Allarme.model().SCRIPT, returnAlias);
-		}
-		if(field.equals(Allarme.model().SCRIPT.INVOCA_ALERT)){
 			return this.toTable(Allarme.model().SCRIPT, returnAlias);
 		}
 		if(field.equals(Allarme.model().SCRIPT.COMMAND)){

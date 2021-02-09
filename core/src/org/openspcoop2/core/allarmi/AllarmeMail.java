@@ -35,9 +35,8 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="allarme-mail"&gt;
  * 		&lt;sequence&gt;
- * 			&lt;element name="ack-mode" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="invia" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="invia-warning" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
- * 			&lt;element name="invia-alert" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="destinatari" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="subject" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="body" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
@@ -54,9 +53,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "allarme-mail", 
   propOrder = {
-  	"ackMode",
+  	"invia",
   	"inviaWarning",
-  	"inviaAlert",
   	"destinatari",
   	"subject",
   	"body"
@@ -83,12 +81,12 @@ public class AllarmeMail extends org.openspcoop2.utils.beans.BaseBean implements
 		this.id=Long.valueOf(-1);
   }
 
-  public java.lang.Integer getAckMode() {
-    return this.ackMode;
+  public java.lang.Integer getInvia() {
+    return this.invia;
   }
 
-  public void setAckMode(java.lang.Integer ackMode) {
-    this.ackMode = ackMode;
+  public void setInvia(java.lang.Integer invia) {
+    this.invia = invia;
   }
 
   public java.lang.Integer getInviaWarning() {
@@ -97,14 +95,6 @@ public class AllarmeMail extends org.openspcoop2.utils.beans.BaseBean implements
 
   public void setInviaWarning(java.lang.Integer inviaWarning) {
     this.inviaWarning = inviaWarning;
-  }
-
-  public java.lang.Integer getInviaAlert() {
-    return this.inviaAlert;
-  }
-
-  public void setInviaAlert(java.lang.Integer inviaAlert) {
-    this.inviaAlert = inviaAlert;
   }
 
   public java.lang.String getDestinatari() {
@@ -139,16 +129,12 @@ public class AllarmeMail extends org.openspcoop2.utils.beans.BaseBean implements
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlElement(name="ack-mode",required=false,nillable=false)
-  protected java.lang.Integer ackMode;
+  @XmlElement(name="invia",required=false,nillable=false)
+  protected java.lang.Integer invia;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="invia-warning",required=false,nillable=false)
   protected java.lang.Integer inviaWarning;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlElement(name="invia-alert",required=false,nillable=false)
-  protected java.lang.Integer inviaAlert;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="destinatari",required=false,nillable=false)

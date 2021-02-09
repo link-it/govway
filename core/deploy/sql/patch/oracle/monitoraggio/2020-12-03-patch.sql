@@ -22,17 +22,15 @@ CREATE TABLE allarmi
 	acknowledged NUMBER NOT NULL,
 	periodo_tipo VARCHAR2(255),
 	periodo NUMBER,
+	mail_invia NUMBER,
 	-- Informazioni sull'invio di e-mail
-	mail_ack_mode NUMBER,
 	mail_invia_warning NUMBER,
-	mail_invia_alert NUMBER,
 	mail_destinatari CLOB,
 	mail_subject VARCHAR2(255),
 	mail_body CLOB,
+	script_invoke NUMBER,
 	-- Informazioni sull'invocazione di script esterni
-	script_ack_mode NUMBER,
 	script_invoke_warning NUMBER,
-	script_invoke_alert NUMBER,
 	script_command CLOB,
 	script_args CLOB,
 	-- Filtro

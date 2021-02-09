@@ -18405,7 +18405,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			/* ******** VALIDAZIONE NOTIFICA MAIL *************** */
 			
-			if(allarme.getMail()!=null && allarme.getMail().getInviaAlert()!=null && allarme.getMail().getInviaAlert()==1){
+			if(allarme.getMail()!=null && allarme.getMail().getInvia()!=null && allarme.getMail().getInvia()==1){
 				if(allarme.getMail().getDestinatari()==null || "".equals(allarme.getMail().getDestinatari())){
 					this.log.debug("Almeno un indirizzo e-mail è obbligatorio");
 					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_EMAIL_VUOTA);
@@ -18660,10 +18660,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// sezione mail
 			String inviaEmailAlertS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT);
 			if(StringUtils.isNotBlank(inviaEmailAlertS)) {
-				allarme.getMail().setInviaAlert(Integer.parseInt(inviaEmailAlertS));
+				allarme.getMail().setInvia(Integer.parseInt(inviaEmailAlertS));
 			}
 			
-			if(allarme.getMail().getInviaAlert() == 1) {
+			if(allarme.getMail().getInvia() == 1) {
 				String destinatariEmail = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
 				allarme.getMail().setDestinatari(destinatariEmail);
 				
@@ -18673,13 +18673,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					allarme.getMail().setInviaWarning(Integer.parseInt(notificaWarningEmailS));
 				}
 				
-				if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {
-					//Acknowledge
-					String ackModeEmailS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE);
-					if(StringUtils.isNotBlank(ackModeEmailS)) {
-						allarme.getMail().setAckMode(Integer.parseInt(ackModeEmailS));
-					}
-					
+				if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {					
 					// Subject
 					String subject = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
 					allarme.getMail().setSubject(subject);
@@ -18693,10 +18687,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// sezione script
 			String invocaScriptAlertS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT);
 			if(StringUtils.isNotBlank(invocaScriptAlertS)) {
-				allarme.getScript().setInvocaAlert(Integer.parseInt(invocaScriptAlertS));
+				allarme.getScript().setInvoca(Integer.parseInt(invocaScriptAlertS));
 			}
 			
-			if(allarme.getScript().getInvocaAlert() == 1) {
+			if(allarme.getScript().getInvoca() == 1) {
 				// notifica warning
 				String notificaWarningScriptS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT);
 				if(StringUtils.isNotBlank(notificaWarningScriptS)) {
@@ -18704,12 +18698,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				if(this.confCore.getAllarmiConfig().isScriptShowAllOptions()) {
-					//Acknowledge
-					String ackModeEmailS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE);
-					if(StringUtils.isNotBlank(ackModeEmailS)) {
-						allarme.getScript().setAckMode(Integer.parseInt(ackModeEmailS));
-					}
-					
 					// Subject
 					String path = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH);
 					allarme.getScript().setCommand(path);
@@ -19594,8 +19582,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// Acknowledge
 			if(this.confCore.getAllarmiConfig().isOptionsAcknowledgedStatusAssociation() || 
-					( allarme.getMail().getInviaAlert() == 1 && allarme.getMail().getAckMode() == 1) ||
-					( allarme.getScript().getInvocaAlert() == 1 && allarme.getScript().getAckMode() == 1) ) {
+					( allarme.getMail().getInvia() == 1 && this.confCore.getAllarmiConfig().isMailCheckAcknowledgedStatus()) ||
+					( allarme.getScript().getInvoca() == 1 && this.confCore.getAllarmiConfig().isScriptCheckAcknowledgedStatus()) ) {
 				
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED);
@@ -19802,16 +19790,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String [] inviaEmailAlertLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
 			de.setValues(inviaEmailAlertValues);
 			de.setLabels(inviaEmailAlertLabels);
-			de.setSelected(allarme.getMail().getInviaAlert()+"");
+			de.setSelected(allarme.getMail().getInvia()+"");
 			de.setPostBack_viaPOST(true);
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(allarme.getMail().getInviaAlert()+"");
+			de.setValue(allarme.getMail().getInvia()+"");
 		}
 		dati.addElement(de);
 		
-		if(allarme.getMail().getInviaAlert() == 1) {
+		if(allarme.getMail().getInvia() == 1) {
 			// destinatari
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
@@ -19844,26 +19832,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			dati.addElement(de);
 			
-			if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {
-				//Acknowledge
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE); 
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE);
-				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
-					de.setType(DataElementType.SELECT);
-					String [] mailAckModeValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-					String [] mailAckModeLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-					de.setValues(mailAckModeValues);
-					de.setLabels(mailAckModeLabels);
-					de.setSelected(allarme.getMail().getAckMode()+"");
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE_NOTE);
-				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(allarme.getMail().getAckMode()+"");
-				}
-				dati.addElement(de);
-				
+			if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {			
 				// Subject
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
@@ -19911,16 +19880,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String [] invocaScriptAlertLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
 			de.setValues(invocaScriptAlertValues);
 			de.setLabels(invocaScriptAlertLabels);
-			de.setSelected(allarme.getScript().getInvocaAlert()+"");
+			de.setSelected(allarme.getScript().getInvoca()+"");
 			de.setPostBack_viaPOST(true);
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(allarme.getScript().getInvocaAlert()+"");
+			de.setValue(allarme.getScript().getInvoca()+"");
 		}
 		dati.addElement(de);
 		
-		if(allarme.getScript().getInvocaAlert() == 1) {
+		if(allarme.getScript().getInvoca() == 1) {
 			// notifica warning
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT); 
@@ -19940,25 +19909,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 			if(this.confCore.getAllarmiConfig().isScriptShowAllOptions()) {
-				//Acknowledge
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE); 
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE);
-				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
-					de.setType(DataElementType.SELECT);
-					String [] scriptAckModeValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-					String [] scriptAckModeLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-					de.setValues(scriptAckModeValues);
-					de.setLabels(scriptAckModeLabels);
-					de.setSelected(allarme.getScript().getAckMode()+"");
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE_NOTE);
-				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(allarme.getScript().getAckMode()+"");
-				}
-				dati.addElement(de);
-				
+			
 				// Subject
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH);

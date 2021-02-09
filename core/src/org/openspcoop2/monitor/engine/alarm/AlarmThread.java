@@ -20,9 +20,6 @@
 
 package org.openspcoop2.monitor.engine.alarm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
@@ -51,6 +48,7 @@ public class AlarmThread implements Runnable {
 	private String classname;
 	private IAlarm alarm;
 	private Logger _log;
+	@SuppressWarnings("unused")
 	private AlarmEngineConfig alarmEngineConfig;
 	private String threadName;
 	private boolean stop = false;
@@ -144,97 +142,28 @@ public class AlarmThread implements Runnable {
 					
 					this.alarmLogger.info("Verifica stato in corso ...");
 					
+//					org.openspcoop2.monitor.sdk.alarm.AlarmStatus oldStatus = null;
+//					if(this.alarm.getStatus()!=null){
+//						oldStatus = (org.openspcoop2.monitor.sdk.alarm.AlarmStatus) this.alarm.getStatus().clone();
+//					}
+					
 					TipoPlugin tipoPlugin = TipoPlugin.ALLARME;
 					IDynamicLoader cAllarme = DynamicFactory.getInstance().newDynamicLoader(tipoPlugin, this.tipo, this.classname, this._log);
 					IAlarmProcessing alarmProc = (IAlarmProcessing) cAllarme.newInstance();
 					this.alarmLogger.debug("Invocazione plugin '"+this.tipo+"' ...");
 					alarmProc.check(this.alarm);
-					this.alarmLogger.debug("Invocazione plugin '"+this.tipo+"' terminata; analisi nuovo stato in corso ...");
+					this.alarmLogger.debug("Invocazione plugin '"+this.tipo+"' terminato");
 					
-					boolean mailAckMode = false;
-					if(this.alarm.getConfigAllarme().getMail()==null || this.alarm.getConfigAllarme().getMail().getAckMode()==null){
-						mailAckMode = this.alarmEngineConfig.isMailAckMode();
-					}
-					else{
-						mailAckMode = this.alarm.getConfigAllarme().getMail().getAckMode()==1;
-					}
-					
-					boolean scriptAckMode = false;
-					if(this.alarm.getConfigAllarme().getScript()==null || this.alarm.getConfigAllarme().getScript().getAckMode()==null){
-						scriptAckMode = this.alarmEngineConfig.isScriptAckMode();
-					}
-					else{
-						scriptAckMode = this.alarm.getConfigAllarme().getScript().getAckMode()==1;
-					}
-								
-					boolean sendMail = false;
-					boolean invokeScript = false;
-					boolean acknowledged = (this.alarm.getConfigAllarme().getAcknowledged()==null || this.alarm.getConfigAllarme().getAcknowledged()==1);
-					if(this.alarm.getStatus()!=null){
-						if(AlarmStateValues.WARNING.equals(this.alarm.getStatus().getStatus())){
-							if(mailAckMode && !acknowledged){
-								// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
-								sendMail = 
-										(
-												this.alarm.getConfigAllarme().getMail()!=null &&
-												this.alarm.getConfigAllarme().getMail().getInviaAlert()!=null && 
-												this.alarm.getConfigAllarme().getMail().getInviaAlert()==1
-										) 
-										&& 
-										(
-												this.alarm.getConfigAllarme().getMail()!=null &&
-												this.alarm.getConfigAllarme().getMail().getInviaWarning()!=null && 
-												this.alarm.getConfigAllarme().getMail().getInviaWarning()==1
-										);
-							}
-							if(scriptAckMode && !acknowledged){
-								// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
-								invokeScript = 
-										(
-												this.alarm.getConfigAllarme().getScript()!=null &&
-												this.alarm.getConfigAllarme().getScript().getInvocaAlert()!=null && 
-												this.alarm.getConfigAllarme().getScript().getInvocaAlert()==1) 
-										&&
-										(
-												this.alarm.getConfigAllarme().getScript()!=null &&
-												this.alarm.getConfigAllarme().getScript().getInvocaWarning()!=null && 
-												this.alarm.getConfigAllarme().getScript().getInvocaWarning()==1);
-							}
-						}
-						else if(AlarmStateValues.ERROR.equals(this.alarm.getStatus().getStatus())){
-							if(mailAckMode && !acknowledged){
-								sendMail = this.alarm.getConfigAllarme().getMail()!=null &&
-										this.alarm.getConfigAllarme().getMail().getInviaAlert()!=null && 
-										this.alarm.getConfigAllarme().getMail().getInviaAlert()==1;
-							}
-							if(scriptAckMode && !acknowledged){
-								invokeScript = this.alarm.getConfigAllarme().getScript()!=null &&
-										this.alarm.getConfigAllarme().getScript().getInvocaAlert()!=null && 
-										this.alarm.getConfigAllarme().getScript().getInvocaAlert()==1;
-							}
-						}
-					}
-					
-					if(sendMail){
-						List<String> logEvents = new ArrayList<String>();
-						AlarmManager.sendMail(this.alarm.getConfigAllarme(), this.alarmLogger, logEvents);
-						if(logEvents!=null && !logEvents.isEmpty()) {
-							for (String logEvent : logEvents) {
-								this.alarmLogger.debug(logEvent);
-							}
-						}
-					}
-					if(invokeScript){
-						List<String> logEvents = new ArrayList<String>();
-						AlarmManager.invokeScript(this.alarm.getConfigAllarme(), this.alarmLogger, logEvents);
-						if(logEvents!=null && !logEvents.isEmpty()) {
-							for (String logEvent : logEvents) {
-								this.alarmLogger.debug(logEvent);
-							}
-						}
-					}
-					
-					this.alarmLogger.info("Verifica nuovo stato terminata correttamente");
+					// la notifica di cambio stato viene attuata quando si effettua il changeStatus sull'allarme
+//					this.alarmLogger.debug("Invocazione plugin '"+this.tipo+"' terminata; analisi nuovo stato in corso ...");
+//					
+//					AlarmManager.notifyChangeStatus(this.alarmEngineConfig, this.alarm.getConfigAllarme(),
+//							this.alarm, this.classname, this.threadName,
+//							this.alarmLogger,
+//							oldStatus, this.alarm.getStatus(),
+//							true);
+//					
+//					this.alarmLogger.info("Analisi nuovo stato terminata correttamente");
 				} catch (Exception e) {
 					this.alarmLogger.error("Errore inatteso emerso durante la verifica dello stato: "
 									+ e.getMessage(), e);

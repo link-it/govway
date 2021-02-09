@@ -13,7 +13,7 @@
     	<style>
 			#legendPanel_body  { padding: 0px !important; }
 		</style>
-		<rich:panel id="legendPanel" rendered="#{(allarmiBean.allarme.id != -1 and ((allarmiBean.allarme.mail.ackMode==1 and allarmiBean.allarme.mail.inviaAlert==1) or (allarmiBean.allarme.script.ackMode==1 and allarmiBean.allarme.script.invocaAlert==1)))}">
+		<rich:panel id="legendPanel" rendered="#{(allarmiBean.allarme.id != -1 and ((allarmiBean.mailAckMode==1 and allarmiBean.allarme.mail.invia==1) or (allarmiBean.scriptAckMode==1 and allarmiBean.allarme.script.invoca==1)))}">
 			<p class="legend">
 				<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
 			</p>

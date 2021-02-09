@@ -1273,12 +1273,10 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT = "allInviaEmailAlert";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL = "allDestinatariEmail";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING = "allInviaEmailWarning";
-	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE = "allMailAckMode";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT = "allSubjectMail";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY = "allBodyMail";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT = "allInvocaScriptAlert";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT = "allInvocaScriptWarning";
-	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE = "allScriptAckMode";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH = "allScriptPath";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS = "allScriptArgs";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPOLOGIA_ERRORE = "allTipoErrore";
@@ -1835,15 +1833,11 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL = "Destinatari Email";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL_NOTE = "Indicare una o più e-mail separandole con la virgola ','";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING = "Notifica Warning";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE = "Acknowledge";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE_NOTE = "Notifica una mail, ad ogni intervallo di frequenza, fino a che non viene effettuato un ack manuale dell'allarme";	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT = "Subject";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY = "Body";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT = "Notifica Monitoraggio Esterno";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT_ABILITATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT = "Notifica Warning";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE = "Acknowledge";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE_NOTE = "Viene invocato lo script, ad ogni intervallo di frequenza, fino a che non viene effettuato un ack manuale dell'allarme";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH = "Script Path";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS = "Script Arguments";
 	

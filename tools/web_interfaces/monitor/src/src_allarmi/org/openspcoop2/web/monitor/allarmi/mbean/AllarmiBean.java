@@ -29,9 +29,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
-import org.openspcoop2.core.allarmi.AllarmeMail;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
-import org.openspcoop2.core.allarmi.AllarmeScript;
 import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoPeriodo;
@@ -63,6 +61,7 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.AlarmStateValues;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
+import org.openspcoop2.monitor.sdk.exceptions.AlarmNotifyException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -219,45 +218,15 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 
 	public ConfigurazioneAllarmeBean getAllarme() {
-		if (this.allarme == null){
-			this.allarme = new ConfigurazioneAllarmeBean();
-
-			//Configurazione default
-			this.allarme.setEnabled(1);
-			
-			this.allarme.setTipoAllarme(null);
-
-			this.allarme.setMail(new AllarmeMail());
-			this.allarme.getMail().setInviaAlert(0);
-			this.allarme.getMail().setInviaWarning(0);
-			if(this.alarmEngineConfig.isMailAckMode()){
-				this.allarme.getMail().setAckMode(1);
-			}else{
-				this.allarme.getMail().setAckMode(0);
-			}
-
-			this.allarme.setScript(new AllarmeScript());
-			this.allarme.getScript().setInvocaAlert(0);
-			this.allarme.getScript().setInvocaWarning(0);
-			if(this.alarmEngineConfig.isScriptAckMode()){
-				this.allarme.getScript().setAckMode(1);
-			}else{
-				this.allarme.getScript().setAckMode(0);
-			}
-			
-			this.parameters=null;
-			
-			this.modificatoInformazioniHistory = false;
-			this.modificatoStato = false;
-			this.modificatoAckwoldegment = false;
-			this.modificatoInformazioniHistory_statoAllarme = null;
-			this.modificatoInformazioniHistory_dettaglioAllarme = null;
-			this.modificatoInformazioniHistory_ackwoldegmentAllarme = null;
-		}
-
 		return this.allarme;
 	}
-
+	
+	public int getMailAckMode() {
+		return this.alarmEngineConfig.isMailCheckAcknowledgedStatus()?1:0;
+	}
+	public int getScriptAckMode() {
+		return this.alarmEngineConfig.isScriptCheckAcknowledgedStatus()?1:0;
+	}
 	
 	public void setModificaStato(int value){
 		
@@ -521,8 +490,9 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			/* ******** GESTIONE NOTIFICA CAMBIO DI STATO *************** */
 			
 			boolean historyCreatoTramiteNotificaCambioStato = false;
+			boolean notifyOk = true;
 			if(this.modificatoStato){
-				this.notifyChangeState();
+				notifyOk = this.notifyChangeState();
 				historyCreatoTramiteNotificaCambioStato = true;
 			}
 			
@@ -543,7 +513,10 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			
 			try {
 				AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, oldConfigurazioneAllarme, this.allarme, AllarmiBean.log, this.alarmEngineConfig);
-				MessageUtils.addInfoMsg("Allarme salvato con successo.");
+				
+				if(notifyOk) {
+					MessageUtils.addInfoMsg("Allarme salvato con successo.");
+				}
 			} catch (Exception e) {
 				MessageUtils.addErrorMsg("Allarme salvato con successo, ma invio notifica terminato con errore: " + e.getMessage());
 			}
@@ -578,36 +551,80 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		return null;
 	}
 	
-	private void notifyChangeState() throws AlarmException{
-		IAlarm alarm = ((IAllarmiService)this.service).getAlarm(this.allarme.getNome());
-		AlarmStatusWithAck alarmStatus = new AlarmStatusWithAck();
-		StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(this.allarme.getStato());
-		switch (statoAllarme) {
-		case OK:
-			alarmStatus.setStatus(AlarmStateValues.OK);	
-			break;
-		case WARNING:
-			alarmStatus.setStatus(AlarmStateValues.WARNING);	
-			break;
-		case ERROR:
-			alarmStatus.setStatus(AlarmStateValues.ERROR);	
-			break;
+	private boolean notifyChangeState() throws AlarmException{
+		
+		boolean esito = true;
+		try {
+			IAlarm alarm = ((IAllarmiService)this.service).getAlarm(this.allarme.getNome());
+			AlarmStatusWithAck alarmStatus = new AlarmStatusWithAck();
+			StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(this.allarme.getStato());
+			switch (statoAllarme) {
+			case OK:
+				alarmStatus.setStatus(AlarmStateValues.OK);	
+				break;
+			case WARNING:
+				alarmStatus.setStatus(AlarmStateValues.WARNING);	
+				break;
+			case ERROR:
+				alarmStatus.setStatus(AlarmStateValues.ERROR);	
+				break;
+			}
+			alarmStatus.setDetail(this.allarme.getDettaglioStato());
+			if(this.allarme.getAcknowledged()==1){
+				alarmStatus.setAck(true);
+			}
+			else{
+				alarmStatus.setAck(false);
+			}
+			if(alarm instanceof AlarmImpl){
+				((AlarmImpl)alarm).setUsername(Utility.getLoggedUtente().getLogin());
+			}
+			alarm.changeStatus(alarmStatus);
+			AllarmiBean.log.debug("Notificato cambio di stato all'allarme con nome ["+this.allarme.getNome()+"]");
+		}catch(AlarmNotifyException notify) {
+			
+			esito = false;
+			
+			AllarmiBean.log.error(notify.getMessage(), notify);
+			int failed = 0;
+			StringBuilder sb = new StringBuilder();
+			if(notify.getPluginInvocationError()!=null) {
+				failed++;
+				if(sb.length()>0) {
+					sb.append("; ");
+				}
+				sb.append("invocazione del metodo 'changeStatusNotify' ha ritornato l'errore '").append(notify.getPluginInvocationError()).append("'");
+			}
+			if(notify.getSendMailError()!=null) {
+				failed++;
+				if(sb.length()>0) {
+					sb.append("; ");
+				}
+				sb.append("spedizione mail non riuscita '").append(notify.getSendMailError()).append("'");
+			}
+			if(notify.getScriptInvocationError()!=null) {
+				failed++;
+				if(sb.length()>0) {
+					sb.append("; ");
+				}
+				sb.append("invocazione dello script di monitoraggio ha generato l'errore '").append(notify.getScriptInvocationError()).append("'");
+			}
+			String error = null;
+			if(failed==1) {
+				error = "Allarme salvato con successo, ma la seguente notifica di cambio stato è fallita: "+sb.toString();
+			}
+			else {
+				error = "Allarme salvato con successo, ma le seguenti notifiche di cambio stato sono fallite: "+sb.toString();
+			}
+			
+			MessageUtils.addErrorMsg(error);
 		}
-		alarmStatus.setDetail(this.allarme.getDettaglioStato());
-		if(this.allarme.getAcknowledged()==1){
-			alarmStatus.setAck(true);
-		}
-		else{
-			alarmStatus.setAck(false);
-		}
-		if(alarm instanceof AlarmImpl){
-			((AlarmImpl)alarm).setUsername(Utility.getLoggedUtente().getLogin());
-		}
-		alarm.changeStatus(alarmStatus);
-		AllarmiBean.log.debug("Notificato cambio di stato all'allarme con nome ["+this.allarme.getNome()+"]");
+			
 		if(this.statoAllarmePrimaModifica!=null){
 			this.allarme.setStatoPrecedente(AllarmiConverterUtils.toIntegerValue(this.statoAllarmePrimaModifica));
 		}
+		
+		return esito;
 	}
 	
 	public void toggleAck(ActionEvent ae) {
@@ -1312,25 +1329,16 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		
 		if(this.modificatoStato) {
 			if(this.isAllarmiAssociazioneAcknowledgedStatoAllarme() || 
-					(this.allarme.getMail().getInviaAlert() == 1  && this.allarme.getMail().getAckMode() == 1) ||
-					(this.allarme.getScript().getInvocaAlert() == 1 && this.allarme.getScript().getAckMode() == 1)) {
+					(this.allarme.getMail().getInvia() == 1  && this.alarmEngineConfig.isMailCheckAcknowledgedStatus()) ||
+					(this.allarme.getScript().getInvoca() == 1 && this.alarmEngineConfig.isScriptCheckAcknowledgedStatus() )) {
 				return true;
 			}
 		} else {
-		/*
-		 #{
-								(allarmiBean.allarmiAssociazioneAcknowledgedStatoAllarme)
-								or
-								(allarmiBean.allarme.mail.inviaAlert==1 and allarmiBean.allarme.mail.ackMode==1) 
-								or 
-								(allarmiBean.allarme.script.invocaAlert==1 and allarmiBean.allarme.script.ackMode==1)
-							}
-		 * */
 			if(this.allarme.getEnabled() != 0) { // non disabilitato
 				if(this.allarme.getStato() != 0) { // non in stato OK
 					if(this.isAllarmiAssociazioneAcknowledgedStatoAllarme() || 
-							(this.allarme.getMail().getInviaAlert() == 1  && this.allarme.getMail().getAckMode() == 1) ||
-							(this.allarme.getScript().getInvocaAlert() == 1 && this.allarme.getScript().getAckMode() == 1)) {
+							(this.allarme.getMail().getInvia() == 1  && this.alarmEngineConfig.isMailCheckAcknowledgedStatus()) ||
+							(this.allarme.getScript().getInvoca() == 1 && this.alarmEngineConfig.isScriptCheckAcknowledgedStatus())) {
 						return true;
 					}
 				}

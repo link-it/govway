@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.config.Configurazione;
@@ -3584,6 +3585,19 @@ public class ImporterArchiveUtils {
 //					// ricalcolo
 //					allarme.setIdActivePolicy(this.buildIdActivePolicy(instanceSerialIdsForAlarm, allarme.getIdPolicy()));
 //				}
+				
+				if(allarme.sizeAllarmeParametroList()>0) {
+					if(old.sizeAllarmeParametroList()>0) {
+						for (AllarmeParametro param : allarme.getAllarmeParametroList()) {
+							for (AllarmeParametro oldParam : old.getAllarmeParametroList()) {
+								if(oldParam.getIdParametro().equals(param.getIdParametro())) {
+									param.setId(oldParam.getId());
+									break;
+								}
+							}
+						}
+					}
+				}
 				
 				// visibilita' oggetto stesso per update
 				// non esistenti

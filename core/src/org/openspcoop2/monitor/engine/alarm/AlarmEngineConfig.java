@@ -68,19 +68,20 @@ public class AlarmEngineConfig implements Serializable {
 	private String mailPassword;
 	private SSLConfig mailSSLConfig;
 	private boolean mailStartTls;
+	private String mailAgent;
 	private String mailFrom;
 	private String mailSubject;
 	private String mailBody;
-	private boolean mailAckMode;
 	private boolean mailDebug;
 	private boolean mailSendChangeStatusOk;
+	private boolean mailCheckAcknowledgedStatus;
 	private boolean mailShowAllOptions;
 	
 	private String defaultScriptPath;
 	private String defaultScriptArgs;
-	private boolean scriptAckMode;
 	private boolean scriptDebug;
 	private boolean scriptSendChangeStatusOk;
+	private boolean scriptCheckAcknowledgedStatus;
 	private boolean scriptShowAllOptions;
 	
 	private boolean optionsUpdateStateActiveAlarm;
@@ -170,6 +171,14 @@ public class AlarmEngineConfig implements Serializable {
 		this.mailStartTls = mailStartTls;
 	}
 
+	public String getMailAgent() {
+		return this.mailAgent;
+	}
+
+	public void setMailAgent(String mailAgent) {
+		this.mailAgent = mailAgent;
+	}
+	
 	public String getMailFrom() {
 		return this.mailFrom;
 	}
@@ -209,13 +218,13 @@ public class AlarmEngineConfig implements Serializable {
 	public void setDefaultScriptArgs(String defaultScriptArgs) {
 		this.defaultScriptArgs = defaultScriptArgs;
 	}
-	
-	public boolean isMailAckMode() {
-		return this.mailAckMode;
+
+	public boolean isMailCheckAcknowledgedStatus() {
+		return this.mailCheckAcknowledgedStatus;
 	}
 
-	public void setMailAckMode(boolean mailAckMode) {
-		this.mailAckMode = mailAckMode;
+	public void setMailCheckAcknowledgedStatus(boolean mailCheckAcknowledgedStatus) {
+		this.mailCheckAcknowledgedStatus = mailCheckAcknowledgedStatus;
 	}
 
 	public boolean isMailSendChangeStatusOk() {
@@ -234,14 +243,6 @@ public class AlarmEngineConfig implements Serializable {
 		this.mailShowAllOptions = mailShowAllOptions;
 	}
 	
-	public boolean isScriptAckMode() {
-		return this.scriptAckMode;
-	}
-
-	public void setScriptAckMode(boolean scriptAckMode) {
-		this.scriptAckMode = scriptAckMode;
-	}
-	
 	public boolean isMailDebug() {
 		return this.mailDebug;
 	}
@@ -256,6 +257,14 @@ public class AlarmEngineConfig implements Serializable {
 
 	public void setScriptDebug(boolean scriptDebug) {
 		this.scriptDebug = scriptDebug;
+	}
+	
+	public boolean isScriptCheckAcknowledgedStatus() {
+		return this.scriptCheckAcknowledgedStatus;
+	}
+
+	public void setScriptCheckAcknowledgedStatus(boolean scriptCheckAcknowledgedStatus) {
+		this.scriptCheckAcknowledgedStatus = scriptCheckAcknowledgedStatus;
 	}
 	
 	public boolean isScriptSendChangeStatusOk() {
@@ -491,22 +500,31 @@ public class AlarmEngineConfig implements Serializable {
 			
 				mailSSLConfig.setSslType(mailSenderSSLType);
 				
-				mailSSLConfig.setTrustStoreLocation(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_TRUSTSTORE_LOCATION, true, true));
-				mailSSLConfig.setTrustStoreType(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_TRUSTSTORE_TYPE, true, true));
-				mailSSLConfig.setTrustStorePassword(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_TRUSTSTORE_PASSWORD, true, true));
-				mailSSLConfig.setTrustManagementAlgorithm(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_TRUSTSTORE_MANAGEMENT_ALGORITHM, true, true));
+				mailSSLConfig.setHostnameVerifier(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_HOSTNAME_VERIFIER, true, true)));
+				boolean serverAuth = Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_SERVER_AUTH, true, true));
+				if(serverAuth) {
+					mailSSLConfig.setTrustStoreLocation(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_TRUSTSTORE_LOCATION, true, true));
+					mailSSLConfig.setTrustStoreType(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_TRUSTSTORE_TYPE, true, true));
+					mailSSLConfig.setTrustStorePassword(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_TRUSTSTORE_PASSWORD, true, true));
+					mailSSLConfig.setTrustManagementAlgorithm(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_TRUSTSTORE_MANAGEMENT_ALGORITHM, true, true));
+				}
+				else {
+					mailSSLConfig.setTrustAllCerts(true);
+				}
 				config.setMailStartTls(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SSL_START_TLS, true, true)));
 				
 				config.setMailSSLConfig(mailSSLConfig);
 			}
 			
+			config.setMailAgent(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_AGENT, false, true));
+			
 			config.setMailFrom(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_FROM, true, true));
 			config.setMailSubject(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SUBJECT, true, true));
 			config.setMailBody(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_BODY, true, true));
 		
-			config.setMailAckMode(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_ACK_MODE, true, true)));
-			
 			config.setMailDebug(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_DEBUG, true, true)));
+			
+			config.setMailCheckAcknowledgedStatus(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_CHECK_ACKNOWLEDGED_STATUS, true, true)));
 			
 			config.setMailSendChangeStatusOk(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_MAIL_SEND_CHANGE_STATUS_OK, true, true)));
 			
@@ -520,8 +538,8 @@ public class AlarmEngineConfig implements Serializable {
 			config.setDefaultScriptArgs(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_ARGS, true, true));
 		}
 		// L'ack mode è obbligatorio (lo script può essere impostato anche dentro l'allarme)
-		config.setScriptAckMode(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_ACK_MODE, true, true)));
 		config.setScriptDebug(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_DEBUG, true, true)));
+		config.setScriptCheckAcknowledgedStatus(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_CHECK_ACKNOWLEDGED_STATUS, true, true)));
 		config.setScriptSendChangeStatusOk(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_SEND_CHANGE_STATUS_OK, true, true)));
 		config.setScriptShowAllOptions(Boolean.parseBoolean(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_SCRIPT_SHOW_ALL_OPTIONS, true, true)));
 

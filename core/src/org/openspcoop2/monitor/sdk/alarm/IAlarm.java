@@ -24,6 +24,7 @@ import java.util.Map;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
+import org.openspcoop2.monitor.sdk.exceptions.AlarmNotifyException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 
 /**     
@@ -58,6 +59,6 @@ public interface IAlarm {
 	 * @throws AlarmException
 	 */
 	
-	public void changeStatus(AlarmStatus statoAllarme) throws AlarmException;
+	public void changeStatus(AlarmStatus statoAllarme) throws AlarmException, AlarmNotifyException;
 
 }
