@@ -15,6 +15,7 @@
 		'installer_rules.dataSource.config': nome jndi del datasource per la configurazione
 		'installer_rules.dataSource.tracce': nome jndi del datasource per le tracce
 		'installer_rules.dataSource.statistiche': nome jndi del datasource per le statistiche
+
 		I file di proprietà verranno ricercati, se l'archivio è un war, in:
 		-  in WEB-INF/properties
 		altrimenti
@@ -53,6 +54,47 @@
 				</foreach>
 
 				<echo message="Add Archives [${deploy_archivi_add_as}] completed"/>
+			</then>
+		</if>
+
+		<property name="deploy_archivi_add_resources" value="${deploy_archivi_add}/resources"/>
+		<if>
+			<available file="${deploy_archivi_add_resources}/" type="dir"/>
+			<then>
+				<echo message="Add Archives [${deploy_archivi_add_resources}] ..."/>
+
+				<mkdir dir="${tmp_archivi}/_createresources"/>
+				<mkdir dir="${tmp_archivi}/_createresources/resources"/>
+				<copy todir="${tmp_archivi}/_createresources/resources">
+					<fileset dir="${deploy_archivi_add_resources}/">
+				    		<include name="**"/>
+					</fileset>
+				</copy>
+
+				<delete includeemptydirs="true">
+					<fileset dir="${tmp_archivi}/_createresources"  >
+						<and>
+							<size value="0"/>
+							<type type="dir"/>
+						</and>
+					</fileset>
+				</delete>
+
+				<if>
+					<available file="${tmp_archivi}/_createresources/resources" type="dir"/>
+					<then>
+						<mkdir dir="${dist}/resources"/>
+						<copy todir="${dist}/resources">
+							<fileset dir="${tmp_archivi}/_createresources/resources">
+						    		<include name="**"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
+
+				<delete dir="${tmp_archivi}/_createresources"/>
+
+				<echo message="Add Archives [${deploy_archivi_add_resources}] completed"/>
 			</then>
 		</if>
 

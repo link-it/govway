@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -819,6 +820,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	@Override
 	public void createPluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
 		updatePosizioneBeforeCreate(rp);
+		updateDate(rp);
 		try {
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, rp);
 			this.archiviUpdated = true;
@@ -828,8 +830,15 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	@Override
 	public void updatePluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		updateDate(rp);
 		try {
-			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rp);
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rp); // aggiorna solo i dati principali
+			if(rp.sizeArchivioList()>0) {
+				for (RegistroPluginArchivio rpa : rp.getArchivioList()) {
+					rpa.setNomePlugin(rp.getNome());
+					this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rpa);
+				}
+			}
 			this.archiviUpdated = true;
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);

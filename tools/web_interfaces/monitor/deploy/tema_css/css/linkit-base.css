@@ -189,6 +189,13 @@ option:active  {
 	color: ${input.color};
 }
 
+textarea.inputTextAreaLong {
+        background-color: ${input.background.color} ;
+        background-image: none !important;
+        width: auto;
+        color: ${input.color};
+}
+
 ul {
 	line-height: normal;
 }

@@ -959,7 +959,6 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 		// Object _portaApplicativa
 		sqlQueryObjectGet.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model()));
 		sqlQueryObjectGet.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME,true));
-		sqlQueryObjectGet.addSelectField("id_soggetto");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -969,7 +968,6 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 		};
 		List<Class<?>> listaFieldIdReturnType_portaApplicativa = new ArrayList<Class<?>>();
 		listaFieldIdReturnType_portaApplicativa.add(String.class);
-		listaFieldIdReturnType_portaApplicativa.add(Long.class);
 		org.openspcoop2.core.commons.search.IdPortaApplicativa id_portaApplicativa = null;
 		List<Object> listaFieldId_portaApplicativa = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_portaApplicativa, searchParams_portaApplicativa);

@@ -21,15 +21,15 @@
 			<h:outputText id="outStatoAttualeDisabilitato" value="Disabilitato" rendered="#{allarmiBean.allarme.enabled == 0}"/>
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" value="Dettaglio" rendered="#{not empty allarmiBean.modificaDettaglioStato}"/>
-			<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" readonly="#{true}" rendered="#{not empty allarmiBean.modificaDettaglioStato}" styleClass="inputLinkLong" rows="7"/>
-						
-			<h:outputLabel value="Data Creazione" id="dataCreazione" styleClass="outputFieldLabel icon-date" rendered="#{true}"/>
-			<h:outputText id="outDataCreazione" value="#{allarmiBean.allarme.lasttimestampCreate}" rendered="#{true}">
-				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
-			</h:outputText>
-			
+			<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" readonly="#{true}" rendered="#{not empty allarmiBean.modificaDettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+									
 			<h:outputLabel value="Ultima Modifica" id="dataUltimaModifica" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}"/>
 			<h:outputText id="outDataUltimaModifica" value="#{allarmiBean.allarme.lasttimestampUpdate}" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+			</h:outputText>
+
+			<h:outputLabel value="Data Creazione" id="dataCreazione" styleClass="outputFieldLabel icon-date" rendered="#{true}"/>
+			<h:outputText id="outDataCreazione" value="#{allarmiBean.allarme.lasttimestampCreate}" rendered="#{true}">
 				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
 			</h:outputText>
 			

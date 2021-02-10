@@ -242,11 +242,13 @@ public class ConfigurazioneAllarmiAdd extends Action {
 							try{
 								Context context = confHelper.createAlarmContext(allarme, parameters);	
 								
-								allarme.setAlias(AllarmiUtils.costruisciAliasAllarme(allarme, ControlStationCore.getLog(), context));
+								if(confCore.isShowAllarmiFormNomeSuggeritoCreazione()) {
+									allarme.setAlias(AllarmiUtils.costruisciAliasAllarme(allarme, ControlStationCore.getLog(), context));
+								}
 								
 								String serialId = confCore.getNextAlarmInstanceSerialId(allarme.getPlugin().getTipo());
 								allarme.setNome(AllarmiDriverUtils.buildIdAlarm(allarme.getPlugin().getTipo(), serialId));
-								
+																
 								allarme.setDescrizione(allarme.getPlugin().getDescrizione());
 								
 								IDynamicLoader dl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, allarme.getPlugin().getTipo(), allarme.getPlugin().getClassName(), ControlStationCore.getLog());

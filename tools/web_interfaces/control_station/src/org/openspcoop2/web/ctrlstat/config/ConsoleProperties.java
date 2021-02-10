@@ -454,6 +454,9 @@ public class ConsoleProperties {
 	public Boolean isShowAllarmiIdentificativoRuntime() throws UtilsException{
 		return this.readBooleanProperty(true, "allarmi.identificativoRuntime");
 	}
+	public Boolean isShowAllarmiFormNomeSuggeritoCreazione() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.form.nomeSuggeritoCreazione");
+	}
 	public Boolean isShowAllarmiFormStatoAllarme() throws UtilsException{
 		return this.readBooleanProperty(true, "allarmi.form.statoAllarme");
 	}

@@ -114,6 +114,8 @@ public class CostantiConfigurazione {
 	
 	public static final String ALARM_KEYWORD_TEMPLATE_STATO_ALLARME = "@STATO_ALLARME@";
 	public static final String ALARM_KEYWORD_TEMPLATE_NOME_ALLARME = "@NOME_ALLARME@";
+	public static final String ALARM_KEYWORD_TEMPLATE_ID_ALLARME = "@ID_ALLARME@";
+	public static final String ALARM_KEYWORD_TEMPLATE_API = "@API@";
 	public static final String ALARM_KEYWORD_TEMPLATE_DETTAGLIO_ALLARME = "@DETTAGLIO_ALLARME@";
 	
 }

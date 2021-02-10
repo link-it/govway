@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -100,6 +101,7 @@ import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
 /**
@@ -2184,8 +2186,22 @@ public abstract class AbstractArchiveEngine {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
+	protected void updateDate(RegistroPlugin rp) throws DriverConfigurazioneException{
+		try {
+			// aggiorno tutte le date
+			rp.setData(DateManager.getDate());
+			if(rp.sizeArchivioList()>0) {
+				for (RegistroPluginArchivio rpa : rp.getArchivioList()) {
+					rpa.setData(DateManager.getDate());
+				}
+			}
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
 	public void createPluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
 		updatePosizioneBeforeCreate(rp);
+		updateDate(rp);
 		try {
 			this.driverConfigurazione.createRegistroPlugin(rp);
 		}catch(Exception e) {
@@ -2193,6 +2209,7 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	public void updatePluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		updateDate(rp);
 		try {
 			this.driverConfigurazione.updateRegistroPlugin(rp);
 		}catch(Exception e) {

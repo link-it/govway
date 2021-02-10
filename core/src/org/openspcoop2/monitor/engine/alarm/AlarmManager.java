@@ -591,6 +591,8 @@ public class AlarmManager {
 		
 		String newS = original.replace(CostantiConfigurazione.ALARM_KEYWORD_TEMPLATE_NOME_ALLARME, configAllarme.getAlias());
 		
+		newS = newS.replace(CostantiConfigurazione.ALARM_KEYWORD_TEMPLATE_ID_ALLARME, configAllarme.getNome());
+		
 		StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(configAllarme.getStato());
 		switch ( statoAllarme ) {
 		case OK:

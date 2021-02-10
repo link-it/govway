@@ -900,6 +900,10 @@ public class ControlStationCore {
 	public Boolean isShowAllarmiIdentificativoRuntime() throws UtilsException{
 		return this.showAllarmiIdentificativoRuntime;
 	}
+	private boolean showAllarmiFormNomeSuggeritoCreazione = false;
+	public Boolean isShowAllarmiFormNomeSuggeritoCreazione() throws UtilsException{
+		return this.showAllarmiFormNomeSuggeritoCreazione;
+	}
 	private boolean showAllarmiFormStatoAllarme = false;
 	public Boolean isShowAllarmiFormStatoAllarme() throws UtilsException{
 		return this.showAllarmiFormStatoAllarme;
@@ -2406,6 +2410,7 @@ public class ControlStationCore {
 		this.configurazioneAllarmiEnabled = core.configurazioneAllarmiEnabled;
 		this.allarmiConfig = core.allarmiConfig;
 		this.showAllarmiIdentificativoRuntime = core.showAllarmiIdentificativoRuntime;
+		this.showAllarmiFormNomeSuggeritoCreazione = core.showAllarmiFormNomeSuggeritoCreazione;
 		this.showAllarmiFormStatoAllarme = core.showAllarmiFormStatoAllarme;
 		this.showAllarmiFormStatoAllarmeHistory = core.showAllarmiFormStatoAllarmeHistory;
 		this.showAllarmiSearchStatiAllarmi = core.showAllarmiSearchStatiAllarmi;
@@ -2779,6 +2784,7 @@ public class ControlStationCore {
 			if(this.configurazioneAllarmiEnabled) {
 				this.allarmiConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), consoleProperties.getAllarmiConfigurazione());
 				this.showAllarmiIdentificativoRuntime = consoleProperties.isShowAllarmiIdentificativoRuntime();
+				this.showAllarmiFormNomeSuggeritoCreazione = consoleProperties.isShowAllarmiFormNomeSuggeritoCreazione();
 				this.showAllarmiFormStatoAllarme = consoleProperties.isShowAllarmiFormStatoAllarme();
 				this.showAllarmiFormStatoAllarmeHistory = consoleProperties.isShowAllarmiFormStatoAllarmeHistory();
 				this.showAllarmiSearchStatiAllarmi = consoleProperties.isShowAllarmiSearchStatiAllarmi();
