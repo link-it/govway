@@ -45,6 +45,12 @@ public interface IAlarmProcessing extends ISearchArguments {
 	public boolean isUsableFilter();
 	public boolean isUsableGroupBy();
 	
+	public boolean isManuallyUpdateState();
+	
+	public default String getParameterSectionTitle() {
+		return null;
+	}
+	
 	/* Solo per allarmi di tipo Attivo */
 	public void check(IAlarm allarme) throws AlarmException;
 	

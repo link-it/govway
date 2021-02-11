@@ -126,7 +126,7 @@ public class AlarmLibrary {
 		
 	public void executeAlarms(boolean exitAfterExecution) throws AlarmException{
 		try{
-			this.activeThreads = this.getActiveAlarmThreads(this.allarmeSearchDAO);
+			this.activeThreads = this.getActiveAlarmThreads(this.allarmeSearchDAO, this.log);
 			if(this.activeThreads.size()>0){
 				for (AlarmThread alarmThread : this.activeThreads.values()) {
 					Thread t = new Thread(alarmThread);
@@ -280,7 +280,7 @@ public class AlarmLibrary {
 	
 	/* Utiltiies interne */
 	
-	private Hashtable<String, AlarmThread> getActiveAlarmThreads(IAllarmeServiceSearch allarmeSearchDAO) throws Exception{
+	private Hashtable<String, AlarmThread> getActiveAlarmThreads(IAllarmeServiceSearch allarmeSearchDAO, Logger log) throws Exception{
 		
 		IExpression expr = allarmeSearchDAO.newExpression();
 		expr.and();
@@ -297,9 +297,13 @@ public class AlarmLibrary {
 		Hashtable<String, AlarmThread> listAlarmThread = new Hashtable<String, AlarmThread>();
 		
 		for (Allarme confAllarme : list) {
-			AlarmThread alarmThread = createAlarmThread(confAllarme);
-			if(alarmThread!=null){
-				listAlarmThread.put(confAllarme.getNome(),alarmThread);
+			try {
+				AlarmThread alarmThread = createAlarmThread(confAllarme);
+				if(alarmThread!=null){
+					listAlarmThread.put(confAllarme.getNome(),alarmThread);
+				}
+			}catch(Throwable t) {
+				log.error("Creazione allarme con id '"+confAllarme.getNome()+"' (alias: "+confAllarme.getAlias()+") non riuscita: "+t.getMessage(),t);
 			}
 		}
 		return listAlarmThread;

@@ -355,20 +355,22 @@ public class ConfigurazioneAllarmiChange extends Action {
 			}
 				
 			// salvataggio dei parametri
-			for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
-				boolean found = false;
-				for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
-					if(parDB.getIdParametro().equals(par.getId())){
-						parDB.setValore(par.getValueAsString());
-						found = true;
-						break;
+			if(parameters!=null && parameters.size()>0) {
+				for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
+					boolean found = false;
+					for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
+						if(parDB.getIdParametro().equals(par.getId())){
+							parDB.setValore(par.getValueAsString());
+							found = true;
+							break;
+						}
 					}
-				}
-				if(!found){
-					AllarmeParametro parDB = new AllarmeParametro();
-					parDB.setIdParametro(par.getId());
-					parDB.setValore(par.getValueAsString());
-					allarme.addAllarmeParametro(parDB);
+					if(!found){
+						AllarmeParametro parDB = new AllarmeParametro();
+						parDB.setIdParametro(par.getId());
+						parDB.setValore(par.getValueAsString());
+						allarme.addAllarmeParametro(parDB);
+					}
 				}
 			}
 			

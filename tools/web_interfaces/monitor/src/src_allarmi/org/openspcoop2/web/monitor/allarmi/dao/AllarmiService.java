@@ -22,7 +22,6 @@
 package org.openspcoop2.web.monitor.allarmi.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -42,7 +41,6 @@ import org.openspcoop2.core.allarmi.dao.IAllarmeServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IDBAllarmeServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IServiceManager;
 import org.openspcoop2.core.allarmi.dao.jdbc.JDBCAllarmeHistoryServiceSearch;
-import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -497,6 +495,8 @@ public class AllarmiService implements IAllarmiService {
 			if(findAll != null && findAll.size() > 0){
 				List<ConfigurazioneAllarmeBean> toRet = new ArrayList<ConfigurazioneAllarmeBean>();
 
+				boolean existsAlmostOneManuallyUpdateState = false;
+				
 				for (Allarme al : findAll) {
 					IdPlugin idPlugin = new IdPlugin();
 					idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
@@ -504,7 +504,14 @@ public class AllarmiService implements IAllarmiService {
 					Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
 					ConfigurazioneAllarmeBean allarmeBean = new ConfigurazioneAllarmeBean(al, plugin);
 					this.valorizzaDettaglioAPI(allarmeBean);
+					if(allarmeBean.isManuallyUpdateState()) {
+						existsAlmostOneManuallyUpdateState = true;
+					}
 					toRet.add(allarmeBean);
+				}
+				
+				for (ConfigurazioneAllarmeBean allarmeBean : toRet) {
+					allarmeBean.setExistsAlmostOneManuallyUpdateState(existsAlmostOneManuallyUpdateState);
 				}
 
 				return toRet;
@@ -757,12 +764,13 @@ public class AllarmiService implements IAllarmiService {
 		if (this.allarmeDAO.exists(idAll)) {
 			this.allarmeDAO.update(idAll, allarme);
 		} else {
+			throw new Exception("Allarme con id '"+allarme.getNome()+"' non esistente");
 			// imposto lo stato di default per l'allarme:
-			allarme.setStato(AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
-			allarme.setStatoPrecedente(AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
-			allarme.setLasttimestampCreate(new Date());
-			allarme.setAcknowledged(Integer.valueOf(0));
-			this.allarmeDAO.create(allarme);
+//			allarme.setStato(AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
+//			allarme.setStatoPrecedente(AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
+//			allarme.setLasttimestampCreate(new Date());
+//			allarme.setAcknowledged(Integer.valueOf(0));
+//			this.allarmeDAO.create(allarme);
 		}
 	}
 
@@ -1258,6 +1266,27 @@ public class AllarmiService implements IAllarmiService {
 	}
 
 	@Override
+	public boolean isShowParameters(Allarme configurazioneAllarme, Context context) throws Exception{
+		try {
+
+			IdPlugin idPlugin = new IdPlugin();
+			idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
+			idPlugin.setTipo(configurazioneAllarme.getTipo());
+			
+			Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
+			List<Parameter<?>> sdkParameters = bl.getParameters(context);
+			
+			return sdkParameters!=null && sdkParameters.size()>0;
+
+		} catch (Exception e) {
+			AllarmiService.log.error(e.getMessage(), e);
+			return false;
+		}
+	}
+	
+	@Override
 	public List<Parameter<?>> instanceParameters(Allarme configurazioneAllarme, Context context) throws Exception {
 
 		try {
@@ -1312,6 +1341,37 @@ public class AllarmiService implements IAllarmiService {
 			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
 			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
 			return filter ? alarmProcessing.isUsableFilter() : alarmProcessing.isUsableGroupBy();
+
+		} catch (Exception e) {
+			AllarmiService.log.error(e.getMessage(), e);
+			throw e;
+		}
+	}
+	
+	@Override
+	public String getParameterSectionTitle(Allarme configurazioneAllarme) throws Exception{
+		try {
+			IdPlugin idPlugin = new IdPlugin();
+			idPlugin.setTipoPlugin(TipoPlugin.ALLARME.getValue());
+			idPlugin.setTipo(configurazioneAllarme.getTipo());
+			
+			Plugin plugin = this.dynamicUtils.getPlugin(idPlugin);
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getTipo(), plugin.getClassName(), AllarmiService.log);
+			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
+			
+			boolean groupBy = alarmProcessing.isUsableGroupBy();
+			
+			String s = alarmProcessing.getParameterSectionTitle();
+			if(s==null || StringUtils.isEmpty(s)) {
+				if(groupBy) {
+					s = org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_VALORI_DI_SOGLIA;
+				}
+				else {
+					s = org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_PARAMETRI;
+				}
+			}
+			return s;
 
 		} catch (Exception e) {
 			AllarmiService.log.error(e.getMessage(), e);

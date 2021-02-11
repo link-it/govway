@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.monitor.engine.dynamic;
 
+import java.util.List;
+
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
@@ -26,9 +28,6 @@ import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.monitor.sdk.plugins.ISearchArguments;
 import org.openspcoop2.monitor.sdk.plugins.ISearchProcessing;
 import org.openspcoop2.monitor.sdk.plugins.IStatisticProcessing;
-
-import java.util.List;
-
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
@@ -42,18 +41,23 @@ import org.slf4j.Logger;
  */
 public class BasicLoader implements IDynamicLoader{
 
-	private static Logger log = LoggerWrapperFactory.getLogger(BasicLoader.class);
-
 	private String tipoPlugin;
 	private String tipo;
 	private String className;
 	private Class<?> c;
+	private Logger log;
 
-	protected BasicLoader(String tipoPlugin, String tipo, String className, Class<?> c) {
+	protected BasicLoader(String tipoPlugin, String tipo, String className, Class<?> c, Logger log) {
 		this.tipoPlugin = tipoPlugin;
 		this.tipo = tipo;
 		this.className = className;
 		this.c = c;
+		if(log==null) {
+			this.log = LoggerWrapperFactory.getLogger(BasicLoader.class);
+		}
+		else {
+			this.log = log;
+		}
 	}
 
 	@Override
@@ -116,7 +120,7 @@ public class BasicLoader implements IDynamicLoader{
 		catch (SearchException re) {
 			throw re;
 		}catch (Exception e) {
-			BasicLoader.log.error("Impossibile ottenere informazioni per il rendereng dal Loader: "+e.getMessage(),e);
+			this.log.error("Impossibile ottenere informazioni per il rendereng dal Loader: "+e.getMessage(),e);
 			throw new SearchException(e.getMessage(),e);
 		}
 	}
@@ -144,7 +148,7 @@ public class BasicLoader implements IDynamicLoader{
 		catch (SearchException re) {
 			throw re;
 		}catch (Exception e) {
-			BasicLoader.log.error("Impossibile ottenere informazioni per il rendereng dal Loader: "+e.getMessage(),e);
+			this.log.error("Impossibile ottenere informazioni per il rendereng dal Loader: "+e.getMessage(),e);
 			throw new SearchException(e.getMessage(),e);
 		}
 	}
@@ -170,7 +174,7 @@ public class BasicLoader implements IDynamicLoader{
 //			throw new RuntimeException("Impossibile caricare il plugin. La classe indicata ["+this.className+"] non esiste.");
 //		}
 		catch (Exception e) {
-			BasicLoader.log.error(e.getMessage(),e);
+			this.log.error(e.getMessage(),e);
 		}
 
 	}
@@ -195,7 +199,7 @@ public class BasicLoader implements IDynamicLoader{
 		catch (SearchException re) {
 			throw re;
 		}catch (Exception e) {
-			BasicLoader.log.error(e.getMessage(),e);
+			this.log.error(e.getMessage(),e);
 			throw new SearchException(e.getMessage(),e);
 		}
 

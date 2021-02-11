@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
@@ -79,6 +80,7 @@ import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.AlarmContext;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
 import org.openspcoop2.core.plugins.IdPlugin;
@@ -87,6 +89,7 @@ import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
+import org.openspcoop2.monitor.sdk.constants.ParameterType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
@@ -102,6 +105,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.lib.audit.AuditException;
 import org.openspcoop2.web.lib.audit.DriverAudit;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
 
@@ -2288,6 +2292,39 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public String getParameterSectionTitle(ConfigurazioneAllarmeBean configurazioneAllarme, boolean groupByAllarme) throws Exception{
+		String nomeMetodo = "getParameterSectionTitle";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), true);
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), plugin.getClassName(), ControlStationCore.log);
+			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
+			String s = alarmProcessing.getParameterSectionTitle();
+			if(s==null || StringUtils.isEmpty(s)) {
+				if(groupByAllarme) {
+					s = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_VALORI_DI_SOGLIA;
+				}
+				else {
+					s = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI;
+				}
+			}
+			return s;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public List<Parameter<?>> instanceParameters(ConfigurazioneAllarmeBean configurazioneAllarme, Context context) throws Exception{
 		String nomeMetodo = "instanceParameters";
 		Connection con = null;
@@ -2312,8 +2349,15 @@ public class ConfigurazioneCore extends ControlStationCore {
 				
 				for (Parameter<?> sdkParameter : sdkParameters) {
 					Parameter<?> par = DynamicComponentUtils.createDynamicComponentParameter(sdkParameter, bl);
-					((BaseComponent<?>)par).setContext(context);
+					
 					res.add(par);
+				}
+			}
+			
+			if(res!=null && !res.isEmpty()) {
+				((AlarmContext)context).setParameters(res);
+				for (Parameter<?> par : res) {
+					((BaseComponent<?>)par).setContext(context);		
 				}
 			}
 
@@ -2332,7 +2376,20 @@ public class ConfigurazioneCore extends ControlStationCore {
 			for (AllarmeParametro parDB : configurazioneAllarme.getAllarmeParametroList()) {
 				for (Parameter<?> par : parameters) {
 					if(parDB.getIdParametro().equals(par.getId())){
-						par.setValueAsString(parDB.getValore());
+						
+						String value = parDB.getValore();
+						
+						if(ParameterType.CHECK_BOX.equals(par.getType())){
+							if(Costanti.CHECK_BOX_ENABLED.equals(value) || Costanti.CHECK_BOX_ENABLED_ABILITATO.equals(value) || Costanti.CHECK_BOX_ENABLED_TRUE.equals(value)) {
+								value = Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								value = Costanti.CHECK_BOX_DISABLED_FALSE;
+							}
+						}
+						par.setValueAsString(value);
+						
+						par.setValueAsString(value);
 						break;
 					}
 				}

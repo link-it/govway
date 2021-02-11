@@ -36,9 +36,11 @@ public class ParameterRendering<T> {
 	private boolean required;
 	private boolean hidden;	
 	private T defaultValue;
+	private List<String> values = new ArrayList<String>();
+	private List<String> labels = new ArrayList<String>();
 	private Integer rows; // solo per text area
 	private Integer columns; // solo per text area
-	private List<String> values = new ArrayList<String>();
+	private String labelRight;
 	
 	public String getLabel() {
 		return this.label;
@@ -77,6 +79,18 @@ public class ParameterRendering<T> {
 	public void setValues(List<String> values) {
 		this.values = values;
 	}
+	public List<String> getLabels() {
+		return this.labels;
+	}
+	public void setLabels(List<String> labels) {
+		this.labels = labels;
+	}
+	public String getLabelRight() {
+		return this.labelRight;
+	}
+	public void setLabelRight(String labelRight) {
+		this.labelRight = labelRight;
+	}	
 	public Integer getRows() {
 		return this.rows;
 	}

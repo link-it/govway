@@ -38,18 +38,18 @@
 						    <ui:include src="/allarmi/includes/dettaglioAllarmeStato.xhtml" >
 						    </ui:include>
 					    </rich:tab>
+					    <rich:tab name="parametriConfigurazione" rendered="#{allarmiBean.showParameters}">
+							<f:facet name="label">
+								<h:outputText id="outTitleTabParametri" value="#{allarmiBean.parameterSectionTitle}" />
+						    </f:facet>
+						    <ui:include src="/allarmi/includes/dettaglioAllarmeParametriConfigurazione.xhtml" >
+						    </ui:include>
+					    </rich:tab>
 					    <rich:tab name="informazioniGenerali">
 							<f:facet name="label">
 								<h:outputText id="outTitleTabInfo" value="Informazioni Generali" />
 						    </f:facet>
 						    <ui:include src="/allarmi/includes/dettaglioAllarmeInformazioniGenerali.xhtml" >
-						    </ui:include>
-					    </rich:tab>
-						<rich:tab name="parametriConfigurazione">
-							<f:facet name="label">
-								<h:outputText id="outTitleTabParametri" value="Parametri di Configurazione" />
-						    </f:facet>
-						    <ui:include src="/allarmi/includes/dettaglioAllarmeParametriConfigurazione.xhtml" >
 						    </ui:include>
 					    </rich:tab>
 					

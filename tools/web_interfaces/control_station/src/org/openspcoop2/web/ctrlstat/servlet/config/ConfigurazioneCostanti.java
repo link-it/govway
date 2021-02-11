@@ -752,7 +752,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_PLUGIN = "Plugin";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_STATO_ALLARME = "Stato Allarme";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI_FREQUENZA = "Frequenza";
-	public final static String LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI = "Parametri";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI = org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_PARAMETRI;
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_VALORI_DI_SOGLIA = org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_VALORI_DI_SOGLIA;
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_EMAIL = "Notifica via Email";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_MONITORAGGIO_ESTERNO = "Notifica Monitoraggio Esterno";
 	

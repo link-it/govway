@@ -61,4 +61,5 @@ public interface IAlarm {
 	
 	public void changeStatus(AlarmStatus statoAllarme) throws AlarmException, AlarmNotifyException;
 
+	public boolean isManuallyUpdateState();
 }

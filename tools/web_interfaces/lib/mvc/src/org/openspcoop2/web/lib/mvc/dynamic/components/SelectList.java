@@ -58,10 +58,16 @@ public class SelectList extends BaseComponent<String> {
 		List<String> valuesList = new ArrayList<String>();
 		List<String> labelsList = new ArrayList<String>();
 		List<String> values = this.getRendering().getValues();
+		List<String> labels = this.getRendering().getLabels();
 		if(values!=null && values.size()>0) {
-			for (String itemValue : values) {
+			for (int i = 0; i < values.size(); i++) {
+				String itemValue = values.get(i);
+				String itemLabel = itemValue;
+				if(labels!=null && labels.size()==values.size()) {
+					itemLabel = labels.get(i);
+				}
 				valuesList.add(itemValue);
-				labelsList.add(itemValue);
+				labelsList.add(itemLabel);
 			}
 		}
 //		else if(this.provider!=null){

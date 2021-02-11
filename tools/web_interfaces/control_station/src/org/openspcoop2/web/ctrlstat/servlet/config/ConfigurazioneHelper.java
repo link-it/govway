@@ -149,6 +149,7 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistory
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicValidator;
 import org.openspcoop2.monitor.sdk.condition.Context;
+import org.openspcoop2.monitor.sdk.constants.ParameterType;
 import org.openspcoop2.monitor.sdk.exceptions.ValidationException;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -18116,7 +18117,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
 					de.setValue(allarme.getAlias());
 					de.setIdToRemove(""+allarme.getId());
-					de.setToolTip(allarme.getNome()); 
+					//de.setToolTip(allarme.getNome());
+					de.setToolTip(allarme.getAlias());
 					e.addElement(de);
 					
 					// Descrizione
@@ -18637,7 +18639,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(plugin != null) {
 				if(parameters != null&& parameters.size() > 0) {
 					for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
-						par.setValueAsString(this.getParameter(par.getId()));
+						String value = this.getParameter(par.getId());
+						if(ParameterType.CHECK_BOX.equals(par.getType())){
+							if(Costanti.CHECK_BOX_ENABLED.equals(value) || Costanti.CHECK_BOX_ENABLED_ABILITATO.equals(value) || Costanti.CHECK_BOX_ENABLED_TRUE.equals(value)) {
+								value = Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								value = Costanti.CHECK_BOX_DISABLED_FALSE;
+							}
+						}
+						par.setValueAsString(value);
 //						
 //						boolean found = false;
 //						for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
@@ -19399,28 +19410,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(allarme.getTipo() != null ? allarme.getTipo() : "");
 		de.setType(DataElementType.HIDDEN);
 		dati.addElement(de);
-		
-		// modalita
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
-		de.setValue(allarme.getTipoAllarme() != null ? allarme.getTipoAllarme().getValue() : "");
-		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_LABEL);
-		if(allarme.getTipoAllarme() != null && 
-				(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) || allarme.getTipoAllarme().equals(TipoAllarme.PASSIVO))) {
-			de.setType(DataElementType.TEXT);
-			de.setValue(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA );
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue("");
-		}
-		dati.addElement(de);
-		
+				
 		// nome
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
@@ -19516,6 +19506,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI_FREQUENZA);
 			dati.add(de);
+		}
+		
+		// modalita
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setValue(allarme.getTipoAllarme() != null ? allarme.getTipoAllarme().getValue() : "");
+		de.setType(DataElementType.HIDDEN);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_LABEL);
+		if(allarme.getTipoAllarme() != null && 
+				(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) || allarme.getTipoAllarme().equals(TipoAllarme.PASSIVO))) {
+			de.setType(DataElementType.TEXT);
+			de.setValue(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA );
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("");
+		}
+		dati.addElement(de);
+		
+		// frequenza
+		if(allarmeAttivo) {
 			
 			// number periodo
 			de = new DataElement();
@@ -19743,33 +19758,49 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 		}
+
+		boolean groupByAllarme = this.isShowGroupBy(allarme);
+		
+		if( (parameters != null && parameters.size() > 0) || groupByAllarme) {
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(getParameterSectionTitle(allarme, groupByAllarme));
+			dati.add(de);
+		}
+		
+		// sezione dinamica parametri
+		if(parameters != null && parameters.size() > 0) {
+			
+			for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> parameter : parameters) {
+				BaseComponent<?> component = (BaseComponent<?>) parameter;
+				
+				component.updateRendering();
+				
+				String postBack = this.getPostBackElementName();
+				if(StringUtils.isNotEmpty(postBack)) {
+					if(postBack.equals(parameter.getId())) {
+						component.valueSelectedListener();
+					}
+				}
+				
+				if(component.getRendered()) { // nella versione originale non sono consentiti gli hidden
+					dati.add(component.toDataElement());
+				}
+				
+			}
+		}
+		
+		// sezione group by
+		if(groupByAllarme) {
+			this.addToDatiAllarmeGroupBy(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RAGGRUPPAMENTO,
+					ruoloPorta, nomePorta, serviceBinding, tokenAbilitato);
+		}
 		
 		// Sezione filtro
 		if(this.isShowFilter(allarme)) {
 			this.addToDatiAllarmeFiltro(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO,
 					ruoloPorta, nomePorta, serviceBinding, idSoggettoProprietario, tokenAbilitato , tipoAutenticazione, 
 					appId, pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore);
-		}
-		
-		// sezione group by
-		if(this.isShowGroupBy(allarme)) {
-			this.addToDatiAllarmeGroupBy(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RAGGRUPPAMENTO,
-					ruoloPorta, nomePorta, serviceBinding, tokenAbilitato);
-		}
-		
-		// sezione dinamica parametri
-		if(parameters != null && parameters.size() > 0) {
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI);
-			dati.add(de);
-			
-			for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> parameter : parameters) {
-				BaseComponent<?> component = (BaseComponent<?>) parameter;
-				if(component.getRendered()) { // nella versione originale non sono consentiti gli hidden
-					dati.add(component.toDataElement());
-				}
-			}
 		}
 		
 		// Notifiche Email
@@ -19955,6 +19986,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		return this.confCore.isUsableGroupBy(allarme);
+	}
+	
+	public String getParameterSectionTitle(ConfigurazioneAllarmeBean allarme, boolean groupByAllarme) throws Exception {
+		if(allarme==null || allarme.getPlugin() == null){
+			return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI; // all'inizio deve prima essere scelto il plugin
+		}
+		return this.confCore.getParameterSectionTitle(allarme, groupByAllarme);
 	}
 	
 	private void addToDatiAllarmeFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, String nomeSezione,
@@ -21296,7 +21334,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();

@@ -69,10 +69,10 @@
 						<h:outputLabel styleClass="outputFieldLabel" id="outLabelUtente" value="Utente" rendered="#{not empty allarmiBean.allarmeHistory.utente}"/>
 						<h:outputText value="#{allarmiBean.allarmeHistory.utente}" rendered="#{not empty allarmiBean.allarmeHistory.utente}" id="outUtente"/>
 						
-						<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" value="Dettaglio" rendered="#{true}"/>
-						<h:inputTextarea value="#{allarmiBean.allarmeHistory.dettaglioStatoHtmlEscaped}" readonly="#{true}" 
-							rendered="#{true}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
-												
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" value="Dettaglio" rendered="#{not empty allarmiBean.allarmeHistory.dettaglioStato}"/>
+						<h:inputTextarea value="#{allarmiBean.allarmeHistory.dettaglioStato}" readonly="#{true}" 
+							rendered="#{not empty allarmiBean.allarmeHistory.dettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+										
 					</h:panelGrid>
 				</a4j:outputPanel>
 			</rich:panel>

@@ -172,6 +172,7 @@ public class AlarmManager {
 				
 				IDynamicLoader cAllarme = DynamicFactory.getInstance().newDynamicLoader(tipoPlugin, allarme.getTipo(), plugin.getClassName(), log);
 				IAlarmProcessing alarmProc = (IAlarmProcessing) cAllarme.newInstance();
+				alarm.setManuallyUpdateState(alarmProc.isManuallyUpdateState());
 				AlarmContext ctx = new AlarmContext(allarme, log, daoFactory);
 				List<Parameter<?>> listParameters = alarmProc.getParameters(ctx);
 				
@@ -200,7 +201,7 @@ public class AlarmManager {
 		return alarm;
 	}
 	
-	protected static void changeStatus(AlarmStatus newStatoAllarme,IAlarm allarme,DAOFactory daoFactory,String username) throws AlarmException {
+	protected static void changeStatus(AlarmStatus newStatoAllarme,IAlarm allarme,DAOFactory daoFactory,String username,boolean statusChanged) throws AlarmException {
 		try {
 			
 			Allarme oldConfig = allarme.getConfigAllarme();
@@ -235,9 +236,9 @@ public class AlarmManager {
 					autoChangeAck = false;
 				}
 				
-				if(confAllarme.getStato()!=null){
+				if(statusChanged && confAllarme.getStato()!=null){
 					confAllarme.setStatoPrecedente(confAllarme.getStato());
-					oldConfig.setStatoPrecedente(confAllarme.getStatoPrecedente());
+					oldConfig.setStatoPrecedente(confAllarme.getStato());
 				}
 				
 				switch (newStatoAllarme.getStatus()) {
@@ -257,8 +258,8 @@ public class AlarmManager {
 				oldConfig.setLasttimestampUpdate(confAllarme.getLasttimestampUpdate());
 				
 				// Azzero acknoledgement in caso di cambio stato
-				if(confAllarme.getStatoPrecedente()!=null){
-					if(autoChangeAck && confAllarme.getStatoPrecedente().equals(confAllarme.getStato())==false){
+				if(statusChanged){
+					if(autoChangeAck){
 						// lo stato è modificato
 						confAllarme.setAcknowledged(0);
 						oldConfig.setAcknowledged(0);

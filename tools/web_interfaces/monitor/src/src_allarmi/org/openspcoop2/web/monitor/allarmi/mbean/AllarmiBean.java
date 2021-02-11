@@ -110,6 +110,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	private StatoAllarme modificatoInformazioniHistory_statoAllarme = null;
 	private String modificatoInformazioniHistory_dettaglioAllarme = null;
 	private Integer modificatoInformazioniHistory_ackwoldegmentAllarme = null;
+	@SuppressWarnings("unused")
 	private StatoAllarme statoAllarmePrimaModifica = null;
 	
 	private AlarmEngineConfig alarmEngineConfig;
@@ -147,6 +148,22 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 
 	public void setShowGroupBy(boolean showGroupBy) {
 		this.showGroupBy = showGroupBy;
+	}
+	
+	public String getParameterSectionTitle() throws Exception {
+		if(this.allarme==null || this.allarme.getPlugin()==null){
+			return org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_PARAMETRI; // all'inizio deve prima essere scelto il plugin
+		}
+		return ((IAllarmiService)this.service).getParameterSectionTitle(this.allarme);
+	}
+	
+	public boolean isShowParameters() throws Exception {
+		if(this.allarme==null || this.allarme.getPlugin()==null){
+			return false; // all'inizio deve prima essere scelto il plugin
+		}
+		
+		Context context = new AllarmiContext(this);
+		return ((IAllarmiService)this.service).isShowParameters(this.allarme, context);
 	}
 	
 	public AllarmiBean() {
@@ -620,10 +637,11 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			
 			MessageUtils.addErrorMsg(error);
 		}
-			
-		if(this.statoAllarmePrimaModifica!=null){
-			this.allarme.setStatoPrecedente(AllarmiConverterUtils.toIntegerValue(this.statoAllarmePrimaModifica));
-		}
+//			
+//		viene modificato nella chiamata 'changeStatus' sopra
+//		if(this.statoAllarmePrimaModifica!=null){
+//			this.allarme.setStatoPrecedente(AllarmiConverterUtils.toIntegerValue(this.statoAllarmePrimaModifica));
+//		}
 		
 		return esito;
 	}

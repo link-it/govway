@@ -50,11 +50,15 @@ public interface IAllarmiService extends
 
 	public Long getCountAllarmiByStato(String stato, Integer acknowledged);
 
+	public boolean isShowParameters(Allarme configurazioneAllarme, Context context) throws Exception;
+	
 	public List<Parameter<?>> instanceParameters(Allarme configurazioneAllarme, Context context) throws Exception;
 	
 	public boolean isUsableFilter(Allarme configurazioneAllarme) throws Exception;
 	
 	public boolean isUsableGroupBy(Allarme configurazioneAllarme) throws Exception;
+	
+	public String getParameterSectionTitle(Allarme configurazioneAllarme) throws Exception;
 	
 	public ConfigurazioneAllarmeBean getAllarme(String nome) throws NotFoundException, ServiceException;
 

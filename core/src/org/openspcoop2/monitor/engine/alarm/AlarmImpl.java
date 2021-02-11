@@ -81,8 +81,17 @@ public class AlarmImpl implements IAlarm {
 	@Override
 	public void changeStatus(AlarmStatus nuovoStatoAllarme) throws AlarmException, AlarmNotifyException {
 		
+		// Cambio di stato effettivo ?
+		boolean statusChanged = false;
+		if(this.status==null || this.status.getStatus()==null){
+			statusChanged = true;
+		}
+		else{
+			statusChanged = !this.status.getStatus().equals(nuovoStatoAllarme.getStatus());
+		}
+		
 		// Cambio stato sul database degli allarmi
-		AlarmManager.changeStatus(nuovoStatoAllarme, this, this.daoFactory, this.username);
+		AlarmManager.changeStatus(nuovoStatoAllarme, this, this.daoFactory, this.username, statusChanged);
 		
 		
 		// Switch stato nell'attuale implementazione
@@ -159,10 +168,20 @@ public class AlarmImpl implements IAlarm {
 		this.pluginClassName = plugin;
 	}
 
+	@Override
+	public boolean isManuallyUpdateState() {
+		return this.manuallyUpdateState;
+	}
+	
+	public void setManuallyUpdateState(boolean manuallyUpdateState) {
+		this.manuallyUpdateState = manuallyUpdateState;
+	}
+
 	private String id = null;
 	private String nome = null;
 	private Allarme configAllarme;
 	private HashMap<String, Parameter<?>> parameters = null;
 	private AlarmStatus status = null;
 	private String pluginClassName = null;
+	private boolean manuallyUpdateState = false;
 }

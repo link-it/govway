@@ -64,6 +64,10 @@ public class AlarmContext implements Context{
 		this.parameters = parameters;
 	}
 
+	public void setParameters(List<Parameter<?>> parameters) {
+		this.parameters = parameters;
+	}
+	
 	@Override
 	public SearchType getTipoRicerca() {
 		return SearchType.ALL;

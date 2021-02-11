@@ -57,7 +57,7 @@ public class DynamicFactory {
 	public IDynamicLoader newDynamicLoader(String tipoPlugin, String tipo, String className,Logger log) throws SearchException{
 		
 		try {
-			return new BasicLoader(tipoPlugin, tipo, className, this.pluginLoader.getDynamicClass(className, tipoPlugin, tipo));
+			return new BasicLoader(tipoPlugin, tipo, className, this.pluginLoader.getDynamicClass(className, tipoPlugin, tipo), log);
 		}catch(Exception e) {
 			throw new SearchException(e.getMessage(),e);
 		}
