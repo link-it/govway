@@ -81,6 +81,7 @@ public class ContentAuthorizationCostanti {
 		
 		// Allarmi
 		"/allarmi/pages/form/allarme.jsf",
+		"/allarmi/pages/form/dettaglioAllarmeHistory.jsf",
 		"/allarmi/pages/list/statoAllarmi.jsf",
 		"/allarmi/pages/list/allarmeHistory.jsf",
 	}; 
@@ -149,6 +150,7 @@ public class ContentAuthorizationCostanti {
 		
 		// Allarmi
 		"/allarmi/pages/form/allarme.jsf",
+		"/allarmi/pages/form/dettaglioAllarmeHistory.jsf",
 		"/allarmi/pages/list/statoAllarmi.jsf",
 		"/allarmi/pages/list/allarmeHistory.jsf",
 		
@@ -219,6 +221,7 @@ public class ContentAuthorizationCostanti {
 		
 		// Allarmi
 		{"/allarmi/pages/form/allarme.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
+		{"/allarmi/pages/form/dettaglioAllarmeHistory.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
 		{"/allarmi/pages/list/statoAllarmi.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
 		{"/allarmi/pages/list/allarmeHistory.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
 

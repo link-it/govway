@@ -100,6 +100,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	//private AllarmiSearchForm search;
 
 	private ConfigurazioneAllarmeBean allarme;
+	private AllarmeHistory allarmeHistory;
 
 	private String ack;
 
@@ -1350,5 +1351,17 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 
 	public void setVisualizzaAck(boolean visualizzaAck) {
 	}
+	
+	public String dettaglioStatoAllarme(){
+		return "dettaglioStatoAllarme";
+	}
 
+	public AllarmeHistory getAllarmeHistory() {
+		return this.allarmeHistory;
+	}
+
+	public void setAllarmeHistory(AllarmeHistory allarmeHistory) {
+		this.allarmeHistory = allarmeHistory;
+	}
+	
 }

@@ -77,21 +77,25 @@
 						<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{item.acknowledged==0}" id="outAcknowledged3"/>
 					</rich:column>
 					
-					<rich:column>
-						<f:facet name="header">
-							<h:outputText value="Dettaglio" />
-						</f:facet>
-						<h:outputText value="#{item.dettaglioStatoAbbr}" id="allDettStato"/>
-						<rich:toolTip for="allDettStato">
-							<h:outputText value="#{item.dettaglioStatoHtmlEscaped}" escape="false" />
-						</rich:toolTip>
-					</rich:column>
-					
 					<rich:column id="colUtente">
 						<f:facet name="header">
 							<h:outputText id="outUtente" value="Utente" />
 						</f:facet>
 						<h:outputText value="#{item.utente}" readonly="true" style="width: 412px" id="outUtente2"/>
+					</rich:column>
+					
+					<rich:column  align="center" width="60px">
+						<f:facet name="header">
+							<h:outputText value="Dettaglio" id="outDettaglio" />
+						</f:facet>
+						<h:panelGroup layout="block" style="width: 60px;">
+							<a4j:htmlCommandLink id="dettaglio-iconLink" value="" action="#{allarmiBean.dettaglioStatoAllarme}">
+								<i class="material-icons md-18" id="iconaDettaglioOpen">&#xE8B6;</i>
+								<rich:toolTip id="dettaglioToolLink" for="dettaglio-iconLink" mode="client" value="Visualizza Dettaglio" />
+								<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarmeHistory}" />
+								<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
+							</a4j:htmlCommandLink>
+						</h:panelGroup>
 					</rich:column>
 					
 				</link:dataTable>
