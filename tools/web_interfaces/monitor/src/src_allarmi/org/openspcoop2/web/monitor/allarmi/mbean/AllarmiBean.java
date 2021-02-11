@@ -517,7 +517,12 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			
 			/* ******** SALVO ALLARME *************** */
 			
-			((IAllarmiService)this.service).store(this.allarme);
+			if(!this.modificatoStato){
+				((IAllarmiService)this.service).store(this.allarme);
+			}
+			else {
+				// viene tutto salvato dentro notifyChangeState
+			}
 
 			
 			/* ******** GESTIONE HISTORY *************** */
@@ -637,6 +642,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			
 			MessageUtils.addErrorMsg(error);
 		}
+		
 //			
 //		viene modificato nella chiamata 'changeStatus' sopra
 //		if(this.statoAllarmePrimaModifica!=null){
