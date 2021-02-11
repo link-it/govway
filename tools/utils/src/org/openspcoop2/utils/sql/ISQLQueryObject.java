@@ -858,6 +858,19 @@ public interface ISQLQueryObject {
 	public ISQLQueryObject addUpdateField(String nomeField,String valueField) throws SQLQueryObjectException;
 	
 	/**
+	 * Aggiunge un field per l'update
+	 * es: UPDATE table set nomeField=CASE  
+                        WHEN condizione1 THEN valore1
+                        WHEN condizione2 THEN valore2 
+						... 
+                        ELSE valoreDefault
+                    END  WHERE ...
+	 * 
+	 * @param nomeField Nome del Field
+	 */
+	public ISQLQueryObject addUpdateField(String nomeField,Case caseValue) throws SQLQueryObjectException;
+	
+	/**
 	 * Crea una SQL per una operazione di Update con i dati dell'oggetto
 	 * 
 	 * @return SQL per una operazione di Update

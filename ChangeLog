@@ -11,6 +11,8 @@ Corretti inoltre bug sulle API visualizzate rispetto ai permessi utente
 
 Utils mail: riviste utility per funzionare con java 11 e ultime versioni delle librerie.
 
+Utils sql: aggiunta gestione CASE in update
+
 2021-01-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
