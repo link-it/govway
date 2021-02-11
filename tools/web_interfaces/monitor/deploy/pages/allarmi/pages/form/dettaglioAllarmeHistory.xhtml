@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core"
+	template="/templates/defaultTemplate.xhtml">
+		<ui:param value="Dettagli Allarme (#{allarmiBean.allarme.alias})" name="title" />
+		<ui:define name="navbar">
+			<ul>
+				<li>
+					<h:commandLink action="allarmi" value="Allarmi"/>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li>
+					<a4j:htmlCommandLink id="dettaglioAllarmeStato" action="#{allarmiBean.dettaglioAllarme}" value="Dettagli Allarme (#{allarmiBean.allarme.alias})" rendered="#{true}">
+						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+						<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
+	                </a4j:htmlCommandLink>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li>
+					<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" action="visualizzaHistoryAllarme" value="Archivio Stati">
+						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+						<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
+					</a4j:htmlCommandLink>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li>
+					<h:outputText id="allarmi" value="Dettagli Stato Allarme" styleClass="ultimo-path" />
+				</li>
+			</ul>
+		</ui:define>
+		<ui:define name="body">
+			<a4j:keepAlive beanName="allarmiBean" />
+			
+			<rich:panel styleClass="noborder" id="paginaStatoAllarme"> 
+				<f:facet name="header">
+					<h:outputText id="outDettagli2" value="Dettagli Stato Allarme (#{allarmiBean.allarme.alias})" />
+				</f:facet>
+				
+				<a4j:outputPanel layout="block" id="informazioniStatoAllarme">
+					<h:panelGrid id="panelGridStatoAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx">
+					
+						<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+							<h:outputText value="Dettagli" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+						</h:panelGroup>
+						
+						<h:outputLabel value="Data Aggiornamento" id="dataAggiornamento" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.allarmeHistory.timestampUpdate}"/>
+						<h:outputText id="outDataAggiornamento" value="#{allarmiBean.allarmeHistory.timestampUpdate}" rendered="#{not empty allarmiBean.allarmeHistory.timestampUpdate}">
+							<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+						</h:outputText>
+						
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelAbilitato" value="Abilitato" rendered="#{true}"/>
+						<h:outputText value="Si" rendered="#{allarmiBean.allarmeHistory.enabled==1}" id="outAbilitato2"/>
+						<h:outputText value="No" rendered="#{allarmiBean.allarmeHistory.enabled==0}" id="outAbilitato3"/>
+
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelStatoAttuale" value="Stato" rendered="#{true}"/>
+						<h:outputText value="#{allarmiBean.allarmeHistory.labelStato}" id="outStato2" rendered="#{allarmiBean.allarmeHistory.enabled == 1}"/>
+						<h:outputText value="Disabilitato" id="outStato3" rendered="#{allarmiBean.allarmeHistory.enabled == 0}"/>
+						
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelAcknowledgde" value="Acknowledge" rendered="#{true}"/>
+						<h:outputText value="Si" rendered="#{allarmiBean.allarmeHistory.acknowledged==1}" id="outAcknowledged2"/>
+						<h:outputText value="No" rendered="#{allarmiBean.allarmeHistory.acknowledged==0}" id="outAcknowledged3"/>
+						
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelUtente" value="Utente" rendered="#{not empty allarmiBean.allarmeHistory.utente}"/>
+						<h:outputText value="#{allarmiBean.allarmeHistory.utente}" rendered="#{not empty allarmiBean.allarmeHistory.utente}" id="outUtente"/>
+						
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" value="Dettaglio" rendered="#{true}"/>
+						<h:inputTextarea value="#{allarmiBean.allarmeHistory.dettaglioStatoHtmlEscaped}" readonly="#{true}" 
+							rendered="#{true}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+												
+					</h:panelGrid>
+				</a4j:outputPanel>
+			</rich:panel>
+		</ui:define>
+</ui:composition>
+		
+
+
+
+
+
+
