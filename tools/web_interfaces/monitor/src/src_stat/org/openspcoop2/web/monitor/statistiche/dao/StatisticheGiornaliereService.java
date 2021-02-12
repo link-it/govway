@@ -47,6 +47,7 @@ import org.openspcoop2.core.statistiche.dao.IStatisticaOrariaServiceSearch;
 import org.openspcoop2.core.statistiche.dao.IStatisticaSettimanaleServiceSearch;
 import org.openspcoop2.core.statistiche.model.StatisticaContenutiModel;
 import org.openspcoop2.core.statistiche.model.StatisticaModel;
+import org.openspcoop2.core.statistiche.utils.StatisticheUtils;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
@@ -1488,6 +1489,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			else{
 				expr.equals(model.DATA,date);
 			}
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(expr, model);
 
 			// Protocollo
 			String protocollo = null;
@@ -1742,6 +1746,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroApi(expr, this.andamentoTemporaleSearch, model, isCount);
 			
+			this.impostaFiltroIdClusterOrCanale(expr, this.andamentoTemporaleSearch, model, isCount);
 
 			if(date==null){
 				// ORDER BY
@@ -1850,6 +1855,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// ok 
 			IExpression exprOk =  dao.newExpression();
 			exprOk.between(model.DATA, min,max);
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(exprOk, model);
 			exprOk.and().in(model.ESITO, esitiOk);
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(dao, model.ID_PORTA, 
@@ -1871,6 +1878,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// fault
 			IExpression exprFault =  dao.newExpression();
 			exprFault.between(model.DATA, min,max);
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(exprFault, model);
 			exprFault.and().in(model.ESITO, esitiFault);
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(dao, model.ID_PORTA, 
@@ -1892,6 +1901,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// ko
 			IExpression exprKo =  dao.newExpression();
 			exprKo.between(model.DATA, min,max);
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(exprKo, model);
 			exprKo.and().in(model.ESITO, esitiKo);
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(dao, model.ID_PORTA, 
@@ -2186,6 +2197,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.and().between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
+				
+				// Record validi
+				StatisticheUtils.selezionaRecordValidi(erogazione_portaApplicativa_Expr, model);
 
 				// Protocollo
 				String protocollo = null;
@@ -2285,6 +2299,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.and().between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
+				
+				// Record validi
+				StatisticheUtils.selezionaRecordValidi(fruizione_portaDelegata_Expr, model);
 
 				// Protocollo
 				//String protocollo = null;
@@ -2381,6 +2398,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				this.impostaFiltroApi(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 				this.impostaFiltroApi(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+				
+				this.impostaFiltroIdClusterOrCanale(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+				this.impostaFiltroIdClusterOrCanale(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 
 				// UNION
 
@@ -2466,6 +2486,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
+				
+				// Record validi
+				StatisticheUtils.selezionaRecordValidi(erogazione_portaApplicativa_Expr, model);
 
 				// Protocollo
 				String protocollo = null;
@@ -2563,6 +2586,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				this.impostaFiltroApi(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 				
+				this.impostaFiltroIdClusterOrCanale(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 					erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -2628,6 +2653,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
+				
+				// Record validi
+				StatisticheUtils.selezionaRecordValidi(fruizione_portaDelegata_Expr, model);
 
 				// Protocollo
 				String protocollo = null;
@@ -2724,6 +2752,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 				
 				this.impostaFiltroApi(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+
+				this.impostaFiltroIdClusterOrCanale(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 					fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -2847,6 +2877,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			erogazione_portaApplicativa_Expr.and().between(model.DATA,
 					this.distribSoggettoSearch.getDataInizio(),
 					this.distribSoggettoSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(erogazione_portaApplicativa_Expr, model);
 
 			// Protocollo
 			String protocollo = null;
@@ -2945,6 +2978,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			fruizione_portaDelegata_Expr.and().between(model.DATA,
 					this.distribSoggettoSearch.getDataInizio(),
 					this.distribSoggettoSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(fruizione_portaDelegata_Expr, model);
 
 			// Protocollo
 			//			String protocollo = null;
@@ -3041,6 +3077,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroApi(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 			this.impostaFiltroApi(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+			
+			this.impostaFiltroIdClusterOrCanale(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+			this.impostaFiltroIdClusterOrCanale(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 
 			// UNION
 
@@ -3251,6 +3290,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			erogazione_portaApplicativa_Expr.between(model.DATA,
 					this.distribSoggettoSearch.getDataInizio(),
 					this.distribSoggettoSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(erogazione_portaApplicativa_Expr, model);
 
 			// Protocollo
 			String protocollo = null;
@@ -3348,6 +3390,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroGruppo(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 			
 			this.impostaFiltroApi(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+			
+			this.impostaFiltroIdClusterOrCanale(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -3536,6 +3580,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			fruizione_portaDelegata_Expr.between(model.DATA,
 					this.distribSoggettoSearch.getDataInizio(),
 					this.distribSoggettoSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(fruizione_portaDelegata_Expr, model);
 
 
 			// Protocollo
@@ -3632,6 +3679,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroGruppo(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 			
 			this.impostaFiltroApi(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
+
+			this.impostaFiltroIdClusterOrCanale(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 			
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4188,6 +4237,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			expr.between(model.DATA,
 					this.distribServizioSearch.getDataInizio(),
 					this.distribServizioSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(expr, model);
 
 			// Protocollo
 			String protocollo = null;
@@ -4434,6 +4486,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroApi(expr, this.distribServizioSearch, model, isCount); // non viene presentato all'utente la possibilita di impostarlo nel searchform
 
+			this.impostaFiltroIdClusterOrCanale(expr, this.distribServizioSearch, model, isCount);
+
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 			
 				expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4568,6 +4622,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			expr.between(model.DATA,
 					this.distribAzioneSearch.getDataInizio(),
 					this.distribAzioneSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(expr, model);
 
 			// Protocollo
 			String protocollo = null;
@@ -4827,6 +4884,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroGruppo(expr, this.distribAzioneSearch, model, isCount);
 			
 			this.impostaFiltroApi(expr, this.distribAzioneSearch, model, isCount);
+
+			this.impostaFiltroIdClusterOrCanale(expr, this.distribAzioneSearch, model, isCount);
 			
 			expr.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.AZIONE);
@@ -5719,7 +5778,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			expr = dao.newExpression();
 			// Data
 			expr.between(model.DATA, this.distribSaSearch.getDataInizio(),	this.distribSaSearch.getDataFine());
-
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(expr, model);
+			
 			// Protocollo
 			String protocollo = null;
 			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
@@ -5988,6 +6050,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroGruppo(expr, this.distribSaSearch, model, isCount);
 			
 			this.impostaFiltroApi(expr, this.distribSaSearch, model, isCount);
+
+			this.impostaFiltroIdClusterOrCanale(expr, this.distribSaSearch, model, isCount);
 
 			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 			// Poichè gli applicativi sono identificati univocamente insieme anche al soggetto proprietario, si aggiunge il soggetto nella group by
@@ -6376,6 +6440,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroGruppo(expr, this.statistichePersonalizzateSearch, model, isCount);
 			
 			this.impostaFiltroApi(expr, this.statistichePersonalizzateSearch, model, isCount);
+
+			this.impostaFiltroIdClusterOrCanale(expr, this.statistichePersonalizzateSearch, model, isCount);
 
 			// String idRisorsaAggregare = "RISORSA_DA_AGGREGARE";
 			//
@@ -6786,6 +6852,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.impostaFiltroGruppo(expr, this.statistichePersonalizzateSearch, model, isCount);
 
 			this.impostaFiltroApi(expr, this.statistichePersonalizzateSearch, model, isCount);
+
+			this.impostaFiltroIdClusterOrCanale(expr, this.statistichePersonalizzateSearch, model, isCount);
 			
 			// Risorsa da aggregare indica la statistica per cui aggregare, deve coincidere nel campo risorsa_nome
 			String nomeStatisticaPersonalizzata = this.statistichePersonalizzateSearch.getStatisticaSelezionata().getIdConfigurazioneStatistica();
@@ -6840,6 +6908,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// Data
 			expr.between(model.DATA,this.statistichePersonalizzateSearch.getDataInizio(),this.statistichePersonalizzateSearch.getDataFine());
+			
+			// Record validi
+			StatisticheUtils.selezionaRecordValidi(expr, model);
 
 			// Protocollo
 			String protocollo = null;
@@ -7141,6 +7212,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaFiltroApi(expr, this.statistichePersonalizzateSearch, model, false);
 
+			this.impostaFiltroIdClusterOrCanale(expr, this.statistichePersonalizzateSearch, model, false);
+
 			boolean resourceStats = false;
 			if(StatisticByResource.ID.equals(this.statistichePersonalizzateSearch.getStatisticaSelezionata().getIdConfigurazioneStatistica())){
 				if(this.statistichePersonalizzateSearch.getStatisticaSelezionataParameters()!=null && 
@@ -7398,6 +7471,24 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
 			addListaCredenzialiMittente(filter, listaCredenzialiMittente, model);
 
+		}
+	}
+	
+	private void impostaFiltroIdClusterOrCanale(IExpression filter, BaseSearchForm searchForm, StatisticaModel model, boolean isCount) throws UtilsException, ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+		if (StringUtils.isNotEmpty(searchForm.getClusterId())) {
+			
+			filter.and().equals(model.CLUSTER_ID,	searchForm.getClusterId().trim());
+			
+		}
+		else if (StringUtils.isNotEmpty(searchForm.getCanale())) {
+			
+			List<String> listId = searchForm.getIdClusterByCanale(searchForm.getCanale());
+			if(listId!=null && !listId.isEmpty()) {
+				filter.and().in(model.CLUSTER_ID, listId);
+			}
+			else {
+				filter.and().equals(model.CLUSTER_ID,	"--"); // non esistente volutamente
+			}
 		}
 	}
 	

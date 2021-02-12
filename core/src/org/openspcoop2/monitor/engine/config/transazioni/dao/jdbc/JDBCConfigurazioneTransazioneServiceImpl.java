@@ -904,4 +904,12 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
 		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
 	}
+	
+	@Override
+	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
+	
+		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+																							sql,param);
+	
+	}
 }

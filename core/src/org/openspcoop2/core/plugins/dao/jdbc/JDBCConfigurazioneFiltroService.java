@@ -1265,4 +1265,65 @@ public class JDBCConfigurazioneFiltroService extends JDBCConfigurazioneFiltroSer
 	
 	}
 	
+	@Override
+	public int nativeUpdate(String sql,Object ... param) throws ServiceException, NotImplementedException {
+		
+		Connection connection = null;
+		boolean oldValueAutoCommit = false;
+		boolean rollback = false;
+		try{
+			
+			// check parameters
+			if(sql==null){
+				throw new Exception("Parameter 'sql' is null");
+			}
+		
+			// ISQLQueryObject
+			ISQLQueryObject sqlQueryObject = this.jdbcSqlObjectFactory.createSQLQueryObject(this.jdbcProperties.getDatabase());
+			sqlQueryObject.setANDLogicOperator(true);
+			// Connection sql
+			connection = this.jdbcServiceManager.getConnection();
+
+			// transaction
+			if(this.jdbcProperties.isAutomaticTransactionManagement()){
+				oldValueAutoCommit = connection.getAutoCommit();
+				connection.setAutoCommit(false);
+			}
+
+			return this.serviceCRUD.nativeUpdate(this.jdbcProperties,this.log,connection,sqlQueryObject,sql,param);
+	
+		}catch(ServiceException e){
+			rollback = true;
+			this.log.error(e.getMessage(),e); throw e;
+		}catch(NotImplementedException e){
+			rollback = true;
+			this.log.error(e.getMessage(),e); throw e;
+		}catch(Exception e){
+			rollback = true;
+			this.log.error(e.getMessage(),e); throw new ServiceException("DeleteById(tableId) not completed: "+e.getMessage(),e);
+		}finally{
+			if(this.jdbcProperties.isAutomaticTransactionManagement()){
+				if(rollback){
+					try{
+						if(connection!=null)
+							connection.rollback();
+					}catch(Exception eIgnore){}
+				}else{
+					try{
+						if(connection!=null)
+							connection.commit();
+					}catch(Exception eIgnore){}
+				}
+				try{
+					if(connection!=null)
+						connection.setAutoCommit(oldValueAutoCommit);
+				}catch(Exception eIgnore){}
+			}
+			if(connection!=null){
+				this.jdbcServiceManager.closeConnection(connection);
+			}
+		}
+	
+	}
+	
 }

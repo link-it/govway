@@ -46,6 +46,7 @@ import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
 import org.openspcoop2.monitor.engine.utils.ContentFormatter;
 import org.openspcoop2.monitor.sdk.statistic.StatisticFilterName;
 import org.openspcoop2.monitor.sdk.statistic.StatisticResourceFilter;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 
 /**
@@ -97,7 +98,8 @@ public class StatisticsUtils {
 		expr.and();
 		
 		// indice
-		expr.between(Transazione.model().DATA_INGRESSO_RICHIESTA,data , dateNext);
+		//expr.between(Transazione.model().DATA_INGRESSO_RICHIESTA, data , dateNext); between is inclusive!
+		expr.between(Transazione.model().DATA_INGRESSO_RICHIESTA, DateUtils.incredementDate1MsIf999(data) , dateNext);
 		expr.isNotNull(Transazione.model().DATA_INGRESSO_RICHIESTA);
 		
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){
@@ -182,6 +184,9 @@ public class StatisticsUtils {
 			String uriApi = stat.getApi();
 			StatisticsUtils.setCondition(expr, uriApi, Transazione.model().URI_API);
 			
+			String clusterId = stat.getClusterId();
+			StatisticsUtils.setCondition(expr, clusterId, Transazione.model().CLUSTER_ID);
+			
 			expr.equals(Transazione.model().ESITO, stat.getEsito()!=null ? stat.getEsito() : -1);
 			
 			String esitoContesto = stat.getEsitoContesto();
@@ -247,6 +252,7 @@ public class StatisticsUtils {
 		expr.addGroupBy(Transazione.model().CLIENT_ADDRESS);
 		expr.addGroupBy(Transazione.model().GRUPPI);
 		expr.addGroupBy(Transazione.model().URI_API);
+		expr.addGroupBy(Transazione.model().CLUSTER_ID);
 		expr.addGroupBy(Transazione.model().ESITO);
 		expr.addGroupBy(Transazione.model().ESITO_CONTESTO);
 		if(groupByStato){
@@ -392,6 +398,8 @@ public class StatisticsUtils {
 		stat.setGruppo(StatisticsUtils.getValueFromMap(Transazione.model().GRUPPI,row));
 		
 		stat.setApi(StatisticsUtils.getValueFromMap(Transazione.model().URI_API,row));
+		
+		stat.setClusterId(StatisticsUtils.getValueFromMap(Transazione.model().CLUSTER_ID,row));
 		
 //		stat.setMittente(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldName()), (String)row.get(Transazione.model().NOME_SOGGETTO_FRUITORE .getFieldName())));
 //		stat.setDestinatario(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_EROGATORE.getFieldName()),(String)row.get(Transazione.model().NOME_SOGGETTO_EROGATORE.getFieldName())));

@@ -23,8 +23,13 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" value="Dettaglio" rendered="#{not empty allarmiBean.modificaDettaglioStato}"/>
 			<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" readonly="#{true}" rendered="#{not empty allarmiBean.modificaDettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
 									
-			<h:outputLabel value="Ultima Modifica" id="dataUltimaModifica" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}"/>
+			<h:outputLabel value="Ultima Verifica" id="dataUltimaModifica" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}"/>
 			<h:outputText id="outDataUltimaModifica" value="#{allarmiBean.allarme.lasttimestampUpdate}" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+			</h:outputText>
+
+			<h:outputLabel value="Ultima Modifica" id="dataUltimaModificaStato" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.dataUltimaModificaStato}"/>
+			<h:outputText id="outDataUltimaModificaStato" value="#{allarmiBean.dataUltimaModificaStato}" rendered="#{not empty allarmiBean.dataUltimaModificaStato}">
 				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
 			</h:outputText>
 

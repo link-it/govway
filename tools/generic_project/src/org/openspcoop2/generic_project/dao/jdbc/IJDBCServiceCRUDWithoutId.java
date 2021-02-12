@@ -54,5 +54,7 @@ public interface IJDBCServiceCRUDWithoutId<T,SM>  extends IJDBCServiceCRUD_DBNoS
 	public NonNegativeNumber deleteAll(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject) throws NotImplementedException,ServiceException,Exception;
 	
 	public NonNegativeNumber deleteAll(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,JDBCExpression expression) throws NotImplementedException,ServiceException,Exception;
-	
+
+	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException,Exception;	
+
 }

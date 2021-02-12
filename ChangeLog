@@ -13,6 +13,10 @@ Utils mail: riviste utility per funzionare con java 11 e ultime versioni delle l
 
 Utils sql: aggiunta gestione CASE in update
 
+statistiche: aggiunta ricerca per id cluster e canale
+             corretto bug di ricerca in transazioni su partizioni differenti: 59.999
+             migliorato algoritmo di aggironamento delle statistiche per evitare informazioni parziali scorrette in seguito alla delete
+
 2021-01-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

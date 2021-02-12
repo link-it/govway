@@ -51,4 +51,6 @@ public interface IJDBCServiceCRUDSingleObject<T,SM> extends IJDBCServiceCRUD_DB<
 	
 	public void updateOrCreate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject,T obj, IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception;
 	
+	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException,Exception;	
+
 }

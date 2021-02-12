@@ -197,6 +197,9 @@
 							          Errore: ERROR 1070 (42000): Too many key parts specified; max 16 parts allowed
 							- hsql: consente qualsiasi indice
 							- sqlserver: consente qualsiasi indice (verificato su sqlserver 2019)
+							- db2: (verificato su db2:11.5.0.0)
+			    					non consente la creazione degli indici 'INDEX_TR_MEDIUM', 'INDEX_TR_FULL:','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'. 
+									Errore: SQL Error [54008]: The index or index extension "INDEX_STAT_..." cannot be created or altered because the combined length of the specified columns is too long.. SQLCODE=-614, SQLSTATE=54008, DRIVER=4.26.14
 						-->	
 				    	<linkit:sql-table-index name="INDEX_TR_ENTRY">
 				    		<linkit:sql-table-index-field name="data-ingresso-richiesta" order="DESC" ignoreTypeCompatibility="true"/>
@@ -334,6 +337,7 @@
 				    		<linkit:sql-table-index-field name="client-address"/>
 				    		<linkit:sql-table-index-field name="gruppi"/>
 				    		<linkit:sql-table-index-field name="uri-api"/>
+				    		<linkit:sql-table-index-field name="cluster-id"/>
 				    		<linkit:sql-table-index-field name="data-uscita-richiesta" ignoreTypeCompatibility="true"/>
 				    		<linkit:sql-table-index-field name="data-ingresso-risposta" ignoreTypeCompatibility="true"/>
 				    		<linkit:sql-table-index-field name="data-uscita-risposta" ignoreTypeCompatibility="true"/>

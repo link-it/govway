@@ -63,6 +63,7 @@ import org.openspcoop2.core.statistiche.StatisticaOraria;
 import org.openspcoop2.core.statistiche.StatisticaSettimanale;
 import org.openspcoop2.core.statistiche.constants.TipoPorta;
 import org.openspcoop2.core.statistiche.model.StatisticaModel;
+import org.openspcoop2.core.statistiche.utils.StatisticheUtils;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
@@ -744,6 +745,9 @@ public class DatiStatisticiDAOManager  {
 		expr.between(model.DATA,
 				dataInizio,
 				dataFine);
+		
+		// Record validi
+		StatisticheUtils.selezionaRecordValidi(expr, model);
 
 		
         // escludo le transazioni con esito policy violate

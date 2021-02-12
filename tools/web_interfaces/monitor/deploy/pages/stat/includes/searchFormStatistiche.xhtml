@@ -43,7 +43,7 @@
 				<ui:param name="tipo_filtro_soggetti" value="soggetto_locale" />
 		 	</ui:include>
 		 	
-	 		<link:prop label="Tipo" rendered="#{sf_showTipologia}">
+	 		<link:prop label="#{msg['stats.search.tipoRicerca']}" rendered="#{sf_showTipologia}">
 				<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
 						width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
 					<f:selectItems value="#{sf_bean.tipologieRicerca}"/>
@@ -51,6 +51,30 @@
 				</rich:comboBox>
 			</link:prop>
 			<h:inputHidden value="#{sf_bean.tipologiaRicerca}" rendered="#{not sf_showTipologia}" />
+			
+			<a4j:outputPanel id="panelCanale" layout="block" rendered="#{sf_bean.visualizzaCanali}">
+				<link:prop label="#{msg['stats.search.canale']}">
+					<rich:comboBox id="idCanaleCombo" value="#{sf_bean.canale}"
+						defaultLabel="Seleziona #{msg['stats.search.canale']}" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="true"
+						rendered="true">
+						<f:selectItems value="#{sf_bean.listCanali}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+			</a4j:outputPanel>
+			<a4j:outputPanel id="panelIdCluster" layout="block" rendered="#{sf_bean.visualizzaIdCluster}">
+				<link:prop label="#{msg['stats.search.idCluster']}">
+					<h:inputText id="idCluster" value="#{sf_bean.clusterId}" styleClass="inputLinkLong" rendered="#{sf_bean.visualizzaIdClusterAsSelectList == false}"/>
+					<rich:comboBox id="idClusterCombo" value="#{sf_bean.clusterId}"
+						defaultLabel="Seleziona Id" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="true"
+						rendered="#{sf_bean.visualizzaIdClusterAsSelectList == true}">
+						<f:selectItems value="#{sf_bean.listIdCluster}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+			</a4j:outputPanel>
 						
 			<a4j:outputPanel id="periodoCtr" layout="block">
 			

@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.StatisticaSettimanale;
 
 
@@ -71,6 +71,13 @@ public class StatisticaSettimanaleFieldConverter extends AbstractSQLFieldConvert
 				return this.toAliasTable(field)+".data";
 			}else{
 				return "data";
+			}
+		}
+		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.STATO_RECORD)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".stato_record";
+			}else{
+				return "stato_record";
 			}
 		}
 		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.ID_PORTA)){
@@ -225,6 +232,13 @@ public class StatisticaSettimanaleFieldConverter extends AbstractSQLFieldConvert
 				return this.toAliasTable(field)+".uri_api";
 			}else{
 				return "uri_api";
+			}
+		}
+		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.CLUSTER_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id";
+			}else{
+				return "cluster_id";
 			}
 		}
 		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
@@ -502,6 +516,9 @@ public class StatisticaSettimanaleFieldConverter extends AbstractSQLFieldConvert
 		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.DATA)){
 			return this.toTable(StatisticaSettimanale.model().STATISTICA_BASE, returnAlias);
 		}
+		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.STATO_RECORD)){
+			return this.toTable(StatisticaSettimanale.model().STATISTICA_BASE, returnAlias);
+		}
 		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.ID_PORTA)){
 			return this.toTable(StatisticaSettimanale.model().STATISTICA_BASE, returnAlias);
 		}
@@ -566,6 +583,9 @@ public class StatisticaSettimanaleFieldConverter extends AbstractSQLFieldConvert
 			return this.toTable(StatisticaSettimanale.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.URI_API)){
+			return this.toTable(StatisticaSettimanale.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.CLUSTER_ID)){
 			return this.toTable(StatisticaSettimanale.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
@@ -693,13 +713,13 @@ public class StatisticaSettimanaleFieldConverter extends AbstractSQLFieldConvert
 		// the full definition of the table containing the alias
 		
 		if(model.equals(StatisticaSettimanale.model())){
-			return "statistiche_settimanali";
+			return CostantiDB.STATISTICHE_SETTIMANALI;
 		}
 		if(model.equals(StatisticaSettimanale.model().STATISTICA_BASE)){
-			return "statistiche_settimanali";
+			return CostantiDB.STATISTICHE_SETTIMANALI;
 		}
 		if(model.equals(StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI)){
-			return "stat_settimane_contenuti";
+			return CostantiDB.STATISTICHE_SETTIMANALI_CONTENUTI;
 		}
 
 

@@ -1387,5 +1387,25 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	public void setAllarmeHistory(AllarmeHistory allarmeHistory) {
 		this.allarmeHistory = allarmeHistory;
 	}
-	
+
+	public Date getDataUltimaModificaStato() {
+		if(this.allarme!=null) {
+			Date lastUpdate = this.allarme.getLasttimestampUpdate();
+			
+			try {
+				List<AllarmeHistory> list = ((IAllarmiService)this.service).findAllHistory(this.allarme.getId(), 0, 1);
+				if(list!=null && !list.isEmpty()) {
+					Date d = list.get(0).getTimestampUpdate();
+					if(d!=null) {
+						return d;
+					}
+				}
+			} catch (Exception e) {
+				AllarmiBean.log.error(e.getMessage(), e);
+			}
+			
+			return lastUpdate;
+		}
+		return null;
+	}
 }

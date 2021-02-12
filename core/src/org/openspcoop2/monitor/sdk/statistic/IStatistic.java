@@ -68,6 +68,8 @@ public interface IStatistic {
 	
 	public String getApi();
 	
+	public String getClusterId();
+	
 	public TipiDatabase getDatabaseType();
 	
 	public StatisticType getStatisticType();

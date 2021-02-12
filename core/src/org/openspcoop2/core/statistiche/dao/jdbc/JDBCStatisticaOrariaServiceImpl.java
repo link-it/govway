@@ -68,6 +68,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		// Object statisticaOraria.getStatisticaBase()
 		sqlQueryObjectInsert.addInsertTable(this.getStatisticaOrariaFieldConverter().toTable(StatisticaOraria.model().STATISTICA_BASE));
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DATA,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.ID_PORTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TIPO_PORTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TIPO_MITTENTE,false),"?");
@@ -90,6 +91,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.GRUPPI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.URI_API,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
@@ -102,6 +104,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getStatisticaOrariaFetch().getKeyGeneratorObject(StatisticaOraria.model());
 		long id = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert, keyGenerator, jdbcProperties.isShowSql(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getData(),StatisticaOraria.model().STATISTICA_BASE.DATA.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getStatoRecord(),StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getIdPorta(),StatisticaOraria.model().STATISTICA_BASE.ID_PORTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getTipoPorta(),StatisticaOraria.model().STATISTICA_BASE.TIPO_PORTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getTipoMittente(),StatisticaOraria.model().STATISTICA_BASE.TIPO_MITTENTE.getFieldType()),
@@ -124,6 +127,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getClientAddress(),StatisticaOraria.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getGruppi(),StatisticaOraria.model().STATISTICA_BASE.GRUPPI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getUriApi(),StatisticaOraria.model().STATISTICA_BASE.URI_API.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getClusterId(),StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getNumeroTransazioni(),StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getDimensioniBytesBandaComplessiva(),StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaOraria.getStatisticaBase().getDimensioniBytesBandaInterna(),StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
@@ -245,6 +249,8 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DATA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getData(), StatisticaOraria.model().STATISTICA_BASE.DATA.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD,false), "?");
+		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getStatoRecord(), StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.ID_PORTA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getIdPorta(), StatisticaOraria.model().STATISTICA_BASE.ID_PORTA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TIPO_PORTA,false), "?");
@@ -289,6 +295,8 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getGruppi(), StatisticaOraria.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.URI_API,false), "?");
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getUriApi(), StatisticaOraria.model().STATISTICA_BASE.URI_API.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID,false), "?");
+		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getClusterId(), StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaOraria_statisticaBase.getNumeroTransazioni(), StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");
@@ -681,5 +689,13 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
 		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+	}
+	
+	@Override
+	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
+	
+		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+																							sql,param);
+	
 	}
 }

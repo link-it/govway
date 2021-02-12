@@ -68,6 +68,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		// Object statisticaGiornaliera.getStatisticaBase()
 		sqlQueryObjectInsert.addInsertTable(this.getStatisticaGiornalieraFieldConverter().toTable(StatisticaGiornaliera.model().STATISTICA_BASE));
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DATA,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_PORTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_MITTENTE,false),"?");
@@ -90,6 +91,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.URI_API,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
@@ -102,6 +104,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getStatisticaGiornalieraFetch().getKeyGeneratorObject(StatisticaGiornaliera.model());
 		long id = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert, keyGenerator, jdbcProperties.isShowSql(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getData(),StatisticaGiornaliera.model().STATISTICA_BASE.DATA.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getStatoRecord(),StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getIdPorta(),StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getTipoPorta(),StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_PORTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getTipoMittente(),StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_MITTENTE.getFieldType()),
@@ -124,6 +127,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getClientAddress(),StatisticaGiornaliera.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getGruppi(),StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getUriApi(),StatisticaGiornaliera.model().STATISTICA_BASE.URI_API.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getClusterId(),StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getNumeroTransazioni(),StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getDimensioniBytesBandaComplessiva(),StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaGiornaliera.getStatisticaBase().getDimensioniBytesBandaInterna(),StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
@@ -245,6 +249,8 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DATA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getData(), StatisticaGiornaliera.model().STATISTICA_BASE.DATA.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD,false), "?");
+		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getStatoRecord(), StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getIdPorta(), StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_PORTA,false), "?");
@@ -289,6 +295,8 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getGruppi(), StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.URI_API,false), "?");
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getUriApi(), StatisticaGiornaliera.model().STATISTICA_BASE.URI_API.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID,false), "?");
+		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getClusterId(), StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaGiornaliera_statisticaBase.getNumeroTransazioni(), StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaGiornalieraFieldConverter().toColumn(StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");
@@ -681,5 +689,13 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
 		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+	}
+	
+	@Override
+	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
+	
+		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+																							sql,param);
+	
 	}
 }

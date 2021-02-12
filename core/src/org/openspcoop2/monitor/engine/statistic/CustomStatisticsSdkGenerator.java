@@ -162,6 +162,11 @@ public class CustomStatisticsSdkGenerator implements IStatistic {
 	}
 	
 	@Override
+	public String getClusterId() {
+		return this.statistic.getClusterId();
+	}
+	
+	@Override
 	public TipiDatabase getDatabaseType(){
 		return this.abstractStatisticheCore.getDatabaseType();
 	}

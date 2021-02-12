@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.Statistica;
 
 
@@ -58,6 +59,8 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object.getStatisticaBase(), "setData", StatisticaGiornaliera.model().STATISTICA_BASE.DATA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data", StatisticaGiornaliera.model().STATISTICA_BASE.DATA.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setStatoRecord", StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "stato_record", StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "id_porta", StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA.getFieldType()));
 				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
@@ -102,6 +105,8 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "gruppi", StatisticaGiornaliera.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaGiornaliera.model().STATISTICA_BASE.URI_API.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "uri_api", StatisticaGiornaliera.model().STATISTICA_BASE.URI_API.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setClusterId", StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id", StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -207,6 +212,8 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.id"));
 				setParameter(object.getStatisticaBase(), "setData", StatisticaGiornaliera.model().STATISTICA_BASE.DATA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.data"));
+				setParameter(object.getStatisticaBase(), "setStatoRecord", StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.stato-record"));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.id-porta"));
 				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
@@ -251,6 +258,8 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.gruppi"));
 				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaGiornaliera.model().STATISTICA_BASE.URI_API.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.uri-api"));
+				setParameter(object.getStatisticaBase(), "setClusterId", StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.cluster-id"));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.numero-transazioni"));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -351,10 +360,10 @@ public class StatisticaGiornalieraFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(StatisticaGiornaliera.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("statistiche_giornaliere","id","seq_statistiche_giornaliere","statistiche_giornaliere_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_GIORNALIERE,"id","seq_"+CostantiDB.STATISTICHE_GIORNALIERE,CostantiDB.STATISTICHE_GIORNALIERE+"_init_seq");
 			}
 			if(model.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("stat_giorni_contenuti","id","seq_stat_giorni_contenuti","stat_giorni_contenuti_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_GIORNALIERE_CONTENUTI,"id","seq_"+CostantiDB.STATISTICHE_GIORNALIERE_CONTENUTI,CostantiDB.STATISTICHE_GIORNALIERE_CONTENUTI+"_init_seq");
 			}
 			
 			else{

@@ -17,6 +17,7 @@ CREATE SEQUENCE seq_statistiche_orarie AS BIGINT START WITH 1 INCREMENT BY 1 ; -
 CREATE TABLE statistiche_orarie
 (
 	data TIMESTAMP NOT NULL,
+	stato_record INT NOT NULL,
 	-- Informazioni porta di dominio
 	id_porta VARCHAR(255) NOT NULL,
 	tipo_porta VARCHAR(20) NOT NULL,
@@ -46,6 +47,8 @@ CREATE TABLE statistiche_orarie
 	gruppi VARCHAR(20) NOT NULL,
 	-- API implementata
 	uri_api VARCHAR(20) NOT NULL,
+	-- Cluster ID
+	cluster_id VARCHAR(100) NOT NULL,
 	-- Informazioni statistiche
 	richieste INT NOT NULL,
 	bytes_banda_complessiva BIGINT,
@@ -63,9 +66,9 @@ CREATE TABLE statistiche_orarie
 );
 
 -- index
-CREATE INDEX INDEX_STAT_HOUR_ENTRY ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
--- CREATE INDEX INDEX_STAT_HOUR_FULL ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api);
--- CREATE INDEX INDEX_STAT_HOUR ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+CREATE INDEX INDEX_STAT_HOUR_ENTRY ON statistiche_orarie (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
+-- CREATE INDEX INDEX_STAT_HOUR_FULL ON statistiche_orarie (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,cluster_id);
+-- CREATE INDEX INDEX_STAT_HOUR ON statistiche_orarie (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,cluster_id,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TABLE statistiche_orarie_init_seq (id BIGINT);
 INSERT INTO statistiche_orarie_init_seq VALUES (NEXT VALUE FOR seq_statistiche_orarie);
 
@@ -130,6 +133,7 @@ CREATE SEQUENCE seq_statistiche_giornaliere AS BIGINT START WITH 1 INCREMENT BY 
 CREATE TABLE statistiche_giornaliere
 (
 	data TIMESTAMP NOT NULL,
+	stato_record INT NOT NULL,
 	-- Informazioni porta di dominio
 	id_porta VARCHAR(255) NOT NULL,
 	tipo_porta VARCHAR(20) NOT NULL,
@@ -159,6 +163,8 @@ CREATE TABLE statistiche_giornaliere
 	gruppi VARCHAR(20) NOT NULL,
 	-- API implementata
 	uri_api VARCHAR(20) NOT NULL,
+	-- Cluster ID
+	cluster_id VARCHAR(100) NOT NULL,
 	-- Informazioni statistiche
 	richieste INT NOT NULL,
 	bytes_banda_complessiva BIGINT,
@@ -176,9 +182,9 @@ CREATE TABLE statistiche_giornaliere
 );
 
 -- index
-CREATE INDEX INDEX_STAT_DAY_ENTRY ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
--- CREATE INDEX INDEX_STAT_DAY_FULL ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api);
--- CREATE INDEX INDEX_STAT_DAY ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+CREATE INDEX INDEX_STAT_DAY_ENTRY ON statistiche_giornaliere (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
+-- CREATE INDEX INDEX_STAT_DAY_FULL ON statistiche_giornaliere (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,cluster_id);
+-- CREATE INDEX INDEX_STAT_DAY ON statistiche_giornaliere (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,cluster_id,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TABLE statistiche_giornaliere_init_seq (id BIGINT);
 INSERT INTO statistiche_giornaliere_init_seq VALUES (NEXT VALUE FOR seq_statistiche_giornaliere);
 
@@ -243,6 +249,7 @@ CREATE SEQUENCE seq_statistiche_settimanali AS BIGINT START WITH 1 INCREMENT BY 
 CREATE TABLE statistiche_settimanali
 (
 	data TIMESTAMP NOT NULL,
+	stato_record INT NOT NULL,
 	-- Informazioni porta di dominio
 	id_porta VARCHAR(255) NOT NULL,
 	tipo_porta VARCHAR(20) NOT NULL,
@@ -272,6 +279,8 @@ CREATE TABLE statistiche_settimanali
 	gruppi VARCHAR(20) NOT NULL,
 	-- API implementata
 	uri_api VARCHAR(20) NOT NULL,
+	-- Cluster ID
+	cluster_id VARCHAR(100) NOT NULL,
 	-- Informazioni statistiche
 	richieste INT NOT NULL,
 	bytes_banda_complessiva BIGINT,
@@ -289,9 +298,9 @@ CREATE TABLE statistiche_settimanali
 );
 
 -- index
-CREATE INDEX INDEX_STAT_WEEK_ENTRY ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
--- CREATE INDEX INDEX_STAT_WEEK_FULL ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api);
--- CREATE INDEX INDEX_STAT_WEEK ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+CREATE INDEX INDEX_STAT_WEEK_ENTRY ON statistiche_settimanali (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
+-- CREATE INDEX INDEX_STAT_WEEK_FULL ON statistiche_settimanali (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,cluster_id);
+-- CREATE INDEX INDEX_STAT_WEEK ON statistiche_settimanali (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,cluster_id,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TABLE statistiche_settimanali_init_seq (id BIGINT);
 INSERT INTO statistiche_settimanali_init_seq VALUES (NEXT VALUE FOR seq_statistiche_settimanali);
 
@@ -356,6 +365,7 @@ CREATE SEQUENCE seq_statistiche_mensili AS BIGINT START WITH 1 INCREMENT BY 1 ; 
 CREATE TABLE statistiche_mensili
 (
 	data TIMESTAMP NOT NULL,
+	stato_record INT NOT NULL,
 	-- Informazioni porta di dominio
 	id_porta VARCHAR(255) NOT NULL,
 	tipo_porta VARCHAR(20) NOT NULL,
@@ -385,6 +395,8 @@ CREATE TABLE statistiche_mensili
 	gruppi VARCHAR(20) NOT NULL,
 	-- API implementata
 	uri_api VARCHAR(20) NOT NULL,
+	-- Cluster ID
+	cluster_id VARCHAR(100) NOT NULL,
 	-- Informazioni statistiche
 	richieste INT NOT NULL,
 	bytes_banda_complessiva BIGINT,
@@ -402,9 +414,9 @@ CREATE TABLE statistiche_mensili
 );
 
 -- index
-CREATE INDEX INDEX_STAT_MONTH_ENTRY ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
--- CREATE INDEX INDEX_STAT_MONTH_FULL ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api);
--- CREATE INDEX INDEX_STAT_MONTH ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+CREATE INDEX INDEX_STAT_MONTH_ENTRY ON statistiche_mensili (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
+-- CREATE INDEX INDEX_STAT_MONTH_FULL ON statistiche_mensili (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,cluster_id);
+-- CREATE INDEX INDEX_STAT_MONTH ON statistiche_mensili (data DESC,stato_record,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,client_address,gruppi,uri_api,cluster_id,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TABLE statistiche_mensili_init_seq (id BIGINT);
 INSERT INTO statistiche_mensili_init_seq VALUES (NEXT VALUE FOR seq_statistiche_mensili);
 

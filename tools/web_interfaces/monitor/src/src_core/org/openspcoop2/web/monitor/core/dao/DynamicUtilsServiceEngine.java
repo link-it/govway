@@ -191,7 +191,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			
 			if(pluginsServiceManager==null) {
 				this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
-						.getInstance( log).getServiceManager(ProjectInfo.getInstance(), DynamicUtilsServiceEngine.log);
+						.getInstance( log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(), DynamicUtilsServiceEngine.log);
 			}
 			else {
 				this.pluginsServiceManager = pluginsServiceManager;

@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.StatisticaInfo;
 
 
@@ -99,7 +99,7 @@ public class StatisticaInfoFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(StatisticaInfo.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("statistiche","id","seq_statistiche","statistiche_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE,"id","seq_"+CostantiDB.STATISTICHE,CostantiDB.STATISTICHE+"_init_seq");
 			}
 			
 			else{

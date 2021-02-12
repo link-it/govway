@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.StatisticaMensile;
 
 
@@ -71,6 +71,13 @@ public class StatisticaMensileFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".data";
 			}else{
 				return "data";
+			}
+		}
+		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".stato_record";
+			}else{
+				return "stato_record";
 			}
 		}
 		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.ID_PORTA)){
@@ -225,6 +232,13 @@ public class StatisticaMensileFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".uri_api";
 			}else{
 				return "uri_api";
+			}
+		}
+		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id";
+			}else{
+				return "cluster_id";
 			}
 		}
 		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
@@ -502,6 +516,9 @@ public class StatisticaMensileFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.DATA)){
 			return this.toTable(StatisticaMensile.model().STATISTICA_BASE, returnAlias);
 		}
+		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD)){
+			return this.toTable(StatisticaMensile.model().STATISTICA_BASE, returnAlias);
+		}
 		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.ID_PORTA)){
 			return this.toTable(StatisticaMensile.model().STATISTICA_BASE, returnAlias);
 		}
@@ -566,6 +583,9 @@ public class StatisticaMensileFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(StatisticaMensile.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.URI_API)){
+			return this.toTable(StatisticaMensile.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID)){
 			return this.toTable(StatisticaMensile.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
@@ -693,13 +713,13 @@ public class StatisticaMensileFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(StatisticaMensile.model())){
-			return "statistiche_mensili";
+			return CostantiDB.STATISTICHE_MENSILI;
 		}
 		if(model.equals(StatisticaMensile.model().STATISTICA_BASE)){
-			return "statistiche_mensili";
+			return CostantiDB.STATISTICHE_MENSILI;
 		}
 		if(model.equals(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI)){
-			return "stat_mensili_contenuti";
+			return CostantiDB.STATISTICHE_MENSILI_CONTENUTI;
 		}
 
 

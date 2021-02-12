@@ -41,6 +41,7 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 		super();
 	
 		this.DATA = new Field("data",java.util.Date.class,"statistica",Statistica.class);
+		this.STATO_RECORD = new Field("stato-record",int.class,"statistica",Statistica.class);
 		this.ID_PORTA = new Field("id-porta",java.lang.String.class,"statistica",Statistica.class);
 		this.TIPO_PORTA = new Field("tipo-porta",java.lang.String.class,"statistica",Statistica.class);
 		this.TIPO_MITTENTE = new Field("tipo-mittente",java.lang.String.class,"statistica",Statistica.class);
@@ -63,6 +64,7 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 		this.CLIENT_ADDRESS = new Field("client-address",java.lang.String.class,"statistica",Statistica.class);
 		this.GRUPPI = new Field("gruppi",java.lang.String.class,"statistica",Statistica.class);
 		this.URI_API = new Field("uri-api",java.lang.String.class,"statistica",Statistica.class);
+		this.CLUSTER_ID = new Field("cluster-id",java.lang.String.class,"statistica",Statistica.class);
 		this.NUMERO_TRANSAZIONI = new Field("numero-transazioni",java.lang.Integer.class,"statistica",Statistica.class);
 		this.DIMENSIONI_BYTES_BANDA_COMPLESSIVA = new Field("dimensioni-bytes-banda-complessiva",java.lang.Long.class,"statistica",Statistica.class);
 		this.DIMENSIONI_BYTES_BANDA_INTERNA = new Field("dimensioni-bytes-banda-interna",java.lang.Long.class,"statistica",Statistica.class);
@@ -78,6 +80,7 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 		super(father);
 	
 		this.DATA = new ComplexField(father,"data",java.util.Date.class,"statistica",Statistica.class);
+		this.STATO_RECORD = new ComplexField(father,"stato-record",int.class,"statistica",Statistica.class);
 		this.ID_PORTA = new ComplexField(father,"id-porta",java.lang.String.class,"statistica",Statistica.class);
 		this.TIPO_PORTA = new ComplexField(father,"tipo-porta",java.lang.String.class,"statistica",Statistica.class);
 		this.TIPO_MITTENTE = new ComplexField(father,"tipo-mittente",java.lang.String.class,"statistica",Statistica.class);
@@ -100,6 +103,7 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 		this.CLIENT_ADDRESS = new ComplexField(father,"client-address",java.lang.String.class,"statistica",Statistica.class);
 		this.GRUPPI = new ComplexField(father,"gruppi",java.lang.String.class,"statistica",Statistica.class);
 		this.URI_API = new ComplexField(father,"uri-api",java.lang.String.class,"statistica",Statistica.class);
+		this.CLUSTER_ID = new ComplexField(father,"cluster-id",java.lang.String.class,"statistica",Statistica.class);
 		this.NUMERO_TRANSAZIONI = new ComplexField(father,"numero-transazioni",java.lang.Integer.class,"statistica",Statistica.class);
 		this.DIMENSIONI_BYTES_BANDA_COMPLESSIVA = new ComplexField(father,"dimensioni-bytes-banda-complessiva",java.lang.Long.class,"statistica",Statistica.class);
 		this.DIMENSIONI_BYTES_BANDA_INTERNA = new ComplexField(father,"dimensioni-bytes-banda-interna",java.lang.Long.class,"statistica",Statistica.class);
@@ -113,6 +117,8 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 	
 
 	public IField DATA = null;
+	 
+	public IField STATO_RECORD = null;
 	 
 	public IField ID_PORTA = null;
 	 
@@ -157,6 +163,8 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 	public IField GRUPPI = null;
 	 
 	public IField URI_API = null;
+	 
+	public IField CLUSTER_ID = null;
 	 
 	public IField NUMERO_TRANSAZIONI = null;
 	 
