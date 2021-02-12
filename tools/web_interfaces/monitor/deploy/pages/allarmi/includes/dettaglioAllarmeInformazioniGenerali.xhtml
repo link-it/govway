@@ -70,7 +70,7 @@
 			<h:outputText id="outFiltroSoggettoErogatore" value="#{allarmiBean.tipoNomeDestinatarioFiltro}" rendered="#{allarmiBean.visualizzaSoggettoErogatoreFiltro and not empty allarmiBean.tipoNomeDestinatarioFiltro}"/>
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroTag" value="Tag" rendered="#{allarmiBean.visualizzaTagFiltro and not empty allarmiBean.allarme.filtro.tag}"/>
-			<h:outputText id="outFiltroTag" value="#{allarmiBean.allarme.filtro.ruoloErogatore}" rendered="#{allarmiBean.visualizzaTagFiltro and not empty allarmiBean.allarme.filtro.tag}"/>
+			<h:outputText id="outFiltroTag" value="#{allarmiBean.allarme.filtro.tag}" rendered="#{allarmiBean.visualizzaTagFiltro and not empty allarmiBean.allarme.filtro.tag}"/>
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFiltroServizio" value="API" rendered="#{allarmiBean.visualizzaServizioFiltro and not empty allarmiBean.tipoNomeServizioFiltro}"/>
 			<h:outputText id="outFiltroServizio" value="#{allarmiBean.tipoNomeServizioFiltro}" rendered="#{allarmiBean.visualizzaServizioFiltro and not empty allarmiBean.tipoNomeServizioFiltro}"/>
