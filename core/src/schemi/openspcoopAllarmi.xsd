@@ -155,6 +155,23 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+	
+	
+	
+	
+	<xsd:element name="allarme-notifica">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="data-notifica" type="xsd:dateTime"/>
+				<xsd:element name="id-allarme" type="id-allarme"/>
+				<xsd:element name="old-stato" type="xsd:integer"/>
+				<xsd:element name="old-dettaglio-stato" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="nuovo-stato" type="xsd:integer"/>
+				<xsd:element name="nuovo-dettaglio-stato" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="history-entry" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
 		
 

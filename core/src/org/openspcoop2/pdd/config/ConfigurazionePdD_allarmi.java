@@ -29,6 +29,7 @@ import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.dao.IAllarmeServiceSearch;
+import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -39,7 +40,9 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.monitor.engine.alarm.AlarmImpl;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
+import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
@@ -136,7 +139,7 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 			expr.equals(Allarme.model().ENABLED, 1);
 			
 			if(recuperaSoloAllarmiInStatoDiversoDaOk) {
-				expr.notEquals(Allarme.model().STATO, StatoAllarme.OK);
+				expr.notEquals(Allarme.model().STATO, AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
 			}
 			
 			// AVENDO DUE PARAMETRI IN GIOCO, LA QUERY VIENE SBAGLIATA. DOVREI GENERARE DUE JOIN CON DIFFERENTE ALIAS
@@ -225,8 +228,9 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "Allarmi.instanceAllarmi");
-			org.openspcoop2.core.plugins.dao.IServiceManager sm = 
-					(org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory.getInstance(this.log).
+			DAOFactory daoFactory = DAOFactory.getInstance(this.log);
+			org.openspcoop2.core.plugins.dao.IServiceManager smPlugins = 
+					(org.openspcoop2.core.plugins.dao.IServiceManager) daoFactory.
 					getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
 							cr.connectionDB,this.smp,this.log);
 			
@@ -236,7 +240,7 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 			
 			List<IAlarm> list = new ArrayList<IAlarm>();
 			for (Allarme allarme : listAllarmi) {
-				list.add(AlarmManager.getAlarm(allarme, this.log, sm));
+				list.add(AlarmManager.getAlarm(allarme, this.log, daoFactory, smPlugins));
 			}
 			
 			return list;
@@ -250,6 +254,35 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 			this.releaseConnection(cr);
 		}
 
+	}
+	
+	public boolean changeStatus(Connection connectionPdD,  AlarmImpl alarm, AlarmStatus nuovoStatoAllarme) throws DriverConfigurazioneException {
+		return _changeStatus(connectionPdD, alarm, nuovoStatoAllarme);
+	}
+	public boolean changeStatus(Connection connectionPdD,  IAlarm alarm, AlarmStatus nuovoStatoAllarme) throws DriverConfigurazioneException {
+		return _changeStatus(connectionPdD, alarm, nuovoStatoAllarme);
+	}
+	private boolean _changeStatus(Connection connectionPdD,  IAlarm alarm, AlarmStatus nuovoStatoAllarme) throws DriverConfigurazioneException {
+		ConfigurazionePdDConnectionResource cr = null;
+		try{
+			cr = this.getConnection(connectionPdD, "Allarmi.changeStato");
+				
+			if(alarm instanceof AlarmImpl) {
+				((AlarmImpl)alarm).changeStatus(this.log, cr.connectionDB, this.smp,nuovoStatoAllarme);
+			}
+			else {
+				alarm.changeStatus(nuovoStatoAllarme);
+			}
+			return true; // serve solo per passare dai metodi "cache" della configurazione; il valore true/false non viene usato
+		}
+		catch(Exception e){
+			String errorMsg = "Errore durante update stato degli allarmi: "+e.getMessage();
+			this.log.error(errorMsg,e);
+			throw new DriverConfigurazioneException(errorMsg,e);
+		}
+		finally {
+			this.releaseConnection(cr);
+		}
 	}
 	
 	

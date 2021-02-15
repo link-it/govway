@@ -168,3 +168,40 @@ end;
 /
 
 
+
+CREATE SEQUENCE seq_allarmi_notifiche MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE allarmi_notifiche
+(
+	data_notifica TIMESTAMP NOT NULL,
+	old_stato NUMBER NOT NULL,
+	old_stato_dettaglio CLOB,
+	nuovo_stato NUMBER NOT NULL,
+	nuovo_stato_dettaglio CLOB,
+	history_entry CLOB,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	id_allarme NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_allarmi_notifiche_1 FOREIGN KEY (id_allarme) REFERENCES allarmi(id) ON DELETE CASCADE,
+	CONSTRAINT pk_allarmi_notifiche PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_allarmi_notifiche_1 ON allarmi_notifiche (data_notifica ASC);
+
+ALTER TABLE allarmi_notifiche MODIFY data_notifica DEFAULT CURRENT_TIMESTAMP;
+
+CREATE TRIGGER trg_allarmi_notifiche
+BEFORE
+insert on allarmi_notifiche
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_allarmi_notifiche.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+

@@ -833,10 +833,16 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 		updateDate(rp);
 		try {
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rp); // aggiorna solo i dati principali
+			ConfigurazioneCore confCore = new ConfigurazioneCore(this.archiviCore);
 			if(rp.sizeArchivioList()>0) {
 				for (RegistroPluginArchivio rpa : rp.getArchivioList()) {
 					rpa.setNomePlugin(rp.getNome());
-					this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rpa);
+					if(confCore.existsRegistroPluginArchivio(rpa.getNomePlugin(), rpa.getNome())){
+						this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rpa);
+					}
+					else {
+						this.archiviCore.performCreateOperation(this.userLogin, this.smista, rpa);
+					}
 				}
 			}
 			this.archiviUpdated = true;

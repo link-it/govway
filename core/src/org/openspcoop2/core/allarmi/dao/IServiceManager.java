@@ -85,5 +85,31 @@ public interface IServiceManager {
 	
 	
 	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:allarme-notifica type:allarme-notifica
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IAllarmeNotificaServiceSearch getAllarmeNotificaServiceSearch() throws ServiceException,NotImplementedException;
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IAllarmeNotificaService getAllarmeNotificaService() throws ServiceException,NotImplementedException;
+	
+	
+	
 	
 }

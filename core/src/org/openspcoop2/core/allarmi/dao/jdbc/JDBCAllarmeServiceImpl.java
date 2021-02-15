@@ -23,7 +23,9 @@ import java.sql.Connection;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeFiltro;
+import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.AllarmeMail;
+import org.openspcoop2.core.allarmi.AllarmeNotifica;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.AllarmeRaggruppamento;
 import org.openspcoop2.core.allarmi.AllarmeScript;
@@ -31,6 +33,7 @@ import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
+import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceCRUDWithId;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
@@ -568,6 +571,33 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		if(id != null)
 			sqlQueryObjectDelete.addWhereCondition("id=?");
 
+		
+		// Delete history
+		@SuppressWarnings("unchecked")
+		IDBServiceUtilities<AllarmeHistory> dbHistoryServiceUtilities = (IDBServiceUtilities<AllarmeHistory>) this.getServiceManager().getAllarmeHistoryServiceSearch();
+		
+		ISQLQueryObject sqlQueryObjectDelete_allarmeHistory_delete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_allarmeHistory_delete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_allarmeHistory_delete.addDeleteTable(dbHistoryServiceUtilities.getFieldConverter().toTable(AllarmeHistory.model()));
+		sqlQueryObjectDelete_allarmeHistory_delete.addWhereCondition("id_allarme=?");
+		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeHistory_delete.createSQLDelete(), jdbcProperties.isShowSql(), 
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+				
+
+		
+		// Delete notifiche
+		@SuppressWarnings("unchecked")
+		IDBServiceUtilities<AllarmeNotifica> dbNotificaServiceUtilities = (IDBServiceUtilities<AllarmeNotifica>) this.getServiceManager().getAllarmeNotificaServiceSearch();
+		
+		ISQLQueryObject sqlQueryObjectDelete_allarmeNotifica_delete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_allarmeNotifica_delete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_allarmeNotifica_delete.addDeleteTable(dbNotificaServiceUtilities.getFieldConverter().toTable(AllarmeNotifica.model()));
+		sqlQueryObjectDelete_allarmeNotifica_delete.addWhereCondition("id_allarme=?");
+		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeNotifica_delete.createSQLDelete(), jdbcProperties.isShowSql(), 
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+		
+		
+		
 		// Delete allarme
 		jdbcUtilities.execute(sqlQueryObjectDelete.createSQLDelete(), jdbcProperties.isShowSql(), 
 			new JDBCObject(id,Long.class));

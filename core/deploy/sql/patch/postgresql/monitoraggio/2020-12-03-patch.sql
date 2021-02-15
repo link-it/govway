@@ -119,3 +119,26 @@ CREATE INDEX index_allarmi_history_1 ON allarmi_history (id_allarme,timestamp_up
 CREATE INDEX index_allarmi_history_2 ON allarmi_history (timestamp_update);
 
 
+
+CREATE SEQUENCE seq_allarmi_notifiche start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE allarmi_notifiche
+(
+	data_notifica TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	old_stato INT NOT NULL,
+	old_stato_dettaglio TEXT,
+	nuovo_stato INT NOT NULL,
+	nuovo_stato_dettaglio TEXT,
+	history_entry TEXT,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_allarmi_notifiche') NOT NULL,
+	id_allarme BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_allarmi_notifiche_1 FOREIGN KEY (id_allarme) REFERENCES allarmi(id) ON DELETE CASCADE,
+	CONSTRAINT pk_allarmi_notifiche PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_allarmi_notifiche_1 ON allarmi_notifiche (data_notifica ASC);
+
+

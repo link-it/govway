@@ -22,6 +22,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-1.64.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.14.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
@@ -773,6 +774,7 @@
 			<zipfileset prefix="lib" dir="${required_lib}/commons">
 				<include name="commons-codec-1.14.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
+				<include name="commons-collections4-4.4.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-io-2.6.jar"/>
 				<include name="commons-lang-2.6.jar"/>

@@ -19561,8 +19561,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoPeriodoValues);
 			de.setLabels(tipoPeriodoLabels);
 			if(tipoOperazione.equals(TipoOperazione.ADD)){
-				if(first) {
-					de.setValue(ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO_ORE);
+				if(first || allarme.getTipoPeriodo()==null || StringUtils.isEmpty(allarme.getTipoPeriodo())) {
+					de.setSelected(ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO_ORE);
 				} else {
 					de.setSelected(allarme.getTipoPeriodo());
 				}

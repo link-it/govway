@@ -20,12 +20,19 @@
 
 package org.openspcoop2.monitor.engine.alarm;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
+import org.openspcoop2.core.allarmi.dao.IServiceManager;
+import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
@@ -78,8 +85,33 @@ public class AlarmImpl implements IAlarm {
 		return this.daoFactory;
 	}
 	
+	// Metodo utilizzato dal Gateway in AlarmNotifier
+	public void changeStatus(Logger logSql, Connection connection,  ServiceManagerProperties smp, AlarmStatus nuovoStatoAllarme) throws AlarmException, AlarmNotifyException {
+		this._changeStatus(logSql, connection, smp, nuovoStatoAllarme);
+	}
+	
 	@Override
 	public void changeStatus(AlarmStatus nuovoStatoAllarme) throws AlarmException, AlarmNotifyException {
+		this._changeStatus(null, null, null, nuovoStatoAllarme);
+	}
+	
+	private void _changeStatus(Logger logSql, Connection connection,  ServiceManagerProperties smp, AlarmStatus nuovoStatoAllarme) throws AlarmException, AlarmNotifyException {
+		
+		IServiceManager allarmiSM = null;
+		boolean changeEventFromGateway = false;
+		List<AllarmeHistory> repositoryHistory = null;
+		try {
+			if(connection==null) {
+				allarmiSM = (IServiceManager) this.daoFactory.getServiceManager(ProjectInfo.getInstance());
+			}
+			else {
+				allarmiSM = (IServiceManager) this.daoFactory.getServiceManager(ProjectInfo.getInstance(), connection, smp, logSql);
+				changeEventFromGateway = true;
+				repositoryHistory = new ArrayList<AllarmeHistory>();
+			}
+		}catch(Exception e) {
+			throw new AlarmException(e.getMessage(),e);
+		}
 		
 		// Cambio di stato effettivo ?
 		boolean statusChanged = false;
@@ -91,7 +123,7 @@ public class AlarmImpl implements IAlarm {
 		}
 		
 		// Cambio stato sul database degli allarmi
-		AlarmManager.changeStatus(nuovoStatoAllarme, this, this.daoFactory, this.username, statusChanged);
+		AlarmManager.changeStatus(nuovoStatoAllarme, this, allarmiSM, this.username, statusChanged, repositoryHistory);
 		
 		
 		// Switch stato nell'attuale implementazione
@@ -101,19 +133,32 @@ public class AlarmImpl implements IAlarm {
 		}
 		this.setStatus(nuovoStatoAllarme);
 		
-		AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
-		if(alarmEngineConfig==null){
-			throw new AlarmException("Configurazione Allarme non fornita, utilizzare il metodo AlarmManager.setAlarmEngineConfig(...)");
+		if(changeEventFromGateway) {
+			
+			this.alarmLogger.debug("Registrazione richiesta notifica su db in corso ...");
+			AlarmManager.registraNotifica(this.alarmLogger, this.configAllarme, oldStatus, nuovoStatoAllarme, 
+					!repositoryHistory.isEmpty() ? repositoryHistory.get(0) : null,
+					allarmiSM);
+			this.alarmLogger.debug("Registrazione richiesta notifica su db terminata correttamente");
+			
 		}
+		else {
 		
-		this.alarmLogger.debug("Analisi nuovo stato in corso ...");
-		AlarmManager.notifyChangeStatus(alarmEngineConfig, this.configAllarme,
-				this, this.pluginClassName, this.threadName,
-				this.alarmLogger,
-				oldStatus, nuovoStatoAllarme,
-				(this.configAllarme!=null && TipoAllarme.ATTIVO.equals(this.configAllarme.getTipoAllarme()))
-				);
-		this.alarmLogger.info("Analisi nuovo stato terminata correttamente");
+			AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
+			if(alarmEngineConfig==null){
+				throw new AlarmException("Configurazione Allarme non fornita, utilizzare il metodo AlarmManager.setAlarmEngineConfig(...)");
+			}
+			
+			this.alarmLogger.debug("Analisi nuovo stato in corso ...");
+			AlarmManager.notifyChangeStatus(alarmEngineConfig, this.configAllarme,
+					this, this.pluginClassName, this.threadName,
+					this.alarmLogger,
+					oldStatus, nuovoStatoAllarme,
+					(this.configAllarme!=null && TipoAllarme.ATTIVO.equals(this.configAllarme.getTipoAllarme()))
+					);
+			this.alarmLogger.info("Analisi nuovo stato terminata correttamente");
+			
+		}
 		
 	}
 
@@ -160,7 +205,7 @@ public class AlarmImpl implements IAlarm {
 		this.parameters.put(param.getId(), param);
 	}
 	
-	protected String getPluginClassName() {
+	public String getPluginClassName() {
 		return this.pluginClassName;
 	}
 	

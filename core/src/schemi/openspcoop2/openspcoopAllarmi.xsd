@@ -25,6 +25,7 @@
 								<linkit:sql-table object-name="allarme" object-type="allarme"/>
 								<linkit:sql-table object-name="allarme-parametro" object-type="allarme-parametro"/>
 								<linkit:sql-table object-name="allarme-history" object-type="allarme-history"/>
+								<linkit:sql-table object-name="allarme-notifica" object-type="allarme-notifica"/>
 							</linkit:sql-table-list>
 						</linkit:sql-script>
 						<linkit:sql-mapping single-table-mapping="true"
@@ -829,6 +830,108 @@
 					</xsd:annotation>
 				</xsd:element>
 				<xsd:element name="utente" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+
+
+	<xsd:element name="allarme-notifica">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" />
+					<linkit:sql-table-mapping name="allarmi_notifiche" comment="Cambi di stato da inoltrare come notifiche">
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="data_notifica" order="ASC" ignoreTypeCompatibility="true"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="data-notifica" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="data_notifica" default-current-time="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Data di notifica dello stato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-allarme" type="id-allarme">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping object-name="allarme" object-type="allarme"
+									relationship="reversed"/>
+								<linkit:sql-column-mapping name="id_allarme" required="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'allarme (FK verso tabella allarmi(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="old-stato" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="old_stato"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Precedente stato dell'allarme (0=OK, 1=Warning, 2=Allarme)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="old-dettaglio-stato" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="old_stato_dettaglio" text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Precedente dettaglio dello stato dell'allarme]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nuovo-stato" type="xsd:integer">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nuovo_stato"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Stato dell'allarme (0=OK, 1=Warning, 2=Allarme)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nuovo-dettaglio-stato" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nuovo_stato_dettaglio" text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Dettaglio dello stato dell'allarme]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="history-entry" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="history_entry" medium-text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Dettaglio dell'history]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>

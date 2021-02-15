@@ -23,24 +23,25 @@ package org.openspcoop2.monitor.engine.alarm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.allarmi.AllarmeNotifica;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryService;
+import org.openspcoop2.core.allarmi.dao.IAllarmeNotificaService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IServiceManager;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
@@ -58,6 +59,7 @@ import org.openspcoop2.utils.mail.Mail;
 import org.openspcoop2.utils.mail.Sender;
 import org.openspcoop2.utils.mail.SenderFactory;
 import org.openspcoop2.utils.resources.ScriptInvoker;
+import org.slf4j.Logger;
 
 
 /**
@@ -110,7 +112,7 @@ public class AlarmManager {
 		} catch (Exception e) {
 			log.error("AlarmManager.getAlarm(" + idAllarme
 					+ ") ha rilevato un errore: " + e.getMessage(), e);
-			throw new AlarmException(e);
+			throw new AlarmException(e.getMessage(),e);
 		}
 		return alarm;
 	}
@@ -125,13 +127,13 @@ public class AlarmManager {
 	 */
 	public static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory)
 			throws AlarmException {
-		return getAlarm(allarme, log, daoFactory, null);
+		return _getAlarm(allarme, log, daoFactory, null);
 	}
-	public static IAlarm getAlarm(Allarme allarme,Logger log, org.openspcoop2.core.plugins.dao.IServiceManager pluginSM)
+	public static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.core.plugins.dao.IServiceManager pluginSM)
 			throws AlarmException {
-		return getAlarm(allarme, log, null, pluginSM);
+		return _getAlarm(allarme, log, daoFactory, pluginSM);
 	}
-	private static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.core.plugins.dao.IServiceManager pluginSM)
+	private static IAlarm _getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.core.plugins.dao.IServiceManager pluginSM)
 			throws AlarmException {
 		
 		AlarmImpl alarm = null;
@@ -196,22 +198,22 @@ public class AlarmManager {
 			log.error(
 					"AlarmManager.getAlarm(" + allarme.getNome()
 							+ ") ha rilevato un errore: " + e.getMessage(), e);
-			throw new AlarmException(e);
+			throw new AlarmException(e.getMessage(),e);
 		}
 		return alarm;
 	}
 	
-	protected static void changeStatus(AlarmStatus newStatoAllarme,IAlarm allarme,DAOFactory daoFactory,String username,boolean statusChanged) throws AlarmException {
+	protected static void changeStatus(AlarmStatus newStatoAllarme,IAlarm allarme,IServiceManager allarmiSM,String username,boolean statusChanged, 
+			List<AllarmeHistory> repositoryHistory) throws AlarmException {
 		try {
 			
 			Allarme oldConfig = allarme.getConfigAllarme();
 			
-			IServiceManager pluginSM = (IServiceManager) daoFactory.getServiceManager(ProjectInfo.getInstance());
-			IAllarmeServiceSearch allarmeSearchDAO = pluginSM
+			IAllarmeServiceSearch allarmeSearchDAO = allarmiSM
 					.getAllarmeServiceSearch();
-			IAllarmeService allarmeDAO = pluginSM
+			IAllarmeService allarmeDAO = allarmiSM
 					.getAllarmeService();
-			IAllarmeHistoryService allarmeHistoryDAO = pluginSM
+			IAllarmeHistoryService allarmeHistoryDAO = allarmiSM
 					.getAllarmeHistoryService();
 
 			IExpression expr = allarmeSearchDAO.newExpression();
@@ -288,8 +290,15 @@ public class AlarmManager {
 				//System.out.println("UPDATE ALLARME");
 				allarmeDAO.update(idConfAllarme, confAllarme);
 				
-				AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
-				if(alarmEngineConfig.isHistoryEnabled()) {
+				boolean checkHistory = false;
+				if(repositoryHistory!=null) {
+					checkHistory = true;
+				}
+				else {
+					AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
+					checkHistory = alarmEngineConfig.isHistoryEnabled();
+				}
+				if(checkHistory) {
 
 					boolean registraHistory = registraHistory(confAllarme, allarmeImmagineDB);
 					//System.out.println("REGISTRO HISTORY ALLARME ? "+registraHistory);
@@ -304,7 +313,12 @@ public class AlarmManager {
 						history.setIdAllarme(idAllarme);
 						history.setUtente(username);	
 						history.setTimestampUpdate(confAllarme.getLasttimestampUpdate());
-						allarmeHistoryDAO.create(history);
+						if(repositoryHistory!=null) {
+							repositoryHistory.add(history);
+						}
+						else {
+							allarmeHistoryDAO.create(history);
+						}
 						//System.out.println("REGISTRATO HISTORY ALLARME");
 					}
 					
@@ -318,7 +332,7 @@ public class AlarmManager {
 			allarme.getLogger().error(
 					"AlarmManager.changeStatus() ha rilevato un errore: "
 							+ e.getMessage(), e);
-			throw new AlarmException(e);
+			throw new AlarmException(e.getMessage(),e);
 		}
 	}
 	
@@ -824,6 +838,39 @@ public class AlarmManager {
 			ane.setSendMailError(sendMailError);
 			ane.setScriptInvocationError(scriptInvocationError);
 			throw ane;
+		}
+	}
+	
+	protected static void registraNotifica(AlarmLogger alarmLogger, Allarme allarme, AlarmStatus oldStatoAllarme, AlarmStatus newStatoAllarme, AllarmeHistory repositoryHistory,
+			IServiceManager allarmiSM) throws AlarmException {
+		try {
+			IAllarmeNotificaService allarmeNotificaSearchDAO = allarmiSM
+					.getAllarmeNotificaService();
+			
+			AllarmeNotifica notifica = new AllarmeNotifica();
+			
+			notifica.setDataNotifica(DateManager.getDate());
+			
+			IdAllarme idAllarme = allarmiSM.getAllarmeServiceSearch().convertToId(allarme);
+			notifica.setIdAllarme(idAllarme);
+			
+			notifica.setOldStato(AllarmiConverterUtils.toIntegerValue(StatoAllarme.valueOf(oldStatoAllarme.getStatus().name())));
+			notifica.setOldDettaglioStato(oldStatoAllarme.getDetail());
+			
+			notifica.setNuovoStato(AllarmiConverterUtils.toIntegerValue(StatoAllarme.valueOf(newStatoAllarme.getStatus().name())));
+			notifica.setNuovoDettaglioStato(newStatoAllarme.getDetail());
+			
+			if(repositoryHistory!=null) {
+				org.openspcoop2.core.allarmi.utils.serializer.JaxbSerializer serializer = new org.openspcoop2.core.allarmi.utils.serializer.JaxbSerializer();
+				notifica.setHistoryEntry(serializer.toString(repositoryHistory));
+			}
+			allarmeNotificaSearchDAO.create(notifica);
+			
+		} catch (Exception e) {
+			alarmLogger.error(
+					"Registrazione notifica di cambio stato fallita: "
+							+ e.getMessage(), e);
+			throw new AlarmException(e.getMessage(),e);
 		}
 	}
 }

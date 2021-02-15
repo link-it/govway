@@ -17,22 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.core.allarmi.model;
+package org.openspcoop2.core.allarmi.dao;
 
-/**     
- * Factory
+import org.openspcoop2.core.allarmi.AllarmeNotifica;
+import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
+
+
+/** 
+* Service can be used for research objects on the backend of type org.openspcoop2.core.allarmi.AllarmeNotifica  
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ModelFactory {
 
-	public static AllarmeModel ALLARME = new AllarmeModel();
-	
-	public static AllarmeHistoryModel ALLARME_HISTORY = new AllarmeHistoryModel();
-	
-	public static AllarmeNotificaModel ALLARME_NOTIFICA = new AllarmeNotificaModel();
-	
-
+public interface IAllarmeNotificaServiceSearch extends IServiceSearchWithoutId<AllarmeNotifica> {
 }

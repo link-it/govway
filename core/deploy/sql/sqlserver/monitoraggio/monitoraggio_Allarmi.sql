@@ -116,3 +116,24 @@ CREATE INDEX index_allarmi_history_1 ON allarmi_history (id_allarme,timestamp_up
 CREATE INDEX index_allarmi_history_2 ON allarmi_history (timestamp_update);
 
 
+
+CREATE TABLE allarmi_notifiche
+(
+	data_notifica DATETIME2 NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	old_stato INT NOT NULL,
+	old_stato_dettaglio VARCHAR(max),
+	nuovo_stato INT NOT NULL,
+	nuovo_stato_dettaglio VARCHAR(max),
+	history_entry VARCHAR(max),
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	id_allarme BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_allarmi_notifiche_1 FOREIGN KEY (id_allarme) REFERENCES allarmi(id) ON DELETE CASCADE,
+	CONSTRAINT pk_allarmi_notifiche PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_allarmi_notifiche_1 ON allarmi_notifiche (data_notifica ASC);
+
+

@@ -191,6 +191,7 @@ public final class CostantiDB {
     public static final String ALLARMI = "allarmi";
     public static final String ALLARMI_PARAMETRI = "allarmi_parametri";
     public static final String ALLARMI_HISTORY = "allarmi_history";
+    public static final String ALLARMI_NOTIFICHE = "allarmi_notifiche";
     
     public static final String MSG_DIAGN_APPENDER = "msgdiag_appender";
     public static final String MSG_DIAGN_APPENDER_COLUMN_ID = "id";

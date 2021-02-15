@@ -119,3 +119,25 @@ CREATE INDEX index_allarmi_history_1 ON allarmi_history (id_allarme,timestamp_up
 CREATE INDEX index_allarmi_history_2 ON allarmi_history (timestamp_update);
 
 
+
+CREATE TABLE allarmi_notifiche
+(
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_notifica TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+	old_stato INT NOT NULL,
+	old_stato_dettaglio TEXT,
+	nuovo_stato INT NOT NULL,
+	nuovo_stato_dettaglio TEXT,
+	history_entry MEDIUMTEXT,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	id_allarme BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_allarmi_notifiche_1 FOREIGN KEY (id_allarme) REFERENCES allarmi(id) ON DELETE CASCADE,
+	CONSTRAINT pk_allarmi_notifiche PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX index_allarmi_notifiche_1 ON allarmi_notifiche (data_notifica ASC);
+
+

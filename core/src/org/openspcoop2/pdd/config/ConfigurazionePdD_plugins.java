@@ -273,7 +273,7 @@ public class ConfigurazionePdD_plugins extends AbstractConfigurazionePdDConnecti
 				}
 			}
 			
-			return plugin.getClassName();
+			return plugin.getTipo();
 
 		}
 		catch(NotFoundException e) {

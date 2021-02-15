@@ -28,6 +28,8 @@ import org.openspcoop2.core.allarmi.dao.IAllarmeServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IAllarmeService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryService;
+import org.openspcoop2.core.allarmi.dao.IAllarmeNotificaServiceSearch;
+import org.openspcoop2.core.allarmi.dao.IAllarmeNotificaService;
 
 import org.openspcoop2.core.allarmi.dao.IServiceManager;
 
@@ -208,6 +210,38 @@ public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc
 	@Override
 	public IAllarmeHistoryService getAllarmeHistoryService() throws ServiceException,NotImplementedException{
 		return new JDBCAllarmeHistoryService(this);
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:allarme-notifica type:allarme-notifica
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IAllarmeNotificaServiceSearch getAllarmeNotificaServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCAllarmeNotificaServiceSearch(this);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IAllarmeNotificaService getAllarmeNotificaService() throws ServiceException,NotImplementedException{
+		return new JDBCAllarmeNotificaService(this);
 	}
 	
 	
