@@ -110,6 +110,7 @@ import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -118,6 +119,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
@@ -8343,7 +8345,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 	
 	public boolean connettoriMultipliCheckData(TipoOperazione tipoOp, PortaApplicativa pa , BehaviourType beaBehaviourType, String nomeSAConnettore,
-			String oldNome, String nome, String descrizione, String stato, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore) throws Exception{
+			String oldNome, String nome, String descrizione, String stato, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore,
+			String getmsg, String getmsgUsername, String getmsgPassword, ServizioApplicativo oldSA) throws Exception{
 		try{
 			boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
 			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDatiGenerali)) {
@@ -8439,6 +8442,106 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 				}
 			}
+			
+			// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
+			if (!getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) && !getmsg.equals(CostantiConfigurazione.DISABILITATO.toString())) {
+				this.pd.setMessage("Servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"' dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
+				return false;
+			}
+			if (getmsg!=null && getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) ){
+				
+				boolean add = tipoOp.equals(TipoOperazione.ADD);
+				boolean encryptEnabled = this.saCore.isApplicativiPasswordEncryptEnabled();
+				
+				boolean validaPassword = false;
+				if(add || !encryptEnabled) {
+					validaPassword = true;
+				}
+				else {
+					boolean oldAbilitato = oldSA!=null && oldSA.getInvocazioneServizio()!=null && StatoFunzionalita.ABILITATO.equals(oldSA.getInvocazioneServizio().getGetMessage());
+					if(oldAbilitato) {
+						String changePwd = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
+						if(ServletUtils.isCheckBoxEnabled(changePwd)) {
+							validaPassword = true;
+						}
+					}
+					else {
+						validaPassword = true;
+					}
+				}
+				
+				boolean passwordEmpty = false;
+				if(validaPassword) {
+					if(getmsgPassword==null || getmsgPassword.equals("")) {
+						passwordEmpty = true;
+					}
+				}
+				
+				if(getmsgUsername==null || "".equals(getmsgUsername)) {
+					this.pd.setMessage("Dati incompleti. E' necessario indicare 'Username' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+					return false;
+				}
+				if(passwordEmpty) {
+					this.pd.setMessage("Dati incompleti. E' necessario indicare 'Password' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+					return false;
+				}
+				if (((getmsgUsername.indexOf(" ") != -1) || (validaPassword && getmsgPassword.indexOf(" ") != -1))) {
+					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					return false;
+				}
+				
+				if(validaPassword) {
+					PasswordVerifier passwordVerifier = this.saCore.getApplicativiPasswordVerifier();
+					if(passwordVerifier!=null){
+						StringBuilder motivazioneErrore = new StringBuilder();
+						if(passwordVerifier.validate(getmsgUsername, getmsgPassword, motivazioneErrore)==false){
+							this.pd.setMessage(motivazioneErrore.toString());
+							return false;
+						}
+					}
+				}
+				
+				// recupera lista servizi applicativi con stesse credenziali
+				boolean checkPassword = this.saCore.isApplicativiCredenzialiBasicCheckUniqueUsePassword(); // la password non viene utilizzata per riconoscere se l'username e' già utilizzato.
+				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiBasicList(getmsgUsername, getmsgPassword, checkPassword);
+
+				for (int i = 0; i < saList.size(); i++) {
+					ServizioApplicativo sa = saList.get(i);
+
+					if(oldSA!=null && oldSA.getId().longValue() == sa.getId().longValue()) {
+						continue;
+					}
+
+					// Messaggio di errore
+					IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
+					String labelSoggetto = this.getLabelNomeSoggetto(idSoggettoProprietario);
+					if(sa.getTipo()!=null && StringUtils.isNotEmpty(sa.getTipo())) {
+						this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già l'utente (http-basic) indicato");
+					}
+					else {
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setIdSoggettoProprietario(idSoggettoProprietario);
+						idSA.setNome(sa.getNome());
+						List<IDPortaApplicativa> list = this.porteApplicativeCore.porteApplicativeWithApplicativoErogatore(idSA);
+						String labelErogazione = sa.getNome();
+						if(list!=null && !list.isEmpty()) {
+							try {
+								PortaApplicativa paFound = this.porteApplicativeCore.getPortaApplicativa(list.get(0));
+								MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(paFound);
+								labelErogazione = this.getLabelIdServizio(mappingPA.getIdServizio());
+								if(!mappingPA.isDefault()) {
+									labelErogazione = labelErogazione+" (gruppo:"+mappingPA.getDescrizione()+")";
+								}
+							}catch(Throwable t) {
+								this.log.error("Errore durante la comprensione dell'erogazione: "+t.getMessage(),t);
+							}
+						}
+						this.pd.setMessage("L'erogazione "+labelErogazione+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+					}
+					return false;
+				}
+			}
+			
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

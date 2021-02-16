@@ -253,12 +253,30 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						}
 
 						// Messaggio di errore
-						String labelSoggetto = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+						IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
+						String labelSoggetto = this.getLabelNomeSoggetto(idSoggettoProprietario);
 						if(sa.getTipo()!=null && StringUtils.isNotEmpty(sa.getTipo())) {
 							this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già l'utente (http-basic) indicato");
 						}
 						else {
-							this.pd.setMessage("L'erogazione "+sa.getNome()+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setIdSoggettoProprietario(idSoggettoProprietario);
+							idSA.setNome(sa.getNome());
+							List<IDPortaApplicativa> list = this.porteApplicativeCore.porteApplicativeWithApplicativoErogatore(idSA);
+							String labelErogazione = sa.getNome();
+							if(list!=null && !list.isEmpty()) {
+								try {
+									PortaApplicativa paFound = this.porteApplicativeCore.getPortaApplicativa(list.get(0));
+									MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(paFound);
+									labelErogazione = this.getLabelIdServizio(mappingPA.getIdServizio());
+									if(!mappingPA.isDefault()) {
+										labelErogazione = labelErogazione+" (gruppo:"+mappingPA.getDescrizione()+")";
+									}
+								}catch(Throwable t) {
+									this.log.error("Errore durante la comprensione dell'erogazione: "+t.getMessage(),t);
+								}
+							}
+							this.pd.setMessage("L'erogazione "+labelErogazione+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
 						}
 						return false;
 					}

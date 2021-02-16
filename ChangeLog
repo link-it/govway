@@ -1,3 +1,14 @@
+2021-02-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1141
+	Nei Connettori Multipli erano presenti i seguenti problemi relativi alle credenziali basic associate in una consegna tramite servizio IntegrationManager:
+	- le credenziali non venivano verificate ed era quindi erroneamente possibile creare una consegna senza credenziali
+	- le credenziali definite non venivano controllate se fossero già utilizzate in altri applicativo o erogazioni
+	- se veniva prima abilitata la consegna tramite I.M. assegnando delle credenziali basic e poi successivamente disabilitata, 
+	  le credenziali rimanevano erroneamente assegnate all'applicativo. Il problema si evidenziava quando si effettuava un export ed un successivo import dell'erogazione.
+	  Terminato il processo di import veniva creato erroneamente un applicativo che possiedeva il nome interno dell'erogazione e le credenziali che inizialmente erano state assegnate alla funzione I.M.
+
 2021-02-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

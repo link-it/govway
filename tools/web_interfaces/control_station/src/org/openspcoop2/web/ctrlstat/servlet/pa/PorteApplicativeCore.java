@@ -61,6 +61,7 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
@@ -1800,6 +1801,26 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
+	public List<IDPortaApplicativa> porteApplicativeWithApplicativoErogatore(IDServizioApplicativo idSA) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "porteApplicativeWithApplicativoErogatore";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().porteApplicativeWithApplicativoErogatore(idSA);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 	
 	public boolean azioniTutteOneway(AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, List<String> azioniDaControllare) {
 		String profiloCollaborazioneAccordo = as.getProfiloCollaborazione().toString();
