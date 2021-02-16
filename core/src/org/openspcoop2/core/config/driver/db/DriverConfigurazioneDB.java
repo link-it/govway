@@ -3553,6 +3553,89 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return lista;
 	}
 	
+	public List<IDPortaApplicativa> porteApplicativeWithApplicativoErogatore(IDServizioApplicativo idSA) throws DriverConfigurazioneException {
+		String nomeMetodo = "porteApplicativeWithApplicativoErogatore";
+		
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<IDPortaApplicativa> list = new ArrayList<IDPortaApplicativa>();
+		try {
+			long idSAlong = DBUtils.getIdServizioApplicativo(idSA.getNome(), idSA.getIdSoggettoProprietario().getTipo(), idSA.getIdSoggettoProprietario().getNome(), con, this.tipoDB);
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectField("nome_porta");
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".id_servizio_applicativo=?");
+			
+			stmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
+			stmt.setLong(1, idSAlong);
+
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				String nomePorta = risultato.getString("nome_porta");
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(nomePorta);
+				list.add(idPA);
+			}
+			risultato.close();
+			stmt.close();
+
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return list;
+	}
+	
 	public boolean azioneUsataInTrasformazioniPortaDelegata(String azione) throws DriverConfigurazioneException {
 		return this.azioneUsataInTrasformazioni(azione, true);
 	}

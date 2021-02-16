@@ -577,7 +577,8 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 
 			// Controlli sui campi immessi 
 			boolean isOk = porteApplicativeHelper.connettoriMultipliCheckData(TipoOperazione.ADD, pa, beaBehaviourType, nomeSAConnettore,
-					null, nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore, null, null, null, null);
+					null, nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore, null, null, null, null,
+					getmsg, getmsgUsername, getmsgPassword, null);
 			
 			if(isOk) {
 				isOk = porteApplicativeHelper.endPointCheckData(protocollo, true,
@@ -615,6 +616,14 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 				
 				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.ADD, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
 						connettoreAccessoGruppi, connettoreRegistro, null);	
+				
+				porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+						getmsg,getmsgUsername,getmsgPassword,true,
+						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
+						parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
+						null, false,
+						integrationManagerEnabled,
+						TipoOperazione.ADD, null,null);
 				
 				dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 						null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 

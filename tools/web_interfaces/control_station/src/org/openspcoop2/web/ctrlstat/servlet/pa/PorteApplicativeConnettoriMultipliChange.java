@@ -1215,7 +1215,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			// Controlli sui campi immessi 
 			boolean isOk = porteApplicativeHelper.connettoriMultipliCheckData(TipoOperazione.CHANGE, pa, beaBehaviourType, nomeSAConnettore,
-					oldNomeConnettore, nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore,  visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore);
+					oldNomeConnettore, nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore,  visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore,
+					getmsg, getmsgUsername, getmsgPassword, oldSA);
 
 			if(isOk) {
 				isOk = porteApplicativeHelper.endPointCheckData(protocollo, true,
@@ -1723,6 +1724,16 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								}
 								
 								invocazionePorta.addCredenziali(c);
+							}
+						}
+						else {
+							// Fix: altrimenti rimaneva assegnate le credenziali quando si disabilitava l'integration manager
+							if(!porteApplicativeHelper.isModalitaCompleta()) {
+								if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+									while (invocazionePorta.sizeCredenzialiList()>0) {
+										invocazionePorta.removeCredenziali(0);
+									}
+								}
 							}
 						}
 
