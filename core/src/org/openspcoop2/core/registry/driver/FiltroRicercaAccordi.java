@@ -74,6 +74,35 @@ public class FiltroRicercaAccordi implements Serializable{
 
 	private IDGruppo idGruppo;
 	
+	private String protocollo;
+	private List<String> protocolli;
+
+	private boolean order = false;
+	
+	public boolean isOrder() {
+		return this.order;
+	}
+
+	public void setOrder(boolean order) {
+		this.order = order;
+	}
+
+	public List<String> getProtocolli() {
+		return this.protocolli;
+	}
+
+	public void setProtocolli(List<String> protocolli) {
+		this.protocolli = protocolli;
+	}
+	
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
+	}
+	
 	public ServiceBinding getServiceBinding() {
 		return this.serviceBinding;
 	}
@@ -209,6 +238,12 @@ public class FiltroRicercaAccordi implements Serializable{
 			bf.append(" [servizio-composto:"+this.servizioComposto+"]");
 		if(this.idGruppo!=null)
 			bf.append(" [id-gruppo:"+this.idGruppo+"]");
+		if(this.protocollo!=null)
+			bf.append(" [protocollo:"+this.protocollo+"]");
+		if(this.protocolli!=null && this.protocolli.size()>0) {
+			bf.append(" [protocolli:"+this.protocolli+"]");
+		}
+		bf.append(" [order:"+this.order+"]");
 		if(this.protocolPropertiesAccordo!=null && this.protocolPropertiesAccordo.size()>0){
 			bf.append(" [protocol-properties-accordo:"+this.protocolPropertiesAccordo.size()+"]");
 			for (int i = 0; i < this.protocolPropertiesAccordo.size(); i++) {

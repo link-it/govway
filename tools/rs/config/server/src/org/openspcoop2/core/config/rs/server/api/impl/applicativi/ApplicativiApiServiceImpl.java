@@ -28,6 +28,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.rs.server.api.ApplicativiApi;
 import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
@@ -236,7 +237,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      *
      */
 	@Override
-    public ListaApplicativi findAllApplicativi(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, String ruolo, ModalitaAccessoEnum tipoCredenziali) {
+    public ListaApplicativi findAllApplicativi(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, String ruolo, ModalitaAccessoEnum tipoCredenziali, Boolean profiloQualsiasi, Boolean soggettoQualsiasi) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -249,9 +250,21 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			int idLista = Liste.SERVIZIO_APPLICATIVO;
 
 			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
-			ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);	
+			
+			if(profiloQualsiasi!=null && profiloQualsiasi) {
+				ricerca.clearFilter(idLista, Filtri.FILTRO_PROTOCOLLO);
+			}
+			if(soggettoQualsiasi!=null && soggettoQualsiasi) {
+				ricerca.clearFilter(idLista, Filtri.FILTRO_SOGGETTO);
+			}
+			
+			//ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);
+			//ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, CostantiConfigurazione.CLIENT_OR_SERVER);
+			ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, CostantiConfigurazione.CLIENT); // Nelle API per adesso sono gestiti solo gli applicativi SERVER
+			
 			if (ruolo != null && ruolo.trim().length() > 0)
 				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO, ruolo.trim());
+			
 			if(tipoCredenziali!=null) {
 				String filtro = Helper.tipoAuthFromModalitaAccesso.get(tipoCredenziali);
 				if(filtro!=null && !"".equals(filtro)) {

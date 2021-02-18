@@ -107,7 +107,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaSoggetti findAllSoggetti(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("dominio") DominioEnum dominio, @QueryParam("ruolo") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String ruolo, @QueryParam("tipo_credenziali") ModalitaAccessoEnum tipoCredenziali);
+    public ListaSoggetti findAllSoggetti(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("dominio") DominioEnum dominio, @QueryParam("ruolo") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String ruolo, @QueryParam("tipo_credenziali") ModalitaAccessoEnum tipoCredenziali, @QueryParam("profilo_qualsiasi") @DefaultValue("false") Boolean profiloQualsiasi);
 
     /**
      * Restituisce il dettaglio di un soggetto

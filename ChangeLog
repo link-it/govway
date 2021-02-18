@@ -18,6 +18,13 @@ statistiche: aggiunta ricerca per id cluster e canale
              migliorato algoritmo di aggironamento delle statistiche per evitare informazioni parziali scorrette in seguito alla delete
 	     aggiunti indici FULL anche in hsql e sqlserver
 
+2021-02-18  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, GovWayConsole]
+	Aggiunta funzionalità OP-1144
+	Sulle API di configurazione è adesso possibile ottenere la lista degli oggetti presenti nel registro relativamente a qualsiasi profilo e/o soggetto. 
+	È stata inoltre aggiunta la possibilità di filtrare per API sulle erogazioni e fruizioni sia sulla console di gestione che nelle API di configurazione.
+
 2021-02-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
@@ -29,6 +36,12 @@ statistiche: aggiunta ricerca per id cluster e canale
 	  le credenziali rimanevano erroneamente assegnate all'applicativo. Il problema si evidenziava quando si effettuava un export ed un successivo import dell'erogazione.
 	  Terminato il processo di import veniva creato erroneamente un applicativo che possiedeva il nome interno dell'erogazione e le credenziali che inizialmente erano state assegnate alla funzione I.M.
 
+2021-02-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1139
+	La funzione di filtro delle richieste duplicate poteva far scaturire un deadlock tra le richieste su architetture dove il tracciamento è dispiegato su un database differente da quello di runtime.
+	
 2021-01-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

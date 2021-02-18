@@ -160,6 +160,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
@@ -9567,7 +9568,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			FiltroRicercaGruppi filtroGruppi = new FiltroRicercaGruppi();
 			filtroGruppi.setProtocolli(protocolli);
-			List<IDGruppo> listGruppi = this.ruoliCore.getAllIdGruppi(filtroGruppi);
+			List<IDGruppo> listGruppi = this.gruppiCore.getAllIdGruppi(filtroGruppi);
 			int length = 1;
 			if(listGruppi!=null && listGruppi.size()>0) {
 				length+=listGruppi.size();
@@ -9584,6 +9585,61 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			this.pd.addFilter(Filtri.FILTRO_GRUPPO, GruppiCostanti.LABEL_GRUPPO, gruppo, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterApi(String filterProtocollo, String filterTipoAccordo, String gruppo, String api, boolean postBack) throws Exception{
+		try {
+			
+			boolean isFilterProtocollo = filterProtocollo!=null && !"".equals(filterProtocollo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo);
+			
+			List<String> protocolli = this.core.getProtocolli(this.session);
+			if(isFilterProtocollo) {
+				protocolli.clear();
+				protocolli.add(filterProtocollo);
+			}
+			
+			FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
+			
+			filtroRicerca.setOrder(true);
+			
+			filtroRicerca.setProtocolli(protocolli);
+			
+			if(gruppo!=null && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_GRUPPO_QUALSIASI.equals(gruppo)) {
+				IDGruppo idGruppo = new IDGruppo(gruppo);
+				filtroRicerca.setIdGruppo(idGruppo);
+			}
+			
+			if(filterTipoAccordo!=null && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI.equals(filterTipoAccordo)) {
+				filtroRicerca.setServiceBinding(org.openspcoop2.core.registry.constants.ServiceBinding.toEnumConstant(filterTipoAccordo));
+			}
+			
+			List<IDAccordo> listAccordi = null;
+			try {
+				listAccordi = this.apcCore.getAllIdAccordiServizio(filtroRicerca);
+			}catch(DriverRegistroServiziNotFound notFound) {
+				listAccordi = new ArrayList<IDAccordo>();
+			}
+			int length = 1;
+			if(listAccordi!=null && listAccordi.size()>0) {
+				length+=listAccordi.size();
+			}
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_API_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_API_QUALSIASI;
+			if(listAccordi!=null && listAccordi.size()>0) {
+				for (int i =0; i < listAccordi.size() ; i ++) {
+					labels[i+1] = this.getLabelIdAccordo(listAccordi.get(i));
+					values[i+1] = IDAccordoFactory.getInstance().getUriFromIDAccordo(listAccordi.get(i));
+				}
+			}
+			
+			this.pd.addFilter(Filtri.FILTRO_API, AccordiServizioParteComuneCostanti.LABEL_APC, api, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

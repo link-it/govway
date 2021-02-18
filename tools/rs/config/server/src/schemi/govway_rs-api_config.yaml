@@ -65,6 +65,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_api"
         - $ref: "govway_core.yaml#/components/parameters/tag"
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/profilo_qualsiasi'
       summary: Ricerca api
       operationId: findAllApi
       description: Elenca le API registrate
@@ -1240,6 +1241,9 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_api"
         - $ref: "govway_core.yaml#/components/parameters/tag"
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/uri_api_implementata'
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/profilo_qualsiasi'
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/soggetto_qualsiasi'
       summary: Ricerca erogazioni di api
       operationId: findAllErogazioni
       description: Elenca le erogazioni di API
@@ -3708,6 +3712,9 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_api"
         - $ref: "govway_core.yaml#/components/parameters/tag"
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/uri_api_implementata'
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/profilo_qualsiasi'
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/soggetto_qualsiasi'
       summary: Ricerca fruizioni di api
       operationId: findAllFruizioni
       description: Elenca le fruizioni di API
@@ -6113,6 +6120,7 @@ paths:
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/dominio"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/ruolo"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_credenziali"
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/profilo_qualsiasi'
       summary: Ricerca soggetti
       operationId: findAllSoggetti
       description: Elenca i soggetti registrati
@@ -6300,6 +6308,8 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/ruolo"
         - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/tipo_credenziali"
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/profilo_qualsiasi'
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/soggetto_qualsiasi'
       summary: Ricerca applicativi
       operationId: findAllApplicativi
       description: Elenca gli applicativi registrati

@@ -94,6 +94,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -123,6 +124,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
@@ -138,6 +140,8 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -5109,4 +5113,28 @@ public class ErogazioniApiHelper {
 		return canale;
 	}
 	
+	
+	
+	public static final void setFiltroApiImplementata(String uriApiImplementata, int idLista, Search ricerca, ErogazioniEnv env) throws Exception {
+		//  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione
+		String pattern1 = "^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$";
+		String pattern2 = "^[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$";
+		try {
+			IDAccordo idAccordo = null;
+			IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
+			if(RegularExpressionEngine.isMatch(uriApiImplementata, pattern1)) {
+				idAccordo = idAccordoFactory.getIDAccordoFromUri(uriApiImplementata);
+			}
+			else if(RegularExpressionEngine.isMatch(uriApiImplementata, pattern2)) {
+				String uriCompleto = env.idSoggetto.getTipo()+"/"+env.idSoggetto.getNome()+":"+uriApiImplementata;
+				idAccordo = idAccordoFactory.getIDAccordoFromUri(uriCompleto);
+			}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La uri fornita '"+uriApiImplementata+"' non rispetta il formato atteso '"+pattern1+"|"+pattern2+"'");
+			}
+			ricerca.addFilter(idLista, Filtri.FILTRO_API, idAccordoFactory.getUriFromIDAccordo(idAccordo));
+		}catch(RegExpNotFoundException e) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("La uri fornita '"+uriApiImplementata+"' non rispetta il formato atteso '"+pattern1+"|"+pattern2+"': "+e.getMessage());
+		}
+	}
 }

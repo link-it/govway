@@ -117,6 +117,8 @@ public final class Filtri
 	
 	public final static String FILTRO_GRUPPO = "filtroGruppo";
 	
+	public final static String FILTRO_API = "filtroApi";
+	
 	public final static String FILTRO_CANALE = "filtroCanale";
 	public final static String PREFIX_VALUE_CANALE_DEFAULT = "__DEFAULT__ ";
 

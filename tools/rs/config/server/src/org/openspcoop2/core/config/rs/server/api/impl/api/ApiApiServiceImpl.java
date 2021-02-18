@@ -892,7 +892,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 	 */
 	@Override
 	public ListaApi findAllApi(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset,
-			TipoApiEnum tipoApi, String tag) {
+			TipoApiEnum tipoApi, String tag, Boolean profiloQualsiasi) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -906,6 +906,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(),
 					env.tipo_protocollo);
 
+			if(profiloQualsiasi!=null && profiloQualsiasi) {
+				ricerca.clearFilter(idLista, Filtri.FILTRO_PROTOCOLLO);
+			}
+			
 			if (tipoApi != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, Enums.serviceBindingFromTipo.get(tipoApi).toString().toLowerCase());
 			
