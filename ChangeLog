@@ -1,3 +1,10 @@
+2021-02-18  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, GovWayConsole]
+	Aggiunta funzionalità OP-1144
+	Sulle API di configurazione è adesso possibile ottenere la lista degli oggetti presenti nel registro relativamente a qualsiasi profilo e/o soggetto. 
+	È stata inoltre aggiunta la possibilità di filtrare per API sulle erogazioni e fruizioni sia sulla console di gestione che nelle API di configurazione.
+
 2021-02-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

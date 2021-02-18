@@ -1112,6 +1112,9 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_GRUPPO_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_GRUPPO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_API_QUALSIASI = "";
+	public final static String LABEL_PARAMETRO_API_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
 	public final static String DEFAULT_VALUE_PARAMETRO_CANALE_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_CANALE_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String PREFIX_VALUE_PARAMETRO_CANALE_DEFAULT = Filtri.PREFIX_VALUE_CANALE_DEFAULT;

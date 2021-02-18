@@ -238,7 +238,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      *
      */
 	@Override
-    public ListaSoggetti findAllSoggetti(ProfiloEnum profilo, String q, Integer limit, Integer offset, DominioEnum dominio, String ruolo, ModalitaAccessoEnum tipoCredenziali) {
+    public ListaSoggetti findAllSoggetti(ProfiloEnum profilo, String q, Integer limit, Integer offset, DominioEnum dominio, String ruolo, ModalitaAccessoEnum tipoCredenziali, Boolean profiloQualsiasi) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -249,6 +249,10 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);                        
 			int idLista = Liste.SOGGETTI;
 			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			
+			if(profiloQualsiasi!=null && profiloQualsiasi) {
+				ricerca.clearFilter(idLista, Filtri.FILTRO_PROTOCOLLO);
+			}
 			
 			if (dominio != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, dominio.toString());

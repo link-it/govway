@@ -454,14 +454,22 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				this.addFilterSoggetto(filterSoggetto,protocolloS,true,false);
 			}
 			
+			String filterTipoAccordo = null;
 			if(showServiceBinding) {
-				String filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
-				this.addFilterServiceBinding(filterTipoAccordo,false,true);
+				filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
+				boolean postBackServiceBinding = profiloSelezionato; // serve se poi si fa vedere le API
+				this.addFilterServiceBinding(filterTipoAccordo,postBackServiceBinding,true);
 			}
 			
 			String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
-			addFilterGruppo(filterProtocollo, filterGruppo, false);
+			boolean postBackGruppo = profiloSelezionato; // serve se poi si fa vedere le API
+			addFilterGruppo(filterProtocollo, filterGruppo, postBackGruppo);
 
+			if( profiloSelezionato ) {
+				String filterApi = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API);
+				addFilterApi(filterProtocollo, filterTipoAccordo,filterGruppo, filterApi, false);
+			}
+			
 			CanaliConfigurazione canali = this.confCore.getCanaliConfigurazione(false);
 			if(canali!=null && StatoFunzionalita.ABILITATO.equals(canali.getStato())) {
 				String filterCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CANALE);

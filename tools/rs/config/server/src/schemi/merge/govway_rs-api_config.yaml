@@ -62,6 +62,7 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/tipo_api"
       - $ref: "#/components/parameters/tag"
+      - $ref: "#/components/parameters/profilo_qualsiasi"
       responses:
         "200":
           description: "Ricerca eseguita correttamente"
@@ -1264,6 +1265,9 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/tipo_api"
       - $ref: "#/components/parameters/tag"
+      - $ref: "#/components/parameters/uri_api_implementata"
+      - $ref: "#/components/parameters/profilo_qualsiasi"
+      - $ref: "#/components/parameters/soggetto_qualsiasi"
       responses:
         "200":
           description: "Ricerca eseguita correttamente"
@@ -3788,6 +3792,9 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/tipo_api"
       - $ref: "#/components/parameters/tag"
+      - $ref: "#/components/parameters/uri_api_implementata"
+      - $ref: "#/components/parameters/profilo_qualsiasi"
+      - $ref: "#/components/parameters/soggetto_qualsiasi"
       responses:
         "200":
           description: "Ricerca eseguita correttamente"
@@ -6256,6 +6263,7 @@ paths:
       - $ref: "#/components/parameters/dominio"
       - $ref: "#/components/parameters/ruolo"
       - $ref: "#/components/parameters/tipo_credenziali"
+      - $ref: "#/components/parameters/profilo_qualsiasi"
       responses:
         "200":
           description: "Ricerca eseguita correttamente"
@@ -6444,6 +6452,8 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/ruolo"
       - $ref: "#/components/parameters/tipo_credenziali"
+      - $ref: "#/components/parameters/profilo_qualsiasi"
+      - $ref: "#/components/parameters/soggetto_qualsiasi"
       responses:
         "200":
           description: "Ricerca eseguita correttamente"
@@ -7658,6 +7668,11 @@ components:
           $ref: "#/components/schemas/CanaleEnum"
         nome:
           $ref: "#/components/schemas/IdCanale"
+    UriApi:
+      pattern: "^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\\-\\._A-Za-z0-9]*:\\d$|^[_A-Za-z][\\\
+        -\\._A-Za-z0-9]*:\\d$"
+      type: "string"
+      description: "Indica l'uri di una Api"
     ApiBase:
       required:
       - "nome"
@@ -10133,6 +10148,31 @@ components:
       schema:
         $ref: "#/components/schemas/TipoApiEnum"
       example: "rest"
+    uri_api_implementata:
+      name: "uri_api_implementata"
+      in: "query"
+      description: "Identificativo dell'API implementata"
+      required: false
+      schema:
+        $ref: "#/components/schemas/UriApi"
+    profilo_qualsiasi:
+      name: "profilo_qualsiasi"
+      in: "query"
+      description: "Indica di non filtrare per uno specifico profilo ma di ritornare\
+        \ le API di tutti i profili gestiti"
+      required: false
+      schema:
+        type: "boolean"
+        default: false
+    soggetto_qualsiasi:
+      name: "soggetto_qualsiasi"
+      in: "query"
+      description: "Indica di non filtrare per uno specifico soggetto ma di ritornare\
+        \ le API di tutti i soggetti"
+      required: false
+      schema:
+        type: "boolean"
+        default: false
     dominio:
       name: "dominio"
       in: "query"

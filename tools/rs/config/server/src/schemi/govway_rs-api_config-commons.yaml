@@ -87,6 +87,29 @@ components:
       example: 'rest'
       schema:
         $ref: '#/components/schemas/TipoApiEnum'
+    uri_api_implementata:
+      name: uri_api_implementata 
+      in: query
+      description: Identificativo dell'API implementata
+      required: false
+      schema:
+        $ref: '#/components/schemas/UriApi'
+    profilo_qualsiasi:
+      name: profilo_qualsiasi 
+      in: query
+      description: Indica di non filtrare per uno specifico profilo ma di ritornare le API di tutti i profili gestiti
+      required: false
+      schema:
+        type: boolean
+        default: false
+    soggetto_qualsiasi:
+      name: soggetto_qualsiasi 
+      in: query
+      description: Indica di non filtrare per uno specifico soggetto ma di ritornare le API di tutti i soggetti
+      required: false
+      schema:
+        type: boolean
+        default: false
     dominio:
       name: dominio
       in: query
@@ -216,6 +239,12 @@ components:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
 
     # Base: API
+    
+    UriApi:
+      type: string
+      pattern: ^[a-z]{2,20}/[0-9A-Za-z]+:[_A-Za-z][\-\._A-Za-z0-9]*:\d$|^[_A-Za-z][\-\._A-Za-z0-9]*:\d$
+      description: Indica l'uri di una Api 
+    
     ApiBase:
       type: object
       required:
