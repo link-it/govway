@@ -27,11 +27,13 @@ import java.util.List;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.IdAllarme;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.dao.IAllarmeServiceSearch;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -128,6 +130,14 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 			String valoreParametro = filtroRicerca.getValoreParametro();
 			
 			boolean recuperaSoloAllarmiInStatoDiversoDaOk = filtroRicerca.isRecuperaSoloAllarmiInStatoDiversoDaOk();
+		
+			Boolean globale = filtroRicerca.getGlobale();
+			RuoloPorta ruoloPorta = null;
+			String nomePorta = null;
+			if(globale!=null && !globale) {
+				ruoloPorta = filtroRicerca.getRuoloPorta();
+				nomePorta = filtroRicerca.getNomePorta();
+			}
 			
 			IAllarmeServiceSearch allarmeServiceSearch = sm.getAllarmeServiceSearch();
 		
@@ -137,6 +147,15 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 			expr.and();
 			expr.equals(Allarme.model().TIPO, tipo);
 			expr.equals(Allarme.model().ENABLED, 1);
+			
+			if(globale!=null) {
+				if(globale) {
+					expr.isNull(Allarme.model().FILTRO.NOME_PORTA);
+				}
+				else {
+					expr.equals(Allarme.model().FILTRO.RUOLO_PORTA, ruoloPorta.getValue()).and().equals(Allarme.model().FILTRO.NOME_PORTA, nomePorta);
+				}
+			}
 			
 			if(recuperaSoloAllarmiInStatoDiversoDaOk) {
 				expr.notEquals(Allarme.model().STATO, AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
@@ -170,13 +189,12 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 					if(idParametroCluster!=null) {
 						for (AllarmeParametro configurazioneAllarmeParametro : configurazioneAllarme.getAllarmeParametroList()) {
 							if(idParametroCluster.equals(configurazioneAllarmeParametro.getIdParametro())) {
-								// Il cluster c'è sempre, semmai quello di default pddOE
 								if(idCluster!=null) {
 									if(idCluster.equals(configurazioneAllarmeParametro.getValore())==false) {
 										if(idClusterOpzionale) {
 											if(configurazioneAllarmeParametro.getValore()!=null && 
 													!"".equals(configurazioneAllarmeParametro.getValore()) && 
-													!"-".equals(configurazioneAllarmeParametro.getValore())) {
+													!CostantiConfigurazione.CLUSTER_ID_NON_DEFINITO.equals(configurazioneAllarmeParametro.getValore())) {
 												add=false;
 											}
 										}
@@ -189,7 +207,7 @@ public class ConfigurazionePdD_allarmi extends AbstractConfigurazionePdDConnecti
 									if(idClusterOpzionale) {
 										if(configurazioneAllarmeParametro.getValore()!=null && 
 												!"".equals(configurazioneAllarmeParametro.getValore()) && 
-												!"-".equals(configurazioneAllarmeParametro.getValore())) {
+												!CostantiConfigurazione.CLUSTER_ID_NON_DEFINITO.equals(configurazioneAllarmeParametro.getValore())) {
 											add=false;
 										}
 									}

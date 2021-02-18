@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -766,71 +767,16 @@ public class PolicyVerifier {
 			// Ad esempio se si raggruppa per soggetto fruitore, ci potranno essere soggetti che la violano, altri no.
 			// Si vuole un evento per ogni soggetto che viola la policy
 			String idPolicyConGruppo = null;
+			String configurazione = null;
 			if(violazionePolicy || violazionePolicy_warningOnly) {
 				
 				String API = null;
 				if(policyAPI) {
-					
-					PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
-					
-					String nomePorta = activePolicy.getInstanceConfiguration().getFiltro().getNomePorta();
-					if(RuoloPolicy.DELEGATA.equals(activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta())) {
-						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setNome(nomePorta);
-						PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
-						if(pd!=null) {
-							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
-									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
-									pd.getServizio().getVersione());
-							IDSoggetto idFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
-							List<MappingFruizionePortaDelegata> list = configPdDManager.getMappingFruizionePortaDelegataList(idFruitore, idServizio);
-							if(list.size()<=1) {
-								API = namingUtils.normalizePD(nomePorta);
-							}
-							else {
-								String gruppo = null;
-								for (MappingFruizionePortaDelegata mapping : list) {
-									if(mapping.isDefault()) {
-										API = namingUtils.normalizePD(mapping.getIdPortaDelegata().getNome());
-									}
-									if(nomePorta.equals(mapping.getIdPortaDelegata().getNome())) {
-										gruppo = mapping.getDescrizione();
-									}
-								}
-								API = API + " (gruppo '"+gruppo+"'"+") ";
-							}
-						}
-					}
-					else if(RuoloPolicy.APPLICATIVA.equals(activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta())) {
-						IDPortaApplicativa idPA = new IDPortaApplicativa();
-						idPA.setNome(nomePorta);
-						PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);
-						if(pa!=null) {
-							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
-									pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
-									pa.getServizio().getVersione());
-							List<MappingErogazionePortaApplicativa> list = configPdDManager.getMappingErogazionePortaApplicativaList(idServizio);
-							if(list.size()<=1) {
-								API = namingUtils.normalizePA(nomePorta);
-							}
-							else {
-								String gruppo = null;
-								for (MappingErogazionePortaApplicativa mapping : list) {
-									if(mapping.isDefault()) {
-										API = namingUtils.normalizePA(mapping.getIdPortaApplicativa().getNome());
-									}
-									if(nomePorta.equals(mapping.getIdPortaApplicativa().getNome())) {
-										gruppo = mapping.getDescrizione();
-									}
-								}
-								API = API + " (gruppo '"+gruppo+"'"+") ";
-							}
-						}
-					}
+					API = getIdAPI(activePolicy, protocolFactory, configPdDManager);
 				}
 				
 				idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(activePolicy, datiGroupBy, API);
-			
+				configurazione = PolicyUtilities.buildConfigurazioneEventoPerPolicy(activePolicy, policyGlobale);
 				
 			}
 			
@@ -843,7 +789,7 @@ public class PolicyVerifier {
 					tipoEvento = CategoriaEventoControlloTraffico.POLICY_API;
 				}
 				NotificatoreEventi.getInstance().log(tipoEvento, 
-						idPolicyConGruppo,
+						idPolicyConGruppo, configurazione,
 						dataEventoPolicyViolated, descriptionPolicyViolated); 
 			}
 			if(violazionePolicy_warningOnly){
@@ -855,12 +801,80 @@ public class PolicyVerifier {
 					tipoEvento = CategoriaEventoControlloTraffico.POLICY_API_WARNING_ONLY;
 				}
 				NotificatoreEventi.getInstance().log(tipoEvento, 
-						idPolicyConGruppo,
+						idPolicyConGruppo, configurazione,
 						dataEventoPolicyViolated, descriptionPolicyViolated); 
 			}
 			
 		}
 
+	}
+	
+	public static String getIdAPI(ActivePolicy activePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager) throws Exception {
+		PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
+		
+		String API = null;
+		
+		if(activePolicy.getInstanceConfiguration().getFiltro()!=null &&
+				activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()!=null && 
+				StringUtils.isNotEmpty(activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()) && 
+				activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta()!=null) {
+			String nomePorta = activePolicy.getInstanceConfiguration().getFiltro().getNomePorta();
+			if(RuoloPolicy.DELEGATA.equals(activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta())) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(nomePorta);
+				PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
+				if(pd!=null) {
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+							pd.getServizio().getVersione());
+					IDSoggetto idFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+					List<MappingFruizionePortaDelegata> list = configPdDManager.getMappingFruizionePortaDelegataList(idFruitore, idServizio);
+					if(list.size()<=1) {
+						API = namingUtils.normalizePD(nomePorta);
+					}
+					else {
+						String gruppo = null;
+						for (MappingFruizionePortaDelegata mapping : list) {
+							if(mapping.isDefault()) {
+								API = namingUtils.normalizePD(mapping.getIdPortaDelegata().getNome());
+							}
+							if(nomePorta.equals(mapping.getIdPortaDelegata().getNome())) {
+								gruppo = mapping.getDescrizione();
+							}
+						}
+						API = API + " (gruppo '"+gruppo+"'"+") ";
+					}
+				}
+			}
+			else if(RuoloPolicy.APPLICATIVA.equals(activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta())) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(nomePorta);
+				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);
+				if(pa!=null) {
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+							pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+							pa.getServizio().getVersione());
+					List<MappingErogazionePortaApplicativa> list = configPdDManager.getMappingErogazionePortaApplicativaList(idServizio);
+					if(list.size()<=1) {
+						API = namingUtils.normalizePA(nomePorta);
+					}
+					else {
+						String gruppo = null;
+						for (MappingErogazionePortaApplicativa mapping : list) {
+							if(mapping.isDefault()) {
+								API = namingUtils.normalizePA(mapping.getIdPortaApplicativa().getNome());
+							}
+							if(nomePorta.equals(mapping.getIdPortaApplicativa().getNome())) {
+								gruppo = mapping.getDescrizione();
+							}
+						}
+						API = API + " (gruppo '"+gruppo+"'"+") ";
+					}
+				}
+			}
+		}
+		
+		return API;
 	}
 
 }

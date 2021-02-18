@@ -37,7 +37,9 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
+import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -384,6 +386,12 @@ public class ConfigurazioneAllarmiChange extends Action {
 			// se ho modificato l'abilitato devo registrare la modifica nella tabella history
 			if(allarme.getEnabled().intValue() != oldEnabled.intValue()) {
 				modificatoInformazioniHistory = true;
+				
+				if(allarme.getEnabled().intValue() == 0) {
+					// se disabilito resetto lo stato per quando lo riabilito
+					allarme.setStato(AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
+					allarme.setDettaglioStato(null);
+				}
 			}
 			
 			// insert sul db

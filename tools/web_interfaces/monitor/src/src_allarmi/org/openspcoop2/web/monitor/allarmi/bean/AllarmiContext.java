@@ -31,7 +31,9 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.allarmi.mbean.AllarmiBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.transazioni.utils.ProjectInfo;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -139,6 +141,38 @@ public class AllarmiContext implements Context{
 		return this.allarmiBean.getAzioneFiltro();
 	}
 
+	@Override
+	public String getInterfaccia() {
+		if(this.allarmiBean!=null && 
+				this.allarmiBean.getAllarme()!=null &&
+				this.allarmiBean.getAllarme().getFiltro()!=null &&
+				StringUtils.isNotEmpty(this.allarmiBean.getAllarme().getFiltro().getNomePorta()) &&
+				!"*".equals(this.allarmiBean.getAllarme().getFiltro().getNomePorta())
+			){
+			return this.allarmiBean.getAllarme().getFiltro().getNomePorta();			
+		}
+		return null;
+	}
+	
+	@Override
+	public TipoPdD getRuolo() {
+		if(this.allarmiBean!=null && 
+				this.allarmiBean.getAllarme()!=null &&
+				this.allarmiBean.getAllarme().getFiltro()!=null &&
+				this.allarmiBean.getAllarme().getFiltro().getRuoloPorta()!=null)
+			{
+			switch (this.allarmiBean.getAllarme().getFiltro().getRuoloPorta()) {
+			case DELEGATA:
+				return TipoPdD.DELEGATA;
+			case APPLICATIVA:
+				return TipoPdD.APPLICATIVA;
+			default:
+				return null;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public EsitoTransazione getEsitoTransazione() {
 		return null; // non dovrebbe venire usato

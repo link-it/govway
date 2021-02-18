@@ -36,6 +36,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.activation.FileDataSource;
 
+import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
@@ -152,9 +153,9 @@ public class NotificatoreEventi {
 	
 	
 	public void log(CategoriaEventoControlloTraffico evento, Date date, String descrizione) throws Exception{
-		log(evento, null, null, descrizione);
+		log(evento, null, null, null, descrizione);
 	}
-	public void log(CategoriaEventoControlloTraffico evento, String idPolicy, Date date, String descrizione) throws Exception{
+	public void log(CategoriaEventoControlloTraffico evento, String idPolicy, String configurazione, Date date, String descrizione) throws Exception{
 		
 		if(evento==null){
 			throw new Exception("Evento non definito");
@@ -170,6 +171,7 @@ public class NotificatoreEventi {
 					else
 						this.inMemory_lastMaxRequests.data = date;
 					this.inMemory_lastMaxRequests.descrizione = descrizione;
+					this.inMemory_lastMaxRequests.configurazione = configurazione;
 //					System.out.println("@@LOG AGGIORNO DATA LIMITE_RICHIESTE_SIMULTANEE_VIOLAZIONE ["+
 //					newSimpleDateFormat().format(this.inMemory_lastMaxRequests.data)+"]");
 					this.inMemory_lastMaxRequests.datiConsumatiThread=false;
@@ -185,6 +187,7 @@ public class NotificatoreEventi {
 					else
 						this.inMemory_lastMaxRequests_warningOnly.data = date;
 					this.inMemory_lastMaxRequests_warningOnly.descrizione = descrizione;
+					this.inMemory_lastMaxRequests_warningOnly.configurazione = configurazione;
 //					System.out.println("@@LOG AGGIORNO DATA LIMITE_RICHIESTE_SIMULTANEE_VIOLAZIONE WARNING_ONLY ["+
 //					newSimpleDateFormat().format(this.inMemory_lastMaxRequests_warningOnly.data)+"]");
 					this.inMemory_lastMaxRequests_warningOnly.datiConsumatiThread=false;
@@ -200,6 +203,7 @@ public class NotificatoreEventi {
 					else
 						this.inMemory_lastPddCongestionata.data = date;
 					this.inMemory_lastPddCongestionata.descrizione = descrizione;
+					this.inMemory_lastPddCongestionata.configurazione = configurazione;
 //					System.out.println("@@LOG AGGIORNO DATA CONGESTIONE PDD ["+
 //							newSimpleDateFormat().format(this.inMemory_lastPddCongestionata.data)+"]");
 					this.inMemory_lastPddCongestionata.datiConsumatiThread=false;
@@ -226,6 +230,7 @@ public class NotificatoreEventi {
 					else
 						inMemory_lastPolicyGlobaleViolated_policy.data = date;
 					inMemory_lastPolicyGlobaleViolated_policy.descrizione = descrizione;
+					inMemory_lastPolicyGlobaleViolated_policy.configurazione = configurazione;
 	//				System.out.println("@@LOG AGGIORNO DATA POLICY VIOLAZIONE ["+
 	//						newSimpleDateFormat().format(inMemory_lastPolicyViolated_policy.data)+"]");
 					inMemory_lastPolicyGlobaleViolated_policy.datiConsumatiThread=false;
@@ -252,6 +257,7 @@ public class NotificatoreEventi {
 					else
 						inMemory_lastPolicyGlobaleViolated_warningOnly_policy.data = date;
 					inMemory_lastPolicyGlobaleViolated_warningOnly_policy.descrizione = descrizione;
+					inMemory_lastPolicyGlobaleViolated_warningOnly_policy.configurazione = configurazione;
 	//				System.out.println("@@LOG AGGIORNO DATA POLICY VIOLAZIONE WARNING_ONLY ["+
 	//						newSimpleDateFormat().format(inMemory_lastPolicyViolated_warningOnly_policy.data)+"]");
 					inMemory_lastPolicyGlobaleViolated_warningOnly_policy.datiConsumatiThread=false;
@@ -279,6 +285,7 @@ public class NotificatoreEventi {
 					else
 						inMemory_lastPolicyAPIViolated_policy.data = date;
 					inMemory_lastPolicyAPIViolated_policy.descrizione = descrizione;
+					inMemory_lastPolicyAPIViolated_policy.configurazione = configurazione;
 	//				System.out.println("@@LOG AGGIORNO DATA POLICY VIOLAZIONE ["+
 	//						newSimpleDateFormat().format(inMemory_lastPolicyViolated_policy.data)+"]");
 					inMemory_lastPolicyAPIViolated_policy.datiConsumatiThread=false;
@@ -305,6 +312,7 @@ public class NotificatoreEventi {
 					else
 						inMemory_lastPolicyAPIViolated_warningOnly_policy.data = date;
 					inMemory_lastPolicyAPIViolated_warningOnly_policy.descrizione = descrizione;
+					inMemory_lastPolicyAPIViolated_warningOnly_policy.configurazione = configurazione;
 	//				System.out.println("@@LOG AGGIORNO DATA POLICY VIOLAZIONE WARNING_ONLY ["+
 	//						newSimpleDateFormat().format(inMemory_lastPolicyViolated_warningOnly_policy.data)+"]");
 					inMemory_lastPolicyAPIViolated_warningOnly_policy.datiConsumatiThread=false;
@@ -551,6 +559,7 @@ public class NotificatoreEventi {
 					CodiceEventoControlloTraffico codice = eventoViolazione;
 					Evento evento = buildEvento(tipoEvento,codice, idPolicy,
 							local_inMemory.descrizione,
+							local_inMemory.configurazione,
 							local_inMemory.data); // uso come data dell'evento la data in cui e' accaduta la segnalazione
 							//DateManager.getDate());
 					logEvento(gestoreEventi, connection, evento, log, debug);
@@ -569,6 +578,7 @@ public class NotificatoreEventi {
 				CodiceEventoControlloTraffico codice = eventoViolazione;
 				Evento evento = buildEvento(tipoEvento,codice, idPolicy,
 						local_inMemory.descrizione,
+						local_inMemory.configurazione,
 						local_inMemory.data); // uso come data dell'evento la data in cui e' accaduta la segnalazione
 						//DateManager.getDate());
 				logEvento(gestoreEventi, connection, evento, log, debug);
@@ -589,7 +599,9 @@ public class NotificatoreEventi {
 					// emetto evento che non risulta piu' violato.
 					CodiceEventoControlloTraffico codice = eventoViolazioneRisolta;
 					Evento evento = buildEvento(tipoEvento,codice, idPolicy,
-							local_db.descrizione, DateManager.getDate());
+							local_db.descrizione, 
+							local_inMemory!=null && local_inMemory.configurazione!=null ? local_inMemory.configurazione : local_db.configurazione, // importante per far arrivare la configurazione usata nella gestione delle policy
+							DateManager.getDate());
 					logEvento(gestoreEventi, connection, evento, log, debug);
 					// synchronized (this.semaphore) { // Gli eventi db_* sono acceduti solo dal thread non serve un synchronized
 					this_db.data = evento.getOraRegistrazione();
@@ -605,7 +617,7 @@ public class NotificatoreEventi {
 
 	}
 	
-	private static Evento buildEvento(TipoEvento tipoEvento, CodiceEventoControlloTraffico codice, String idPolicy, String descrizione, Date data) throws Exception{
+	private static Evento buildEvento(TipoEvento tipoEvento, CodiceEventoControlloTraffico codice, String idPolicy, String descrizione, String configurazione, Date data) throws Exception{
 		Evento evento = new Evento();
 		evento.setTipo(tipoEvento.getValue());
 		evento.setCodice(codice.getValue());
@@ -613,6 +625,7 @@ public class NotificatoreEventi {
 			evento.setIdConfigurazione(idPolicy);
 		}		
 		evento.setDescrizione(descrizione);
+		evento.setConfigurazione(configurazione);
 		evento.setOraRegistrazione(data);
 		
 		switch (tipoEvento) {
@@ -676,6 +689,12 @@ public class NotificatoreEventi {
 	
 	private static void logEvento(GestoreEventi gestoreEventi, Connection connection, Evento evento, Logger log, boolean debug) throws Exception {
 		
+		// Fix evento per passarlo al notifier
+		String configurazione = evento.getConfigurazione();
+		if(PolicyUtilities.isConfigurazioneEventoPerPolicy(configurazione)) {
+			evento.setConfigurazione(null); // serve solo per passarlo al notifier
+		}
+		
 		gestoreEventi.log(evento, connection);
 		
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
@@ -696,7 +715,7 @@ public class NotificatoreEventi {
 						break;
 					case RATE_LIMITING_POLICY_GLOBALE:
 					case RATE_LIMITING_POLICY_API:
-						notifier.updateStatoRilevamentoViolazionePolicy(log, debug, tipoEvento, codiceEvento, evento.getIdConfigurazione());
+						notifier.updateStatoRilevamentoViolazionePolicy(log, debug, tipoEvento, codiceEvento, evento.getIdConfigurazione(), configurazione);
 						break;
 					default:
 						// altri casi non previsti per questo notificatore eventi
@@ -1156,6 +1175,7 @@ class DatiEventoGenerico{
 	
 	Date data;
 	String descrizione;
+	String configurazione;
 	boolean datiConsumatiThread = true;
 	
 	public DatiEventoGenerico readAndConsume(){
@@ -1164,6 +1184,8 @@ class DatiEventoGenerico{
 			d.data = new Date(this.data.getTime());
 		if(this.descrizione!=null)
 			d.descrizione = new String(this.descrizione);
+		if(this.configurazione!=null)
+			d.configurazione = new String(this.configurazione);
 		d.datiConsumatiThread = this.datiConsumatiThread;
 		
 		this.datiConsumatiThread = true;

@@ -53,7 +53,6 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.commons.SearchUtils;
-import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -171,6 +170,7 @@ import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.DAOConsoleFactory;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
@@ -201,6 +201,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
+import org.openspcoop2.web.lib.mvc.dynamic.components.Hidden;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -18526,7 +18527,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	} 
 	
 	public Context createAlarmContext(ConfigurazioneAllarmeBean allarme, List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters) throws DAOFactoryException {
-		Context context = new AlarmContext(allarme, this.log, DAOFactory.getInstance(this.log), parameters );
+		Context context = new AlarmContext(allarme, this.log, DAOConsoleFactory.getInstance(this.log), parameters );
 		
 		return context;
 	}
@@ -19785,6 +19786,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				if(component.getRendered()) { // nella versione originale non sono consentiti gli hidden
 					dati.add(component.toDataElement());
+				}
+				else {
+					Hidden<?> hidden = new Hidden<>(parameter, component.getLoader());
+					dati.add(hidden.toDataElement());
 				}
 				
 			}

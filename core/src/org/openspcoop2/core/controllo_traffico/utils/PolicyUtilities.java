@@ -22,6 +22,7 @@ package org.openspcoop2.core.controllo_traffico.utils;
 
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -429,7 +430,6 @@ public class PolicyUtilities {
 		return id;
 	}
 	
-	
 	public static String buildIdConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, IDUnivocoGroupByPolicy datiGroupBy, String API) {
 		// L'obiettivo è di generare un evento differente per ogni raggruppamento violato di una stessa policy
 		// All'interno di una stessa policy ci possono essere gruppi che non sono violati ed altri che lo sono
@@ -448,6 +448,86 @@ public class PolicyUtilities {
 		}
 		return idPolicyConGruppo;
 	}
+	
+	private static final String GLOBALE_PROPERTY = "globale:";
+	private static final String ID_ACTIVE_POLICY_PROPERTY = "idActivePolicy:";
+	private static final String RUOLO_PORTA_PROPERTY = "ruoloPorta:";
+	private static final String NOME_PORTA_PROPERTY = "nomePorta:";
+	
+	public static String buildConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, boolean policyGlobale) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(GLOBALE_PROPERTY).append(policyGlobale);
+		sb.append("\n").append(ID_ACTIVE_POLICY_PROPERTY).append(activePolicy.getInstanceConfiguration().getIdActivePolicy());
+		if(!policyGlobale) {
+			if(activePolicy.getInstanceConfiguration().getFiltro()!=null &&
+					activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()!=null && 
+					StringUtils.isNotEmpty(activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()) && 
+					activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta()!=null) {
+				String nomePorta = activePolicy.getInstanceConfiguration().getFiltro().getNomePorta();
+				String ruoloPorta = activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta().getValue();
+				sb.append("\n").append(RUOLO_PORTA_PROPERTY).append(ruoloPorta);
+				sb.append("\n").append(NOME_PORTA_PROPERTY).append(nomePorta);
+			}
+		}
+		return sb.toString();
+	}
+	
+	public static boolean isConfigurazioneEventoPerPolicy(String configurazione) {
+		return configurazione!=null && configurazione.startsWith(GLOBALE_PROPERTY);
+	}
+	public static boolean isConfigurazioneEventoPerPolicy_policyGlobale(String configurazione) {
+		if(isConfigurazioneEventoPerPolicy(configurazione)) {
+			String [] tmp = configurazione.split("\n");
+			if(tmp!=null && tmp.length>0) {
+				String firstLine = tmp[0];
+				if(firstLine!=null && firstLine.startsWith(GLOBALE_PROPERTY) && firstLine.length()>GLOBALE_PROPERTY.length()) {
+					String s = firstLine.substring(GLOBALE_PROPERTY.length());
+					return Boolean.valueOf(s);
+				}
+			}
+		}
+		return false;
+	}
+	public static String getConfigurazioneEventoPerPolicy_idActivePolicy(String configurazione) {
+		if(isConfigurazioneEventoPerPolicy(configurazione)) {
+			String [] tmp = configurazione.split("\n");
+			if(tmp!=null && tmp.length>1) {
+				String firstLine = tmp[1];
+				if(firstLine!=null && firstLine.startsWith(ID_ACTIVE_POLICY_PROPERTY) && firstLine.length()>ID_ACTIVE_POLICY_PROPERTY.length()) {
+					String s = firstLine.substring(ID_ACTIVE_POLICY_PROPERTY.length());
+					return s;
+				}
+			}
+		}
+		return null;
+	}
+	public static String getConfigurazioneEventoPerPolicy_ruoloPorta(String configurazione) {
+		if(isConfigurazioneEventoPerPolicy(configurazione)) {
+			String [] tmp = configurazione.split("\n");
+			if(tmp!=null && tmp.length>2) {
+				String firstLine = tmp[2];
+				if(firstLine!=null && firstLine.startsWith(RUOLO_PORTA_PROPERTY) && firstLine.length()>RUOLO_PORTA_PROPERTY.length()) {
+					String s = firstLine.substring(RUOLO_PORTA_PROPERTY.length());
+					return s;
+				}
+			}
+		}
+		return null;
+	}
+	public static String getConfigurazioneEventoPerPolicy_nomePorta(String configurazione) {
+		if(isConfigurazioneEventoPerPolicy(configurazione)) {
+			String [] tmp = configurazione.split("\n");
+			if(tmp!=null && tmp.length>3) {
+				String firstLine = tmp[3];
+				if(firstLine!=null && firstLine.startsWith(NOME_PORTA_PROPERTY) && firstLine.length()>NOME_PORTA_PROPERTY.length()) {
+					String s = firstLine.substring(NOME_PORTA_PROPERTY.length());
+					return s;
+				}
+			}
+		}
+		return null;
+	}
+	
 	
 	public static String extractIdPolicyFromIdConfigurazioneEvento(String idConfigurazioneEvento) {
 		if(idConfigurazioneEvento.contains(org.openspcoop2.core.controllo_traffico.constants.Costanti.SEPARATORE_IDPOLICY_RAGGRUPPAMENTO)) {

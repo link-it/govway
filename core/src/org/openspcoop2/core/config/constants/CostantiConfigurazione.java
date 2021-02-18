@@ -360,4 +360,8 @@ public class CostantiConfigurazione {
 	public static final String ALLARMI_TIPOLOGIA_DELEGATA = TipoPdD.DELEGATA.toString(); 
 	public static final String ALLARMI_TIPOLOGIA_APPLICATIVA = TipoPdD.APPLICATIVA.toString(); 
 	public static final String ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE = "SOLO_ASSOCIATE";
+	
+	public static final String CLUSTER_ID_NON_DEFINITO = "-";
+	
+	public static final String POLICY_ID_NON_DEFINITA = "-";
 }

@@ -38,6 +38,7 @@ import javax.faces.model.SelectItem;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -1038,6 +1039,18 @@ Context, Cloneable {
 		return this.getNomeAzione();
 	}
 
+	@Override
+	public String getInterfaccia() {
+		// non viene usato in questo contesto
+		return null;
+	}
+	
+	@Override
+	public TipoPdD getRuolo() {
+		// non viene usato in questo contesto
+		return null;
+	}
+	
 	@Override
 	public EsitoTransazione getEsitoTransazione() {
 		if(EsitoUtils.ALL_VALUE != this.getEsitoDettaglio()){

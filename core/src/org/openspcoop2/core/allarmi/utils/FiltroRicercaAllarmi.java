@@ -20,6 +20,8 @@
 
 package org.openspcoop2.core.allarmi.utils;
 
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+
 /**
  * FiltroRicercaAllarmi
  *
@@ -39,6 +41,10 @@ public class FiltroRicercaAllarmi {
 	private String valoreParametro;
 	
 	private boolean recuperaSoloAllarmiInStatoDiversoDaOk;
+	
+	private Boolean globale;
+	private RuoloPorta ruoloPorta;
+	private String nomePorta;
 
 	@Override
 	public String toString() {
@@ -53,6 +59,9 @@ public class FiltroRicercaAllarmi {
 		sb.append(separator).append("idParametro:").append(this.idParametro!=null ? this.idParametro : "");
 		sb.append(separator).append("valoreParametro:").append(this.valoreParametro!=null ? this.valoreParametro : "");
 		sb.append(separator).append("diversiOk:").append(this.recuperaSoloAllarmiInStatoDiversoDaOk);
+		sb.append(separator).append("globale:").append(this.globale!=null ? this.globale : "");
+		sb.append(separator).append("ruoloPorta:").append(this.ruoloPorta!=null ? this.ruoloPorta.getValue() : "");
+		sb.append(separator).append("nomePorta:").append(this.nomePorta!=null ? this.nomePorta : "");
 		return sb.toString();
 	} 
 	
@@ -111,6 +120,25 @@ public class FiltroRicercaAllarmi {
 
 	public void setRecuperaSoloAllarmiInStatoDiversoDaOk(boolean recuperaSoloAllarmiInStatoDiversoDaOk) {
 		this.recuperaSoloAllarmiInStatoDiversoDaOk = recuperaSoloAllarmiInStatoDiversoDaOk;
+	}
+	
+	public Boolean getGlobale() {
+		return this.globale;
+	}
+	public void setGlobale(boolean globale) {
+		this.globale = globale;
+	}
+	public RuoloPorta getRuoloPorta() {
+		return this.ruoloPorta;
+	}
+	public void setRuoloPorta(RuoloPorta ruoloPorta) {
+		this.ruoloPorta = ruoloPorta;
+	}
+	public String getNomePorta() {
+		return this.nomePorta;
+	}
+	public void setNomePorta(String nomePorta) {
+		this.nomePorta = nomePorta;
 	}
 	
 }

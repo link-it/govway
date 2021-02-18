@@ -20,6 +20,7 @@
 package org.openspcoop2.monitor.sdk.condition;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.monitor.sdk.constants.CRUDType;
 import org.openspcoop2.monitor.sdk.constants.SearchType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
@@ -57,6 +58,10 @@ public interface Context {
 	public Integer getVersioneServizio();
 	
 	public String getAzione();
+	
+	public String getInterfaccia();
+	
+	public TipoPdD getRuolo();
 	
 	public EsitoTransazione getEsitoTransazione();
 	

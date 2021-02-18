@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.id.IDAccordo;
@@ -529,6 +530,17 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				}
 
 				if(filtroRicercaBase!=null){
+					
+					List<String> tipoSoggettiProtocollo = null;
+					try {
+						if(filtroRicercaBase!=null && (filtroRicercaBase.getProtocollo()!=null || (filtroRicercaBase.getProtocolli()!=null && !filtroRicercaBase.getProtocolli().isEmpty()))){
+							tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(filtroRicercaBase.getProtocollo(), Filtri.convertToString(filtroRicercaBase.getProtocolli()));
+						}
+					}catch(Exception e) {
+						throw new DriverRegistroServiziException(e.getMessage(),e);
+					}
+					boolean searchByTipoSoggetto = (tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0);
+					
 					// Filtro By Data
 					if(filtroRicercaBase.getMinDate()!=null){
 						if(asList[i].getOraRegistrazione()==null){
@@ -557,11 +569,23 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 							continue;
 						}
 					}
-					if(filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
+					if(searchByTipoSoggetto || filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
 						if(asList[i].getSoggettoReferente()==null)
 							continue;
 						if(filtroRicercaBase.getTipoSoggettoReferente()!=null){
 							if(asList[i].getSoggettoReferente().getTipo().equals(filtroRicercaBase.getTipoSoggettoReferente()) == false){
+								continue;
+							}
+						}
+						else if(searchByTipoSoggetto) {
+							boolean find = false;
+							for (String tipoSoggettoProtocollo : tipoSoggettiProtocollo) {
+								if(asList[i].getSoggettoReferente().getTipo().equals(tipoSoggettoProtocollo)){
+									find = true;
+									break;
+								}
+							}
+							if(!find) {
 								continue;
 							}
 						}
