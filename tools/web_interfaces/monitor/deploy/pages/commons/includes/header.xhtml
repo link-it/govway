@@ -38,6 +38,46 @@
 													<rich:toolTip id="toolIconaStatusPdd" for="iconaStatusPdd" mode="client" value="#{statusBean.tooltipIconaStato}" direction="bottom-left"/>
 												</h:graphicImage>
 											</a>
+											
+											<a4j:jsFunction id="pollStatoPddFn" name="pollStatoPdd" reRender="cdLabel_stPdd,statusPdd" oncomplete="startCounterStatoPdd()" rendered="#{statusBean.enable}">
+					                			<f:setPropertyActionListener value="true" target="#{statusBean.aggiornamentoAutomatico}" /> 
+					                		</a4j:jsFunction>
+					                		<script type="text/javascript">
+												var cdifp_stPdd = #{statusBean.intervalloRefresh};
+											</script>
+										</a4j:outputPanel>
+										<a4j:outputPanel layout="block" rendered="#{statusBean.enable}" id="statusPddScript" styleClass="">
+											<script type="text/javascript">
+												var t_stPdd;
+												var cdt_stPdd;
+												var timer_is_on_stPdd=0;
+												var cd_stPdd = cdifp_stPdd;
+											
+												function startCounterStatoPdd()
+												{
+													cd_stPdd=cdifp_stPdd;
+													//console.log(cd_stPdd);
+													t_stPdd=setTimeout("pollStatoPdd()",cd_stPdd*1000);
+												}
+											
+												function stopCounterStatoPdd(){
+													timer_is_on_stPdd = 0;
+													clearTimeout(t_stPdd);
+												}					
+											
+												function doTimerStatoPdd()
+												{
+													if (!timer_is_on_stPdd){
+													  timer_is_on_stPdd=1;
+													  startCounterStatoPdd();
+												 	}
+												}
+											
+												jQuery(document).ready(function(){
+													doTimerStatoPdd();
+												});
+												
+											</script>
 										</a4j:outputPanel>
 		            				</td>
 								</c:if>
@@ -48,54 +88,6 @@
 				                </td>
 				                <td align="right" class="titleRight">
 				                	<c:if test="#{applicationBean.user}">
-										<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">		                	
-						                	<c:if test="#{statusBean.enable}">
-						                		<a4j:jsFunction id="pollStatoPddFn" name="pollStatoPdd" reRender="cdLabel_stPdd,statusPdd" oncomplete="startCounterStatoPdd()" rendered="#{statusBean.enable}">
-						                			<f:setPropertyActionListener value="true" target="#{statusBean.aggiornamentoAutomatico}" /> 
-						                		</a4j:jsFunction>
-						                		<script type="text/javascript">
-													var cdifp_stPdd = #{statusBean.intervalloRefresh};
-													var t_stPdd;
-													var cdt_stPdd;
-													var timer_is_on_stPdd=0;
-													var cd_stPdd = cdifp_stPdd;
-												
-													function updateCountDownStatoPdd(){
-														if(cd_stPdd>0){
-															cd_stPdd--;
-															jQuery("[id='cdLabel_stPdd']").text("Prossimo Aggiornamento dello stato tra "+cd_stPdd+" secondi");
-															cdt_stPdd = setTimeout("updateCountDownStatoPdd()", 1000);
-														}
-													}
-												
-													function startCounterStatoPdd()
-													{
-														cd_stPdd=cdifp_stPdd;
-														t_stPdd=setTimeout("pollStatoPdd()",cd_stPdd*1000);
-														//updateCountDownStatoPdd();
-													}
-												
-													function stopCounterStatoPdd(){
-														timer_is_on_stPdd = 0;
-														clearTimeout(t_stPdd);
-													}					
-												
-													function doTimerStatoPdd()
-													{
-														if (!timer_is_on_stPdd){
-														  timer_is_on_stPdd=1;
-														  startCounterStatoPdd();
-													 	}
-													}
-												
-													jQuery(document).ready(function(){
-														doTimerStatoPdd();
-													});
-													
-												</script>
-											</c:if>
-										</c:if>
-										
 										<h:panelGroup id="pgTitleDx" layout="block">
 											<h:outputLabel id="cdLabel_stPdd" value="#{statusBean.labelStato}" rendered="#{statusBean.enable}"/>
 											<h:panelGrid columns="#{loginBean.colonneUserInfo}">

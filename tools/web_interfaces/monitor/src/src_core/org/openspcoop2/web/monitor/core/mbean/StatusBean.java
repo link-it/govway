@@ -19,16 +19,19 @@
  */
 package org.openspcoop2.web.monitor.core.mbean;
 
+import java.io.Serializable;
+import java.time.Duration;
+import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.status.ISondaPdd;
 import org.openspcoop2.web.monitor.core.status.SondaPddManager;
 import org.openspcoop2.web.monitor.core.status.SondaStatus;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 
 /***
@@ -59,6 +62,10 @@ public class StatusBean implements Serializable {
 	private boolean aggiornamentoAutomatico = false;
 
 	private boolean enable ;
+	
+	private Date dataAggiornamento = null;
+	
+	private String intervalloRefreshPropValue;
 
 	private static final String ICONA_STATO_OK= "/images/tema_link/status_green.png";
 	private static final String ICONA_STATO_WARN= "/images/tema_link/status_yellow.png";
@@ -74,6 +81,7 @@ public class StatusBean implements Serializable {
 
 				PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(StatusBean.log);
 
+				this.intervalloRefreshPropValue = govwayMonitorProperties.getIntervalloRefreshStatusPdD();
 				this.intervalloRefresh = govwayMonitorProperties.getIntervalloRefreshStatusPdD();
 
 				this.enable = govwayMonitorProperties.isStatusPdDEnabled();
@@ -120,10 +128,29 @@ public class StatusBean implements Serializable {
 	}
 
 	public String getIntervalloRefresh() {
+		if(this.dataAggiornamento == null) {
+			this.dataAggiornamento = new Date();
+			return this.intervalloRefresh;
+		}
+		
+		int intervallo = Integer.parseInt(this.intervalloRefreshPropValue); // intervallo in secondi
+		Calendar c = Calendar.getInstance();
+		c.setTime(this.dataAggiornamento);
+		c.add(Calendar.SECOND, intervallo);
+		
+		Date now = new Date();
+		if(c.getTime().after(now)) {  // ho chiesto l'intervallo prima della scadenza dei secondi previsti, restituisco il numero di secondi residui 
+			Temporal startInclusive = now.toInstant();
+			Temporal endExclusive = c.toInstant();
+			Duration between = Duration.between(startInclusive , endExclusive );
+//			this.dataAggiornamento = new Date();
+			return "" + between.toSeconds();
+		}
+
+		this.dataAggiornamento = new Date();
 		return this.intervalloRefresh;
 	}
-
-
+	
 	/***
 	 * 
 	 * Resistuisce il valore della label dello stato
