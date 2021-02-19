@@ -100,58 +100,78 @@ public final class ConfigurazioneAllarmiDel extends Action {
 
 			Long id = null;
 
-			List<Object> allarmiToRemove = new ArrayList<>();
-			
-			List<String> allarmi = new ArrayList<String>();
+			List<Allarme> allarmiToRemove = new ArrayList<>();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				id = Long.parseLong(idsToRemove.get(i));
 				
-				Allarme allarmeToRemove = new Allarme();
-				allarmeToRemove.setId(id);
+				Allarme allarme = confCore.getAllarmeSenzaPlugin(id);
 				
-				ConfigurazioneAllarmeBean allarme = confCore.getAllarme(id);
+				allarmiToRemove.add(allarme);
 				
-				allarmeToRemove.setNome(allarme.getNome());
-				allarmiToRemove.add(allarmeToRemove);
-				
-				if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
-					// NOTA: il tipo di allarme non è modificabile.
-					ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è passivo. Non viene effettuata alcuna rimozione su Allarmi.war");
-					continue;
-				}
-				if(allarme.getEnabled()==0){
-					// NOTA: il tipo di allarme non è modificabile.
-					ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è disabilitato. Non viene effettuata alcuna rimozione su Allarmi.war");
-					continue;
-				}
+			}
+			
+			List<Allarme> allarmiRimossi = new ArrayList<Allarme>();
+			ConfigurazioneUtilities.deleteAllarmi(allarmiToRemove, confHelper, confCore, userLogin, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, allarmiRimossi);
+			
+			List<String> allarmiAttivi = new ArrayList<String>();
+			if(!allarmiRimossi.isEmpty()) {
+			
+				for (Allarme allarme : allarmiRimossi) {
+										
+					if(TipoAllarme.PASSIVO.equals(allarme.getTipoAllarme())){
+						// NOTA: il tipo di allarme non è modificabile.
+						ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è passivo. Non viene effettuata alcuna rimozione su Allarmi.war");
+						continue;
+					}
+					if(allarme.getEnabled()==0){
+						// NOTA: il tipo di allarme non è modificabile.
+						ControlStationCore.getLog().debug("Allarme ["+allarme.getNome()+"] è disabilitato. Non viene effettuata alcuna rimozione su Allarmi.war");
+						continue;
+					}
+						
+					allarmiAttivi.add(allarme.getNome());
 					
-				allarmi.add(allarme.getNome());
+				}
 				 
 			}
 			
 			/* ******** INVIO NOTIFICHE *************** */
+			String pdMessage = null;
 			try {
-				if(!allarmi.isEmpty()) {
+				if(!allarmiAttivi.isEmpty()) {
 					
 					AlarmEngineConfig alarmEngineConfig = confCore.getAllarmiConfig();
 					
-					AllarmiUtils.stopActiveThreads(allarmi, ControlStationCore.getLog(), alarmEngineConfig);
+					AllarmiUtils.stopActiveThreads(allarmiAttivi, ControlStationCore.getLog(), alarmEngineConfig);
 				}
 			} catch(Exception e) {
 				String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA,e.getMessage());
 				ControlStationCore.getLog().error(errorMsg, e);
 				pd.setMessage(errorMsg);
+				pdMessage = errorMsg;
 			}
 			
 			
 
-			Object[] oggetti = allarmiToRemove.toArray(new Allarme[allarmiToRemove.size()]); 
+			Object[] oggetti = allarmiRimossi.toArray(new Allarme[allarmiRimossi.size()]); 
 			confCore.performDeleteOperation(userLogin, confHelper.smista(), oggetti);
 			// Preparo il menu
 			confHelper.makeMenu();
 
+			if(inUsoMessage.length()>0) {
+				if(pdMessage!=null) {
+					pd.setMessage(pdMessage+
+							org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+							org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+							inUsoMessage.toString());
+				}
+				else {
+					pd.setMessage(inUsoMessage.toString());
+				}
+			}
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

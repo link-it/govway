@@ -298,6 +298,37 @@ public class ControlloTrafficoDriverUtils {
 		
 		return listaPolicy;
 	}
+	
+	public static List<ConfigurazionePolicy> configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme(String idAllarme, Connection con, Logger log, String tipoDB) throws ServiceException{
+		String nomeMetodo = "configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme";
+		// ritorna la configurazione controllo del traffico della PdD
+		
+		List<ConfigurazionePolicy> listaPolicy = new ArrayList<ConfigurazionePolicy>();
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, log);
+			
+			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
+			
+			expr.equals(ConfigurazionePolicy.model().APPLICABILITA_STATO_ALLARME, true);
+			expr.equals(ConfigurazionePolicy.model().ALLARME_NOME, idAllarme);
+			
+			IPaginatedExpression pagExpr = serviceManager.getConfigurazionePolicyServiceSearch().toPaginatedExpression(expr);
+			pagExpr.sortOrder(SortOrder.ASC);
+			pagExpr.addOrder(ConfigurazionePolicy.model().ID_POLICY);
+			
+			listaPolicy = serviceManager.getConfigurazionePolicyServiceSearch().findAll(pagExpr);
+						
+		} catch (Exception qe) {
+			throw new ServiceException("[" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		}
+		
+		return listaPolicy;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyList(ISearch ricerca, RuoloPolicy ruoloPorta, String nomePorta, 

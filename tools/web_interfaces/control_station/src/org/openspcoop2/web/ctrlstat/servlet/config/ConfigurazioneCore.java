@@ -1087,6 +1087,26 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public List<ConfigurazionePolicy> configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme(String idAllarme) throws DriverControlStationException{
+		String nomeMetodo = "configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme(idAllarme);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public List<TipoRisorsaPolicyAttiva> attivazionePolicyTipoRisorsaList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
 		String nomeMetodo = "attivazionePolicyTipoRisorsaList";
 		Connection con = null;
@@ -2101,6 +2121,26 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public List<Allarme> allarmiSenzaPluginList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{ 
+		String nomeMetodo = "allarmiSenzaPluginList";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.allarmiSenzaPluginList(ricerca, ruoloPorta, nomePorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public boolean existsAllarmi(TipoAllarme tipoAllarme) throws DriverControlStationException{ 
 		String nomeMetodo = "existsAllarmi";
 		Connection con = null;
@@ -2455,6 +2495,26 @@ public class ConfigurazioneCore extends ControlStationCore {
 					filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
 					filtroSoggettoErogatore, filtroRuoloErogatore,
 					filtroServizioAzione, filtroRuolo);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<Allarme> allarmiForPolicyRateLimiting(String activeIdPolicy, RuoloPorta ruoloPorta, String nomePorta)  throws DriverControlStationException{
+		String nomeMetodo = "allarmiForPolicyRateLimiting";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			return driver.allarmiForPolicyRateLimiting(activeIdPolicy, ruoloPorta, nomePorta);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

@@ -41,6 +41,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeFiltro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
@@ -138,7 +139,6 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.AlarmContext;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
@@ -10729,9 +10729,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// con stato allarme
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL);
-		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
-		if(condizionata && this.isAllarmiModuleEnabled()){
+		//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL);
+		//de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
+		de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
+		if(condizionata && this.confCore.isConfigurazioneAllarmiEnabled()){
 			if(editMode) {
 				de.setType(DataElementType.CHECKBOX);
 				
@@ -10752,7 +10753,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(policy.isApplicabilitaStatoAllarme()+"");
 		dati.addElement(de);
 		
-		if(!editMode && condizionata && this.isAllarmiModuleEnabled()){
+		if(!editMode && condizionata && this.confCore.isConfigurazioneAllarmiEnabled()){
 			// Il valore del parametor originale viene passato come hidden
 			// L'elemento seguente serve solo come presentation, infatti il nome del parametro termina con un suffisso noEdit
 			if(policy.isApplicabilitaStatoAllarme()) {
@@ -11151,21 +11152,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			dati.addElement(de);
 		}
 		
-		List<String> allarmi = null;
+		List<String> allarmi_id = null;
+		List<String> allarmi_alias = null;
 		if(policy.isApplicabilitaStatoAllarme()){
-			throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); 
-			
-//			try{
-//				allarmi = AllarmiCore.getAllIdAllarmi();
-//			}catch(Exception eError){
-//				this.log.error(eError.getMessage(),eError);
-//			}
+			try{
+				// Permetto di creare policy legate solamente a allarmi globali
+				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new Search(true), null, null);
+				if(listAllarmiGlobali!=null && !listAllarmiGlobali.isEmpty()) {
+					allarmi_id = new ArrayList<String>();
+					allarmi_alias = new ArrayList<String>();
+					for (Allarme allarme : listAllarmiGlobali) {
+						allarmi_id.add(allarme.getNome());
+						allarmi_alias.add(allarme.getAlias());
+					}
+				}
+			}catch(Exception eError){
+				this.log.error(eError.getMessage(),eError);
+			}
 		}
-		if(allarmi==null){
-			allarmi = new ArrayList<String>();
+		if(allarmi_id==null){
+			allarmi_id = new ArrayList<String>();
 		}
 		
-		if(policy.isApplicabilitaStatoAllarme() && allarmi.size()<=0){
+		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()<=0){
 			DataElement de = new DataElement();
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NON_ESISTENTI);
 			de.setType(DataElementType.NOTE);
@@ -11176,23 +11185,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME);
-		if(policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			String [] values = null;
+			String [] labels = null;
 			int index = 0;
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
-				values = new String[allarmi.size()];
+				values = new String[allarmi_id.size()];
+				labels = new String[allarmi_alias.size()];
 			}
 			else{
-				values = new String[allarmi.size() + 1];
+				values = new String[allarmi_id.size() + 1];
+				labels = new String[allarmi_alias.size() + 1];
 				values[0] = "-";
+				labels[0] = "-";
 				index = 1;
 			}
 
-			for (String allarme : allarmi) {
-				values[index++] = allarme;
+			for (int i = 0; i < allarmi_id.size(); i++) {
+				values[index] = allarmi_id.get(i);
+				labels[index++] = allarmi_alias.get(i);
 			}
 			de.setType(DataElementType.SELECT);
 			de.setValues(values);
+			de.setLabels(labels);
 			if(policy.getAllarmeNome()!=null){
 				de.setSelected(policy.getAllarmeNome());
 			}
@@ -11211,7 +11226,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
-		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
 			// L'elemento seguente serve solo come presentation, infatti il nome del parametro termina con un suffisso noEdit
 			de = new DataElement();
@@ -11228,7 +11243,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO);
-		if(policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			if(editMode) {
 				de.setType(DataElementType.CHECKBOX);
 			}
@@ -11244,7 +11259,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(policy.isAllarmeNotStato()+"");
 		dati.addElement(de);
 		
-		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
 			// L'elemento seguente serve solo come presentation, infatti il nome del parametro termina con un suffisso noEdit
 			de = new DataElement();
@@ -11266,7 +11281,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO);
-		if(policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			de.setType(DataElementType.SELECT);
 			de.setValues(ConfigurazioneCostanti.CONFIGURAZIONE_STATI_ALLARMI);
 			de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATI_ALLARMI);
@@ -11290,7 +11305,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
-		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
 			// L'elemento seguente serve solo come presentation, infatti il nome del parametro termina con un suffisso noEdit
 			de = new DataElement();
@@ -11523,46 +11538,37 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		if(policy.isApplicabilitaStatoAllarme()){
-			throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); 
-//			List<String> allarmi = null;
-//			try{
-//				allarmi = AllarmiCore.getAllIdAllarmi();
-//			}catch(Exception eError){
-//				this.log.error(eError.getMessage(),eError);
-//			}
+			List<String> allarmi = null;
+			try{
+				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new Search(true), null, null);
+				if(listAllarmiGlobali!=null && !listAllarmiGlobali.isEmpty()) {
+					allarmi = new ArrayList<String>();
+					for (Allarme allarme : listAllarmiGlobali) {
+						allarmi.add(allarme.getNome());
+					}
+				}
+			}catch(Exception eError){
+				this.log.error(eError.getMessage(),eError);
+			}
 
-//			if(allarmi==null || allarmi.size()<=0){
-//				String messaggio = "Non risultano attivi allarmi; disabilitare l'opzione '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL+"'";
-//				this.pd.setMessage(messaggio);
-//				return false;
-//			}			
-//			else{
-//				if(policy.getAllarmeNome()==null || "".equals(policy.getAllarmeNome())  || "-".equals(policy.getAllarmeNome())) {
-//					String messaggio = "Selezionare uno degli allarmi indicati in '"+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ALLARME
-//							+" - "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME+"'";
-//					this.pd.setMessage(messaggio);
-//				return false;
-//				}
-//			}
+			if(allarmi==null || allarmi.size()<=0){
+				String messaggio = "Non risultano attivi allarmi; disabilitare l'opzione '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL+"'";
+				this.pd.setMessage(messaggio);
+				return false;
+			}			
+			else{
+				if(policy.getAllarmeNome()==null || "".equals(policy.getAllarmeNome())  || "-".equals(policy.getAllarmeNome())) {
+					String messaggio = "Selezionare uno degli allarmi indicati in '"+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ALLARME
+							+" - "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME+"'";
+					this.pd.setMessage(messaggio);
+					return false;
+				}
+			}
 		}
 		return true;
 	}
 	
 	
-	private static Boolean allarmiEnabled = null;
-	public boolean isAllarmiModuleEnabled(){
-		if(allarmiEnabled==null){
-			// sono abilitati gli allarmi se esiste la classe degli allarmi nel classpath
-			try{
-				Class<?> c = Class.forName("it.link.pdd.core.plugins.allarmi.ConfigurazioneAllarme");
-				allarmiEnabled = (c!=null);
-			}catch(ClassNotFoundException notFound){
-				allarmiEnabled = false;
-			}
-		}
-		return allarmiEnabled;
-	}
-
 	public String readDatiAttivazionePolicyFromHttpParameters(AttivazionePolicy policy, boolean first, TipoOperazione tipoOperazione, InfoPolicy infoPolicy) throws Exception{
 		
 		StringBuilder sbParsingError = new StringBuilder();

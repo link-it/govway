@@ -44,6 +44,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -808,4 +809,47 @@ public class AllarmiDriverUtils {
 			pstmt.setString(index++, filtroRuolo);
 		}
 	}
+	
+	
+	public static List<Allarme> allarmiForPolicyRateLimiting(String activeIdPolicy, RuoloPorta ruoloPorta, String nomePorta, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "allarmiForPolicyRateLimiting";
+				
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
+			
+			IAllarmeServiceSearch allarmiServiceSearch = jdbcServiceManager.getAllarmeServiceSearch();
+			
+			IExpression expr = allarmiServiceSearch.newExpression();
+			
+			expr.and();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(Allarme.model().FILTRO.RUOLO_PORTA, ruoloPorta.getValue()).and().equals(Allarme.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expr.isNull(Allarme.model().FILTRO.NOME_PORTA);
+			}
+			
+			expr.equals(Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO, CostantiConfigurazione.PARAM_POLICY_ID);
+			if(activeIdPolicy!=null) {
+				expr.like(Allarme.model().ALLARME_PARAMETRO.VALORE, activeIdPolicy,LikeMode.EXACT);
+			}
+			else {
+				expr.isNull(Allarme.model().ALLARME_PARAMETRO.VALORE);
+			}
+
+			IPaginatedExpression pagExpr = allarmiServiceSearch.toPaginatedExpression(expr);
+			
+			pagExpr.addOrder(Allarme.model().ALIAS, SortOrder.ASC);
+
+			return allarmiServiceSearch.findAll(pagExpr);
+			
+		} catch (Exception qe) {
+			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} 
+	}
+	
 }
