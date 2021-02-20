@@ -74,7 +74,7 @@
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-annotations-2.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-core-2.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-coreutils-1.8.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-databind-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-databind-2.10.5.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-dataformat-xml-2.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-dataformat-yaml-2.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-datatype-joda-2.10.2.jar"/>
