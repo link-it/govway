@@ -20,20 +20,24 @@
 
 package org.openspcoop2.monitor.engine.alarm;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.allarmi.constants.TipoAllarme;
+import org.openspcoop2.core.allarmi.dao.IServiceManager;
+import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
-import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
-import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
-import org.openspcoop2.monitor.sdk.constants.AlarmStateValues;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
+import org.openspcoop2.monitor.sdk.exceptions.AlarmNotifyException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
-import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
@@ -46,21 +50,25 @@ import org.slf4j.Logger;
  */
 public class AlarmImpl implements IAlarm {
 
-	private Logger logger = LoggerWrapperFactory.getLogger(AlarmImpl.class);
+	private Logger _logger = LoggerWrapperFactory.getLogger(AlarmImpl.class);
 	private DAOFactory daoFactory = null;
 	private String threadName;
 	private String username;
+	private AlarmLogger alarmLogger;
 	
 	public AlarmImpl(Allarme configAllarme,Logger log, DAOFactory daoFactory) {
 		this.id = configAllarme.getNome();
+		this.nome = configAllarme.getAlias();
 		this.configAllarme = configAllarme;
-		this.logger = log;
+		this._logger = log;
 		this.daoFactory = daoFactory;
 		this.threadName = "SDK";
+		this.alarmLogger = new AlarmLogger(this.nome, this.id, this.threadName, this._logger);
 	}
 	
 	protected void setThreadName(String threadName) {
 		this.threadName = threadName;
+		this.alarmLogger.setThreadName(this.threadName);
 	}
 	
 	public void setUsername(String username) {
@@ -68,8 +76,8 @@ public class AlarmImpl implements IAlarm {
 	}
 	
 	@Override
-	public Logger getLogger(){
-		return this.logger;
+	public AlarmLogger getLogger(){
+		return this.alarmLogger;
 	}
 	
 	@Override
@@ -77,11 +85,45 @@ public class AlarmImpl implements IAlarm {
 		return this.daoFactory;
 	}
 	
+	// Metodo utilizzato dal Gateway in AlarmNotifier
+	public void changeStatus(Logger logSql, Connection connection,  ServiceManagerProperties smp, AlarmStatus nuovoStatoAllarme) throws AlarmException, AlarmNotifyException {
+		this._changeStatus(logSql, connection, smp, nuovoStatoAllarme);
+	}
+	
 	@Override
-	public void changeStatus(AlarmStatus nuovoStatoAllarme) throws AlarmException {
+	public void changeStatus(AlarmStatus nuovoStatoAllarme) throws AlarmException, AlarmNotifyException {
+		this._changeStatus(null, null, null, nuovoStatoAllarme);
+	}
+	
+	private void _changeStatus(Logger logSql, Connection connection,  ServiceManagerProperties smp, AlarmStatus nuovoStatoAllarme) throws AlarmException, AlarmNotifyException {
+		
+		IServiceManager allarmiSM = null;
+		boolean changeEventFromGateway = false;
+		List<AllarmeHistory> repositoryHistory = null;
+		try {
+			if(connection==null) {
+				allarmiSM = (IServiceManager) this.daoFactory.getServiceManager(ProjectInfo.getInstance());
+			}
+			else {
+				allarmiSM = (IServiceManager) this.daoFactory.getServiceManager(ProjectInfo.getInstance(), connection, smp, logSql);
+				changeEventFromGateway = true;
+				repositoryHistory = new ArrayList<AllarmeHistory>();
+			}
+		}catch(Exception e) {
+			throw new AlarmException(e.getMessage(),e);
+		}
+		
+		// Cambio di stato effettivo ?
+		boolean statusChanged = false;
+		if(this.status==null || this.status.getStatus()==null){
+			statusChanged = true;
+		}
+		else{
+			statusChanged = !this.status.getStatus().equals(nuovoStatoAllarme.getStatus());
+		}
 		
 		// Cambio stato sul database degli allarmi
-		AlarmManager.changeStatus(nuovoStatoAllarme, this, this.logger, this.daoFactory, this.username);
+		AlarmManager.changeStatus(nuovoStatoAllarme, this, allarmiSM, this.username, statusChanged, repositoryHistory);
 		
 		
 		// Switch stato nell'attuale implementazione
@@ -90,130 +132,34 @@ public class AlarmImpl implements IAlarm {
 			oldStatus = (AlarmStatus) this.status.clone();
 		}
 		this.setStatus(nuovoStatoAllarme);
-				
-		// Cambio di stato effettivo
-		boolean statusChanged = false;
-		if(oldStatus==null || oldStatus.getStatus()==null){
-			statusChanged = true;
+		
+		if(changeEventFromGateway) {
+			
+			this.alarmLogger.debug("Registrazione richiesta notifica su db in corso ...");
+			AlarmManager.registraNotifica(this.alarmLogger, this.configAllarme, oldStatus, nuovoStatoAllarme, 
+					!repositoryHistory.isEmpty() ? repositoryHistory.get(0) : null,
+					allarmiSM);
+			this.alarmLogger.debug("Registrazione richiesta notifica su db terminata correttamente");
+			
 		}
-		else{
-			statusChanged = !oldStatus.getStatus().equals(nuovoStatoAllarme.getStatus());
+		else {
+		
+			AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
+			if(alarmEngineConfig==null){
+				throw new AlarmException("Configurazione Allarme non fornita, utilizzare il metodo AlarmManager.setAlarmEngineConfig(...)");
+			}
+			
+			this.alarmLogger.debug("Analisi nuovo stato in corso ...");
+			AlarmManager.notifyChangeStatus(alarmEngineConfig, this.configAllarme,
+					this, this.pluginClassName, this.threadName,
+					this.alarmLogger,
+					oldStatus, nuovoStatoAllarme,
+					(this.configAllarme!=null && TipoAllarme.ATTIVO.equals(this.configAllarme.getTipoAllarme()))
+					);
+			this.alarmLogger.info("Analisi nuovo stato terminata correttamente");
+			
 		}
 		
-		// Gestione invocazione script e mail
-		if(statusChanged){
-			
-			// Notifico cambio di stato all'interfaccia		
-			try {
-				IDynamicLoader cPlugin = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME,this.configAllarme.getTipo(),this.pluginClassName, this.logger);
-				IAlarmProcessing alarmProc = (IAlarmProcessing) cPlugin.newInstance();
-				alarmProc.changeStatusNotify(this, oldStatus, this.status);
-			} catch( Exception e) {
-				this.logger.error("AlarmImpl.changeStatus() ha rilevato un errore: "+e.getMessage(),e);
-				throw new AlarmException(e);
-			}
-			
-			try{
-			
-				AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
-				if(alarmEngineConfig==null){
-					throw new Exception("Configurazione Allarme non fornita, utilizzare il metodo AlarmManager.setAlarmEngineConfig(...)");
-				}
-				
-				boolean mailAckMode = false;
-				if(this.getConfigAllarme().getMail()==null || this.getConfigAllarme().getMail().getAckMode()==null){
-					mailAckMode = alarmEngineConfig.isMailAckMode();
-				}
-				else{
-					mailAckMode = this.getConfigAllarme().getMail().getAckMode()==1;
-				}
-				
-				boolean mailSendChangeStatusOk = alarmEngineConfig.isMailSendChangeStatusOk();
-				
-				boolean scriptAckMode = false;
-				if(this.getConfigAllarme().getScript()==null || this.getConfigAllarme().getScript().getAckMode()==null){
-					scriptAckMode = alarmEngineConfig.isScriptAckMode();
-				}
-				else{
-					scriptAckMode = this.getConfigAllarme().getScript().getAckMode()==1;
-				}
-				
-				boolean scriptSendChangeStatusOk = alarmEngineConfig.isScriptSendChangeStatusOk();
-				
-				
-				boolean sendMail = false;
-				boolean invokeScript = false;
-				if(AlarmStateValues.OK.equals(nuovoStatoAllarme.getStatus())){
-					if(mailSendChangeStatusOk){
-						// sia in ack mode che non in ack mode viene spedito da questo metodo.
-						// tanto deve essere spedita solo la prima volta e non continuamente
-						sendMail = (this.getConfigAllarme().getMail()!=null &&
-								this.getConfigAllarme().getMail().getInviaAlert()!=null && 
-								this.getConfigAllarme().getMail().getInviaAlert()==1); // note: Alert rappresenta l'invio della mail nel db e non veramente solo il livello error
-					}
-					if(scriptSendChangeStatusOk){
-						// sia in ack mode che non in ack mode viene spedito da questo metodo.
-						// tanto deve essere spedita solo la prima volta e non continuamente
-						invokeScript = (this.getConfigAllarme().getScript()!=null &&
-								this.getConfigAllarme().getScript().getInvocaAlert()!=null && 
-								this.getConfigAllarme().getScript().getInvocaAlert()==1); // note: Alert rappresenta l'invio della mail nel db e non veramente solo il livello error
-					}
-				}
-				else if(AlarmStateValues.WARNING.equals(nuovoStatoAllarme.getStatus())){
-					if(mailAckMode==false){
-						// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
-						sendMail = (
-									this.getConfigAllarme().getMail()!=null && 
-									this.getConfigAllarme().getMail().getInviaAlert()!=null && 
-									this.getConfigAllarme().getMail().getInviaAlert()==1
-								) 
-								&& // note: Alert rappresenta l'invio della mail nel db e non veramente solo il livello error
-								(
-										this.getConfigAllarme().getMail()!=null &&
-										this.getConfigAllarme().getMail().getInviaWarning()!=null && 
-										this.getConfigAllarme().getMail().getInviaWarning()==1
-								);
-					}
-					if(scriptAckMode==false){
-						// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
-						invokeScript = (
-									this.getConfigAllarme().getScript()!=null &&
-									this.getConfigAllarme().getScript().getInvocaAlert()!=null && 
-									this.getConfigAllarme().getScript().getInvocaAlert()==1
-								) 
-								&& // note: Alert rappresenta l'invio via script nel db e non veramente solo il livello error
-								(
-										this.getConfigAllarme().getScript()!=null && 
-										this.getConfigAllarme().getScript().getInvocaWarning()!=null && 
-										this.getConfigAllarme().getScript().getInvocaWarning()==1
-								);
-					}
-				}
-				else if(AlarmStateValues.ERROR.equals(nuovoStatoAllarme.getStatus())){
-					if(mailAckMode==false){
-						sendMail = this.getConfigAllarme().getMail()!=null &&
-								this.getConfigAllarme().getMail().getInviaAlert()!=null && 
-								this.getConfigAllarme().getMail().getInviaAlert()==1; // note: Alert rappresenta l'invio della mail nel db e non veramente solo il livello error
-					}
-					if(scriptAckMode==false){
-						invokeScript = this.getConfigAllarme().getScript()!=null &&
-								this.getConfigAllarme().getScript().getInvocaAlert()!=null && 
-								this.getConfigAllarme().getScript().getInvocaAlert()==1; // note: Alert rappresenta l'invio via script nel db e non veramente solo il livello error
-					}
-				}
-				
-				if(sendMail){
-					AlarmManager.sendMail(this.getConfigAllarme(), this.logger, this.threadName);
-				}
-				if(invokeScript){
-					AlarmManager.invokeScript(this.getConfigAllarme(), this.logger, this.threadName);
-				}
-				
-			}catch(Exception e){
-				throw new AlarmException(e.getMessage(),e);
-			}
-			
-		}
 	}
 
 	public void setStatus(AlarmStatus statoAllarme) throws AlarmException {
@@ -228,6 +174,11 @@ public class AlarmImpl implements IAlarm {
 	@Override
 	public String getId() {
 		return this.id;
+	}
+	
+	@Override
+	public String getNome() {
+		return this.nome;
 	}
 
 	@Override
@@ -254,7 +205,7 @@ public class AlarmImpl implements IAlarm {
 		this.parameters.put(param.getId(), param);
 	}
 	
-	protected String getPluginClassName() {
+	public String getPluginClassName() {
 		return this.pluginClassName;
 	}
 	
@@ -262,9 +213,20 @@ public class AlarmImpl implements IAlarm {
 		this.pluginClassName = plugin;
 	}
 
+	@Override
+	public boolean isManuallyUpdateState() {
+		return this.manuallyUpdateState;
+	}
+	
+	public void setManuallyUpdateState(boolean manuallyUpdateState) {
+		this.manuallyUpdateState = manuallyUpdateState;
+	}
+
 	private String id = null;
+	private String nome = null;
 	private Allarme configAllarme;
 	private HashMap<String, Parameter<?>> parameters = null;
 	private AlarmStatus status = null;
 	private String pluginClassName = null;
+	private boolean manuallyUpdateState = false;
 }

@@ -35,9 +35,8 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="allarme-script"&gt;
  * 		&lt;sequence&gt;
- * 			&lt;element name="ack-mode" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="invoca" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="invoca-warning" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
- * 			&lt;element name="invoca-alert" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="command" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="args" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
@@ -53,9 +52,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "allarme-script", 
   propOrder = {
-  	"ackMode",
+  	"invoca",
   	"invocaWarning",
-  	"invocaAlert",
   	"command",
   	"args"
   }
@@ -81,12 +79,12 @@ public class AllarmeScript extends org.openspcoop2.utils.beans.BaseBean implemen
 		this.id=Long.valueOf(-1);
   }
 
-  public java.lang.Integer getAckMode() {
-    return this.ackMode;
+  public java.lang.Integer getInvoca() {
+    return this.invoca;
   }
 
-  public void setAckMode(java.lang.Integer ackMode) {
-    this.ackMode = ackMode;
+  public void setInvoca(java.lang.Integer invoca) {
+    this.invoca = invoca;
   }
 
   public java.lang.Integer getInvocaWarning() {
@@ -95,14 +93,6 @@ public class AllarmeScript extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setInvocaWarning(java.lang.Integer invocaWarning) {
     this.invocaWarning = invocaWarning;
-  }
-
-  public java.lang.Integer getInvocaAlert() {
-    return this.invocaAlert;
-  }
-
-  public void setInvocaAlert(java.lang.Integer invocaAlert) {
-    this.invocaAlert = invocaAlert;
   }
 
   public java.lang.String getCommand() {
@@ -129,16 +119,12 @@ public class AllarmeScript extends org.openspcoop2.utils.beans.BaseBean implemen
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlElement(name="ack-mode",required=false,nillable=false)
-  protected java.lang.Integer ackMode;
+  @XmlElement(name="invoca",required=false,nillable=false)
+  protected java.lang.Integer invoca;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="invoca-warning",required=false,nillable=false)
   protected java.lang.Integer invocaWarning;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlElement(name="invoca-alert",required=false,nillable=false)
-  protected java.lang.Integer invocaAlert;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="command",required=false,nillable=false)

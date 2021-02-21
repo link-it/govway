@@ -80,4 +80,8 @@ public class SortedMap<T> {
 		return this.map.contains(value);
 	}
 	
+	public boolean isEmpty() {
+		return this.map.isEmpty();
+	}
+	
 }

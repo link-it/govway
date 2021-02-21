@@ -37,6 +37,7 @@ import java.io.Serializable;
  * &lt;complexType name="statistica"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="stato-record" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="id-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo-porta" type="{http://www.openspcoop2.org/core/statistiche}tipo-porta" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo-mittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
@@ -59,6 +60,7 @@ import java.io.Serializable;
  * 			&lt;element name="client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="uri-api" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="numero-transazioni" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="dimensioni-bytes-banda-complessiva" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="dimensioni-bytes-banda-interna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
@@ -80,6 +82,7 @@ import java.io.Serializable;
 @XmlType(name = "statistica", 
   propOrder = {
   	"data",
+  	"statoRecord",
   	"idPorta",
   	"tipoPorta",
   	"tipoMittente",
@@ -102,6 +105,7 @@ import java.io.Serializable;
   	"clientAddress",
   	"gruppi",
   	"uriApi",
+  	"clusterId",
   	"numeroTransazioni",
   	"dimensioniBytesBandaComplessiva",
   	"dimensioniBytesBandaInterna",
@@ -138,6 +142,14 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
 
   public void setData(java.util.Date data) {
     this.data = data;
+  }
+
+  public int getStatoRecord() {
+    return this.statoRecord;
+  }
+
+  public void setStatoRecord(int statoRecord) {
+    this.statoRecord = statoRecord;
   }
 
   public java.lang.String getIdPorta() {
@@ -328,6 +340,14 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
     this.uriApi = uriApi;
   }
 
+  public java.lang.String getClusterId() {
+    return this.clusterId;
+  }
+
+  public void setClusterId(java.lang.String clusterId) {
+    this.clusterId = clusterId;
+  }
+
   public java.lang.Integer getNumeroTransazioni() {
     return this.numeroTransazioni;
   }
@@ -395,6 +415,10 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date data;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="stato-record",required=true,nillable=false)
+  protected int statoRecord;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-porta",required=true,nillable=false)
@@ -485,6 +509,10 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="uri-api",required=true,nillable=false)
   protected java.lang.String uriApi;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id",required=true,nillable=false)
+  protected java.lang.String clusterId;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="numero-transazioni",required=true,nillable=false)

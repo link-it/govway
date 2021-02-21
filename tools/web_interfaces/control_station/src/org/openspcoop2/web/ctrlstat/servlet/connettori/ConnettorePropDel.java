@@ -320,7 +320,7 @@ public final class ConnettorePropDel extends Action {
 				}
 			}
 
-			connettoriHelper.prepareConnettorePropList(lista, new Search(), newMyId,tipoAccordo);
+			connettoriHelper.prepareConnettorePropList(lista, new Search(true), newMyId,tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

@@ -117,7 +117,9 @@ public class Loader {
 			String import_tipoPddArchivi = loaderProperties.getTipoPddArchivio();
 			String userLogin = loaderProperties.getUtente();
 			boolean importDeletePolicyConfig = loaderProperties.isPolicy_enable();
-			boolean importConfig = loaderProperties.isConfigurazioneGenerare_enable();
+			boolean importDeletePluginConfig = loaderProperties.isPlugin_enable();
+			boolean importCheckPluginReferences = loaderProperties.isPlugin_checkReferences();
+			boolean importConfig = loaderProperties.isConfigurazioneGenerale_enable();
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
 			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
 			CryptConfig utenzeCryptConfig = new CryptConfig(loaderProperties.getUtenze_password());
@@ -272,19 +274,35 @@ public class Loader {
 			RegistryReader registryReader = new RegistryReader(driverRegistroDB,logSql);
 			ConfigIntegrationReader configReader = new ConfigIntegrationReader(driverConfigDB,logSql);
 			
+			// istanzio driver per Plugins
+			ServiceManagerProperties propertiesPlugins = new ServiceManagerProperties();
+			propertiesPlugins.setDatabaseType(tipoDatabase);
+			propertiesPlugins.setShowSql(true);
+			org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager jdbcServiceManagerPlugins = 
+					new org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesPlugins, logSql);
+			
 			// istanzio driver per ControlloTraffico
-			ServiceManagerProperties properties = new ServiceManagerProperties();
-			properties.setDatabaseType(tipoDatabase);
-			properties.setShowSql(true);
+			ServiceManagerProperties propertiesControlloTraffico = new ServiceManagerProperties();
+			propertiesControlloTraffico.setDatabaseType(tipoDatabase);
+			propertiesControlloTraffico.setShowSql(true);
 			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager jdbcServiceManagerControlloTraffico = 
-					new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(connectionSQL, properties, logSql);
+					new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesControlloTraffico, logSql);
+			
+			// istanzio driver per Allarmi
+			ServiceManagerProperties propertiesAllarmi = new ServiceManagerProperties();
+			propertiesAllarmi.setDatabaseType(tipoDatabase);
+			propertiesAllarmi.setShowSql(true);
+			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager jdbcServiceManagerAllarmi = 
+					new org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesAllarmi, logSql);
 
 			// Istanzio ArchiviEngineControlStation
 			ControlStationCore core = new ControlStationCore(true, null, protocolloDefault);
 			ArchiviCore archiviCore = new ArchiviCore(core);
 			ArchiveEngine importerEngine = new ArchiveEngine(driverRegistroDB, 
 					driverConfigDB,
+					jdbcServiceManagerPlugins,
 					jdbcServiceManagerControlloTraffico,
+					jdbcServiceManagerAllarmi,
 					archiviCore, smista, userLogin);
 			
 			logCore.debug("Inizializzazione driver terminata");
@@ -324,7 +342,8 @@ public class Loader {
 				
 				DeleterArchiveUtils deleterArchiveUtils = 
 						new DeleterArchiveUtils(importerEngine, logCore, userLogin,
-								importDeletePolicyConfig);
+								importDeletePolicyConfig,
+								importDeletePluginConfig);
 				
 				ArchiveEsitoDelete esitoDelete = deleterArchiveUtils.deleteArchive(archive, userLogin);
 				
@@ -339,7 +358,9 @@ public class Loader {
 				ImporterArchiveUtils importerArchiveUtils = 
 						new ImporterArchiveUtils(importerEngine, logCore, userLogin, import_nomePddOperativa, import_tipoPddArchivi, 
 								isShowGestioneWorkflowStatoDocumenti, updateAbilitato,
-								importDeletePolicyConfig, importConfig);
+								importDeletePolicyConfig, 
+								importDeletePluginConfig, importCheckPluginReferences,
+								importConfig);
 				
 				ArchiveEsitoImport esitoImport = importerArchiveUtils.importArchive(archive, userLogin, 
 						isShowAccordiColonnaAzioni,

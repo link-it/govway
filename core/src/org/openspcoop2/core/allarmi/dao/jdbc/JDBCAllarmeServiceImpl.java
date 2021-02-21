@@ -23,7 +23,9 @@ import java.sql.Connection;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeFiltro;
+import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.AllarmeMail;
+import org.openspcoop2.core.allarmi.AllarmeNotifica;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.AllarmeRaggruppamento;
 import org.openspcoop2.core.allarmi.AllarmeScript;
@@ -31,6 +33,7 @@ import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
+import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceCRUDWithId;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
@@ -71,15 +74,13 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().DESCRIZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_ALLARME,false),"?");
-		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.ACK_MODE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA_WARNING,false),"?");
-		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA_ALERT,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.DESTINATARI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.SUBJECT,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.BODY,false),"?");
-		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.ACK_MODE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA_WARNING,false),"?");
-		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA_ALERT,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.COMMAND,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.ARGS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAllarmeFieldConverter().toColumn(Allarme.model().STATO_PRECEDENTE,false),"?");
@@ -126,15 +127,13 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getDescrizione(),Allarme.model().DESCRIZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getTipo(),Allarme.model().TIPO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getTipoAllarme(),Allarme.model().TIPO_ALLARME.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getMail().getAckMode(),Allarme.model().MAIL.ACK_MODE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getMail().getInvia(),Allarme.model().MAIL.INVIA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getMail().getInviaWarning(),Allarme.model().MAIL.INVIA_WARNING.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getMail().getInviaAlert(),Allarme.model().MAIL.INVIA_ALERT.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getMail().getDestinatari(),Allarme.model().MAIL.DESTINATARI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getMail().getSubject(),Allarme.model().MAIL.SUBJECT.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getMail().getBody(),Allarme.model().MAIL.BODY.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getScript().getAckMode(),Allarme.model().SCRIPT.ACK_MODE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getScript().getInvoca(),Allarme.model().SCRIPT.INVOCA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getScript().getInvocaWarning(),Allarme.model().SCRIPT.INVOCA_WARNING.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getScript().getInvocaAlert(),Allarme.model().SCRIPT.INVOCA_ALERT.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getScript().getCommand(),Allarme.model().SCRIPT.COMMAND.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getScript().getArgs(),Allarme.model().SCRIPT.ARGS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(allarme.getStatoPrecedente(),Allarme.model().STATO_PRECEDENTE.getFieldType()),
@@ -247,12 +246,10 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().TIPO_ALLARME,false), "?");
 		lstObjects.add(new JDBCObject(allarme.getTipoAllarme(), Allarme.model().TIPO_ALLARME.getFieldType()));
 		AllarmeMail allarme_mail = allarme.getMail();
-		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.ACK_MODE,false), "?");
-		lstObjects.add(new JDBCObject(allarme_mail.getAckMode(), Allarme.model().MAIL.ACK_MODE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA,false), "?");
+		lstObjects.add(new JDBCObject(allarme_mail.getInvia(), Allarme.model().MAIL.INVIA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA_WARNING,false), "?");
 		lstObjects.add(new JDBCObject(allarme_mail.getInviaWarning(), Allarme.model().MAIL.INVIA_WARNING.getFieldType()));
-		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.INVIA_ALERT,false), "?");
-		lstObjects.add(new JDBCObject(allarme_mail.getInviaAlert(), Allarme.model().MAIL.INVIA_ALERT.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.DESTINATARI,false), "?");
 		lstObjects.add(new JDBCObject(allarme_mail.getDestinatari(), Allarme.model().MAIL.DESTINATARI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.SUBJECT,false), "?");
@@ -260,12 +257,10 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().MAIL.BODY,false), "?");
 		lstObjects.add(new JDBCObject(allarme_mail.getBody(), Allarme.model().MAIL.BODY.getFieldType()));
 		AllarmeScript allarme_script = allarme.getScript();
-		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.ACK_MODE,false), "?");
-		lstObjects.add(new JDBCObject(allarme_script.getAckMode(), Allarme.model().SCRIPT.ACK_MODE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA,false), "?");
+		lstObjects.add(new JDBCObject(allarme_script.getInvoca(), Allarme.model().SCRIPT.INVOCA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA_WARNING,false), "?");
 		lstObjects.add(new JDBCObject(allarme_script.getInvocaWarning(), Allarme.model().SCRIPT.INVOCA_WARNING.getFieldType()));
-		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.INVOCA_ALERT,false), "?");
-		lstObjects.add(new JDBCObject(allarme_script.getInvocaAlert(), Allarme.model().SCRIPT.INVOCA_ALERT.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.COMMAND,false), "?");
 		lstObjects.add(new JDBCObject(allarme_script.getCommand(), Allarme.model().SCRIPT.COMMAND.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAllarmeFieldConverter().toColumn(Allarme.model().SCRIPT.ARGS,false), "?");
@@ -576,6 +571,33 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 		if(id != null)
 			sqlQueryObjectDelete.addWhereCondition("id=?");
 
+		
+		// Delete history
+		@SuppressWarnings("unchecked")
+		IDBServiceUtilities<AllarmeHistory> dbHistoryServiceUtilities = (IDBServiceUtilities<AllarmeHistory>) this.getServiceManager().getAllarmeHistoryServiceSearch();
+		
+		ISQLQueryObject sqlQueryObjectDelete_allarmeHistory_delete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_allarmeHistory_delete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_allarmeHistory_delete.addDeleteTable(dbHistoryServiceUtilities.getFieldConverter().toTable(AllarmeHistory.model()));
+		sqlQueryObjectDelete_allarmeHistory_delete.addWhereCondition("id_allarme=?");
+		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeHistory_delete.createSQLDelete(), jdbcProperties.isShowSql(), 
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+				
+
+		
+		// Delete notifiche
+		@SuppressWarnings("unchecked")
+		IDBServiceUtilities<AllarmeNotifica> dbNotificaServiceUtilities = (IDBServiceUtilities<AllarmeNotifica>) this.getServiceManager().getAllarmeNotificaServiceSearch();
+		
+		ISQLQueryObject sqlQueryObjectDelete_allarmeNotifica_delete = sqlQueryObjectDelete.newSQLQueryObject();
+		sqlQueryObjectDelete_allarmeNotifica_delete.setANDLogicOperator(true);
+		sqlQueryObjectDelete_allarmeNotifica_delete.addDeleteTable(dbNotificaServiceUtilities.getFieldConverter().toTable(AllarmeNotifica.model()));
+		sqlQueryObjectDelete_allarmeNotifica_delete.addWhereCondition("id_allarme=?");
+		jdbcUtilities.execute(sqlQueryObjectDelete_allarmeNotifica_delete.createSQLDelete(), jdbcProperties.isShowSql(), 
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
+		
+		
+		
 		// Delete allarme
 		jdbcUtilities.execute(sqlQueryObjectDelete.createSQLDelete(), jdbcProperties.isShowSql(), 
 			new JDBCObject(id,Long.class));
@@ -622,5 +644,13 @@ public class JDBCAllarmeServiceImpl extends JDBCAllarmeServiceSearchImpl
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
 		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+	}
+	
+	@Override
+	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
+	
+		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+																							sql,param);
+	
 	}
 }

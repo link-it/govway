@@ -20,10 +20,9 @@
 
 package org.openspcoop2.monitor.engine.alarm;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
@@ -33,6 +32,7 @@ import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.IDUtilities;
+import org.slf4j.Logger;
 
 /**
  * AlarmLibrary
@@ -47,18 +47,26 @@ public class AlarmThread implements Runnable {
 	private String tipo;
 	private String classname;
 	private IAlarm alarm;
-	private Logger log;
+	private Logger _log;
+	@SuppressWarnings("unused")
 	private AlarmEngineConfig alarmEngineConfig;
 	private String threadName;
 	private boolean stop = false;
 	private boolean terminated = false;
-
+	private boolean forceNewCheck = false;
+	
+	private AlarmLogger alarmLogger;
+	
 	public boolean isTerminated() {
 		return this.terminated;
 	}
 
 	public void setStop(boolean stop) {
 		this.stop = stop;
+	}
+	
+	public void forceNewCheck() {
+		this.forceNewCheck = true;
 	}
 
 	public AlarmThread(Logger log,String tipo, String classname, IAlarm alarm, AlarmEngineConfig alarmEngineConfig)
@@ -75,10 +83,12 @@ public class AlarmThread implements Runnable {
 		this.tipo = tipo;
 		this.classname = classname;
 		this.alarm = alarm;
-		this.log = log;
+		this._log = log;
 		this.alarmEngineConfig = alarmEngineConfig;
 		this.threadName = "T_"+IDUtilities.getUniqueSerialNumber()+"_"+DateManager.getTimeMillis();
 		((AlarmImpl)this.alarm).setThreadName(this.threadName);
+		
+		this.alarmLogger = (AlarmLogger) alarm.getLogger();
 	}
 
 	public void updateState(AlarmStateValues alarmStatus){
@@ -125,117 +135,65 @@ public class AlarmThread implements Runnable {
 		
 		try{
 		
-			this.log.debug("["+this.threadName+"] avviato ...");
+			this.alarmLogger.debug("Thread avviato ...");
 			
 			while (this.stop == false) {
 				try {
 					
-					this.log.info("["+this.threadName+"] Allarme - " + this.alarm.getId()
-							+ " - In Esecuzione ...");
+					this.alarmLogger.info("Verifica stato in corso ...");
+					
+//					org.openspcoop2.monitor.sdk.alarm.AlarmStatus oldStatus = null;
+//					if(this.alarm.getStatus()!=null){
+//						oldStatus = (org.openspcoop2.monitor.sdk.alarm.AlarmStatus) this.alarm.getStatus().clone();
+//					}
 					
 					TipoPlugin tipoPlugin = TipoPlugin.ALLARME;
-					IDynamicLoader cAllarme = DynamicFactory.getInstance().newDynamicLoader(tipoPlugin, this.tipo, this.classname, this.log);
+					IDynamicLoader cAllarme = DynamicFactory.getInstance().newDynamicLoader(tipoPlugin, this.tipo, this.classname, this._log);
 					IAlarmProcessing alarmProc = (IAlarmProcessing) cAllarme.newInstance();
+					this.alarmLogger.debug("Invocazione plugin '"+this.tipo+"' ...");
 					alarmProc.check(this.alarm);
+					this.alarmLogger.debug("Invocazione plugin '"+this.tipo+"' terminato");
 					
-					boolean mailAckMode = false;
-					if(this.alarm.getConfigAllarme().getMail()==null || this.alarm.getConfigAllarme().getMail().getAckMode()==null){
-						mailAckMode = this.alarmEngineConfig.isMailAckMode();
-					}
-					else{
-						mailAckMode = this.alarm.getConfigAllarme().getMail().getAckMode()==1;
-					}
-					
-					boolean scriptAckMode = false;
-					if(this.alarm.getConfigAllarme().getScript()==null || this.alarm.getConfigAllarme().getScript().getAckMode()==null){
-						scriptAckMode = this.alarmEngineConfig.isScriptAckMode();
-					}
-					else{
-						scriptAckMode = this.alarm.getConfigAllarme().getScript().getAckMode()==1;
-					}
-								
-					boolean sendMail = false;
-					boolean invokeScript = false;
-					boolean acknowledged = (this.alarm.getConfigAllarme().getAcknowledged()==null || this.alarm.getConfigAllarme().getAcknowledged()==1);
-					if(this.alarm.getStatus()!=null){
-						if(AlarmStateValues.WARNING.equals(this.alarm.getStatus().getStatus())){
-							if(mailAckMode && !acknowledged){
-								// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
-								sendMail = 
-										(
-												this.alarm.getConfigAllarme().getMail()!=null &&
-												this.alarm.getConfigAllarme().getMail().getInviaAlert()!=null && 
-												this.alarm.getConfigAllarme().getMail().getInviaAlert()==1
-										) 
-										&& 
-										(
-												this.alarm.getConfigAllarme().getMail()!=null &&
-												this.alarm.getConfigAllarme().getMail().getInviaWarning()!=null && 
-												this.alarm.getConfigAllarme().getMail().getInviaWarning()==1
-										);
-							}
-							if(scriptAckMode && !acknowledged){
-								// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
-								invokeScript = 
-										(
-												this.alarm.getConfigAllarme().getScript()!=null &&
-												this.alarm.getConfigAllarme().getScript().getInvocaAlert()!=null && 
-												this.alarm.getConfigAllarme().getScript().getInvocaAlert()==1) 
-										&&
-										(
-												this.alarm.getConfigAllarme().getScript()!=null &&
-												this.alarm.getConfigAllarme().getScript().getInvocaWarning()!=null && 
-												this.alarm.getConfigAllarme().getScript().getInvocaWarning()==1);
-							}
-						}
-						else if(AlarmStateValues.ERROR.equals(this.alarm.getStatus().getStatus())){
-							if(mailAckMode && !acknowledged){
-								sendMail = this.alarm.getConfigAllarme().getMail()!=null &&
-										this.alarm.getConfigAllarme().getMail().getInviaAlert()!=null && 
-										this.alarm.getConfigAllarme().getMail().getInviaAlert()==1;
-							}
-							if(scriptAckMode && !acknowledged){
-								invokeScript = this.alarm.getConfigAllarme().getScript()!=null &&
-										this.alarm.getConfigAllarme().getScript().getInvocaAlert()!=null && 
-										this.alarm.getConfigAllarme().getScript().getInvocaAlert()==1;
-							}
-						}
-					}
-					
-					if(sendMail){
-						AlarmManager.sendMail(this.alarm.getConfigAllarme(), this.log, this.threadName);
-					}
-					if(invokeScript){
-						AlarmManager.invokeScript(this.alarm.getConfigAllarme(), this.log, this.threadName);
-					}
-					
-					this.log.info("["+this.threadName+"] Allarme - " + this.alarm.getId()
-							+ " - Eseguito correttamente");
+					// la notifica di cambio stato viene attuata quando si effettua il changeStatus sull'allarme
+//					this.alarmLogger.debug("Invocazione plugin '"+this.tipo+"' terminata; analisi nuovo stato in corso ...");
+//					
+//					AlarmManager.notifyChangeStatus(this.alarmEngineConfig, this.alarm.getConfigAllarme(),
+//							this.alarm, this.classname, this.threadName,
+//							this.alarmLogger,
+//							oldStatus, this.alarm.getStatus(),
+//							true);
+//					
+//					this.alarmLogger.info("Analisi nuovo stato terminata correttamente");
 				} catch (Exception e) {
-					this.log.error(
-							"["+this.threadName+"] Allarme - " + this.alarm.getId()
-									+ " - Eseguito con errore: "
+					this.alarmLogger.error("Errore inatteso emerso durante la verifica dello stato: "
 									+ e.getMessage(), e);
 				}
 				int sleep = 0;
 				int timeSleep = 500;
-				this.log.debug("["+this.threadName+"] Allarme - " + this.alarm.getId()
-						+ " - Sleep ["+this.periodMillis+"]ms ...");
+				this.alarmLogger.debug("Sleep "+this.periodMillis+"ms ...");
 				while(sleep<this.periodMillis && this.stop==false){
 					Utilities.sleep(timeSleep);
 					sleep = sleep+timeSleep;
+					if(this.forceNewCheck) {
+						break;
+					}
 				}
-				this.log.debug("["+this.threadName+"] Allarme - " + this.alarm.getId()
-						+ " - Sleep ["+this.periodMillis+"] terminato");
+				if(this.forceNewCheck) {
+					this.alarmLogger.debug("Sleep terminata prematuramente; è stato richiesto un nuovo controllo senza attendere il normale intervallo temporale");
+					this.forceNewCheck = false;
+				}
+				else {
+					this.alarmLogger.debug("Sleep "+this.periodMillis+"ms terminato");
+				}
 			}
 			
-			this.log.debug("["+this.threadName+"] terminato");
+			this.alarmLogger.debug("Thread terminato");
 		}finally{
 			this.terminated = true;
 		}
 	}
 		
-
-
-
+	public String getStatoAllarme() {
+		return this.alarmLogger.getStatoAllarme();
+	}
 }

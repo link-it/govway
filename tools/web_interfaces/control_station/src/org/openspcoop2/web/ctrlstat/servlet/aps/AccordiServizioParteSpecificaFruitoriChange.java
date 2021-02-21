@@ -448,7 +448,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			// Prendo la lista di soggetti (tranne quello del servizio)
 			// e la metto in un array
-//			List<Soggetto> soggList = soggettiCore.soggettiRegistroList("", new Search());
+//			List<Soggetto> soggList = soggettiCore.soggettiRegistroList("", new Search(true));
 //			String[] soggettiList = null;
 //			String[] soggettiListLabel = null;
 //			List<String> soggettiListVector = new ArrayList<String>();

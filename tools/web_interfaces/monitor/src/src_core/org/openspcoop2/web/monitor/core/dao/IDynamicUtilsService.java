@@ -33,8 +33,14 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 
 
@@ -258,6 +264,8 @@ public interface IDynamicUtilsService {
 	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String val,Boolean searchTipo);
 	public int countServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto);
 	
+	public List<IDServizio> getServizi(String protocolloSelezionato,List<String> protocolliSupportati, String tipoServizio, String nomeServizio, Integer versioneServizio, String tag);
+	
 	public List<Soggetto> getSoggettiErogatoreAutoComplete(String tipoProtocollo,String uriAccordoServizio, String input);
 	
 	public List<Soggetto> getSoggettiFruitoreAutoComplete(String tipoProtocollo,String uriAccordoServizio  , String input);
@@ -265,11 +273,11 @@ public interface IDynamicUtilsService {
 	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio);
 	public AccordoServizioParteSpecifica getAspsFromId(Long idServizio);
 
-	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,Boolean searchTipo, Boolean distinct);
+	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct);
 	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, 
 			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
-			String val,Boolean searchTipo, Boolean distinct);
-	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,Boolean searchTipo);
+			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct);
+	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
 	
 	public List<IDServizio> getConfigurazioneServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, 
 			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct);
@@ -280,13 +288,14 @@ public interface IDynamicUtilsService {
 			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
 			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
 	
-	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, Boolean distinct);
+	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, 
+			PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct);
 	public List<IDServizio> getServiziFruizione(String tipoProtocollo, 
 			String tipoSoggetto, String nomeSoggetto, 
 			String tipoSoggettoErogatore , String nomeSoggettoErogatore, 
 			String tipoServizio ,String nomeServizio, Integer versioneServizio, String nomeAzione, 
-			String val,Boolean searchTipo, Boolean distinct);
-	public int countServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo);
+			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct);
+	public int countServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
 	
 	public List<IDServizio> getConfigurazioneServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, 
 			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
@@ -297,5 +306,10 @@ public interface IDynamicUtilsService {
 
 	public PortaApplicativa getPortaApplicativa(String nomePorta);
 	public PortaDelegata getPortaDelegata(String nomePorta);
+	
+	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata);
+	public MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa);
+	
+	public Plugin getPlugin(IdPlugin idPlugin);
 	
 }

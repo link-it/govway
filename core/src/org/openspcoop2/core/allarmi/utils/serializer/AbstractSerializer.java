@@ -31,6 +31,7 @@ import org.openspcoop2.core.allarmi.AllarmeScript;
 import org.openspcoop2.core.allarmi.AllarmeFiltro;
 import org.openspcoop2.core.allarmi.AllarmeRaggruppamento;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
+import org.openspcoop2.core.allarmi.AllarmeNotifica;
 import org.openspcoop2.core.allarmi.ElencoAllarmi;
 import org.openspcoop2.core.allarmi.ElencoIdAllarmi;
 
@@ -1063,6 +1064,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(AllarmeParametro allarmeParametro,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(AllarmeParametro.class, allarmeParametro, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: allarme-notifica
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>allarmeNotifica</var>
+	 * @param allarmeNotifica Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AllarmeNotifica allarmeNotifica) throws SerializerException {
+		this.objToXml(fileName, AllarmeNotifica.class, allarmeNotifica, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>allarmeNotifica</var>
+	 * @param allarmeNotifica Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AllarmeNotifica allarmeNotifica,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, AllarmeNotifica.class, allarmeNotifica, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param file Xml file to serialize the object <var>allarmeNotifica</var>
+	 * @param allarmeNotifica Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AllarmeNotifica allarmeNotifica) throws SerializerException {
+		this.objToXml(file, AllarmeNotifica.class, allarmeNotifica, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param file Xml file to serialize the object <var>allarmeNotifica</var>
+	 * @param allarmeNotifica Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AllarmeNotifica allarmeNotifica,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, AllarmeNotifica.class, allarmeNotifica, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param out OutputStream to serialize the object <var>allarmeNotifica</var>
+	 * @param allarmeNotifica Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AllarmeNotifica allarmeNotifica) throws SerializerException {
+		this.objToXml(out, AllarmeNotifica.class, allarmeNotifica, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param out OutputStream to serialize the object <var>allarmeNotifica</var>
+	 * @param allarmeNotifica Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AllarmeNotifica allarmeNotifica,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, AllarmeNotifica.class, allarmeNotifica, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param allarmeNotifica Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AllarmeNotifica allarmeNotifica) throws SerializerException {
+		return this.objToXml(AllarmeNotifica.class, allarmeNotifica, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param allarmeNotifica Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AllarmeNotifica allarmeNotifica,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AllarmeNotifica.class, allarmeNotifica, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param allarmeNotifica Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AllarmeNotifica allarmeNotifica) throws SerializerException {
+		return this.objToXml(AllarmeNotifica.class, allarmeNotifica, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>allarmeNotifica</var> of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param allarmeNotifica Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AllarmeNotifica allarmeNotifica,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AllarmeNotifica.class, allarmeNotifica, prettyPrint).toString();
 	}
 	
 	

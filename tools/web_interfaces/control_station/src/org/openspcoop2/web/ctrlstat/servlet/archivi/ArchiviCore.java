@@ -117,7 +117,9 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(), 
+					driver.getJdbcServiceManagerPlugins(),
 					driver.getJdbcServiceManagerControlloTraffico(),
+					driver.getJdbcServiceManagerAllarmi(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -148,7 +150,9 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(), 
+					driver.getJdbcServiceManagerPlugins(),
 					driver.getJdbcServiceManagerControlloTraffico(),
+					driver.getJdbcServiceManagerAllarmi(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -173,7 +177,9 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(),
+					driver.getJdbcServiceManagerPlugins(),
 					driver.getJdbcServiceManagerControlloTraffico(),
+					driver.getJdbcServiceManagerAllarmi(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -188,7 +194,10 @@ public class ArchiviCore extends ControlStationCore {
 	}
 	
 	public String importArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista,
-			boolean updateAbilitato, boolean importPolicyConfig, boolean importConfig, String nomePddOperativa,
+			boolean updateAbilitato, 
+			boolean importPolicyConfig, 
+			boolean importPluginConfig, boolean checkExistsPluginConfig,
+			boolean importConfig, String nomePddOperativa,
 			ConsoleHelper consoleHelper) throws Exception,ImportInformationMissingException{
 		
 		Connection con = null;
@@ -202,13 +211,17 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(),
+					driver.getJdbcServiceManagerPlugins(),
 					driver.getJdbcServiceManagerControlloTraffico(),
+					driver.getJdbcServiceManagerAllarmi(),
 					this, smista, userLogin);
 			
 			ImporterArchiveUtils importerArchiveUtils = 
 					new ImporterArchiveUtils(importerEngine, log, userLogin, nomePddOperativa, this.getImportArchivi_tipoPdD(), 
 							consoleHelper.isShowGestioneWorkflowStatoDocumenti(), updateAbilitato,
-							importPolicyConfig, importConfig);
+							importPolicyConfig, 
+							importPluginConfig, checkExistsPluginConfig,
+							importConfig);
 			
 			ArchiveEsitoImport esito = importerArchiveUtils.importArchive(archive, userLogin, 
 					this.isShowAccordiColonnaAzioni(),
@@ -226,7 +239,7 @@ public class ArchiviCore extends ControlStationCore {
 	
 	
 	public String deleteArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista,
-			 boolean deletePolicyConfig) throws Exception,ImportInformationMissingException{
+			 boolean deletePolicyConfig, boolean deletePluginConfig) throws Exception,ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -239,12 +252,14 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(),
+					driver.getJdbcServiceManagerPlugins(),
 					driver.getJdbcServiceManagerControlloTraffico(),
+					driver.getJdbcServiceManagerAllarmi(),
 					this, smista, userLogin);
 			
 			DeleterArchiveUtils deleterArchiveUtils = 
 					new DeleterArchiveUtils(importerEngine, log, userLogin,
-							deletePolicyConfig);
+							deletePolicyConfig, deletePluginConfig);
 			
 			ArchiveEsitoDelete esito = deleterArchiveUtils.deleteArchive(archive, userLogin);
 			

@@ -387,7 +387,7 @@ public final class UtentiDel extends Action {
 							if (singleSuServizi != null && !singleSuServizi.equals("")) {
 								if(soggettiCore.isRegistroServiziLocale()){
 									// Recupero le pdd dell'utente
-									List<PdDControlStation> pdsLista = pddCore.pddList(nomesu, new Search());
+									List<PdDControlStation> pdsLista = pddCore.pddList(nomesu, new Search(true));
 									Iterator<PdDControlStation> itPds = pdsLista.iterator();
 									while (itPds.hasNext()) {
 										PdDControlStation pds = itPds.next();
@@ -396,7 +396,7 @@ public final class UtentiDel extends Action {
 								        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_UPDATE);
 									}
 									// Recupero gli accordi servizio parte specifica dell'utente
-									List<AccordoServizioParteSpecifica> aspsLista = apsCore.serviziList(nomesu, new Search());
+									List<AccordoServizioParteSpecifica> aspsLista = apsCore.serviziList(nomesu, new Search(true));
 									Iterator<AccordoServizioParteSpecifica> itAps = aspsLista.iterator();
 									while (itAps.hasNext()) {
 										AccordoServizioParteSpecifica asTmp = itAps.next();
@@ -406,7 +406,7 @@ public final class UtentiDel extends Action {
 								        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_UPDATE);
 									}
 									// Recupero gli accordi servizio dell'utente
-									List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search());
+									List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioParteComuneList(nomesu, new Search(true));
 									Iterator<AccordoServizioParteComuneSintetico> itAs = asLista.iterator();
 									while (itAs.hasNext()) {
 										AccordoServizioParteComuneSintetico asSintetico = itAs.next();
@@ -416,7 +416,7 @@ public final class UtentiDel extends Action {
 								        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_UPDATE);
 									}
 									// Recupero i soggetti dell'utente
-									List<Soggetto> soggLista = soggettiCore.soggettiRegistroList(nomesu, new Search());
+									List<Soggetto> soggLista = soggettiCore.soggettiRegistroList(nomesu, new Search(true));
 									Iterator<Soggetto> itSs = soggLista.iterator();
 									while (itSs.hasNext()) {
 										Soggetto sogg = itSs.next();
@@ -430,7 +430,7 @@ public final class UtentiDel extends Action {
 								}
 								else{
 									// Recupero i soggetti dell'utente
-									List<org.openspcoop2.core.config.Soggetto> soggLista = soggettiCore.soggettiList(nomesu, new Search());
+									List<org.openspcoop2.core.config.Soggetto> soggLista = soggettiCore.soggettiList(nomesu, new Search(true));
 									Iterator<org.openspcoop2.core.config.Soggetto> itSs = soggLista.iterator();
 									while (itSs.hasNext()) {					
 										org.openspcoop2.core.config.Soggetto sogg = itSs.next();
@@ -444,7 +444,7 @@ public final class UtentiDel extends Action {
 							if(soggettiCore.isRegistroServiziLocale()){
 								if ((singleSuAccordiCooperazione != null && !singleSuAccordiCooperazione.equals("")) || checkOggettiAccordi) {
 									// Recupero gli accordi di cooperazione dell'utente
-									List<AccordoCooperazione> acLista = acCore.accordiCooperazioneList(nomesu, new Search());
+									List<AccordoCooperazione> acLista = acCore.accordiCooperazioneList(nomesu, new Search(true));
 									Iterator<AccordoCooperazione> itAc = acLista.iterator();
 									while (itAc.hasNext()) {
 										AccordoCooperazione ac = itAc.next();
@@ -453,7 +453,7 @@ public final class UtentiDel extends Action {
 								        tipoModifica.add(CostantiControlStation.PERFORM_OPERATION_UPDATE);
 									}
 									// Recupero gli accordi servizio dell'utente
-									List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search());
+									List<AccordoServizioParteComuneSintetico> asLista = apcCore.accordiServizioCompostiList(nomesu, new Search(true));
 									Iterator<AccordoServizioParteComuneSintetico> itAs = asLista.iterator();
 									while (itAs.hasNext()) {
 										AccordoServizioParteComuneSintetico asSintetico = itAs.next();

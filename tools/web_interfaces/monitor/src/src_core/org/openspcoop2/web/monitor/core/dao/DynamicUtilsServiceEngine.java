@@ -66,10 +66,19 @@ import org.openspcoop2.core.commons.search.utils.ExpressionProperties;
 import org.openspcoop2.core.commons.search.utils.ProjectInfo;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
@@ -97,6 +106,7 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -140,12 +150,17 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
 
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager;
+	
+	private IPluginServiceSearch pluginsServiceSearchDAO;
+	
 	private transient DriverRegistroServiziDB driverRegistroDB = null;
+	private transient DriverConfigurazioneDB driverConfigDB = null;
 	
 	public DynamicUtilsServiceEngine(){
-		this(null);
+		this(null, null);
 	}
-	public DynamicUtilsServiceEngine(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
+	public DynamicUtilsServiceEngine(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
 		try{
 			if(serviceManager==null) {
 				this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
@@ -173,11 +188,24 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
+			
+			if(pluginsServiceManager==null) {
+				this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+						.getInstance( log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(), DynamicUtilsServiceEngine.log);
+			}
+			else {
+				this.pluginsServiceManager = pluginsServiceManager;
+			}
+			
+			this.pluginsServiceSearchDAO = this.pluginsServiceManager.getPluginServiceSearch();
+			
+			
 			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 						
 			this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
 			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
 			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
@@ -218,9 +246,17 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
+			
+			this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
+			
+			this.pluginsServiceSearchDAO = this.pluginsServiceManager.getPluginServiceSearch();
+			
+			
 			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			
 			this.driverRegistroDB = new DriverRegistroServiziDB(con, log, tipoDatabase);
+			this.driverConfigDB = new DriverConfigurazioneDB(con, log, tipoDatabase);
 			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
 			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
@@ -1075,10 +1111,14 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			IExpression expr = this.serviziApplicativiDAO.newExpression();
 
 			if (soggetto != null) {
-				expr.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO,
-						soggetto.getTipoSoggetto());
-				expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
-						soggetto.getNomeSoggetto());
+				if(soggetto.getTipoSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getTipoSoggetto())) {
+					expr.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO,
+							soggetto.getTipoSoggetto());
+				}
+				if(soggetto.getNomeSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getNomeSoggetto())) {
+					expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
+							soggetto.getNomeSoggetto());
+				}
 				
 			}
 			
@@ -1116,10 +1156,14 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			IExpression expr = this.serviziApplicativiDAO.newExpression();
 
 			if (soggetto != null) {
-				expr.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO,
-						soggetto.getTipoSoggetto());
-				expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
-						soggetto.getNomeSoggetto());
+				if(soggetto.getTipoSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getTipoSoggetto())) {
+					expr.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO,
+							soggetto.getTipoSoggetto());
+				}
+				if(soggetto.getNomeSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getNomeSoggetto())) {
+					expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
+							soggetto.getNomeSoggetto());
+				}
 			}
 			
 			expr.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE).and().notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO);
@@ -2156,12 +2200,12 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	
 	@Override
 	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto,
-			String val, Boolean searchTipo, Boolean distinct) {
+			String val, Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct) {
 		log.debug("getServiziErogazione [Soggetto Proprietario : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
 		List<IDServizio> lista = new ArrayList<IDServizio>();
 
 		try {
-			IExpression pAExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, null, null, val,null);
+			IExpression pAExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, null, null, val,permessiUtenteOperatore);
 				 
 			List<PortaApplicativa> listaPorte = new ArrayList<PortaApplicativa>();
 			IPaginatedExpression pagPaExpr = this.portaApplicativaDAO.toPaginatedExpression(pAExpr );
@@ -2171,7 +2215,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			pagPaExpr.addOrder(PortaApplicativa.model().TIPO_SERVIZIO, SortOrder.ASC);
 			pagPaExpr.addOrder(PortaApplicativa.model().NOME_SERVIZIO, SortOrder.ASC);
 			pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
-			
+						
 			pagPaExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPaExpr);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
@@ -2206,12 +2250,12 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	@Override
 	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, 
 			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
-			String val,Boolean searchTipo, Boolean distinct){
+			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		log.debug("getServiziErogazione [Soggetto Proprietario : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
 		List<IDServizio> lista = new ArrayList<IDServizio>();
 
 		try {
-			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, val, null);
+			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, val, permessiUtenteOperatore);
 			
 			List<PortaApplicativa> listaPorte = new ArrayList<PortaApplicativa>();
 			IPaginatedExpression pagPaExpr = this.portaApplicativaDAO.toPaginatedExpression(paExpr );
@@ -2255,9 +2299,9 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	
 	@Override
 	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,
-			Boolean searchTipo) {
+			Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore) {
 		try {
-			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, null, null, val,null);
+			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, null, null, val,permessiUtenteOperatore);
 
 			NonNegativeNumber nnn = this.portaApplicativaDAO.count(paExpr);
 			
@@ -2421,9 +2465,9 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			paExpr.and(permessi);
 		}
 
-		if(StringUtils.isNotEmpty(tipoSoggetto ))
+		if(StringUtils.isNotEmpty(tipoSoggetto ) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(tipoSoggetto))
 			paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoSoggetto);
-		if(StringUtils.isNotEmpty(nomeSoggetto ))
+		if(StringUtils.isNotEmpty(nomeSoggetto ) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggetto))
 			paExpr.and().equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeSoggetto);
 		if(StringUtils.isNotEmpty(val)) {
 			paExpr.ilike(PortaApplicativa.model().ID_SOGGETTO.NOME, val.toLowerCase(), LikeMode.ANYWHERE);
@@ -2456,12 +2500,12 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	}
 	
 	@Override
-	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String val, Boolean searchTipo, Boolean distinct) {
+	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String val, Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct) {
 		log.debug("getServiziFruizione [Soggetto Erogatore : " + tipoSoggettoErogatore + "/"+ nomeSoggettoErogatore	 + "]");
 		List<IDServizio> lista = new ArrayList<IDServizio>();
 
 		try {
-			IExpression pdExpr = getExpressionPD(tipoProtocollo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, null, null, null, null, val, null);
+			IExpression pdExpr = getExpressionPD(tipoProtocollo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, null, null, null, null, val, permessiUtenteOperatore);
 			
 			List<PortaDelegata> listaPorte = new ArrayList<PortaDelegata>();
 			IPaginatedExpression pagPdExpr = this.portaDelegataDAO.toPaginatedExpression(pdExpr );
@@ -2507,12 +2551,12 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			String tipoSoggetto, String nomeSoggetto, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore, 
 			String tipoServizio ,String nomeServizio, Integer versioneServizio, String nomeAzione, 
-			String val, Boolean searchTipo, Boolean distinct) {
+			String val, Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct) {
 		log.debug("getServiziFruizione [Soggetto Erogatore : " + tipoSoggettoErogatore + "/"+ nomeSoggettoErogatore	 + "]");
 		List<IDServizio> lista = new ArrayList<IDServizio>();
 
 		try {
-			IExpression pdExpr = getExpressionPD(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoSoggettoErogatore, nomeSoggettoErogatore,	tipoServizio, nomeServizio, versioneServizio, nomeAzione, val, null);
+			IExpression pdExpr = getExpressionPD(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoSoggettoErogatore, nomeSoggettoErogatore,	tipoServizio, nomeServizio, versioneServizio, nomeAzione, val, permessiUtenteOperatore);
 						
 			List<PortaDelegata> listaPorte = new ArrayList<PortaDelegata>();
 			IPaginatedExpression pagPdExpr = this.portaDelegataDAO.toPaginatedExpression(pdExpr );
@@ -2522,7 +2566,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			pagPdExpr.addOrder(PortaDelegata.model().TIPO_SERVIZIO, SortOrder.ASC);
 			pagPdExpr.addOrder(PortaDelegata.model().NOME_SERVIZIO, SortOrder.ASC);
 			pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
-			
+						
 			pagPdExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
@@ -2555,9 +2599,9 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	
 	@Override
 	public int countServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String val,
-			Boolean searchTipo) {
+			Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore) {
 		try {
-			IExpression pdExpr = getExpressionPD(tipoProtocollo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, null, null,null, null, val, null);
+			IExpression pdExpr = getExpressionPD(tipoProtocollo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, null, null,null, null, val, permessiUtenteOperatore);
 			
 			NonNegativeNumber nnn = this.portaDelegataDAO.count(pdExpr);
 
@@ -2596,7 +2640,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			pagPdExpr.addOrder(PortaDelegata.model().TIPO_SERVIZIO, SortOrder.ASC);
 			pagPdExpr.addOrder(PortaDelegata.model().NOME_SERVIZIO, SortOrder.ASC);
 			pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
-			
+						
 			pagPdExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
 			ExpressionProperties.enableSoloDatiIdentificativiServizio(pagPdExpr);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
@@ -2672,9 +2716,9 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		}
 		
 		// Se ho selezionato un servizio, oppure se non ho selezionato niente 
-		if(StringUtils.isNotEmpty(tipoSoggetto ))
+		if(StringUtils.isNotEmpty(tipoSoggetto ) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(tipoSoggetto))
 			pdExpr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO, tipoSoggetto);
-		if(StringUtils.isNotEmpty(nomeSoggetto ))
+		if(StringUtils.isNotEmpty(nomeSoggetto ) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggetto))
 			pdExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
 		if(StringUtils.isNotEmpty(val)) {
 			pdExpr.ilike(PortaDelegata.model().ID_SOGGETTO.NOME, val.toLowerCase(), LikeMode.ANYWHERE);
@@ -2752,5 +2796,64 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			log.error(e.getMessage(), e);
 		} 
 		return portaDelegata;
+	}
+	
+	@Override
+	public List<IDServizio> getServizi(String protocolloSelezionato, List<String> protocolliSupportati, String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String tag) {
+		log.debug("Get Servizi [Protocollo: " + protocolloSelezionato + "], [Protocolli supportati: " + protocolliSupportati 
+				+ "], [TipoServizio: " + tipoServizio + "], [NomeServizio: " + nomeServizio + "], [VersioneServizio: " + versioneServizio + "], [Tag: " + tag + "]");
+
+		try {
+			
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getServizi((JDBCServiceManager) this.utilsServiceManager, protocolloSelezionato, tipoServizio, nomeServizio, versioneServizio, tag);
+			}
+			else{
+				return RegistroCore.getServizi((JDBCServiceManager) this.utilsServiceManager, protocolliSupportati, tipoServizio, nomeServizio, versioneServizio, tag);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+
+		return new ArrayList<IDServizio>();
+	}
+
+	@Override
+	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata) {
+		log.debug("getMappingFruizione [idServizio:" + idServizio + ", idSoggetto:"+idSoggetto+", idPortaDelegata:"+idPortaDelegata+"]");
+		try {
+			return this.driverConfigDB.getMappingFruizione(idServizio, idSoggetto, idPortaDelegata);
+		} catch (DriverConfigurazioneNotFound e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return null;
+	}
+	@Override
+	public MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) {
+		log.debug("MappingErogazionePortaApplicativa [idServizio:" + idServizio + ", idPortaApplicativa:"+idPortaApplicativa+"]");
+		try {
+			return this.driverConfigDB.getMappingErogazione(idServizio, idPortaApplicativa);
+		} catch (DriverConfigurazioneNotFound e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return null;
+	}
+	
+	@Override
+	public Plugin getPlugin(IdPlugin idPlugin) {
+		log.debug("getPlugin [tipoPlugin:" + idPlugin.getTipoPlugin()+", ClassName:" + idPlugin.getClassName()+", Tipo:" + idPlugin.getTipo()+", Label:" + idPlugin.getLabel()+"]");
+		try {
+			return this.pluginsServiceSearchDAO.get(idPlugin);
+		} catch (NotFoundException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return null;
 	}
 }

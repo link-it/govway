@@ -32,5 +32,7 @@ public class ModelFactory {
 	
 	public static AllarmeHistoryModel ALLARME_HISTORY = new AllarmeHistoryModel();
 	
+	public static AllarmeNotificaModel ALLARME_NOTIFICA = new AllarmeNotificaModel();
+	
 
 }

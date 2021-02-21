@@ -197,12 +197,7 @@ public final class ConfigurazioneProxyPassRegolaAdd extends Action {
 				configurazioneGenerale.setUrlInvocazione(new ConfigurazioneUrlInvocazione());
 			
 			// calcolo prossima posizione
-			int posizione = 1;
-			for (ConfigurazioneUrlInvocazioneRegola check : configurazioneGenerale.getUrlInvocazione().getRegolaList()) {
-				if(check.getPosizione()>=posizione) {
-					posizione = check.getPosizione()+1;
-				}
-			}
+			int posizione = ConfigurazioneUtilities.getProssimaPosizioneUrlInvocazioneRegola(configurazioneGenerale);
 			
 			// salvataggio regola
 			ConfigurazioneUrlInvocazioneRegola regola = new ConfigurazioneUrlInvocazioneRegola();
@@ -254,9 +249,11 @@ public final class ConfigurazioneProxyPassRegolaAdd extends Action {
 			regola.setPosizione(posizione);
 			
 			
-			configurazioneGenerale.getUrlInvocazione().addRegola(regola);
+//			configurazioneGenerale.getUrlInvocazione().addRegola(regola);
+//			
+//			confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
 			
-			confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
+			confCore.performCreateOperation(userLogin, confHelper.smista(), regola);
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

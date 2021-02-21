@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.Fruitore;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -173,23 +174,23 @@ public class FruitoreFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(Fruitore.model())){
-			return "servizi_fruitori";
+			return CostantiDB.SERVIZI_FRUITORI;
 		}
 		if(model.equals(Fruitore.model().ID_FRUITORE)){
 			if(returnAlias){
 				return "sfr";
 			}else{
-				return "soggetti sfr";
+				return CostantiDB.SOGGETTI+" sfr";
 			}
 		}
 		if(model.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA)){
-			return "servizi";
+			return CostantiDB.SERVIZI;
 		}
 		if(model.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE)){
 			if(returnAlias){
 				return "ser";
 			}else{
-				return "soggetti ser";
+				return CostantiDB.SOGGETTI+" ser";
 			}
 		}
 

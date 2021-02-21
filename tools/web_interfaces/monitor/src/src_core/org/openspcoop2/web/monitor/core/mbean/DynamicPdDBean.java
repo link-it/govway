@@ -124,10 +124,10 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 					e);
 		}
 	}
-	public DynamicPdDBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
-		super(serviceManager);
+	public DynamicPdDBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
+		super(serviceManager, pluginsServiceManager);
 		try {
-			this.dynamicUtils = new DynamicPdDBeanUtils(serviceManager,log);
+			this.dynamicUtils = new DynamicPdDBeanUtils(serviceManager, pluginsServiceManager,log);
 		} catch (Exception e) {
 			DynamicPdDBean.log.error("lettura delle properties fallita.....",
 					e);
@@ -351,7 +351,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			}
 			
 			if (TipologiaRicerca.uscita.equals(this.search.getTipologiaRicercaEnum())) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, false);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFruizione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true);
 			} else if (TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum())) {
 				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziErogazione(tipoProtocollo, gruppo, idAccordo, tipoSoggetto, nomeSoggetto,input, true);
 			} else {

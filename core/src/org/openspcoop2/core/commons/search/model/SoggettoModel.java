@@ -44,6 +44,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		this.TIPO_SOGGETTO = new Field("tipo-soggetto",java.lang.String.class,"soggetto",Soggetto.class);
 		this.SERVER = new Field("server",java.lang.String.class,"soggetto",Soggetto.class);
 		this.IDENTIFICATIVO_PORTA = new Field("identificativo-porta",java.lang.String.class,"soggetto",Soggetto.class);
+		this.SOGGETTO_RUOLO = new org.openspcoop2.core.commons.search.model.SoggettoRuoloModel(new Field("soggetto-ruolo",org.openspcoop2.core.commons.search.SoggettoRuolo.class,"soggetto",Soggetto.class));
 	
 	}
 	
@@ -55,6 +56,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		this.TIPO_SOGGETTO = new ComplexField(father,"tipo-soggetto",java.lang.String.class,"soggetto",Soggetto.class);
 		this.SERVER = new ComplexField(father,"server",java.lang.String.class,"soggetto",Soggetto.class);
 		this.IDENTIFICATIVO_PORTA = new ComplexField(father,"identificativo-porta",java.lang.String.class,"soggetto",Soggetto.class);
+		this.SOGGETTO_RUOLO = new org.openspcoop2.core.commons.search.model.SoggettoRuoloModel(new ComplexField(father,"soggetto-ruolo",org.openspcoop2.core.commons.search.SoggettoRuolo.class,"soggetto",Soggetto.class));
 	
 	}
 	
@@ -67,6 +69,8 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	public IField SERVER = null;
 	 
 	public IField IDENTIFICATIVO_PORTA = null;
+	 
+	public org.openspcoop2.core.commons.search.model.SoggettoRuoloModel SOGGETTO_RUOLO = null;
 	 
 
 	@Override

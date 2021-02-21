@@ -274,6 +274,7 @@
 			<xsd:element name="id-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="enabled" type="xsd:boolean" minOccurs="0" />
 			<xsd:element name="update-time" type="xsd:dateTime" minOccurs="0" />
+			<xsd:element name="alias" type="xsd:string" minOccurs="0" />
 			<xsd:element name="filtro-ruolo-porta" type="ruolo-policy" minOccurs="0" />
 			<xsd:element name="filtro-nome-porta" type="xsd:string" minOccurs="0" />
 		</xsd:sequence>

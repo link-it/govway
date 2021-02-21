@@ -57,6 +57,7 @@ public class StatisticBean {
 	private String esitoContesto;
 	private String gruppo;
 	private String api;
+	private String clusterId;
 	private String clientAddress;
 	private long richieste;
 	private long bytesBandaTotale;
@@ -219,6 +220,12 @@ public class StatisticBean {
 	public void setApi(String api) {
 		this.api = api;
 	}
+	public String getClusterId() {
+		return this.clusterId;
+	}
+	public void setClusterId(String clusterId) {
+		this.clusterId = clusterId;
+	}
 	public String getClientAddress() {
 		return this.clientAddress;
 	}
@@ -314,6 +321,8 @@ public class StatisticBean {
 		bf.append(this.gruppo);
 		bf.append("] api[");
 		bf.append(this.api);
+		bf.append("] clusterId[");
+		bf.append(this.clusterId);
 		bf.append("] esito[");
 		bf.append(this.esito);
 		bf.append("] esito-contesto[");

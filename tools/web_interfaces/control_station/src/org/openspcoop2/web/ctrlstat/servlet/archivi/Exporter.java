@@ -49,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostan
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -107,6 +108,7 @@ public final class Exporter extends Action {
 			
 			// Cascade
 			String cascadePolicyConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG);
+			String cascadePluginConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG);
 			String cascade = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 			
 			String cascadePdd = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
@@ -252,6 +254,48 @@ public final class Exporter extends Action {
 				identificativi = exporterUtils.getIdsScope(objToExport);
 				protocolli = archiviCore.getProtocolli(session);
 				break;
+			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST);
+				identificativi = exporterUtils.getIdsControlloTrafficoConfigPolicy(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
+			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST);
+				identificativi = exporterUtils.getIdsControlloTrafficoActivePolicy(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
+			case ALLARME:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST);
+				identificativi = exporterUtils.getIdsAllarmi(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
+			case CONFIGURAZIONE_TOKEN_POLICY:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST);
+				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
+			case CONFIGURAZIONE_PLUGIN_CLASSE:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_CLASSI, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_CLASSI_LIST);
+				identificativi = exporterUtils.getIdsPluginClassi(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
+			case CONFIGURAZIONE_PLUGIN_ARCHVIO:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_REGISTRO_ARCHIVI, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_LIST);
+				identificativi = exporterUtils.getIdsPluginArchivi(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
+			case CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROXY_PASS_REGOLE,
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST);
+				identificativi = exporterUtils.getIdsUrlInvocazioneRegole(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
 			case CONFIGURAZIONE:
 				//provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null); e' al primo livello
 				protocolli = archiviCore.getProtocolli(session);
@@ -347,6 +391,7 @@ public final class Exporter extends Action {
 				}
 				if(cascadeEnabled){
 					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG+"="+ (ServletUtils.isCheckBoxEnabled(cascadePolicyConfig)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
+					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG+"="+ (ServletUtils.isCheckBoxEnabled(cascadePluginConfig)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
 					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE+"="+ (ServletUtils.isCheckBoxEnabled(cascade)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
 					ArchiveCascadeConfiguration cascadeConfig = archiviCore.getCascadeConfig(exportModes, exportMode);
 					if(cascadeConfig.isCascadePdd()){
@@ -435,7 +480,7 @@ public final class Exporter extends Action {
 			archiviHelper.addExportToDati(dati, protocolli, protocollo, 
 					exportModes, exportMode, 
 					archiveType, objToExport,
-					cascadePolicyConfig, cascade,tipoConfigurazione,
+					cascadePolicyConfig, cascadePluginConfig, cascade,tipoConfigurazione,
 					cascadePdd,cascadeRuoli,cascadeScope,cascadeSoggetti,
 					cascadeServiziApplicativi, cascadePorteDelegate, cascadePorteApplicative,
 					cascadeAccordiCooperazione, cascadeAccordiServizioParteComune, 

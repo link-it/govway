@@ -68,6 +68,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		// Object statisticaMensile.getStatisticaBase()
 		sqlQueryObjectInsert.addInsertTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_BASE));
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DATA,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.ID_PORTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TIPO_PORTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TIPO_MITTENTE,false),"?");
@@ -90,6 +91,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.CLIENT_ADDRESS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.GRUPPI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.URI_API,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,false),"?");
@@ -102,6 +104,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getStatisticaMensileFetch().getKeyGeneratorObject(StatisticaMensile.model());
 		long id = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert, keyGenerator, jdbcProperties.isShowSql(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getData(),StatisticaMensile.model().STATISTICA_BASE.DATA.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getStatoRecord(),StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getIdPorta(),StatisticaMensile.model().STATISTICA_BASE.ID_PORTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getTipoPorta(),StatisticaMensile.model().STATISTICA_BASE.TIPO_PORTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getTipoMittente(),StatisticaMensile.model().STATISTICA_BASE.TIPO_MITTENTE.getFieldType()),
@@ -124,6 +127,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getClientAddress(),StatisticaMensile.model().STATISTICA_BASE.CLIENT_ADDRESS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getGruppi(),StatisticaMensile.model().STATISTICA_BASE.GRUPPI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getUriApi(),StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getClusterId(),StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getNumeroTransazioni(),StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getDimensioniBytesBandaComplessiva(),StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getDimensioniBytesBandaInterna(),StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()),
@@ -245,6 +249,8 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		java.util.List<JDBCObject> lstObjects = new java.util.ArrayList<JDBCObject>();
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DATA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getData(), StatisticaMensile.model().STATISTICA_BASE.DATA.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getStatoRecord(), StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.ID_PORTA,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getIdPorta(), StatisticaMensile.model().STATISTICA_BASE.ID_PORTA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TIPO_PORTA,false), "?");
@@ -289,6 +295,8 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getGruppi(), StatisticaMensile.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.URI_API,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getUriApi(), StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getClusterId(), StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getNumeroTransazioni(), StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,false), "?");
@@ -681,5 +689,13 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
 		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+	}
+	
+	@Override
+	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
+	
+		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+																							sql,param);
+	
 	}
 }

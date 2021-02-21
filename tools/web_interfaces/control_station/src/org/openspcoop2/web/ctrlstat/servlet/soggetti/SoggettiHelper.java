@@ -1121,7 +1121,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			// Prendo la lista di pdd dell'utente connesso
 			/*List<String> nomiPdd = new ArrayList<String>();
-			List<PdDControlStation> listaPdd = this.core.pddList(superUser, new Search());
+			List<PdDControlStation> listaPdd = this.core.pddList(superUser, new Search(true));
 			Iterator<PdDControlStation> itP = listaPdd.iterator();
 			while (itP.hasNext()) {
 				PdDControlStation pds = (PdDControlStation) itP.next();
@@ -1145,7 +1145,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.SOGGETTO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -1665,7 +1665,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.SOGGETTO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

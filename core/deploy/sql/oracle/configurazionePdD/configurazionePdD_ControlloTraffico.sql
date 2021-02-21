@@ -147,7 +147,7 @@ CREATE SEQUENCE seq_ct_active_policy MINVALUE 1 MAXVALUE 9223372036854775807 STA
 CREATE TABLE ct_active_policy
 (
 	-- Dati Generali
-	active_policy_id VARCHAR2(255) NOT NULL,
+	active_policy_id VARCHAR2(275) NOT NULL,
 	policy_alias VARCHAR2(255),
 	policy_update_time TIMESTAMP NOT NULL,
 	policy_posizione NUMBER NOT NULL,

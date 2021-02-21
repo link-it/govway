@@ -51,6 +51,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
@@ -68,7 +69,6 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
@@ -311,7 +311,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, ControlStationCore.getLog());
 			String idporta = pa.getNome();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
-			BehaviourType beaBehaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+			TipoBehaviour beaBehaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 			long idAspsLong = Long.parseLong(idAsps);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
@@ -332,7 +332,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				isSoapOneWay = porteApplicativeHelper.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
 			}
 			if(integrationManagerEnabled) {
-				if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(beaBehaviourType)) {
+				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(beaBehaviourType)) {
 					ConfigurazioneMultiDeliver confMultiDeliver = MultiDeliverUtils.read(pa, ControlStationCore.getLog());
 					String nomeConnettoreSincrono = null;
 					if(confMultiDeliver!=null) {
@@ -1378,16 +1378,16 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				if(!nomeConnettore.equals(oldNomeConnettore)) {
 					if(pa.getBehaviour() != null) {
 
-						BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+						TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 
 						boolean consegnaCondizionale = false;
-						if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)
-								|| behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)
-								|| behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)
-								|| behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+						if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)
+								|| behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)
+								|| behaviourType.equals(TipoBehaviour.CONSEGNA_CONDIZIONALE)
+								|| behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE)) {
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
 
-							if( behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
+							if( behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
 										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
 

@@ -191,6 +191,7 @@ public final class CostantiDB {
     public static final String ALLARMI = "allarmi";
     public static final String ALLARMI_PARAMETRI = "allarmi_parametri";
     public static final String ALLARMI_HISTORY = "allarmi_history";
+    public static final String ALLARMI_NOTIFICHE = "allarmi_notifiche";
     
     public static final String MSG_DIAGN_APPENDER = "msgdiag_appender";
     public static final String MSG_DIAGN_APPENDER_COLUMN_ID = "id";
@@ -264,6 +265,22 @@ public final class CostantiDB {
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_1 = "INDEX_TR_FILTROD_RES";
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_2 = "INDEX_TR_FILTROD_REQ_2";
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_2 = "INDEX_TR_FILTROD_RES_2";
+	
+	 /*STATISTICHE*/
+    public static final String STATISTICHE = "statistiche";
+    public static final String STATISTICHE_ORARIE = "statistiche_orarie";
+    public static final String STATISTICHE_ORARIE_CONTENUTI = "stat_orarie_contenuti";
+    public static final String STATISTICHE_GIORNALIERE = "statistiche_giornaliere";
+    public static final String STATISTICHE_GIORNALIERE_CONTENUTI = "stat_giorni_contenuti";
+    public static final String STATISTICHE_SETTIMANALI = "statistiche_settimanali";
+    public static final String STATISTICHE_SETTIMANALI_CONTENUTI = "stat_settimane_contenuti";
+    public static final String STATISTICHE_MENSILI = "statistiche_mensili";
+    public static final String STATISTICHE_MENSILI_CONTENUTI = "stat_mensili_contenuti";
+    
+    public static final int STATISTICHE_STATO_RECORD_VALIDO = 1; // finito anche in patch sql
+    public static final int STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO = 2;
+    public static final int STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO = 0;
+    public static final int STATISTICHE_STATO_RECORD_ELIMINATO = -2;
 	
 	public static final String TRANSAZIONI_EXTENDED_INFO = "transazione_extended_info";
 	

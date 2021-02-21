@@ -103,6 +103,7 @@ public class ArchiveCascadeConfiguration {
 	private boolean cascadeFruizioni = false;
 	
 	private boolean cascadePolicyConfigurazione = false;
+	private boolean cascadePluginConfigurazione = false;
 	
 	
 	public boolean isCascadePdd() {
@@ -196,5 +197,12 @@ public class ArchiveCascadeConfiguration {
 	}
 	public void setCascadePolicyConfigurazione(boolean cascadeConfigurazione) {
 		this.cascadePolicyConfigurazione = cascadeConfigurazione;
+	}
+	
+	public boolean isCascadePluginConfigurazione() {
+		return this.cascadePluginConfigurazione;
+	}
+	public void setCascadePluginConfigurazione(boolean cascadePluginConfigurazione) {
+		this.cascadePluginConfigurazione = cascadePluginConfigurazione;
 	}
 }

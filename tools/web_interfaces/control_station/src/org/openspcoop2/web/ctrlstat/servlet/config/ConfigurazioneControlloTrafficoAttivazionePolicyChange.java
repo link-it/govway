@@ -37,7 +37,6 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
-import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -127,11 +126,6 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			InfoPolicy infoPolicy = null;
 			if(policy.getIdPolicy()!=null){
 				infoPolicy = confCore.getInfoPolicy(policy.getIdPolicy());
-				
-				if(TipoOperazione.ADD.equals(tipoOperazione) && infoPolicy!=null){
-					int counter = confCore.getFreeCounterForGlobalPolicy(infoPolicy.getIdPolicy());
-					policy.setIdActivePolicy(infoPolicy.getIdPolicy()+ControlloTrafficoDriverUtils.getFreeCounterSeparatorCharForGlobalPolicy()+counter);
-				}
 			}
 			
 			// Dati Attivazione

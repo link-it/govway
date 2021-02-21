@@ -44,6 +44,8 @@ import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.Openspcoop2;
@@ -2362,6 +2364,27 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			}
 		}
 		throw new DriverConfigurazioneNotFound("Archivio '"+nome+"' non esistente nel plugin '"+nomePlugin+"'");
+	}
+	
+	@Override
+	public ConfigurazioneUrlInvocazioneRegola getUrlInvocazioneRegola(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		if(nome==null) {
+			throw new DriverConfigurazioneException("Nome regola non indicato");
+		}
+		
+		refreshConfigurazioneXML();
+
+		ConfigurazioneUrlInvocazione registro = this.openspcoop.getConfigurazione().getUrlInvocazione();
+		if(registro==null || registro.sizeRegolaList()<=0) {
+			throw new DriverConfigurazioneNotFound("Regola '"+nome+"' non esistente");
+		}
+		for (int i = 0; i < registro.sizeRegolaList(); i++) {
+			ConfigurazioneUrlInvocazioneRegola regola = registro.getRegola(i);
+			if(regola.getNome().equals(nome)) {
+				return regola;
+			}
+		}
+		throw new DriverConfigurazioneNotFound("Regola '"+nome+"' non esistente");
 	}
 	
 	/**

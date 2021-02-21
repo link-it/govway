@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -94,6 +95,27 @@ public class SoggettoFieldConverter extends AbstractSQLFieldConverter {
 				return "identificativo_porta";
 			}
 		}
+		if(field.equals(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO.TIPO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tipo_soggetto";
+			}else{
+				return "tipo_soggetto";
+			}
+		}
+		if(field.equals(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome_soggetto";
+			}else{
+				return "nome_soggetto";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -119,6 +141,15 @@ public class SoggettoFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Soggetto.model().IDENTIFICATIVO_PORTA)){
 			return this.toTable(Soggetto.model(), returnAlias);
 		}
+		if(field.equals(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO.NOME)){
+			return this.toTable(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO, returnAlias);
+		}
+		if(field.equals(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO.TIPO)){
+			return this.toTable(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO, returnAlias);
+		}
+		if(field.equals(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO.NOME)){
+			return this.toTable(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO, returnAlias);
+		}
 
 
 		return super.toTable(field,returnAlias);
@@ -133,7 +164,16 @@ public class SoggettoFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(Soggetto.model())){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
+		}
+		if(model.equals(Soggetto.model().SOGGETTO_RUOLO)){
+			return CostantiDB.SOGGETTI_RUOLI;
+		}
+		if(model.equals(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO)){
+			return CostantiDB.RUOLI;
+		}
+		if(model.equals(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO)){
+			return CostantiDB.SOGGETTI;
 		}
 
 

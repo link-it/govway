@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
 
 
@@ -71,6 +71,13 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 				return this.toAliasTable(field)+".data";
 			}else{
 				return "data";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".stato_record";
+			}else{
+				return "stato_record";
 			}
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA)){
@@ -225,6 +232,13 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 				return this.toAliasTable(field)+".uri_api";
 			}else{
 				return "uri_api";
+			}
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id";
+			}else{
+				return "cluster_id";
 			}
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
@@ -502,6 +516,9 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.DATA)){
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
 		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.STATO_RECORD)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
+		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.ID_PORTA)){
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
 		}
@@ -566,6 +583,9 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.URI_API)){
+			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.CLUSTER_ID)){
 			return this.toTable(StatisticaGiornaliera.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
@@ -693,13 +713,13 @@ public class StatisticaGiornalieraFieldConverter extends AbstractSQLFieldConvert
 		// the full definition of the table containing the alias
 		
 		if(model.equals(StatisticaGiornaliera.model())){
-			return "statistiche_giornaliere";
+			return CostantiDB.STATISTICHE_GIORNALIERE;
 		}
 		if(model.equals(StatisticaGiornaliera.model().STATISTICA_BASE)){
-			return "statistiche_giornaliere";
+			return CostantiDB.STATISTICHE_GIORNALIERE;
 		}
 		if(model.equals(StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI)){
-			return "stat_giorni_contenuti";
+			return CostantiDB.STATISTICHE_GIORNALIERE_CONTENUTI;
 		}
 
 

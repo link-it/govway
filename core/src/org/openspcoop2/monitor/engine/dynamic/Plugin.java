@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.RegistroPluginArchivio;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.utils.resources.DynamicClassLoader;
 
 /**

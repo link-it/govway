@@ -63,6 +63,7 @@ import org.openspcoop2.core.statistiche.StatisticaOraria;
 import org.openspcoop2.core.statistiche.StatisticaSettimanale;
 import org.openspcoop2.core.statistiche.constants.TipoPorta;
 import org.openspcoop2.core.statistiche.model.StatisticaModel;
+import org.openspcoop2.core.statistiche.utils.StatisticheUtils;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
@@ -744,6 +745,9 @@ public class DatiStatisticiDAOManager  {
 		expr.between(model.DATA,
 				dataInizio,
 				dataFine);
+		
+		// Record validi
+		StatisticheUtils.selezionaRecordValidi(expr, model);
 
 		
         // escludo le transazioni con esito policy violate
@@ -986,9 +990,9 @@ public class DatiStatisticiDAOManager  {
 				exprServizio.and();
 				exprServizio.equals(model.TIPO_DESTINATARIO, idServizioByTag.getSoggettoErogatore().getTipo());
 				exprServizio.equals(model.DESTINATARIO, idServizioByTag.getSoggettoErogatore().getNome());
-				expr.equals(model.TIPO_SERVIZIO, idServizioByTag.getTipo());
-				expr.equals(model.SERVIZIO, idServizioByTag.getNome());
-				expr.equals(model.VERSIONE_SERVIZIO, idServizioByTag.getVersione());
+				exprServizio.equals(model.TIPO_SERVIZIO, idServizioByTag.getTipo());
+				exprServizio.equals(model.SERVIZIO, idServizioByTag.getNome());
+				exprServizio.equals(model.VERSIONE_SERVIZIO, idServizioByTag.getVersione());
 				l.add(exprServizio);
 			}
 			expr.or(l.toArray(new IExpression[l.size()]));
@@ -1035,51 +1039,58 @@ public class DatiStatisticiDAOManager  {
 		}
 		
 		// Servizio Applicativo
-		if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){
+		//if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){
 			
-			// servizioApplicativoFruitore
-			String servizioApplicativoFruitore = groupByPolicy.getServizioApplicativoFruitoreIfDefined();
-			List<String> servizioApplicativoFruitoreByRuolo = null;
-			if(servizioApplicativoFruitore==null) {
-				// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-				if(filtro!=null && filtro.isEnabled()){
-					if(filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
-						servizioApplicativoFruitore = filtro.getServizioApplicativoFruitore();
-					}
-					else if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
-						/*
-						 * Se policyGlobale:
-						 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
-						 * else
-						 * 	  nel caso di delegata si controlla solo l'applicativo.
-						 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
-						 **/
-						ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-						FiltroRicercaServiziApplicativi filtroRicerca = new FiltroRicercaServiziApplicativi();
-						IDRuolo idRuolo = new IDRuolo(filtro.getRuoloFruitore());
-						filtroRicerca.setIdRuolo(idRuolo);
-						List<IDServizioApplicativo> list = null;
-						try {
-							list = configurazionePdDManager.getAllIdServiziApplicativi(filtroRicerca);
-						}catch(DriverConfigurazioneNotFound notFound) {}
-						if(list!=null && !list.isEmpty()) {
-							servizioApplicativoFruitoreByRuolo = new ArrayList<String>();
-							for (IDServizioApplicativo idServizioApplicativo : list) {
-								servizioApplicativoFruitoreByRuolo.add(idServizioApplicativo.getNome());
-							}
-						}
+		// servizioApplicativoFruitore
+		String servizioApplicativoFruitore = groupByPolicy.getServizioApplicativoFruitoreIfDefined();
+		List<IDServizioApplicativo> servizioApplicativoFruitoreByRuolo = null;
+		if(servizioApplicativoFruitore==null) {
+			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
+			if(filtro!=null && filtro.isEnabled()){
+				if(filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
+					servizioApplicativoFruitore = filtro.getServizioApplicativoFruitore();
+				}
+				else if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
+					/*
+					 * Se policyGlobale:
+					 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
+					 * else
+					 * 	  nel caso di delegata si controlla solo l'applicativo.
+					 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
+					 **/
+					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+					FiltroRicercaServiziApplicativi filtroRicerca = new FiltroRicercaServiziApplicativi();
+					IDRuolo idRuolo = new IDRuolo(filtro.getRuoloFruitore());
+					filtroRicerca.setIdRuolo(idRuolo);
+					List<IDServizioApplicativo> list = null;
+					try {
+						list = configurazionePdDManager.getAllIdServiziApplicativi(filtroRicerca);
+					}catch(DriverConfigurazioneNotFound notFound) {}
+					if(list!=null && !list.isEmpty()) {
+						servizioApplicativoFruitoreByRuolo = list;
 					}
 				}
 			}
-			if(servizioApplicativoFruitore!=null){
-				expr.equals(model.SERVIZIO_APPLICATIVO, servizioApplicativoFruitore);
-			}
-			else if (servizioApplicativoFruitoreByRuolo!=null && !servizioApplicativoFruitoreByRuolo.isEmpty()) {
-				expr.in(model.SERVIZIO_APPLICATIVO, servizioApplicativoFruitoreByRuolo);
-			}
-			
 		}
-		else{
+		if(servizioApplicativoFruitore!=null){
+			expr.equals(model.SERVIZIO_APPLICATIVO, servizioApplicativoFruitore);
+		}
+		else if (servizioApplicativoFruitoreByRuolo!=null && !servizioApplicativoFruitoreByRuolo.isEmpty()) {
+			List<IExpression> l = new ArrayList<IExpression>();
+			for (IDServizioApplicativo idServizioApplicativo : servizioApplicativoFruitoreByRuolo) {
+				IExpression exprServizioApplicativo = dao.newExpression();
+				exprServizioApplicativo.and();
+				exprServizioApplicativo.equals(model.TIPO_MITTENTE, idServizioApplicativo.getIdSoggettoProprietario().getTipo());
+				exprServizioApplicativo.equals(model.MITTENTE, idServizioApplicativo.getIdSoggettoProprietario().getNome());
+				exprServizioApplicativo.equals(model.SERVIZIO_APPLICATIVO, idServizioApplicativo.getNome());
+				l.add(exprServizioApplicativo);
+			}
+			expr.or(l.toArray(new IExpression[l.size()]));
+		}
+			
+		//}
+		
+		if(TipoPdD.APPLICATIVA.equals(tipoPdDTransazioneInCorso)){
 			
 			// servizioApplicativoErogatore
 			String servizioApplicativoErogatore = groupByPolicy.getServizioApplicativoErogatoreIfDefined();

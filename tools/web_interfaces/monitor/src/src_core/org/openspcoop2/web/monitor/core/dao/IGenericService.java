@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.monitor.core.dao;
 
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
+import org.openspcoop2.core.plugins.ConfigurazioneServizio;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import org.openspcoop2.core.commons.search.Soggetto;

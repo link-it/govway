@@ -96,6 +96,7 @@ public class Costanti {
 	public final static String CHECK_BOX_ENABLED_TRUE = "true";
 	public final static String CHECK_BOX_ENABLED_ABILITATO = "abilitato";
 	public final static String CHECK_BOX_DISABLED = "no";
+	public final static String CHECK_BOX_DISABLED_FALSE = "false";
 	public final static String CHECK_BOX_WARN = "warn";
 	public final static String CHECK_BOX_CONFIG_ENABLE = "config_enable";
 	public final static String CHECK_BOX_CONFIG_WARNING = "config_warning";

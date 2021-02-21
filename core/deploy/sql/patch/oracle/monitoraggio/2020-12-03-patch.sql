@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_allarmi MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1
 CREATE TABLE allarmi
 (
 	-- Informazioni generiche
-	nome VARCHAR2(255) NOT NULL,
+	nome VARCHAR2(275) NOT NULL,
 	alias VARCHAR2(255) NOT NULL,
 	descrizione VARCHAR2(255),
 	tipo VARCHAR2(255) NOT NULL,
@@ -22,17 +22,15 @@ CREATE TABLE allarmi
 	acknowledged NUMBER NOT NULL,
 	periodo_tipo VARCHAR2(255),
 	periodo NUMBER,
+	mail_invia NUMBER,
 	-- Informazioni sull'invio di e-mail
-	mail_ack_mode NUMBER,
 	mail_invia_warning NUMBER,
-	mail_invia_alert NUMBER,
 	mail_destinatari CLOB,
 	mail_subject VARCHAR2(255),
 	mail_body CLOB,
+	script_invoke NUMBER,
 	-- Informazioni sull'invocazione di script esterni
-	script_ack_mode NUMBER,
 	script_invoke_warning NUMBER,
-	script_invoke_alert NUMBER,
 	script_command CLOB,
 	script_args CLOB,
 	-- Filtro
@@ -153,6 +151,7 @@ CREATE TABLE allarmi_history
 
 -- index
 CREATE INDEX index_allarmi_history_1 ON allarmi_history (id_allarme,timestamp_update DESC);
+CREATE INDEX index_allarmi_history_2 ON allarmi_history (timestamp_update);
 
 ALTER TABLE allarmi_history MODIFY timestamp_update DEFAULT CURRENT_TIMESTAMP;
 
@@ -163,6 +162,43 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_allarmi_history.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_allarmi_notifiche MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE allarmi_notifiche
+(
+	data_notifica TIMESTAMP NOT NULL,
+	old_stato NUMBER NOT NULL,
+	old_stato_dettaglio CLOB,
+	nuovo_stato NUMBER NOT NULL,
+	nuovo_stato_dettaglio CLOB,
+	history_entry CLOB,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	id_allarme NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_allarmi_notifiche_1 FOREIGN KEY (id_allarme) REFERENCES allarmi(id) ON DELETE CASCADE,
+	CONSTRAINT pk_allarmi_notifiche PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_allarmi_notifiche_1 ON allarmi_notifiche (data_notifica ASC);
+
+ALTER TABLE allarmi_notifiche MODIFY data_notifica DEFAULT CURRENT_TIMESTAMP;
+
+CREATE TRIGGER trg_allarmi_notifiche
+BEFORE
+insert on allarmi_notifiche
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_allarmi_notifiche.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.core.config.utils;
 
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -82,5 +84,18 @@ public class ConfigurazionePdDUtils {
 			return false;
 		}
 	}
+
 	
+	public static int getProssimaPosizioneUrlInvocazioneRegola(Configurazione config) {
+		// calcolo prossima posizione
+		int posizione = 1;
+		if(config!=null) {
+			for (ConfigurazioneUrlInvocazioneRegola check : config.getUrlInvocazione().getRegolaList()) {
+				if(check.getPosizione()>=posizione) {
+					posizione = check.getPosizione()+1;
+				}
+			}
+		}
+		return posizione;
+	}
 }

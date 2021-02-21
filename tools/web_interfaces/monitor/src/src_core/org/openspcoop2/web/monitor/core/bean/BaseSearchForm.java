@@ -84,6 +84,16 @@ import org.slf4j.Logger;
  */
 public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
+	private boolean visualizzaIdCluster = false;
+	private boolean visualizzaIdClusterAsSelectList = false;
+	private List<String> listIdCluster;
+	protected String clusterId;
+	
+	private boolean visualizzaCanali = false;
+	private List<String> listCanali;
+	private Map<String,List<String>> mapCanaleToNodi;
+	protected String canale;
+	
 	// private String nomeMittente;
 	private String nomeAzione;
 	private String nomeServizio;
@@ -414,6 +424,35 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		}
 	}
 
+	protected void initIdClusterAndCanali(PddMonitorProperties pddMonitorProperties) throws Exception {
+		List<String> pddMonitorare = pddMonitorProperties.getListaPdDMonitorate_StatusPdD();
+		this.setVisualizzaIdCluster(pddMonitorare!=null && pddMonitorare.size()>1);
+		this.visualizzaIdClusterAsSelectList = pddMonitorProperties.isAttivoTransazioniUtilizzoSondaPdDListAsClusterId();
+		if(pddMonitorare!=null && pddMonitorare.size()>1){
+			this.listIdCluster = new ArrayList<String>();
+			this.listIdCluster.add("--");
+			this.listIdCluster.addAll(pddMonitorare);
+		}
+		
+		this.visualizzaCanali = Utility.isCanaliAbilitato();
+		if(this.visualizzaCanali) {
+			List<String> canali = Utility.getCanali();
+			this.listCanali = new ArrayList<String>();
+			this.listCanali.add("--");
+			this.listCanali.addAll(canali);
+			if(canali!=null && !canali.isEmpty()) {
+				this.mapCanaleToNodi = new HashMap<String, List<String>>();
+				for (String canale : canali) {
+					List<String> nodi = Utility.getNodi(canale);
+					if(nodi==null) {
+						nodi = new ArrayList<String>();
+					}
+					this.mapCanaleToNodi.put(canale, nodi);
+				}
+			}
+		}
+	}
+	
 	public void modalitaRicercaListener(ActionEvent ae) {
 
 		//		String mod = this.modalitaRicercaStorico;
@@ -2343,6 +2382,102 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			}
 		}
 	}
+	
+	
+	public boolean isVisualizzaIdCluster() {
+		return this.visualizzaIdCluster;
+	}
+
+	public void setVisualizzaIdCluster(boolean visualizzaIdCluster) {
+		this.visualizzaIdCluster = visualizzaIdCluster;
+	}
+	
+	public boolean isVisualizzaIdClusterAsSelectList() {
+		return this.visualizzaIdClusterAsSelectList;
+	}
+
+	public void setVisualizzaIdClusterAsSelectList(boolean visualizzaIdClusterAsSelectList) {
+		this.visualizzaIdClusterAsSelectList = visualizzaIdClusterAsSelectList;
+	}
+	
+	public List<SelectItem> getListIdCluster() {
+		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+		
+		if(this.listIdCluster!=null && this.listIdCluster.size()>0){
+			for (String id : this.listIdCluster) {
+				if("--".equals(id)) {
+					list.add(new SelectItem(id));
+					continue;
+				}
+				if(this.canale!=null && !"".equals(this.canale) && !"--".equals(this.canale) &&
+						this.visualizzaCanali && this.mapCanaleToNodi!=null) {
+					List<String> nodi = this.mapCanaleToNodi.get(this.canale);
+					if(nodi==null || !nodi.contains(id)) {
+						continue;
+					}
+				}
+				list.add(new SelectItem(id));
+			}
+		}
+		return list;
+	}
+
+
+	public String getClusterId() {
+		if("--".equals(this.clusterId)){
+			return null;
+		}
+		return this.clusterId;
+	}
+
+	public void setClusterId(String clusterId) {
+		if("--".equals(clusterId)){
+			this.clusterId = null;	
+		}
+		else{
+			this.clusterId = clusterId;		
+		}
+	}
+	
+	public boolean isVisualizzaCanali() {
+		return this.visualizzaCanali;
+	}
+
+	public void setVisualizzaCanali(boolean visualizzaCanali) {
+		this.visualizzaCanali = visualizzaCanali;
+	}
+	
+	public List<SelectItem> getListCanali() {
+		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+		if(this.listCanali!=null && this.listCanali.size()>0){
+			for (String id : this.listCanali) {
+				list.add(new SelectItem(id));
+			}
+		}
+		return list;
+	}
+
+
+	public String getCanale() {
+		if("--".equals(this.canale)){
+			return null;
+		}
+		return this.canale;
+	}
+
+	public void setCanale(String canale) {
+		if("--".equals(canale)){
+			this.canale = null;	
+		}
+		else{
+			this.canale = canale;		
+		}
+	}
+	
+	public List<String> getIdClusterByCanale(String canale){
+		return this.mapCanaleToNodi.get(canale);
+	}
+	
 	
 	public boolean isAllProtocol() {
 		return Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.protocollo);

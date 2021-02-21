@@ -29,21 +29,21 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
-import org.openspcoop2.core.allarmi.AllarmeMail;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
-import org.openspcoop2.core.allarmi.AllarmeScript;
 import org.openspcoop2.core.allarmi.IdAllarme;
-import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoPeriodo;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.exception.NotFoundException;
@@ -55,21 +55,19 @@ import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.AlarmImpl;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.monitor.engine.alarm.AlarmStatusWithAck;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.AlarmStateValues;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
+import org.openspcoop2.monitor.sdk.exceptions.AlarmNotifyException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiContext;
-import org.openspcoop2.web.monitor.allarmi.bean.AllarmiMonitorConfig;
 import org.openspcoop2.web.monitor.allarmi.dao.IAllarmiService;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -102,6 +100,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	//private AllarmiSearchForm search;
 
 	private ConfigurazioneAllarmeBean allarme;
+	private AllarmeHistory allarmeHistory;
 
 	private String ack;
 
@@ -111,14 +110,17 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	private StatoAllarme modificatoInformazioniHistory_statoAllarme = null;
 	private String modificatoInformazioniHistory_dettaglioAllarme = null;
 	private Integer modificatoInformazioniHistory_ackwoldegmentAllarme = null;
+	@SuppressWarnings("unused")
 	private StatoAllarme statoAllarmePrimaModifica = null;
 	
 	private AlarmEngineConfig alarmEngineConfig;
-	private AllarmiConfig allarmiConfig;
-
+	
 	private boolean showFilter = true;
 	private boolean showGroupBy = true;
+	private boolean controlloAllarmiFiltroApiSoggettoErogatore = false;
 	
+	private String selectedTab = null;
+	private boolean editMode = false;
 	
 	public boolean isShowFilter() throws Exception {
 		if(this.allarme==null || this.allarme.getPlugin()==null){
@@ -148,20 +150,47 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		this.showGroupBy = showGroupBy;
 	}
 	
+	public String getParameterSectionTitle() throws Exception {
+		if(this.allarme==null || this.allarme.getPlugin()==null){
+			return org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_PARAMETRI; // all'inizio deve prima essere scelto il plugin
+		}
+		return ((IAllarmiService)this.service).getParameterSectionTitle(this.allarme);
+	}
+	
+	public boolean isShowParameters() throws Exception {
+		if(this.allarme==null || this.allarme.getPlugin()==null){
+			return false; // all'inizio deve prima essere scelto il plugin
+		}
+		
+		Context context = new AllarmiContext(this);
+		return ((IAllarmiService)this.service).isShowParameters(this.allarme, context);
+	}
 	
 	public AllarmiBean() {
 		super();
 		try {
-			this.allarmiConfig = new AllarmiMonitorConfig(PddMonitorProperties.getInstance(log));
-			this.alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, PddMonitorProperties.getInstance(log).getAllarmiConfigurazione());
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
+			
+			this.alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(log, pddMonitorProperties.getAllarmiConfigurazione());
 			
 			if(AlarmManager.getAlarmEngineConfig() == null) {
 				AlarmManager.setAlarmEngineConfig(this.alarmEngineConfig);
 			}
+			
+			this.controlloAllarmiFiltroApiSoggettoErogatore = this.alarmEngineConfig.isOptionsFilterApiOrganization();
+			
 		} catch (Throwable e) {
 			AllarmiBean.log.error(e.getMessage(), e);
 		}
 
+	}
+	
+	public boolean isShowFiltroSoggetti() {
+		return Utility.isMultitenantAbilitato();
+	}
+	
+	public boolean isAbilitaGestioneGruppiInConfigurazione() {
+		return true;
 	}
 	
 	public String getDescrizione(){
@@ -180,20 +209,23 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		this.allarme.setPlugin(infoPlugin);
 	}
 	
-	public boolean isAllarmiConsultazioneModificaStatoAbilitata() {
-		return this.allarmiConfig.isAllarmiConsultazioneModificaStatoAbilitata();
+	public boolean isAllarmiConsultazioneModificaStatoAbilitataAllarmeAttivo() {
+		return this.alarmEngineConfig.isOptionsUpdateStateActiveAlarm();
 	}
-	
+	public boolean isAllarmiConsultazioneModificaStatoAbilitataAllarmePassivo() {
+		return this.alarmEngineConfig.isOptionsUpdateStatePassiveAlarm();
+	}
+		
 	public boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() {
-		return this.allarmiConfig.isAllarmiAssociazioneAcknowledgedStatoAllarme();
+		return this.alarmEngineConfig.isOptionsAcknowledgedStatusAssociation();
 	}
 	
 	public boolean isAllarmiNotificaMailVisualizzazioneCompleta() {
-		return this.allarmiConfig.isAllarmiNotificaMailVisualizzazioneCompleta();
+		return this.alarmEngineConfig.isMailShowAllOptions();
 	}
 
 	public boolean isAllarmiMonitoraggioEsternoVisualizzazioneCompleta() {
-		return this.allarmiConfig.isAllarmiMonitoraggioEsternoVisualizzazioneCompleta();
+		return this.alarmEngineConfig.isScriptShowAllOptions();
 	}
 
 	public String getLabelStato(){
@@ -204,45 +236,15 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 
 	public ConfigurazioneAllarmeBean getAllarme() {
-		if (this.allarme == null){
-			this.allarme = new ConfigurazioneAllarmeBean();
-
-			//Configurazione default
-			this.allarme.setEnabled(1);
-			
-			this.allarme.setTipoAllarme(null);
-
-			this.allarme.setMail(new AllarmeMail());
-			this.allarme.getMail().setInviaAlert(0);
-			this.allarme.getMail().setInviaWarning(0);
-			if(this.alarmEngineConfig.isMailAckMode()){
-				this.allarme.getMail().setAckMode(1);
-			}else{
-				this.allarme.getMail().setAckMode(0);
-			}
-
-			this.allarme.setScript(new AllarmeScript());
-			this.allarme.getScript().setInvocaAlert(0);
-			this.allarme.getScript().setInvocaWarning(0);
-			if(this.alarmEngineConfig.isScriptAckMode()){
-				this.allarme.getScript().setAckMode(1);
-			}else{
-				this.allarme.getScript().setAckMode(0);
-			}
-			
-			this.parameters=null;
-			
-			this.modificatoInformazioniHistory = false;
-			this.modificatoStato = false;
-			this.modificatoAckwoldegment = false;
-			this.modificatoInformazioniHistory_statoAllarme = null;
-			this.modificatoInformazioniHistory_dettaglioAllarme = null;
-			this.modificatoInformazioniHistory_ackwoldegmentAllarme = null;
-		}
-
 		return this.allarme;
 	}
-
+	
+	public int getMailAckMode() {
+		return this.alarmEngineConfig.isMailCheckAcknowledgedStatus()?1:0;
+	}
+	public int getScriptAckMode() {
+		return this.alarmEngineConfig.isScriptCheckAcknowledgedStatus()?1:0;
+	}
 	
 	public void setModificaStato(int value){
 		
@@ -317,7 +319,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		ArrayList<String> f = null;
 		if (f == null) {
 			f = new ArrayList<String>();
-			f.add("All");
+			f.add("Qualsiasi");
 			f.add("Non Disabilitato");
 			f.add("Ok");
 			f.add("Warn");
@@ -333,7 +335,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		ArrayList<String> f = null;
 		if (f == null) {
 			f = new ArrayList<String>();
-			f.add("All");
+			f.add("Qualsiasi");
 			f.add("Non Disabilitato");
 			f.add("Ok");
 			f.add("Warn");
@@ -468,6 +470,10 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 
 		return this.parameters;
 	}
+	
+	public String filtra() {
+		return this.search.filtra();
+	}
 
 	public String dettaglioAllarme(){
 		return "allarme";
@@ -502,15 +508,21 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			/* ******** GESTIONE NOTIFICA CAMBIO DI STATO *************** */
 			
 			boolean historyCreatoTramiteNotificaCambioStato = false;
+			boolean notifyOk = true;
 			if(this.modificatoStato){
-				this.notifyChangeState();
+				notifyOk = this.notifyChangeState();
 				historyCreatoTramiteNotificaCambioStato = true;
 			}
 			
 			
 			/* ******** SALVO ALLARME *************** */
 			
-			((IAllarmiService)this.service).store(this.allarme);
+			if(!this.modificatoStato){
+				((IAllarmiService)this.service).store(this.allarme);
+			}
+			else {
+				// viene tutto salvato dentro notifyChangeState
+			}
 
 			
 			/* ******** GESTIONE HISTORY *************** */
@@ -523,8 +535,11 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
 			
 			try {
-				AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, oldConfigurazioneAllarme, this.allarme, AllarmiBean.log, this.allarmiConfig);
-				MessageUtils.addInfoMsg("Allarme salvato con successo.");
+				AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, oldConfigurazioneAllarme, this.allarme, AllarmiBean.log, this.alarmEngineConfig);
+				
+				if(notifyOk) {
+					MessageUtils.addInfoMsg("Allarme salvato con successo.");
+				}
 			} catch (Exception e) {
 				MessageUtils.addErrorMsg("Allarme salvato con successo, ma invio notifica terminato con errore: " + e.getMessage());
 			}
@@ -537,18 +552,20 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 
 	private void addHistory() throws ServiceException, NotImplementedException{
-		// registro la modifica
-		AllarmeHistory history = new AllarmeHistory();
-		history.setEnabled(this.allarme.getEnabled());
-		history.setAcknowledged(this.allarme.getAcknowledged());
-		history.setDettaglioStato(this.allarme.getDettaglioStato());
-		IdAllarme idConfigurazioneAllarme = new IdAllarme();
-		idConfigurazioneAllarme.setNome(this.allarme.getNome());
-		history.setIdAllarme(idConfigurazioneAllarme);
-		history.setStato(this.allarme.getStato());
-		history.setTimestampUpdate(new Date());
-		history.setUtente(Utility.getLoggedUtente().getLogin());
-		((IAllarmiService)this.service).addHistory(history);
+		if(this.alarmEngineConfig.isHistoryEnabled()) {
+			// registro la modifica
+			AllarmeHistory history = new AllarmeHistory();
+			history.setEnabled(this.allarme.getEnabled());
+			history.setAcknowledged(this.allarme.getAcknowledged());
+			history.setDettaglioStato(this.allarme.getDettaglioStato());
+			IdAllarme idConfigurazioneAllarme = new IdAllarme();
+			idConfigurazioneAllarme.setNome(this.allarme.getNome());
+			history.setIdAllarme(idConfigurazioneAllarme);
+			history.setStato(this.allarme.getStato());
+			history.setTimestampUpdate(new Date());
+			history.setUtente(Utility.getLoggedUtente().getLogin());
+			((IAllarmiService)this.service).addHistory(history);
+		}
 	}
 	
 
@@ -557,36 +574,82 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		return null;
 	}
 	
-	private void notifyChangeState() throws AlarmException{
-		IAlarm alarm = ((IAllarmiService)this.service).getAlarm(this.allarme.getNome());
-		AlarmStatusWithAck alarmStatus = new AlarmStatusWithAck();
-		StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(this.allarme.getStato());
-		switch (statoAllarme) {
-		case OK:
-			alarmStatus.setStatus(AlarmStateValues.OK);	
-			break;
-		case WARNING:
-			alarmStatus.setStatus(AlarmStateValues.WARNING);	
-			break;
-		case ERROR:
-			alarmStatus.setStatus(AlarmStateValues.ERROR);	
-			break;
+	private boolean notifyChangeState() throws AlarmException{
+		
+		boolean esito = true;
+		try {
+			IAlarm alarm = ((IAllarmiService)this.service).getAlarm(this.allarme.getNome());
+			AlarmStatusWithAck alarmStatus = new AlarmStatusWithAck();
+			StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(this.allarme.getStato());
+			switch (statoAllarme) {
+			case OK:
+				alarmStatus.setStatus(AlarmStateValues.OK);	
+				break;
+			case WARNING:
+				alarmStatus.setStatus(AlarmStateValues.WARNING);	
+				break;
+			case ERROR:
+				alarmStatus.setStatus(AlarmStateValues.ERROR);	
+				break;
+			}
+			alarmStatus.setDetail(this.allarme.getDettaglioStato());
+			if(this.allarme.getAcknowledged()==1){
+				alarmStatus.setAck(true);
+			}
+			else{
+				alarmStatus.setAck(false);
+			}
+			if(alarm instanceof AlarmImpl){
+				((AlarmImpl)alarm).setUsername(Utility.getLoggedUtente().getLogin());
+			}
+			alarm.changeStatus(alarmStatus);
+			AllarmiBean.log.debug("Notificato cambio di stato all'allarme con nome ["+this.allarme.getNome()+"]");
+		}catch(AlarmNotifyException notify) {
+			
+			esito = false;
+			
+			AllarmiBean.log.error(notify.getMessage(), notify);
+			int failed = 0;
+			StringBuilder sb = new StringBuilder();
+			if(notify.getPluginInvocationError()!=null) {
+				failed++;
+				if(sb.length()>0) {
+					sb.append("; ");
+				}
+				sb.append("invocazione del metodo 'changeStatusNotify' ha ritornato l'errore '").append(notify.getPluginInvocationError()).append("'");
+			}
+			if(notify.getSendMailError()!=null) {
+				failed++;
+				if(sb.length()>0) {
+					sb.append("; ");
+				}
+				sb.append("spedizione mail non riuscita '").append(notify.getSendMailError()).append("'");
+			}
+			if(notify.getScriptInvocationError()!=null) {
+				failed++;
+				if(sb.length()>0) {
+					sb.append("; ");
+				}
+				sb.append("invocazione dello script di monitoraggio ha generato l'errore '").append(notify.getScriptInvocationError()).append("'");
+			}
+			String error = null;
+			if(failed==1) {
+				error = "Allarme salvato con successo, ma la seguente notifica di cambio stato è fallita: "+sb.toString();
+			}
+			else {
+				error = "Allarme salvato con successo, ma le seguenti notifiche di cambio stato sono fallite: "+sb.toString();
+			}
+			
+			MessageUtils.addErrorMsg(error);
 		}
-		alarmStatus.setDetail(this.allarme.getDettaglioStato());
-		if(this.allarme.getAcknowledged()==1){
-			alarmStatus.setAck(true);
-		}
-		else{
-			alarmStatus.setAck(false);
-		}
-		if(alarm instanceof AlarmImpl){
-			((AlarmImpl)alarm).setUsername(Utility.getLoggedUtente().getLogin());
-		}
-		alarm.changeStatus(alarmStatus);
-		AllarmiBean.log.debug("Notificato cambio di stato all'allarme con nome ["+this.allarme.getNome()+"]");
-		if(this.statoAllarmePrimaModifica!=null){
-			this.allarme.setStatoPrecedente(AllarmiConverterUtils.toIntegerValue(this.statoAllarmePrimaModifica));
-		}
+		
+//			
+//		viene modificato nella chiamata 'changeStatus' sopra
+//		if(this.statoAllarmePrimaModifica!=null){
+//			this.allarme.setStatoPrecedente(AllarmiConverterUtils.toIntegerValue(this.statoAllarmePrimaModifica));
+//		}
+		
+		return esito;
 	}
 	
 	public void toggleAck(ActionEvent ae) {
@@ -603,7 +666,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			this.addHistory();
 			
 			// notifico avvio thread o stop
-			AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, this.allarme, this.allarme, AllarmiBean.log, this.allarmiConfig);
+			AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, this.allarme, this.allarme, AllarmiBean.log, this.alarmEngineConfig);
 			
 		} catch (Exception e) {
 			AllarmiBean.log.error(e.getMessage(), e);
@@ -626,7 +689,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 			this.addHistory();
 			
 			// notifico avvio thread o stop
-			AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, null, this.allarme, AllarmiBean.log, this.allarmiConfig);
+			AllarmiUtils.notifyStateActiveThread(false, this.modificatoStato, this.modificatoAckwoldegment, null, this.allarme, AllarmiBean.log, this.alarmEngineConfig);
 
 		} catch (Exception e) {
 			AllarmiBean.log.error(e.getMessage(), e);
@@ -683,7 +746,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 //		return v;
 //	}
 	public String getTipoNomeServizioFiltro() {
-		return AllarmiUtils.getTipoNomeServizio(this.allarme.getFiltro());
+		return AllarmiUtils.getTipoNomeServizio(this.allarme.getFiltro(), log, this.controlloAllarmiFiltroApiSoggettoErogatore);
 	}
 	
 //	public String getAzioneFiltro() {
@@ -721,7 +784,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 	
 	public String getRuoloPortaFiltro() {
-		if(this.allarme.getFiltro() != null && this.allarme.getFiltro().getRuoloPorta() != null) {
+		if(this.allarme.getFiltro() != null && this.allarme.getFiltro().getRuoloPorta() != null && this.allarme.getFiltro().getNomePorta() == null) {
 			try {
 				switch (this.allarme.getFiltro().getRuoloPorta()) {
 				case APPLICATIVA:
@@ -729,75 +792,67 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 				case DELEGATA:
 					return "Fruizione";
 				case ENTRAMBI:
-					return "Qualsiasi";
+					return null;
 				}
 			} catch (Exception e) {
-				return "Qualsiasi";
+				return null;
 			} 
 		}
 			
-		return "Qualsiasi";
+		return null;
+	}
+	
+	private boolean isAllarmeGlobale() {
+		boolean isGlobale = this.allarme.getFiltro()==null || this.allarme.getFiltro().isEnabled()==false || 
+				this.allarme.getFiltro().getNomePorta()==null;
+		return isGlobale;
+	}
+	
+	private boolean isGroupByEnabled() {
+		return this.allarme.getGroupBy()!=null && this.allarme.getGroupBy().isEnabled();
 	}
 	
 	public boolean isVisualizzaRuoloPortaGroupBy() {
-		if(this.isAllarmeConfigurazione()) {
-			return this.allarme.getFiltro()==null || this.allarme.getFiltro().isEnabled()==false || 
-					this.allarme.getFiltro().getRuoloPorta()==null || RuoloPorta.ENTRAMBI.equals(this.allarme.getFiltro().getRuoloPorta());
+		
+		if(this.allarme.isAllarmeConfigurazione()) {
+			return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isRuoloPorta();
 		}
 		
 		return false;
 	}
 	
 	public boolean isVisualizzaProtocolloGroupBy() throws Exception {
-		if(this.isAllarmeConfigurazione()) {
+		if(this.allarme.isAllarmeConfigurazione()) {
 			List<String> protocolli = Utility.getProtocolli(Utility.getLoggedUtente());
-			return protocolli.size()>1 && (this.allarme.getFiltro()==null || 
-					this.allarme.getFiltro().isEnabled()==false || 
-							this.allarme.getFiltro().getProtocollo()==null);
+			return this.isAllarmeGlobale() && protocolli.size()>1 && this.isGroupByEnabled() && this.allarme.getGroupBy().isProtocollo();
 		}
 		
 		return false;
 	}
 	
 	public boolean isVisualizzaSoggettoErogatoreGroupBy() {
-		if(this.isAllarmeConfigurazione()) {
-			return this.allarme.getFiltro()==null || 
-					this.allarme.getFiltro().isEnabled()==false || 
-							this.allarme.getFiltro().getTipoErogatore()==null ||
-							this.allarme.getFiltro().getNomeErogatore()==null;
+		if(this.allarme.isAllarmeConfigurazione()) {
+			return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isErogatore();
 		}
 		
 		return false;
 	}
 	
 	public boolean isVisualizzaServizioGroupBy() {
-		if(this.isAllarmeConfigurazione()) {
-			if(this.allarmiConfig.isAllarmiGroupByApi()) {
-				return this.allarme.getFiltro()==null || 
-						this.allarme.getFiltro().isEnabled()==false || 
-								this.allarme.getFiltro().getTipoServizio()==null ||
-										this.allarme.getFiltro().getNomeServizio()==null;
-			}
+		if(this.allarme.isAllarmeConfigurazione()) {
+			return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isServizio();
 		}
 		
 		return false;
 	}
 	
 	public boolean isVisualizzaAzioneGroupBy() {
-		boolean showAzione = this.allarme.getFiltro()==null || 
-				this.allarme.getFiltro().isEnabled()==false || 
-				this.allarme.getFiltro().getAzione()==null;
-		
-		if(showAzione) {
-			showAzione = this.isVisualizzaServizioGroupBy() && this.allarme.getGroupBy().isServizio(); // l'azione la scelgo se ho prima selezionato una API
-		}
-		
-		return showAzione;
+		return this.isGroupByEnabled() && this.allarme.getGroupBy().isAzione();
 	}
 	
 	public String getLabelAzioneGroupBy() {
 		if(this.allarme.getFiltro() != null) {
-			boolean configurazione = isAllarmeConfigurazione();
+			boolean configurazione = this.allarme.isAllarmeConfigurazione();
 			boolean definedApi = this.allarme.getFiltro().getTipoServizio()!=null && this.allarme.getFiltro().getNomeServizio()!=null && this.allarme.getFiltro().getVersioneServizio()!=null;
 			ServiceBinding serviceBinding = null;
 			if(configurazione) { // in configurazione deve essere selezionato il filtro sull'API
@@ -810,7 +865,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 					
 				}
 			} else {
-				if(this.isRuoloPortaDelegata()) {
+				if(this.allarme.isRuoloPortaDelegata()) {
 					PortaDelegata portaDelegata = this.dynamicUtilsService.getPortaDelegata(this.allarme.getFiltro().getNomePorta());
 					
 					IDSoggetto idSoggetto = new IDSoggetto(portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore()); 
@@ -818,7 +873,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 							portaDelegata.getNomeServizio(), portaDelegata.getVersioneServizio());
 							
 					serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
-				} else if(this.isRuoloPortaApplicativa()) {
+				} else if(this.allarme.isRuoloPortaApplicativa()) {
 					PortaApplicativa portaApplicativa = this.dynamicUtilsService.getPortaApplicativa(this.allarme.getFiltro().getNomePorta());
 					
 					IDSoggetto idSoggetto = new IDSoggetto(portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome()); 
@@ -842,92 +897,56 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 	
 	public boolean isVisualizzaSoggettoFruitoreGroupBy() {
-		if(this.isAllarmeConfigurazione()) {
-			return this.allarme.getFiltro()==null || 
-					this.allarme.getFiltro().isEnabled()==false || 
-							this.allarme.getFiltro().getTipoFruitore()==null ||
-									this.allarme.getFiltro().getNomeFruitore()==null;
-		}
-		
-		return false;
+		return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isFruitore();
 	}
 	
 	public boolean isVisualizzaServizioApplicativoFruitoreGroupBy() {
-		if(this.isAllarmeConfigurazione()) {
-			return this.allarme.getFiltro()==null || 
-					this.allarme.getFiltro().isEnabled()==false || 
-							this.allarme.getFiltro().getRuoloPorta()==null ||
-							this.allarme.getFiltro().getServizioApplicativoFruitore()==null;
+		return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isServizioApplicativoFruitore();
+	}
+	
+	public boolean isVisualizzaIdentificativoAutenticatoGroupBy() {
+		return this.isAllarmeGlobale() && this.isGroupByEnabled() && this.allarme.getGroupBy().isIdentificativoAutenticato();
+	}
+	
+	public boolean isVisualizzaRichiedenteGroupBy() {
+		return !this.isAllarmeGlobale() && this.isGroupByEnabled() && (this.allarme.getGroupBy().isFruitore() || this.allarme.getGroupBy().isServizioApplicativoFruitore() || this.allarme.getGroupBy().isIdentificativoAutenticato());
+	}
+	
+	public boolean isVisualizzaTokenGroupBy() {
+		return this.isGroupByEnabled() && StringUtils.isNotEmpty(this.allarme.getGroupBy().getToken());
+	}
+	
+	public boolean isVisualizzaProfiloFiltro() {
+		if(this.allarme.getFiltro() != null && this.allarme.getFiltro().getProtocollo() != null) {
+			boolean configurazione = this.allarme.isAllarmeConfigurazione();
+			return configurazione && this.search.isShowListaProtocolli();
 		}
 		
 		return false;
 	}
 	
-	public boolean isVisualizzaIdentificativoAutenticatoGroupBy() {
-		return !this.isAllarmeConfigurazione();
-	}
-	
-	public boolean isVisualizzaTokenGroupBy() {
-		boolean visualizzaToken = true;
-		
-		// TODO mancano i field per poter decidere lo stato del token
-//		if(this.allarme.getFiltro() != null && this.allarme.getFiltro().getRuoloPorta() != null) {
-//			if(this.isRuoloPortaApplicativa()) {
-//				PortaApplicativa portaApplicativa = this.dynamicUtilsService.getPortaApplicativa(this.allarme.getFiltro().getNomePorta());
-//				
-//				if(portaApplicativa.getGestioneToken()!=null) {
-//					String gestioneTokenPolicy = portaApplicativa.getGestioneToken().getPolicy();
-//					if(	gestioneTokenPolicy == null ||
-//							gestioneTokenPolicy.equals("") ||
-//							gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-//						visualizzaToken = false;
-//					}						
-//				}
-//				else {
-//					visualizzaToken = false;
-//				}
-//			}
-//			if(this.isRuoloPortaDelegata()) {
-//				PortaDelegata portaDelegata = this.dynamicUtilsService.getPortaDelegata(this.allarme.getFiltro().getNomePorta());
-//				
-//				if(portaDelegata.getGestioneToken()!=null) {
-//					String gestioneTokenPolicy = portaDelegata.getGestioneToken().getPolicy();
-//					if(	gestioneTokenPolicy == null ||
-//							gestioneTokenPolicy.equals("") ||
-//							gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-//						visualizzaToken = false;
-//					}						
-//				}
-//				else {
-//					visualizzaToken = false;
-//				}
-//			}
-//		}
-		return visualizzaToken;
-	}
-	
 	public boolean isVisualizzaRuoloErogatoreFiltro() {
-		boolean configurazione = this.isAllarmeConfigurazione();
+		boolean configurazione = this.allarme.isAllarmeConfigurazione();
 		return configurazione;
 	}
 	
 	public boolean isVisualizzaSoggettoErogatoreFiltro() {
-		boolean configurazione = this.isAllarmeConfigurazione();
+		boolean configurazione = this.allarme.isAllarmeConfigurazione();
 		return configurazione;
 	}
 	
 	public boolean isVisualizzaTagFiltro() {
-		boolean configurazione = this.isAllarmeConfigurazione();
+		boolean configurazione = this.allarme.isAllarmeConfigurazione();
 		return configurazione;
 	}
 	
 	public boolean isVisualizzaServizioFiltro() {
-		boolean configurazione = this.isAllarmeConfigurazione();
+		boolean configurazione = this.allarme.isAllarmeConfigurazione();
 		return configurazione;
 	}
 	
 	public boolean isVisualizzaAzioneFiltro() {
-		boolean configurazione = isAllarmeConfigurazione();
+		boolean configurazione = this.allarme.isAllarmeConfigurazione();
 		
 		boolean showAzione = true;
 		boolean definedApi = this.allarme.getFiltro().getTipoServizio()!=null && this.allarme.getFiltro().getNomeServizio()!=null && this.allarme.getFiltro().getVersioneServizio()!=null;
@@ -942,7 +961,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	
 	public boolean isVisualizzaRuoloFruitoreFiltro() {
 		if(this.allarme.getFiltro() != null) {
-			boolean configurazione = isAllarmeConfigurazione();
+			boolean configurazione = this.allarme.isAllarmeConfigurazione();
 			boolean showRuoloRichiedente = false;
 			if(configurazione) {
 				showRuoloRichiedente = true;
@@ -968,8 +987,8 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 	
 	public boolean isVisualizzaSoggettoFruitoreFiltro() {
-		boolean configurazione = this.isAllarmeConfigurazione();
-		boolean applicativa = this.isRuoloPortaApplicativa();
+		boolean configurazione = this.allarme.isAllarmeConfigurazione();
+		boolean applicativa = this.allarme.isRuoloPortaApplicativa();
 		
 		if(configurazione || applicativa) {
 			return true;
@@ -979,7 +998,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 	}
 	
 	public boolean isVisualizzaSaFruitoreFiltro() {
-		boolean configurazione = this.isAllarmeConfigurazione();
+		boolean configurazione = this.allarme.isAllarmeConfigurazione();
 		if(this.allarme.getFiltro() != null) {
 			return !configurazione || (this.allarme.getFiltro().getTipoFruitore()!=null && this.allarme.getFiltro().getNomeFruitore()!=null);
 		}
@@ -995,26 +1014,51 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		return null;
 	}
 
-	public boolean isAllarmeConfigurazione() {
-		return !this.isRuoloPortaDelegata() && !this.isRuoloPortaApplicativa();
-	}
-	
 	public String getLabelAzioneFiltro() {
 		if(this.allarme.getFiltro() != null) {
-			boolean configurazione = isAllarmeConfigurazione();
+			boolean configurazione = this.allarme.isAllarmeConfigurazione();
 			boolean definedApi = this.allarme.getFiltro().getTipoServizio()!=null && this.allarme.getFiltro().getNomeServizio()!=null && this.allarme.getFiltro().getVersioneServizio()!=null;
 			ServiceBinding serviceBinding = null;
 			if(configurazione) { // in configurazione deve essere selezionato il filtro sull'API
 				if(definedApi) {
-					IDSoggetto idSoggetto = new IDSoggetto(this.allarme.getFiltro().getTipoErogatore(), this.allarme.getFiltro().getNomeErogatore()); 
-					AccordoServizioParteComune accordoServizio = this.dynamicUtilsService.getAccordoServizio(this.allarme.getFiltro().getProtocollo(), idSoggetto , this.allarme.getFiltro().getTipoServizio(), 
-							this.allarme.getFiltro().getNomeServizio(), this.allarme.getFiltro().getVersioneServizio());
-							
-					serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
-					
+					if(StringUtils.isNotEmpty(this.allarme.getFiltro().getTipoErogatore()) && 
+							StringUtils.isNotEmpty(this.allarme.getFiltro().getNomeErogatore())) {
+						IDSoggetto idSoggetto = new IDSoggetto(this.allarme.getFiltro().getTipoErogatore(), this.allarme.getFiltro().getNomeErogatore()); 
+						AccordoServizioParteComune accordoServizio = this.dynamicUtilsService.getAccordoServizio(this.allarme.getFiltro().getProtocollo(), idSoggetto , this.allarme.getFiltro().getTipoServizio(), 
+								this.allarme.getFiltro().getNomeServizio(), this.allarme.getFiltro().getVersioneServizio());
+								
+						serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
+					} else {
+						List<IDServizio> listServizi = this.dynamicUtilsService.getServizi(this.allarme.getFiltro().getProtocollo(), null, 
+								this.allarme.getFiltro().getTipoServizio(), this.allarme.getFiltro().getNomeServizio(), this.allarme.getFiltro().getVersioneServizio(), null);
+						List<String> uris = new ArrayList<String>();
+						AccordoServizioParteSpecifica aspsRiferimento = null;
+						if(listServizi!=null && !listServizi.isEmpty()) {
+							for (IDServizio idS : listServizi) {
+								if(!uris.contains(idS.getUriAccordoServizioParteComune())) {
+									uris.add(idS.getUriAccordoServizioParteComune());
+									if(aspsRiferimento==null) {
+										AccordoServizioParteSpecifica asps = this.dynamicUtilsService.getAspsFromValues(idS.getTipo(), idS.getNome(), idS.getSoggettoErogatore().getTipo(),
+												idS.getSoggettoErogatore().getNome(), idS.getVersione());
+										aspsRiferimento = asps;
+									}
+								}
+								if(uris.size()>1) {
+									break;
+								}
+							}
+						}
+						if(uris.size()==1) {
+							IDSoggetto idSoggetto = new IDSoggetto(aspsRiferimento.getIdErogatore().getTipo(), aspsRiferimento.getIdErogatore().getNome()); 
+							AccordoServizioParteComune accordoServizio = this.dynamicUtilsService.getAccordoServizio(this.allarme.getFiltro().getProtocollo(), idSoggetto , 
+									aspsRiferimento.getTipo(), 
+									aspsRiferimento.getNome(), aspsRiferimento.getVersione());
+							serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
+						}
+					}
 				}
 			} else {
-				if(this.isRuoloPortaDelegata()) {
+				if(this.allarme.isRuoloPortaDelegata()) {
 					PortaDelegata portaDelegata = this.dynamicUtilsService.getPortaDelegata(this.allarme.getFiltro().getNomePorta());
 					
 					IDSoggetto idSoggetto = new IDSoggetto(portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore()); 
@@ -1022,7 +1066,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 							portaDelegata.getNomeServizio(), portaDelegata.getVersioneServizio());
 							
 					serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
-				} else if(this.isRuoloPortaApplicativa()) {
+				} else if(this.allarme.isRuoloPortaApplicativa()) {
 					PortaApplicativa portaApplicativa = this.dynamicUtilsService.getPortaApplicativa(this.allarme.getFiltro().getNomePorta());
 					
 					IDSoggetto idSoggetto = new IDSoggetto(portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome()); 
@@ -1049,21 +1093,50 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		
 		try {
 		if(this.allarme.getFiltro() != null && this.allarme.getFiltro().getAzione() != null) {
-			boolean configurazione = isAllarmeConfigurazione();
+			boolean configurazione = this.allarme.isAllarmeConfigurazione();
 			boolean definedApi = this.allarme.getFiltro().getTipoServizio()!=null && this.allarme.getFiltro().getNomeServizio()!=null && this.allarme.getFiltro().getVersioneServizio()!=null;
 			ServiceBinding serviceBinding = null;
 			AccordoServizioParteComune accordoServizio = null;
 			if(configurazione) { // in configurazione deve essere selezionato il filtro sull'API
 				if(definedApi) {
-					IDSoggetto idSoggetto = new IDSoggetto(this.allarme.getFiltro().getTipoErogatore(), this.allarme.getFiltro().getNomeErogatore()); 
-					accordoServizio = this.dynamicUtilsService.getAccordoServizio(this.allarme.getFiltro().getProtocollo(), idSoggetto , this.allarme.getFiltro().getTipoServizio(), 
-							this.allarme.getFiltro().getNomeServizio(), this.allarme.getFiltro().getVersioneServizio());
-							
-					serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
-					
+					if(StringUtils.isNotEmpty(this.allarme.getFiltro().getTipoErogatore()) && 
+							StringUtils.isNotEmpty(this.allarme.getFiltro().getNomeErogatore())) {
+						IDSoggetto idSoggetto = new IDSoggetto(this.allarme.getFiltro().getTipoErogatore(), this.allarme.getFiltro().getNomeErogatore()); 
+						accordoServizio = this.dynamicUtilsService.getAccordoServizio(this.allarme.getFiltro().getProtocollo(), idSoggetto , this.allarme.getFiltro().getTipoServizio(), 
+								this.allarme.getFiltro().getNomeServizio(), this.allarme.getFiltro().getVersioneServizio());
+								
+						serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
+					} else {
+						List<IDServizio> listServizi = this.dynamicUtilsService.getServizi(this.allarme.getFiltro().getProtocollo(), null, 
+								this.allarme.getFiltro().getTipoServizio(), this.allarme.getFiltro().getNomeServizio(), this.allarme.getFiltro().getVersioneServizio(), null);
+						List<String> uris = new ArrayList<String>();
+						AccordoServizioParteSpecifica aspsRiferimento = null;
+						if(listServizi!=null && !listServizi.isEmpty()) {
+							for (IDServizio idS : listServizi) {
+								if(!uris.contains(idS.getUriAccordoServizioParteComune())) {
+									uris.add(idS.getUriAccordoServizioParteComune());
+									if(aspsRiferimento==null) {
+										AccordoServizioParteSpecifica asps = this.dynamicUtilsService.getAspsFromValues(idS.getTipo(), idS.getNome(), idS.getSoggettoErogatore().getTipo(),
+												idS.getSoggettoErogatore().getNome(), idS.getVersione());
+										aspsRiferimento = asps;
+									}
+								}
+								if(uris.size()>1) {
+									break;
+								}
+							}
+						}
+						if(uris.size()==1) {
+							IDSoggetto idSoggetto = new IDSoggetto(aspsRiferimento.getIdErogatore().getTipo(), aspsRiferimento.getIdErogatore().getNome()); 
+							accordoServizio = this.dynamicUtilsService.getAccordoServizio(this.allarme.getFiltro().getProtocollo(), idSoggetto , 
+									aspsRiferimento.getTipo(), 
+									aspsRiferimento.getNome(), aspsRiferimento.getVersione());
+							serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
+						}
+					}
 				}
 			} else {
-				if(this.isRuoloPortaDelegata()) {
+				if(this.allarme.isRuoloPortaDelegata()) {
 					PortaDelegata portaDelegata = this.dynamicUtilsService.getPortaDelegata(this.allarme.getFiltro().getNomePorta());
 					
 					IDSoggetto idSoggetto = new IDSoggetto(portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore()); 
@@ -1071,7 +1144,7 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 							portaDelegata.getNomeServizio(), portaDelegata.getVersioneServizio());
 							
 					serviceBinding = ServiceBinding.valueOf(accordoServizio.getServiceBinding().toUpperCase());
-				} else if(this.isRuoloPortaApplicativa()) {
+				} else if(this.allarme.isRuoloPortaApplicativa()) {
 					PortaApplicativa portaApplicativa = this.dynamicUtilsService.getPortaApplicativa(this.allarme.getFiltro().getNomePorta());
 					
 					IDSoggetto idSoggetto = new IDSoggetto(portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome()); 
@@ -1135,29 +1208,34 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 		
 		return this.allarme.getFiltro().getAzione();
 	}
-
-	public boolean isRuoloPortaApplicativa() {
-		boolean applicativa = false;
-		
-		if(this.allarme.getFiltro() != null && this.allarme.getFiltro().getRuoloPorta() != null) {
-			if(RuoloPorta.APPLICATIVA.equals(this.allarme.getFiltro().getRuoloPorta())) {
-				applicativa = (this.allarme.getFiltro().getNomePorta()!=null);
-			}
-		}
-		
-		return applicativa;
-	}
 	
-	public boolean isRuoloPortaDelegata() {
-		boolean delegata = false;
-		
-		if(this.allarme.getFiltro() != null && this.allarme.getFiltro().getRuoloPorta() != null) {
-			if(RuoloPorta.DELEGATA.equals(this.allarme.getFiltro().getRuoloPorta())) {
-				delegata = (this.allarme.getFiltro().getNomePorta()!=null);
+	public String getAzioneFiltroHTML(){
+		String tmp = this.getAzioneFiltro();
+		if(tmp!=null){
+			tmp = tmp.trim();
+			if(tmp.contains(",")){
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0){
+					StringBuilder bf = new StringBuilder();
+					for (int i = 0; i < split.length; i++) {
+						if(bf.length()>0){
+							bf.append("<BR/>");
+						}
+						bf.append(split[i].trim());
+					}
+					return bf.toString();
+				}
+				else{
+					return tmp;
+				}
+			}
+			else{
+				return tmp;
 			}
 		}
-		
-		return delegata;
+		else{
+			return null;
+		}
 	}
 
 	public String getClaimsGroupBy() {
@@ -1200,12 +1278,134 @@ DynamicPdDBean<ConfigurazioneAllarmeBean, Integer, IService<ConfigurazioneAllarm
 					}
 				}
 				
-				return NamingUtils.getLabelProtocollo(this.allarme.getFiltro().getProtocollo());
+				return this.allarme.getGroupBy().getToken();
 			} catch (Exception e) {
 				return null;
 			} 
 		}
 			
+		return null;
+	}
+	
+	public String getClaimsGroupByHTML(){
+		String tmp = this.getClaimsGroupBy();
+		if(tmp!=null){
+			tmp = tmp.trim();
+			if(tmp.contains(",")){
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0){
+					StringBuilder bf = new StringBuilder();
+					for (int i = 0; i < split.length; i++) {
+						if(bf.length()>0){
+							bf.append("<BR/>");
+						}
+						bf.append(split[i].trim());
+					}
+					return bf.toString();
+				}
+				else{
+					return tmp;
+				}
+			}
+			else{
+				return tmp;
+			}
+		}
+		else{
+			return null;
+		}
+	}
+	
+	 public List<String> nomeAllarmeAutoComplete(Object val){
+         List<String> list = null;
+         if(val==null || StringUtils.isEmpty((String)val))
+                 list = new ArrayList<String>();
+         else{
+                 list = ((IAllarmiService)this.service).nomeAllarmeAutoComplete((String) val);
+         }
+
+         list.add(0,"--");
+         return list;
+	 }
+
+	public String getSelectedTab() {
+		return this.selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	public boolean isEditMode() {
+		return this.editMode;
+	}
+
+	public void setEditMode(boolean editMode) {
+		this.editMode = editMode;
+	}
+
+	public boolean isVisualizzaParametri() {
+		return this.getParameters() != null && !this.getParameters().isEmpty();
+	}
+
+	public void setVisualizzaParametri(boolean visualizzaParametri) {}
+
+	public boolean isVisualizzaAck() {
+		
+		if(this.modificatoStato) {
+			if(this.isAllarmiAssociazioneAcknowledgedStatoAllarme() || 
+					(this.allarme.getMail().getInvia() == 1  && this.alarmEngineConfig.isMailCheckAcknowledgedStatus()) ||
+					(this.allarme.getScript().getInvoca() == 1 && this.alarmEngineConfig.isScriptCheckAcknowledgedStatus() )) {
+				return true;
+			}
+		} else {
+			if(this.allarme.getEnabled() != 0) { // non disabilitato
+				if(this.allarme.getStato() != 0) { // non in stato OK
+					if(this.isAllarmiAssociazioneAcknowledgedStatoAllarme() || 
+							(this.allarme.getMail().getInvia() == 1  && this.alarmEngineConfig.isMailCheckAcknowledgedStatus()) ||
+							(this.allarme.getScript().getInvoca() == 1 && this.alarmEngineConfig.isScriptCheckAcknowledgedStatus())) {
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+
+	public void setVisualizzaAck(boolean visualizzaAck) {
+	}
+	
+	public String dettaglioStatoAllarme(){
+		return "dettaglioStatoAllarme";
+	}
+
+	public AllarmeHistory getAllarmeHistory() {
+		return this.allarmeHistory;
+	}
+
+	public void setAllarmeHistory(AllarmeHistory allarmeHistory) {
+		this.allarmeHistory = allarmeHistory;
+	}
+
+	public Date getDataUltimaModificaStato() {
+		if(this.allarme!=null) {
+			Date lastUpdate = this.allarme.getLasttimestampUpdate();
+			
+			try {
+				List<AllarmeHistory> list = ((IAllarmiService)this.service).findAllHistory(this.allarme.getId(), 0, 1);
+				if(list!=null && !list.isEmpty()) {
+					Date d = list.get(0).getTimestampUpdate();
+					if(d!=null) {
+						return d;
+					}
+				}
+			} catch (Exception e) {
+				AllarmiBean.log.error(e.getMessage(), e);
+			}
+			
+			return lastUpdate;
+		}
 		return null;
 	}
 }

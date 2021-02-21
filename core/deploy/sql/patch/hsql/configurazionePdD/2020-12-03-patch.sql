@@ -60,3 +60,6 @@ INSERT INTO registro_plug_jar_init_seq VALUES (NEXT VALUE FOR seq_registro_plug_
 -- Aggiunto filtro per tag sul controllo del traffico
 ALTER TABLE ct_active_policy ADD COLUMN filtro_tag VARCHAR(255);
 
+-- Modificata dimensione colonna id_active_policy
+ALTER TABLE ct_active_policy ALTER COLUMN active_policy_id VARCHAR(275);
+

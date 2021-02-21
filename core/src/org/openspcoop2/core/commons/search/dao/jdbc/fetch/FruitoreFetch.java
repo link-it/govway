@@ -31,6 +31,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.Fruitore;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -99,7 +100,7 @@ public class FruitoreFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(Fruitore.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("servizi_fruitori","id","seq_servizi_fruitori","servizi_fruitori_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.SERVIZI_FRUITORI,"id","seq_"+CostantiDB.SERVIZI_FRUITORI,CostantiDB.SERVIZI_FRUITORI+"_init_seq");
 			}
 			
 			else{

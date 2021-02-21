@@ -20,6 +20,8 @@
 
 package org.openspcoop2.monitor.engine.alarm;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -124,7 +126,7 @@ public class AlarmLibrary {
 		
 	public void executeAlarms(boolean exitAfterExecution) throws AlarmException{
 		try{
-			this.activeThreads = this.getActiveAlarmThreads(this.allarmeSearchDAO);
+			this.activeThreads = this.getActiveAlarmThreads(this.allarmeSearchDAO, this.log);
 			if(this.activeThreads.size()>0){
 				for (AlarmThread alarmThread : this.activeThreads.values()) {
 					Thread t = new Thread(alarmThread);
@@ -170,6 +172,25 @@ public class AlarmLibrary {
 		}
 	}
 	
+	/* Utiltiies per refresh threads */
+	
+	public void forceNewCheckAlarm(String name) throws AlarmException{
+		try{
+			Allarme conf = null;
+			try{
+				conf = this.getActiveAlarmThread(this.allarmeSearchDAO, name);
+			}catch(Exception e){
+				throw new AlarmException(e.getMessage(),e);
+			}
+			if(conf==null){
+				throw new AlarmException("Alarm ["+name+"] not exists");
+			}
+			AlarmThread alarmThread = this.activeThreads.get(name);
+			alarmThread.forceNewCheck();
+		}catch(Exception e){
+			throw new AlarmException(e.getMessage(),e);
+		}
+	}
 	
 	/* Utiltiies per update stato threads */
 	
@@ -210,9 +231,56 @@ public class AlarmLibrary {
 	}
 	
 	
+	/* Utiltiies per get image threads */
+	
+	public String getAlarmImage(String name) throws AlarmException{
+		if(this.activeThreads!=null && this.activeThreads.size()>0 && this.activeThreads.containsKey(name)){
+			AlarmThread alarmThread = this.activeThreads.get(name);
+			return alarmThread.getStatoAllarme();
+		}
+		else{
+			throw new AlarmException("Alarm ["+name+"] not exists");
+		}
+	}
+	
+	public String getAlarmsImages() throws AlarmException{
+		if(this.activeThreads!=null && this.activeThreads.size()>0){
+			List<String> list = new ArrayList<String>();
+			for (String idAllarme : this.activeThreads.keySet()) {
+				list.add(idAllarme);
+			}
+			Collections.sort(list);
+			StringBuilder sb = new StringBuilder();
+			for (String idAllarme : list) {
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(idAllarme);
+			}
+			return sb.toString();
+		}
+		else{
+			return "";
+		}
+	}
+	
+	
+	
+	/* Utiltiies per exists threads */
+	
+	public boolean existsAlarm(String name) throws AlarmException{
+		if(this.activeThreads!=null && this.activeThreads.size()>0 && this.activeThreads.containsKey(name)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	
 	/* Utiltiies interne */
 	
-	private Hashtable<String, AlarmThread> getActiveAlarmThreads(IAllarmeServiceSearch allarmeSearchDAO) throws Exception{
+	private Hashtable<String, AlarmThread> getActiveAlarmThreads(IAllarmeServiceSearch allarmeSearchDAO, Logger log) throws Exception{
 		
 		IExpression expr = allarmeSearchDAO.newExpression();
 		expr.and();
@@ -229,9 +297,13 @@ public class AlarmLibrary {
 		Hashtable<String, AlarmThread> listAlarmThread = new Hashtable<String, AlarmThread>();
 		
 		for (Allarme confAllarme : list) {
-			AlarmThread alarmThread = createAlarmThread(confAllarme);
-			if(alarmThread!=null){
-				listAlarmThread.put(confAllarme.getNome(),alarmThread);
+			try {
+				AlarmThread alarmThread = createAlarmThread(confAllarme);
+				if(alarmThread!=null){
+					listAlarmThread.put(confAllarme.getNome(),alarmThread);
+				}
+			}catch(Throwable t) {
+				log.error("Creazione allarme con id '"+confAllarme.getNome()+"' (alias: "+confAllarme.getAlias()+") non riuscita: "+t.getMessage(),t);
 			}
 		}
 		return listAlarmThread;

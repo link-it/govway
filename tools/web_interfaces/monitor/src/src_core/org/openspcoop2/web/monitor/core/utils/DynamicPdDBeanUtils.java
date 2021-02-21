@@ -37,12 +37,20 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
+import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -101,14 +109,14 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 	public DynamicPdDBeanUtils(Logger log) throws Exception{
-		this(null, log);
+		this(null, null, log);
 	}
-	public DynamicPdDBeanUtils(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, Logger log) throws Exception{
+	public DynamicPdDBeanUtils(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager, Logger log) throws Exception{
 		this.log = log;
 		try{
 			this.log.debug("Init Dynamic Utils in corso...");
 			if(serviceManager!=null) {
-				this.dynamicUtilsService = new DynamicUtilsService(serviceManager);
+				this.dynamicUtilsService = new DynamicUtilsService(serviceManager, pluginsServiceManager);
 			}
 			else {
 				this.dynamicUtilsService = new DynamicUtilsService();
@@ -596,112 +604,270 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 			UserDetailsBean user = Utility.getLoggedUser();
 
-			List<AccordoServizioParteSpecifica> servizi2 = this.dynamicUtilsService.getServizi(tipoProtocollo,uriAccordoServizio, tipoSoggetto, nomeSoggetto, input);
-
-			IDAccordoFactory idAccordoFactory = null;
-			if(idAccordo!=null) {
-				idAccordoFactory = IDAccordoFactory.getInstance();
-			}
-			
-			if(servizi2 != null && servizi2.size() > 0){
-				for (AccordoServizioParteSpecifica res : servizi2) {
-					
-					if( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) {
-						
-						if(idAccordo!=null) {
-							IDAccordo idAccordoDB = idAccordoFactory.getIDAccordoFromValues(res.getIdAccordoServizioParteComune().getNome(), 
-									res.getIdAccordoServizioParteComune().getIdSoggetto().getTipo(), res.getIdAccordoServizioParteComune().getIdSoggetto().getNome(), 
-									res.getIdAccordoServizioParteComune().getVersione());
-							if(!idAccordo.equals(idAccordoDB)) {
-								continue;
-							}
-						}
-						
-						if((gruppo!=null && !"".equals(gruppo))) {
-							List<IdAccordoServizioParteComuneGruppo> lGruppi = this.dynamicUtilsService.getAccordoServizioGruppi(res.getIdAccordoServizioParteComune());
-							boolean found = false;
-							if(lGruppi!=null && !lGruppi.isEmpty()) {
-								for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
-									if(gruppoCheck.getIdGruppo().getNome().equals(gruppo)) {
-										found = true;
-										break;
-									}
-								}
-							}
-							if(!found) {
-								continue;
-							}
-						}
-					}
-					
-					boolean add= true;
-					String value= null;
-					// servizi.add(new
-					// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
-					StringBuilder uri = new StringBuilder();
-
-					String nomeAsps = res.getNome();
-
-					String tipoAsps = res.getTipo();
-
-					if(tipoAsps != null)
-						uri.append(tipoAsps).append("/");
-
-					uri.append(nomeAsps).append(":").append(res.getVersione());
-					
-
-//					if(showErogatore ){
-					uri.append(" (").append(res.getIdErogatore().getTipo()).append("/").append(res.getIdErogatore().getNome()).append(")"); 
-//					}
-					
-					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getIdErogatore().getTipo(), res.getIdErogatore().getNome(), res.getVersione());
-					String label = StringUtils.isEmpty(nomeSoggetto) ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) 
-							: NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
-					
-					value = uri.toString();
-					//compongo la label e la imposto
-					if(soloOperativi){ // controllo se il soggetto e' associato ad una pdd operativa
-						String nomePddFromSoggetto = this.getServerFromSoggetto(res.getIdErogatore().getTipo(), res.getIdErogatore().getNome());
-						add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
-					}
-
-					if(add && !user.isAdmin()){
-
-						// controllo sul soggetto
-						boolean existsPermessoSoggetto = false;
-						if(user.getSizeSoggetti()>0){
-							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
-								if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
-										res.getIdErogatore().getNome().equals(utenteSoggetto.getNome())){
-									existsPermessoSoggetto = true;
-									break;
-								}
-							}
-						}
-
-						boolean existsPermessoServizio = false;
-						if(!existsPermessoSoggetto){
-							if(user.getSizeServizio()>0){
-								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
-									if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
-											res.getIdErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
-											res.getTipo().equals(utenteSoggetto.getTipo()) &&
-											res.getNome().equals(utenteSoggetto.getNome())){
-										existsPermessoServizio = true;
-										break;
-									}
-								}
-							}
-						}
-
-						add = (existsPermessoSoggetto || existsPermessoServizio);
-					}
-
-					if(add)
-						servizi.add(new SelectItem(value, label)); 
+			PermessiUtenteOperatore permessiUtenteOperatoreRecheck = null;
+			if(user!=null && !user.isAdmin()) {
+				permessiUtenteOperatoreRecheck = new PermessiUtenteOperatore();
+				if(user.getUtenteSoggettoList()!=null && !user.getUtenteSoggettoList().isEmpty()) {
+					permessiUtenteOperatoreRecheck.getListIDSoggetti().addAll(user.getUtenteSoggettoList());
+				}
+				if(user.getUtenteServizioList()!=null && !user.getUtenteServizioList().isEmpty()) {
+					permessiUtenteOperatoreRecheck.getListIDServizi().addAll(user.getUtenteServizioList());
 				}
 			}
+			
+			if(permessiUtenteOperatoreRecheck!=null) {
+				
+				List<IDServizio> listIdServiziErogazione = this.dynamicUtilsService.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false, permessiUtenteOperatoreRecheck, true);
+				
+				List<IDServizio> listIdServiziFruizione = this.dynamicUtilsService.getServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false, permessiUtenteOperatoreRecheck, true);
+				
+				List<IDServizio> listIdServizi = new ArrayList<IDServizio>();
+				if(listIdServiziErogazione!=null && !listIdServiziErogazione.isEmpty()) {
+					for (IDServizio idServizio : listIdServiziErogazione) {
+						if(!listIdServizi.contains(idServizio)) {
+							listIdServizi.add(idServizio);
+						}
+					}
+				}
+				if(listIdServiziFruizione!=null && !listIdServiziFruizione.isEmpty()) {
+					for (IDServizio idServizio : listIdServiziFruizione) {
+						if(!listIdServizi.contains(idServizio)) {
+							listIdServizi.add(idServizio);
+						}
+					}
+				}
+				if(listIdServizi!=null && !listIdServizi.isEmpty()) {
+					IDAccordoFactory idAccordoFactory = null;
+					if(idAccordo!=null) {
+						idAccordoFactory = IDAccordoFactory.getInstance();
+					}
+					
+					List<String> lstLabelOrdinate = new ArrayList<>();
+					Map<String, String> mapElementi = new HashMap<>();
+					for (IDServizio res : listIdServizi) {
+						
+						
+						if( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) {
+							
+							AccordoServizioParteComune aspc = this.dynamicUtilsService.getAccordoServizio(tipoProtocollo, res.getSoggettoErogatore(), 
+									res.getTipo(), res.getNome(), res.getVersione());
+							
+							if(idAccordo!=null) {
+								IDAccordo idAccordoDB = idAccordoFactory.getIDAccordoFromValues(aspc.getNome(), aspc.getIdReferente().getTipo(), aspc.getIdReferente().getNome(), aspc.getVersione());
+								if(!idAccordo.equals(idAccordoDB)) {
+									continue;
+								}
+							}
+							
+							if((gruppo!=null && !"".equals(gruppo))) {
+								IdAccordoServizioParteComune idAspc = new IdAccordoServizioParteComune();
+								idAspc.setIdSoggetto(aspc.getIdReferente());
+								idAspc.setNome(aspc.getNome());
+								idAspc.setVersione(aspc.getVersione());
+								List<IdAccordoServizioParteComuneGruppo> lGruppi = this.dynamicUtilsService.getAccordoServizioGruppi(idAspc);
+								boolean found = false;
+								if(lGruppi!=null && !lGruppi.isEmpty()) {
+									for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+										if(gruppoCheck.getIdGruppo().getNome().equals(gruppo)) {
+											found = true;
+											break;
+										}
+									}
+								}
+								if(!found) {
+									continue;
+								}
+							}
+						}
+						
+						boolean add= true;
+						String value= null;
+						// servizi.add(new
+						// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
+						StringBuilder uri = new StringBuilder();
 
+						String nomeAsps = res.getNome();
+
+						String tipoAsps = res.getTipo();
+
+						if(tipoAsps != null)
+							uri.append(tipoAsps).append("/");
+
+						uri.append(nomeAsps).append(":").append(res.getVersione());
+						
+
+//							if(showErogatore ){
+						uri.append(" (").append(res.getSoggettoErogatore().getTipo()).append("/").append(res.getSoggettoErogatore().getNome()).append(")"); 
+//							}
+						
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getSoggettoErogatore().getTipo(), res.getSoggettoErogatore().getNome(), res.getVersione());
+						String label = NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio);
+						
+						value = uri.toString();
+						//compongo la label e la imposto
+						if(soloOperativi){ // controllo se il soggetto e' associato ad una pdd operativa
+							String nomePddFromSoggetto = this.getServerFromSoggetto(res.getSoggettoErogatore().getTipo(), res.getSoggettoErogatore().getNome());
+							add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+						}
+
+						// Controllo spostato nei metodi che ottengono la lista
+//							if(add && !user.isAdmin()){
+	//
+//								// controllo sul soggetto
+//								boolean existsPermessoSoggetto = false;
+//								if(user.getSizeSoggetti()>0){
+//									for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
+//										if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
+//												res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getNome())){
+//											existsPermessoSoggetto = true;
+//											break;
+//										}
+//									}
+//								}
+	//
+//								boolean existsPermessoServizio = false;
+//								if(!existsPermessoSoggetto){
+//									if(user.getSizeServizio()>0){
+//										for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
+//											if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
+//													res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
+//													res.getTipo().equals(utenteSoggetto.getTipo()) &&
+//													res.getNome().equals(utenteSoggetto.getNome())){
+//												existsPermessoServizio = true;
+//												break;
+//											}
+//										}
+//									}
+//								}
+	//
+//								add = (existsPermessoSoggetto || existsPermessoServizio);
+//							}
+
+						if(add) {
+							lstLabelOrdinate.add(label);
+							mapElementi.put(label, value);
+						}
+					}
+
+					if(lstLabelOrdinate.size() > 0) {
+						Collections.sort(lstLabelOrdinate);
+						
+						for (String string : lstLabelOrdinate) {
+							servizi.add(new SelectItem(mapElementi.get(string), string));  
+						}
+					}
+				}
+				
+			}
+			else {
+			
+				List<AccordoServizioParteSpecifica> servizi2 = this.dynamicUtilsService.getServizi(tipoProtocollo,uriAccordoServizio, tipoSoggetto, nomeSoggetto, input);
+	
+				IDAccordoFactory idAccordoFactory = null;
+				if(idAccordo!=null) {
+					idAccordoFactory = IDAccordoFactory.getInstance();
+				}
+				
+				if(servizi2 != null && servizi2.size() > 0){
+					for (AccordoServizioParteSpecifica res : servizi2) {
+						
+						if( (gruppo!=null && !"".equals(gruppo)) || idAccordo!=null ) {
+							
+							if(idAccordo!=null) {
+								IDAccordo idAccordoDB = idAccordoFactory.getIDAccordoFromValues(res.getIdAccordoServizioParteComune().getNome(), 
+										res.getIdAccordoServizioParteComune().getIdSoggetto().getTipo(), res.getIdAccordoServizioParteComune().getIdSoggetto().getNome(), 
+										res.getIdAccordoServizioParteComune().getVersione());
+								if(!idAccordo.equals(idAccordoDB)) {
+									continue;
+								}
+							}
+							
+							if((gruppo!=null && !"".equals(gruppo))) {
+								List<IdAccordoServizioParteComuneGruppo> lGruppi = this.dynamicUtilsService.getAccordoServizioGruppi(res.getIdAccordoServizioParteComune());
+								boolean found = false;
+								if(lGruppi!=null && !lGruppi.isEmpty()) {
+									for (IdAccordoServizioParteComuneGruppo gruppoCheck : lGruppi) {
+										if(gruppoCheck.getIdGruppo().getNome().equals(gruppo)) {
+											found = true;
+											break;
+										}
+									}
+								}
+								if(!found) {
+									continue;
+								}
+							}
+						}
+						
+						boolean add= true;
+						String value= null;
+						// servizi.add(new
+						// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
+						StringBuilder uri = new StringBuilder();
+	
+						String nomeAsps = res.getNome();
+	
+						String tipoAsps = res.getTipo();
+	
+						if(tipoAsps != null)
+							uri.append(tipoAsps).append("/");
+	
+						uri.append(nomeAsps).append(":").append(res.getVersione());
+						
+	
+	//					if(showErogatore ){
+						uri.append(" (").append(res.getIdErogatore().getTipo()).append("/").append(res.getIdErogatore().getNome()).append(")"); 
+	//					}
+						
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getIdErogatore().getTipo(), res.getIdErogatore().getNome(), res.getVersione());
+						String label = StringUtils.isEmpty(nomeSoggetto) ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) 
+								: NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
+						
+						value = uri.toString();
+						//compongo la label e la imposto
+						if(soloOperativi){ // controllo se il soggetto e' associato ad una pdd operativa
+							String nomePddFromSoggetto = this.getServerFromSoggetto(res.getIdErogatore().getTipo(), res.getIdErogatore().getNome());
+							add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+						}
+	
+						// Controllo spostato nei metodi che ottengono la lista
+	//					if(add && !user.isAdmin()){
+	//
+	//						// controllo sul soggetto
+	//						boolean existsPermessoSoggetto = false;
+	//						if(user.getSizeSoggetti()>0){
+	//							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
+	//								if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
+	//										res.getIdErogatore().getNome().equals(utenteSoggetto.getNome())){
+	//									existsPermessoSoggetto = true;
+	//									break;
+	//								}
+	//							}
+	//						}
+	//
+	//						boolean existsPermessoServizio = false;
+	//						if(!existsPermessoSoggetto){
+	//							if(user.getSizeServizio()>0){
+	//								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
+	//									if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
+	//											res.getIdErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
+	//											res.getTipo().equals(utenteSoggetto.getTipo()) &&
+	//											res.getNome().equals(utenteSoggetto.getNome())){
+	//										existsPermessoServizio = true;
+	//										break;
+	//									}
+	//								}
+	//							}
+	//						}
+	//
+	//						add = (existsPermessoSoggetto || existsPermessoServizio);
+	//					}
+	
+						if(add)
+							servizi.add(new SelectItem(value, label)); 
+					}
+				}
+			}
 
 		}catch(Exception e){
 			this.log.error("Si e' verificato un errore durante la ricerca dei servizi per l'accordo ["+uriAccordoServizio+"] erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
@@ -867,27 +1033,43 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 			UserDetailsBean user = Utility.getLoggedUser();
 
+			PermessiUtenteOperatore permessiUtenteOperatoreRecheck = null;
+			if(permessiUtenteOperatore!=null) {
+				permessiUtenteOperatoreRecheck = permessiUtenteOperatore;
+			}
+			else {
+				if(user!=null && !user.isAdmin()) {
+					permessiUtenteOperatoreRecheck = new PermessiUtenteOperatore();
+					if(user.getUtenteSoggettoList()!=null && !user.getUtenteSoggettoList().isEmpty()) {
+						permessiUtenteOperatoreRecheck.getListIDSoggetti().addAll(user.getUtenteSoggettoList());
+					}
+					if(user.getUtenteServizioList()!=null && !user.getUtenteServizioList().isEmpty()) {
+						permessiUtenteOperatoreRecheck.getListIDServizi().addAll(user.getUtenteServizioList());
+					}
+				}
+			}
+			
 			List<IDServizio> servizi2 = null;
 			if(permessiUtenteOperatore!=null) {
 				// ci si arriva da elenco configurazioni
 				if(nomeServizio!=null) {
 					servizi2 = this.dynamicUtilsService.getConfigurazioneServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, 
 							tipoServizio ,nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, 
-							input, false, permessiUtenteOperatore, distinct);
+							input, false, permessiUtenteOperatoreRecheck, distinct);
 				}
 				else {
 					servizi2 = this.dynamicUtilsService.getConfigurazioneServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, 
-							input, false, permessiUtenteOperatore, distinct);
+							input, false, permessiUtenteOperatoreRecheck, distinct);
 				}
 			}
 			else {
 				if(nomeServizio!=null) {
 					servizi2 = this.dynamicUtilsService.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, 
 							tipoServizio ,nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, 
-							input, false, distinct);
+							input, false, permessiUtenteOperatoreRecheck, distinct);
 				}
 				else {
-					servizi2 = this.dynamicUtilsService.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false, distinct);
+					servizi2 = this.dynamicUtilsService.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false, permessiUtenteOperatoreRecheck, distinct);
 				}
 			}
 
@@ -965,37 +1147,38 @@ public class DynamicPdDBeanUtils implements Serializable {
 						add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
 					}
 
-					if(add && !user.isAdmin()){
-
-						// controllo sul soggetto
-						boolean existsPermessoSoggetto = false;
-						if(user.getSizeSoggetti()>0){
-							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
-								if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
-										res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getNome())){
-									existsPermessoSoggetto = true;
-									break;
-								}
-							}
-						}
-
-						boolean existsPermessoServizio = false;
-						if(!existsPermessoSoggetto){
-							if(user.getSizeServizio()>0){
-								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
-									if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
-											res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
-											res.getTipo().equals(utenteSoggetto.getTipo()) &&
-											res.getNome().equals(utenteSoggetto.getNome())){
-										existsPermessoServizio = true;
-										break;
-									}
-								}
-							}
-						}
-
-						add = (existsPermessoSoggetto || existsPermessoServizio);
-					}
+					// Controllo spostato nei metodi che ottengono la lista
+//					if(add && !user.isAdmin()){
+//
+//						// controllo sul soggetto
+//						boolean existsPermessoSoggetto = false;
+//						if(user.getSizeSoggetti()>0){
+//							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
+//								if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
+//										res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getNome())){
+//									existsPermessoSoggetto = true;
+//									break;
+//								}
+//							}
+//						}
+//
+//						boolean existsPermessoServizio = false;
+//						if(!existsPermessoSoggetto){
+//							if(user.getSizeServizio()>0){
+//								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
+//									if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
+//											res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
+//											res.getTipo().equals(utenteSoggetto.getTipo()) &&
+//											res.getNome().equals(utenteSoggetto.getNome())){
+//										existsPermessoServizio = true;
+//										break;
+//									}
+//								}
+//							}
+//						}
+//
+//						add = (existsPermessoSoggetto || existsPermessoServizio);
+//					}
 
 					if(add) {
 						lstLabelOrdinate.add(label);
@@ -1058,29 +1241,46 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 			UserDetailsBean user = Utility.getLoggedUser();
 
+			PermessiUtenteOperatore permessiUtenteOperatoreRecheck = null;
+			if(permessiUtenteOperatore!=null) {
+				permessiUtenteOperatoreRecheck = permessiUtenteOperatore;
+			}
+			else {
+				if(user!=null && !user.isAdmin()) {
+					permessiUtenteOperatoreRecheck = new PermessiUtenteOperatore();
+					if(user.getUtenteSoggettoList()!=null && !user.getUtenteSoggettoList().isEmpty()) {
+						permessiUtenteOperatoreRecheck.getListIDSoggetti().addAll(user.getUtenteSoggettoList());
+					}
+					if(user.getUtenteServizioList()!=null && !user.getUtenteServizioList().isEmpty()) {
+						permessiUtenteOperatoreRecheck.getListIDServizi().addAll(user.getUtenteServizioList());
+					}
+				}
+			}
+			
 			List<IDServizio> servizi2 = null;
 			if(tipoSoggetto!=null && nomeSoggetto!=null) {
 				// ci si arriva da elenco configurazioni
 				if(nomeServizio!=null) {
 					servizi2 = this.dynamicUtilsService.getConfigurazioneServiziFruizione(tipoProtocollo,tipoSoggetto,nomeSoggetto,
 							tipoServizio,nomeServizio, tipoSoggettoErogatore, nomeSoggettoErogatore, versioneServizio,nomeAzione, 
-							input, false, permessiUtenteOperatore, distinct);
+							input, false, permessiUtenteOperatoreRecheck, distinct);
 				}
 				else {
 					servizi2 = this.dynamicUtilsService.getConfigurazioneServiziFruizione(tipoProtocollo,tipoSoggetto,nomeSoggetto,
 							null,null, tipoSoggettoErogatore, nomeSoggettoErogatore, null,null,
-							input, false, permessiUtenteOperatore, distinct);
+							input, false, permessiUtenteOperatoreRecheck, distinct);
 				}
 			}else {
+								
 				if(nomeServizio!=null) {
 					servizi2 = this.dynamicUtilsService.getServiziFruizione(tipoProtocollo, 
 							tipoSoggetto, nomeSoggetto, 
 							tipoSoggettoErogatore , nomeSoggettoErogatore, 
 							tipoServizio , nomeServizio, versioneServizio, nomeAzione, 
-							input, false, distinct);
+							input, false, permessiUtenteOperatoreRecheck, distinct);
 				}
 				else {
-					servizi2 = this.dynamicUtilsService.getServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, input, false, distinct);
+					servizi2 = this.dynamicUtilsService.getServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, input, false, permessiUtenteOperatoreRecheck, distinct);
 				}
 			}
 
@@ -1159,37 +1359,38 @@ public class DynamicPdDBeanUtils implements Serializable {
 						add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
 					}
 
-					if(add && !user.isAdmin()){
-
-						// controllo sul soggetto
-						boolean existsPermessoSoggetto = false;
-						if(user.getSizeSoggetti()>0){
-							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
-								if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
-										res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getNome())){
-									existsPermessoSoggetto = true;
-									break;
-								}
-							}
-						}
-
-						boolean existsPermessoServizio = false;
-						if(!existsPermessoSoggetto){
-							if(user.getSizeServizio()>0){
-								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
-									if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
-											res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
-											res.getTipo().equals(utenteSoggetto.getTipo()) &&
-											res.getNome().equals(utenteSoggetto.getNome())){
-										existsPermessoServizio = true;
-										break;
-									}
-								}
-							}
-						}
-
-						add = (existsPermessoSoggetto || existsPermessoServizio);
-					}
+					// Controllo spostato nei metodi che ottengono la lista
+//					if(add && !user.isAdmin()){
+//
+//						// controllo sul soggetto
+//						boolean existsPermessoSoggetto = false;
+//						if(user.getSizeSoggetti()>0){
+//							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
+//								if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
+//										res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getNome())){
+//									existsPermessoSoggetto = true;
+//									break;
+//								}
+//							}
+//						}
+//
+//						boolean existsPermessoServizio = false;
+//						if(!existsPermessoSoggetto){
+//							if(user.getSizeServizio()>0){
+//								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
+//									if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
+//											res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
+//											res.getTipo().equals(utenteSoggetto.getTipo()) &&
+//											res.getNome().equals(utenteSoggetto.getNome())){
+//										existsPermessoServizio = true;
+//										break;
+//									}
+//								}
+//							}
+//						}
+//
+//						add = (existsPermessoSoggetto || existsPermessoServizio);
+//					}
 
 					if(add) {
 						lstLabelOrdinate.add(label);
@@ -1210,5 +1411,24 @@ public class DynamicPdDBeanUtils implements Serializable {
 			this.log.error("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore+ "]");
 		}
 		return servizi;
+	}
+	
+	public PortaDelegata getPortaDelegata(String nomePorta) {
+		return this.dynamicUtilsService.getPortaDelegata(nomePorta);
+	}
+	
+	public PortaApplicativa getPortaApplicativa(String nomePorta) {
+		return this.dynamicUtilsService.getPortaApplicativa(nomePorta);
+	}
+	
+	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata) {
+		return this.dynamicUtilsService.getMappingFruizione(idServizio, idSoggetto, idPortaDelegata);
+	}
+	public MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) {
+		return this.dynamicUtilsService.getMappingErogazione(idServizio, idPortaApplicativa);
+	}
+	
+	public Plugin getPlugin(IdPlugin idPlugin) {
+		return this.dynamicUtilsService.getPlugin(idPlugin);
 	}
 }

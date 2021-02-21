@@ -3,7 +3,7 @@
 CREATE TABLE allarmi
 (
 	-- Informazioni generiche
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR(275) NOT NULL,
 	alias VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	tipo VARCHAR(255) NOT NULL,
@@ -20,17 +20,15 @@ CREATE TABLE allarmi
 	acknowledged INT NOT NULL,
 	periodo_tipo VARCHAR(255),
 	periodo INT,
+	mail_invia INT,
 	-- Informazioni sull'invio di e-mail
-	mail_ack_mode INT,
 	mail_invia_warning INT,
-	mail_invia_alert INT,
 	mail_destinatari CLOB,
 	mail_subject VARCHAR(255),
 	mail_body CLOB,
+	script_invoke INT,
 	-- Informazioni sull'invocazione di script esterni
-	script_ack_mode INT,
 	script_invoke_warning INT,
-	script_invoke_alert INT,
 	script_command CLOB,
 	script_args CLOB,
 	-- Filtro
@@ -115,5 +113,27 @@ CREATE TABLE allarmi_history
 
 -- index
 CREATE INDEX index_allarmi_history_1 ON allarmi_history (id_allarme,timestamp_update DESC);
+CREATE INDEX index_allarmi_history_2 ON allarmi_history (timestamp_update);
+
+
+
+CREATE TABLE allarmi_notifiche
+(
+	data_notifica TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	old_stato INT NOT NULL,
+	old_stato_dettaglio CLOB,
+	nuovo_stato INT NOT NULL,
+	nuovo_stato_dettaglio CLOB,
+	history_entry CLOB,
+	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	id_allarme BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_allarmi_notifiche_1 FOREIGN KEY (id_allarme) REFERENCES allarmi(id) ON DELETE CASCADE,
+	CONSTRAINT pk_allarmi_notifiche PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_allarmi_notifiche_1 ON allarmi_notifiche (data_notifica ASC);
 
 

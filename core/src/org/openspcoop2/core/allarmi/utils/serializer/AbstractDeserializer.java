@@ -29,6 +29,7 @@ import org.openspcoop2.core.allarmi.AllarmeScript;
 import org.openspcoop2.core.allarmi.AllarmeFiltro;
 import org.openspcoop2.core.allarmi.AllarmeRaggruppamento;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
+import org.openspcoop2.core.allarmi.AllarmeNotifica;
 import org.openspcoop2.core.allarmi.ElencoAllarmi;
 import org.openspcoop2.core.allarmi.ElencoIdAllarmi;
 
@@ -547,6 +548,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public AllarmeParametro readAllarmeParametroFromString(String in) throws DeserializerException {
 		return (AllarmeParametro) this.xmlToObj(in.getBytes(), AllarmeParametro.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: allarme-notifica
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @return Object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AllarmeNotifica readAllarmeNotifica(String fileName) throws DeserializerException {
+		return (AllarmeNotifica) this.xmlToObj(fileName, AllarmeNotifica.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @return Object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AllarmeNotifica readAllarmeNotifica(File file) throws DeserializerException {
+		return (AllarmeNotifica) this.xmlToObj(file, AllarmeNotifica.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @return Object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AllarmeNotifica readAllarmeNotifica(InputStream in) throws DeserializerException {
+		return (AllarmeNotifica) this.xmlToObj(in, AllarmeNotifica.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @return Object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AllarmeNotifica readAllarmeNotifica(byte[] in) throws DeserializerException {
+		return (AllarmeNotifica) this.xmlToObj(in, AllarmeNotifica.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @return Object type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AllarmeNotifica readAllarmeNotificaFromString(String in) throws DeserializerException {
+		return (AllarmeNotifica) this.xmlToObj(in.getBytes(), AllarmeNotifica.class);
 	}	
 	
 	

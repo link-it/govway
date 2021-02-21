@@ -209,7 +209,7 @@
     </page> 
 
     <page name="informazioniPreliminari_nuovaInstallazione" type="input" displayText="Informazioni Dispiegamento"
-	ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}==postgresql) OR (${antinstaller_tipo_database}==oracle)">
+	ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}!=mysql) AND (${antinstaller_tipo_database}!=db2)">
 
 	<comment displayText="DBMS" bold="true"/>
 	<!-- <large-select defaultValue="standard" property="antinstaller_runtime_db" displayText="Runtime">
@@ -254,8 +254,8 @@
 
     </page>
 
-    <page name="informazioniPreliminari_nuovaInstallazione_notPostgresNotOracle" type="input" displayText="Informazioni Dispiegamento"
-	ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}!=postgresql) AND (${antinstaller_tipo_database}!=oracle)">
+    <page name="informazioniPreliminari_nuovaInstallazione_mysql_or_db2" type="input" displayText="Informazioni Dispiegamento"
+	ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}==mysql) OR (${antinstaller_tipo_database}==db2)">
 
 	<comment displayText="DBMS" bold="true"/>
 	<!-- <large-select defaultValue="standard" property="antinstaller_runtime_db" displayText="Runtime">

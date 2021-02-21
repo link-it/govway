@@ -35,10 +35,10 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
-import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioServiceSearch;
+import org.openspcoop2.core.plugins.ConfigurazioneServizio;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioServiceSearch;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
@@ -67,7 +67,7 @@ public class GenericService implements IGenericService {
 
 	private org.openspcoop2.web.lib.users.DriverUsersDB utenteDAO;
 
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager basePluginsServiceManager;
+	private org.openspcoop2.core.plugins.dao.IServiceManager basePluginsServiceManager;
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager transazioniPluginsServiceManager;
 	private IConfigurazioneServizioAzioneServiceSearch confSerAzSearchDAO;
 	private IConfigurazioneServizioServiceSearch confSerSearchDAO;
@@ -85,8 +85,8 @@ public class GenericService implements IGenericService {
 						
 
 			// init Service Manager BASE
-			this.basePluginsServiceManager = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory
-					.getInstance(GenericService.log).getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),GenericService.log);
+			this.basePluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
+					.getInstance(GenericService.log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),GenericService.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 			this.confSerSearchDAO = this.basePluginsServiceManager

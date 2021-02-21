@@ -59,6 +59,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AllarmeNotifica }
+     */
+    public AllarmeNotifica createAllarmeNotifica() {
+        return new AllarmeNotifica();
+    }
+
+    /**
      * Create an instance of {@link IdAllarme }
      */
     public IdAllarme createIdAllarme() {

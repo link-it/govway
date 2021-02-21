@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import java.io.Serializable;
 
 
@@ -37,6 +38,10 @@ import java.io.Serializable;
  * 		&lt;sequence&gt;
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="alias" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-ruolo-porta" type="{http://www.openspcoop2.org/core/allarmi}ruolo-porta" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -51,7 +56,11 @@ import java.io.Serializable;
 @XmlType(name = "id-allarme", 
   propOrder = {
   	"nome",
-  	"tipo"
+  	"tipo",
+  	"enabled",
+  	"alias",
+  	"filtroRuoloPorta",
+  	"filtroNomePorta"
   }
 )
 
@@ -91,6 +100,50 @@ public class IdAllarme extends org.openspcoop2.utils.beans.BaseBean implements S
     this.tipo = tipo;
   }
 
+  public java.lang.Integer getEnabled() {
+    return this.enabled;
+  }
+
+  public void setEnabled(java.lang.Integer enabled) {
+    this.enabled = enabled;
+  }
+
+  public java.lang.String getAlias() {
+    return this.alias;
+  }
+
+  public void setAlias(java.lang.String alias) {
+    this.alias = alias;
+  }
+
+  public void set_value_filtroRuoloPorta(String value) {
+    this.filtroRuoloPorta = (RuoloPorta) RuoloPorta.toEnumConstantFromString(value);
+  }
+
+  public String get_value_filtroRuoloPorta() {
+    if(this.filtroRuoloPorta == null){
+    	return null;
+    }else{
+    	return this.filtroRuoloPorta.toString();
+    }
+  }
+
+  public org.openspcoop2.core.allarmi.constants.RuoloPorta getFiltroRuoloPorta() {
+    return this.filtroRuoloPorta;
+  }
+
+  public void setFiltroRuoloPorta(org.openspcoop2.core.allarmi.constants.RuoloPorta filtroRuoloPorta) {
+    this.filtroRuoloPorta = filtroRuoloPorta;
+  }
+
+  public java.lang.String getFiltroNomePorta() {
+    return this.filtroNomePorta;
+  }
+
+  public void setFiltroNomePorta(java.lang.String filtroNomePorta) {
+    this.filtroNomePorta = filtroNomePorta;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -105,5 +158,23 @@ public class IdAllarme extends org.openspcoop2.utils.beans.BaseBean implements S
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo",required=false,nillable=false)
   protected java.lang.String tipo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlElement(name="enabled",required=false,nillable=false)
+  protected java.lang.Integer enabled;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="alias",required=false,nillable=false)
+  protected java.lang.String alias;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_filtroRuoloPorta;
+
+  @XmlElement(name="filtro-ruolo-porta",required=false,nillable=false)
+  protected RuoloPorta filtroRuoloPorta;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="filtro-nome-porta",required=false,nillable=false)
+  protected java.lang.String filtroNomePorta;
 
 }

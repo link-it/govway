@@ -25,9 +25,9 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
 
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCConfigurazioneServizioAzioneBaseLib;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCPluginsBaseLib;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.dao.jdbc.JDBCConfigurazioneServizioAzioneBaseLib;
+import org.openspcoop2.core.plugins.dao.jdbc.JDBCPluginsBaseLib;
 
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceCRUDWithId;
 import org.openspcoop2.monitor.engine.config.transazioni.IdConfigurazioneTransazione;
@@ -903,5 +903,13 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 	@Override
 	public void deleteById(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId) throws ServiceException, NotImplementedException, Exception {
 		this._delete(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId));
+	}
+	
+	@Override
+	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
+	
+		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+																							sql,param);
+	
 	}
 }

@@ -31,7 +31,6 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
@@ -51,13 +50,15 @@ public interface IAllarmiService extends
 
 	public Long getCountAllarmiByStato(String stato, Integer acknowledged);
 
+	public boolean isShowParameters(Allarme configurazioneAllarme, Context context) throws Exception;
+	
 	public List<Parameter<?>> instanceParameters(Allarme configurazioneAllarme, Context context) throws Exception;
 	
 	public boolean isUsableFilter(Allarme configurazioneAllarme) throws Exception;
 	
 	public boolean isUsableGroupBy(Allarme configurazioneAllarme) throws Exception;
 	
-	public List<Plugin> plugins() throws Exception;
+	public String getParameterSectionTitle(Allarme configurazioneAllarme) throws Exception;
 	
 	public ConfigurazioneAllarmeBean getAllarme(String nome) throws NotFoundException, ServiceException;
 

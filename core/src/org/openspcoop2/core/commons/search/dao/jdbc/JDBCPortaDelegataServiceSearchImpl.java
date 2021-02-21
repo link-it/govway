@@ -961,7 +961,6 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 		// Object _portaDelegata
 		sqlQueryObjectGet.addFromTable(this.getPortaDelegataFieldConverter().toTable(PortaDelegata.model()));
 		sqlQueryObjectGet.addSelectField(this.getPortaDelegataFieldConverter().toColumn(PortaDelegata.model().NOME,true));
-		sqlQueryObjectGet.addSelectField("id_soggetto");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -971,7 +970,6 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 		};
 		List<Class<?>> listaFieldIdReturnType_portaDelegata = new ArrayList<Class<?>>();
 		listaFieldIdReturnType_portaDelegata.add(String.class);
-		listaFieldIdReturnType_portaDelegata.add(Long.class);
 		org.openspcoop2.core.commons.search.IdPortaDelegata id_portaDelegata = null;
 		List<Object> listaFieldId_portaDelegata = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_portaDelegata, searchParams_portaDelegata);
@@ -1030,7 +1028,6 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
 		sqlQueryObjectGet.addWhereCondition(this.getPortaDelegataFieldConverter().toColumn(PortaDelegata.model().NOME,true)+"=?");
-		sqlQueryObjectGet.addWhereCondition("id_soggetto=?");
 
 		// Recupero _portaDelegata
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_portaDelegata = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 

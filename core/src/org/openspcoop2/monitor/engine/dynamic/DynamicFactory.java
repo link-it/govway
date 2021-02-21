@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.monitor.engine.dynamic;
 
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.slf4j.Logger;
 
@@ -57,7 +57,7 @@ public class DynamicFactory {
 	public IDynamicLoader newDynamicLoader(String tipoPlugin, String tipo, String className,Logger log) throws SearchException{
 		
 		try {
-			return new BasicLoader(tipoPlugin, tipo, className, this.pluginLoader.getDynamicClass(className, tipoPlugin, tipo));
+			return new BasicLoader(tipoPlugin, tipo, className, this.pluginLoader.getDynamicClass(className, tipoPlugin, tipo), log);
 		}catch(Exception e) {
 			throw new SearchException(e.getMessage(),e);
 		}

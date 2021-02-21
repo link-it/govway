@@ -24,24 +24,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -51,14 +55,16 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoDelete;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
@@ -68,6 +74,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMappingErogazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMappingFruizione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginArchivio;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginClasse;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
@@ -75,6 +83,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveUrlInvocazioneRegola;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 import org.slf4j.Logger;
 
@@ -91,14 +100,17 @@ public class DeleterArchiveUtils {
 	private Logger log;
 	private String userLogin;
 	private boolean deletePolicyConfigurazione;
+	private boolean deletePluginConfigurazione;
 	
 	public DeleterArchiveUtils(AbstractArchiveEngine importerEngine,Logger log,
 			String userLogin,
-			boolean deletePolicyConfigurazione) throws Exception{
+			boolean deletePolicyConfigurazione,
+			boolean deletePluginConfigurazione) throws Exception{
 		this.importerEngine = importerEngine;
 		this.log = log;
 		this.userLogin = userLogin;
 		this.deletePolicyConfigurazione = deletePolicyConfigurazione;
+		this.deletePluginConfigurazione = deletePluginConfigurazione;
 	}
 	
 	private static String NEW_LINE = "\n\t\t";
@@ -481,6 +493,20 @@ public class DeleterArchiveUtils {
 			}
 			
 			
+			// Allarmi
+			for (int i = 0; i < archive.getAllarmi().size(); i++) {
+				ArchiveAllarme archiveAllarme = archive.getAllarmi().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAllarme);
+				try{
+					this.deleteAllarme(archiveAllarme, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getAllarmi().add(detail);
+			}
+			
+			
 			// ControlloTraffico (AttivazionePolicy)
 			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
 				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
@@ -534,6 +560,44 @@ public class DeleterArchiveUtils {
 				esito.getToken_retrieve_policies().add(detail);
 			}
 			
+			// Plugin (Classi)
+			for (int i = 0; i < archive.getPlugin_classi().size(); i++) {
+				ArchivePluginClasse archiveClasse = archive.getPlugin_classi().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveClasse);
+				try{
+					this.deletePluginClasse(archiveClasse, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getPlugin_classi().add(detail);
+			}
+			
+			// Plugin (Archivi)
+			for (int i = 0; i < archive.getPlugin_archivi().size(); i++) {
+				ArchivePluginArchivio archivePlugin = archive.getPlugin_archivi().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePlugin);
+				try{
+					this.deletePluginArchivio(archivePlugin, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getPlugin_archivi().add(detail);
+			}
+			
+			// UrlInvocazione (Regole)
+			for (int i = 0; i < archive.getConfigurazionePdD_urlInvocazione_regole().size(); i++) {
+				ArchiveUrlInvocazioneRegola archiveRegola = archive.getConfigurazionePdD_urlInvocazione_regole().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveRegola);
+				try{
+					this.deleteUrlInvocazioneRegola(archiveRegola, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getConfigurazionePdD_urlInvocazione_regole().add(detail);
+			}
 			
 			// Configurazione (Gestisco solamente informazioni extended, in modo da chiamare il driver con la DELETE)
 			if(archive.getConfigurazionePdD()!=null && archive.getConfigurazionePdD().sizeExtendedInfoList()>0) {
@@ -549,6 +613,7 @@ public class DeleterArchiveUtils {
 				esito.setConfigurazionePdD(detail);
 			}
 			
+			this.importerEngine.finalizeDelete(archive);
 			
 			return esito;
 			
@@ -624,10 +689,19 @@ public class DeleterArchiveUtils {
 	
 	public void deleteActivePolicy(ArchiveActivePolicy archivePolicy,ArchiveEsitoImportDetail detail){
 		
-		String nomePolicy = archivePolicy.getNomePolicy();
+		AttivazionePolicy attivazionePolicy = archivePolicy.getPolicy();
+		String aliasPolicy = archivePolicy.getAliasPolicy();
+		RuoloPolicy ruoloPorta = archivePolicy.getRuoloPorta();
+		String nomePorta = archivePolicy.getNomePorta();
+		
+		String tipoPolicy = "configurazione";
+		if(ruoloPorta!=null && nomePorta!=null) {
+			tipoPolicy = ruoloPorta.toString()+" "+nomePorta;
+		}
+		
 		try{
 			
-			boolean policyGlobale = archivePolicy.getPolicy().getFiltro()==null || archivePolicy.getPolicy().getFiltro().getNomePorta()==null || "".equals(archivePolicy.getPolicy().getFiltro().getNomePorta());
+			boolean policyGlobale = archivePolicy.isPolicyGlobale();
 			
 			// --- check abilitazione ---
 			if(policyGlobale && this.deletePolicyConfigurazione==false){ // se non e' globale la policy di attivazione va eliminata sempre poiche' associata all'erogazione o alla fruizione
@@ -637,7 +711,7 @@ public class DeleterArchiveUtils {
 			
 			
 			// --- check esistenza ---
-			if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)==false){
+			if(this.importerEngine.existsControlloTraffico_activePolicy(ruoloPorta, nomePorta, attivazionePolicy.getAlias())==false){
 				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
 				return;
 			}
@@ -651,8 +725,9 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			List<String> whereIsInUso = new ArrayList<String>();
-			if (this.importerEngine.isControlloTraffico_activePolicyInUso(nomePolicy, whereIsInUso)) {
-				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(nomePolicy, whereIsInUso,false,NEW_LINE));
+			if (this.importerEngine.isControlloTraffico_activePolicyInUso(ruoloPorta, nomePorta, attivazionePolicy.getAlias(), whereIsInUso)) {
+				// Il metodo inUso sopra ritorna sempre false.
+				//throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(ruoloPorta, nomePorta, attivazionePolicy.getAlias(), whereIsInUso,false,NEW_LINE));
 			}
 			
 			
@@ -663,12 +738,69 @@ public class DeleterArchiveUtils {
 						
 		}			
 		catch(Exception e){
-			this.log.error("Errore durante l'eliminazione dell'attivazione della policy ["+nomePolicy+"]: "+e.getMessage(),e);
+			this.log.error("Errore durante l'eliminazione dell'attivazione della policy ["+aliasPolicy+"] ("+tipoPolicy+"): "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}
 	}
 	
+	
+	public void deleteAllarme(ArchiveAllarme archiveAllarme,ArchiveEsitoImportDetail detail){
+		
+		Allarme allarme = archiveAllarme.getAllarme();
+		String alias = archiveAllarme.getAlias();
+		RuoloPorta ruoloPorta = archiveAllarme.getRuoloPorta();
+		String nomePorta = archiveAllarme.getNomePorta();
+		
+		String tipoAllarme = "configurazione";
+		if(ruoloPorta!=null && nomePorta!=null) {
+			tipoAllarme = ruoloPorta.toString()+" "+nomePorta;
+		}
+		
+		try{
+			
+			boolean allarmeGlobale = archiveAllarme.isAllarmeGlobale();
+			
+			// --- check abilitazione ---
+			if(allarmeGlobale && this.deletePolicyConfigurazione==false){ // se non e' globale la policy di attivazione va eliminata sempre poiche' associata all'erogazione o alla fruizione
+				detail.setState(ArchiveStatoImport.DELETED_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsAllarme(ruoloPorta, nomePorta, allarme.getAlias())==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// non esistenti
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			List<String> whereIsInUso = new ArrayList<String>();
+			if (this.importerEngine.isAllarmeInUso(ruoloPorta, nomePorta, allarme.getAlias(), whereIsInUso)) {
+				// Il metodo inUso sopra ritorna sempre false.
+				//throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(ruoloPorta, nomePorta, attivazionePolicy.getAlias(), whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deleteAllarme(archiveAllarme.getAllarme(), this.log);
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione dell'allarme ["+alias+"] ("+tipoAllarme+"): "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
 	
 	public void deleteTokenPolicy(ArchiveTokenPolicy archivePolicy,ArchiveEsitoImportDetail detail){
 		
@@ -719,6 +851,149 @@ public class DeleterArchiveUtils {
 		}
 	}
 	
+	public void deletePluginClasse(ArchivePluginClasse archivePluginClasse,ArchiveEsitoImportDetail detail){
+		
+		String tipoPlugin = archivePluginClasse.getTipoPlugin();
+		String tipo = archivePluginClasse.getTipo();
+		try{
+			
+			// --- check abilitazione ---
+			if(this.deletePluginConfigurazione==false){
+				detail.setState(ArchiveStatoImport.DELETED_PLUGIN_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsPluginClasse(archivePluginClasse.getTipoPlugin(), archivePluginClasse.getTipo())==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// non esistenti
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			IdPlugin idPlugin = new IdPlugin();
+			idPlugin.setTipoPlugin(archivePluginClasse.getTipoPlugin());
+			idPlugin.setTipo(archivePluginClasse.getTipo());
+			idPlugin.setLabel(archivePluginClasse.getPlugin().getLabel());
+			idPlugin.setClassName(archivePluginClasse.getPlugin().getClassName());
+			if (this.importerEngine.isPluginClasseInUso(idPlugin, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(archivePluginClasse.getPlugin().getClassName(), archivePluginClasse.getPlugin().getLabel(), 
+						archivePluginClasse.getTipoPlugin(), archivePluginClasse.getTipo(), whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deletePluginClasse(archivePluginClasse.getPlugin());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione del plugin ["+tipo+"] (tipo-plugin: '"+tipoPlugin+"'): "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	public void deletePluginArchivio(ArchivePluginArchivio archivePluginArchivio,ArchiveEsitoImportDetail detail){
+		
+		String nome = archivePluginArchivio.getNome();
+		try{
+			
+			// --- check abilitazione ---
+			if(this.deletePluginConfigurazione==false){
+				detail.setState(ArchiveStatoImport.DELETED_PLUGIN_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsPluginArchivio(archivePluginArchivio.getNome())==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// non esistenti
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			if (this.importerEngine.isPluginArchivioInUso(archivePluginArchivio.getNome(), whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
+				// Il metodo inUso sopra ritorna sempre false.
+				//throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(archivePluginArchivio.getNome(), archivePluginArchivio.getTipo(), whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deletePluginArchivio(archivePluginArchivio.getPlugin());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione dell'archivio dei plugin ["+nome+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	public void deleteUrlInvocazioneRegola(ArchiveUrlInvocazioneRegola archiveUrlInvocazioneRegola,ArchiveEsitoImportDetail detail){
+		
+		String nome = archiveUrlInvocazioneRegola.getNome();
+		try{
+			
+			// --- check abilitazione ---
+			if(this.deletePolicyConfigurazione==false){
+				detail.setState(ArchiveStatoImport.DELETED_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsUrlInvocazioneRegola(archiveUrlInvocazioneRegola.getNome())==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// non esistenti
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			if (this.importerEngine.isUrlInvocazioneRegolaInUso(archiveUrlInvocazioneRegola.getNome(), whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
+				// Il metodo inUso sopra ritorna sempre false.
+				//throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(archivePluginArchivio.getNome(), archivePluginArchivio.getTipo(), whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deleteUrlInvocazioneRegola(archiveUrlInvocazioneRegola.getRegola());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione della regola di proxy pass ["+nome+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
 	
 	public void deletePdd(ArchivePdd archivePdd,ArchiveEsitoImportDetail detail){
 		

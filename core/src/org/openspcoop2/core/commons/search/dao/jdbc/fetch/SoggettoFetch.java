@@ -31,6 +31,8 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.SoggettoRuolo;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -63,6 +65,12 @@ public class SoggettoFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "identificativo_porta", Soggetto.model().IDENTIFICATIVO_PORTA.getFieldType()));
 				return object;
 			}
+			if(model.equals(Soggetto.model().SOGGETTO_RUOLO)){
+				SoggettoRuolo object = new SoggettoRuolo();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -93,6 +101,12 @@ public class SoggettoFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"identificativo-porta"));
 				return object;
 			}
+			if(model.equals(Soggetto.model().SOGGETTO_RUOLO)){
+				SoggettoRuolo object = new SoggettoRuolo();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"soggetto-ruolo.id"));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -111,7 +125,10 @@ public class SoggettoFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(Soggetto.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("soggetti","id","seq_soggetti","soggetti_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.SOGGETTI,"id","seq_"+CostantiDB.SOGGETTI,CostantiDB.SOGGETTI+"_init_seq");
+			}
+			if(model.equals(Soggetto.model().SOGGETTO_RUOLO)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.SOGGETTI_RUOLI,"id","seq_"+CostantiDB.SOGGETTI_RUOLI,CostantiDB.SOGGETTI_RUOLI+"_init_seq");
 			}
 			
 			else{

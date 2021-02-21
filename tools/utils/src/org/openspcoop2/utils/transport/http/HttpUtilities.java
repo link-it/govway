@@ -1045,7 +1045,7 @@ public class HttpUtilities {
 				httpConn.setRequestProperty(HttpConstants.CONTENT_TYPE,request.getContentType());
 			}
 			else if(request.getContent()!=null){
-				throw new UtilsException("Content required with ContentType");
+				throw new UtilsException("Content require a Content Type");
 			}
 			
 			httpConn.setConnectTimeout(request.getConnectTimeout());

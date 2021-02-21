@@ -236,8 +236,13 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 				configurazioneGenerale.setUrlInvocazione(new ConfigurazioneUrlInvocazione());
 			
 			// salvataggio regola
+			ConfigurazioneUrlInvocazioneRegola regolaModificata = null;
 			for (ConfigurazioneUrlInvocazioneRegola regola : configurazioneGenerale.getUrlInvocazione().getRegolaList()) {
 				if(regola.getId().longValue() == idRegola) {
+					
+					regolaModificata = regola;
+					regolaModificata.setOldNome(regola.getNome());
+					
 					regola.setNome(nome);
 					if(descrizione!=null && !"".equals(descrizione)) {
 						regola.setDescrizione(descrizione);
@@ -302,7 +307,8 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 				}
 			}
 			
-			confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
+			//confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
+			confCore.performUpdateOperation(userLogin, confHelper.smista(), regolaModificata);
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

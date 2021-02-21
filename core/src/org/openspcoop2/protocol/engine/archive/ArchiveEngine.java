@@ -21,7 +21,6 @@
 package org.openspcoop2.protocol.engine.archive;
 
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 
 /**
@@ -35,8 +34,13 @@ public class ArchiveEngine extends AbstractArchiveEngine {
 
 	public ArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,
 			DriverConfigurazioneDB driverConfigurazione,
-			JDBCServiceManager serviceManagerControlloTraffico) {
-		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloTraffico);
+			org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager serviceManagerPlugins,
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManagerControlloTraffico, 
+			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager serviceManagerAllarmi) {
+		super(driverRegistroServizi, driverConfigurazione, 
+				serviceManagerPlugins,
+				serviceManagerControlloTraffico, 
+				serviceManagerAllarmi);
 	}
 
 	@Override

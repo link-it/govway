@@ -21,7 +21,7 @@ package org.openspcoop2.monitor.engine.config;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryException;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.engine.config.statistiche.dao.IConfigurazioneStatisticaServiceSearch;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;

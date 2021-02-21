@@ -135,6 +135,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
+import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
@@ -5767,6 +5768,9 @@ public class ConfigurazionePdDReader {
 	}
 	public List<IAlarm> instanceAllarmi(Connection connectionPdD, List<Allarme> listAllarmi) throws DriverConfigurazioneException {
 		return this.configurazionePdD.instanceAllarmi(connectionPdD, listAllarmi);
+	}
+	public void changeStatus(Connection connectionPdD, IAlarm alarm, AlarmStatus nuovoStatoAllarme) throws DriverConfigurazioneException {
+		this.configurazionePdD.changeStatus(connectionPdD, alarm, nuovoStatoAllarme);
 	}
 
 

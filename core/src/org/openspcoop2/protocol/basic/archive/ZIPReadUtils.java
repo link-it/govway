@@ -40,6 +40,7 @@ import java.util.zip.ZipFile;
 
 import javax.activation.FileDataSource;
 
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -48,6 +49,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.utils.ConfigurazionePdDUtils;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -89,11 +91,14 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginArchivio;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginClasse;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
@@ -101,6 +106,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveUrlInvocazioneRegola;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
@@ -130,7 +136,9 @@ public class ZIPReadUtils  {
 	
 	protected org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer jaxbRegistryDeserializer = null;
 	protected org.openspcoop2.core.config.utils.serializer.JaxbDeserializer jaxbConfigDeserializer = null;
+	protected org.openspcoop2.core.plugins.utils.serializer.JaxbDeserializer jaxbPluginDeserializer = null;
 	protected org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer jaxbControlloTrafficoDeserializer = null;
+	protected org.openspcoop2.core.allarmi.utils.serializer.JaxbDeserializer jaxbAllarmeDeserializer = null;
 	protected org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer jaxbInformationMissingDeserializer = null;
 	
 	private org.openspcoop2.protocol.abstraction.utils.serializer.JaxbDeserializer jaxbAbstractionDeserializer = null;
@@ -193,7 +201,9 @@ public class ZIPReadUtils  {
 		
 		this.jaxbRegistryDeserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 		this.jaxbConfigDeserializer = new org.openspcoop2.core.config.utils.serializer.JaxbDeserializer();
+		this.jaxbPluginDeserializer = new org.openspcoop2.core.plugins.utils.serializer.JaxbDeserializer();
 		this.jaxbControlloTrafficoDeserializer = new org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer();
+		this.jaxbAllarmeDeserializer = new org.openspcoop2.core.allarmi.utils.serializer.JaxbDeserializer();
 		this.jaxbInformationMissingDeserializer = new org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer();
 		
 		// abstract
@@ -406,6 +416,19 @@ public class ZIPReadUtils  {
 							}
 						}
 						
+						// ********** configurazione - url di invocazione ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_REGOLE_DIR+File.separatorChar)){
+								bin = new ByteArrayInputStream(xml);
+								this.readUrlInvocazioneRegola(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else {
+								bin = new ByteArrayInputStream(xml);
+								this.readUrlInvocazione(archivio, bin, xml, entryName, validationDocuments);
+							}
+						}
+						
 						// ********** controllo traffico ****************
 						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_DIR+File.separatorChar)) ){
 							byte[] xml = placeholder.replace(content);
@@ -423,6 +446,13 @@ public class ZIPReadUtils  {
 							}
 						}
 						
+						// ********** allarmi ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_ALLARMI_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
+							this.readAllarme(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+						}
+						
 						// ********** token policies ****************
 						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_DIR+File.separatorChar)) ){
 							byte[] xml = placeholder.replace(content);
@@ -433,6 +463,22 @@ public class ZIPReadUtils  {
 							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_RETRIEVE_DIR+File.separatorChar)){
 								bin = new ByteArrayInputStream(xml);
 								this.readTokenRetrievePolicy(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else {
+								throw new ProtocolException("Elemento ["+entryName+"] non atteso");
+							}
+						}
+						
+						// ********** plugins ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_PLUGINS_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_PLUGINS_CLASSI_DIR+File.separatorChar)){
+								bin = new ByteArrayInputStream(xml);
+								this.readPluginClasse(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_PLUGINS_ARCHIVI_DIR+File.separatorChar)){
+								bin = new ByteArrayInputStream(xml);
+								this.readPluginArchivio(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
 							}
 							else {
 								throw new ProtocolException("Elemento ["+entryName+"] non atteso");
@@ -1241,14 +1287,44 @@ public class ZIPReadUtils  {
 				org.openspcoop2.core.controllo_traffico.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
 			org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy = this.jaxbControlloTrafficoDeserializer.readAttivazionePolicy(xml);
-			String key = ArchiveActivePolicy.buildKey(policy.getIdActivePolicy());
+			RuoloPolicy ruoloPorta = null;
+			String nomePorta = null;
+			if(policy!=null && policy.getFiltro()!=null) {
+				ruoloPorta = policy.getFiltro().getRuoloPorta();
+				nomePorta = policy.getFiltro().getNomePorta();
+			}
+			String key = ArchiveActivePolicy.buildKey(ruoloPorta, nomePorta, policy.getAlias());
 			if(archivio.getControlloTraffico_activePolicies().containsKey(key)){
-				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un'attivazione di policy con key ["+key+"]");
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere più di un'attivazione di policy con key ["+key+"]");
 			}
 			archivio.getControlloTraffico_activePolicies().add(key,new ArchiveActivePolicy(policy,idCorrelazione));
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (attivazione-policy) non valida rispetto allo schema (ControlloTraffico): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readAllarme(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.allarmi.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.allarmi.Allarme allarme = this.jaxbAllarmeDeserializer.readAllarme(xml);
+			RuoloPorta ruoloPorta = null;
+			String nomePorta = null;
+			if(allarme!=null && allarme.getFiltro()!=null) {
+				ruoloPorta = allarme.getFiltro().getRuoloPorta();
+				nomePorta = allarme.getFiltro().getNomePorta();
+			}
+			String key = ArchiveAllarme.buildKey(ruoloPorta, nomePorta, allarme.getAlias());
+			if(archivio.getAllarmi().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere più di un'allarme con key ["+key+"]");
+			}
+			archivio.getAllarmi().add(key,new ArchiveAllarme(allarme,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (allarme) non valida rispetto allo schema (Allarmi): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -1288,6 +1364,78 @@ public class ZIPReadUtils  {
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
+	
+	public void readPluginClasse(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.plugins.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.plugins.Plugin plugin = this.jaxbPluginDeserializer.readPlugin(xml);
+			String key = ArchivePluginClasse.buildKey(plugin.getTipoPlugin(), plugin.getTipo());
+			if(archivio.getPlugin_classi().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un plugin con key ["+key+"]");
+			}
+			archivio.getPlugin_classi().add(key,new ArchivePluginClasse(plugin,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (plugin-classe) non valida rispetto allo schema (Plugins): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readPluginArchivio(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.RegistroPlugin plugin = this.jaxbConfigDeserializer.readRegistroPlugin(xml);
+			String key = ArchivePluginArchivio.buildKey(plugin.getNome());
+			if(archivio.getPlugin_archivi().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un archivio plugin con key ["+key+"]");
+			}
+			archivio.getPlugin_archivi().add(key,new ArchivePluginArchivio(plugin,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (plugin-archivio) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readUrlInvocazioneRegola(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola regola = this.jaxbConfigDeserializer.readConfigurazioneUrlInvocazioneRegola(xml);
+			String key = ArchiveUrlInvocazioneRegola.buildKey(regola.getNome());
+			if(archivio.getConfigurazionePdD_urlInvocazione_regole().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una regola proxy pass con key ["+key+"]");
+			}
+			archivio.getConfigurazionePdD_urlInvocazione_regole().add(key,new ArchiveUrlInvocazioneRegola(regola,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (regola proxy-pass) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readUrlInvocazione(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = this.jaxbConfigDeserializer.readConfigurazioneUrlInvocazione(xml);
+			if(archivio.getConfigurazionePdD_urlInvocazione()!=null){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una configurazione della url di invocazione");
+			}
+			archivio.setConfigurazionePdD_urlInvocazione(configurazioneUrlInvocazione);
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (configurazione url invocazione) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
 	
 	public void readPortaDominio(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{

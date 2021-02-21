@@ -34,6 +34,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
@@ -404,6 +407,12 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			String labelDialog = null;
 			String noteDialog = null;
 			String messageDialog = null;
+			if(nomeParametroPostBack==null || "".equals(nomeParametroPostBack)){
+				String allarmeOp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER);
+				if(allarmeOp!=null && !"".equals(allarmeOp)){
+					nomeParametroPostBack = allarmeOp;
+				}
+			}
 			if(nomeParametroPostBack!=null && !"".equals(nomeParametroPostBack)){
 			
 				String nomeAttributo = null;
@@ -412,6 +421,9 @@ public final class ConfigurazioneSistemaAdd extends Action {
 				String nomeRisorsa = null;
 				Object nuovoStato = null;
 				String tipo = null;
+				boolean startAllarmi = false;
+				boolean stopAllarmi = false;
+				boolean restartAllarmi = false;
 				try{
 					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias);
@@ -708,7 +720,21 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX+
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD;
 					}
-
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START.equals(nomeParametroPostBack)){
+						startAllarmi = true;
+						tipo = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START;
+						labelDialog = "Avvio "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI;
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP.equals(nomeParametroPostBack)){
+						stopAllarmi = true;
+						tipo = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP;
+						labelDialog = "Fermo "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI;
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART.equals(nomeParametroPostBack)){
+						restartAllarmi = true;
+						tipo = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART;
+						labelDialog = "Riavvio "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI;
+					}
 					
 					if(nomeAttributo!=null){
 						confCore.setJMXAttribute(confCore.getGestoreRisorseJMX(alias),alias,confCore.getJmxPdD_cache_type(alias), 
@@ -747,6 +773,25 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							messagePerOperazioneEffettuata = tmp;
 						}
 						messageDialog = tmp;
+					}
+					else if(startAllarmi || stopAllarmi || restartAllarmi) {
+						AlarmEngineConfig alarmEngineConfig = confCore.getAllarmiConfig();
+						if(startAllarmi) {
+							AllarmiUtils.startActiveThreads(ControlStationCore.getLog(), alarmEngineConfig);
+						}
+						else if(stopAllarmi) {
+							AllarmiUtils.stopActiveThreads(ControlStationCore.getLog(), alarmEngineConfig);
+						}
+						else if(restartAllarmi) {
+							AllarmiUtils.restartActiveThreads(ControlStationCore.getLog(), alarmEngineConfig);
+						}
+						messageDialog = labelDialog+" effettuato con successo";
+						noteDialog = null;
+						messagePerOperazioneEffettuata = "Operazione effettuata con successo ("+tipo+")";
+						
+						// Dormo qualche secondo per dare il tempo di fare lo stop/start dell'allarme
+						Utilities.sleep(3000);
+						
 					}
 				}catch(Exception e){
 					String errorMessage = "Errore durante l'aggiornamento ("+tipo+"): "+e.getMessage();

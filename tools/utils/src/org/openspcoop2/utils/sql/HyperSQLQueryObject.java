@@ -37,6 +37,31 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 		super(tipoDatabase);
 	}
 
+	@Override
+	protected String getPrefixCastValue(CastColumnType type, int length) {
+		return "CAST( ";
+	}
+	@Override
+	protected String getSuffixCastValue(CastColumnType type, int length) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(" AS ");
+		switch (type) {
+		case INT:
+			sb.append("INT");
+			break;
+		case LONG:
+			sb.append("BIGINT");
+			break;
+		case STRING:
+			sb.append("VARCHAR("+length+")");
+			break;
+		case TIMESTAMP:
+			sb.append("TIMESTAMP");
+			break;
+		}
+		sb.append(")");
+		return sb.toString();
+	}
 	
 	
 	@Override

@@ -597,16 +597,17 @@ public class LoginBean extends AbstractLoginBean {
 	
 	public String getSoggettoPddMonitor() {
 		if(this.soggettoPddMonitor == null) {
-			try {
-				List<Soggetto> listaSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
-
-				if(listaSoggetti.size() == 1) {
-					IDSoggetto idSoggetto = new IDSoggetto(listaSoggetti.get(0).getTipoSoggetto(), listaSoggetti.get(0).getNomeSoggetto()); 
-					return  idSoggetto.toString();
-				}
-			}catch(Exception e) {
-				return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
-			}
+			// Provocava un bug sul filtro per ruolo operatore, poichè risultava sempre assegnato il soggetto locale, e quindi il filtro per API di un soggetto diverso non comparivano nelle tendine
+//			try {
+//				List<Soggetto> listaSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
+//
+//				if(listaSoggetti.size() == 1) {
+//					IDSoggetto idSoggetto = new IDSoggetto(listaSoggetti.get(0).getTipoSoggetto(), listaSoggetti.get(0).getNomeSoggetto()); 
+//					return  idSoggetto.toString();
+//				}
+//			}catch(Exception e) {
+//				return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
+//			}
 			
 			return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
 		}
@@ -1032,4 +1033,7 @@ public class LoginBean extends AbstractLoginBean {
 		return this.listaNomiGruppi;
 	}
 	
+	public boolean isAmministratore() {
+		return this.getLoggedUser().isAdmin();
+	}
 }

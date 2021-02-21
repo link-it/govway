@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -243,22 +244,22 @@ public class PortaApplicativaFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(PortaApplicativa.model())){
-			return "porte_applicative";
+			return CostantiDB.PORTE_APPLICATIVE;
 		}
 		if(model.equals(PortaApplicativa.model().ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO)){
-			return "porte_applicative_sa";
+			return CostantiDB.PORTE_APPLICATIVE_SA;
 		}
 		if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO)){
-			return "servizi_applicativi";
+			return CostantiDB.SERVIZI_APPLICATIVI;
 		}
 		if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE)){
-			return "pa_azioni";
+			return CostantiDB.PORTE_APPLICATIVE_AZIONI;
 		}
 
 

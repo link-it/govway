@@ -79,8 +79,8 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		super();
 		this.init();
 	}
-	public AndamentoTemporaleBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
-		super(serviceManager);
+	public AndamentoTemporaleBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager) {
+		super(serviceManager, pluginsServiceManager);
 		this.init();
 	}
 	private void init() {

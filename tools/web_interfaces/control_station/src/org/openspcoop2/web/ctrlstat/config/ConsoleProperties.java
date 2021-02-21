@@ -451,69 +451,25 @@ public class ConsoleProperties {
 		return this.readProperty(true, "allarmi.configurazione");
 	}
 	
-	public String getAllarmiActiveServiceUrl() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url");
+	public Boolean isShowAllarmiIdentificativoRuntime() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.identificativoRuntime");
 	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixStartAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.startAlarm");
+	public Boolean isShowAllarmiFormNomeSuggeritoCreazione() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.form.nomeSuggeritoCreazione");
 	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixStopAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.stopAlarm");
+	public Boolean isShowAllarmiFormStatoAllarme() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.form.statoAllarme");
 	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixReStartAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.restartAlarm");
+	public Boolean isShowAllarmiFormStatoAllarmeHistory() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.form.statoAllarme.history");
 	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.ok");
+	public Boolean isShowAllarmiSearchStatiAllarmi() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.search.statoAllarme");
 	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.warning");
+	public Boolean isShowAllarmiElenchiStatiAllarmi() throws UtilsException{
+		return this.readBooleanProperty(true, "allarmi.elenchi.statoAllarme");
 	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateStateAlarm.error");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateAcknoledgement.enabled");
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm() throws Exception{
-		return this.readProperty(true, "allarmi.active.service.url.suffix.updateAcknoledgement.disabled");
-	}
-	
-	public Boolean isAllarmiConsultazioneModificaStatoAbilitata() throws Exception{
-		return this.readBooleanProperty(true, "allarmi.consultazione.modificaStatoAbilitata");
-	}
-	
-	public Boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() throws Exception{
-		return this.readBooleanProperty(true, "allarmi.acknowledged.associazioneStatoAllarme");
-	}
-	
-	public Boolean isAllarmiNotificaMailVisualizzazioneCompleta() throws Exception{
-		return this.readBooleanProperty(true, "allarmi.notificaMail.visualizzazioneCompleta");
-	}
-	
-	public Boolean isAllarmiMonitoraggioEsternoVisualizzazioneCompleta() throws Exception{
-		return this.readBooleanProperty(true, "allarmi.monitoraggioEsterno.visualizzazioneCompleta");
-	}
-	
-	public boolean isAllarmiGroupByApi() throws Exception {
-		return this.readBooleanProperty(true, "allarmi.groupBy.api");
-	}
-	
-	public boolean isAllarmiFiltroApi() throws Exception {
-		return this.readBooleanProperty(true, "allarmi.filtro.api");
-	}
-	
-	public boolean isAllarmiFiltroApiSoggettoErogatore() throws Exception {
-		return this.readBooleanProperty(true, "allarmi.filtro.api.soggettoErogatore");
-	}
+
 	
 	
 	/* ----- Gestione Password ------- */

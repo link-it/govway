@@ -1244,6 +1244,52 @@ public class DBUtils {
 		}
 	}
 	
+	
+	public static long getUrlInvocazioneRegola(String nome, Connection con,String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idRP=-1;
+		try
+		{
+			if(nome==null) {
+				throw new CoreException("Nome non fornito");
+			}
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_URL_REGOLE);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			rs = stm.executeQuery();
+			if(rs.next()) {
+				idRP = rs.getLong("id");
+			}
+			rs.close();
+			stm.close();
+			rs=null;
+			stm=null;
+			
+			return idRP;
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
 
 	/**
 	 * Utility per formattare la string sql con i parametri passati, e stamparla per debug

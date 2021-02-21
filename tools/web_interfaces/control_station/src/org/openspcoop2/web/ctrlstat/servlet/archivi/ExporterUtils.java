@@ -27,7 +27,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.config.CanaleConfigurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
@@ -35,7 +39,9 @@ import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -50,6 +56,8 @@ import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -57,8 +65,6 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.monitor.engine.config.base.IdPlugin;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -68,6 +74,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -181,7 +188,7 @@ public class ExporterUtils {
 	}
 
 	
-	public boolean existsAtLeastOneExportMpde(ArchiveType archiveType, HttpSession session) throws ProtocolException, DriverRegistroServiziException{
+	public boolean existsAtLeastOneExportMode(ArchiveType archiveType, HttpSession session) throws ProtocolException, DriverRegistroServiziException{
 		List<String> protocolli = this.archiviCore.getProtocolli(session);
 		return this.getExportModesWithProtocol(protocolli, archiveType).size()>0;
 	}
@@ -388,7 +395,7 @@ public class ExporterUtils {
 		return idsTokenPolicy;
 	}
 	
-	public List<?> getIdsRateLimitingPolicy(String ids) throws DriverControlStationNotFound, DriverControlStationException{
+	public List<?> getIdsControlloTrafficoConfigPolicy(String ids) throws DriverControlStationNotFound, DriverControlStationException{
 		List<IdPolicy> idsRateLimitingPolicy = new ArrayList<IdPolicy>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
@@ -400,6 +407,51 @@ public class ExporterUtils {
 			idsRateLimitingPolicy.add(idGP);
 		}
 		return idsRateLimitingPolicy;
+	}
+	
+	public List<?> getIdsControlloTrafficoActivePolicy(String ids) throws DriverControlStationNotFound, DriverControlStationException{
+		List<IdActivePolicy> idsRateLimitingPolicy = new ArrayList<IdActivePolicy>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			long idPolicy = Long.parseLong(id);
+			AttivazionePolicy attivazionePolicy =  this.confCore.getAttivazionePolicy(idPolicy); 
+			
+			IdActivePolicy idAttivazionePolicy = new IdActivePolicy();
+			idAttivazionePolicy.setNome(attivazionePolicy.getIdActivePolicy());
+			idAttivazionePolicy.setIdPolicy(attivazionePolicy.getIdPolicy());
+			idAttivazionePolicy.setAlias(attivazionePolicy.getAlias());
+			idAttivazionePolicy.setEnabled(attivazionePolicy.isEnabled());
+			idAttivazionePolicy.setUpdateTime(attivazionePolicy.getUpdateTime());
+			idAttivazionePolicy.setPosizione(attivazionePolicy.getPosizione());
+			idAttivazionePolicy.setContinuaValutazione(attivazionePolicy.isContinuaValutazione());
+			if(attivazionePolicy.getFiltro()!=null) {
+				idAttivazionePolicy.setFiltroRuoloPorta(attivazionePolicy.getFiltro().getRuoloPorta());
+				idAttivazionePolicy.setFiltroNomePorta(attivazionePolicy.getFiltro().getNomePorta());
+			}
+			idsRateLimitingPolicy.add(idAttivazionePolicy);
+		}
+		return idsRateLimitingPolicy;
+	}
+	
+	public List<?> getIdsAllarmi(String ids) throws DriverControlStationNotFound, DriverControlStationException{
+		List<IdAllarme> idsAllarmi = new ArrayList<IdAllarme>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			long idAllarmeLong = Long.parseLong(id);
+			Allarme allarme = this.confCore.getAllarmeSenzaPlugin(idAllarmeLong);
+			
+			IdAllarme idAllarme = new IdAllarme();
+			idAllarme.setNome(allarme.getNome());
+			idAllarme.setTipo(allarme.getTipo());
+			idAllarme.setEnabled(allarme.getEnabled());
+			idAllarme.setAlias(allarme.getAlias());
+			if(allarme.getFiltro()!=null) {
+				idAllarme.setFiltroRuoloPorta(allarme.getFiltro().getRuoloPorta());
+				idAllarme.setFiltroNomePorta(allarme.getFiltro().getNomePorta());
+			}
+			idsAllarmi.add(idAllarme);
+		}
+		return idsAllarmi;
 	}
 	
 	public List<?> getIdsPluginClassi(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
@@ -417,6 +469,35 @@ public class ExporterUtils {
 			idsPlugins.add(idPlugin);
 		}
 		return idsPlugins;
+	}
+	
+	public List<?> getIdsPluginArchivi(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		List<String> idsPlugins = new ArrayList<String>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			idsPlugins.add(id);
+		}
+		return idsPlugins;
+	}
+	
+	public List<?> getIdsUrlInvocazioneRegole(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		ConfigurazioneUrlInvocazione urlInvocazione = this.confCore.getConfigurazioneGenerale().getUrlInvocazione();
+		
+		List<String> idsRegole = new ArrayList<String>();
+		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
+		for (String id : idsToExport) {
+			long idRegolaLong = Long.parseLong(id);
+			
+			for (int j = 0; j < urlInvocazione.sizeRegolaList(); j++) {
+				ConfigurazioneUrlInvocazioneRegola regola = urlInvocazione.getRegola(j); 
+				if (regola.getId().longValue() == idRegolaLong) {
+					idsRegole.add(regola.getNome());
+					break;
+				}
+			}
+		}
+		return idsRegole;
 	}
 	
 	public void filterByProtocol(List<String> tipiSoggetti,List<String> tipiServizi,Archive archive) throws ProtocolException {
@@ -625,6 +706,43 @@ public class ExporterUtils {
 			if(listFiltrata.size()>0) {
 				for (ArchiveActivePolicy archiveFiltrato : listFiltrata) {
 					archive.getControlloTraffico_activePolicies().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// allarmi
+		if(archive.getAllarmi()!=null && archive.getAllarmi().size()>0) {
+			List<ArchiveAllarme> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getAllarmi().size(); i++) {
+				ArchiveAllarme archiveAllarme = archive.getAllarmi().get(i);
+				boolean filtra = false;
+				if(archiveAllarme.getAllarme().getFiltro()!=null) {
+					if(archiveAllarme.getAllarme().getFiltro().getTipoErogatore()!=null) {
+						if(tipiSoggetti.contains(archiveAllarme.getAllarme().getFiltro().getTipoErogatore())==false) {
+							filtra = true;
+						}
+					}
+					if(archiveAllarme.getAllarme().getFiltro().getTipoFruitore()!=null) {
+						if(tipiSoggetti.contains(archiveAllarme.getAllarme().getFiltro().getTipoFruitore())==false) {
+							filtra = true;
+						}
+					}
+					if(archiveAllarme.getAllarme().getFiltro().getTipoServizio()!=null) {
+						if(tipiServizi.contains(archiveAllarme.getAllarme().getFiltro().getTipoServizio())==false) {
+							filtra = true;
+						}
+					}
+				}
+				if(!filtra) {
+					listFiltrata.add(archiveAllarme);
+				}
+			}
+			while(archive.getAllarmi().size()>0) {
+				archive.getAllarmi().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveAllarme archiveFiltrato : listFiltrata) {
+					archive.getAllarmi().add(archiveFiltrato);		
 				}
 			}
 		}
@@ -1063,7 +1181,7 @@ public class ExporterUtils {
 								filtra = true;
 							}
 						}catch(Exception e) {
-							ControlStationCore.logError("ControlloTraffico activePolicies ["+archivePolicy.getNomePolicy()+"]: "+e.getMessage(), e);
+							ControlStationCore.logError("ControlloTraffico activePolicies ["+archivePolicy.getPolicy().getIdActivePolicy()+"]: "+e.getMessage(), e);
 						}
 					}
 				}
@@ -1077,6 +1195,58 @@ public class ExporterUtils {
 			if(listFiltrata.size()>0) {
 				for (ArchiveActivePolicy archiveFiltrato : listFiltrata) {
 					archive.getControlloTraffico_activePolicies().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		
+		// allarmi
+		if(archive.getAllarmi()!=null && archive.getAllarmi().size()>0) {
+			List<ArchiveAllarme> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getAllarmi().size(); i++) {
+				ArchiveAllarme archiveAllarme = archive.getAllarmi().get(i);
+				boolean filtra = false;
+				if(archiveAllarme.getAllarme().getFiltro()!=null) {
+					IDSoggetto idSoggettoErogatore = null;
+					if(archiveAllarme.getAllarme().getFiltro().getTipoErogatore()!=null && archiveAllarme.getAllarme().getFiltro().getNomeErogatore()!=null) {
+						idSoggettoErogatore = new IDSoggetto(archiveAllarme.getAllarme().getFiltro().getTipoErogatore(), archiveAllarme.getAllarme().getFiltro().getNomeErogatore());
+						if(idSoggettiCoinvolti.contains(idSoggettoErogatore)==false) {
+							filtra = true;
+						}
+					}
+					if(archiveAllarme.getAllarme().getFiltro().getTipoFruitore()!=null && archiveAllarme.getAllarme().getFiltro().getNomeFruitore()!=null) {
+						IDSoggetto idSoggettoFruitore = new IDSoggetto(archiveAllarme.getAllarme().getFiltro().getTipoFruitore(), archiveAllarme.getAllarme().getFiltro().getNomeFruitore());
+						if(idSoggettiCoinvolti.contains(idSoggettoFruitore)==false) {
+							filtra = true;
+						}
+					}
+					if(idSoggettoErogatore!=null && 
+							archiveAllarme.getAllarme().getFiltro().getTipoServizio()!=null &&
+							archiveAllarme.getAllarme().getFiltro().getNomeServizio()!=null &&
+							archiveAllarme.getAllarme().getFiltro().getVersioneServizio()!=null) {
+						try {
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(archiveAllarme.getAllarme().getFiltro().getTipoServizio(), 
+									archiveAllarme.getAllarme().getFiltro().getNomeServizio(), 
+									idSoggettoErogatore, 
+									archiveAllarme.getAllarme().getFiltro().getVersioneServizio());
+							if(idServiziCoinvolti.contains(idServizio)==false) {
+								filtra = true;
+							}
+						}catch(Exception e) {
+							ControlStationCore.logError("Allarmi ["+archiveAllarme.getAllarme().getNome()+"]: "+e.getMessage(), e);
+						}
+					}
+				}
+				if(!filtra) {
+					listFiltrata.add(archiveAllarme);
+				}
+			}
+			while(archive.getAllarmi().size()>0) {
+				archive.getAllarmi().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveAllarme archiveFiltrato : listFiltrata) {
+					archive.getAllarmi().add(archiveFiltrato);		
 				}
 			}
 		}

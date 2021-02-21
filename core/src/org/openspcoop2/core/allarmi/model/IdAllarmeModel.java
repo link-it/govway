@@ -42,6 +42,10 @@ public class IdAllarmeModel extends AbstractModel<IdAllarme> {
 	
 		this.NOME = new Field("nome",java.lang.String.class,"id-allarme",IdAllarme.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"id-allarme",IdAllarme.class);
+		this.ENABLED = new Field("enabled",java.lang.Integer.class,"id-allarme",IdAllarme.class);
+		this.ALIAS = new Field("alias",java.lang.String.class,"id-allarme",IdAllarme.class);
+		this.FILTRO_RUOLO_PORTA = new Field("filtro-ruolo-porta",java.lang.String.class,"id-allarme",IdAllarme.class);
+		this.FILTRO_NOME_PORTA = new Field("filtro-nome-porta",java.lang.String.class,"id-allarme",IdAllarme.class);
 	
 	}
 	
@@ -51,6 +55,10 @@ public class IdAllarmeModel extends AbstractModel<IdAllarme> {
 	
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"id-allarme",IdAllarme.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"id-allarme",IdAllarme.class);
+		this.ENABLED = new ComplexField(father,"enabled",java.lang.Integer.class,"id-allarme",IdAllarme.class);
+		this.ALIAS = new ComplexField(father,"alias",java.lang.String.class,"id-allarme",IdAllarme.class);
+		this.FILTRO_RUOLO_PORTA = new ComplexField(father,"filtro-ruolo-porta",java.lang.String.class,"id-allarme",IdAllarme.class);
+		this.FILTRO_NOME_PORTA = new ComplexField(father,"filtro-nome-porta",java.lang.String.class,"id-allarme",IdAllarme.class);
 	
 	}
 	
@@ -59,6 +67,14 @@ public class IdAllarmeModel extends AbstractModel<IdAllarme> {
 	public IField NOME = null;
 	 
 	public IField TIPO = null;
+	 
+	public IField ENABLED = null;
+	 
+	public IField ALIAS = null;
+	 
+	public IField FILTRO_RUOLO_PORTA = null;
+	 
+	public IField FILTRO_NOME_PORTA = null;
 	 
 
 	@Override

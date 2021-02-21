@@ -25,13 +25,13 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckUtils;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyConnector;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyResult;
@@ -358,7 +358,7 @@ public class GestoreLoadBalancerCaching {
 		
 		ConditionalFilterResult filterResult = 
 				ConditionalUtils.filter(pa, message, busta, requestInfo, pddContext, msgDiag, log, 
-						BehaviourType.CONSEGNA_LOAD_BALANCE);
+						TipoBehaviour.CONSEGNA_LOAD_BALANCE);
 		
 		String keyCache = getKeyCache(pa, message, busta, 
 				requestInfo, pddContext, 

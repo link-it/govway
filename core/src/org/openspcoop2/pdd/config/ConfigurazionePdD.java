@@ -88,9 +88,10 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.monitor.engine.config.base.IdPlugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
+import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -1720,6 +1721,9 @@ public class ConfigurazionePdD  {
 				if("getServizioApplicativoByCredenzialiApiKey".equals(methodName) && i==2) {
 					classArgoments[i] = boolean.class;
 				}
+				else if("instanceAllarmi".equals(methodName) && i==0) {
+					classArgoments[i] = List.class;
+				}
 				values[i] = instances[i];
 			}
 		}
@@ -1830,6 +1834,9 @@ public class ConfigurazionePdD  {
 				}
 				if("getServizioApplicativoByCredenzialiApiKey".equals(methodNameParam) && i==2) {
 					classArgoments[i] = boolean.class;
+				}
+				else if("instanceAllarmi".equals(methodNameParam) && i==0) {
+					classArgoments[i] = List.class;
 				}
 				values[i] = instances[i];
 			}
@@ -4419,6 +4426,14 @@ public class ConfigurazionePdD  {
 	public List<IAlarm> instanceAllarmi(Connection connectionPdD, List<Allarme> listAllarmi) throws DriverConfigurazioneException {
 		try {
 			return (List<IAlarm>) this.getObject("instanceAllarmi",connectionPdD, ConfigurazionePdDType.allarmi, listAllarmi);
+		}catch(DriverConfigurazioneNotFound e) {
+			throw new DriverConfigurazioneException(e.getMessage(), e);
+		}
+	}
+	
+	public void changeStatus(Connection connectionPdD, IAlarm alarm, AlarmStatus nuovoStatoAllarme) throws DriverConfigurazioneException {
+		try {
+			this.getObject("changeStatus",connectionPdD, ConfigurazionePdDType.allarmi, alarm, nuovoStatoAllarme);
 		}catch(DriverConfigurazioneNotFound e) {
 			throw new DriverConfigurazioneException(e.getMessage(), e);
 		}

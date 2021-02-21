@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
@@ -241,9 +242,14 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			}else if(this.getSearch().getTipoNomeSoggettoLocale()!=null && !StringUtils.isEmpty(this.getSearch().getTipoNomeSoggettoLocale())	&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())){
 				String tipoSoggetto = this.getSearch().getTipoSoggettoLocale();
 				String nomeSoggetto = this.getSearch().getSoggettoLocale();
-				IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto, nomeSoggetto); 
-				String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto ) : NamingUtils.getLabelSoggetto(idSoggetto);
-				this.labelInformazioniServizi = MessageFormat.format(CostantiConfigurazioni.LABEL_INFORMAZIONI_SOGGETTO, label);
+				if(nomeSoggetto!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggetto)) {
+					IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto, nomeSoggetto); 
+					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto ) : NamingUtils.getLabelSoggetto(idSoggetto);
+					this.labelInformazioniServizi = MessageFormat.format(CostantiConfigurazioni.LABEL_INFORMAZIONI_SOGGETTO, label);
+				}
+				else {
+					this.labelInformazioniServizi = CostantiConfigurazioni.LABEL_SERVIZI;
+				}
 			}else {
 				// non ho selezionato ne servizio ne soggetto
 				this.labelInformazioniServizi = CostantiConfigurazioni.LABEL_SERVIZI;

@@ -46,6 +46,7 @@ public class CheckBox extends BaseComponent<Boolean> {
 		DataElement de = new DataElement();
 		de.setName(this.getId());
 		de.setLabel(this.getRendering().getLabel()); 
+		de.setLabelRight(this.getRendering().getLabelRight());
 		de.setPostBack_viaPOST(this.getRefreshParamIds().size() > 0);
 		de.setRequired(this.getRendering().isRequired()); 
 		de.setNote(this.getRendering().getSuggestion());

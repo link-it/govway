@@ -101,6 +101,7 @@ import org.openspcoop2.core.config.TrasformazioneSoap;
 import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PluginCostanti;
@@ -172,12 +173,11 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
@@ -215,6 +215,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.DynamicStringReplace;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
@@ -1620,7 +1621,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1689,7 +1690,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 						index++;
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
@@ -1739,7 +1740,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					String[][] entriesUtenti = null;
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1784,7 +1785,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 							index++;
-							if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
+							if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
@@ -1840,7 +1841,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					int dimensioneEntries = 1; //  audit
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1882,7 +1883,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 						index++;
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
@@ -1930,7 +1931,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					String[][] entriesUtenti = null;
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1975,7 +1976,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 							index++;
-							if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
+							if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
@@ -2350,6 +2351,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*$")) {
 			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'");
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean checkNCNameAndSerial(String name, String object) throws Exception{
+		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
+		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*@[0-9]*$")) {
+			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.', infine deve terminare con @ e numeri interi");
 			return false;
 		}
 		return true;
@@ -7770,7 +7780,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setToolTip(canaleTooltip);
 	}
 	
-	public void setStatoAllarmi(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound {
+	public void setStatoAllarmi(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound, UtilsException {
+		if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+			setStatoAllarmi_showStati(de, listaAllarmi);
+		}
+		else {
+			setStatoAllarmi_showTipi(de, listaAllarmi);
+		}
+	}
+	public void setStatoAllarmi_showStati(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound {
+		
 		de.setType(DataElementType.CHECKBOX);
 		if(listaAllarmi!=null && listaAllarmi.size()>0) {
 			Integer countOk = 0;
@@ -7833,6 +7852,67 @@ public class ConsoleHelper implements IConsoleHelper {
 					bf.append(" (").append(countError).append(")");
 					de.addStatus(bf.toString(), CheckboxStatusType.CONFIG_ERROR);
 				}
+			}
+			else {
+				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+				de.setStatusToolTip("Sull'API sono registrati "+listaAllarmi.size()+" allarmi tutti con stato disabilitato");
+			}
+			
+		}
+		else {
+			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+		}
+	}
+	public void setStatoAllarmi_showTipi(DataElement de, List<ConfigurazioneAllarmeBean> listaAllarmi) throws DriverControlStationException, DriverControlStationNotFound {
+		de.setType(DataElementType.CHECKBOX);
+		if(listaAllarmi!=null && listaAllarmi.size()>0) {
+			Hashtable<String, Integer> mapActive = new Hashtable<>();
+			for (ConfigurazioneAllarmeBean allarme : listaAllarmi) {
+				if(allarme.getEnabled().intValue()==0) {
+					continue;
+				}
+				//String tipoPlugin = allarme.getPlugin().getLabel();
+				String tipoPlugin = allarme.getPlugin().getTipo(); // più compatto
+				
+				Integer count = null;
+				if(mapActive.containsKey(tipoPlugin)){
+					count = mapActive.remove(tipoPlugin);
+				}
+				else {
+					count = 0;
+				}
+				count ++;
+				mapActive.put(tipoPlugin, count);	
+			}
+			
+			if(mapActive.size()>0) {
+				
+				if(mapActive.size()>0) {
+					StringBuilder bf = new StringBuilder();
+					Enumeration<String> enKeys = mapActive.keys();
+					while (enKeys.hasMoreElements()) {
+						String risorsa = (String) enKeys.nextElement();
+						Integer count = mapActive.get(risorsa);
+						if(bf.length()>0) {
+							bf.append(", ");
+						}
+						bf.append(risorsa);
+						if(count>1) {
+							bf.append("(").append(count).append(")");
+						}
+					}
+					if(bf.length()>0 && bf.length()<CostantiControlStation.MAX_LENGTH_VALORE_STATO_ALLARMI) {
+						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [ "+bf.toString()+" ]";
+						de.addStatus(value, CheckboxStatusType.CONFIG_ENABLE);
+					}
+					else {
+						String value = this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO);
+						de.addStatus(bf.toString(), value, CheckboxStatusType.CONFIG_ENABLE);
+					}
+				} 
+				
 			}
 			else {
 				de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
@@ -15824,21 +15904,28 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (AttivazionePolicy policy : listPolicies) {
 				if(policy.getFiltro()!=null && policy.getFiltro().getAzione()!=null) {
 					for (String azioneTmp : azioni) {
-						if(azioneTmp.equals(policy.getFiltro().getAzione())) {
-							String nomePolicy = policy.getAlias();
-							if(nomePolicy==null || "".equals(nomePolicy)) {
-								nomePolicy = policy.getIdActivePolicy();
+						
+						String [] tmp = policy.getFiltro().getAzione().split(",");
+						if(tmp!=null && tmp.length>0) {
+							for (String az : tmp) {
+								if(azioneTmp.equals(az)) {
+									String nomePolicy = policy.getAlias();
+									if(nomePolicy==null || "".equals(nomePolicy)) {
+										nomePolicy = policy.getIdActivePolicy();
+									}
+									if(sizeGruppi>1) {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING_GRUPPO, 
+												azioneTmp, nomePolicy, descrizioneGruppo));
+									}
+									else {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING, 
+												azioneTmp, nomePolicy, descrizioneGruppo));
+									}
+									return false;	
+								}
 							}
-							if(sizeGruppi>1) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING_GRUPPO, 
-										azioneTmp, nomePolicy, descrizioneGruppo));
-							}
-							else {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING, 
-										azioneTmp, nomePolicy, descrizioneGruppo));
-							}
-							return false;	
 						}
+						
 					}
 				}
 			}
@@ -15849,21 +15936,28 @@ public class ConsoleHelper implements IConsoleHelper {
 			for (Allarme allarme : listAllarmi) {
 				if(allarme.getFiltro()!=null && allarme.getFiltro().getAzione()!=null) {
 					for (String azioneTmp : azioni) {
-						if(azioneTmp.equals(allarme.getFiltro().getAzione())) {
-							String nomeAllarme = allarme.getAlias();
-							if(nomeAllarme==null || "".equals(nomeAllarme)) {
-								nomeAllarme = allarme.getNome();
+						
+						String [] tmp = allarme.getFiltro().getAzione().split(",");
+						if(tmp!=null && tmp.length>0) {
+							for (String az : tmp) {
+								if(azioneTmp.equals(az)) {
+									String nomeAllarme = allarme.getAlias();
+									if(nomeAllarme==null || "".equals(nomeAllarme)) {
+										nomeAllarme = allarme.getNome();
+									}
+									if(sizeGruppi>1) {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME_GRUPPO, 
+												azioneTmp, nomeAllarme, descrizioneGruppo));
+									}
+									else {
+										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME, 
+												azioneTmp, nomeAllarme, descrizioneGruppo));
+									}
+									return false;	
+								}
 							}
-							if(sizeGruppi>1) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME_GRUPPO, 
-										azioneTmp, nomeAllarme, descrizioneGruppo));
-							}
-							else {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME, 
-										azioneTmp, nomeAllarme, descrizioneGruppo));
-							}
-							return false;	
 						}
+						
 					}
 				}
 			}
@@ -16366,7 +16460,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public String getNomiConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound, NotFoundException {
 		StringBuilder sbConnettoriMultipli = new StringBuilder();
 		
-		BehaviourType behaviourType = BehaviourType.toEnumConstant(paAssociata.getBehaviour().getNome());
+		TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(paAssociata.getBehaviour().getNome());
 		switch (behaviourType) {
 		case CONSEGNA_LOAD_BALANCE:
 			String loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(paAssociata.getBehaviour());

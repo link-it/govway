@@ -1,12 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition template="/templates/defaultTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j" xmlns:link="http://www.link.it">
-
-<ui:composition template="/templates/defaultTemplate.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:link="http://www.link.it"
+	xmlns:fc="http://www.fusioncharts.com"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" />
+    
 	<ui:define name="navbar">
 		<ul>
 			<li>
@@ -17,12 +20,13 @@
 	<ui:define name="navbar">
 			<ul>
 				<li>
-					<h:commandLink action="allarmi" value="/Monitoraggio Allarmi" rendered="#{true}"/>
+					<h:commandLink action="allarmi" value="Allarmi" rendered="#{true}"/>
 				</li>
 				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
 				<li>
-					<a4j:htmlCommandLink id="dettaglioAllarmeStato" action="#{allarmiBean.dettaglioHistoryAllarme}" value="Stato Allarme (#{allarmiBean.allarme.nome})" rendered="#{true}">
+					<a4j:htmlCommandLink id="dettaglioAllarmeStato" action="#{allarmiBean.dettaglioAllarme}" value="Dettagli Allarme (#{allarmiBean.allarme.alias})" rendered="#{true}">
 						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+						<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
 	                </a4j:htmlCommandLink>
 				</li>
 				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
@@ -73,21 +77,25 @@
 						<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{item.acknowledged==0}" id="outAcknowledged3"/>
 					</rich:column>
 					
-					<rich:column>
-						<f:facet name="header">
-							<h:outputText value="Dettaglio" />
-						</f:facet>
-						<h:outputText value="#{item.dettaglioStatoAbbr}" id="allDettStato"/>
-						<rich:toolTip for="allDettStato">
-							<h:outputText value="#{item.dettaglioStatoHtmlEscaped}" escape="false" />
-						</rich:toolTip>
-					</rich:column>
-					
 					<rich:column id="colUtente">
 						<f:facet name="header">
 							<h:outputText id="outUtente" value="Utente" />
 						</f:facet>
 						<h:outputText value="#{item.utente}" readonly="true" style="width: 412px" id="outUtente2"/>
+					</rich:column>
+					
+					<rich:column  align="center" width="60px">
+						<f:facet name="header">
+							<h:outputText value="Dettaglio" id="outDettaglio" />
+						</f:facet>
+						<h:panelGroup layout="block" style="width: 60px;">
+							<a4j:htmlCommandLink id="dettaglio-iconLink" value="" action="#{allarmiBean.dettaglioStatoAllarme}">
+								<i class="material-icons md-18" id="iconaDettaglioOpen">&#xE8B6;</i>
+								<rich:toolTip id="dettaglioToolLink" for="dettaglio-iconLink" mode="client" value="Visualizza Dettaglio" />
+								<f:setPropertyActionListener value="#{item}" target="#{allarmiBean.allarmeHistory}" />
+								<f:setPropertyActionListener value="stato" target="#{allarmiBean.selectedTab}"/>
+							</a4j:htmlCommandLink>
+						</h:panelGroup>
 					</rich:column>
 					
 				</link:dataTable>
@@ -96,5 +104,3 @@
 
 	</ui:define>
 </ui:composition>
-
-</html>

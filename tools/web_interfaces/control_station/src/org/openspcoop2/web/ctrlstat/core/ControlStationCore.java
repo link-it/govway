@@ -53,6 +53,8 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -115,8 +117,9 @@ import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
@@ -156,7 +159,6 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.openspcoop2.web.ctrlstat.config.AllarmiConsoleConfig;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -890,9 +892,33 @@ public class ControlStationCore {
 	public boolean isConfigurazioneAllarmiEnabled() {
 		return this.configurazioneAllarmiEnabled;
 	}
-	private AllarmiConfig allarmiConfig = null;
-	public AllarmiConfig getAllarmiConfig() {
+	private AlarmEngineConfig allarmiConfig = null;
+	public AlarmEngineConfig getAllarmiConfig() {
 		return this.allarmiConfig;
+	}
+	private boolean showAllarmiIdentificativoRuntime = false;
+	public Boolean isShowAllarmiIdentificativoRuntime() throws UtilsException{
+		return this.showAllarmiIdentificativoRuntime;
+	}
+	private boolean showAllarmiFormNomeSuggeritoCreazione = false;
+	public Boolean isShowAllarmiFormNomeSuggeritoCreazione() throws UtilsException{
+		return this.showAllarmiFormNomeSuggeritoCreazione;
+	}
+	private boolean showAllarmiFormStatoAllarme = false;
+	public Boolean isShowAllarmiFormStatoAllarme() throws UtilsException{
+		return this.showAllarmiFormStatoAllarme;
+	}
+	private boolean showAllarmiFormStatoAllarmeHistory = false;
+	public Boolean isShowAllarmiFormStatoAllarmeHistory() throws UtilsException{
+		return this.showAllarmiFormStatoAllarmeHistory;
+	}
+	private boolean showAllarmiSearchStatiAllarmi = false;
+	public Boolean isShowAllarmiSearchStatiAllarmi() throws UtilsException{
+		return this.showAllarmiSearchStatiAllarmi;
+	}
+	private boolean showAllarmiElenchiStatiAllarmi = false;
+	public Boolean isShowAllarmiElenchiStatiAllarmi() throws UtilsException{
+		return this.showAllarmiElenchiStatiAllarmi;
 	}
 	
 	/** Parametri pdd */
@@ -2383,6 +2409,12 @@ public class ControlStationCore {
 		/** Configurazione Allarmi */
 		this.configurazioneAllarmiEnabled = core.configurazioneAllarmiEnabled;
 		this.allarmiConfig = core.allarmiConfig;
+		this.showAllarmiIdentificativoRuntime = core.showAllarmiIdentificativoRuntime;
+		this.showAllarmiFormNomeSuggeritoCreazione = core.showAllarmiFormNomeSuggeritoCreazione;
+		this.showAllarmiFormStatoAllarme = core.showAllarmiFormStatoAllarme;
+		this.showAllarmiFormStatoAllarmeHistory = core.showAllarmiFormStatoAllarmeHistory;
+		this.showAllarmiSearchStatiAllarmi = core.showAllarmiSearchStatiAllarmi;
+		this.showAllarmiElenchiStatiAllarmi = core.showAllarmiElenchiStatiAllarmi;
 		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
@@ -2749,7 +2781,15 @@ public class ControlStationCore {
 			this.configurazionePluginsEnabled = consoleProperties.isConfigurazionePluginsEnabled();
 			this.configurazionePluginsSeconds = consoleProperties.getPluginsSeconds();
 			this.configurazioneAllarmiEnabled = consoleProperties.isConfigurazioneAllarmiEnabled();
-			this.allarmiConfig = new AllarmiConsoleConfig(consoleProperties);
+			if(this.configurazioneAllarmiEnabled) {
+				this.allarmiConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), consoleProperties.getAllarmiConfigurazione());
+				this.showAllarmiIdentificativoRuntime = consoleProperties.isShowAllarmiIdentificativoRuntime();
+				this.showAllarmiFormNomeSuggeritoCreazione = consoleProperties.isShowAllarmiFormNomeSuggeritoCreazione();
+				this.showAllarmiFormStatoAllarme = consoleProperties.isShowAllarmiFormStatoAllarme();
+				this.showAllarmiFormStatoAllarmeHistory = consoleProperties.isShowAllarmiFormStatoAllarmeHistory();
+				this.showAllarmiSearchStatiAllarmi = consoleProperties.isShowAllarmiSearchStatiAllarmi();
+				this.showAllarmiElenchiStatiAllarmi = consoleProperties.isShowAllarmiElenchiStatiAllarmi();
+			}
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
@@ -2912,7 +2952,7 @@ public class ControlStationCore {
 					this.jmxPdD_aliases = new ArrayList<String>();
 					PddCore pddCore = new PddCore(this);
 					try{
-						List<PdDControlStation> pddList = pddCore.pddList(null, new Search());
+						List<PdDControlStation> pddList = pddCore.pddList(null, new Search(true));
 						for (PdDControlStation pddControlStation : pddList) {
 							if(PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
 								this.jmxPdD_aliases.add(pddControlStation.getNome());
@@ -3573,6 +3613,13 @@ public class ControlStationCore {
 
 						doSetDati = false;
 					}
+					// ConfigurazioneUrlInvocazioneRegola
+					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
+						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
+						driver.getDriverConfigurazioneDB().createUrlInvocazioneRegola(regola);
+	
+						doSetDati = false;
+					}
 
 					/***********************************************************
 					 * Operazioni su Registro *
@@ -4113,6 +4160,28 @@ public class ControlStationCore {
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().updateSystemPropertiesPdD(sps);
+						doSetDati = false;
+					}
+					// ConfigurazioneUrlInvocazioneRegola
+					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
+						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
+						driver.getDriverConfigurazioneDB().updateUrlInvocazioneRegola(regola);
+						doSetDati = false;
+					}
+					// ConfigurazioneUrlInvocazione
+					if (oggetto instanceof ConfigurazioneUrlInvocazione) {
+						ConfigurazioneUrlInvocazione confConfigurazioneUrlInvocazione = (ConfigurazioneUrlInvocazione) oggetto;
+						
+						Configurazione config = driver.getDriverConfigurazioneDB().getConfigurazioneGenerale();
+						if(config.getUrlInvocazione()==null) {
+							config.setUrlInvocazione(confConfigurazioneUrlInvocazione);
+						}
+						else {
+							config.getUrlInvocazione().setBaseUrl(confConfigurazioneUrlInvocazione.getBaseUrl());
+							config.getUrlInvocazione().setBaseUrlFruizione(confConfigurazioneUrlInvocazione.getBaseUrlFruizione());
+						}
+						
+						driver.getDriverConfigurazioneDB().updateConfigurazione(config);
 						doSetDati = false;
 					}
 
@@ -4687,6 +4756,12 @@ public class ControlStationCore {
 					if (oggetto instanceof SystemProperties) {
 						SystemProperties sps = (SystemProperties) oggetto;
 						driver.getDriverConfigurazioneDB().deleteSystemPropertiesPdD(sps);
+						doSetDati = false;
+					}
+					// ConfigurazioneUrlInvocazioneRegola
+					if (oggetto instanceof ConfigurazioneUrlInvocazioneRegola) {
+						ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) oggetto;
+						driver.getDriverConfigurazioneDB().deleteUrlInvocazioneRegola(regola);
 						doSetDati = false;
 					}
 

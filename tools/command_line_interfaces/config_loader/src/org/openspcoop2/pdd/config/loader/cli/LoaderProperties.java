@@ -54,7 +54,9 @@ public class LoaderProperties {
 	private String protocolloDefault = null;
 	
 	private boolean policy_enable = false;
-	private boolean configurazioneGenerare_enable = false;
+	private boolean plugin_enable = false;
+	private boolean plugin_checkReferences = false;
+	private boolean configurazioneGenerale_enable = false;
 	
 	private String nomePddOperativa = null;
 	private String tipoPddArchivio = null;
@@ -90,7 +92,9 @@ public class LoaderProperties {
 		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);
 		
 		this.policy_enable = this.getBooleanProperty(props, "policy.enable", true);
-		this.configurazioneGenerare_enable = this.getBooleanProperty(props, "configurazioneGenerare.enable", true);
+		this.plugin_enable = this.getBooleanProperty(props, "plugin.enable", true);
+		this.plugin_checkReferences = this.getBooleanProperty(props, "plugin.checkReferences", true);
+		this.configurazioneGenerale_enable = this.getBooleanProperty(props, "configurazioneGenerale.enable", true);
 		
 		this.nomePddOperativa = this.getProperty(props, "nomePddOperativa", false);
 		this.tipoPddArchivio = this.getProperty(props, "tipoPddArchivio", true);
@@ -161,8 +165,14 @@ public class LoaderProperties {
 	public boolean isPolicy_enable() {
 		return this.policy_enable;
 	}
-	public boolean isConfigurazioneGenerare_enable() {
-		return this.configurazioneGenerare_enable;
+	public boolean isPlugin_enable() {
+		return this.plugin_enable;
+	}
+	public boolean isPlugin_checkReferences() {
+		return this.plugin_checkReferences;
+	}
+	public boolean isConfigurazioneGenerale_enable() {
+		return this.configurazioneGenerale_enable;
 	}
 	
 	public String getNomePddOperativa() {

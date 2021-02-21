@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaSettimanale;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.Statistica;
 
 
@@ -58,6 +59,8 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object.getStatisticaBase(), "setData", StatisticaSettimanale.model().STATISTICA_BASE.DATA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data", StatisticaSettimanale.model().STATISTICA_BASE.DATA.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setStatoRecord", StatisticaSettimanale.model().STATISTICA_BASE.STATO_RECORD.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "stato_record", StatisticaSettimanale.model().STATISTICA_BASE.STATO_RECORD.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaSettimanale.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "id_porta", StatisticaSettimanale.model().STATISTICA_BASE.ID_PORTA.getFieldType()));
 				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
@@ -102,6 +105,8 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "gruppi", StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaSettimanale.model().STATISTICA_BASE.URI_API.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "uri_api", StatisticaSettimanale.model().STATISTICA_BASE.URI_API.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setClusterId", StatisticaSettimanale.model().STATISTICA_BASE.CLUSTER_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id", StatisticaSettimanale.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -207,6 +212,8 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.id"));
 				setParameter(object.getStatisticaBase(), "setData", StatisticaSettimanale.model().STATISTICA_BASE.DATA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.data"));
+				setParameter(object.getStatisticaBase(), "setStatoRecord", StatisticaSettimanale.model().STATISTICA_BASE.STATO_RECORD.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.stato-record"));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaSettimanale.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.id-porta"));
 				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
@@ -251,6 +258,8 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.gruppi"));
 				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaSettimanale.model().STATISTICA_BASE.URI_API.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.uri-api"));
+				setParameter(object.getStatisticaBase(), "setClusterId", StatisticaSettimanale.model().STATISTICA_BASE.CLUSTER_ID.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.cluster-id"));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.numero-transazioni"));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -351,10 +360,10 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(StatisticaSettimanale.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("statistiche_settimanali","id","seq_statistiche_settimanali","statistiche_settimanali_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_SETTIMANALI,"id","seq_"+CostantiDB.STATISTICHE_SETTIMANALI,CostantiDB.STATISTICHE_SETTIMANALI+"_init_seq");
 			}
 			if(model.equals(StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("stat_settimane_contenuti","id","seq_stat_settimane_contenuti","stat_settimane_contenuti_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_SETTIMANALI_CONTENUTI,"id","seq_"+CostantiDB.STATISTICHE_SETTIMANALI_CONTENUTI,CostantiDB.STATISTICHE_SETTIMANALI_CONTENUTI+"_init_seq");
 			}
 			
 			else{

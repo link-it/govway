@@ -24,8 +24,8 @@ import java.util.Map;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
+import org.openspcoop2.monitor.sdk.exceptions.AlarmNotifyException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
-import org.slf4j.Logger;
 
 /**     
  * IAlarm
@@ -38,6 +38,8 @@ public interface IAlarm {
 	
 	public String getId();
 	
+	public String getNome();
+	
 	public Allarme getConfigAllarme();
 	
 	public AlarmStatus getStatus();
@@ -46,7 +48,7 @@ public interface IAlarm {
 	
 	public Map<String, Parameter<?>> getParameters();
 		
-	public Logger getLogger();
+	public IAlarmLogger getLogger();
 	
 	public DAOFactory getDAOFactory();
 
@@ -57,6 +59,7 @@ public interface IAlarm {
 	 * @throws AlarmException
 	 */
 	
-	public void changeStatus(AlarmStatus statoAllarme) throws AlarmException;
+	public void changeStatus(AlarmStatus statoAllarme) throws AlarmException, AlarmNotifyException;
 
+	public boolean isManuallyUpdateState();
 }

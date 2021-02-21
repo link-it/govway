@@ -41,8 +41,10 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeFiltro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoPeriodo;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
@@ -52,7 +54,6 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.commons.SearchUtils;
-import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -122,6 +123,8 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -136,17 +139,16 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.AlarmContext;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicValidator;
 import org.openspcoop2.monitor.sdk.condition.Context;
+import org.openspcoop2.monitor.sdk.constants.ParameterType;
 import org.openspcoop2.monitor.sdk.exceptions.ValidationException;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -158,13 +160,17 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
+import org.openspcoop2.protocol.sdk.archive.ExportMode;
+import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.DAOConsoleFactory;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
@@ -175,11 +181,13 @@ import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -193,6 +201,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
+import org.openspcoop2.web.lib.mvc.dynamic.components.Hidden;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -3939,6 +3948,34 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			else
 				de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS);
 			dati.addElement(de);
+			
+
+			String send = ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT+"?"+
+					ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE.name();
+			List<String> protocolli = this.confCore.getProtocolli(this.session, true);
+			String protocollo = protocolli.get(0);
+			if(protocollo!=null && !"".equals(protocollo)){
+				send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO+"="+ protocollo;
+			}
+			ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+			List<ExportMode> exportModes = exporterUtils.getExportModesCompatibleWithAllProtocol(protocolli, ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE);
+			String exportMode = null;
+			if(exportModes!=null) {
+				if(exportModes.contains(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE)){
+					exportMode = org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.toString();
+				}else{
+					exportMode = exportModes.get(0).toString();
+				}
+			}
+			if(exportMode!=null && !"".equals(exportMode)){
+				send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO+"="+ exportMode;
+			}
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(send);
+			de.setValue(ConfigurazioneCostanti.LABEL_ESPORTA_URL_INVOCAZIONE);
+			dati.addElement(de);
+			
 		}
 		
 		
@@ -6838,6 +6875,82 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_REPOSITORY_STATEFUL_THREAD);
 
+		if(this.confCore.isConfigurazioneAllarmiEnabled()) {
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			AlarmEngineConfig alarmEngineConfig = this.confCore.getAllarmiConfig();
+			stato = null;
+			try{
+				stato = AllarmiUtils.getActiveThreadImages(this.log, alarmEngineConfig);
+			}catch(Exception e){
+				this.log.error("Riscontrato errore durante la lettura dello stato degli allarmi attivi: "+e.getMessage(),e);
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			
+			
+			if(stato !=null && !"".equals(stato)) {
+			
+				de = newDataElementStyleRuntime();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP);
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP);
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP);
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+				
+				de = newDataElementStyleRuntime();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART);
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART);
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART);
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+
+			}
+			else {
+				
+				boolean existsAllarmi = this.confCore.existsAllarmi(TipoAllarme.ATTIVO);
+				if(existsAllarmi) {
+					de = newDataElementStyleRuntime();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START);
+					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START);
+					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
+							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START);
+					de.setType(DataElementType.LINK);
+					dati.addElement(de);
+				}
+				
+			}
+			
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STATO);
+			if("".equals(stato)) {
+				stato = "Nessun allarme attivo";
+			}
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI);
+			de.setSize(this.getSize());
+			de.setRows(5);
+			de.setCols(80);
+			dati.addElement(de);
+			
+		}
 		
 		return dati;
 	}
@@ -8075,6 +8188,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -8607,6 +8747,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport() && (nomePorta==null || StringUtils.isEmpty(nomePorta))) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -10562,9 +10729,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// con stato allarme
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL);
-		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
-		if(condizionata && this.isAllarmiModuleEnabled()){
+		//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL);
+		//de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
+		de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
+		if(condizionata && this.confCore.isConfigurazioneAllarmiEnabled()){
 			if(editMode) {
 				de.setType(DataElementType.CHECKBOX);
 				
@@ -10585,7 +10753,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(policy.isApplicabilitaStatoAllarme()+"");
 		dati.addElement(de);
 		
-		if(!editMode && condizionata && this.isAllarmiModuleEnabled()){
+		if(!editMode && condizionata && this.confCore.isConfigurazioneAllarmiEnabled()){
 			// Il valore del parametor originale viene passato come hidden
 			// L'elemento seguente serve solo come presentation, infatti il nome del parametro termina con un suffisso noEdit
 			if(policy.isApplicabilitaStatoAllarme()) {
@@ -10984,21 +11152,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			dati.addElement(de);
 		}
 		
-		List<String> allarmi = null;
+		List<String> allarmi_id = null;
+		List<String> allarmi_alias = null;
 		if(policy.isApplicabilitaStatoAllarme()){
-			throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); 
-			
-//			try{
-//				allarmi = AllarmiCore.getAllIdAllarmi();
-//			}catch(Exception eError){
-//				this.log.error(eError.getMessage(),eError);
-//			}
+			try{
+				// Permetto di creare policy legate solamente a allarmi globali
+				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new Search(true), null, null);
+				if(listAllarmiGlobali!=null && !listAllarmiGlobali.isEmpty()) {
+					allarmi_id = new ArrayList<String>();
+					allarmi_alias = new ArrayList<String>();
+					for (Allarme allarme : listAllarmiGlobali) {
+						allarmi_id.add(allarme.getNome());
+						allarmi_alias.add(allarme.getAlias());
+					}
+				}
+			}catch(Exception eError){
+				this.log.error(eError.getMessage(),eError);
+			}
 		}
-		if(allarmi==null){
-			allarmi = new ArrayList<String>();
+		if(allarmi_id==null){
+			allarmi_id = new ArrayList<String>();
 		}
 		
-		if(policy.isApplicabilitaStatoAllarme() && allarmi.size()<=0){
+		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()<=0){
 			DataElement de = new DataElement();
 			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NON_ESISTENTI);
 			de.setType(DataElementType.NOTE);
@@ -11009,23 +11185,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME);
-		if(policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			String [] values = null;
+			String [] labels = null;
 			int index = 0;
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
-				values = new String[allarmi.size()];
+				values = new String[allarmi_id.size()];
+				labels = new String[allarmi_alias.size()];
 			}
 			else{
-				values = new String[allarmi.size() + 1];
+				values = new String[allarmi_id.size() + 1];
+				labels = new String[allarmi_alias.size() + 1];
 				values[0] = "-";
+				labels[0] = "-";
 				index = 1;
 			}
 
-			for (String allarme : allarmi) {
-				values[index++] = allarme;
+			for (int i = 0; i < allarmi_id.size(); i++) {
+				values[index] = allarmi_id.get(i);
+				labels[index++] = allarmi_alias.get(i);
 			}
 			de.setType(DataElementType.SELECT);
 			de.setValues(values);
+			de.setLabels(labels);
 			if(policy.getAllarmeNome()!=null){
 				de.setSelected(policy.getAllarmeNome());
 			}
@@ -11044,7 +11226,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
-		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
 			// L'elemento seguente serve solo come presentation, infatti il nome del parametro termina con un suffisso noEdit
 			de = new DataElement();
@@ -11061,7 +11243,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO);
-		if(policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			if(editMode) {
 				de.setType(DataElementType.CHECKBOX);
 			}
@@ -11077,7 +11259,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(policy.isAllarmeNotStato()+"");
 		dati.addElement(de);
 		
-		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
 			// L'elemento seguente serve solo come presentation, infatti il nome del parametro termina con un suffisso noEdit
 			de = new DataElement();
@@ -11099,7 +11281,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO);
-		if(policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			de.setType(DataElementType.SELECT);
 			de.setValues(ConfigurazioneCostanti.CONFIGURAZIONE_STATI_ALLARMI);
 			de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATI_ALLARMI);
@@ -11123,7 +11305,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
-		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi.size()>0){
+		if(!editMode && policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			// Il valore del parametor originale viene passato come hidden
 			// L'elemento seguente serve solo come presentation, infatti il nome del parametro termina con un suffisso noEdit
 			de = new DataElement();
@@ -11356,46 +11538,37 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		if(policy.isApplicabilitaStatoAllarme()){
-			throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); 
-//			List<String> allarmi = null;
-//			try{
-//				allarmi = AllarmiCore.getAllIdAllarmi();
-//			}catch(Exception eError){
-//				this.log.error(eError.getMessage(),eError);
-//			}
+			List<String> allarmi = null;
+			try{
+				List<Allarme> listAllarmiGlobali = this.confCore.allarmiSenzaPluginList(new Search(true), null, null);
+				if(listAllarmiGlobali!=null && !listAllarmiGlobali.isEmpty()) {
+					allarmi = new ArrayList<String>();
+					for (Allarme allarme : listAllarmiGlobali) {
+						allarmi.add(allarme.getNome());
+					}
+				}
+			}catch(Exception eError){
+				this.log.error(eError.getMessage(),eError);
+			}
 
-//			if(allarmi==null || allarmi.size()<=0){
-//				String messaggio = "Non risultano attivi allarmi; disabilitare l'opzione '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL+"'";
-//				this.pd.setMessage(messaggio);
-//				return false;
-//			}			
-//			else{
-//				if(policy.getAllarmeNome()==null || "".equals(policy.getAllarmeNome())  || "-".equals(policy.getAllarmeNome())) {
-//					String messaggio = "Selezionare uno degli allarmi indicati in '"+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ALLARME
-//							+" - "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME+"'";
-//					this.pd.setMessage(messaggio);
-//				return false;
-//				}
-//			}
+			if(allarmi==null || allarmi.size()<=0){
+				String messaggio = "Non risultano attivi allarmi; disabilitare l'opzione '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL+"'";
+				this.pd.setMessage(messaggio);
+				return false;
+			}			
+			else{
+				if(policy.getAllarmeNome()==null || "".equals(policy.getAllarmeNome())  || "-".equals(policy.getAllarmeNome())) {
+					String messaggio = "Selezionare uno degli allarmi indicati in '"+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ALLARME
+							+" - "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME+"'";
+					this.pd.setMessage(messaggio);
+					return false;
+				}
+			}
 		}
 		return true;
 	}
 	
 	
-	private static Boolean allarmiEnabled = null;
-	public boolean isAllarmiModuleEnabled(){
-		if(allarmiEnabled==null){
-			// sono abilitati gli allarmi se esiste la classe degli allarmi nel classpath
-			try{
-				Class<?> c = Class.forName("it.link.pdd.core.plugins.allarmi.ConfigurazioneAllarme");
-				allarmiEnabled = (c!=null);
-			}catch(ClassNotFoundException notFound){
-				allarmiEnabled = false;
-			}
-		}
-		return allarmiEnabled;
-	}
-
 	public String readDatiAttivazionePolicyFromHttpParameters(AttivazionePolicy policy, boolean first, TipoOperazione tipoOperazione, InfoPolicy infoPolicy) throws Exception{
 		
 		StringBuilder sbParsingError = new StringBuilder();
@@ -15687,6 +15860,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -15972,6 +16172,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -16730,6 +16957,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -17337,6 +17591,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -17683,7 +17964,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
 			String filterStato = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO);
-			this.addFilterStato(filterStato, true, false);
+			boolean addStatiAllarme = this.confCore.isShowAllarmiSearchStatiAllarmi();
+			this.addFilterStato(filterStato, addStatiAllarme, false);
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -17733,9 +18015,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<String> lstLabels = new ArrayList<>();
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
 
 			// preparo i dati
@@ -17760,20 +18044,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setWidthPx(10);
 					de.setType(DataElementType.CHECKBOX);
 					if(allarme.getEnabled() == 1){
-//						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-//						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
-						if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
-							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+						if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
+							if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
+								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+								de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
+							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
+								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+								de.setSelected(CheckboxStatusType.CONFIG_ERROR);
+							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
+								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+								de.setSelected(CheckboxStatusType.CONFIG_WARNING);
+							}
+						}
+						else {
+							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 							de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
-						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
-							de.setSelected(CheckboxStatusType.CONFIG_ERROR);
-						} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
-							de.setSelected(CheckboxStatusType.CONFIG_WARNING);
 						}
 					}
 					else{
@@ -17810,12 +18099,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //					de.setValue(allarme.getTipo());
 //					e.addElement(de);
 					
+					// TipoAllarme
+					
+					de = new DataElement();
+					de.setWidthPx(24);
+					de.setType(DataElementType.IMAGE);
+					DataElementImage imageUp = new DataElementImage();
+					String mode = TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme()) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA;
+					if(TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme())) {
+						imageUp.setImage(CostantiControlStation.ICONA_ALARM_ACTIVE);
+						imageUp.setToolTip(mode);
+					}
+					else {
+						imageUp.setImage(CostantiControlStation.ICONA_ALARM_PASSIVE);
+						imageUp.setToolTip(mode);
+					}
+					de.addImage(imageUp);
+					de.allineaTdAlCentro();
+					de.setValue(mode);
+					e.addElement(de);
+					
 					// Nome 
 					de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
 					de.setValue(allarme.getAlias());
 					de.setIdToRemove(""+allarme.getId());
-					de.setToolTip(allarme.getNome()); 
+					//de.setToolTip(allarme.getNome());
+					de.setToolTip(allarme.getAlias());
 					e.addElement(de);
 					
 					// Descrizione
@@ -17824,12 +18134,59 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setToolTip(allarme.getDescrizione()); 
 					e.addElement(de);
 					
+					// Runtime
+					boolean isActive = allarme.getEnabled() == 1 && TipoAllarme.ATTIVO.equals(allarme.getTipoAllarme());
+					de = new DataElement();
+					if(isActive){
+						de.setValue("Visualizza");
+					}
+					else{
+						de.setValue("-");
+					}
+					de.allineaTdAlCentro();
+					de.setWidthPx(60);
+					if(isActive){
+						Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+						List<Parameter> lstParamEntryState = new ArrayList<Parameter>();
+						lstParamEntryState.addAll(lstParamEntry);
+						lstParamEntryState.add(pState);
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryState.toArray(new Parameter[lstParamEntryState.size()]));
+					}
+					e.addElement(de);
+										
 					dati.addElement(e);
 				}
 			}
 			
 			this.pd.setDati(dati);
 			this.pd.setAddButton(true);
+			
+			// preparo bottoni
+			if(lista!=null && lista.size()>0){
+				if (this.core.isShowPulsantiImportExport()  && (nomePorta==null || StringUtils.isEmpty(nomePorta))) {
+
+					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.ALLARME, this.session)){
+
+						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
+
+						AreaBottoni ab = new AreaBottoni();
+						Vector<DataElement> otherbott = new Vector<DataElement>();
+						DataElement de = new DataElement();
+						de.setValue(ConfigurazioneCostanti.LABEL_ALLARMI_ESPORTA_SELEZIONATI);
+						de.setOnClick(ConfigurazioneCostanti.LABEL_ALLARMI_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
+						otherbott.addElement(de);
+						ab.setBottoni(otherbott);
+						bottoni.addElement(ab);
+
+						this.pd.setAreaBottoni(bottoni);
+
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -17947,7 +18304,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Indicare un valore nel campo '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME+"'");
 				return false;
 			}
-			if (!this.checkNCName(allarme.getNome(), ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME)) {
+			if (!this.checkNCNameAndSerial(allarme.getNome(), ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME)) {
 				return false;
 			}
 			
@@ -18057,7 +18414,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			/* ******** VALIDAZIONE NOTIFICA MAIL *************** */
 			
-			if(allarme.getMail()!=null && allarme.getMail().getInviaAlert()!=null && allarme.getMail().getInviaAlert()==1){
+			if(allarme.getMail()!=null && allarme.getMail().getInvia()!=null && allarme.getMail().getInvia()==1){
 				if(allarme.getMail().getDestinatari()==null || "".equals(allarme.getMail().getDestinatari())){
 					this.log.debug("Almeno un indirizzo e-mail è obbligatorio");
 					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_EMAIL_VUOTA);
@@ -18176,7 +18533,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	} 
 	
 	public Context createAlarmContext(ConfigurazioneAllarmeBean allarme, List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters) throws DAOFactoryException {
-		Context context = new AlarmContext(allarme, this.log, DAOFactory.getInstance(this.log), parameters );
+		Context context = new AlarmContext(allarme, this.log, DAOConsoleFactory.getInstance(this.log), parameters );
 		
 		return context;
 	}
@@ -18289,7 +18646,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(plugin != null) {
 				if(parameters != null&& parameters.size() > 0) {
 					for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
-						par.setValueAsString(this.getParameter(par.getId()));
+						String value = this.getParameter(par.getId());
+						if(ParameterType.CHECK_BOX.equals(par.getType())){
+							if(Costanti.CHECK_BOX_ENABLED.equals(value) || Costanti.CHECK_BOX_ENABLED_ABILITATO.equals(value) || Costanti.CHECK_BOX_ENABLED_TRUE.equals(value)) {
+								value = Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								value = Costanti.CHECK_BOX_DISABLED_FALSE;
+							}
+						}
+						par.setValueAsString(value);
 //						
 //						boolean found = false;
 //						for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
@@ -18312,10 +18678,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// sezione mail
 			String inviaEmailAlertS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT);
 			if(StringUtils.isNotBlank(inviaEmailAlertS)) {
-				allarme.getMail().setInviaAlert(Integer.parseInt(inviaEmailAlertS));
+				allarme.getMail().setInvia(Integer.parseInt(inviaEmailAlertS));
 			}
 			
-			if(allarme.getMail().getInviaAlert() == 1) {
+			if(allarme.getMail().getInvia() == 1) {
 				String destinatariEmail = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
 				allarme.getMail().setDestinatari(destinatariEmail);
 				
@@ -18325,13 +18691,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					allarme.getMail().setInviaWarning(Integer.parseInt(notificaWarningEmailS));
 				}
 				
-				if(this.confCore.getAllarmiConfig().isAllarmiNotificaMailVisualizzazioneCompleta()) {
-					//Acknowledge
-					String ackModeEmailS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE);
-					if(StringUtils.isNotBlank(ackModeEmailS)) {
-						allarme.getMail().setAckMode(Integer.parseInt(ackModeEmailS));
-					}
-					
+				if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {					
 					// Subject
 					String subject = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
 					allarme.getMail().setSubject(subject);
@@ -18345,23 +18705,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// sezione script
 			String invocaScriptAlertS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT);
 			if(StringUtils.isNotBlank(invocaScriptAlertS)) {
-				allarme.getScript().setInvocaAlert(Integer.parseInt(invocaScriptAlertS));
+				allarme.getScript().setInvoca(Integer.parseInt(invocaScriptAlertS));
 			}
 			
-			if(allarme.getScript().getInvocaAlert() == 1) {
+			if(allarme.getScript().getInvoca() == 1) {
 				// notifica warning
 				String notificaWarningScriptS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT);
 				if(StringUtils.isNotBlank(notificaWarningScriptS)) {
 					allarme.getScript().setInvocaWarning(Integer.parseInt(notificaWarningScriptS));
 				}
 				
-				if(this.confCore.getAllarmiConfig().isAllarmiMonitoraggioEsternoVisualizzazioneCompleta()) {
-					//Acknowledge
-					String ackModeEmailS = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE);
-					if(StringUtils.isNotBlank(ackModeEmailS)) {
-						allarme.getScript().setAckMode(Integer.parseInt(ackModeEmailS));
-					}
-					
+				if(this.confCore.getAllarmiConfig().isScriptShowAllOptions()) {
 					// Subject
 					String path = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH);
 					allarme.getScript().setCommand(path);
@@ -18781,6 +19135,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters, RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding
 			) throws Exception { 
 		
+		boolean allarmeAttivo = allarme.getTipoAllarme() != null && (allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO));
+		
 		boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FIRST_TIME);
 		DataElement de;
 		
@@ -18815,6 +19171,200 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(serviceBinding.name());
 			de.setType(DataElementType.HIDDEN);
 			dati.addElement(de);
+		}
+		
+		String stateParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE);
+		boolean state = stateParam!=null && "true".equals(stateParam);
+		
+		if(state) {
+			
+			String refreshParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_REFRESH);
+			boolean refresh = refreshParam!=null && "true".equals(refreshParam);
+			
+			String stopParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_STOP);
+			boolean stop = stopParam!=null && "true".equals(stopParam);
+			
+			String startParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_START);
+			boolean start = startParam!=null && "true".equals(startParam);
+			
+			String restartParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_RESTART);
+			boolean restart = restartParam!=null && "true".equals(restartParam);
+			
+			if(refresh || stop || start || restart) {
+				try {
+					String label = "";
+					if(refresh) {
+						AllarmiUtils.refreshActiveThreadState(allarme, this.log, alarmEngineConfig);
+						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH;
+					}
+					else if(stop) {
+						AllarmiUtils.stopActiveThread(allarme, this.log, alarmEngineConfig);
+						label = "Stop allarme";
+					}
+					else if(start) {
+						AllarmiUtils.startActiveThread(allarme, this.log, alarmEngineConfig);
+						label = "Start allarme";
+					}
+					else if(restart) {
+						AllarmiUtils.restartActiveThread(allarme, this.log, alarmEngineConfig);
+						label = "Restart allarme";
+					}
+					
+					// Dormo qualche secondo per dare il tempo di fare il recheck o stop/start dell'allarme
+					Utilities.sleep(3000);
+					
+					this.pd.setMessage(label+" effettuato con successo", MessageType.INFO);
+					
+				} catch(Exception e) {
+					String errorMsg = "Richiesta di aggiornamento dello stato dell'allarme '"+allarme.getAlias()+"' fallita: "+e.getMessage();
+					ControlStationCore.getLog().error(errorMsg, e);
+					this.pd.setMessage(errorMsg, MessageType.ERROR);
+				}
+			}
+			
+			
+			
+			List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+			if(ruoloPorta!=null) {
+				Parameter parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA, ruoloPorta.getValue());
+				lstParamEntry.add(parRuoloPorta);
+			}
+			if(nomePorta!=null) {
+				Parameter parNomePorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA, nomePorta);
+				lstParamEntry.add(parNomePorta);
+			}
+			if(serviceBinding!=null) {
+				Parameter parServiceBinding = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING, serviceBinding.name());
+				lstParamEntry.add(parServiceBinding);
+			}
+			Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+			lstParamEntry.add(pId);
+			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+			lstParamEntry.add(pState);
+			
+			boolean existsActiveThread = false;
+			try {
+				existsActiveThread = AllarmiUtils.existsActiveThread(allarme, this.log, alarmEngineConfig);
+			} catch(Exception e) {
+				String errorMsg = "Lettura stato del thread dell'allarme '"+allarme.getAlias()+"' fallita: "+e.getMessage();
+				ControlStationCore.getLog().error(errorMsg, e);
+			}
+			
+			
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			// Link refresh
+			
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH);
+			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+			de.setType(DataElementType.LINK);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setRows(20);
+			de.setCols(100);
+			String result = null; 
+			try {
+				if(existsActiveThread) {
+					result = AllarmiUtils.getActiveThreadImage(allarme, this.log, alarmEngineConfig);
+				}
+				else {
+					result = "Il thread di gestione dell'allarme non è attivo";
+				}
+			} catch(Exception e) {
+				String errorMsg = "Lettura stato dell'allarme '"+allarme.getAlias()+"' fallita: "+e.getMessage();
+				ControlStationCore.getLog().error(errorMsg, e);
+				result = errorMsg;
+			}
+			de.setValue(result);
+			dati.addElement(de);
+			
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GESTIONE_THREAD);
+			dati.add(de);
+			
+			// Link ricalcola stato
+			
+			if(existsActiveThread) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH);
+				List<Parameter> lstParamEntryRecheck = new ArrayList<Parameter>();
+				lstParamEntryRecheck.addAll(lstParamEntry);
+				Parameter pRecheck = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_REFRESH, true+"");
+				lstParamEntryRecheck.add(pRecheck);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryRecheck.toArray(new Parameter[lstParamEntryRecheck.size()]));
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
+			
+			// Link restart
+			
+			if(existsActiveThread) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
+				List<Parameter> lstParamEntryRestart = new ArrayList<Parameter>();
+				lstParamEntryRestart.addAll(lstParamEntry);
+				Parameter pRestart = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_RESTART, true+"");
+				lstParamEntryRestart.add(pRestart);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryRestart.toArray(new Parameter[lstParamEntryRestart.size()]));
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
+			
+			// Link stop
+			
+			if(existsActiveThread) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
+				List<Parameter> lstParamEntryStop = new ArrayList<Parameter>();
+				lstParamEntryStop.addAll(lstParamEntry);
+				Parameter pStop = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_STOP, true+"");
+				lstParamEntryStop.add(pStop);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryStop.toArray(new Parameter[lstParamEntryStop.size()]));
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
+			
+			// Link start
+			
+			if(!existsActiveThread) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
+				List<Parameter> lstParamEntryStart = new ArrayList<Parameter>();
+				lstParamEntryStart.addAll(lstParamEntry);
+				Parameter pStart = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_START, true+"");
+				lstParamEntryStart.add(pStart);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntryStart.toArray(new Parameter[lstParamEntryStart.size()]));
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
+			
+
+				
+			this.pd.disableEditMode();
+
+			
+			return;
 		}
 		
 		// Informazioni Generali
@@ -18867,28 +19417,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(allarme.getTipo() != null ? allarme.getTipo() : "");
 		de.setType(DataElementType.HIDDEN);
 		dati.addElement(de);
-		
-		// modalita
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
-		de.setValue(allarme.getTipoAllarme() != null ? allarme.getTipoAllarme().getValue() : "");
-		de.setType(DataElementType.HIDDEN);
-		dati.addElement(de);
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_LABEL);
-		if(allarme.getTipoAllarme() != null && 
-				(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) || allarme.getTipoAllarme().equals(TipoAllarme.PASSIVO))) {
-			de.setType(DataElementType.TEXT);
-			de.setValue(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA );
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue("");
-		}
-		dati.addElement(de);
-		
+				
 		// nome
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
@@ -18904,7 +19433,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRequired(true);
 		}
 		else{
-			if(!this.isModalitaStandard()) {
+			if(!this.isModalitaStandard() && this.confCore.isShowAllarmiIdentificativoRuntime()) {
 				de.setType(DataElementType.TEXT);
 			}
 			else {
@@ -18979,11 +19508,36 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		// frequenza
-		if(allarme.getTipoAllarme() != null && (allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO))) {
+		if(allarmeAttivo) {
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI_FREQUENZA);
 			dati.add(de);
+		}
+		
+		// modalita
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setValue(allarme.getTipoAllarme() != null ? allarme.getTipoAllarme().getValue() : "");
+		de.setType(DataElementType.HIDDEN);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_LABEL);
+		if(allarme.getTipoAllarme() != null && 
+				(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) || allarme.getTipoAllarme().equals(TipoAllarme.PASSIVO))) {
+			de.setType(DataElementType.TEXT);
+			de.setValue(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) ? ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_ATTIVA : ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_PASSIVA );
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("");
+		}
+		dati.addElement(de);
+		
+		// frequenza
+		if(allarmeAttivo) {
 			
 			// number periodo
 			de = new DataElement();
@@ -19014,8 +19568,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(tipoPeriodoValues);
 			de.setLabels(tipoPeriodoLabels);
 			if(tipoOperazione.equals(TipoOperazione.ADD)){
-				if(first) {
-					de.setValue(ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO_ORE);
+				if(first || allarme.getTipoPeriodo()==null || StringUtils.isEmpty(allarme.getTipoPeriodo())) {
+					de.setSelected(ConfigurazioneCostanti.VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO_ORE);
 				} else {
 					de.setSelected(allarme.getTipoPeriodo());
 				}
@@ -19027,7 +19581,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		// field da visualizzare in modifica
-		if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+		if(tipoOperazione.equals(TipoOperazione.CHANGE) && this.confCore.isShowAllarmiFormStatoAllarme()) {
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
@@ -19049,14 +19603,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);	
 			
 			// Acknowledge
-			if(this.confCore.getAllarmiConfig().isAllarmiAssociazioneAcknowledgedStatoAllarme() || 
-					( allarme.getMail().getInviaAlert() == 1 && allarme.getMail().getAckMode() == 1) ||
-					( allarme.getScript().getInvocaAlert() == 1 && allarme.getScript().getAckMode() == 1) ) {
+			if(this.confCore.getAllarmiConfig().isOptionsAcknowledgedStatusAssociation() || 
+					( allarme.getMail().getInvia() == 1 && this.confCore.getAllarmiConfig().isMailCheckAcknowledgedStatus()) ||
+					( allarme.getScript().getInvoca() == 1 && this.confCore.getAllarmiConfig().isScriptCheckAcknowledgedStatus()) ) {
 				
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED);
-				de.setType(DataElementType.TEXT);
+				if(allarme.getEnabled() == 1 && 
+						(
+								allarme.getStato().intValue() == org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils.toIntegerValue(StatoAllarme.WARNING)
+								||
+								allarme.getStato().intValue() == org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils.toIntegerValue(StatoAllarme.ERROR)
+						) 
+						) {
+					de.setType(DataElementType.TEXT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
 				if(allarme.getAcknowledged() == 1) { 
 					de.setValue(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_SI); 
 				}
@@ -19068,12 +19633,47 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			// Archivio Stati
+			if(this.confCore.isShowAllarmiFormStatoAllarmeHistory() && this.confCore.getAllarmiConfig().isHistoryEnabled()) {
+				de = new DataElement();
+	//			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI);
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_HISTORY_LIST, pIdAllarme);
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI); 
+				dati.addElement(de);
+			}
+		}
+		
+		if(tipoOperazione.equals(TipoOperazione.CHANGE) && allarmeAttivo) {
+			
 			de = new DataElement();
-//			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI);
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+			dati.add(de);		
+			
+			List<Parameter> lstParamEntry = new ArrayList<Parameter>();
+			if(ruoloPorta!=null) {
+				Parameter parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RUOLO_PORTA, ruoloPorta.getValue());
+				lstParamEntry.add(parRuoloPorta);
+			}
+			if(nomePorta!=null) {
+				Parameter parNomePorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME_PORTA, nomePorta);
+				lstParamEntry.add(parNomePorta);
+			}
+			if(serviceBinding!=null) {
+				Parameter parServiceBinding = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_SERVICE_BINDING, serviceBinding.name());
+				lstParamEntry.add(parServiceBinding);
+			}
+			Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId() + "");
+			lstParamEntry.add(pId);
+			Parameter pState = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE, true+"");
+			lstParamEntry.add(pState);
+			
+			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_HISTORY_LIST, pIdAllarme);
-			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ARCHIVIO_STATI); 
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
+			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_EDIT); 
 			dati.addElement(de);
+			
 		}
 		
 		
@@ -19165,33 +19765,53 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 		}
+
+		boolean groupByAllarme = this.isShowGroupBy(allarme);
+		
+		if( (parameters != null && parameters.size() > 0) || groupByAllarme) {
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(getParameterSectionTitle(allarme, groupByAllarme));
+			dati.add(de);
+		}
+		
+		// sezione dinamica parametri
+		if(parameters != null && parameters.size() > 0) {
+			
+			for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> parameter : parameters) {
+				BaseComponent<?> component = (BaseComponent<?>) parameter;
+				
+				component.updateRendering();
+				
+				String postBack = this.getPostBackElementName();
+				if(StringUtils.isNotEmpty(postBack)) {
+					if(postBack.equals(parameter.getId())) {
+						component.valueSelectedListener();
+					}
+				}
+				
+				if(component.getRendered()) { // nella versione originale non sono consentiti gli hidden
+					dati.add(component.toDataElement());
+				}
+				else {
+					Hidden<?> hidden = new Hidden<>(parameter, component.getLoader());
+					dati.add(hidden.toDataElement());
+				}
+				
+			}
+		}
+		
+		// sezione group by
+		if(groupByAllarme) {
+			this.addToDatiAllarmeGroupBy(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RAGGRUPPAMENTO,
+					ruoloPorta, nomePorta, serviceBinding, tokenAbilitato);
+		}
 		
 		// Sezione filtro
 		if(this.isShowFilter(allarme)) {
 			this.addToDatiAllarmeFiltro(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO,
 					ruoloPorta, nomePorta, serviceBinding, idSoggettoProprietario, tokenAbilitato , tipoAutenticazione, 
 					appId, pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore);
-		}
-		
-		// sezione group by
-		if(this.isShowGroupBy(allarme)) {
-			this.addToDatiAllarmeGroupBy(dati, tipoOperazione, allarme, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RAGGRUPPAMENTO,
-					ruoloPorta, nomePorta, serviceBinding, tokenAbilitato);
-		}
-		
-		// sezione dinamica parametri
-		if(parameters != null && parameters.size() > 0) {
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI);
-			dati.add(de);
-			
-			for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> parameter : parameters) {
-				BaseComponent<?> component = (BaseComponent<?>) parameter;
-				if(component.getRendered()) { // nella versione originale non sono consentiti gli hidden
-					dati.add(component.toDataElement());
-				}
-			}
 		}
 		
 		// Notifiche Email
@@ -19212,16 +19832,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String [] inviaEmailAlertLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
 			de.setValues(inviaEmailAlertValues);
 			de.setLabels(inviaEmailAlertLabels);
-			de.setSelected(allarme.getMail().getInviaAlert()+"");
+			de.setSelected(allarme.getMail().getInvia()+"");
 			de.setPostBack_viaPOST(true);
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(allarme.getMail().getInviaAlert()+"");
+			de.setValue(allarme.getMail().getInvia()+"");
 		}
 		dati.addElement(de);
 		
-		if(allarme.getMail().getInviaAlert() == 1) {
+		if(allarme.getMail().getInvia() == 1) {
 			// destinatari
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
@@ -19254,26 +19874,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			dati.addElement(de);
 			
-			if(this.confCore.getAllarmiConfig().isAllarmiNotificaMailVisualizzazioneCompleta()) {
-				//Acknowledge
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE); 
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE);
-				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
-					de.setType(DataElementType.SELECT);
-					String [] mailAckModeValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-					String [] mailAckModeLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-					de.setValues(mailAckModeValues);
-					de.setLabels(mailAckModeLabels);
-					de.setSelected(allarme.getMail().getAckMode()+"");
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE_NOTE);
-				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(allarme.getMail().getAckMode()+"");
-				}
-				dati.addElement(de);
-				
+			if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {			
 				// Subject
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
@@ -19321,16 +19922,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String [] invocaScriptAlertLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
 			de.setValues(invocaScriptAlertValues);
 			de.setLabels(invocaScriptAlertLabels);
-			de.setSelected(allarme.getScript().getInvocaAlert()+"");
+			de.setSelected(allarme.getScript().getInvoca()+"");
 			de.setPostBack_viaPOST(true);
 		}
 		else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(allarme.getScript().getInvocaAlert()+"");
+			de.setValue(allarme.getScript().getInvoca()+"");
 		}
 		dati.addElement(de);
 		
-		if(allarme.getScript().getInvocaAlert() == 1) {
+		if(allarme.getScript().getInvoca() == 1) {
 			// notifica warning
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT); 
@@ -19349,26 +19950,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			dati.addElement(de);
 			
-			if(this.confCore.getAllarmiConfig().isAllarmiMonitoraggioEsternoVisualizzazioneCompleta()) {
-				//Acknowledge
-				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE); 
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE);
-				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
-					de.setType(DataElementType.SELECT);
-					String [] scriptAckModeValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-					String [] scriptAckModeLabels = ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO;
-					de.setValues(scriptAckModeValues);
-					de.setLabels(scriptAckModeLabels);
-					de.setSelected(allarme.getScript().getAckMode()+"");
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE_NOTE);
-				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(allarme.getScript().getAckMode()+"");
-				}
-				dati.addElement(de);
-				
+			if(this.confCore.getAllarmiConfig().isScriptShowAllOptions()) {
+			
 				// Subject
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH);
@@ -19414,6 +19997,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		return this.confCore.isUsableGroupBy(allarme);
+	}
+	
+	public String getParameterSectionTitle(ConfigurazioneAllarmeBean allarme, boolean groupByAllarme) throws Exception {
+		if(allarme==null || allarme.getPlugin() == null){
+			return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI; // all'inizio deve prima essere scelto il plugin
+		}
+		return this.confCore.getParameterSectionTitle(allarme, groupByAllarme);
 	}
 	
 	private void addToDatiAllarmeFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, String nomeSezione,
@@ -19638,7 +20228,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// servizio
 			if(configurazione) {
-				boolean controlloAllarmiFiltroApiSoggettoErogatore = this.core.getAllarmiConfig().isAllarmiFiltroApiSoggettoErogatore();
+				boolean controlloAllarmiFiltroApiSoggettoErogatore = this.core.getAllarmiConfig().isOptionsFilterApiOrganization();
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 					IDServizio idServizio = null;
 					if(allarme.getFiltro().getTipoServizio()!=null && allarme.getFiltro().getNomeServizio()!=null && allarme.getFiltro().getVersioneServizio()!=null &&
@@ -20397,7 +20987,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG);
 			de.setValue(datiIdentificativiTagSelezionatoValue);
-			boolean allarmiFiltroApi = this.core.getAllarmiConfig().isAllarmiFiltroApi();
+			boolean allarmiFiltroApi = this.core.getAllarmiConfig().isOptionsFilterApi();
 			if(!configurazione) {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
@@ -20755,7 +21345,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
@@ -20870,7 +21460,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(configurazione) {
 			
-				if(this.core.getAllarmiConfig().isAllarmiGroupByApi()) {
+				if(this.core.getAllarmiConfig().isOptionsGroupByApi()) {
 					showServizio = allarme.getFiltro()==null || 
 							allarme.getFiltro().isEnabled()==false || 
 							allarme.getFiltro().getTipoServizio()==null ||

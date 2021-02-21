@@ -54,10 +54,12 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.ServizioApplicativoFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.ServizioApplicativoFetch;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.ServizioApplicativoRuolo;
 
 /**     
  * JDBCServizioApplicativoServiceSearchImpl
@@ -453,6 +455,26 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 				imgSaved.getIdSoggetto()!=null){
 			obj.getIdSoggetto().setId(imgSaved.getIdSoggetto().getId());
 		}
+		if(obj.getServizioApplicativoRuoloList()!=null){
+			List<org.openspcoop2.core.commons.search.ServizioApplicativoRuolo> listObj_ = obj.getServizioApplicativoRuoloList();
+			for(org.openspcoop2.core.commons.search.ServizioApplicativoRuolo itemObj_ : listObj_){
+				org.openspcoop2.core.commons.search.ServizioApplicativoRuolo itemAlreadySaved_ = null;
+				if(imgSaved.getServizioApplicativoRuoloList()!=null){
+					List<org.openspcoop2.core.commons.search.ServizioApplicativoRuolo> listImgSaved_ = imgSaved.getServizioApplicativoRuoloList();
+					for(org.openspcoop2.core.commons.search.ServizioApplicativoRuolo itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getNome(),itemImgSaved_.getNome());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
+				}
+			}
+		}
 
 	}
 	
@@ -490,7 +512,7 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 
 		// Object _servizioApplicativo_soggetto (recupero id)
 		ISQLQueryObject sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId = sqlQueryObjectGet.newSQLQueryObject();
-		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addFromTable("servizi_applicativi");
+		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addSelectField("id_soggetto");
 		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addWhereCondition("id=?");
 		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.setANDLogicOperator(true);
@@ -499,7 +521,7 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		
 		// Object _servizioApplicativo_soggetto
 		ISQLQueryObject sqlQueryObjectGet_servizioApplicativo_soggetto = sqlQueryObjectGet.newSQLQueryObject();
-		sqlQueryObjectGet_servizioApplicativo_soggetto.addFromTable("soggetti");
+		sqlQueryObjectGet_servizioApplicativo_soggetto.addFromTable(CostantiDB.SOGGETTI);
 		sqlQueryObjectGet_servizioApplicativo_soggetto.addSelectField("tipo_soggetto");
 		sqlQueryObjectGet_servizioApplicativo_soggetto.addSelectField("nome_soggetto");
 		sqlQueryObjectGet_servizioApplicativo_soggetto.setANDLogicOperator(true);
@@ -520,7 +542,27 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		id_servizioApplicativo_soggetto.setNome((String)listaFieldId_servizioApplicativo_soggetto.get(1));
 		servizioApplicativo.setIdSoggetto(id_servizioApplicativo_soggetto);
 
-            
+		// Object servizioApplicativo_servizioApplicativoRuolo
+		ISQLQueryObject sqlQueryObjectGet_servizioApplicativo_servizioApplicativoRuolo = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoRuolo.setANDLogicOperator(true);
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoRuolo.addFromTable(this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO));
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoRuolo.addSelectField("id");
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoRuolo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME,true));
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoRuolo.addWhereCondition("id_servizio_applicativo=?");
+
+		// Get servizioApplicativo_servizioApplicativoRuolo
+		java.util.List<Object> servizioApplicativo_servizioApplicativoRuolo_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_servizioApplicativo_servizioApplicativoRuolo.createSQLQuery(), jdbcProperties.isShowSql(), ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO, this.getServizioApplicativoFetch(),
+			new JDBCObject(servizioApplicativo.getId(),Long.class));
+
+		if(servizioApplicativo_servizioApplicativoRuolo_list != null) {
+			for (Object servizioApplicativo_servizioApplicativoRuolo_object: servizioApplicativo_servizioApplicativoRuolo_list) {
+				ServizioApplicativoRuolo servizioApplicativo_servizioApplicativoRuolo = (ServizioApplicativoRuolo) servizioApplicativo_servizioApplicativoRuolo_object;
+
+
+				servizioApplicativo.addServizioApplicativoRuolo(servizioApplicativo_servizioApplicativoRuolo);
+			}
+		}
+		
         return servizioApplicativo;  
 	
 	} 
@@ -561,7 +603,12 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 			String tableName2 = this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().ID_SOGGETTO);
 			sqlQueryObject.addWhereCondition(tableName1+".id_soggetto="+tableName2+".id");
 		}
-		        
+		if(expression.inUseModel(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO,false)){
+			String tableName1 = this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model());
+			String tableName2 = this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_servizio_applicativo");
+		}
+		
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdServizioApplicativo id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
@@ -588,6 +635,12 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		mapTableToPKColumn.put(converter.toTable(ServizioApplicativo.model().ID_SOGGETTO),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(ServizioApplicativo.model().ID_SOGGETTO))
+			));
+
+		// ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO
+		mapTableToPKColumn.put(converter.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO))
 			));
 
         return mapTableToPKColumn;		

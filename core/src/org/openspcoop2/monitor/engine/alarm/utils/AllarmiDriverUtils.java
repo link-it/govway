@@ -34,9 +34,9 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
-import org.openspcoop2.monitor.engine.config.base.utils.PluginsDriverUtils;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
 import org.slf4j.Logger;
 
 /**
@@ -92,6 +92,16 @@ public class AllarmiDriverUtils {
 			Allarme al = org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils.getAllarme(nome, con, log, tipoDB);
 			Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), al.getTipo(), true, con, log, tipoDB);
 			return new ConfigurazioneAllarmeBean(al, plugin);
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		}
+	}
+	public static ConfigurazioneAllarmeBean getAllarme(Allarme allarme, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "convertAllarme";
+		
+		try {
+			Plugin plugin = PluginsDriverUtils.getPlugin(TipoPlugin.ALLARME.getValue(), allarme.getTipo(), true, con, log, tipoDB);
+			return new ConfigurazioneAllarmeBean(allarme, plugin);
 		} catch (Exception qe) {
 			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		}

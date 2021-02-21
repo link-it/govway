@@ -226,9 +226,9 @@ public class DAOFactoryProperties {
 	}
 
 	private static final String PROP_TIPO = "db.tipo";
-	private static final String PROP_TIPO_VALUE_DATASOURCE = "datasource";
-	private static final String PROP_TIPO_VALUE_CONNECTION = "connection";
-	private String getTipoAccessoDatabase(IProjectInfo tipoDAO) throws Exception {
+	protected static final String PROP_TIPO_VALUE_DATASOURCE = "datasource";
+	protected static final String PROP_TIPO_VALUE_CONNECTION = "connection";
+	protected String getTipoAccessoDatabase(IProjectInfo tipoDAO) throws Exception {
 		String v = this.getProperty(PREFIX_FACTORY+tipoDAO.getProjectName()+"."+PROP_TIPO, false, true);
 		if(v==null){
 			v = this.getProperty(PROP_TIPO, true, true);

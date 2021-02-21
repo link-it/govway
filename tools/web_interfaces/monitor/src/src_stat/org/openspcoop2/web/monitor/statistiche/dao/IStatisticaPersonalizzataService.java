@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.web.monitor.statistiche.dao;
 
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.core.commons.search.Operation;
 import org.openspcoop2.core.commons.search.PortType;

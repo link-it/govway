@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniStatoAllarme">
+		<h:panelGrid id="panelGridStatoAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Dettagli" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelStatoAttuale" value="Stato Attuale" rendered="#{true}"/>
+			<h:outputText id="outStatoAttuale" value="#{allarmiBean.labelStato}" rendered="#{allarmiBean.allarme.enabled == 1}"/>
+			<h:outputText id="outStatoAttualeDisabilitato" value="Disabilitato" rendered="#{allarmiBean.allarme.enabled == 0}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglio" value="Dettaglio" rendered="#{not empty allarmiBean.modificaDettaglioStato}"/>
+			<h:inputTextarea value="#{allarmiBean.modificaDettaglioStato}" readonly="#{true}" rendered="#{not empty allarmiBean.modificaDettaglioStato}" styleClass="inputTextAreaLong" rows="7" cols="80"/>
+									
+			<h:outputLabel value="Ultima Verifica" id="dataUltimaModifica" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}"/>
+			<h:outputText id="outDataUltimaModifica" value="#{allarmiBean.allarme.lasttimestampUpdate}" rendered="#{not empty allarmiBean.allarme.lasttimestampUpdate}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+			</h:outputText>
+
+			<h:outputLabel value="Ultima Modifica" id="dataUltimaModificaStato" styleClass="outputFieldLabel icon-date" rendered="#{not empty allarmiBean.dataUltimaModificaStato}"/>
+			<h:outputText id="outDataUltimaModificaStato" value="#{allarmiBean.dataUltimaModificaStato}" rendered="#{not empty allarmiBean.dataUltimaModificaStato}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+			</h:outputText>
+
+			<h:outputLabel value="Data Creazione" id="dataCreazione" styleClass="outputFieldLabel icon-date" rendered="#{true}"/>
+			<h:outputText id="outDataCreazione" value="#{allarmiBean.allarme.lasttimestampCreate}" rendered="#{true}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+			</h:outputText>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelAcknowledgde" value="Acknowledge" rendered="#{allarmiBean.visualizzaAck}"/>
+			<h:outputText id="outAcknowledgde" value="#{allarmiBean.allarme.acknowledged == 1 ? 'Si' : 'No'}" rendered="#{allarmiBean.visualizzaAck}"/>
+						
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelGridStoricoStatiAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<h:outputText value="&#160;&#160;" rendered="#{true}" />
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Archivio Stati" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelStatoPrecedente" value="Stato Precedente" rendered="#{true}"/>
+			<h:outputText id="outStatoPrecedente" value="#{allarmiBean.labelPrecedenteStato}" rendered="#{allarmiBean.allarme.enabled == 1}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<a4j:outputPanel layout="block" styleClass="divNoEdit">
+				<a4j:form>
+					<a4j:htmlCommandLink id="history-iconLink" styleClass="icon-details" action="visualizzaHistoryAllarme" value="Archivio Stati">
+						<f:setPropertyActionListener value="#{allarmiBean.allarme}" target="#{allarmiBean.allarme}"/>
+					</a4j:htmlCommandLink>
+				</a4j:form>
+			</a4j:outputPanel>
+			
+		</h:panelGrid>
+	</a4j:outputPanel>
+</ui:composition>

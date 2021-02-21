@@ -102,7 +102,7 @@ CREATE UNIQUE INDEX idx_cong_gen_policy_1 ON ct_config_policy (policy_id);
 CREATE TABLE ct_active_policy
 (
 	-- Dati Generali
-	active_policy_id VARCHAR(255) NOT NULL,
+	active_policy_id VARCHAR(275) NOT NULL,
 	policy_alias VARCHAR(255),
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	policy_update_time TIMESTAMP(3) NOT NULL DEFAULT 0,

@@ -31,6 +31,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -111,7 +112,7 @@ public class AccordoServizioParteSpecificaFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(AccordoServizioParteSpecifica.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("servizi","id","seq_servizi","servizi_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.SERVIZI,"id","seq_"+CostantiDB.SERVIZI,CostantiDB.SERVIZI+"_init_seq");
 			}
 			
 			else{

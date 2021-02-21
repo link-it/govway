@@ -35,8 +35,14 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
@@ -62,10 +68,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	private static Logger log = LoggerManager.getPddMonitorSqlLogger(); 
 
 	public DynamicUtilsService(){
-		this(null);
+		this(null, null);
 	}
-	public DynamicUtilsService(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager){
-		this.driver = new DynamicUtilsServiceEngine(serviceManager);
+	public DynamicUtilsService(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
+		this.driver = new DynamicUtilsServiceEngine(serviceManager, pluginsServiceManager);
 	}
 	public DynamicUtilsService(Connection con, boolean autoCommit){
 		this(con, autoCommit, null, DynamicUtilsService.log);
@@ -885,6 +891,28 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			return this.driver.getServizi(tipoProtocollo, uriAccordoServizio , tipoSoggetto, nomeSoggetto);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IDServizio> getServizi(String protocolloSelezionato, 
+			List<String> protocolliSupportati, String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String tag) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey(protocolloSelezionato, protocolliSupportati , tipoServizio, nomeServizio, versioneServizio, tag);
+			String methodName = "getServizi";
+			try {
+				return (List<IDServizio>) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, 
+						AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName, 
+						new Class<?>[] {String.class, List.class, String.class, String.class, Integer.class, String.class },
+						protocolloSelezionato, protocolliSupportati, tipoServizio, nomeServizio, versioneServizio, tag);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		}else {
+			return this.driver.getServizi(protocolloSelezionato, protocolliSupportati, tipoServizio, nomeServizio, versioneServizio, tag);
+		}
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String val){
@@ -1048,7 +1076,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,Boolean searchTipo, Boolean distinct){
+	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1062,26 +1090,26 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 		
 		if(cache!=null) {
-			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, "VAL:"+val, "searchTipo:"+searchTipo, "distinct:"+distinct);
+			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, "VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore, "distinct:"+distinct);
 			String methodName = "getServiziErogazione";
 			try {
 				return (List<IDServizio>) cache.getObjectCache(this.driver, debug, key, methodName, 
-						new Class<?>[] {String.class, String.class, String.class, String.class, Boolean.class, Boolean.class },
-						tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, distinct);
+						new Class<?>[] {String.class, String.class, String.class, String.class, Boolean.class, PermessiUtenteOperatore.class, Boolean.class },
+						tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, permessiUtenteOperatore, distinct);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
 			}
 		}
 		else {
-			return this.driver.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, distinct);
+			return this.driver.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, permessiUtenteOperatore, distinct);
 		}
 	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, 
 			String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, 
-			String val,Boolean searchTipo, Boolean distinct){
+			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1097,16 +1125,16 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		if(cache!=null) {
 			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, 
 					tipoServizio ,nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, 
-					"VAL:"+val, "searchTipo:"+searchTipo, "distinct:"+distinct);
+					"VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore,  "distinct:"+distinct);
 			String methodName = "getServiziErogazione";
 			try {
 				return (List<IDServizio>) cache.getObjectCache(this.driver, debug, key, methodName, 
 						new Class<?>[] {String.class, String.class, String.class,
 								String.class, String.class, String.class, String.class, Integer.class, String.class,
-								String.class, Boolean.class, Boolean.class },
+								String.class, Boolean.class, PermessiUtenteOperatore.class, Boolean.class },
 						tipoProtocollo, tipoSoggetto, nomeSoggetto, 
 						tipoServizio ,nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, 
-						val, searchTipo, distinct);
+						val, searchTipo, permessiUtenteOperatore, distinct);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
@@ -1115,11 +1143,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		else {
 			return this.driver.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, 
 					tipoServizio ,nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, 
-					val, searchTipo, distinct);
+					val, searchTipo, permessiUtenteOperatore, distinct);
 		}
 	}
 	@Override
-	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,Boolean searchTipo){
+	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1133,19 +1161,19 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 		
 		if(cache!=null) {
-			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, "VAL:"+val, "searchTipo:"+searchTipo);
+			String key = buildKey(tipoProtocollo, tipoSoggetto, nomeSoggetto, "VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore);
 			String methodName = "countServiziErogazione";
 			try {
 				return (Integer) cache.getObjectCache(this.driver, debug, key, methodName, 
-						new Class<?>[] {String.class, String.class, String.class, String.class, Boolean.class },
-						tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo);
+						new Class<?>[] {String.class, String.class, String.class, String.class, Boolean.class, PermessiUtenteOperatore.class },
+						tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, permessiUtenteOperatore);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return 0;
 			}
 		}
 		else {
-			return this.driver.countServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo);
+			return this.driver.countServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, val, searchTipo, permessiUtenteOperatore);
 		}
 	}
 	@SuppressWarnings("unchecked")
@@ -1225,7 +1253,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, Boolean distinct){
+	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, 
+			PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1239,19 +1268,20 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 		
 		if(cache!=null) {
-			String key = buildKey(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, "VAL:"+val, "searchTipo:"+searchTipo, "distinct:"+distinct);
+			String key = buildKey(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, "VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore, "distinct:"+distinct);
 			String methodName = "getServiziFruizione";
 			try {
 				return (List<IDServizio>) cache.getObjectCache(this.driver, debug, key, methodName, 
-						new Class<?>[] {String.class, String.class, String.class, String.class ,Boolean.class, Boolean.class},
-						tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, distinct);
+						new Class<?>[] {String.class, String.class, String.class, String.class ,Boolean.class, 
+						PermessiUtenteOperatore.class, Boolean.class},
+						tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, permessiUtenteOperatore, distinct);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
 			}
 		}
 		else {
-			return this.driver.getServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, distinct);
+			return this.driver.getServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, permessiUtenteOperatore, distinct);
 		}
 	}
 	@SuppressWarnings("unchecked")
@@ -1260,7 +1290,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			String tipoSoggetto, String nomeSoggetto, 
 			String tipoSoggettoErogatore , String nomeSoggettoErogatore, 
 			String tipoServizio ,String nomeServizio, Integer versioneServizio, String nomeAzione, 
-			String val,Boolean searchTipo, Boolean distinct){
+			String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore, Boolean distinct){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1278,19 +1308,19 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					tipoSoggetto, nomeSoggetto, 
 					tipoSoggettoErogatore, nomeSoggettoErogatore, 
 					tipoServizio , nomeServizio, versioneServizio, nomeAzione, 
-					"VAL:"+val, "searchTipo:"+searchTipo, "distinct:"+distinct);
+					"VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore, "distinct:"+distinct);
 			String methodName = "getServiziFruizione";
 			try {
 				return (List<IDServizio>) cache.getObjectCache(this.driver, debug, key, methodName, 
 						new Class<?>[] {String.class, String.class, String.class, 
 							String.class, String.class,
 							String.class, String.class, Integer.class, String.class, 
-							String.class ,Boolean.class, Boolean.class},
+							String.class ,Boolean.class, PermessiUtenteOperatore.class, Boolean.class},
 						tipoProtocollo, 
 						tipoSoggetto, nomeSoggetto, 
 						tipoSoggettoErogatore, nomeSoggettoErogatore, 
 						tipoServizio ,nomeServizio, versioneServizio, nomeAzione, 
-						val, searchTipo, distinct);
+						val, searchTipo, permessiUtenteOperatore, distinct);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
@@ -1301,11 +1331,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					tipoSoggetto, nomeSoggetto, 
 					tipoSoggettoErogatore, nomeSoggettoErogatore, 
 					tipoServizio ,nomeServizio, versioneServizio, nomeAzione, 
-					val, searchTipo, distinct);
+					val, searchTipo, permessiUtenteOperatore, distinct);
 		}
 	}
 	@Override
-	public int countServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo){
+	public int countServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,Boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore){
 		
 		DynamicUtilsServiceCache cache = null;
 		boolean debug = false;
@@ -1319,19 +1349,19 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		}
 		
 		if(cache!=null) {
-			String key = buildKey(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, "VAL:"+val, "searchTipo:"+searchTipo);
+			String key = buildKey(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, "VAL:"+val, "searchTipo:"+searchTipo, "permessi:"+permessiUtenteOperatore);
 			String methodName = "countServiziFruizione";
 			try {
 				return (Integer) cache.getObjectCache(this.driver, debug, key, methodName,
-						new Class<?>[] {String.class, String.class, String.class, String.class ,Boolean.class},
-						tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo);
+						new Class<?>[] {String.class, String.class, String.class, String.class ,Boolean.class, PermessiUtenteOperatore.class},
+						tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, permessiUtenteOperatore);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return 0;
 			}
 		}
 		else {
-			return this.driver.countServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo);
+			return this.driver.countServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, val, searchTipo, permessiUtenteOperatore);
 		}
 	}
 	@SuppressWarnings("unchecked")
@@ -1386,11 +1416,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public PortaDelegata getPortaDelegata(String nomePorta) {
-		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione!=null) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
 			String key = buildKey("PD", nomePorta);
 			String methodName = "getPortaDelegata";
 			try {
-				return (PortaDelegata) AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_ricercheConfigurazione, key, methodName,
+				return (PortaDelegata) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
 						new Class<?>[] {String.class }, nomePorta);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
@@ -1403,11 +1433,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	
 	@Override
 	public PortaApplicativa getPortaApplicativa(String nomePorta) {
-		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione!=null) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
 			String key = buildKey("PA", nomePorta);
 			String methodName = "getPortaApplicativa";
 			try {
-				return (PortaApplicativa) AbstractConsoleStartupListener.dynamicUtilsServiceCache_ricercheConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_ricercheConfigurazione, key, methodName,
+				return (PortaApplicativa) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
 						new Class<?>[] {String.class }, nomePorta);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
@@ -1415,6 +1445,59 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			}
 		} else {
 			return this.driver.getPortaApplicativa(nomePorta);
+		}
+	}
+	
+	@Override
+	public MappingFruizionePortaDelegata getMappingFruizione(IDServizio idServizio, IDSoggetto idSoggetto, IDPortaDelegata idPortaDelegata) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("MappingFruizionePD", "idServizio:"+idServizio , "idSoggetto:"+idSoggetto, "idPD:"+idPortaDelegata);
+			String methodName = "getMappingFruizione";
+			try {
+				return (MappingFruizionePortaDelegata) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {IDServizio.class, IDSoggetto.class, IDPortaDelegata.class }, 
+						idServizio, idSoggetto, idPortaDelegata);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		} else {
+			return this.driver.getMappingFruizione(idServizio, idSoggetto, idPortaDelegata);
+		}
+	}
+	@Override
+	public MappingErogazionePortaApplicativa getMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("MappingErogazionePA", "idServizio:"+idServizio , "idPA:"+idPortaApplicativa);
+			String methodName = "getMappingErogazione";
+			try {
+				return (MappingErogazionePortaApplicativa) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {IDServizio.class, IDPortaApplicativa.class }, 
+						idServizio, idPortaApplicativa);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		} else {
+			return this.driver.getMappingErogazione(idServizio, idPortaApplicativa);
+		}
+	}
+	
+	@Override
+	public Plugin getPlugin(IdPlugin idPlugin) {
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey("Plugin", "tipoPlugin:"+idPlugin.getTipoPlugin() , "tipo:"+idPlugin.getTipo());
+			String methodName = "getPlugin";
+			try {
+				return (Plugin) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName,
+						new Class<?>[] {IdPlugin.class }, 
+						idPlugin);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		} else {
+			return this.driver.getPlugin(idPlugin);
 		}
 	}
 }

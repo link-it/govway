@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
 
 
@@ -49,8 +49,7 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 
 	@Override
 	public IModel<?> getRootModel() throws ExpressionException {
-		return StatisticaOraria.model();
-	}
+		return StatisticaOraria.model();	}
 	
 	@Override
 	public TipiDatabase getDatabaseType() throws ExpressionException {
@@ -71,6 +70,13 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".data";
 			}else{
 				return "data";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".stato_record";
+			}else{
+				return "stato_record";
 			}
 		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.ID_PORTA)){
@@ -225,6 +231,13 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".uri_api";
 			}else{
 				return "uri_api";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id";
+			}else{
+				return "cluster_id";
 			}
 		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
@@ -502,6 +515,9 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.DATA)){
 			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
 		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.ID_PORTA)){
 			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
 		}
@@ -566,6 +582,9 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.URI_API)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID)){
 			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI)){
@@ -693,13 +712,13 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(StatisticaOraria.model())){
-			return "statistiche_orarie";
+			return CostantiDB.STATISTICHE_ORARIE;
 		}
 		if(model.equals(StatisticaOraria.model().STATISTICA_BASE)){
-			return "statistiche_orarie";
+			return CostantiDB.STATISTICHE_ORARIE;
 		}
 		if(model.equals(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI)){
-			return "stat_orarie_contenuti";
+			return CostantiDB.STATISTICHE_ORARIE_CONTENUTI;
 		}
 
 

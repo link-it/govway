@@ -93,6 +93,7 @@
 	<xsd:complexType name="statistica">
 		<xsd:sequence>
 			<xsd:element name="data" type="xsd:dateTime" />
+			<xsd:element name="stato-record" type="xsd:int"/> 
 			<xsd:element name="id-porta" type="xsd:string" /> 
 			<xsd:element name="tipo-porta" type="tipo-porta" />	
 			<xsd:element name="tipo-mittente" type="xsd:string" />
@@ -116,6 +117,7 @@
 			<xsd:element name="client-address" type="xsd:string" />
 			<xsd:element name="gruppi" type="xsd:string" />
 			<xsd:element name="uri-api" type="xsd:string"/>
+			<xsd:element name="cluster-id" type="xsd:string"/>
 			
 			<!-- Informazioni -->
 			<xsd:element name="numero-transazioni" type="xsd:integer" />

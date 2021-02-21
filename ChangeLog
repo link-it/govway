@@ -1,3 +1,56 @@
+2021-02-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, BatchStatistiche, GovWayMonitor]
+	Aggiunta funzionalità di ricerca per identificativo del cluster e canale.
+	Sono inoltre stati migliorati i criteri di generazione dei report statistici che utilizzano adesso una identificazione dell'intervallo temporale inclusivo al giorno di interesse del report (es. >=2021-02-10 00:00:00.000).
+	Precedentemente al fix la data utilizzata era quelle precedente al giorno di interesse (es. >2021-02-10 23:59:59.999) e questa soluzione risultava meno efficente in presenza di partizionamento giornaliero delle transazioni.
+	Gli indici 'full' generabili utilizzando l'installer in modalità avanzata vengono adesso generati anche per i tipi di database hsql e sqlserver.
+	Infine è stato migliorato l'algoritmo di generazione delle statistiche in modo che l'aggiornamento dell'intervallo corrente non produca informazioni parziali temporaneamente scorrette 
+	fino al completamento dell'aggiornamento come poteva avvenire precedentemente al fix.
+
+2021-02-21  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug presente nel controllo dello stato dei nodi del cluster in modo che avvenga effettivamente ogni 60 secondi.
+	Prima del fix il counter veniva resettato ad ogni navigazione sulla console di monitoraggio e quindi una continua navigazione faceva si che l'aggiornamento dello stato non avvenisse mai.
+
+2021-02-20  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug presente nella gestione dei permessi riguardanti gli utenti della console di monitoraggio con visibilità limitata per soggetti e/o API:
+	- le ricerche puntuali tramite identificativo di transazione o di messaggio non verificavano che l'utente avesse i diritti a visualizzare i dati della transazione;
+	- le liste contenenti le erogazioni o le fruizioni di API, impostabili nei criteri di ricerca, visualizzano adesso solamente le API associate all'utente.
+
+2021-02-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug presente durante la modifica del nome del soggetto se esistono più di 1000 erogazioni: dalla 1001-esima erogazioni la modifica non veniva applicata.
+
+2021-02-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità di export/import per quanto concerne le seguenti configurazioni:
+	- Token Policy
+	- Policy di Rate Limiting del Controllo del Traffico
+	- Token Policy
+
+2021-02-19  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità di filtro per Tag nelle policy di Rate Limiting a livello di configurazione globale.
+
+2021-02-18  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Le utility per la gestione mail, all'interno del package 'org.openspcoop2.utils.mail', sono state aggiornate per funzionare con java 11 e ultime versioni delle librerie 3parti.
+	Nel package 'org.openspcoop2.sql' è stata aggiunta la gestione dell'update tramite CASE.
+
+2021-02-18  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto bug presente durante il salvataggio dei Soggetti e delle API associate ad un utente quando si selezionava la checkbox 'Tutti' nella pagina di configurazione dell'utente.
+	L'associazione dei soggetti e/o delle API precedentemente configurate rimanevano a livello di base dati anche se non più visualizzate da console.
+
 2021-02-18  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione, GovWayConsole]

@@ -28,6 +28,8 @@ import java.util.Properties;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.web.monitor.allarmi.bean.AllarmiSearchForm;
 import org.openspcoop2.web.monitor.allarmi.dao.AllarmiService;
 import org.openspcoop2.web.monitor.allarmi.dao.IAllarmiService;
@@ -59,7 +61,7 @@ public class AllarmeStatus extends BaseSondaPdd implements ISondaPdd{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final String PATH_ALLARMI = "/pages/list/statoAllarmi.jsf";
+	private static final String PATH_ALLARMI = "/allarmi/pages/list/statoAllarmi.jsf";
 
 	private int totOk = 0;
 	private int totAllWarn = 0;
@@ -90,7 +92,10 @@ public class AllarmeStatus extends BaseSondaPdd implements ISondaPdd{
 		try{
 			this.log.debug("Init Sonda AllarmeStatus in corso...");
 			this.listaStatus = new ArrayList<IStatus>();
-			this.allarmiAssociazioneAcknowledgedStatoAllarme = PddMonitorProperties.getInstance(this.log).isAllarmiAssociazioneAcknowledgedStatoAllarme();
+			
+			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(this.log, PddMonitorProperties.getInstance(this.log).getAllarmiConfigurazione());
+			
+			this.allarmiAssociazioneAcknowledgedStatoAllarme = alarmEngineConfig.isOptionsAcknowledgedStatusAssociation();
 
 			// In questa implementazione c'e' solo lo stato generale degli allarmi.
 			IStatus statoAllarmi = new BaseStatus();

@@ -35,13 +35,13 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckConfigurazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckUtils;
@@ -217,8 +217,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			boolean modificaStatoAbilitata = true;
 			boolean visualizzaLinkRegolePerAzioni = false;
 			if(portaApplicativa.getBehaviour() != null) {
-				BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
-				visualizzaLinkProprietaCustom = behaviourType.equals(BehaviourType.CUSTOM);
+				TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+				visualizzaLinkProprietaCustom = behaviourType.equals(TipoBehaviour.CUSTOM);
 
 				if(portaApplicativa.sizeServizioApplicativoList() > 1)
 					modificaStatoAbilitata = false;
@@ -239,10 +239,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					reinitParametriCondizionali = consegnaCondizionale;
 				}
 				else if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA)) {
-					reinitParametriCondizionali = BehaviourType.CONSEGNA_CONDIZIONALE.getValue().equals(modalitaConsegna);
+					reinitParametriCondizionali = TipoBehaviour.CONSEGNA_CONDIZIONALE.getValue().equals(modalitaConsegna);
 					consegnaCondizionale = false;
 					
-					if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+					if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 						// uso il default
 						ConfigurazioneMultiDeliver config = new ConfigurazioneMultiDeliver();
 						notificheCondizionaliEsito = config.isNotificheByEsito();
@@ -330,7 +330,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				if(stato == null) {
 					if(portaApplicativa.getBehaviour() == null) {
 						stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO;
-						modalitaConsegna = BehaviourType.CONSEGNA_LOAD_BALANCE.getValue();
+						modalitaConsegna = TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue();
 						consegnaCondizionale = false;
 						connettoreImplementaAPI = "";
 						notificheCondizionaliEsito = false;
@@ -351,13 +351,13 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					} else {
 						stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO;
 
-						BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+						TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
 
 						modalitaConsegna = behaviourType.getValue();
 						
 						isSoapOneWay = porteApplicativeHelper.isSoapOneWay(portaApplicativa, mappingErogazionePortaApplicativa, asps, as, serviceBinding);
 																		
-						if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+						if(behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE)) {
 							loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(portaApplicativa.getBehaviour());
 							
 							if(StickyUtils.isConfigurazioneSticky(portaApplicativa, ControlStationLogger.getPddConsoleCoreLogger())) {
@@ -384,9 +384,9 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 							
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 														
-						} else if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA) ||
-								behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE) ||
-								behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
+						} else if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA) ||
+								behaviourType.equals(TipoBehaviour.CONSEGNA_CONDIZIONALE) ||
+								behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 
 							if(!isSoapOneWay) {
@@ -400,7 +400,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 								esitiTransazione = null;
 							}
 						}
-						else if(behaviourType.equals(BehaviourType.CUSTOM)) {
+						else if(behaviourType.equals(TipoBehaviour.CUSTOM)) {
 							visualizzaLinkProprietaCustom = true;
 							tipoCustom = portaApplicativa.getBehaviour().getNome();
 						}
@@ -520,7 +520,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				PortaApplicativaBehaviour behaviour = new PortaApplicativaBehaviour();
 				portaApplicativa.setBehaviour(behaviour);
 				
-				BehaviourType behaviourType = BehaviourType.toEnumConstant(modalitaConsegna);
+				TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(modalitaConsegna);
 
 				switch (behaviourType) {
 				case CONSEGNA_LOAD_BALANCE:	{
@@ -588,7 +588,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 			if(portaApplicativa.getBehaviour() == null) {
 				stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO;
-				modalitaConsegna = BehaviourType.CONSEGNA_LOAD_BALANCE.getValue();
+				modalitaConsegna = TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue();
 				consegnaCondizionale = false;
 				connettoreImplementaAPI = "";
 				notificheCondizionaliEsito = false;
@@ -608,10 +608,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			} else {
 				stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO;
 
-				BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+				TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(portaApplicativa.getBehaviour().getNome());
 
 				modalitaConsegna = behaviourType.getValue();
-				if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+				if(behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE)) {
 					loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(portaApplicativa.getBehaviour());
 					if(StickyUtils.isConfigurazioneSticky(portaApplicativa, ControlStationLogger.getPddConsoleCoreLogger())) {
 						sticky = true;
@@ -636,7 +636,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					}
 					
 					consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
-				} else if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)) {
+				} else if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)) {
 					consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 
 					if(!isSoapOneWay) {
@@ -650,7 +650,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						esitiTransazione = null;
 					}
 				}
-				else if(behaviourType.equals(BehaviourType.CUSTOM)) {
+				else if(behaviourType.equals(TipoBehaviour.CUSTOM)) {
 					visualizzaLinkProprietaCustom = true;
 					tipoCustom = portaApplicativa.getBehaviour().getNome();
 					numeroProprietaCustom = portaApplicativa.getBehaviour().sizeProprietaList();

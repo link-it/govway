@@ -451,6 +451,7 @@ public class JDBCStatisticaSettimanaleServiceSearchImpl implements IJDBCServiceS
 		sqlQueryObjectGet.addFromTable(this.getStatisticaSettimanaleFieldConverter().toTable(StatisticaSettimanale.model().STATISTICA_BASE));
 		sqlQueryObjectGet.addSelectField("id");
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DATA,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.STATO_RECORD,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.ID_PORTA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TIPO_PORTA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TIPO_MITTENTE,true));
@@ -473,6 +474,7 @@ public class JDBCStatisticaSettimanaleServiceSearchImpl implements IJDBCServiceS
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.CLIENT_ADDRESS,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.GRUPPI,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.URI_API,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.CLUSTER_ID,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,true));

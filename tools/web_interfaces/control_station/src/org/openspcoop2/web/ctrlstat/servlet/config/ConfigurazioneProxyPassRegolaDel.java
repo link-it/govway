@@ -86,7 +86,8 @@ public final class ConfigurazioneProxyPassRegolaDel extends Action {
 			// Prendo l'accesso registro
 			Configurazione configurazioneGenerale = confCore.getConfigurazioneGenerale();
 			ConfigurazioneUrlInvocazione urlInvocazione = configurazioneGenerale.getUrlInvocazione();
-
+			List<ConfigurazioneUrlInvocazioneRegola> regoleDaEliminare = new ArrayList<ConfigurazioneUrlInvocazioneRegola>();
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				id = Long.parseLong(idsToRemove.get(i));
@@ -94,12 +95,15 @@ public final class ConfigurazioneProxyPassRegolaDel extends Action {
 				for (int j = 0; j < urlInvocazione.sizeRegolaList(); j++) {
 					ConfigurazioneUrlInvocazioneRegola regola = urlInvocazione.getRegola(j); 
 					if (regola.getId().longValue() == id.longValue()) {
-						urlInvocazione.removeRegola(j);
+						regoleDaEliminare.add(urlInvocazione.removeRegola(j));
 					}
 				}
 			}
 
-			confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
+			//confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneGenerale);
+			if(!regoleDaEliminare.isEmpty()) {
+				confCore.performDeleteOperation(userLogin, confHelper.smista(), regoleDaEliminare.toArray(new Object[1]) );
+			}
 
 			// Preparo il menu
 			confHelper.makeMenu();

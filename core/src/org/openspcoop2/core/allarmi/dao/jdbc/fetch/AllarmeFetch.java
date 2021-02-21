@@ -70,12 +70,10 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 				setParameter(object, "set_value_tipoAllarme", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_allarme", Allarme.model().TIPO_ALLARME.getFieldType())+"");
 				object.setMail(new AllarmeMail());
-				setParameter(object.getMail(), "setAckMode", Allarme.model().MAIL.ACK_MODE.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "mail_ack_mode", Allarme.model().MAIL.ACK_MODE.getFieldType()));
+				setParameter(object.getMail(), "setInvia", Allarme.model().MAIL.INVIA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "mail_invia", Allarme.model().MAIL.INVIA.getFieldType()));
 				setParameter(object.getMail(), "setInviaWarning", Allarme.model().MAIL.INVIA_WARNING.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "mail_invia_warning", Allarme.model().MAIL.INVIA_WARNING.getFieldType()));
-				setParameter(object.getMail(), "setInviaAlert", Allarme.model().MAIL.INVIA_ALERT.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "mail_invia_alert", Allarme.model().MAIL.INVIA_ALERT.getFieldType()));
 				setParameter(object.getMail(), "setDestinatari", Allarme.model().MAIL.DESTINATARI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "mail_destinatari", Allarme.model().MAIL.DESTINATARI.getFieldType()));
 				setParameter(object.getMail(), "setSubject", Allarme.model().MAIL.SUBJECT.getFieldType(),
@@ -83,12 +81,10 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 				setParameter(object.getMail(), "setBody", Allarme.model().MAIL.BODY.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "mail_body", Allarme.model().MAIL.BODY.getFieldType()));
 				object.setScript(new AllarmeScript());
-				setParameter(object.getScript(), "setAckMode", Allarme.model().SCRIPT.ACK_MODE.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "script_ack_mode", Allarme.model().SCRIPT.ACK_MODE.getFieldType()));
+				setParameter(object.getScript(), "setInvoca", Allarme.model().SCRIPT.INVOCA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "script_invoke", Allarme.model().SCRIPT.INVOCA.getFieldType()));
 				setParameter(object.getScript(), "setInvocaWarning", Allarme.model().SCRIPT.INVOCA_WARNING.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "script_invoke_warning", Allarme.model().SCRIPT.INVOCA_WARNING.getFieldType()));
-				setParameter(object.getScript(), "setInvocaAlert", Allarme.model().SCRIPT.INVOCA_ALERT.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "script_invoke_alert", Allarme.model().SCRIPT.INVOCA_ALERT.getFieldType()));
 				setParameter(object.getScript(), "setCommand", Allarme.model().SCRIPT.COMMAND.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "script_command", Allarme.model().SCRIPT.COMMAND.getFieldType()));
 				setParameter(object.getScript(), "setArgs", Allarme.model().SCRIPT.ARGS.getFieldType(),
@@ -208,12 +204,10 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 				setParameter(object, "set_value_tipoAllarme", String.class,
 					this.getObjectFromMap(map,"tipo-allarme"));
 				object.setMail(new AllarmeMail());
-				setParameter(object.getMail(), "setAckMode", Allarme.model().MAIL.ACK_MODE.getFieldType(),
-					this.getObjectFromMap(map,"mail.ack-mode"));
+				setParameter(object.getMail(), "setInvia", Allarme.model().MAIL.INVIA.getFieldType(),
+					this.getObjectFromMap(map,"mail.invia"));
 				setParameter(object.getMail(), "setInviaWarning", Allarme.model().MAIL.INVIA_WARNING.getFieldType(),
 					this.getObjectFromMap(map,"mail.invia-warning"));
-				setParameter(object.getMail(), "setInviaAlert", Allarme.model().MAIL.INVIA_ALERT.getFieldType(),
-					this.getObjectFromMap(map,"mail.invia-alert"));
 				setParameter(object.getMail(), "setDestinatari", Allarme.model().MAIL.DESTINATARI.getFieldType(),
 					this.getObjectFromMap(map,"mail.destinatari"));
 				setParameter(object.getMail(), "setSubject", Allarme.model().MAIL.SUBJECT.getFieldType(),
@@ -221,12 +215,10 @@ public class AllarmeFetch extends AbstractJDBCFetch {
 				setParameter(object.getMail(), "setBody", Allarme.model().MAIL.BODY.getFieldType(),
 					this.getObjectFromMap(map,"mail.body"));
 				object.setScript(new AllarmeScript());
-				setParameter(object.getScript(), "setAckMode", Allarme.model().SCRIPT.ACK_MODE.getFieldType(),
-					this.getObjectFromMap(map,"script.ack-mode"));
+				setParameter(object.getScript(), "setInvoca", Allarme.model().SCRIPT.INVOCA.getFieldType(),
+					this.getObjectFromMap(map,"script.invoca"));
 				setParameter(object.getScript(), "setInvocaWarning", Allarme.model().SCRIPT.INVOCA_WARNING.getFieldType(),
 					this.getObjectFromMap(map,"script.invoca-warning"));
-				setParameter(object.getScript(), "setInvocaAlert", Allarme.model().SCRIPT.INVOCA_ALERT.getFieldType(),
-					this.getObjectFromMap(map,"script.invoca-alert"));
 				setParameter(object.getScript(), "setCommand", Allarme.model().SCRIPT.COMMAND.getFieldType(),
 					this.getObjectFromMap(map,"script.command"));
 				setParameter(object.getScript(), "setArgs", Allarme.model().SCRIPT.ARGS.getFieldType(),

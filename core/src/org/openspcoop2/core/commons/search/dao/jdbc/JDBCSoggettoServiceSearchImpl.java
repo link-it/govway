@@ -54,6 +54,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.SoggettoFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.SoggettoFetch;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.SoggettoRuolo;
 
 /**     
  * JDBCSoggettoServiceSearchImpl
@@ -445,6 +446,34 @@ public class JDBCSoggettoServiceSearchImpl implements IJDBCServiceSearchWithId<S
 			return;
 		}
 		obj.setId(imgSaved.getId());
+		if(obj.getSoggettoRuoloList()!=null){
+			List<org.openspcoop2.core.commons.search.SoggettoRuolo> listObj_ = obj.getSoggettoRuoloList();
+			for(org.openspcoop2.core.commons.search.SoggettoRuolo itemObj_ : listObj_){
+				org.openspcoop2.core.commons.search.SoggettoRuolo itemAlreadySaved_ = null;
+				if(imgSaved.getSoggettoRuoloList()!=null){
+					List<org.openspcoop2.core.commons.search.SoggettoRuolo> listImgSaved_ = imgSaved.getSoggettoRuoloList();
+					for(org.openspcoop2.core.commons.search.SoggettoRuolo itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdRuolo().getNome(),itemImgSaved_.getIdRuolo().getNome());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
+					if(itemObj_.getIdRuolo()!=null && 
+							itemAlreadySaved_.getIdRuolo()!=null){
+						itemObj_.getIdRuolo().setId(itemAlreadySaved_.getIdRuolo().getId());
+					}
+					if(itemObj_.getIdSoggetto()!=null && 
+							itemAlreadySaved_.getIdSoggetto()!=null){
+						itemObj_.getIdSoggetto().setId(itemAlreadySaved_.getIdSoggetto().getId());
+					}
+				}
+			}
+		}
 
 	}
 	
@@ -480,6 +509,74 @@ public class JDBCSoggettoServiceSearchImpl implements IJDBCServiceSearchWithId<S
 
 
 
+		// Object soggetto_soggettoRuolo
+		ISQLQueryObject sqlQueryObjectGet_soggetto_soggettoRuolo = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_soggetto_soggettoRuolo.setANDLogicOperator(true);
+		sqlQueryObjectGet_soggetto_soggettoRuolo.addFromTable(this.getSoggettoFieldConverter().toTable(Soggetto.model().SOGGETTO_RUOLO));
+		sqlQueryObjectGet_soggetto_soggettoRuolo.addSelectField("id");
+		sqlQueryObjectGet_soggetto_soggettoRuolo.addWhereCondition("id_soggetto=?");
+
+		// Get soggetto_soggettoRuolo
+		java.util.List<Object> soggetto_soggettoRuolo_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_soggetto_soggettoRuolo.createSQLQuery(), jdbcProperties.isShowSql(), Soggetto.model().SOGGETTO_RUOLO, this.getSoggettoFetch(),
+			new JDBCObject(soggetto.getId(),Long.class));
+
+		if(soggetto_soggettoRuolo_list != null) {
+			for (Object soggetto_soggettoRuolo_object: soggetto_soggettoRuolo_list) {
+				SoggettoRuolo soggetto_soggettoRuolo = (SoggettoRuolo) soggetto_soggettoRuolo_object;
+
+
+				if(idMappingResolutionBehaviour==null ||
+					(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
+				){
+					// Object _soggetto_soggettoRuolo_ruolo (recupero id)
+					ISQLQueryObject sqlQueryObjectGet_soggetto_soggettoRuolo_ruolo_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+					sqlQueryObjectGet_soggetto_soggettoRuolo_ruolo_readFkId.addFromTable(this.getSoggettoFieldConverter().toTable(org.openspcoop2.core.commons.search.Soggetto.model().SOGGETTO_RUOLO));
+					sqlQueryObjectGet_soggetto_soggettoRuolo_ruolo_readFkId.addSelectField("id_ruolo");
+					sqlQueryObjectGet_soggetto_soggettoRuolo_ruolo_readFkId.addWhereCondition("id=?");
+					sqlQueryObjectGet_soggetto_soggettoRuolo_ruolo_readFkId.setANDLogicOperator(true);
+					Long idFK_soggetto_soggettoRuolo_ruolo = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_soggetto_soggettoRuolo_ruolo_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+							new JDBCObject(soggetto_soggettoRuolo.getId(),Long.class));
+					
+					org.openspcoop2.core.commons.search.IdRuolo id_soggetto_soggettoRuolo_ruolo = null;
+					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
+						id_soggetto_soggettoRuolo_ruolo = ((JDBCRuoloServiceSearch)(this.getServiceManager().getRuoloServiceSearch())).findId(idFK_soggetto_soggettoRuolo_ruolo, false);
+					}else{
+						id_soggetto_soggettoRuolo_ruolo = new org.openspcoop2.core.commons.search.IdRuolo();
+					}
+					id_soggetto_soggettoRuolo_ruolo.setId(idFK_soggetto_soggettoRuolo_ruolo);
+					soggetto_soggettoRuolo.setIdRuolo(id_soggetto_soggettoRuolo_ruolo);
+				}
+
+//				if(idMappingResolutionBehaviour==null ||
+//					(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
+//				){
+//					// Object _soggetto_soggettoRuolo_soggetto (recupero id)
+//					ISQLQueryObject sqlQueryObjectGet_soggetto_soggettoRuolo_soggetto_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+//					sqlQueryObjectGet_soggetto_soggettoRuolo_soggetto_readFkId.addFromTable(this.getSoggettoFieldConverter().toTable(org.openspcoop2.core.commons.search.Soggetto.model().SOGGETTO_RUOLO));
+//					sqlQueryObjectGet_soggetto_soggettoRuolo_soggetto_readFkId.addSelectField("id_soggetto");
+//					sqlQueryObjectGet_soggetto_soggettoRuolo_soggetto_readFkId.addWhereCondition("id=?");
+//					sqlQueryObjectGet_soggetto_soggettoRuolo_soggetto_readFkId.setANDLogicOperator(true);
+//					Long idFK_soggetto_soggettoRuolo_soggetto = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_soggetto_soggettoRuolo_soggetto_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+//							new JDBCObject(soggetto_soggettoRuolo.getId(),Long.class));
+//					
+//					org.openspcoop2.core.commons.search.IdSoggetto id_soggetto_soggettoRuolo_soggetto = null;
+//					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
+//						id_soggetto_soggettoRuolo_soggetto = ((JDBCSoggettoServiceSearch)(this.getServiceManager().getSoggettoServiceSearch())).findId(idFK_soggetto_soggettoRuolo_soggetto, false);
+//					}else{
+//						id_soggetto_soggettoRuolo_soggetto = new org.openspcoop2.core.commons.search.IdSoggetto();
+//					}
+//					id_soggetto_soggettoRuolo_soggetto.setId(idFK_soggetto_soggettoRuolo_soggetto);
+//					soggetto_soggettoRuolo.setIdSoggetto(id_soggetto_soggettoRuolo_soggetto);
+//				}
+				IdSoggetto idSoggetto = new IdSoggetto();
+				idSoggetto.setTipo(soggetto.getTipoSoggetto());
+				idSoggetto.setNome(soggetto.getNomeSoggetto());
+				soggetto_soggettoRuolo.setIdSoggetto(idSoggetto);
+
+				soggetto.addSoggettoRuolo(soggetto_soggettoRuolo);
+			}
+		}
+               
 		
         return soggetto;  
 	
@@ -516,7 +613,16 @@ public class JDBCSoggettoServiceSearchImpl implements IJDBCServiceSearchWithId<S
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		// nop;
+		if(expression.inUseModel(Soggetto.model().SOGGETTO_RUOLO,false) || expression.inUseModel(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO,false)){
+			String tableName1 = this.getSoggettoFieldConverter().toAliasTable(Soggetto.model());
+			String tableName2 = this.getSoggettoFieldConverter().toAliasTable(Soggetto.model().SOGGETTO_RUOLO);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_soggetto");
+			
+			tableName1 = this.getSoggettoFieldConverter().toAliasTable(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO);
+			tableName2 = this.getSoggettoFieldConverter().toAliasTable(Soggetto.model().SOGGETTO_RUOLO);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_ruolo");
+		}
+		
         
 	}
 	
@@ -538,6 +644,24 @@ public class JDBCSoggettoServiceSearchImpl implements IJDBCServiceSearchWithId<S
 		mapTableToPKColumn.put(converter.toTable(Soggetto.model()),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(Soggetto.model()))
+			));
+
+		// Soggetto.model().SOGGETTO_RUOLO
+		mapTableToPKColumn.put(converter.toTable(Soggetto.model().SOGGETTO_RUOLO),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(Soggetto.model().SOGGETTO_RUOLO))
+			));
+
+		// Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO
+		mapTableToPKColumn.put(converter.toTable(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(Soggetto.model().SOGGETTO_RUOLO.ID_RUOLO))
+			));
+
+		// Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO
+		mapTableToPKColumn.put(converter.toTable(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(Soggetto.model().SOGGETTO_RUOLO.ID_SOGGETTO))
 			));
 
         return mapTableToPKColumn;		

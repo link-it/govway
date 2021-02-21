@@ -54,10 +54,25 @@
 			<to-view-id>/allarmi/pages/list/allarmeHistory.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<navigation-rule>
+		<navigation-rule>
 		<from-view-id>/allarmi/pages/list/allarmeHistory.xhtml</from-view-id>
 		<navigation-case>
-			<from-outcome>stato</from-outcome>
+			<from-outcome>allarme</from-outcome>
 			<to-view-id>/allarmi/pages/form/allarme.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettaglioStatoAllarme</from-outcome>
+			<to-view-id>/allarmi/pages/form/dettaglioAllarmeHistory.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/allarmi/pages/form/dettaglioAllarmeHistory.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>allarme</from-outcome>
+			<to-view-id>/allarmi/pages/form/allarme.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>visualizzaHistoryAllarme</from-outcome>
+			<to-view-id>/allarmi/pages/list/allarmeHistory.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

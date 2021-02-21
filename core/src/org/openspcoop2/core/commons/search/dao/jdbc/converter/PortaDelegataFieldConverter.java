@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -263,22 +264,22 @@ public class PortaDelegataFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(PortaDelegata.model())){
-			return "porte_delegate";
+			return CostantiDB.PORTE_DELEGATE;
 		}
 		if(model.equals(PortaDelegata.model().ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO)){
-			return "porte_delegate_sa";
+			return CostantiDB.PORTE_DELEGATE_SA;
 		}
 		if(model.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO)){
-			return "servizi_applicativi";
+			return CostantiDB.SERVIZI_APPLICATIVI;
 		}
 		if(model.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(PortaDelegata.model().PORTA_DELEGATA_AZIONE)){
-			return "pd_azioni";
+			return CostantiDB.PORTE_DELEGATE_AZIONI;
 		}
 
 

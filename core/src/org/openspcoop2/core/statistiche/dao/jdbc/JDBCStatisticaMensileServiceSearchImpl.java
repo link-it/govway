@@ -452,6 +452,7 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 		sqlQueryObjectGet.addFromTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_BASE));
 		sqlQueryObjectGet.addSelectField("id");
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DATA,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.ID_PORTA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TIPO_PORTA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TIPO_MITTENTE,true));
@@ -474,6 +475,7 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.CLIENT_ADDRESS,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.GRUPPI,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.URI_API,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,true));

@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -46,6 +47,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
@@ -56,6 +58,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMappingErogazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMappingFruizione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginArchivio;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginClasse;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
@@ -63,6 +67,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveUrlInvocazioneRegola;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 
 /**
@@ -595,7 +600,16 @@ public class EsitoUtils {
 		for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
 			try{
 				ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloTraffico_activePolicies().get(i);
-				String nomePolicy = ((ArchiveActivePolicy)archiveCCPolicy.getArchiveObject()).getNomePolicy();
+				ArchiveActivePolicy activePolicy = ((ArchiveActivePolicy)archiveCCPolicy.getArchiveObject()); 
+				String nomePolicy = activePolicy.getAliasPolicy();
+				if(activePolicy.getRuoloPorta()!=null && activePolicy.getNomePorta()!=null) {
+					if(RuoloPolicy.APPLICATIVA.equals(activePolicy.getRuoloPorta())) {
+						nomePolicy = nomePolicy + " (inbound:"+activePolicy.getNomePorta()+")";
+					}
+					else {
+						nomePolicy = nomePolicy + " (outbound:"+activePolicy.getNomePorta()+")";
+					}
+				}
 				bfEsito.append("\t- [").append(nomePolicy).append("] ");
 				serializeStato(archiveCCPolicy, bfEsito, importOperation);
 			}catch(Throwable e){
@@ -607,6 +621,33 @@ public class EsitoUtils {
 			bfEsito.append("\n");	
 		}
 		
+		// Allarmi
+		if(archive.getAllarmi().size()>0){
+			bfEsito.append("Allarmi (").append(archive.getAllarmi().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getAllarmi().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveAllarme = archive.getAllarmi().get(i);
+				ArchiveAllarme allarme = ((ArchiveAllarme)archiveAllarme.getArchiveObject()); 
+				String aliasAllarme = allarme.getAlias();
+				if(allarme.getRuoloPorta()!=null && allarme.getNomePorta()!=null) {
+					if(RuoloPolicy.APPLICATIVA.equals(allarme.getRuoloPorta())) {
+						aliasAllarme = aliasAllarme + " (inbound:"+allarme.getNomePorta()+")";
+					}
+					else {
+						aliasAllarme = aliasAllarme + " (outbound:"+allarme.getNomePorta()+")";
+					}
+				}
+				bfEsito.append("\t- [").append(aliasAllarme).append("] ");
+				serializeStato(archiveAllarme, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getAllarmi().size()>0){
+			bfEsito.append("\n");	
+		}
 		
 		// Token Policy (Validation)
 		if(archive.getToken_validation_policies().size()>0){
@@ -646,6 +687,78 @@ public class EsitoUtils {
 			bfEsito.append("\n");	
 		}
 		
+		// Plugin Classi
+		if(archive.getPlugin_classi().size()>0){
+			bfEsito.append("Plugin - Classi (").append(archive.getPlugin_classi().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getPlugin_classi().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archivePluginClasse = archive.getPlugin_classi().get(i);
+				String tipoPlugin = ((ArchivePluginClasse)archivePluginClasse.getArchiveObject()).getTipoPlugin();
+				String tipo = ((ArchivePluginClasse)archivePluginClasse.getArchiveObject()).getTipo();
+				bfEsito.append("\t- [").append(tipoPlugin).append(" "+tipo+"] ");
+				serializeStato(archivePluginClasse, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getPlugin_classi().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		// Plugin Archivi
+		if(archive.getPlugin_archivi().size()>0){
+			bfEsito.append("Plugin - Archivi (").append(archive.getPlugin_archivi().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getPlugin_archivi().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archivePluginArchivio = archive.getPlugin_archivi().get(i);
+				String nomeArchivio = ((ArchivePluginArchivio)archivePluginArchivio.getArchiveObject()).getNome();
+				bfEsito.append("\t- [").append(nomeArchivio).append("] ");
+				serializeStato(archivePluginArchivio, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getPlugin_archivi().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		// Configurazione - UrlInvocazione - Regole
+		if(archive.getConfigurazionePdD_urlInvocazione_regole().size()>0){
+			bfEsito.append("Configurazione - Regole ProxyPass (").append(archive.getConfigurazionePdD_urlInvocazione_regole().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getConfigurazionePdD_urlInvocazione_regole().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveRegola = archive.getConfigurazionePdD_urlInvocazione_regole().get(i);
+				String nomeRegola = ((ArchiveUrlInvocazioneRegola)archiveRegola.getArchiveObject()).getNome();
+				bfEsito.append("\t- [").append(nomeRegola).append("] ");
+				serializeStato(archiveRegola, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getConfigurazionePdD_urlInvocazione_regole().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		// Configurazione (UrlInvocazione)
+		if(archive.getConfigurazionePdD_urlInvocazione()!=null){
+			bfEsito.append("Configurazione - UrlInvocazione\n");
+			try{
+				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.config.ConfigurazioneUrlInvocazione> configurazione = 
+						archive.getConfigurazionePdD_urlInvocazione();
+				bfEsito.append("\t- ");
+				serializeStato(configurazione, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- non importata: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+			bfEsito.append("\n");
+		}
 		
 		// Configurazione
 		if(archive.getConfigurazionePdD()!=null){
@@ -666,6 +779,8 @@ public class EsitoUtils {
 	}
 	public final static String LABEL_IMPORT_POLICY = "Policy di Configurazione";
 	public final static String LABEL_DELETE_POLICY =  LABEL_IMPORT_POLICY;
+	public final static String LABEL_IMPORT_PLUGIN = "Plugins";
+	public final static String LABEL_DELETE_PLUGIN =  LABEL_IMPORT_PLUGIN;
 	public final static String LABEL_IMPORT_CONFIGURAZIONE = "Configurazione di GovWay";
 	public void serializeStato(ArchiveEsitoImportDetail detail,StringBuilder bfEsito, boolean importOperation){
 		String stateDetail = "";
@@ -681,6 +796,9 @@ public class EsitoUtils {
 			break;
 		case IMPORT_POLICY_CONFIG_NOT_ENABLED:
 			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_POLICY+"' non abilitata").append(stateDetail);
+			break;
+		case IMPORT_PLUGIN_CONFIG_NOT_ENABLED:
+			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_PLUGIN+"' non abilitata").append(stateDetail);
 			break;
 		case IMPORT_CONFIG_NOT_ENABLED:
 			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_CONFIGURAZIONE+"' non abilitata").append(stateDetail);
@@ -701,7 +819,10 @@ public class EsitoUtils {
 			bfEsito.append("già presente, aggiornato correttamente").append(stateDetail);
 			break;
 		case DELETED_POLICY_CONFIG_NOT_ENABLED:
-			bfEsito.append("non eliminto: opzione '"+LABEL_DELETE_POLICY+"' non abilitata").append(stateDetail);
+			bfEsito.append("non eliminato: opzione '"+LABEL_DELETE_POLICY+"' non abilitata").append(stateDetail);
+			break;
+		case DELETED_PLUGIN_CONFIG_NOT_ENABLED:
+			bfEsito.append("non eliminato: opzione '"+LABEL_DELETE_PLUGIN+"' non abilitata").append(stateDetail);
 			break;
 		case DELETED_NOT_EXISTS:
 			bfEsito.append("non esistente").append(stateDetail);
@@ -726,6 +847,9 @@ public class EsitoUtils {
 		case IMPORT_POLICY_CONFIG_NOT_ENABLED:
 			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_POLICY+"' non abilitata").append(stateDetail);
 			break;
+		case IMPORT_PLUGIN_CONFIG_NOT_ENABLED:
+			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_PLUGIN+"' non abilitata").append(stateDetail);
+			break;
 		case IMPORT_CONFIG_NOT_ENABLED:
 			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_CONFIGURAZIONE+"' non abilitata").append(stateDetail);
 			break;
@@ -742,7 +866,10 @@ public class EsitoUtils {
 			bfEsito.append("aggiornata correttamente").append(stateDetail);
 			break;
 		case DELETED_POLICY_CONFIG_NOT_ENABLED:
-			bfEsito.append("non eliminto: opzione '"+LABEL_DELETE_POLICY+"' non abilitata").append(stateDetail);
+			bfEsito.append("non eliminato: opzione '"+LABEL_DELETE_POLICY+"' non abilitata").append(stateDetail);
+			break;
+		case DELETED_PLUGIN_CONFIG_NOT_ENABLED:
+			bfEsito.append("non eliminato: opzione '"+LABEL_DELETE_PLUGIN+"' non abilitata").append(stateDetail);
 			break;
 		case DELETED_NOT_EXISTS:
 			// Stato mai usato per questo oggetto
@@ -909,6 +1036,13 @@ public class EsitoUtils {
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getControlloTraffico_activePolicies().add(archiveCCPolicy);
 		}
 		
+		// Allarmi
+		for (int i = 0; i < archive.getAllarmi().size(); i++) {
+			ArchiveEsitoImportDetail archiveAllarme = archive.getAllarmi().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveAllarme)archiveAllarme.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getAllarmi().add(archiveAllarme);
+		}
+		
 		// Token Policy (Validation)
 		for (int i = 0; i < archive.getToken_validation_policies().size(); i++) {
 			ArchiveEsitoImportDetail archiveTokenPolicy = archive.getToken_validation_policies().get(i);
@@ -921,6 +1055,45 @@ public class EsitoUtils {
 			ArchiveEsitoImportDetail archiveTokenPolicy = archive.getToken_retrieve_policies().get(i);
 			ArchiveIdCorrelazione idCorrelazione = ((ArchiveTokenPolicy)archiveTokenPolicy.getArchiveObject()).getIdCorrelazione();
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getToken_retrieve_policies().add(archiveTokenPolicy);
+		}
+		
+		// Plugin Classi
+		for (int i = 0; i < archive.getPlugin_classi().size(); i++) {
+			ArchiveEsitoImportDetail archivePluginClasse = archive.getPlugin_classi().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchivePluginClasse)archivePluginClasse.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getPlugin_classi().add(archivePluginClasse);
+		}
+		
+		// Plugin Archivi
+		for (int i = 0; i < archive.getPlugin_archivi().size(); i++) {
+			ArchiveEsitoImportDetail archivePluginArchivio = archive.getPlugin_archivi().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchivePluginArchivio)archivePluginArchivio.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getPlugin_archivi().add(archivePluginArchivio);
+		}
+		
+		// Configurazione - UrlInvocazione - Regole
+		for (int i = 0; i < archive.getConfigurazionePdD_urlInvocazione_regole().size(); i++) {
+			ArchiveEsitoImportDetail archiveRegola = archive.getConfigurazionePdD_urlInvocazione_regole().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveUrlInvocazioneRegola)archiveRegola.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getConfigurazionePdD_urlInvocazione_regole().add(archiveRegola);
+		}
+		
+		// Configurazione (UrlInvocazione)
+		if(archive.getConfigurazionePdD_urlInvocazione()!=null){
+			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.config.ConfigurazioneUrlInvocazione> configurazione = 
+					archive.getConfigurazionePdD_urlInvocazione();
+			if(mapIdCorrelazione.size()>1){
+				throw new ProtocolException("Configurazione permessa solo con una unica correlazione tra oggetti");
+			}
+			ArchiveIdCorrelazione idCorrelazione = null; 
+			if(mapIdCorrelazione.size()==1){
+				idCorrelazione = mapIdCorrelazione.values().iterator().next();
+			}
+			else if(mapIdCorrelazione.size()==0){
+				// l'archivio non contiene altri oggetti se non la configurazione
+				idCorrelazione = new ArchiveIdCorrelazione(ZIPUtils.ID_CORRELAZIONE_DEFAULT);
+			}
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).setConfigurazionePdD_urlInvocazione(configurazione);
 		}
 		
 		// Configurazione

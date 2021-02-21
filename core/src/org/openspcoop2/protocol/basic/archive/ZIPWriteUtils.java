@@ -68,10 +68,13 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginArchivio;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginClasse;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
@@ -79,6 +82,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveUrlInvocazioneRegola;
 import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -100,10 +104,14 @@ public class ZIPWriteUtils {
 
 	private org.openspcoop2.core.registry.utils.serializer.JaxbSerializer jaxbRegistrySerializer = null;
 	private org.openspcoop2.core.config.utils.serializer.JaxbSerializer jaxbConfigSerializer = null;
+	private org.openspcoop2.core.plugins.utils.serializer.JaxbSerializer jaxbPluginSerializer = null;
 	private org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer jaxbControlloTrafficoSerializer = null;
+	private org.openspcoop2.core.allarmi.utils.serializer.JaxbSerializer jaxbAllarmeSerializer = null;
 	private org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsRegistry = null;
 	private org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsConfig = null;
+	private org.openspcoop2.core.plugins.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsPlugin = null;
 	private org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsControlloTraffico = null;
+	private org.openspcoop2.core.allarmi.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsAllarme = null;
 	
 	
 	public ZIPWriteUtils(Logger log,IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
@@ -114,10 +122,14 @@ public class ZIPWriteUtils {
 		
 		this.jaxbRegistrySerializer = new org.openspcoop2.core.registry.utils.serializer.JaxbSerializer();
 		this.jaxbConfigSerializer = new org.openspcoop2.core.config.utils.serializer.JaxbSerializer();
+		this.jaxbPluginSerializer = new org.openspcoop2.core.plugins.utils.serializer.JaxbSerializer();
 		this.jaxbControlloTrafficoSerializer = new org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer();
+		this.jaxbAllarmeSerializer = new org.openspcoop2.core.allarmi.utils.serializer.JaxbSerializer();
 		this.cleanerOpenSPCoop2ExtensionsRegistry = new org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions();
 		this.cleanerOpenSPCoop2ExtensionsConfig = new org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions();
+		this.cleanerOpenSPCoop2ExtensionsPlugin = new org.openspcoop2.core.plugins.utils.CleanerOpenSPCoop2Extensions();
 		this.cleanerOpenSPCoop2ExtensionsControlloTraffico = new org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions();
+		this.cleanerOpenSPCoop2ExtensionsAllarme = new org.openspcoop2.core.allarmi.utils.CleanerOpenSPCoop2Extensions();
 		
 	}
 	
@@ -188,9 +200,17 @@ public class ZIPWriteUtils {
 				method = this.jaxbConfigSerializer.getClass().getMethod("toByteArray", object.getClass());
 				bytes = (byte[]) method.invoke(this.jaxbConfigSerializer, object);
 				break;
+			case PLUGIN:
+				method = this.jaxbPluginSerializer.getClass().getMethod("toByteArray", object.getClass());
+				bytes = (byte[]) method.invoke(this.jaxbPluginSerializer, object);
+				break;
 			case CONTROLLO_TRAFFICO:
 				method = this.jaxbControlloTrafficoSerializer.getClass().getMethod("toByteArray", object.getClass());
 				bytes = (byte[]) method.invoke(this.jaxbControlloTrafficoSerializer, object);
+				break;
+			case ALLARME:
+				method = this.jaxbAllarmeSerializer.getClass().getMethod("toByteArray", object.getClass());
+				bytes = (byte[]) method.invoke(this.jaxbAllarmeSerializer, object);
 				break;
 			}
 			
@@ -240,6 +260,30 @@ public class ZIPWriteUtils {
 				write(zipOut, "ConfigurazionePdD", "", SerializationType.CONFIG, configurazionePdD);
 			}
 			
+			// configurazione - url di invocazione
+			if(archive.getConfigurazionePdD_urlInvocazione()!=null){
+				nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_DIR+File.separatorChar+
+						Costanti.OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_CONFIG_FILE_NAME;
+				zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+				org.openspcoop2.core.config.ConfigurazioneUrlInvocazione configurazioneUrlInvocazione = archive.getConfigurazionePdD_urlInvocazione();
+				this.cleanerOpenSPCoop2ExtensionsConfig.clean(configurazioneUrlInvocazione);
+				write(zipOut, "ConfigurazionePdD_UrlInvocazione", "", SerializationType.CONFIG, configurazioneUrlInvocazione);
+			}
+			
+			// configurazione - url di invocazione - regole
+			if(archive.getConfigurazionePdD_urlInvocazione_regole()!=null && archive.getConfigurazionePdD_urlInvocazione_regole().size()>0){
+				for (int i = 0; i < archive.getConfigurazionePdD_urlInvocazione_regole().size(); i++) {
+					ArchiveUrlInvocazioneRegola archiveUrlRegola = archive.getConfigurazionePdD_urlInvocazione_regole().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_URL_INVOCAZIONE_REGOLE_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveUrlRegola.getNome())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola regola = archiveUrlRegola.getRegola();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(regola);
+					write(zipOut, "ConfigurazionePdD_UrlInvocazione_regola", archiveUrlRegola.getNome(), SerializationType.CONFIG, regola);
+				}
+			}
+			
 			// extendedConfigurazione
 			if(archive.getConfigurazionePdD()!=null && archive.getConfigurazionePdD().sizeExtendedInfoList()>0){
 				String prefix = Costanti.OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR+File.separatorChar+
@@ -257,7 +301,7 @@ public class ZIPWriteUtils {
 					}
 				}
 			}
-			
+						
 			// controlloTraffico
 			if(archive.getControlloTraffico_configurazione()!=null){
 				nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_DIR+File.separatorChar+
@@ -288,11 +332,24 @@ public class ZIPWriteUtils {
 					ArchiveActivePolicy archiveCC = archive.getControlloTraffico_activePolicies().get(i);
 					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_DIR+File.separatorChar+
 							Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_ACTIVE_POLICY_DIR+File.separatorChar+
-							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveCC.getNomePolicy())+".xml";
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveCC.getPolicy().getIdActivePolicy())+".xml";
 					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
 					org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy = archiveCC.getPolicy();
 					this.cleanerOpenSPCoop2ExtensionsControlloTraffico.clean(policy);
-					write(zipOut, "ControlloTraffico_AttivazionePolicy", archiveCC.getNomePolicy(), SerializationType.CONTROLLO_TRAFFICO, policy);
+					write(zipOut, "ControlloTraffico_AttivazionePolicy", archiveCC.getPolicy().getIdActivePolicy(), SerializationType.CONTROLLO_TRAFFICO, policy);
+				}
+			}
+			
+			// allarmi
+			if(archive.getAllarmi()!=null && archive.getAllarmi().size()>0){
+				for (int i = 0; i < archive.getAllarmi().size(); i++) {
+					ArchiveAllarme archiveAllarme = archive.getAllarmi().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ALLARMI_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveAllarme.getAllarme().getNome())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.allarmi.Allarme allarme = archiveAllarme.getAllarme();
+					this.cleanerOpenSPCoop2ExtensionsAllarme.clean(allarme);
+					write(zipOut, "Allarme", archiveAllarme.getAllarme().getNome(), SerializationType.ALLARME, allarme);
 				}
 			}
 			
@@ -321,6 +378,34 @@ public class ZIPWriteUtils {
 					org.openspcoop2.core.config.GenericProperties policy = archiveTP.getPolicy();
 					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
 					write(zipOut, "TokenPolicy_Retrieve", archiveTP.getNomePolicy(), SerializationType.CONFIG, policy);
+				}
+			}
+			
+			// plugins (classi)
+			if(archive.getPlugin_classi()!=null && archive.getPlugin_classi().size()>0){
+				for (int i = 0; i < archive.getPlugin_classi().size(); i++) {
+					ArchivePluginClasse archivePC = archive.getPlugin_classi().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_PLUGINS_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_PLUGINS_CLASSI_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archivePC.getTipoPlugin())+"_"+ZIPUtils.convertNameToSistemaOperativoCompatible(archivePC.getTipo())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.plugins.Plugin plugin = archivePC.getPlugin();
+					this.cleanerOpenSPCoop2ExtensionsPlugin.clean(plugin);
+					write(zipOut, "Plugin_Classe", archivePC.getTipoPlugin()+"_"+archivePC.getTipo(), SerializationType.PLUGIN, plugin);
+				}
+			}
+			
+			// plugins (archivi)
+			if(archive.getPlugin_archivi()!=null && archive.getPlugin_archivi().size()>0){
+				for (int i = 0; i < archive.getPlugin_archivi().size(); i++) {
+					ArchivePluginArchivio archivePA = archive.getPlugin_archivi().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_PLUGINS_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_PLUGINS_ARCHIVI_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archivePA.getNome())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.RegistroPlugin plugin = archivePA.getPlugin();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(plugin);
+					write(zipOut, "Plugin_Archivio", archivePA.getNome(), SerializationType.CONFIG, plugin);
 				}
 			}
 			
@@ -1687,6 +1772,6 @@ public class ZIPWriteUtils {
 
 enum SerializationType {
 	
-	CONFIG, REGISTRY, CONTROLLO_TRAFFICO
+	CONFIG, REGISTRY, PLUGIN, CONTROLLO_TRAFFICO, ALLARME
 	
 }

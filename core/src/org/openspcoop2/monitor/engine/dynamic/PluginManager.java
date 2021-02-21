@@ -31,7 +31,7 @@ import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 

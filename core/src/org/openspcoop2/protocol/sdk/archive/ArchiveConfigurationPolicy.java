@@ -22,7 +22,7 @@ package org.openspcoop2.protocol.sdk.archive;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
- * ArchiveSoggetto
+ * ArchiveConfigurationPolicy
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$

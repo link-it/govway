@@ -142,8 +142,8 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 				infoPolicy = confCore.getInfoPolicy(policy.getIdPolicy());
 				
 				if(TipoOperazione.ADD.equals(tipoOperazione) && infoPolicy!=null){
-					int counter = confCore.getFreeCounterForGlobalPolicy(infoPolicy.getIdPolicy());
-					policy.setIdActivePolicy(infoPolicy.getIdPolicy()+ControlloTrafficoDriverUtils.getFreeCounterSeparatorCharForGlobalPolicy()+counter);
+					String serialId = confCore.getNextPolicyInstanceSerialId(infoPolicy.getIdPolicy());
+					policy.setIdActivePolicy(ControlloTrafficoDriverUtils.buildIdActivePolicy(infoPolicy.getIdPolicy(), serialId));
 				}
 			}
 			

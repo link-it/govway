@@ -21,23 +21,33 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RegistroPlugin;
+import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -48,6 +58,14 @@ import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
+import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
+import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
+import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneUtilities;
+import org.slf4j.Logger;
 
 /**
  * ArchiveEngine
@@ -62,14 +80,26 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	private boolean smista;
 	private String userLogin;
 	
+	private AlarmEngineConfig alarmEngineConfig;
+	private ConfigurazioneCore allarmiConfigurazioneCore;
+	
 	public ArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,
 			DriverConfigurazioneDB driverConfigurazione,
-			JDBCServiceManager serviceManagerControlloTraffico,
-			ArchiviCore archiviCore,boolean smista,String userLogin) {
-		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloTraffico);
+			org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager serviceManagerPlugins,
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManagerControlloTraffico, 
+			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager serviceManagerAllarmi,
+			ArchiviCore archiviCore,boolean smista,String userLogin) throws Exception {
+		super(driverRegistroServizi, driverConfigurazione, 
+				serviceManagerPlugins,
+				serviceManagerControlloTraffico, 
+				serviceManagerAllarmi);
 		this.archiviCore = archiviCore;
 		this.smista = smista;
 		this.userLogin = userLogin;
+		if(this.archiviCore.isConfigurazioneAllarmiEnabled()) {
+			this.allarmiConfigurazioneCore = new ConfigurazioneCore(archiviCore);
+			this.alarmEngineConfig = this.allarmiConfigurazioneCore.getAllarmiConfig();
+		}
 	}
 	
 	// --- Users ---
@@ -601,7 +631,8 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	// --- Controllo Traffico (AttivazionePolicy) ---
 	
 	@Override
-	public void createControlloTraffico_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+	public void createControlloTraffico_activePolicy(AttivazionePolicy policy, Logger log) throws DriverConfigurazioneException {
+		updatePosizioneBeforeCreate(policy, log);		
 		try{
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){
@@ -626,6 +657,101 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	// --- Allarmi ---
+	
+	@Override
+	public void createAllarme(Allarme allarme, Logger log) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, allarme);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
+		try {
+			ConfigurazioneAllarmeBean allarmeWrap = this.allarmiConfigurazioneCore.getAllarme(allarme);
+			AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarmeWrap, log, this.alarmEngineConfig);
+		} catch(Exception e) {
+			String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+			log.error(errorMsg, e);
+			throw new DriverConfigurazioneException(errorMsg, e);
+		}
+	}
+	
+	@Override
+	public void updateAllarme(Allarme allarme, Logger log) throws DriverConfigurazioneException {
+		
+		ConfigurazioneAllarmeBean allarmeWrap = null;
+		ConfigurazioneAllarmeBean oldAllarmeWrap = null;
+		try {
+			allarmeWrap = this.allarmiConfigurazioneCore.getAllarme(allarme);
+			oldAllarmeWrap = this.allarmiConfigurazioneCore.getAllarme(allarme.getId());
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, allarme);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		boolean modificatoInformazioniHistory = false;
+		// se ho modificato l'abilitato devo registrare la modifica nella tabella history
+		if(allarme.getEnabled().intValue() != oldAllarmeWrap.getEnabled().intValue()) {
+			modificatoInformazioniHistory = true;
+		}
+		if(modificatoInformazioniHistory && this.alarmEngineConfig.isHistoryEnabled()) {
+			// registro la modifica
+			AllarmeHistory history = ConfigurazioneUtilities.createAllarmeHistory(allarme, this.userLogin);
+			try{
+				this.allarmiConfigurazioneCore.performCreateOperation(this.userLogin, this.smista, history);
+			}catch(Throwable e) {
+				String json = "";
+				try {
+					json = history.toJson();
+				}catch(Throwable t) {}
+				log.error("Registrazione stato allarme nell'hitstory non riuscita ["+json+"]: "+e.getMessage(),e);
+			}
+		}
+		
+		/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
+		try {
+			AllarmiUtils.notifyStateActiveThread(false, false, false, null, allarmeWrap, log, this.alarmEngineConfig);
+		} catch(Exception e) {
+			String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+			log.error(errorMsg, e);
+			throw new DriverConfigurazioneException(errorMsg, e);
+		}
+		
+	}
+	
+	@Override
+	public void deleteAllarme(Allarme allarme, Logger log) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, allarme);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		/* ******** INVIO NOTIFICHE *************** */
+		try {
+			List<String> allarmeList = new ArrayList<String>();
+			allarmeList.add(allarme.getNome());
+				
+			AllarmiUtils.stopActiveThreads(allarmeList, log, this.alarmEngineConfig);
+		} catch(Exception e) {
+			String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SINGOLO_ELIMINATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+			log.error(errorMsg,e);
+			throw new DriverConfigurazioneException(errorMsg);
+		}
+	}
+	
+	
 	
 	
 	// --- Token Policy ---
@@ -656,6 +782,136 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	
+	
+	// Plugin Classe
+	
+	@Override
+	public void createPluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void updatePluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deletePluginClasse(Plugin plugin) throws DriverConfigurazioneException {
+		try {
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, plugin);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	// --- Plugin Archivio ---
+	
+	private boolean archiviUpdated = false;
+	
+	@Override
+	public void createPluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		updatePosizioneBeforeCreate(rp);
+		updateDate(rp);
+		try {
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, rp);
+			this.archiviUpdated = true;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void updatePluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		updateDate(rp);
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rp); // aggiorna solo i dati principali
+			ConfigurazioneCore confCore = new ConfigurazioneCore(this.archiviCore);
+			if(rp.sizeArchivioList()>0) {
+				for (RegistroPluginArchivio rpa : rp.getArchivioList()) {
+					rpa.setNomePlugin(rp.getNome());
+					if(confCore.existsRegistroPluginArchivio(rpa.getNomePlugin(), rpa.getNome())){
+						this.archiviCore.performUpdateOperation(this.userLogin, this.smista, rpa);
+					}
+					else {
+						this.archiviCore.performCreateOperation(this.userLogin, this.smista, rpa);
+					}
+				}
+			}
+			this.archiviUpdated = true;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deletePluginArchivio(RegistroPlugin rp) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, rp);
+			this.archiviUpdated = true;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	// --- Url Invocazione Regole ---
+	
+	@Override
+	public void createUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		updatePosizioneBeforeCreate(regola);
+		try {
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void updateUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void deleteUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, regola);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	// --- Configurazione (Url Invocazione) ---
+	
+	@Override
+	public void updateConfigurazione_UrlInvocazione(ConfigurazioneUrlInvocazione configurazione) throws DriverConfigurazioneException{
+		try {
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, configurazione);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
 	// --- ConfigurazionePdD ---
 	
 	@Override
@@ -673,6 +929,33 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, configurazione);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	// --- Finalize ---
+	
+	@Override
+	public void finalizeImport(Archive archive) throws DriverConfigurazioneException{
+		if(this.archiviUpdated) {
+			// 	Aggiorno classLoader interno
+			try {
+				this.archiviCore.updatePluginClassLoader();
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}
+	}
+	@Override
+	public void finalizeDelete(Archive archive) throws DriverConfigurazioneException{
+		if(this.archiviUpdated) {
+			// 	Aggiorno classLoader interno
+			try {
+				this.archiviCore.updatePluginClassLoader();
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
 		}
 	}
 }

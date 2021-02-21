@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.config.dynamic;
 import org.openspcoop2.core.config.constants.PluginCostanti;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.IPluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;

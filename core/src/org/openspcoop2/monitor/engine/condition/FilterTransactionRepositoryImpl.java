@@ -31,7 +31,7 @@ import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.monitor.engine.config.base.utils.FilterUtils;
+import org.openspcoop2.core.plugins.utils.FilterUtils;
 import org.openspcoop2.monitor.sdk.condition.IStatisticFilter;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.statistic.StatisticFilterName;

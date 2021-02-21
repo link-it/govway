@@ -197,8 +197,8 @@ public class StatisticByResource extends StatisticProcessing {
 		
 		DAOFactory daoFactory = DAOFactory.getInstance(log);
 		
-		org.openspcoop2.monitor.engine.config.base.dao.IServiceManager jdbcServiceManagerPluginsBase = 
-				(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
+		org.openspcoop2.core.plugins.dao.IServiceManager jdbcServiceManagerPluginsBase = 
+				(org.openspcoop2.core.plugins.dao.IServiceManager) daoFactory.getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance());
 		org.openspcoop2.core.commons.search.dao.IServiceManager jdbcServiceManagerUtils = 
 				(org.openspcoop2.core.commons.search.dao.IServiceManager) daoFactory.getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 		org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager serviceManagerPluginsTransazioni =

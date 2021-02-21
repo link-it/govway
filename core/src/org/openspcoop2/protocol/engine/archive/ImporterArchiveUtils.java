@@ -21,20 +21,38 @@
 package org.openspcoop2.protocol.engine.archive;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
+import org.openspcoop2.core.allarmi.AllarmeParametro;
+import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
+import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDGruppo;
@@ -47,6 +65,9 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
@@ -74,12 +95,14 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
@@ -89,15 +112,23 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMappingErogazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMappingFruizione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginArchivio;
+import org.openspcoop2.protocol.sdk.archive.ArchivePluginClasse;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveSortedMap;
 import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveUrlInvocazioneRegola;
+import org.openspcoop2.protocol.sdk.archive.IPositionArchiveObject;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
+import org.openspcoop2.protocol.sdk.registry.RegistryException;
+import org.openspcoop2.utils.SortedMap;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.slf4j.Logger;
@@ -117,6 +148,8 @@ public class ImporterArchiveUtils {
 	private boolean gestioneWorkflowStatiAccordi;
 	private boolean updateAbilitato;
 	private boolean importPolicyConfigurazione;
+	private boolean importPluginConfigurazione;
+	private boolean checkExistsPluginConfigurazione;
 	private boolean importConfigurazione;
 	private String nomePddOperativa;
 	private String tipoPddDefault;
@@ -128,13 +161,17 @@ public class ImporterArchiveUtils {
 			String userLogin,String nomePddOperativa, String tipoPddDefault,
 			boolean gestioneWorkflowStatiAccordi,
 			boolean updateAbilitato,
-			boolean importPolicyConfigurazione, boolean importConfigurazione) throws Exception{
+			boolean importPolicyConfigurazione, 
+			boolean importPluginConfigurazione, boolean checkExistsPluginConfigurazione,
+			boolean importConfigurazione) throws Exception{
 		this.importerEngine = importerEngine;
 		this.log = log;
 		this.userLogin = userLogin;
 		this.gestioneWorkflowStatiAccordi = gestioneWorkflowStatiAccordi;
 		this.updateAbilitato = updateAbilitato;
 		this.importPolicyConfigurazione = importPolicyConfigurazione;
+		this.importPluginConfigurazione = importPluginConfigurazione;
+		this.checkExistsPluginConfigurazione = checkExistsPluginConfigurazione;
 		this.importConfigurazione = importConfigurazione;
 		if(nomePddOperativa!=null){
 			this.nomePddOperativa = nomePddOperativa;
@@ -184,6 +221,41 @@ public class ImporterArchiveUtils {
 					detail.setException(e);
 				}
 				esito.getPdd().add(detail);
+			}
+			
+			
+			// Plugin (Archivi)
+			// NOTA: devo riordinare per posizione, poi anche se la posizione verrà ricalcolata, verrà mantenuto l'ordine
+			SortedMap<List<ArchivePluginArchivio>> map_plugin_archivi = reorderByPosition(archive.getPlugin_archivi());
+			if(!map_plugin_archivi.isEmpty()) {
+				for (String position : map_plugin_archivi.keys()) {
+					List<ArchivePluginArchivio> archivePluginList = map_plugin_archivi.get(position);
+					if(!archivePluginList.isEmpty()) {
+						for (ArchivePluginArchivio archivePluginArchivio : archivePluginList) {
+							ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePluginArchivio);
+							try{
+								this.importPluginArchivio(archivePluginArchivio, detail);
+							}catch(Exception e){
+								detail.setState(ArchiveStatoImport.ERROR);
+								detail.setException(e);
+							}
+							esito.getPlugin_archivi().add(detail);
+						}
+					}
+				}
+			}
+			
+			// Plugin (Classi)
+			for (int i = 0; i < archive.getPlugin_classi().size(); i++) {
+				ArchivePluginClasse archivePluginClasse = archive.getPlugin_classi().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePluginClasse);
+				try{
+					this.importPluginClasse(archivePluginClasse, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getPlugin_classi().add(detail);
 			}
 			
 			
@@ -525,16 +597,77 @@ public class ImporterArchiveUtils {
 			}
 			
 			// Controllo Traffico (AttivazionePolicy)
-			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
-				ArchiveActivePolicy archiveCCPolicy = archive.getControlloTraffico_activePolicies().get(i);
-				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveCCPolicy);
+			HashMap<String, String> instanceSerialIdsForPolicy = new HashMap<String, String>();
+			// NOTA: devo riordinare per posizione, poi anche se la posizione verrà ricalcolata, verrà mantenuto l'ordine
+			SortedMap<List<ArchiveActivePolicy>> map_controllo_traffico_activePolicy = reorderByPosition(archive.getControlloTraffico_activePolicies());
+			if(!map_controllo_traffico_activePolicy.isEmpty()) {
+				for (String position : map_controllo_traffico_activePolicy.keys()) {
+					List<ArchiveActivePolicy> archiveActivePolicyList = map_controllo_traffico_activePolicy.get(position);
+					if(!archiveActivePolicyList.isEmpty()) {
+						for (ArchiveActivePolicy archiveCCPolicy : archiveActivePolicyList) {
+							ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveCCPolicy);
+							try{
+								this.importControlloTraffico_activePolicy(archiveCCPolicy, detail, instanceSerialIdsForPolicy);
+							}catch(Exception e){
+								detail.setState(ArchiveStatoImport.ERROR);
+								detail.setException(e);
+							}
+							esito.getControlloTraffico_activePolicies().add(detail);
+						}
+					}
+				}
+			}
+
+			
+			// Allarmi
+			HashMap<String, String> instanceSerialIdsForAlarm = new HashMap<String, String>();
+			for (int i = 0; i < archive.getAllarmi().size(); i++) {
+				ArchiveAllarme archiveAllarme = archive.getAllarmi().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAllarme);
 				try{
-					this.importControlloTraffico_activePolicy(archiveCCPolicy, detail);
+					this.importAllarme(archiveAllarme, detail, instanceSerialIdsForAlarm);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
 				}
-				esito.getControlloTraffico_activePolicies().add(detail);
+				esito.getAllarmi().add(detail);
+			}
+			
+			
+			// Configurazione (UrlInvocazioneRegole)
+			// NOTA: devo riordinare per posizione, poi anche se la posizione verrà ricalcolata, verrà mantenuto l'ordine
+			SortedMap<List<ArchiveUrlInvocazioneRegola>> map_urlInvocazione_regole = reorderByPosition(archive.getConfigurazionePdD_urlInvocazione_regole());
+			if(!map_urlInvocazione_regole.isEmpty()) {
+				for (String position : map_urlInvocazione_regole.keys()) {
+					List<ArchiveUrlInvocazioneRegola> archiveRegolaList = map_urlInvocazione_regole.get(position);
+					if(!archiveRegolaList.isEmpty()) {
+						for (ArchiveUrlInvocazioneRegola archiveRegola : archiveRegolaList) {
+							ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveRegola);
+							try{
+								this.importConfigurazione_UrlInvocazioneRegola(archiveRegola, detail);
+							}catch(Exception e){
+								detail.setState(ArchiveStatoImport.ERROR);
+								detail.setException(e);
+							}
+							esito.getConfigurazionePdD_urlInvocazione_regole().add(detail);
+						}
+					}
+				}
+			}
+			
+			
+			// Configurazione (UrlInvocazione)
+			if(archive.getConfigurazionePdD_urlInvocazione()!=null){
+				org.openspcoop2.core.config.ConfigurazioneUrlInvocazione configurazione = archive.getConfigurazionePdD_urlInvocazione();
+				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.config.ConfigurazioneUrlInvocazione> detail = 
+						new ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.config.ConfigurazioneUrlInvocazione>(configurazione);
+				try{
+					this.importConfigurazione_UrlInvocazione(configurazione, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.setConfigurazionePdD_urlInvocazione(detail);
 			}
 			
 						
@@ -614,14 +747,44 @@ public class ImporterArchiveUtils {
 				}
 			}
 			
-			return esito;
+			this.importerEngine.finalizeImport(archive);
 			
+			return esito;
 			
 		}catch(Exception e){
 			throw e;
 		}
 	}
 	
+	
+	private <T extends IPositionArchiveObject> SortedMap<List<T>> reorderByPosition(ArchiveSortedMap<T> map) throws ProtocolException, UtilsException {
+		SortedMap<List<T>> map_reordered = new SortedMap<List<T>>();
+		if(map.size()>0) {
+			HashMap<String, List<T>> map_for_reorder = new HashMap<String, List<T>>();
+			for (int i = 0; i < map.size(); i++) {
+				T archive = map.get(i);
+				int posizione = archive.position();
+				String posizionePadding = StringUtils.leftPad(posizione+"", 20, "0");
+				List<T> l = null;
+				if(map_for_reorder.containsKey(posizionePadding)) {
+					l = map_for_reorder.get(posizionePadding);
+				}
+				else {
+					l = new ArrayList<T>();
+					map_for_reorder.put(posizionePadding, l);
+				}
+				l.add(archive);
+			}
+			
+			List<String> keys = new ArrayList<String>();
+			keys.addAll(map_for_reorder.keySet());
+			Collections.sort(keys);
+			for (String position : keys) {
+				map_reordered.add(position, map_for_reorder.remove(position));
+			}
+		}
+		return map_reordered;
+	}
 	
 	
 	
@@ -1296,6 +1459,35 @@ public class ImporterArchiveUtils {
 				}
 			}
 			
+			// plugin
+			if(this.checkExistsPluginConfigurazione) {
+				if(archiveServizioApplicativo.getServizioApplicativo()!=null && archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio()!=null) {
+					if(archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore()!=null &&
+							archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getCustom()!=null &&
+							archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getCustom() &&
+							archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getTipo()!=null) {
+						TipiConnettore tipo = TipiConnettore.toEnumFromName(archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getTipo());
+						if(tipo==null) {
+							if(this.importerEngine.existsPluginClasse(TipoPlugin.CONNETTORE.getValue(), archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getTipo()) == false ){
+								throw new Exception("Plugin '"+TipoPlugin.CONNETTORE.getValue()+"' ["+archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getTipo()+"] non esistente nel registro");
+							}
+						}
+					}
+				}
+				if(archiveServizioApplicativo.getServizioApplicativo()!=null && archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona()!=null) {
+					if(archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore()!=null &&
+							archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getCustom()!=null &&
+							archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getCustom() &&
+							archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getTipo()!=null) {
+						TipiConnettore tipo = TipiConnettore.toEnumFromName(archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getTipo());
+						if(tipo==null) {
+							if(this.importerEngine.existsPluginClasse(TipoPlugin.CONNETTORE.getValue(), archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getTipo()) == false ){
+								throw new Exception("Plugin '"+TipoPlugin.CONNETTORE.getValue()+"' ["+archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getTipo()+"] non esistente nel registro");
+							}
+						}
+					}
+				}
+			}
 			
 			
 			
@@ -2145,6 +2337,36 @@ public class ImporterArchiveUtils {
 				}
 			}
 			
+			// plugin
+			if(this.checkExistsPluginConfigurazione) {
+				if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore()!=null&&
+						archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getCustom()!=null &&
+						archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getCustom() &&
+						archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getTipo()!=null) {
+					TipiConnettore tipo = TipiConnettore.toEnumFromName(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getTipo());
+					if(tipo==null) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.CONNETTORE.getValue(), archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getTipo()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.CONNETTORE.getValue()+"' ["+archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getTipo()+"] non esistente nel registro");
+						}
+					}
+				}
+				if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().sizeConfigurazioneAzioneList()>0) {
+					for (ConfigurazioneServizioAzione confAzione : archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConfigurazioneAzioneList()) {
+						if(confAzione.getConnettore()!=null &&
+								confAzione.getConnettore().getCustom()!=null &&
+								confAzione.getConnettore().getCustom() &&
+								confAzione.getConnettore().getTipo()!=null) {
+							TipiConnettore tipo = TipiConnettore.toEnumFromName(confAzione.getConnettore().getTipo());
+							if(tipo==null) {
+								if(this.importerEngine.existsPluginClasse(TipoPlugin.CONNETTORE.getValue(), confAzione.getConnettore().getTipo()) == false ){
+									throw new Exception("Plugin '"+TipoPlugin.CONNETTORE.getValue()+"' ["+confAzione.getConnettore().getTipo()+"] non esistente nel registro");
+								}
+							}
+						}
+					}
+				}
+			}
+			
 			
 			
 			// --- compatibilita' elementi riferiti ---
@@ -2405,6 +2627,36 @@ public class ImporterArchiveUtils {
 					}
 				}
 			}
+			
+			// plugin
+			if(this.checkExistsPluginConfigurazione) {
+				if(archiveFruitore.getFruitore().getConnettore()!=null &&
+						archiveFruitore.getFruitore().getConnettore().getCustom()!=null &&
+						archiveFruitore.getFruitore().getConnettore().getCustom() &&
+						archiveFruitore.getFruitore().getConnettore().getTipo()!=null) {
+					TipiConnettore tipo = TipiConnettore.toEnumFromName(archiveFruitore.getFruitore().getConnettore().getTipo());
+					if(tipo==null) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.CONNETTORE.getValue(), archiveFruitore.getFruitore().getConnettore().getTipo()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.CONNETTORE.getValue()+"' ["+archiveFruitore.getFruitore().getConnettore().getTipo()+"] non esistente nel registro");
+						}
+					}
+				}
+				if(archiveFruitore.getFruitore().sizeConfigurazioneAzioneList()>0) {
+					for (ConfigurazioneServizioAzione confAzione : archiveFruitore.getFruitore().getConfigurazioneAzioneList()) {
+						if(confAzione.getConnettore()!=null &&
+								confAzione.getConnettore().getCustom()!=null &&
+								confAzione.getConnettore().getCustom() &&
+								confAzione.getConnettore().getTipo()!=null) {
+							TipiConnettore tipo = TipiConnettore.toEnumFromName(confAzione.getConnettore().getTipo());
+							if(tipo==null) {
+								if(this.importerEngine.existsPluginClasse(TipoPlugin.CONNETTORE.getValue(), confAzione.getConnettore().getTipo()) == false ){
+									throw new Exception("Plugin '"+TipoPlugin.CONNETTORE.getValue()+"' ["+confAzione.getConnettore().getTipo()+"] non esistente nel registro");
+								}
+							}
+						}
+					}
+				}
+			}
 		
 			
 			// --- compatibilita' elementi riferiti ---
@@ -2610,6 +2862,39 @@ public class ImporterArchiveUtils {
 					throw new Exception("Token Policy Validazione ["+archivePortaDelegata.getPortaDelegata().getGestioneToken().getPolicy()+"] indicato nel controllo degli accessi non esistente");
 				}
 			}
+			
+			// plugin
+			if(this.checkExistsPluginConfigurazione) {
+				
+				if(archivePortaDelegata.getPortaDelegata()!=null && StringUtils.isNotEmpty(archivePortaDelegata.getPortaDelegata().getAutenticazione())) {
+					TipoAutenticazione tipo = TipoAutenticazione.toEnumConstant(archivePortaDelegata.getPortaDelegata().getAutenticazione(), false);
+					if(tipo==null) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.AUTENTICAZIONE.getValue(), archivePortaDelegata.getPortaDelegata().getAutenticazione()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.AUTENTICAZIONE.getValue()+"' ["+archivePortaDelegata.getPortaDelegata().getAutenticazione()+"] non esistente nel registro");
+						}
+					}
+				}
+				if(archivePortaDelegata.getPortaDelegata()!=null && StringUtils.isNotEmpty(archivePortaDelegata.getPortaDelegata().getAutorizzazione())) {
+					TipoAutorizzazione tipo = TipoAutorizzazione.toEnumConstant(archivePortaDelegata.getPortaDelegata().getAutorizzazione(), false);
+					if(tipo==null) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.AUTORIZZAZIONE.getValue(), archivePortaDelegata.getPortaDelegata().getAutorizzazione()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.AUTORIZZAZIONE.getValue()+"' ["+archivePortaDelegata.getPortaDelegata().getAutorizzazione()+"] non esistente nel registro");
+						}
+					}
+				}
+				if(archivePortaDelegata.getPortaDelegata()!=null && StringUtils.isNotEmpty(archivePortaDelegata.getPortaDelegata().getAutorizzazioneContenuto())) {
+					if(!CostantiConfigurazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(archivePortaDelegata.getPortaDelegata().getAutorizzazioneContenuto())) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.AUTORIZZAZIONE_CONTENUTI.getValue(), archivePortaDelegata.getPortaDelegata().getAutorizzazioneContenuto()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.AUTORIZZAZIONE_CONTENUTI.getValue()+"' ["+archivePortaDelegata.getPortaDelegata().getAutorizzazioneContenuto()+"] non esistente nel registro");
+						}
+					}
+				}
+//				// TODO:
+//				TipoPlugin.INTEGRAZIONE;
+//				TipoPlugin.MESSAGE_HANDLER;
+				
+			}
+			
 			
 			
 			// --- compatibilita' elementi riferiti ---
@@ -2845,6 +3130,46 @@ public class ImporterArchiveUtils {
 				}
 			}
 			
+			// plugin
+			if(this.checkExistsPluginConfigurazione) {
+				
+				if(archivePortaApplicativa.getPortaApplicativa()!=null && StringUtils.isNotEmpty(archivePortaApplicativa.getPortaApplicativa().getAutenticazione())) {
+					TipoAutenticazione tipo = TipoAutenticazione.toEnumConstant(archivePortaApplicativa.getPortaApplicativa().getAutenticazione(), false);
+					if(tipo==null) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.AUTENTICAZIONE.getValue(), archivePortaApplicativa.getPortaApplicativa().getAutenticazione()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.AUTENTICAZIONE.getValue()+"' ["+archivePortaApplicativa.getPortaApplicativa().getAutenticazione()+"] non esistente nel registro");
+						}
+					}
+				}
+				if(archivePortaApplicativa.getPortaApplicativa()!=null && StringUtils.isNotEmpty(archivePortaApplicativa.getPortaApplicativa().getAutorizzazione())) {
+					TipoAutorizzazione tipo = TipoAutorizzazione.toEnumConstant(archivePortaApplicativa.getPortaApplicativa().getAutorizzazione(), false);
+					if(tipo==null) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.AUTORIZZAZIONE.getValue(), archivePortaApplicativa.getPortaApplicativa().getAutorizzazione()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.AUTORIZZAZIONE.getValue()+"' ["+archivePortaApplicativa.getPortaApplicativa().getAutorizzazione()+"] non esistente nel registro");
+						}
+					}
+				}
+				if(archivePortaApplicativa.getPortaApplicativa()!=null && StringUtils.isNotEmpty(archivePortaApplicativa.getPortaApplicativa().getAutorizzazioneContenuto())) {
+					if(!CostantiConfigurazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(archivePortaApplicativa.getPortaApplicativa().getAutorizzazioneContenuto())) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.AUTORIZZAZIONE_CONTENUTI.getValue(), archivePortaApplicativa.getPortaApplicativa().getAutorizzazioneContenuto()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.AUTORIZZAZIONE_CONTENUTI.getValue()+"' ["+archivePortaApplicativa.getPortaApplicativa().getAutorizzazioneContenuto()+"] non esistente nel registro");
+						}
+					}
+				}
+				if(archivePortaApplicativa.getPortaApplicativa()!=null && archivePortaApplicativa.getPortaApplicativa().getBehaviour()!=null && archivePortaApplicativa.getPortaApplicativa().getBehaviour().getNome()!=null) {
+					TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(archivePortaApplicativa.getPortaApplicativa().getBehaviour().getNome());
+					if(TipoBehaviour.CUSTOM.equals(behaviourType)){
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.BEHAVIOUR.getValue(), archivePortaApplicativa.getPortaApplicativa().getBehaviour().getNome()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.BEHAVIOUR.getValue()+"' ["+archivePortaApplicativa.getPortaApplicativa().getBehaviour().getNome()+"] non esistente nel registro");
+						}
+					}
+				}
+//				// TODO:
+//				TipoPlugin.INTEGRAZIONE;
+//				TipoPlugin.MESSAGE_HANDLER;
+				
+			}
+			
 			
 			// --- compatibilita' elementi riferiti ---
 			String protocolloAssociatoSoggettoProprietario = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoProprietario.getTipo());
@@ -3049,11 +3374,20 @@ public class ImporterArchiveUtils {
 	}
 	
 	
-	public void importControlloTraffico_activePolicy(ArchiveActivePolicy archivePolicy,ArchiveEsitoImportDetail detail){
+	public void importControlloTraffico_activePolicy(ArchiveActivePolicy archivePolicy,ArchiveEsitoImportDetail detail,HashMap<String, String> instanceSerialIdsForPolicy){
 		
-		String nomePolicy = archivePolicy.getNomePolicy();
+		AttivazionePolicy attivazionePolicy = archivePolicy.getPolicy();
+		String aliasPolicy = archivePolicy.getAliasPolicy();
+		RuoloPolicy ruoloPorta = archivePolicy.getRuoloPorta();
+		String nomePorta = archivePolicy.getNomePorta();
+		
+		String tipoPolicy = "configurazione";
+		if(ruoloPorta!=null && nomePorta!=null) {
+			tipoPolicy = ruoloPorta.toString()+" "+nomePorta;
+		}
+
 		try{
-			boolean policyGlobale = archivePolicy.getPolicy().getFiltro()==null || archivePolicy.getPolicy().getFiltro().getNomePorta()==null || "".equals(archivePolicy.getPolicy().getFiltro().getNomePorta());
+			boolean policyGlobale = archivePolicy.isPolicyGlobale();
 						
 			// --- check abilitazione ---
 			if(policyGlobale && this.importPolicyConfigurazione==false){ // se non e' globale la policy di attivazione va aggiunta sempre poiche' associata all'erogazione o alla fruizione
@@ -3063,7 +3397,7 @@ public class ImporterArchiveUtils {
 			
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
-				if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)){
+				if(this.importerEngine.existsControlloTraffico_activePolicy(ruoloPorta, nomePorta, aliasPolicy)){
 					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
@@ -3073,8 +3407,150 @@ public class ImporterArchiveUtils {
 			// --- check elementi riferiti ---
 			
 			// policy
-			if(this.importerEngine.existsControlloTraffico_configurationPolicy(archivePolicy.getPolicy().getIdPolicy()) == false ){
-				throw new Exception("Configurazione della policy ["+archivePolicy.getPolicy().getIdPolicy()+"] non esistente nel registro");
+			if(this.importerEngine.existsControlloTraffico_configurationPolicy(attivazionePolicy.getIdPolicy()) == false ){
+				throw new Exception("Configurazione della policy ["+attivazionePolicy.getIdPolicy()+"] non esistente nel registro");
+			}
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			
+			// plugin
+			if(this.checkExistsPluginConfigurazione) {
+				
+				if(attivazionePolicy!=null && attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().isEnabled() && 
+						attivazionePolicy.getFiltro().isInformazioneApplicativaEnabled() &&
+						StringUtils.isNotEmpty(attivazionePolicy.getFiltro().getInformazioneApplicativaTipo())) {
+					TipoFiltroApplicativo tipoFiltro = TipoFiltroApplicativo.toEnumConstant(attivazionePolicy.getFiltro().getInformazioneApplicativaTipo(), false);
+					if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipoFiltro)) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.RATE_LIMITING.getValue(), attivazionePolicy.getFiltro().getInformazioneApplicativaNome()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.RATE_LIMITING.getValue()+"' ["+attivazionePolicy.getFiltro().getInformazioneApplicativaNome()+"] non esistente nel registro");
+						}
+					}
+				}
+				if(attivazionePolicy!=null && attivazionePolicy.getGroupBy()!=null && attivazionePolicy.getGroupBy().isEnabled() && 
+						attivazionePolicy.getGroupBy().isInformazioneApplicativaEnabled() &&
+						StringUtils.isNotEmpty(attivazionePolicy.getGroupBy().getInformazioneApplicativaTipo())) {
+					TipoFiltroApplicativo tipoFiltro = TipoFiltroApplicativo.toEnumConstant(attivazionePolicy.getGroupBy().getInformazioneApplicativaTipo(), false);
+					if(TipoFiltroApplicativo.PLUGIN_BASED.equals(tipoFiltro)) {
+						if(this.importerEngine.existsPluginClasse(TipoPlugin.RATE_LIMITING.getValue(), attivazionePolicy.getGroupBy().getInformazioneApplicativaNome()) == false ){
+							throw new Exception("Plugin '"+TipoPlugin.RATE_LIMITING.getValue()+"' ["+attivazionePolicy.getGroupBy().getInformazioneApplicativaNome()+"] non esistente nel registro");
+						}
+					}
+				}
+				
+			}
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			// non esistenti
+			
+			
+			// --- ora registrazione
+			// non esistenti
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsControlloTraffico_activePolicy(ruoloPorta, nomePorta, aliasPolicy)){
+				
+				AttivazionePolicy old = this.importerEngine.getControlloTraffico_activePolicy(ruoloPorta, nomePorta, aliasPolicy);
+				attivazionePolicy.setId(old.getId());
+				attivazionePolicy.setOldIdActivePolicy(new IdActivePolicy());
+				attivazionePolicy.getOldIdActivePolicy().setNome(old.getIdActivePolicy());
+				if(old.getIdPolicy().equals(attivazionePolicy.getIdPolicy())) {
+					attivazionePolicy.setIdActivePolicy(old.getIdActivePolicy()); // uso lo stesso id dinamico già calcolato sul sistema se non è cambiata la policy
+				}
+				else {
+					// ricalcolo
+					attivazionePolicy.setIdActivePolicy(this.buildIdActivePolicy(instanceSerialIdsForPolicy, attivazionePolicy.getIdPolicy()));
+				}
+				attivazionePolicy.setPosizione(old.getPosizione()); // in caso di aggiornamento non devo influenzare la posizione
+				
+				// visibilita' oggetto stesso per update
+				// non esistenti
+
+				// update
+				this.importerEngine.updateControlloTraffico_activePolicy(attivazionePolicy);
+				create = false;
+			}
+			// --- create ---
+			else{
+				// calcolo in maniera dinamica l'id
+				attivazionePolicy.setIdActivePolicy(this.buildIdActivePolicy(instanceSerialIdsForPolicy, attivazionePolicy.getIdPolicy()));
+				
+				this.importerEngine.createControlloTraffico_activePolicy(attivazionePolicy,this.log);
+				create = true;
+			}
+				
+			
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import dell'attivazione della policy ["+aliasPolicy+"] ("+tipoPolicy+"): "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	private String buildIdActivePolicy(HashMap<String, String> instanceSerialIdsForPolicy, String idPolicy) throws RegistryException {
+		String serialId = null;
+		if(instanceSerialIdsForPolicy.containsKey(idPolicy)) {
+			serialId = instanceSerialIdsForPolicy.remove(idPolicy);
+			serialId = ControlloTrafficoDriverUtils.incrementPolicyInstanceSerialId(serialId);
+			instanceSerialIdsForPolicy.put(idPolicy, serialId);
+		}
+		else {
+			serialId = this.importerEngine.getNextPolicyInstanceSerialId(idPolicy, this.log);
+			instanceSerialIdsForPolicy.put(idPolicy, serialId);
+		}
+		String idActive = ControlloTrafficoDriverUtils.buildIdActivePolicy(idPolicy, serialId);
+		return idActive;
+	}
+	
+	
+	public void importAllarme(ArchiveAllarme archiveAllarme,ArchiveEsitoImportDetail detail,HashMap<String, String> instanceSerialIdsForAlarm){
+		
+		Allarme allarme = archiveAllarme.getAllarme();
+		String aliasAllarme = archiveAllarme.getAlias();
+		RuoloPorta ruoloPorta = archiveAllarme.getRuoloPorta();
+		String nomePorta = archiveAllarme.getNomePorta();
+		
+		String tipoAllarme = "configurazione";
+		if(ruoloPorta!=null && nomePorta!=null) {
+			tipoAllarme = ruoloPorta.toString()+" "+nomePorta;
+		}
+
+		try{
+			boolean allarmeGlobale = archiveAllarme.isAllarmeGlobale();
+						
+			// --- check abilitazione ---
+			if(allarmeGlobale && this.importPolicyConfigurazione==false){ // se non e' globale l'allarme va aggiunto sempre poiche' associata all'erogazione o alla fruizione
+				detail.setState(ArchiveStatoImport.IMPORT_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsAllarme(ruoloPorta, nomePorta, aliasAllarme)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			
+			// plugin
+			if(this.importerEngine.existsPluginClasse(TipoPlugin.ALLARME.getValue(), allarme.getTipo()) == false ){
+				throw new Exception("Plugin '"+TipoPlugin.ALLARME.getValue()+"' ["+allarme.getTipo()+"] non esistente nel registro");
 			}
 			
 			
@@ -3096,21 +3572,46 @@ public class ImporterArchiveUtils {
 			
 			// --- upload ---
 			boolean create = false;
-			if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)){
+			if(this.importerEngine.existsAllarme(ruoloPorta, nomePorta, aliasAllarme)){
 				
-				AttivazionePolicy old = this.importerEngine.getControlloTraffico_activePolicy(nomePolicy);
-				archivePolicy.getPolicy().setId(old.getId());
+				Allarme old = this.importerEngine.getAllarme(ruoloPorta, nomePorta, aliasAllarme);
+				allarme.setId(old.getId());
+//				allarme.setOldIdActivePolicy(new IdActivePolicy());
+//				allarme.getOldIdActivePolicy().setNome(old.getIdActivePolicy());
+//				if(old.getIdPolicy().equals(allarme.getIdPolicy())) {
+				allarme.setNome(old.getNome()); // uso lo stesso id dinamico già calcolato sul sistema se non è cambiato il tipo di plugin
+//				}
+//				else {
+//					// ricalcolo
+//					allarme.setIdActivePolicy(this.buildIdActivePolicy(instanceSerialIdsForAlarm, allarme.getIdPolicy()));
+//				}
+				
+				if(allarme.sizeAllarmeParametroList()>0) {
+					if(old.sizeAllarmeParametroList()>0) {
+						for (AllarmeParametro param : allarme.getAllarmeParametroList()) {
+							for (AllarmeParametro oldParam : old.getAllarmeParametroList()) {
+								if(oldParam.getIdParametro().equals(param.getIdParametro())) {
+									param.setId(oldParam.getId());
+									break;
+								}
+							}
+						}
+					}
+				}
 				
 				// visibilita' oggetto stesso per update
 				// non esistenti
 
 				// update
-				this.importerEngine.updateControlloTraffico_activePolicy(archivePolicy.getPolicy());
+				this.importerEngine.updateAllarme(allarme, this.log);
 				create = false;
 			}
 			// --- create ---
 			else{
-				this.importerEngine.createControlloTraffico_activePolicy(archivePolicy.getPolicy());
+				// calcolo in maniera dinamica l'id
+				allarme.setNome(this.buildIdAllarme(instanceSerialIdsForAlarm, allarme.getTipo()));
+				
+				this.importerEngine.createAllarme(allarme, this.log);
 				create = true;
 			}
 				
@@ -3123,11 +3624,26 @@ public class ImporterArchiveUtils {
 			}
 		}			
 		catch(Exception e){
-			this.log.error("Errore durante l'import dell'attivazione della policy ["+nomePolicy+"]: "+e.getMessage(),e);
+			this.log.error("Errore durante l'import dell'allarme ["+aliasAllarme+"] ("+tipoAllarme+"): "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}
 	}
+	private String buildIdAllarme(HashMap<String, String> instanceSerialIdsForAlarm, String tipoPlugin) throws RegistryException {
+		String serialId = null;
+		if(instanceSerialIdsForAlarm.containsKey(tipoPlugin)) {
+			serialId = instanceSerialIdsForAlarm.remove(tipoPlugin);
+			serialId = AllarmiDriverUtils.incrementAlarmInstanceSerialId(serialId);
+			instanceSerialIdsForAlarm.put(tipoPlugin, serialId);
+		}
+		else {
+			serialId = this.importerEngine.getNextAlarmInstanceSerialId(tipoPlugin, this.log);
+			instanceSerialIdsForAlarm.put(tipoPlugin, serialId);
+		}
+		String idActive = AllarmiDriverUtils.buildIdAlarm(tipoPlugin, serialId);
+		return idActive;
+	}
+	
 	
 	public void importTokenPolicy(ArchiveTokenPolicy archivePolicy,ArchiveEsitoImportDetail detail){
 		
@@ -3200,6 +3716,263 @@ public class ImporterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'import token policy ["+nomePolicy+"] (tipo: '"+tipologiaPolicy+"'): "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	public void importPluginArchivio(ArchivePluginArchivio archivePlugin,ArchiveEsitoImportDetail detail){
+		
+		String nome = archivePlugin.getNome();
+		try{
+			
+			// --- check abilitazione ---
+			if(this.importPluginConfigurazione==false){
+				detail.setState(ArchiveStatoImport.IMPORT_PLUGIN_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsPluginArchivio(nome)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			// non esistenti
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			// non esistenti
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			// non esistenti
+			
+			
+			// --- ora registrazione
+			// non esistenti
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsPluginArchivio(nome)){
+				
+				RegistroPlugin old = this.importerEngine.getPluginArchivio(nome);
+				archivePlugin.getPlugin().setId(old.getId());
+				archivePlugin.getPlugin().setOldNome(old.getNome());
+				
+				archivePlugin.getPlugin().setPosizione(old.getPosizione()); // in caso di aggiornamento non devo influenzare la posizione
+				
+				// visibilita' oggetto stesso per update
+				// non esistenti
+
+				// update
+				this.importerEngine.updatePluginArchivio(archivePlugin.getPlugin());
+				create = false;
+			}
+			// --- create ---
+			else{
+				this.importerEngine.createPluginArchivio(archivePlugin.getPlugin());
+				create = true;
+			}
+				
+			
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import dell'archivio dei plugin ["+nome+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	public void importPluginClasse(ArchivePluginClasse archivePluginClasse,ArchiveEsitoImportDetail detail){
+		
+		String tipoPlugin = archivePluginClasse.getTipoPlugin();
+		String tipo = archivePluginClasse.getTipo();
+		try{
+			
+			// --- check abilitazione ---
+			if(this.importPluginConfigurazione==false){
+				detail.setState(ArchiveStatoImport.IMPORT_PLUGIN_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsPluginClasse(tipoPlugin, tipo)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			// non esistenti
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			// non esistenti
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			// non esistenti
+			
+			
+			// --- ora registrazione
+			// non esistenti
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsPluginClasse(tipoPlugin, tipo)){
+				
+				Plugin old = this.importerEngine.getPluginClasse(tipoPlugin, tipo);
+				archivePluginClasse.getPlugin().setId(old.getId());
+				IdPlugin oldIdPlugin = new IdPlugin();
+				oldIdPlugin.setClassName(old.getClassName());
+				oldIdPlugin.setLabel(old.getLabel());
+				oldIdPlugin.setTipo(old.getTipo());
+				oldIdPlugin.setTipoPlugin(old.getTipoPlugin());
+				archivePluginClasse.getPlugin().setOldIdPlugin(oldIdPlugin);
+				
+				// visibilita' oggetto stesso per update
+				// non esistenti
+
+				// update
+				this.importerEngine.updatePluginClasse(archivePluginClasse.getPlugin());
+				create = false;
+			}
+			// --- create ---
+			else{
+				this.importerEngine.createPluginClasse(archivePluginClasse.getPlugin());
+				create = true;
+			}
+				
+			
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import del plugin ["+tipo+"] (tipo-plugin: '"+tipoPlugin+"'): "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+
+	public void importConfigurazione_UrlInvocazioneRegola(ArchiveUrlInvocazioneRegola archiveRegola,ArchiveEsitoImportDetail detail){
+		
+		String nome = archiveRegola.getNome();
+		try{
+			
+			// --- check abilitazione ---
+			if(this.importConfigurazione==false){
+				detail.setState(ArchiveStatoImport.IMPORT_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsUrlInvocazioneRegola(nome)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			// non esistenti
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			// non esistenti
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			// non esistenti
+			
+			
+			// --- ora registrazione
+			// non esistenti
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsUrlInvocazioneRegola(nome)){
+				
+				ConfigurazioneUrlInvocazioneRegola old = this.importerEngine.getUrlInvocazioneRegola(nome);
+				archiveRegola.getRegola().setId(old.getId());
+				archiveRegola.getRegola().setOldNome(old.getNome());
+				
+				archiveRegola.getRegola().setPosizione(old.getPosizione()); // in caso di aggiornamento non devo influenzare la posizione
+				
+				// visibilita' oggetto stesso per update
+				// non esistenti
+
+				// update
+				this.importerEngine.updateUrlInvocazioneRegola(archiveRegola.getRegola());
+				create = false;
+			}
+			// --- create ---
+			else{
+				this.importerEngine.createUrlInvocazioneRegola(archiveRegola.getRegola());
+				create = true;
+			}
+				
+			
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import della regola di proxy pass ["+nome+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	public void importConfigurazione_UrlInvocazione(ConfigurazioneUrlInvocazione configurazionePdD, ArchiveEsitoImportDetailConfigurazione<ConfigurazioneUrlInvocazione> detail){		
+		try{
+			// --- check abilitazione ---
+			if(this.importConfigurazione==false){
+				detail.setState(ArchiveStatoImport.IMPORT_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
+			// update
+			this.importerEngine.updateConfigurazione_UrlInvocazione(configurazionePdD);
+			detail.setState(ArchiveStatoImport.UPDATED);
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import della configurazione dell'url di invocazione: "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}

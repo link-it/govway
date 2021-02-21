@@ -200,7 +200,7 @@ public class TimerStatisticheLib {
 				this.daoFactoryServiceManagerPropertiesPluginsStatistiche.setDatabaseType(this.tipoDatabase);
 				
 				this.daoFactoryServiceManagerPropertiesPluginsBase = 
-						daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
+						daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance());
 				this.daoFactoryServiceManagerPropertiesPluginsBase.setShowSql(this.debug);	
 				this.daoFactoryServiceManagerPropertiesPluginsBase.setDatabaseType(this.tipoDatabase);
 				
@@ -381,7 +381,7 @@ public class TimerStatisticheLib {
 						this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLogger);
 			
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM = null;
+			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
 			if(this.generazioneStatisticheCustom){
@@ -399,9 +399,9 @@ public class TimerStatisticheLib {
 						this.daoFactory.getServiceManager(
 								org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance(), conConfig,
 								this.daoFactoryServiceManagerPropertiesPluginsStatistiche, this.daoFactoryLogger);
-				pluginsBaseSM = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) 
+				pluginsBaseSM = (org.openspcoop2.core.plugins.dao.IServiceManager) 
 						this.daoFactory.getServiceManager(
-								org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(), conConfig,
+								org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(), conConfig,
 								this.daoFactoryServiceManagerPropertiesPluginsBase, this.daoFactoryLogger);
 				utilsSM = (org.openspcoop2.core.commons.search.dao.IServiceManager) 
 						this.daoFactory.getServiceManager(

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+
 /**
  * XACMLCostanti
  *
@@ -29,7 +31,7 @@ package org.openspcoop2.pdd.core.autorizzazione;
  */
 public class CostantiAutorizzazione {
 
-	public static final String AUTORIZZAZIONE_CONTENUTO_BUILT_IN = "builtIn";
+	public static final String AUTORIZZAZIONE_CONTENUTO_BUILT_IN = CostantiConfigurazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN;
 	
 	public static final String AUTHZ_ANY_VALUE = "${anyValue}";
 	public static final String AUTHZ_REGEXP_MATCH_PREFIX = "${regExpMatch:";

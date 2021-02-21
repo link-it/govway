@@ -23,7 +23,7 @@ package org.openspcoop2.web.monitor.allarmi.converter;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.openspcoop2.monitor.engine.config.base.Plugin;
+import org.openspcoop2.core.plugins.Plugin;
 
 /**     
  * PluginConverter

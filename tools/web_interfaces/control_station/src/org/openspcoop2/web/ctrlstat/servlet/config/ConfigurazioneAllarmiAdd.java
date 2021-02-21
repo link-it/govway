@@ -50,14 +50,12 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -133,30 +131,18 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			PorteDelegateCore pdCore = new PorteDelegateCore(confCore);
 			PorteApplicativeCore paCore = new PorteApplicativeCore(confCore);
 			
-			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
+			AlarmEngineConfig alarmEngineConfig = confCore.getAllarmiConfig();
 			
 			ConfigurazioneAllarmeBean allarme = new ConfigurazioneAllarmeBean();
 			allarme.setEnabled(1);
 			allarme.setTipo(null);
 			allarme.setTipoAllarme(null);
 			allarme.setMail(new AllarmeMail());
-			allarme.getMail().setInviaAlert(0);
+			allarme.getMail().setInvia(0);
 			allarme.getMail().setInviaWarning(0);
-			if(alarmEngineConfig.isMailAckMode()){
-				allarme.getMail().setAckMode(1);
-			}else{
-				allarme.getMail().setAckMode(0);
-			}
-
 			allarme.setScript(new AllarmeScript());
-			allarme.getScript().setInvocaAlert(0);
+			allarme.getScript().setInvoca(0);
 			allarme.getScript().setInvocaWarning(0);
-			if(alarmEngineConfig.isScriptAckMode()){
-				allarme.getScript().setAckMode(1);
-			}else{
-				allarme.getScript().setAckMode(0);
-			}
 			allarme.setFiltro(new AllarmeFiltro());
 			allarme.setGroupBy(new AllarmeRaggruppamento());
 			
@@ -256,11 +242,13 @@ public class ConfigurazioneAllarmiAdd extends Action {
 							try{
 								Context context = confHelper.createAlarmContext(allarme, parameters);	
 								
-								allarme.setAlias(AllarmiUtils.costruisciAliasAllarme(allarme, ControlStationCore.getLog(), context));
+								if(confCore.isShowAllarmiFormNomeSuggeritoCreazione()) {
+									allarme.setAlias(AllarmiUtils.costruisciAliasAllarme(allarme, ControlStationCore.getLog(), context));
+								}
 								
-								int counter = confCore.getFreeCounterForAlarm(allarme.getPlugin().getTipo());
-								allarme.setNome(allarme.getPlugin().getTipo()+AllarmiDriverUtils.getFreeCounterSeparatorCharForAlarm()+counter);
-								
+								String serialId = confCore.getNextAlarmInstanceSerialId(allarme.getPlugin().getTipo());
+								allarme.setNome(AllarmiDriverUtils.buildIdAlarm(allarme.getPlugin().getTipo(), serialId));
+																
 								allarme.setDescrizione(allarme.getPlugin().getDescrizione());
 								
 								IDynamicLoader dl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, allarme.getPlugin().getTipo(), allarme.getPlugin().getClassName(), ControlStationCore.getLog());
@@ -391,20 +379,22 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			}
 				
 			// salvataggio dei parametri
-			for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
-				boolean found = false;
-				for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
-					if(parDB.getIdParametro().equals(par.getId())){
-						parDB.setValore(par.getValueAsString());
-						found = true;
-						break;
+			if(parameters!=null && parameters.size()>0) {
+				for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
+					boolean found = false;
+					for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
+						if(parDB.getIdParametro().equals(par.getId())){
+							parDB.setValore(par.getValueAsString());
+							found = true;
+							break;
+						}
 					}
-				}
-				if(!found){
-					AllarmeParametro parDB = new AllarmeParametro();
-					parDB.setIdParametro(par.getId());
-					parDB.setValore(par.getValueAsString());
-					allarme.addAllarmeParametro(parDB);
+					if(!found){
+						AllarmeParametro parDB = new AllarmeParametro();
+						parDB.setIdParametro(par.getId());
+						parDB.setValore(par.getValueAsString());
+						allarme.addAllarmeParametro(parDB);
+					}
 				}
 			}
 			
@@ -420,9 +410,11 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
 			
 			try {
-				AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), allarmiConfig);
+				AllarmiUtils.notifyStateActiveThread(true, false, false, null, allarme, ControlStationCore.getLog(), alarmEngineConfig);
 			} catch(Exception e) {
-				pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
+				String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+				ControlStationCore.getLog().error(errorMsg, e);
+				pd.setMessage(errorMsg);
 			}
 				
 			// Preparo la lista

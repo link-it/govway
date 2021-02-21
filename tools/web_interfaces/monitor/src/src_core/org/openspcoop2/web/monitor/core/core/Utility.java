@@ -1071,4 +1071,14 @@ public class Utility {
 
 		return new ArrayList<String>();
 	}
+	
+	public static boolean isAmministratore() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.isAmministratore();
+		}
+		
+		return false;
+	}
 }

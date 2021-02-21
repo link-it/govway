@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.Statistica;
 
 
@@ -58,6 +59,8 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object.getStatisticaBase(), "setData", StatisticaOraria.model().STATISTICA_BASE.DATA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data", StatisticaOraria.model().STATISTICA_BASE.DATA.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setStatoRecord", StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "stato_record", StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaOraria.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "id_porta", StatisticaOraria.model().STATISTICA_BASE.ID_PORTA.getFieldType()));
 				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
@@ -102,6 +105,8 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "gruppi", StatisticaOraria.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaOraria.model().STATISTICA_BASE.URI_API.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "uri_api", StatisticaOraria.model().STATISTICA_BASE.URI_API.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setClusterId", StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id", StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -207,6 +212,8 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.id"));
 				setParameter(object.getStatisticaBase(), "setData", StatisticaOraria.model().STATISTICA_BASE.DATA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.data"));
+				setParameter(object.getStatisticaBase(), "setStatoRecord", StatisticaOraria.model().STATISTICA_BASE.STATO_RECORD.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.stato-record"));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaOraria.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.id-porta"));
 				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
@@ -251,6 +258,8 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.gruppi"));
 				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaOraria.model().STATISTICA_BASE.URI_API.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.uri-api"));
+				setParameter(object.getStatisticaBase(), "setClusterId", StatisticaOraria.model().STATISTICA_BASE.CLUSTER_ID.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.cluster-id"));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.numero-transazioni"));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaOraria.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -351,10 +360,10 @@ public class StatisticaOrariaFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(StatisticaOraria.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("statistiche_orarie","id","seq_statistiche_orarie","statistiche_orarie_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_ORARIE,"id","seq_"+CostantiDB.STATISTICHE_ORARIE,CostantiDB.STATISTICHE_ORARIE+"_init_seq");
 			}
 			if(model.equals(StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("stat_orarie_contenuti","id","seq_stat_orarie_contenuti","stat_orarie_contenuti_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_ORARIE_CONTENUTI,"id","seq_"+CostantiDB.STATISTICHE_ORARIE_CONTENUTI,CostantiDB.STATISTICHE_ORARIE_CONTENUTI+"_init_seq");
 			}
 			
 			else{

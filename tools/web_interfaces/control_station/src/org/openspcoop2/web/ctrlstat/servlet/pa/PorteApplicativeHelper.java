@@ -70,6 +70,7 @@ import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -77,6 +78,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Ruolo;
@@ -90,11 +92,9 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckCostanti;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore;
@@ -6577,8 +6577,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {	
 			de.setType(DataElementType.SELECT);
-			List<String> modalitaLabels = BehaviourType.getLabels(this.porteApplicativeCore.isConnettoriMultipliConsegnaMultiplaEnabled(), isSoapOneWay);
-			List<String> modalitaValues = BehaviourType.getValues(this.porteApplicativeCore.isConnettoriMultipliConsegnaMultiplaEnabled(), isSoapOneWay);
+			List<String> modalitaLabels = TipoBehaviour.getLabels(this.porteApplicativeCore.isConnettoriMultipliConsegnaMultiplaEnabled(), isSoapOneWay);
+			List<String> modalitaValues = TipoBehaviour.getValues(this.porteApplicativeCore.isConnettoriMultipliConsegnaMultiplaEnabled(), isSoapOneWay);
 			de.setValues(modalitaValues);
 			de.setLabels(modalitaLabels);
 			de.setPostBack(true);
@@ -6592,7 +6592,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {
 			
 			// custom
-			if(BehaviourType.CUSTOM.getValue().equals(modalitaConsegna)) {
+			if(TipoBehaviour.CUSTOM.getValue().equals(modalitaConsegna)) {
 				
 				// campo tipo e link proprieta
 				
@@ -6625,7 +6625,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA);
 					dati.addElement(de);
 				}
-			} else if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {
+			} else if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {
 				
 				if(loadBalanceStrategia==null) {
 					loadBalanceStrategia = LoadBalancerType.ROUND_ROBIN.getValue(); // default
@@ -6690,7 +6690,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 			}  
 			
-			if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+			if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 				// sezione notifiche
 
 				//de = new DataElement();
@@ -6712,24 +6712,24 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			// checkbox consegna condizionale
 			DataElement deConsegnaConNotifiche = null;
-			if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) || 
-					BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || 
-					BehaviourType.CONSEGNA_CONDIZIONALE.getValue().equals(modalitaConsegna) ||
-					BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna) ) {
+			if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) || 
+					TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || 
+					TipoBehaviour.CONSEGNA_CONDIZIONALE.getValue().equals(modalitaConsegna) ||
+					TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna) ) {
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE);
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(consegnaCondizionale);
 				de.setPostBack(true);
-				if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) ) {
+				if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) ) {
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LEFT);
 					de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LOAD_BALANCER_RIGHT);
 				}
-				else if(BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) ) {
+				else if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) ) {
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LEFT);
 					de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_PIU_CONNETTORI_RIGHT);
 				}
-				else if(BehaviourType.CONSEGNA_CONDIZIONALE.getValue().equals(modalitaConsegna)) {
+				else if(TipoBehaviour.CONSEGNA_CONDIZIONALE.getValue().equals(modalitaConsegna)) {
 					de.setType(DataElementType.HIDDEN);
 					consegnaCondizionale = true;
 					de.setSelected(true);
@@ -6742,12 +6742,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setType(DataElementType.NOTE);
 					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_SINGOLO_CONNETTORE_RIGHT);
 				}
-				else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+				else if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICA_LEFT);
 					de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICHE_CONNETTORI_RIGHT);
 				}
 				
-				if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 					deConsegnaConNotifiche = de;
 				}
 				else {
@@ -6755,7 +6755,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 			}
 			
-			if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && sticky) {
+			if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && sticky) {
 			
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY);
@@ -6897,7 +6897,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 			}
 			
-			if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && passiveHealthCheck) {
+			if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && passiveHealthCheck) {
 				
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_TITLE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
@@ -6926,7 +6926,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 			}
 
-			if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+			if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 				// sezione notifiche
 
 				de = new DataElement();
@@ -6962,7 +6962,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			
-			if(!BehaviourType.CUSTOM.getValue().equals(modalitaConsegna) && consegnaCondizionale) {
+			if(!TipoBehaviour.CUSTOM.getValue().equals(modalitaConsegna) && consegnaCondizionale) {
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA);
 				de.setType(DataElementType.TITLE);
@@ -6973,7 +6973,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY);
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY);
 				
-				if(!BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {	
+				if(!TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {	
 					de.setType(DataElementType.SELECT);
 					 
 					String [] selezioneConnettoreByValues = {
@@ -7189,7 +7189,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setSelected(condizioneNonIdentificataDiagnostico);
 					dati.addElement(de);
 					
-					if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && !condizioneNonIdentificataAbortTransaction) {	
+					if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && !condizioneNonIdentificataAbortTransaction) {	
 						
 						de = new DataElement();
 						de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION+"__NOTE");
@@ -7199,7 +7199,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 					}
 					
-					if(!BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {	
+					if(!TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {	
 						// select Utilizza Connettore
 						de = new DataElement();
 						de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE);
@@ -7211,10 +7211,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						List<String> condizioneNonIdentificataConnettoriLabels = new ArrayList<String>();
 						condizioneNonIdentificataConnettoriLabels.addAll(connettoriImplementaAPILabels);
 						
-						if(BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							condizioneNonIdentificataConnettoriValues.add(0, CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
 							condizioneNonIdentificataConnettoriLabels.add(0, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_QUALSIASI);
-							if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+							if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 								condizioneNonIdentificataConnettoriValues.add(1, org.openspcoop2.pdd.core.behaviour.conditional.Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO);
 								condizioneNonIdentificataConnettoriLabels.add(1, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_NESSUNO);
 							}
@@ -7226,7 +7226,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setSelected(condizioneNonIdentificataConnettore);
 						dati.addElement(de);
 						
-						if(BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(condizioneNonIdentificataConnettore==null || 
 									"".equals(condizioneNonIdentificataConnettore) || 
 									CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA.equals(condizioneNonIdentificataConnettore)) {
@@ -7288,7 +7288,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setSelected(connettoreNonTrovatoDiagnostico);
 					dati.addElement(de);
 					
-					if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && !connettoreNonTrovatoAbortTransaction) {	
+					if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && !connettoreNonTrovatoAbortTransaction) {	
 					
 						de = new DataElement();
 						de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION+"__NOTE");
@@ -7298,7 +7298,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 					}
 					
-					if(!BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {	
+					if(!TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {	
 						// select Utilizza Connettore
 						de = new DataElement();
 						de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE);
@@ -7310,10 +7310,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						List<String> connettoreNonTrovatoConnettoriLabels = new ArrayList<String>();
 						connettoreNonTrovatoConnettoriLabels.addAll(connettoriImplementaAPILabels);
 						
-						if(BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							connettoreNonTrovatoConnettoriValues.add(0, CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
 							connettoreNonTrovatoConnettoriLabels.add(0, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_QUALSIASI);
-							if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+							if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 								connettoreNonTrovatoConnettoriValues.add(1, org.openspcoop2.pdd.core.behaviour.conditional.Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO);
 								connettoreNonTrovatoConnettoriLabels.add(1, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_NESSUNO);
 							}
@@ -7325,7 +7325,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						de.setSelected(connettoreNonTrovatoConnettore);
 						dati.addElement(de);
 						
-						if(BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+						if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(connettoreNonTrovatoConnettore==null || 
 									"".equals(connettoreNonTrovatoConnettore) || 
 									CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA.equals(connettoreNonTrovatoConnettore)) {
@@ -7447,7 +7447,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			boolean validaSezioneCondizionalita = false;
 			// custom
-			if(modalitaConsegna.equals(BehaviourType.CUSTOM.getValue())) {
+			if(modalitaConsegna.equals(TipoBehaviour.CUSTOM.getValue())) {
 				if (StringUtils.isEmpty(tipoCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(tipoCustom)) {
 					if(this.confCore.isConfigurazionePluginsEnabled()) {
 						this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_BEHAVIOUR_CUSTOM_NON_INDICATA);
@@ -7464,7 +7464,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				if(this.checkLength255(tipoCustom, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO)==false) {
 					return false;
 				}
-			} else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue())) {
+			} else if(modalitaConsegna.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue())) {
 				// select list con strategia
 				if (StringUtils.isEmpty(loadBalanceStrategia)) {
 					this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA+" non pu&ograve; essere vuoto");
@@ -7532,16 +7532,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				validaSezioneCondizionalita = true; 
 				
 				
-			}  else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_MULTIPLA.getValue()) ||
-					modalitaConsegna.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue()) ||
-					modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {
+			}  else if(modalitaConsegna.equals(TipoBehaviour.CONSEGNA_MULTIPLA.getValue()) ||
+					modalitaConsegna.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue()) ||
+					modalitaConsegna.equals(TipoBehaviour.CONSEGNA_CONDIZIONALE.getValue())) {
 				
 				validaSezioneCondizionalita = true;
 			}
 			
 			// validazione della sezione gestione notifiche
 			String connettoreImplementaAPI = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
-			if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+			if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 				// select list con strategia
 				if (StringUtils.isEmpty(connettoreImplementaAPI)) {
 					this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API+" non pu&ograve; essere vuoto");
@@ -7619,7 +7619,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						
 						String condizioneNonIdentificataConnettore = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE);
 						
-						if(modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {	
+						if(modalitaConsegna.equals(TipoBehaviour.CONSEGNA_CONDIZIONALE.getValue())) {	
 							if (StringUtils.isEmpty(condizioneNonIdentificataConnettore)) {
 								this.pd.setMessage("Il campo "+  
 										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE +" nella sezione '"+
@@ -7628,7 +7628,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							}
 						}
 						
-						if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(connettoreImplementaAPI.equals(condizioneNonIdentificataConnettore)) {
 								this.pd.setMessage("Il campo '"+  
 										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE +"' nella sezione '"+
@@ -7651,7 +7651,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						
 						String connettoreNonTrovatoConnettore = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE);
 						
-						if(modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {	
+						if(modalitaConsegna.equals(TipoBehaviour.CONSEGNA_CONDIZIONALE.getValue())) {	
 							if (StringUtils.isEmpty(connettoreNonTrovatoConnettore)) {
 								this.pd.setMessage("Il campo "+  
 										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE +" nella sezione '"+
@@ -7660,7 +7660,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							}
 						}
 						
-						if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(connettoreImplementaAPI.equals(connettoreNonTrovatoConnettore)) {
 								this.pd.setMessage("Il campo '"+  
 										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE +"' nella sezione '"+
@@ -7754,10 +7754,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			//PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, this.log);
-			BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+			TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 			
 			LoadBalancerType loadBalancerType = null;
-			if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+			if(behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE)) {
 				String balancerTypeS = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerType(pa.getBehaviour());
 				loadBalancerType = LoadBalancerType.toEnumConstant(balancerTypeS, true);
 			}
@@ -8016,7 +8016,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.addElement(de);
 				}
 				
-				if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE) &&
+				if(behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE) &&
 						loadBalancerType.isTypeWithWeight()) {
 					// Proprieta
 					de = new DataElement();
@@ -8040,7 +8040,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				
 				
-				if(behaviourType.equals(BehaviourType.CUSTOM)) {
+				if(behaviourType.equals(TipoBehaviour.CUSTOM)) {
 					// Proprieta
 					de = new DataElement();
 					de.setType(DataElementType.TEXT);
@@ -8059,12 +8059,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.addElement(de);
 				}
 				
-				if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA) || behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
+				if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA) || behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 					// Proprieta
 					de = new DataElement();
 					de.setType(DataElementType.TEXT);
 					String label = null;
-					if(behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE) && connettoreDefault) {
+					if(behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE) && connettoreDefault) {
 						label = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_CONSEGNA;
 					}
 					else {
@@ -8163,7 +8163,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 	
 	public Vector<DataElement> addConnettoriMultipliToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
-			BehaviourType beaBehaviourType, String nomeSAConnettore,
+			TipoBehaviour beaBehaviourType, String nomeSAConnettore,
 			String nome, String descrizione, String stato, boolean behaviourConFiltri, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore) {
 		
 		boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
@@ -8315,7 +8315,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 	
 	public Vector<DataElement> addConnettoriMultipliLoadBalanceToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
-			BehaviourType beaBehaviourType, String nomeSAConnettore, String peso) {
+			TipoBehaviour beaBehaviourType, String nomeSAConnettore, String peso) {
 		
 		DataElement de = new DataElement();
 		
@@ -8344,7 +8344,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return dati;
 	}
 	
-	public boolean connettoriMultipliCheckData(TipoOperazione tipoOp, PortaApplicativa pa , BehaviourType beaBehaviourType, String nomeSAConnettore,
+	public boolean connettoriMultipliCheckData(TipoOperazione tipoOp, PortaApplicativa pa , TipoBehaviour beaBehaviourType, String nomeSAConnettore,
 			String oldNome, String nome, String descrizione, String stato, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore,
 			String getmsg, String getmsgUsername, String getmsgPassword, ServizioApplicativo oldSA) throws Exception{
 		try{
@@ -8550,7 +8550,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return true;
 	}
 	
-	public boolean connettoriMultipliLoadBalanceCheckData(TipoOperazione tipoOp, PortaApplicativa pa , BehaviourType beaBehaviourType, String nomeSAConnettore, String peso) throws Exception{
+	public boolean connettoriMultipliLoadBalanceCheckData(TipoOperazione tipoOp, PortaApplicativa pa , TipoBehaviour beaBehaviourType, String nomeSAConnettore, String peso) throws Exception{
 		try{
 			
 			if(StringUtils.isEmpty(peso)) {
@@ -9679,16 +9679,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				if(pa.getBehaviour() != null) {
 					boolean connettoreInUso = false;
 					List<String> titoliSezioniAggiornate = new ArrayList<String>();
-					BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+					TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 
 					boolean consegnaCondizionale = false;
-					if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)
-							|| behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)
-							|| behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)
-							|| behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+					if(behaviourType.equals(TipoBehaviour.CONSEGNA_MULTIPLA)
+							|| behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)
+							|| behaviourType.equals(TipoBehaviour.CONSEGNA_CONDIZIONALE)
+							|| behaviourType.equals(TipoBehaviour.CONSEGNA_LOAD_BALANCE)) {
 						consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
 
-						if(behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
+						if(behaviourType.equals(TipoBehaviour.CONSEGNA_CON_NOTIFICHE)) {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
 										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
 
@@ -9775,7 +9775,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	
 	public Vector<DataElement> addConnettoriMultipliNotificheToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
-			BehaviourType beaBehaviourType, String nomeSAConnettore, ServiceBinding serviceBinding, String cadenzaRispedizione,
+			TipoBehaviour beaBehaviourType, String nomeSAConnettore, ServiceBinding serviceBinding, String cadenzaRispedizione,
 			String codiceRisposta2xx, String codiceRisposta2xxValueMin, String codiceRisposta2xxValueMax, String codiceRisposta2xxValue,
 			String codiceRisposta3xx, String codiceRisposta3xxValueMin, String codiceRisposta3xxValueMax, String codiceRisposta3xxValue,
 			String codiceRisposta4xx, String codiceRisposta4xxValueMin, String codiceRisposta4xxValueMax, String codiceRisposta4xxValue,
@@ -10343,7 +10343,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 	
 	
-	public boolean connettoriMultipliNotificheCheckData(TipoOperazione tipoOp, PortaApplicativa pa , BehaviourType beaBehaviourType, ServiceBinding serviceBinding, String nomeSAConnettore, String cadenzaRispedizione,
+	public boolean connettoriMultipliNotificheCheckData(TipoOperazione tipoOp, PortaApplicativa pa , TipoBehaviour beaBehaviourType, ServiceBinding serviceBinding, String nomeSAConnettore, String cadenzaRispedizione,
 			String codiceRisposta2xx, String codiceRisposta2xxValueMin, String codiceRisposta2xxValueMax, String codiceRisposta2xxValue,
 			String codiceRisposta3xx, String codiceRisposta3xxValueMin, String codiceRisposta3xxValueMax, String codiceRisposta3xxValue,
 			String codiceRisposta4xx, String codiceRisposta4xxValueMin, String codiceRisposta4xxValueMax, String codiceRisposta4xxValue,

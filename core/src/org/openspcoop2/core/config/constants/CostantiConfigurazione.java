@@ -22,6 +22,7 @@
 package org.openspcoop2.core.config.constants;
 
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.utils.TipiDatabase;
 
 /**
@@ -341,4 +342,28 @@ public class CostantiConfigurazione {
     public static final String NOME_CONNETTORE_DEFAULT = "Default";
     
     public static final String REGOLA_PROXY_PASS_CONTESTO_VUOTO = "_____@@EMPTY@@____";
+    
+    public static final String AUTORIZZAZIONE_CONTENUTO_BUILT_IN = "builtIn";
+    
+	public static final String CONSEGNA_MULTIPLA = "__multi";
+	
+	public static final String CONSEGNA_LOAD_BALANCE = "__loadBalance";
+	
+	public static final String CONSEGNA_CONDIZIONALE = "__conditional";
+	
+	public static final String CONSEGNA_CON_NOTIFICHE = "__notify";
+	
+	public static final String CONSEGNA_CUSTOM = "__custom";
+	
+	
+	public static final String ALLARMI_TIPOLOGIA_CONFIGURAZIONE = "configurazione";
+	public static final String ALLARMI_TIPOLOGIA_DELEGATA = TipoPdD.DELEGATA.toString(); 
+	public static final String ALLARMI_TIPOLOGIA_APPLICATIVA = TipoPdD.APPLICATIVA.toString(); 
+	public static final String ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE = "SOLO_ASSOCIATE";
+	
+	public static final String PARAM_ID_CLUSTER = "aPluginClusterId";
+	public static final String CLUSTER_ID_NON_DEFINITO = "-";
+	
+	public static final String PARAM_POLICY_ID = "aPluginPolicyId";
+	public static final String POLICY_ID_NON_DEFINITA = "-";
 }

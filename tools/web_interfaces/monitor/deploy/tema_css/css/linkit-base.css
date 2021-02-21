@@ -189,6 +189,13 @@ option:active  {
 	color: ${input.color};
 }
 
+textarea.inputTextAreaLong {
+        background-color: ${input.background.color} ;
+        background-image: none !important;
+        width: auto;
+        color: ${input.color};
+}
+
 ul {
 	line-height: normal;
 }
@@ -373,6 +380,14 @@ a.titleLinkRight:hover {
 	line-height: 24px;
 }
 
+.labelAllineataTopDxFixedWidth130 {
+	text-align: right;
+	padding: 0px 10px;
+	width: 160px;
+	line-height: 24px;
+	vertical-align: top;
+}
+
 .labelAllineataDxFixedWidth270 {
     text-align: right;
     padding: 0px 10px;
@@ -429,6 +444,15 @@ span.iconLinkie{
 
 .divNoEdit {
 	padding-top: 6px;
+}
+
+.edit-link {
+	float: right;
+	padding: 0px 8px 0px 0px;
+}
+
+.edit-link span.icon-box {
+	vertical-align: middle;
 }
 
 
@@ -601,3 +625,21 @@ span.iconLinkie{
 .entryRuoloConsegna {
     padding: 0px 16px 0px 16px;
 }
+
+
+.icona-allarme-error {
+	color: #FF2D39 !important;
+}
+
+.icona-allarme-warning {
+	color: #FFAB4D !important;
+}
+
+.icona-allarme-ok {
+	color: #00B658 !important;
+}
+
+.icona-allarme-disabilitato {
+	color: #C2C2C9 !important;
+}
+

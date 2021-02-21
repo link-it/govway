@@ -94,7 +94,7 @@ public class ConfigurazioneControlloTraffico extends Action {
 			}
 			
 			// conto policy
-			Search searchPolicyUtente = new Search();
+			Search searchPolicyUtente = new Search(true);
 			searchPolicyUtente.addFilter( Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY, Filtri.FILTRO_TIPO_POLICY, 
 					CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPO_UTENTE);
 			long sizePolicy = confCore.countConfigurazionePolicy(searchPolicyUtente);

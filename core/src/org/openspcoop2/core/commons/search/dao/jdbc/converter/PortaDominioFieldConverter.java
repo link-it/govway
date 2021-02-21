@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.PortaDominio;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -113,7 +114,7 @@ public class PortaDominioFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(PortaDominio.model())){
-			return "pdd";
+			return CostantiDB.PDD;
 		}
 
 

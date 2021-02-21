@@ -74,13 +74,6 @@ public class AllarmeHistoryFieldConverter extends AbstractSQLFieldConverter {
 				return "nome";
 			}
 		}
-		if(field.equals(AllarmeHistory.model().ID_ALLARME.TIPO)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".tipo";
-			}else{
-				return "tipo";
-			}
-		}
 		if(field.equals(AllarmeHistory.model().ENABLED)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".enabled";
@@ -137,9 +130,6 @@ public class AllarmeHistoryFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(field.equals(AllarmeHistory.model().ID_ALLARME.NOME)){
-			return this.toTable(AllarmeHistory.model().ID_ALLARME, returnAlias);
-		}
-		if(field.equals(AllarmeHistory.model().ID_ALLARME.TIPO)){
 			return this.toTable(AllarmeHistory.model().ID_ALLARME, returnAlias);
 		}
 		if(field.equals(AllarmeHistory.model().ENABLED)){

@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>Java class for servizio-applicativo complex type.
@@ -41,6 +43,7 @@ import java.io.Serializable;
  * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="as_client" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-applicativo-ruolo" type="{http://www.openspcoop2.org/core/commons/search}servizio-applicativo-ruolo" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -59,7 +62,8 @@ import java.io.Serializable;
   	"tipologiaErogazione",
   	"tipo",
   	"asClient",
-  	"idSoggetto"
+  	"idSoggetto",
+  	"servizioApplicativoRuolo"
   }
 )
 
@@ -131,6 +135,30 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
     this.idSoggetto = idSoggetto;
   }
 
+  public void addServizioApplicativoRuolo(ServizioApplicativoRuolo servizioApplicativoRuolo) {
+    this.servizioApplicativoRuolo.add(servizioApplicativoRuolo);
+  }
+
+  public ServizioApplicativoRuolo getServizioApplicativoRuolo(int index) {
+    return this.servizioApplicativoRuolo.get( index );
+  }
+
+  public ServizioApplicativoRuolo removeServizioApplicativoRuolo(int index) {
+    return this.servizioApplicativoRuolo.remove( index );
+  }
+
+  public List<ServizioApplicativoRuolo> getServizioApplicativoRuoloList() {
+    return this.servizioApplicativoRuolo;
+  }
+
+  public void setServizioApplicativoRuoloList(List<ServizioApplicativoRuolo> servizioApplicativoRuolo) {
+    this.servizioApplicativoRuolo=servizioApplicativoRuolo;
+  }
+
+  public int sizeServizioApplicativoRuoloList() {
+    return this.servizioApplicativoRuolo.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -172,5 +200,35 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   @XmlElement(name="id-soggetto",required=true,nillable=false)
   protected IdSoggetto idSoggetto;
+
+  @XmlElement(name="servizio-applicativo-ruolo",required=true,nillable=false)
+  protected List<ServizioApplicativoRuolo> servizioApplicativoRuolo = new ArrayList<ServizioApplicativoRuolo>();
+
+  /**
+   * @deprecated Use method getServizioApplicativoRuoloList
+   * @return List&lt;ServizioApplicativoRuolo&gt;
+  */
+  @Deprecated
+  public List<ServizioApplicativoRuolo> getServizioApplicativoRuolo() {
+  	return this.servizioApplicativoRuolo;
+  }
+
+  /**
+   * @deprecated Use method setServizioApplicativoRuoloList
+   * @param servizioApplicativoRuolo List&lt;ServizioApplicativoRuolo&gt;
+  */
+  @Deprecated
+  public void setServizioApplicativoRuolo(List<ServizioApplicativoRuolo> servizioApplicativoRuolo) {
+  	this.servizioApplicativoRuolo=servizioApplicativoRuolo;
+  }
+
+  /**
+   * @deprecated Use method sizeServizioApplicativoRuoloList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeServizioApplicativoRuolo() {
+  	return this.servizioApplicativoRuolo.size();
+  }
 
 }

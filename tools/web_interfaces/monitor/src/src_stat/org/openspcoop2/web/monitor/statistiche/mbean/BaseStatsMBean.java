@@ -86,8 +86,8 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	public BaseStatsMBean() {
 		init();
 	}
-	public BaseStatsMBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
-		super(serviceManager);
+	public BaseStatsMBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager) {
+		super(serviceManager, pluginsServiceManager);
 		init();
 	}
 	private void init() {

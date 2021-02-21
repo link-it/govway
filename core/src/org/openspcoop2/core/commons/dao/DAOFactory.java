@@ -69,6 +69,14 @@ public class DAOFactory implements IDAOFactory {
 			throw new DAOFactoryException(e.getMessage(),e);
 		}
 	}
+	public DAOFactory(Logger log, DAOFactoryProperties daoFactoryProperties) throws DAOFactoryException{
+		try{
+			this.log = log;
+			this.daoFactoryProperties = daoFactoryProperties; 
+		}catch(Exception e){
+			throw new DAOFactoryException(e.getMessage(),e);
+		}
+	}
 
 	private Object getServiceManager(IProjectInfo tipoDAO,DataSource ds,Connection connection,Boolean isAutocommit, 
 			ServiceManagerProperties smProperties, Logger log) throws DAOFactoryException{

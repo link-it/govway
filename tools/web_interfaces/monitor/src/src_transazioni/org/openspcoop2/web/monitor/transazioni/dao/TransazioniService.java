@@ -86,8 +86,8 @@ import org.openspcoop2.monitor.engine.config.SearchServiceLibrary;
 import org.openspcoop2.monitor.engine.config.SearchServiceLibraryReader;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibraryReader;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
@@ -147,7 +147,7 @@ public class TransazioniService implements ITransazioniService {
 
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager transazioniPluginsServiceManager;
 	private org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager ricerchePluginsServiceManager;
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager basePluginsServiceManager;
+	private org.openspcoop2.core.plugins.dao.IServiceManager basePluginsServiceManager;
 
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager;
 	private org.openspcoop2.core.transazioni.dao.ITransazioneService transazioniDAO;
@@ -295,7 +295,7 @@ public class TransazioniService implements ITransazioniService {
 
 			// init Service Manager (base.plugins)
 			this.basePluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),this.log);
+					(org.openspcoop2.core.plugins.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),this.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 
@@ -364,7 +364,7 @@ public class TransazioniService implements ITransazioniService {
 
 			// init Service Manager (base.plugins)
 			this.basePluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties, this.log);
+					(org.openspcoop2.core.plugins.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),con,autoCommit,serviceManagerProperties, this.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 
@@ -2616,6 +2616,18 @@ public class TransazioniService implements ITransazioniService {
 //				idegov.equals(Transazione.model().ID_MESSAGGIO_RICHIESTA,	value);
 //				idegov.equals(Transazione.model().ID_MESSAGGIO_RISPOSTA,	value);
 //				filter.and(idegov);
+				
+				
+				// permessi utente operatore
+				if(this.searchForm.getPermessiUtenteOperatore()!=null){
+					IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
+							Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
+							Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
+					filter.and(permessi);
+					filter.and();
+				}
+				
+				
 				return;
 			}
 			else{
@@ -2628,6 +2640,16 @@ public class TransazioniService implements ITransazioniService {
 			if (StringUtils.isNotEmpty(this.searchForm.getIdTransazione())) {
 				String value = this.searchForm.getIdTransazione().trim();
 				filter.equals(Transazione.model().ID_TRANSAZIONE,	value);
+				
+				// permessi utente operatore
+				if(this.searchForm.getPermessiUtenteOperatore()!=null){
+					IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
+							Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
+							Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
+					filter.and(permessi);
+					filter.and();
+				}
+				
 				return;
 			}
 			else{

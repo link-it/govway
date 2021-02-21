@@ -26,11 +26,13 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
+import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IAllarmeService;
@@ -42,11 +44,14 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.Function;
+import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
@@ -292,6 +297,55 @@ public class AllarmiDriverUtils {
 		}
 	}
 	
+	public static boolean existsAllarmi(TipoAllarme tipoAllarme, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "existsAllarmi";
+		
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
+			
+			IAllarmeServiceSearch allarmiServiceSearch = jdbcServiceManager.getAllarmeServiceSearch();
+			
+			IExpression expr = allarmiServiceSearch.newExpression();
+			
+			if(tipoAllarme!=null) {
+				expr.equals(Allarme.model().TIPO_ALLARME, tipoAllarme.getValue());
+			}
+			
+			NonNegativeNumber count = allarmiServiceSearch.count(expr);
+			
+			return count.longValue() > 0;
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} 
+	}
+	
+	public static long countAllarmi(TipoAllarme tipoAllarme, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "countAllarmi";
+		
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
+			
+			IAllarmeServiceSearch allarmiServiceSearch = jdbcServiceManager.getAllarmeServiceSearch();
+			
+			IExpression expr = allarmiServiceSearch.newExpression();
+			
+			if(tipoAllarme!=null) {
+				expr.equals(Allarme.model().TIPO_ALLARME, tipoAllarme.getValue());
+			}
+			
+			NonNegativeNumber count = allarmiServiceSearch.count(expr);
+			
+			return count.longValue();
+		} catch (Exception qe) {
+			throw new ServiceException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} 
+	}
 	
 	public static void createHistoryAllarme(AllarmeHistory allarme, Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "createHistoryAllarme";
@@ -367,13 +421,36 @@ public class AllarmiDriverUtils {
 		} 
 	}
 	
-	private static String FREE_COUNTER_SEPARATOR_CHAR = "-"; 
-	public static String getFreeCounterSeparatorCharForAlarm() {
-		return FREE_COUNTER_SEPARATOR_CHAR;
+	private static String FREE_COUNTER_SEPARATOR_CHAR = "@"; 
+	private static int FREE_COUNTER_SEPARATOR_CHAR_PAD = 19; // colonna che memorizza l'info ha dimensione 275
+	public static String buildIdAlarm(String tipoPlugin, String serialId) {
+		String idAlarm = tipoPlugin+AllarmiDriverUtils.FREE_COUNTER_SEPARATOR_CHAR+serialId;
+		return idAlarm;
 	}
 	
-	public static Integer getFreeCounterForAlarm(String tipoPlugin, Connection con, Logger log, String tipoDB) throws ServiceException{
-		String nomeMetodo = "getFreeCounterForAlarm"; 
+	private static String normalizeAlarmInstanceSerialId(int value) {
+		return StringUtils.leftPad(value+"", FREE_COUNTER_SEPARATOR_CHAR_PAD, "0");
+	}
+	public static String incrementAlarmInstanceSerialId(String value) {
+		int valueInt = 0;
+		if(value!=null && !"".equals(value)) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < value.length(); i++) {
+				char c = value.charAt(i);
+				if('0' == c && sb.length()<=0) {
+					continue;
+				}
+				sb.append(c);
+			}
+			valueInt = Integer.valueOf(sb.toString());
+		}
+		valueInt++;
+		return StringUtils.leftPad(valueInt+"", FREE_COUNTER_SEPARATOR_CHAR_PAD, "0");
+	}
+	
+	//public static Integer getFreeCounterForAlarm(String tipoPlugin, Connection con, Logger log, String tipoDB) throws ServiceException{
+	public static String getNextAlarmInstanceSerialId(String tipoPlugin, Connection con, Logger log, String tipoDB) throws ServiceException{
+		String nomeMetodo = "getNextAlarmInstanceSerialId"; 
 		
 		
 		try{
@@ -382,7 +459,7 @@ public class AllarmiDriverUtils {
 			properties.setShowSql(true);
 			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
 			
-			IPaginatedExpression pagExpr = jdbcServiceManager.getAllarmeServiceSearch().newPaginatedExpression();
+			IExpression pagExpr = jdbcServiceManager.getAllarmeServiceSearch().newExpression();
 			pagExpr.and();
 			pagExpr.equals(Allarme.model().TIPO, tipoPlugin);
 			
@@ -391,7 +468,9 @@ public class AllarmiDriverUtils {
 			//pagExpr.limit(1);
 			// devo scorrerle tutte
 			
+			/*
 			try{
+				// inefficente
 				List<Object> list = jdbcServiceManager.getAllarmeServiceSearch().select(pagExpr, Allarme.model().NOME);
 				if(list!=null && list.size()>0){
 					int found = -1;
@@ -416,7 +495,27 @@ public class AllarmiDriverUtils {
 			}catch(NotFoundException notF){
 				
 			}
-			return 1;
+			return 1;*/
+			
+			FunctionField ff = new FunctionField(Allarme.model().NOME, Function.MAX, "maxAlarmId");
+			Object maxValue = null;
+			try {
+				maxValue = jdbcServiceManager.getAllarmeServiceSearch().aggregate(pagExpr, ff);
+			}catch(NotFoundException notFound) {
+			}
+			if(maxValue!=null){
+				if(maxValue instanceof String){
+					String s = (String)maxValue;
+					if(s.contains(FREE_COUNTER_SEPARATOR_CHAR)){
+						int last = s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR);
+						if(last<(s.length()-1)){
+							String actualMaxValue = s.substring(s.lastIndexOf(FREE_COUNTER_SEPARATOR_CHAR)+1,s.length());
+							return incrementAlarmInstanceSerialId(actualMaxValue);
+						}
+					}
+				}	
+			}
+			return normalizeAlarmInstanceSerialId(1);
 			
 		} catch (Exception qe) {
 			throw new ServiceException("[" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
@@ -710,4 +809,47 @@ public class AllarmiDriverUtils {
 			pstmt.setString(index++, filtroRuolo);
 		}
 	}
+	
+	
+	public static List<Allarme> allarmiForPolicyRateLimiting(String activeIdPolicy, RuoloPorta ruoloPorta, String nomePorta, Connection con, Logger log, String tipoDB) throws ServiceException {
+		String nomeMetodo = "allarmiForPolicyRateLimiting";
+				
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager jdbcServiceManager = new JDBCServiceManager(con, properties, log);
+			
+			IAllarmeServiceSearch allarmiServiceSearch = jdbcServiceManager.getAllarmeServiceSearch();
+			
+			IExpression expr = allarmiServiceSearch.newExpression();
+			
+			expr.and();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(Allarme.model().FILTRO.RUOLO_PORTA, ruoloPorta.getValue()).and().equals(Allarme.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expr.isNull(Allarme.model().FILTRO.NOME_PORTA);
+			}
+			
+			expr.equals(Allarme.model().ALLARME_PARAMETRO.ID_PARAMETRO, CostantiConfigurazione.PARAM_POLICY_ID);
+			if(activeIdPolicy!=null) {
+				expr.like(Allarme.model().ALLARME_PARAMETRO.VALORE, activeIdPolicy,LikeMode.EXACT);
+			}
+			else {
+				expr.isNull(Allarme.model().ALLARME_PARAMETRO.VALORE);
+			}
+
+			IPaginatedExpression pagExpr = allarmiServiceSearch.toPaginatedExpression(expr);
+			
+			pagExpr.addOrder(Allarme.model().ALIAS, SortOrder.ASC);
+
+			return allarmiServiceSearch.findAll(pagExpr);
+			
+		} catch (Exception qe) {
+			throw new ServiceException("[" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} 
+	}
+	
 }

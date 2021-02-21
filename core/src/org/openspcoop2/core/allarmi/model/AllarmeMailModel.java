@@ -40,9 +40,8 @@ public class AllarmeMailModel extends AbstractModel<AllarmeMail> {
 	
 		super();
 	
-		this.ACK_MODE = new Field("ack-mode",java.lang.Integer.class,"allarme-mail",AllarmeMail.class);
+		this.INVIA = new Field("invia",java.lang.Integer.class,"allarme-mail",AllarmeMail.class);
 		this.INVIA_WARNING = new Field("invia-warning",java.lang.Integer.class,"allarme-mail",AllarmeMail.class);
-		this.INVIA_ALERT = new Field("invia-alert",java.lang.Integer.class,"allarme-mail",AllarmeMail.class);
 		this.DESTINATARI = new Field("destinatari",java.lang.String.class,"allarme-mail",AllarmeMail.class);
 		this.SUBJECT = new Field("subject",java.lang.String.class,"allarme-mail",AllarmeMail.class);
 		this.BODY = new Field("body",java.lang.String.class,"allarme-mail",AllarmeMail.class);
@@ -53,9 +52,8 @@ public class AllarmeMailModel extends AbstractModel<AllarmeMail> {
 	
 		super(father);
 	
-		this.ACK_MODE = new ComplexField(father,"ack-mode",java.lang.Integer.class,"allarme-mail",AllarmeMail.class);
+		this.INVIA = new ComplexField(father,"invia",java.lang.Integer.class,"allarme-mail",AllarmeMail.class);
 		this.INVIA_WARNING = new ComplexField(father,"invia-warning",java.lang.Integer.class,"allarme-mail",AllarmeMail.class);
-		this.INVIA_ALERT = new ComplexField(father,"invia-alert",java.lang.Integer.class,"allarme-mail",AllarmeMail.class);
 		this.DESTINATARI = new ComplexField(father,"destinatari",java.lang.String.class,"allarme-mail",AllarmeMail.class);
 		this.SUBJECT = new ComplexField(father,"subject",java.lang.String.class,"allarme-mail",AllarmeMail.class);
 		this.BODY = new ComplexField(father,"body",java.lang.String.class,"allarme-mail",AllarmeMail.class);
@@ -64,11 +62,9 @@ public class AllarmeMailModel extends AbstractModel<AllarmeMail> {
 	
 	
 
-	public IField ACK_MODE = null;
+	public IField INVIA = null;
 	 
 	public IField INVIA_WARNING = null;
-	 
-	public IField INVIA_ALERT = null;
 	 
 	public IField DESTINATARI = null;
 	 

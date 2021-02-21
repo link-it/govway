@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_allarmi start 1 increment 1 maxvalue 9223372036854775807 min
 CREATE TABLE allarmi
 (
 	-- Informazioni generiche
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR(275) NOT NULL,
 	alias VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	tipo VARCHAR(255) NOT NULL,
@@ -22,17 +22,15 @@ CREATE TABLE allarmi
 	acknowledged INT NOT NULL,
 	periodo_tipo VARCHAR(255),
 	periodo INT,
+	mail_invia INT,
 	-- Informazioni sull'invio di e-mail
-	mail_ack_mode INT,
 	mail_invia_warning INT,
-	mail_invia_alert INT,
 	mail_destinatari TEXT,
 	mail_subject VARCHAR(255),
 	mail_body TEXT,
+	script_invoke INT,
 	-- Informazioni sull'invocazione di script esterni
-	script_ack_mode INT,
 	script_invoke_warning INT,
-	script_invoke_alert INT,
 	script_command TEXT,
 	script_args TEXT,
 	-- Filtro
@@ -118,5 +116,29 @@ CREATE TABLE allarmi_history
 
 -- index
 CREATE INDEX index_allarmi_history_1 ON allarmi_history (id_allarme,timestamp_update DESC);
+CREATE INDEX index_allarmi_history_2 ON allarmi_history (timestamp_update);
+
+
+
+CREATE SEQUENCE seq_allarmi_notifiche start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE allarmi_notifiche
+(
+	data_notifica TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	old_stato INT NOT NULL,
+	old_stato_dettaglio TEXT,
+	nuovo_stato INT NOT NULL,
+	nuovo_stato_dettaglio TEXT,
+	history_entry TEXT,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_allarmi_notifiche') NOT NULL,
+	id_allarme BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_allarmi_notifiche_1 FOREIGN KEY (id_allarme) REFERENCES allarmi(id) ON DELETE CASCADE,
+	CONSTRAINT pk_allarmi_notifiche PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_allarmi_notifiche_1 ON allarmi_notifiche (data_notifica ASC);
 
 

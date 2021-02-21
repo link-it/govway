@@ -77,8 +77,8 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 		super();
 		this.init();
 	}
-	public DistribuzionePerSoggettoBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
-		super(serviceManager);
+	public DistribuzionePerSoggettoBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager) {
+		super(serviceManager, pluginsServiceManager);
 		this.init();
 	}
 	private void init() {

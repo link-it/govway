@@ -28,6 +28,7 @@ import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.Constants;
 import org.openspcoop2.monitor.sdk.exceptions.ParameterException;
+import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -156,6 +157,14 @@ public abstract class BaseComponent<T> extends Parameter<T>{
 	
 	public void valueSelectedListener(ActionEvent ae){
 		this.getLoader().valueSelectedListener(this, this.getContext());
+	}
+	
+	public void valueSelectedListener(){
+		this.getLoader().valueSelectedListener(this, this.getContext());
+	}
+	
+	public void updateRendering() throws SearchException{
+		this.getLoader().updateRendering(this, this.getContext());
 	}
 	
 	private String buildContainerId(String id) {

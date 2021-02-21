@@ -1037,6 +1037,7 @@ public class CostantiControlStation {
 	/** VALUES **/
 	
 	public final static int MAX_LENGTH_VALORE_STATO_RATE_LIMITING = 80;
+	public final static int MAX_LENGTH_VALORE_STATO_ALLARMI = 80;
 	
 	public final static String DEFAULT_VALUE_ABILITATO = "abilitato";
 	public final static String DEFAULT_VALUE_DISABILITATO = "disabilitato";
@@ -1333,6 +1334,9 @@ public class CostantiControlStation {
 	
 	public final static String ICONA_CONTINUE = "&#xe5db;";
 	public final static String ICONA_BREAK = "&#xe5cd;";
+
+	public final static String ICONA_ALARM_ACTIVE = "&#xe855;";
+	public final static String ICONA_ALARM_PASSIVE = "&#xe857;";
 	
 	/** COSTANTI FILE TEMPORANEI */
 	public final static String TEMP_FILE_PREFIX = "__pddconsole__";

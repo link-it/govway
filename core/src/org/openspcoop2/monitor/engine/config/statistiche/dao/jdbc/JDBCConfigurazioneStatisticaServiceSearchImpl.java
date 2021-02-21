@@ -56,10 +56,10 @@ import org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc.converter.Conf
 import org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc.fetch.ConfigurazioneStatisticaFetch;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 
-import org.openspcoop2.monitor.engine.config.base.IdConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCConfigurazioneServizioAzioneBaseLib;
-import org.openspcoop2.monitor.engine.config.base.dao.jdbc.JDBCPluginsBaseLib;
+import org.openspcoop2.core.plugins.IdConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.dao.jdbc.JDBCConfigurazioneServizioAzioneBaseLib;
+import org.openspcoop2.core.plugins.dao.jdbc.JDBCPluginsBaseLib;
 
 /**     
  * JDBCConfigurazioneStatisticaServiceSearchImpl

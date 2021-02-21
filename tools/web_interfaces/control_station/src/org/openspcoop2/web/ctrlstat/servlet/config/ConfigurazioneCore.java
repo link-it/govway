@@ -28,8 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.TipoAllarme;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -77,14 +80,16 @@ import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.alarm.AlarmContext;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistoryBean;
-import org.openspcoop2.monitor.engine.config.base.IdPlugin;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
+import org.openspcoop2.monitor.sdk.constants.ParameterType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
@@ -100,6 +105,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.lib.audit.AuditException;
 import org.openspcoop2.web.lib.audit.DriverAudit;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
 
@@ -511,7 +517,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		DriverControlStationDB driver = null;
 
 		try {
-			ISearch ricercaPlugin = new Search();
+			ISearch ricercaPlugin = new Search(true);
 			ricercaPlugin.addFilter( Liste.CONFIGURAZIONE_PLUGINS_CLASSI, Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.ALLARME.toString());
 			ricercaPlugin.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_APPLICABILITA_NOME, applicabilita);
 			if(soloAbilitati) {
@@ -1081,6 +1087,26 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public List<ConfigurazionePolicy> configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme(String idAllarme) throws DriverControlStationException{
+		String nomeMetodo = "configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.configurazioneControlloTrafficoConfigurazionePolicyList_conApplicabilitaAllarme(idAllarme);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public List<TipoRisorsaPolicyAttiva> attivazionePolicyTipoRisorsaList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationException{
 		String nomeMetodo = "attivazionePolicyTipoRisorsaList";
 		Connection con = null;
@@ -1093,6 +1119,28 @@ public class ConfigurazioneCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);	
 			
 			return driver.configurazioneControlloTrafficoAttivazionePolicyTipoRisorsaList(ricerca, ruoloPorta, nomePorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public void updatePosizioneAttivazionePolicy(InfoPolicy infoPolicy, AttivazionePolicy policy,
+			RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException{
+		String nomeMetodo = "updatePosizioneAttivazionePolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			driver.updatePosizioneAttivazionePolicy(infoPolicy, policy,
+					ruoloPorta, nomePorta);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1371,8 +1419,8 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public Integer getFreeCounterForGlobalPolicy(String policyId) throws DriverControlStationException{
-		String nomeMetodo = "getFreeCounterForGlobalPolicy";
+	public String getNextPolicyInstanceSerialId(String policyId) throws DriverControlStationException{
+		String nomeMetodo = "getNextPolicyInstanceSerialId";
 		Connection con = null;
 		DriverControlStationDB driver = null;
 		try {
@@ -1382,7 +1430,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getFreeCounterForGlobalPolicy(policyId);
+			return driver.getNextPolicyInstanceSerialId(policyId);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -2072,6 +2120,67 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	
+	public List<Allarme> allarmiSenzaPluginList(Search ricerca, RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationException{ 
+		String nomeMetodo = "allarmiSenzaPluginList";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.allarmiSenzaPluginList(ricerca, ruoloPorta, nomePorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsAllarmi(TipoAllarme tipoAllarme) throws DriverControlStationException{ 
+		String nomeMetodo = "existsAllarmi";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.existsAllarmi(tipoAllarme);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public long countAllarmi(TipoAllarme tipoAllarme) throws DriverControlStationException{ 
+		String nomeMetodo = "countAllarmi";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.countAllarmi(tipoAllarme);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public boolean existsAllarme(String nome) throws DriverControlStationException{
 		Connection con = null;
 		String nomeMetodo = "existsAllarme";
@@ -2087,6 +2196,46 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public Allarme getAllarmeSenzaPlugin(Long id) throws DriverControlStationException{ 
+		String nomeMetodo = "getAllarmeSenzaPlugin";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getAllarmeSenzaPlugin(id);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public Allarme getAllarmeSenzaPlugin(String nome) throws DriverControlStationException{ 
+		String nomeMetodo = "getAllarmeSenzaPluginByNome";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getAllarmeSenzaPlugin(nome);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
@@ -2131,6 +2280,26 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public ConfigurazioneAllarmeBean getAllarme(Allarme allarme) throws DriverControlStationException{ 
+		String nomeMetodo = "convertAllarme";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getAllarme(allarme);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public boolean isUsableFilter(ConfigurazioneAllarmeBean configurazioneAllarme) throws Exception{
 		return this._isUsable(configurazioneAllarme, true);
 	}
@@ -2163,6 +2332,39 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	public String getParameterSectionTitle(ConfigurazioneAllarmeBean configurazioneAllarme, boolean groupByAllarme) throws Exception{
+		String nomeMetodo = "getParameterSectionTitle";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			Plugin plugin = driver.getPlugin(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), true);
+			
+			IDynamicLoader bl = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME, configurazioneAllarme.getPlugin().getTipo(), plugin.getClassName(), ControlStationCore.log);
+			IAlarmProcessing alarmProcessing = (IAlarmProcessing) bl.newInstance();
+			String s = alarmProcessing.getParameterSectionTitle();
+			if(s==null || StringUtils.isEmpty(s)) {
+				if(groupByAllarme) {
+					s = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_VALORI_DI_SOGLIA;
+				}
+				else {
+					s = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI;
+				}
+			}
+			return s;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public List<Parameter<?>> instanceParameters(ConfigurazioneAllarmeBean configurazioneAllarme, Context context) throws Exception{
 		String nomeMetodo = "instanceParameters";
 		Connection con = null;
@@ -2187,8 +2389,15 @@ public class ConfigurazioneCore extends ControlStationCore {
 				
 				for (Parameter<?> sdkParameter : sdkParameters) {
 					Parameter<?> par = DynamicComponentUtils.createDynamicComponentParameter(sdkParameter, bl);
-					((BaseComponent<?>)par).setContext(context);
+					
 					res.add(par);
+				}
+			}
+			
+			if(res!=null && !res.isEmpty()) {
+				((AlarmContext)context).setParameters(res);
+				for (Parameter<?> par : res) {
+					((BaseComponent<?>)par).setContext(context);		
 				}
 			}
 
@@ -2207,7 +2416,20 @@ public class ConfigurazioneCore extends ControlStationCore {
 			for (AllarmeParametro parDB : configurazioneAllarme.getAllarmeParametroList()) {
 				for (Parameter<?> par : parameters) {
 					if(parDB.getIdParametro().equals(par.getId())){
-						par.setValueAsString(parDB.getValore());
+						
+						String value = parDB.getValore();
+						
+						if(ParameterType.CHECK_BOX.equals(par.getType())){
+							if(Costanti.CHECK_BOX_ENABLED.equals(value) || Costanti.CHECK_BOX_ENABLED_ABILITATO.equals(value) || Costanti.CHECK_BOX_ENABLED_TRUE.equals(value)) {
+								value = Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								value = Costanti.CHECK_BOX_DISABLED_FALSE;
+							}
+						}
+						par.setValueAsString(value);
+						
+						par.setValueAsString(value);
 						break;
 					}
 				}
@@ -2235,8 +2457,8 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
-	public Integer getFreeCounterForAlarm(String tipoPlugin) throws DriverControlStationException{
-		String nomeMetodo = "getFreeCounterForAlarm";
+	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws DriverControlStationException{
+		String nomeMetodo = "getNextAlarmInstanceSerialId";
 		Connection con = null;
 		DriverControlStationDB driver = null;
 		try {
@@ -2246,7 +2468,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getFreeCounterForAlarm(tipoPlugin);
+			return driver.getNextAlarmInstanceSerialId(tipoPlugin);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -2273,6 +2495,26 @@ public class ConfigurazioneCore extends ControlStationCore {
 					filtroSoggettoFruitore, filtroApplicativoFruitore, filtroRuoloFruitore,
 					filtroSoggettoErogatore, filtroRuoloErogatore,
 					filtroServizioAzione, filtroRuolo);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<Allarme> allarmiForPolicyRateLimiting(String activeIdPolicy, RuoloPorta ruoloPorta, String nomePorta)  throws DriverControlStationException{
+		String nomeMetodo = "allarmiForPolicyRateLimiting";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			return driver.allarmiForPolicyRateLimiting(activeIdPolicy, ruoloPorta, nomePorta);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

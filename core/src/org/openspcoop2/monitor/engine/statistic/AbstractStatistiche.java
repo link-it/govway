@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -40,7 +41,6 @@ import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.generic_project.beans.FunctionField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.dao.IServiceWithoutId;
@@ -74,6 +74,10 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.sql.Case;
+import org.openspcoop2.utils.sql.CastColumnType;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
 
 
@@ -100,7 +104,7 @@ public abstract class AbstractStatistiche {
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
 	private ITransazioneServiceSearch transazioneSearchDAO = null;
 	private org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
-	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM = null;
+	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM;
 	@SuppressWarnings("unused")
@@ -119,7 +123,7 @@ public abstract class AbstractStatistiche {
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM,
-			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM,
+			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM){
 		if(logger!=null){
@@ -160,7 +164,7 @@ public abstract class AbstractStatistiche {
 				this.utilsSM = utilsSM;
 				
 				if(pluginsBaseSM==null){
-					throw new ServiceException("ServiceManager ["+org.openspcoop2.monitor.engine.config.base.dao.IServiceManager.class.getName()+"] non inizializzato");
+					throw new ServiceException("ServiceManager ["+org.openspcoop2.core.plugins.dao.IServiceManager.class.getName()+"] non inizializzato");
 				}
 				this.pluginsBaseSM = pluginsBaseSM;
 				
@@ -266,32 +270,13 @@ public abstract class AbstractStatistiche {
 			now = this.decrementDate1Millisecond(now);
 			Date nowMenoUno = decrementDate(now, false);
 
-
+			
 			// Genero statistiche per transazioni emessi in data > dataUltimaGenerazioneStatistiche AND data <= now
 			while(dataUltimaGenerazioneStatistiche.compareTo(nowMenoUno) <= 0){
 
-				//if(dataUltimaGenerazioneStatistiche.compareTo(nowMenoUno) == 0){
-				// L'IF sopra non lo devo fare, se spengo la macchina, e la riaccendo dopo due ore, l'eliminazione delle statistiche gia' generate riguarda nowMenoDue
-				// Se ho la stessa data devo eliminare l'intervallo, posso gia' averlo generato
-				// Eliminazione
-				if(this.debug)
-					this.logger.debug("----------- eliminazione (DataUguale) ------------");
-				this.deleteStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche);
-				if(this.debug)
-					this.logger.debug("------------ eliminazione (DataUguale) -----------");
-				this.deleteStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche );
-				//}
-
-				//delegata
-				if(this.debug)
-					this.logger.debug("-----------------------");
-				this.generaStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche );
-
-				// applicativa
-				if(this.debug)
-					this.logger.debug("-----------------------");
-				this.generaStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche );
-
+				// genera
+				generaStatistica(dataUltimaGenerazioneStatistiche);
+												
 				// increment
 				dataUltimaGenerazioneStatistiche = incrementDate(dataUltimaGenerazioneStatistiche, false);
 				if(this.debug)
@@ -319,24 +304,9 @@ public abstract class AbstractStatistiche {
 
 				Date dataUltimoIntervallo = dataUltimaGenerazioneStatistiche;
 
-				// Eliminazione
-				if(this.debug)
-					this.logger.debug("----------- eliminazione ------------");
-				this.deleteStatistiche(TipoPdD.DELEGATA, dataUltimoIntervallo);
-				if(this.debug)
-					this.logger.debug("------------ eliminazione -----------");
-				this.deleteStatistiche(TipoPdD.APPLICATIVA, dataUltimoIntervallo );
-
-				// Rigenerazione statistiche
-				if(this.debug)
-					this.logger.debug("---------- Rigenerazione statistiche ultimo intervallo -------------");
-				this.generaStatistiche(TipoPdD.DELEGATA, dataUltimoIntervallo );
-				if(this.debug)
-					this.logger.debug("---------- Rigenerazione statistiche ultimo intervallo -------------");
-				this.generaStatistiche(TipoPdD.APPLICATIVA, dataUltimoIntervallo );
-				if(this.debug)
-					this.logger.debug("---------- Rigenerazione statistiche ultimo intervallo -------------");
-
+				// genera
+				generaStatistica(dataUltimoIntervallo);
+				
 			}
 
 		}catch(Exception e){
@@ -345,13 +315,71 @@ public abstract class AbstractStatistiche {
 		}
 	}
 
+	private void generaStatistica(Date dataUltimaGenerazioneStatistiche) {
+		
+		// Algoritmo
+		// Per la data in fase di aggiornamento:
+		// - 1) si elimina eventuali record rimasti "sporchi" (stato_record <>1)
+		// - 2) i record esistenti nell'intervallo vengono portati al valore stato_record=2
+		// - 3) i nuovi record aggiunti vengono creati con stato_record=0
+		// - 4) si fa un unico comando di update nell'intervallo con CASE WHEN stato_record==2 THEN -2 WHEN stato_record==0 THEN 1
+		// - 5) si eliminano i record nell'intervallo con stato_record=-2
+		
+		//if(dataUltimaGenerazioneStatistiche.compareTo(nowMenoUno) == 0){
+		// L'IF sopra non lo devo fare, se spengo la macchina, e la riaccendo dopo due ore, l'eliminazione delle statistiche gia' generate riguarda nowMenoDue
+		// Se ho la stessa data devo eliminare l'intervallo, posso gia' averlo generato
+		// Eliminazione (Fase 1)
+		if(this.debug)
+			this.logger.debug("----------- pulizia Fase1 (DataUguale) ------------");
+		this.deleteFisicoStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO, false);
+		if(this.debug)
+			this.logger.debug("------------ pulizia Fase1 (DataUguale) -----------");
+		this.deleteFisicoStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO, false);
+		//}
+
+		// Aggiornamento (Fase 2)
+		if(this.debug)
+			this.logger.debug("----------- aggiornamento Fase2 (DataUguale) ------------");
+		this.updateStatoRecordStatistiche(TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO);
+		if(this.debug)
+			this.logger.debug("------------ aggiornamento Fase2 (DataUguale) -----------");
+		this.updateStatoRecordStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO);
+		
+		// Generazione (Fase 3)
+		if(this.debug)
+			this.logger.debug("----------- generazione Fase3 (DataUguale) ------------");
+		this.generaStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		if(this.debug)
+			this.logger.debug("------------ generazione Fase3 (DataUguale) -----------");
+		this.generaStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+
+		// Promozione Record (Fase4)
+		if(this.debug)
+			this.logger.debug("----------- promozione Fase4 (DataUguale) ------------");
+		this.updateStatoRecordStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, 
+				CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
+				CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+		if(this.debug)
+			this.logger.debug("------------ promozione Fase4 (DataUguale) -----------");
+		this.updateStatoRecordStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, 
+				CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
+				CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+
+		// Eliminazione (Fase 5)
+		if(this.debug)
+			this.logger.debug("----------- eliminazione Fase5 (DataUguale) ------------");
+		this.deleteFisicoStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO, true);
+		if(this.debug)
+			this.logger.debug("------------ eliminazione Fase5 (DataUguale) -----------");
+		this.deleteFisicoStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO, true);
+	}
 
 	
 	
 	
 	// ---- GENERAZIONE STATISTICHE BASE ----
 	
-	private void generaStatistiche(  TipoPdD tipoPdD, Date data) {
+	private void generaStatistiche(  TipoPdD tipoPdD, Date data, int statoRecord) {
 
 		if(this.debug){
 			this.logger.debug("Generazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
@@ -400,9 +428,9 @@ public abstract class AbstractStatistiche {
 
 				// Aggiungo informazioni che richiedono ulteriori condizioni di where (es. date not null) 
 				this.addLatenze(data, dateNext, tipoPdD, stat, fieldConverter);
-				
+								
 				// Inserisco statistica
-				insertStatistica(stat);
+				insertStatistica(stat, statoRecord);
 
 				if(this.generazioneStatisticheCustom){
 					createCustomStatistic(stat);
@@ -914,51 +942,144 @@ public abstract class AbstractStatistiche {
 	
 	
 	// ---- CRUD ----
-	
 
-	private void deleteStatistiche( TipoPdD tipoPdD, Date data) {
+
+	private void updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data, int stato) {
 
 		if(this.debug){
-			this.logger.debug("Eliminazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+			this.logger.debug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
 		}
 
 		try{
 
-			IExpression expr = this.statisticaServiceDAO.newExpression();
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.statisticaServiceDAO).getFieldConverter();
+			TipiDatabase tipoDB = fieldConverter.getDatabaseType();
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addUpdateTable(fieldConverter.toTable(this.model));
+			sqlQueryObject.addUpdateField(fieldConverter.toColumn(this.model.STATO_RECORD, false), "?");
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.DATA, false)+"=?");
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.TIPO_PORTA, false)+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
 			Date next = this.truncDate(this.incrementDate(data, false),false);
-			expr.equals(this.model.DATA,  next);
-			expr.and();
-			if(TipoPdD.DELEGATA.equals(tipoPdD)){
-				expr.equals(this.model.TIPO_PORTA, PddRuolo.DELEGATA);
-			}else{
-				expr.equals(this.model.TIPO_PORTA, PddRuolo.APPLICATIVA);
-			}
-
 			if(this.debug){
-				this.logger.debug("Elimino statistiche ["+this.getTipoStatistiche()+"]");
-				this.logger.debug("Valori eliminazione (ms) tr.data_ingresso_richiesta=["+next.getTime()+"]");
+				this.logger.debug("Aggiorno statistiche ["+this.getTipoStatistiche()+"]");
+				this.logger.debug("Valori update stato record = ("+stato+") tr.data_ingresso_richiesta=["+next.getTime()+"]");
 			}
-			NonNegativeNumber nnn = this.statisticaServiceDAO.deleteAll(expr);
-
-			int righeEliminate = nnn!= null ? (int) nnn.longValue() : 0;
-
+			int righeModificate = this.statisticaServiceDAO.nativeUpdate(sqlQueryObject.createSQLUpdate(), 
+					stato,
+					next, 
+					TipoPdD.DELEGATA.equals(tipoPdD)? PddRuolo.DELEGATA.getValue() : PddRuolo.APPLICATIVA.getValue());
+			
 			if(this.debug){
-				this.logger.debug("Eliminate ["+righeEliminate+"] entry");
+				this.logger.debug("Modificate ["+righeModificate+"] entry");
 			}
 
 
-		}catch(ServiceException e){
-			this.logger.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			this.logger.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			this.logger.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
+		}catch(Exception e){
 			this.logger.error(e.getMessage(), e);
 		}
 
 		if(this.debug){
-			this.logger.debug("Eliminazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+			this.logger.debug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+		}
+
+	}
+	
+	private void updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data, 
+			int case1_when_stato, int case1_then_stato,
+			int case2_when_stato, int case2_then_stato) {
+
+		if(this.debug){
+			this.logger.debug("Update record statistiche negli stati con CASE ("+case1_when_stato+"->"+case1_then_stato+") e ("+case2_when_stato+"->"+case2_then_stato+")  ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+		}
+
+		try{
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.statisticaServiceDAO).getFieldConverter();
+			TipiDatabase tipoDB = fieldConverter.getDatabaseType();
+			String nomeColonna = fieldConverter.toColumn(this.model.STATO_RECORD, false);
+			
+			Case caseSql = new Case(CastColumnType.INT);
+			caseSql.addCase(nomeColonna+"=?", "?");
+			caseSql.addCase(nomeColonna+"=?", "?");
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addUpdateTable(fieldConverter.toTable(this.model));
+			sqlQueryObject.addUpdateField(nomeColonna, caseSql);
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.DATA, false)+"=?");
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.TIPO_PORTA, false)+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			Date next = this.truncDate(this.incrementDate(data, false),false);
+			if(this.debug){
+				this.logger.debug("Aggiorno statistiche ["+this.getTipoStatistiche()+"]");
+				this.logger.debug("Valori update stato record CASE ("+case1_when_stato+"->"+case1_then_stato+") e ("+case2_when_stato+"->"+case2_then_stato+") tr.data_ingresso_richiesta=["+next.getTime()+"]");
+			}
+			int righeModificate = this.statisticaServiceDAO.nativeUpdate(sqlQueryObject.createSQLUpdate(), 
+					case1_when_stato, case1_then_stato,
+					case2_when_stato, case2_then_stato,
+					next, 
+					TipoPdD.DELEGATA.equals(tipoPdD)? PddRuolo.DELEGATA.getValue() : PddRuolo.APPLICATIVA.getValue());
+			
+			if(this.debug){
+				this.logger.debug("Modificate ["+righeModificate+"] entry");
+			}
+
+
+		}catch(Exception e){
+			this.logger.error(e.getMessage(), e);
+		}
+
+		if(this.debug){
+			this.logger.debug("Update record statistiche negli stati con CASE ("+case1_when_stato+"->"+case1_then_stato+") e ("+case2_when_stato+"->"+case2_then_stato+") ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+		}
+
+	}
+	
+	private void deleteFisicoStatistiche( TipoPdD tipoPdD, Date data , int statoRecord, boolean equalsStatoRecord) {
+
+		if(this.debug){
+			this.logger.debug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+		}
+
+		try{
+
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.statisticaServiceDAO).getFieldConverter();
+			TipiDatabase tipoDB = fieldConverter.getDatabaseType();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addDeleteTable(fieldConverter.toTable(this.model));
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.DATA, false)+"=?");
+			if(equalsStatoRecord) {
+				sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.STATO_RECORD, false)+"=?");
+			}
+			else {
+				sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.STATO_RECORD, false)+"<>?");
+			}
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.TIPO_PORTA, false)+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			Date next = this.truncDate(this.incrementDate(data, false),false);
+			if(this.debug){
+				this.logger.debug("Elimino statistiche ["+this.getTipoStatistiche()+"]");
+				this.logger.debug("Valori eliminazione (ms) tr.data_ingresso_richiesta=["+next.getTime()+"]");
+			}
+			
+			int righeEliminate = this.statisticaServiceDAO.nativeUpdate(sqlQueryObject.createSQLDelete(), 
+					next, 
+					statoRecord,
+					TipoPdD.DELEGATA.equals(tipoPdD)? PddRuolo.DELEGATA.getValue() : PddRuolo.APPLICATIVA.getValue());
+			
+			if(this.debug){
+				this.logger.debug("Eliminate ["+righeEliminate+"] entry");
+			}
+
+		}catch (Exception e) {
+			this.logger.error(e.getMessage(), e);
+		}
+
+		if(this.debug){
+			this.logger.debug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
 		}
 
 	}
@@ -967,7 +1088,7 @@ public abstract class AbstractStatistiche {
 	protected abstract void updateStatistica(long idStatistica, StatisticaContenuti ... statisticaContenuti) throws StatisticException;
 
 
-	private void insertStatistica(StatisticBean stat) throws StatisticException  {
+	private void insertStatistica(StatisticBean stat, int statoRecord) throws StatisticException  {
 
 		if(this.debug){
 			this.logger.debug("Inserimento statistica ["+stat.toString()+"] in corso ...");
@@ -976,6 +1097,7 @@ public abstract class AbstractStatistiche {
 		Statistica statisticaBase = new Statistica();
 
 		statisticaBase.setData(stat.getData());
+		statisticaBase.setStatoRecord(statoRecord);
 		
 		statisticaBase.setTipoPorta(org.openspcoop2.core.statistiche.constants.TipoPorta.toEnumConstant(stat.getTipoPorta().getTipo()));
 		statisticaBase.setIdPorta(stat.getIdPorta());
@@ -1007,6 +1129,8 @@ public abstract class AbstractStatistiche {
 		statisticaBase.setGruppi(stat.getGruppo());
 		
 		statisticaBase.setUriApi(stat.getApi());
+		
+		statisticaBase.setClusterId(stat.getClusterId());
 		
 		if(stat.getDestinatario()!=null && stat.getDestinatario().getTipo()!=null) {
 			EsitiProperties esitiProperties = null;

@@ -76,4 +76,6 @@ public interface IServiceCRUDWithId<T,K>  {
 	
 	public NonNegativeNumber deleteAll(IExpression expression) throws ServiceException,NotImplementedException;
 	
+	public int nativeUpdate(String sql,Object ... param) throws ServiceException,NotImplementedException;
+	
 }

@@ -82,8 +82,8 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 		super();
 		this.init();
 	}
-	public StatsPersonalizzateBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) {
-		super(serviceManager);
+	public StatsPersonalizzateBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager) {
+		super(serviceManager, pluginsServiceManager);
 		this.init();
 	}
 	private void init() {

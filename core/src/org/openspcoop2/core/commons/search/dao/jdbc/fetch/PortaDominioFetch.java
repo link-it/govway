@@ -31,6 +31,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.PortaDominio;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -103,7 +104,7 @@ public class PortaDominioFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(PortaDominio.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("pdd","id","seq_pdd","pdd_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PDD,"id","seq_"+CostantiDB.PDD,CostantiDB.PDD+"_init_seq");
 			}
 			
 			else{

@@ -342,7 +342,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// Prendo la lista di soggetti dell'utente connesso
 			/*List<Long> idsSogg = new ArrayList<Long>();
-					List<Soggetto> listaSog = this.core.soggettiRegistroList(superUser, new Search());
+					List<Soggetto> listaSog = this.core.soggettiRegistroList(superUser, new Search(true));
 					Iterator<Soggetto> itS = listaSog.iterator();
 					while (itS.hasNext()) {
 						Soggetto ss = (Soggetto) itS.next();
@@ -351,7 +351,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// Prendo la lista di servizi dell'utente connesso
 			/*List<Long> idsServ = new ArrayList<Long>();
-					List<AccordoServizioParteSpecifica> listaServ = this.core.soggettiAccordoServizioParteSpecificaoList(superUser, new Search());
+					List<AccordoServizioParteSpecifica> listaServ = this.core.soggettiAccordoServizioParteSpecificaoList(superUser, new Search(true));
 					Iterator<AccordoServizioParteSpecifica> itServ = listaServ.iterator();
 					while (itServ.hasNext()) {
 						AccordoServizioParteSpecifica ss = (AccordoServizioParteSpecifica) itServ.next();
@@ -5632,10 +5632,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					boolean exists = false;
 					if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
-						exists = exporterUtils.existsAtLeastOneExportMpde(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.session);
 					}
 					else{
-						exists = exporterUtils.existsAtLeastOneExportMpde(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.session);
 					}
 					if(exists){
 

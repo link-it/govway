@@ -38,12 +38,12 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaTrasporto;
@@ -151,7 +151,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
-			BehaviourType beaBehaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+			TipoBehaviour beaBehaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 			long idAspsLong = Long.parseLong(idAsps);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
 			AccordoServizioParteComuneSintetico as = null;
@@ -168,9 +168,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			// valora iniziale della configurazione
 			PortaApplicativaServizioApplicativo oldPaSA = null;
 			boolean connettoreDefault = false;
-			BehaviourType behaviourType = null;
+			TipoBehaviour behaviourType = null;
 			if(pa.getBehaviour()!=null) {
-				behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+				behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 			}
 			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
 				if(paSATmp.getNome().equals(nomeSAConnettore)) {
@@ -178,7 +178,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 					connettoreDefault = porteApplicativeHelper.isConnettoreDefault(oldPaSA);
 				}
 			}
-			boolean consegnaSincrona = connettoreDefault && BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
+			boolean consegnaSincrona = connettoreDefault && TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType);
 			
 			ConfigurazioneGestioneConsegnaNotifiche oldConfigurazioneGestioneConsegnaNotifiche =
 					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(oldPaSA, ControlStationCore.getLog());

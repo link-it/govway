@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.mail;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -27,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
@@ -34,6 +37,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.io.output.WriterOutputStream;
+import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.smtp.AuthenticatingSMTPClient;
 import org.apache.commons.net.smtp.SMTPClient;
 import org.apache.commons.net.smtp.SMTPReply;
@@ -59,20 +63,28 @@ public class CommonsNetSender extends Sender {
 	public void send(Mail mail, boolean debug) throws UtilsException {
 
 		AuthenticatingSMTPClient client = null;
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		try {			
-			client = new AuthenticatingSMTPClient(mail.getEncoding());
-
-			client.setDefaultTimeout(this.getReadTimeout());
-			client.setConnectTimeout(this.getConnectionTimeout());
-			
 			if(mail.getSslConfig()!=null){
 				StringBuilder bf = new StringBuilder();
 				SSLContext sslContext = SSLUtilities.generateSSLContext(mail.getSslConfig(), bf);
 				if(debug)
 					this.log.debug(bf.toString());
-				client.setSocketFactory(sslContext.getSocketFactory());
+				//client.setSocketFactory(sslContext.getSocketFactory());
+				client = new AuthenticatingSMTPClient(false, sslContext);
+				client.setCharset(Charset.forName(mail.getEncoding()));
 			}
+			else {
+				client = new AuthenticatingSMTPClient(mail.getEncoding());
+			}
+			
+			
+			 if (debug)
+				 client.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(bout), true));
 
+			client.setDefaultTimeout(this.getReadTimeout());
+			client.setConnectTimeout(this.getConnectionTimeout());
+			
 			this.log.debug("Connect to ["+mail.getServerHost()+":"+mail.getServerPort()+"] ...");
 			client.connect(mail.getServerHost(), mail.getServerPort());
 			this.log.debug("Connected to ["+mail.getServerHost()+":"+mail.getServerPort()+"]");
@@ -80,6 +92,8 @@ public class CommonsNetSender extends Sender {
 			boolean esito = client.login();
 			checkReply(client, esito, "Login failed");
 
+			client.helo("[" + client.getLocalAddress().getHostAddress() + "]");
+			
 			if(mail.isStartTls()){
 				esito = client.execTLS();
 				checkReply(client, esito, "STARTTLS was not accepted");
@@ -98,6 +112,8 @@ public class CommonsNetSender extends Sender {
 				if(debug){
 					this.log.debug("Authenticating ["+mail.getUsername()+"] ...");
 				}
+				client.helo("[" + client.getLocalAddress().getHostAddress() + "]");
+
 				esito =  client.auth(AuthenticatingSMTPClient.AUTH_METHOD.LOGIN, mail.getUsername(), mail.getPassword());
 				checkReply(client, esito, "Authentication failed");
 				if(debug){
@@ -142,7 +158,7 @@ public class CommonsNetSender extends Sender {
 					this.log.debug("Subject ["+mail.getSubject()+"] ...");
 				}
 				SimpleSMTPHeader header = new SimpleSMTPHeader(mail.getFrom(), mail.getTo(), mail.getSubject());
-				
+						
 				if(debug){
 					this.log.debug("Body ("+mail.getBody().getContentType()+") ["+mail.getBody().getMessage()+"] ...");
 				}
@@ -151,6 +167,18 @@ public class CommonsNetSender extends Sender {
 				Date now = new Date();
 				header.addHeaderField("Date", formatSMTPDate( now, tz ));
 				
+				if(mail.getUserAgent()!=null) {
+					header.addHeaderField("User-Agent", mail.getUserAgent());
+				}
+				
+				if(mail.getMessageIdDomain()!=null) {
+					header.addHeaderField("Message-ID", "<"+UUID.randomUUID().toString()+"@"+mail.getMessageIdDomain()+">");
+				}
+				
+				if(mail.getContentLanguage()!=null) {
+					header.addHeaderField("Content-Language", mail.getContentLanguage());
+				}
+							
 				ccList = mail.getCc();
 				if(ccList!=null && ccList.size()>0){
 					for (String cc : ccList) {
@@ -235,6 +263,9 @@ public class CommonsNetSender extends Sender {
 			try{
 				client.disconnect();
 			}catch(Exception e){}
+			if(bout!=null && bout.size()>0) {
+				this.log.debug("Messages exchanged: \n"+bout.toString());
+			}
 		}
 	}
 

@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -115,6 +116,13 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 				return "nome_soggetto";
 			}
 		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".ruolo";
+			}else{
+				return "ruolo";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -149,6 +157,9 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 		if(field.equals(ServizioApplicativo.model().ID_SOGGETTO.NOME)){
 			return this.toTable(ServizioApplicativo.model().ID_SOGGETTO, returnAlias);
 		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME)){
+			return this.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO, returnAlias);
+		}
 
 
 		return super.toTable(field,returnAlias);
@@ -163,10 +174,13 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 		// the full definition of the table containing the alias
 		
 		if(model.equals(ServizioApplicativo.model())){
-			return "servizi_applicativi";
+			return CostantiDB.SERVIZI_APPLICATIVI;
 		}
 		if(model.equals(ServizioApplicativo.model().ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
+		}
+		if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO)){
+			return CostantiDB.SERVIZI_APPLICATIVI_RUOLI;
 		}
 
 

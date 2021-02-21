@@ -2225,7 +2225,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// Prendo la lista di accordi dell'utente connesso
 			/*List<Long> idsAcc = new ArrayList<Long>();
-			List<AccordoServizio> listaAcc = this.core.accordiList(superUser, new Search());
+			List<AccordoServizio> listaAcc = this.core.accordiList(superUser, new Search(true));
 			Iterator<AccordoServizio> itA = listaAcc.iterator();
 			while (itA.hasNext()) {
 				AccordoServizio as = (AccordoServizio) itA.next();
@@ -2743,7 +2743,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

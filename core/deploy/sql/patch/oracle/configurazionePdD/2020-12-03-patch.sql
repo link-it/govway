@@ -74,5 +74,8 @@ end;
 
 
 -- Aggiunto filtro per tag sul controllo del traffico
-ALTER TABLE ct_active_policy ADD filtro_tag VARCHAR(255);
+ALTER TABLE ct_active_policy ADD filtro_tag VARCHAR2(255);
+
+-- Modificata dimensione colonna id_active_policy
+ALTER TABLE ct_active_policy MODIFY active_policy_id VARCHAR2(275); 
 

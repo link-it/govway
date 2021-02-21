@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    
+    <a4j:outputPanel layout="block" id="parametriConfigurazionePnl">
+		<h:panelGrid id="panelGridParametriAllarme" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" rendered="#{allarmiBean.visualizzaParametri}">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Parametri" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<ui:include src="/commons/includes/dynamicOutputComponent.xhtml">
+				<ui:param value="#{allarmiBean.parameters}" name="formParameters" />
+			</ui:include>
+			
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelGridGroupBy" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataTopDxFixedWidth130,valueAllineataSx" rendered="#{allarmiBean.showGroupBy}">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+			<h:outputText value="&#160;&#160;" rendered="#{true}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Raggruppamento" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByStato" value="Stato" rendered="#{true}"/>
+			<h:outputText id="outGroupByStato" value="#{allarmiBean.allarme.groupBy.enabled ? 'abilitato' : 'disabilitato'}" rendered="#{true}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByRuoloPorta" value="Tipologia" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaRuoloPortaGroupBy}"/>
+			<h:outputText id="outGroupByRuoloPorta" value="#{allarmiBean.allarme.groupBy.ruoloPorta ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaRuoloPortaGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByProfilo" value="Profilo" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaProtocolloGroupBy}"/>
+			<h:outputText id="outGroupByProfilo" value="#{allarmiBean.allarme.groupBy.protocollo ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaProtocolloGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupBySoggettoErogatore" value="Soggetto Erogatore" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaSoggettoErogatoreGroupBy}"/>
+			<h:outputText id="outGroupBySoggettoErogatore" value="#{allarmiBean.allarme.groupBy.erogatore ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaSoggettoErogatoreGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByServizio" value="API" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaServizioGroupBy}"/>
+			<h:outputText id="outGroupByServizio" value="#{allarmiBean.allarme.groupBy.servizio ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaServizioGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByAzione" value="#{allarmiBean.labelAzioneGroupBy}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaAzioneGroupBy}"/>
+			<h:outputText id="outGroupByAzione" value="#{allarmiBean.allarme.groupBy.azione ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaAzioneGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupBySoggettoFruitore" value="Soggetto Fruitore" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaSoggettoFruitoreGroupBy}"/>
+			<h:outputText id="outGroupBySoggettoFruitore" value="#{allarmiBean.allarme.groupBy.fruitore ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaSoggettoFruitoreGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupBySAFruitore" value="Applicativo Fruitore" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaServizioApplicativoFruitoreGroupBy}"/>
+			<h:outputText id="outGroupBySAFruitore" value="#{allarmiBean.allarme.groupBy.servizioApplicativoFruitore ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaServizioApplicativoFruitoreGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByToken" value="Token" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaTokenGroupBy}"/>
+			<h:outputText id="outGroupByToken" value="#{not empty allarmiBean.allarme.groupBy.token ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaTokenGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByTokenClaims" value="Claims" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaTokenGroupBy and not empty allarmiBean.allarme.groupBy.token}"/>
+			<h:outputText id="outGroupByTokenClaims" value="#{allarmiBean.claimsGroupByHTML}" escape="false" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaTokenGroupBy and not empty allarmiBean.allarme.groupBy.token}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByIdentificativoAutenticato" value="Identificativo Autenticato" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaIdentificativoAutenticatoGroupBy}"/>
+			<h:outputText id="outGroupByIdentificativoAutenticato" value="#{not empty allarmiBean.allarme.groupBy.identificativoAutenticato ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaIdentificativoAutenticatoGroupBy}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelGroupByRichiedente" value="Richiedente" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaRichiedenteGroupBy}"/>
+			<h:outputText id="outGroupByRichiedente" value="#{allarmiBean.visualizzaRichiedenteGroupBy ? 'abilitato' : 'disabilitato'}" rendered="#{allarmiBean.allarme.groupBy.enabled and allarmiBean.visualizzaRichiedenteGroupBy}"/>
+						
+		</h:panelGrid>
+		
+
+	</a4j:outputPanel>
+</ui:composition>

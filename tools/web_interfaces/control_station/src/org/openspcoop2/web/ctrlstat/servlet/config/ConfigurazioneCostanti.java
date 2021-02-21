@@ -43,6 +43,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -735,9 +736,15 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE = "Intervallo Osservazione";
 	
 	public final static String LABEL_REGOLE_PROXY_PASS = "Regole Proxy Pass";
+	public final static String LABEL_ESPORTA_URL_INVOCAZIONE = "Esporta Configurazione";
 	
 	
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI = "Allarmi";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI = "Allarmi Attivi";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STATO = "Stato";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START = "Avvia tutti gli allarmi";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP = "Termina tutti gli allarmi";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART = "Riavvia tutti gli allarmi";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_DI = "Allarmi di ";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_ALLARME = "Allarme";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_FILTRO = "Filtro";
@@ -745,7 +752,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_PLUGIN = "Plugin";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_STATO_ALLARME = "Stato Allarme";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI_FREQUENZA = "Frequenza";
-	public final static String LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI = "Parametri";
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_PARAMETRI = org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_PARAMETRI;
+	public final static String LABEL_CONFIGURAZIONE_ALLARMI_VALORI_DI_SOGLIA = org.openspcoop2.monitor.engine.constants.Costanti.LABEL_ALLARMI_VALORI_DI_SOGLIA;
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_EMAIL = "Notifica via Email";
 	public final static String LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_MONITORAGGIO_ESTERNO = "Notifica Monitoraggio Esterno";
 	
@@ -924,6 +932,11 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI = "timerStatisticheSettimanali";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI = "timerStatisticheMensili";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD = "timerThresholdThread";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI = "allarmiAttivi";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER = "allarmiAttiviManager";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START = "allarmiAttiviStart";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP = "allarmiAttiviStop";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART = "allarmiAttiviRestart";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
@@ -1261,12 +1274,10 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT = "allInviaEmailAlert";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL = "allDestinatariEmail";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING = "allInviaEmailWarning";
-	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE = "allMailAckMode";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT = "allSubjectMail";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY = "allBodyMail";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT = "allInvocaScriptAlert";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT = "allInvocaScriptWarning";
-	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE = "allScriptAckMode";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH = "allScriptPath";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS = "allScriptArgs";
 	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPOLOGIA_ERRORE = "allTipoErrore";
@@ -1293,6 +1304,29 @@ public class ConfigurazioneCostanti {
 			LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE_PUNTUALE_ALL_VALUE_TRUE,
 			LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE_PUNTUALE_RISORSE_ALL_VALUE_FALSE
 	};
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE = "AlarmViewState";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_REFRESH = "AlarmRefreshOp";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_STOP = "AlarmStopOp";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_START = "AlarmStartOp";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_OP_RESTART = "AlarmRestartOp";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO = "AlarmStateView";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH = "Refresh";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_EDIT = "Visualizza Informazioni";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO = "AlarmStateUpdate";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH = "Ricalcola Stato";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME = "AlarmStop";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME = "Ferma l'allarme";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME = "AlarmStart";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME = "Avvia l'allarme";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME = "AlarmRestart";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME = "Riavvia l'allarme";
+	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE = "Stato Runtime";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GESTIONE_THREAD = "Gestione Thread";
 	
 	
 	/* LABEL PARAMETRI */
@@ -1772,7 +1806,7 @@ public class ConfigurazioneCostanti {
 	
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME = "Id";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME = "Identificativo Unico";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME = "Identificativo Runtime";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO = "Stato";
@@ -1800,15 +1834,11 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL = "Destinatari Email";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL_NOTE = "Indicare una o più e-mail separandole con la virgola ','";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING = "Notifica Warning";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE = "Acknowledge";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_MAIL_ACK_MODE_NOTE = "Notifica una mail, ad ogni intervallo di frequenza, fino a che non viene effettuato un ack manuale dell'allarme";	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT = "Subject";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY = "Body";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT = "Notifica Monitoraggio Esterno";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT_ABILITATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT = "Notifica Warning";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE = "Acknowledge";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ACK_MODE_NOTE = "Viene invocato lo script, ad ogni intervallo di frequenza, fino a che non viene effettuato un ack manuale dell'allarme";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH = "Script Path";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS = "Script Arguments";
 	
@@ -2155,6 +2185,27 @@ public class ConfigurazioneCostanti {
 			ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPO_PERIODO_GIORNALIERO
 	};
 		
+	
+	public final static String LABEL_ALLARMI_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_ALLARMI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ALLARME.name()+"')";
+	
+	public final static String LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_TOKEN_POLICY.name()+"')";
+	
+	public final static String LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.name()+"')";
+	public final static String LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_PLUGIN_ARCHIVIO_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO.name()+"')";
+
+	public final static String LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_CONTROLLO_TRAFFICO_CONFIG_POLICY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY.name()+"')";
+	public final static String LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_CONTROLLO_TRAFFICO_ACTIVE_POLICY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY.name()+"')";
+	
+	public final static String LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA.name()+"')";
+	
+	
 	// DEFAULT:
 	public final static TipoRisorsa RISORSA_DEFAULT = TipoRisorsa.NUMERO_RICHIESTE;
 	public final static TipoLatenza TIPO_LATENZA_DEFAULT = TipoLatenza.SERVIZIO;
@@ -2277,8 +2328,9 @@ public class ConfigurazioneCostanti {
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE = "Il nome indicato è già stato associato ad un allarme registrato nella configurazione generale";
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_EROGAZIONE = "Il nome indicato è già stato associato ad un allarme registrato nell''erogazione {0}";
 	public final static String MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_FRUIZIONE = "Il nome indicato è già stato associato ad un allarme registrato nella fruizione ${0}";
-	public final static String MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA = "Allarme {0} salvato correttamente, ma invio notifica terminato con errore: {1}";
-	public final static String MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA = "Allarmi eliminati correttamente, ma invio notifica terminato con errore: {0}";
+	public final static String MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA = "Allarme {0} salvato correttamente nel registro, ma la notifica verso il gestore degli allarmi è fallita: {1}";
+	public final static String MESSAGGIO_ERRORE_ALLARME_ELIMINATO_NOTIFICA_FALLITA = "Allarmi eliminati correttamente, ma la notifica verso il gestore degli allarmi è fallita: {0}";
+	public final static String MESSAGGIO_ERRORE_ALLARME_SINGOLO_ELIMINATO_NOTIFICA_FALLITA = "Allarme {0} eliminato correttamente, ma la notifica verso il gestore degli allarmi è fallita: {1}";
 
 	public final static String MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_FILTRO_NON_SELEZIONATO = "Non è stato selezionato nessun plugin da utilizzare come filtro per chiave";
 	public final static String MESSAGGIO_ERRORE_RATE_LIMITING_PLUGIN_GROUP_BY_NON_SELEZIONATO = "Non è stato selezionato nessun plugin da utilizzare come criterio di raggruppamento per chiave";

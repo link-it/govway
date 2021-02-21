@@ -2567,6 +2567,243 @@ public class TestOpenApi4j {
 			}
 		}
 		System.out.println("Test #18 completato\n\n");
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// ** Test su enumeration con valori NO,YES,... **
+		
+		System.out.println("Test #19 (Enumeration con valori NO, YES ...) ...");
+		String testUrl19 = baseUri+"/test-enum-no-yes";
+		
+		List<Object> valori_test19 = new ArrayList<Object>();
+		List<Boolean> esito_test19 = new ArrayList<Boolean>();
+		valori_test19.add("SI"); esito_test19.add(true);
+		valori_test19.add("NO"); esito_test19.add(true);
+		valori_test19.add("YES"); esito_test19.add(true);
+		valori_test19.add("S"); esito_test19.add(true);
+		valori_test19.add("N"); esito_test19.add(true);
+		valori_test19.add("Y"); esito_test19.add(true);
+		valori_test19.add("0"); esito_test19.add(true);
+		valori_test19.add("1"); esito_test19.add(true);
+		valori_test19.add("ON"); esito_test19.add(true);
+		valori_test19.add("OFF"); esito_test19.add(true);
+		valori_test19.add(0); esito_test19.add(false);
+		valori_test19.add(1); esito_test19.add(false);
+		valori_test19.add(false); esito_test19.add(false);
+		valori_test19.add(true); esito_test19.add(false);
+		
+		int TEST_NUMERO = 1;
+		// TODO: impostare a 2 per verificare ISSUE 'OP-1136' e risolvere problematica enum non quotata con i valori previsti in yaml1
+		// TEST_NUMERO = 2;
+		
+		for (int k = 0; k < TEST_NUMERO; k++) {
+			
+			String testYaml = "[test con enum quotata] ";
+			if(k==1) {
+				testUrl19 = testUrl19 + "-yaml1";
+				testYaml = "[test con enum non quotata] ";
+			}
+			
+			for (int i = 0; i < valori_test19.size(); i++) {
+				Object valore = valori_test19.get(i);
+				boolean esito = esito_test19.get(i);
+				
+				String valoreInserito = null;
+				if(valore instanceof String || valore instanceof Boolean) {
+					valoreInserito = "\""+valore+"\"";
+					if(valore instanceof String) {
+						String v = (String) valore;
+						if(v.equals("ON") || v.equals("OFF")) {
+							if(k==1) {
+								testUrl19 = testUrl19 + "-onOff";
+							}
+						}
+					}
+				}
+				else {
+					valoreInserito = valore.toString();
+				}
+				
+				TextHttpRequestEntity httpEntity19 = new TextHttpRequestEntity();
+				httpEntity19.setMethod(HttpRequestMethod.POST);
+				httpEntity19.setUrl(testUrl19); 
+				Map<String, String> parametersTrasporto19 = new HashMap<>();
+				parametersTrasporto19.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				httpEntity19.setParametersTrasporto(parametersTrasporto19);
+				httpEntity19.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' path
+				String json19 = "{\"stato1\": "+valoreInserito.toUpperCase()+",\"stato2\": "+valoreInserito.toLowerCase()+"}";
+				httpEntity19.setContent(json19);
+				
+				
+				TextHttpResponseEntity httpEntityResponse_test19 = new TextHttpResponseEntity();
+				httpEntityResponse_test19.setStatus(200);
+				httpEntityResponse_test19.setMethod(HttpRequestMethod.POST);
+				httpEntityResponse_test19.setUrl(testUrl19);	
+				Map<String, String> parametersTrasportoRisposta_test19 = new HashMap<>();
+				parametersTrasportoRisposta_test19.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				httpEntityResponse_test19.setParametersTrasporto(parametersTrasportoRisposta_test19);
+				httpEntityResponse_test19.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+				httpEntityResponse_test19.setContent(json19);
+	
+				
+				for (int j = 0; j < 2; j++) {
+					
+					boolean openapi4j = (j==0);
+					IApiValidator apiValidator = null;
+					String tipoTest = testYaml+ (esito ? "[stato con valore (type:"+valore.getClass().getName()+") '"+valore+"']" : "[stato con valore errato (type:"+valore.getClass().getName()+") '"+valore+"']");
+					if(openapi4j) {
+						apiValidator = apiValidatorOpenApi4j;
+						tipoTest = tipoTest+"[openapi4j]";
+					}
+					else {
+						apiValidator = apiValidatorNoOpenApi4j;
+						tipoTest = tipoTest+"[json]";
+					}
+				
+					try {
+						System.out.println("\t "+tipoTest+" validate ...");
+						apiValidator.validate(httpEntity19);
+						if(esito) {
+							System.out.println("\t "+tipoTest+" validate ok");
+						}
+						else {
+							System.out.println("\t "+tipoTest+" ERRORE!");
+							throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+						}
+					} catch(ValidatorException e) {
+						String error = e.getMessage();
+						if(error.length()>200) {
+							error = error.substring(0, 198)+" ...";
+						}
+						if(!esito) {
+							System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+						}
+						else {
+							System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+							throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+						}
+						if(openapi4j) {
+							if(valore instanceof Integer) {
+								String msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+								msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+							}
+							else {
+								String msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+								msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+							}
+						}
+						else {
+							if(valore instanceof Integer) {
+								String tipoJava = valore instanceof Integer ? "integer" : "boolean";
+								String msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+								msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+							}
+							String msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								System.out.println("\t "+tipoTest+" ERRORE!");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							}
+						}
+					}
+					
+					try {
+						System.out.println("\t "+tipoTest+" validate response ...");
+						apiValidator.validate(httpEntityResponse_test19);	
+						System.out.println("\t "+tipoTest+" validate response ok");
+					} catch(ValidatorException e) {
+						String error = e.getMessage();
+						if(error.length()>200) {
+							error = error.substring(0, 198)+" ...";
+						}
+						if(!esito) {
+							System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+						}
+						else {
+							System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+							throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+						}
+						if(openapi4j) {
+							if(valore instanceof Integer) {
+								String msgErroreAtteso = "Type expected 'string', found 'integer'. (code: 1027)";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+								msgErroreAtteso = "Value '"+valore+"' is not defined in the schema. (code: 1006)";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+							}
+							else {
+								String msgErroreAtteso = "body.stato1: Value '"+valore.toString().toUpperCase()+"' is not defined in the schema. (code: 1006)";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+								msgErroreAtteso = "body.stato2: Value '"+valore.toString().toLowerCase()+"' is not defined in the schema. (code: 1006)";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+							}
+						}
+						else {
+							if(valore instanceof Integer) {
+								String tipoJava = valore instanceof Integer ? "integer" : "boolean";
+								String msgErroreAtteso = "1029 $.stato2: "+tipoJava+" found, string expected";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+								msgErroreAtteso = "1029 $.stato1: "+tipoJava+" found, string expected";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									System.out.println("\t "+tipoTest+" ERRORE!");
+									throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+								}
+							}
+							String msgErroreAtteso = "does not have a value in the enumeration [si, no, yes, s, n, y, 0, 1, on, off]";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								System.out.println("\t "+tipoTest+" ERRORE!");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		System.out.println("Test #19 (Enumeration con valori NO, YES ...) completato\n\n");
 	}
 
 }

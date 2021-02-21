@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -153,13 +154,13 @@ public class AccordoServizioParteComuneAzioneFieldConverter extends AbstractSQLF
 		// the full definition of the table containing the alias
 		
 		if(model.equals(AccordoServizioParteComuneAzione.model())){
-			return "accordi_azioni";
+			return CostantiDB.ACCORDI_AZIONI;
 		}
 		if(model.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 
 

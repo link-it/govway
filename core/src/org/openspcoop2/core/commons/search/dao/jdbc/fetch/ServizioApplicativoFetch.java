@@ -31,6 +31,8 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
+import org.openspcoop2.core.commons.search.ServizioApplicativoRuolo;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -65,6 +67,14 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "as_client", ServizioApplicativo.model().AS_CLIENT.getFieldType()));
 				return object;
 			}
+			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO)){
+				ServizioApplicativoRuolo object = new ServizioApplicativoRuolo();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setNome", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "ruolo", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME.getFieldType()));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -97,6 +107,14 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"as_client"));
 				return object;
 			}
+			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO)){
+				ServizioApplicativoRuolo object = new ServizioApplicativoRuolo();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"servizio-applicativo-ruolo.id"));
+				setParameter(object, "setNome", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME.getFieldType(),
+					this.getObjectFromMap(map,"servizio-applicativo-ruolo.nome"));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -115,7 +133,10 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(ServizioApplicativo.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("servizi_applicativi","id","seq_servizi_applicativi","servizi_applicativi_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.SERVIZI_APPLICATIVI,"id","seq_"+CostantiDB.SERVIZI_APPLICATIVI,CostantiDB.SERVIZI_APPLICATIVI+"_init_seq");
+			}
+			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.SERVIZI_APPLICATIVI_RUOLI,"id","seq_"+CostantiDB.SERVIZI_APPLICATIVI_RUOLI,CostantiDB.SERVIZI_APPLICATIVI_RUOLI+"_init_seq");
 			}
 			
 			else{

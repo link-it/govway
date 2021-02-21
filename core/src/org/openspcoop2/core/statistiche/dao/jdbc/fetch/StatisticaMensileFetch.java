@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaMensile;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.statistiche.Statistica;
 
 
@@ -58,6 +59,8 @@ public class StatisticaMensileFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object.getStatisticaBase(), "setData", StatisticaMensile.model().STATISTICA_BASE.DATA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data", StatisticaMensile.model().STATISTICA_BASE.DATA.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setStatoRecord", StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "stato_record", StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaMensile.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "id_porta", StatisticaMensile.model().STATISTICA_BASE.ID_PORTA.getFieldType()));
 				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
@@ -102,6 +105,8 @@ public class StatisticaMensileFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "gruppi", StatisticaMensile.model().STATISTICA_BASE.GRUPPI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "uri_api", StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setClusterId", StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id", StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "richieste", StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -207,6 +212,8 @@ public class StatisticaMensileFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.id"));
 				setParameter(object.getStatisticaBase(), "setData", StatisticaMensile.model().STATISTICA_BASE.DATA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.data"));
+				setParameter(object.getStatisticaBase(), "setStatoRecord", StatisticaMensile.model().STATISTICA_BASE.STATO_RECORD.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.stato-record"));
 				setParameter(object.getStatisticaBase(), "setIdPorta", StatisticaMensile.model().STATISTICA_BASE.ID_PORTA.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.id-porta"));
 				setParameter(object.getStatisticaBase(), "set_value_tipoPorta", String.class,
@@ -251,6 +258,8 @@ public class StatisticaMensileFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.gruppi"));
 				setParameter(object.getStatisticaBase(), "setUriApi", StatisticaMensile.model().STATISTICA_BASE.URI_API.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.uri-api"));
+				setParameter(object.getStatisticaBase(), "setClusterId", StatisticaMensile.model().STATISTICA_BASE.CLUSTER_ID.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.cluster-id"));
 				setParameter(object.getStatisticaBase(), "setNumeroTransazioni", StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.numero-transazioni"));
 				setParameter(object.getStatisticaBase(), "setDimensioniBytesBandaComplessiva", StatisticaMensile.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType(),
@@ -351,10 +360,10 @@ public class StatisticaMensileFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(StatisticaMensile.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("statistiche_mensili","id","seq_statistiche_mensili","statistiche_mensili_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_MENSILI,"id","seq_"+CostantiDB.STATISTICHE_MENSILI,CostantiDB.STATISTICHE_MENSILI+"_init_seq");
 			}
 			if(model.equals(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("stat_mensili_contenuti","id","seq_stat_mensili_contenuti","stat_mensili_contenuti_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.STATISTICHE_MENSILI_CONTENUTI,"id","seq_"+CostantiDB.STATISTICHE_MENSILI_CONTENUTI,CostantiDB.STATISTICHE_MENSILI_CONTENUTI+"_init_seq");
 			}
 			
 			else{

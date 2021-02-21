@@ -36,23 +36,22 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
-import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
+import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.constants.TipoAllarme;
+import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
-import org.openspcoop2.monitor.engine.alarm.utils.AllarmiConfig;
 import org.openspcoop2.monitor.engine.alarm.utils.AllarmiUtils;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -127,8 +126,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 			PorteDelegateCore pdCore = new PorteDelegateCore(confCore);
 			PorteApplicativeCore paCore = new PorteApplicativeCore(confCore);
 			
-			AllarmiConfig allarmiConfig = confCore.getAllarmiConfig();
-			AlarmEngineConfig alarmEngineConfig = AlarmConfigProperties.getAlarmConfiguration(ControlStationCore.getLog(), allarmiConfig.getAllarmiConfigurazione());
+			AlarmEngineConfig alarmEngineConfig = confCore.getAllarmiConfig();
 			
 			Long idAllarme = Long.parseLong(idAllarmeS);
 			ConfigurazioneAllarmeBean allarme = confCore.getAllarme(idAllarme);
@@ -287,7 +285,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 			
 			List<Parameter> lstParamPorta = null;
 			if(ruoloPorta!=null) {
-				lstParamPorta = confHelper.getTitleListAllarmi(ruoloPorta, nomePorta, serviceBinding, allarme.getNome());
+				lstParamPorta = confHelper.getTitleListAllarmi(ruoloPorta, nomePorta, serviceBinding, allarme.getAlias());
 			}
 			
 			// setto la barra del titolo
@@ -307,7 +305,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 				}
 //				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 //				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST));
-				lstParam.add(new Parameter(allarme.getNome(), null));
+				lstParam.add(new Parameter(allarme.getAlias(), null));
 			}
 			
 			// Se tipo = null, devo visualizzare la pagina per l'inserimento
@@ -359,27 +357,28 @@ public class ConfigurazioneAllarmiChange extends Action {
 			}
 				
 			// salvataggio dei parametri
-			for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
-				boolean found = false;
-				for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
-					if(parDB.getIdParametro().equals(par.getId())){
-						parDB.setValore(par.getValueAsString());
-						found = true;
-						break;
+			if(parameters!=null && parameters.size()>0) {
+				for (org.openspcoop2.monitor.sdk.parameters.Parameter<?> par : parameters) {
+					boolean found = false;
+					for (AllarmeParametro parDB : allarme.getAllarmeParametroList()) {
+						if(parDB.getIdParametro().equals(par.getId())){
+							parDB.setValore(par.getValueAsString());
+							found = true;
+							break;
+						}
 					}
-				}
-				if(!found){
-					AllarmeParametro parDB = new AllarmeParametro();
-					parDB.setIdParametro(par.getId());
-					parDB.setValore(par.getValueAsString());
-					allarme.addAllarmeParametro(parDB);
+					if(!found){
+						AllarmeParametro parDB = new AllarmeParametro();
+						parDB.setIdParametro(par.getId());
+						parDB.setValore(par.getValueAsString());
+						allarme.addAllarmeParametro(parDB);
+					}
 				}
 			}
 			
 			// data modifica
 			allarme.setLasttimestampUpdate(new Date());
 			
-			boolean historyCreatoTramiteNotificaCambioStato = false;
 			boolean modificatoInformazioniHistory = false;
 			boolean modificatoStato = false;
 			boolean modificatoAckwoldegment = false;
@@ -387,31 +386,30 @@ public class ConfigurazioneAllarmiChange extends Action {
 			// se ho modificato l'abilitato devo registrare la modifica nella tabella history
 			if(allarme.getEnabled().intValue() != oldEnabled.intValue()) {
 				modificatoInformazioniHistory = true;
+				
+				if(allarme.getEnabled().intValue() == 0) {
+					// se disabilito resetto lo stato per quando lo riabilito
+					allarme.setStato(AllarmiConverterUtils.toIntegerValue(StatoAllarme.OK));
+					allarme.setDettaglioStato(null);
+				}
 			}
 			
 			// insert sul db
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), allarme);
 			
-			if(modificatoInformazioniHistory && !historyCreatoTramiteNotificaCambioStato) {
+			if(modificatoInformazioniHistory && alarmEngineConfig.isHistoryEnabled()) {
 				// registro la modifica
-				AllarmeHistory history = new AllarmeHistory();
-				history.setEnabled(allarme.getEnabled());
-				history.setAcknowledged(allarme.getAcknowledged());
-				history.setDettaglioStato(allarme.getDettaglioStato());
-				IdAllarme idConfigurazioneAllarme = new IdAllarme();
-				idConfigurazioneAllarme.setNome(allarme.getNome());
-				history.setIdAllarme(idConfigurazioneAllarme);
-				history.setStato(allarme.getStato());
-				history.setTimestampUpdate(allarme.getLasttimestampUpdate());
-				history.setUtente(userLogin);
+				AllarmeHistory history = ConfigurazioneUtilities.createAllarmeHistory(oldConfigurazioneAllarme, userLogin);
 				confCore.performCreateOperation(userLogin, confHelper.smista(), history);
 			}
 			
 			/* ******** GESTIONE AVVIO THREAD NEL CASO DI ATTIVO *************** */
 			try {
-				AllarmiUtils.notifyStateActiveThread(false, modificatoStato, modificatoAckwoldegment, oldConfigurazioneAllarme, allarme, ControlStationCore.getLog(), allarmiConfig);
+				AllarmiUtils.notifyStateActiveThread(false, modificatoStato, modificatoAckwoldegment, oldConfigurazioneAllarme, allarme, ControlStationCore.getLog(), alarmEngineConfig);
 			} catch(Exception e) {
-				pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getNome(),e.getMessage()));
+				String errorMsg = MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_SALVATO_NOTIFICA_FALLITA, allarme.getAlias(),e.getMessage());
+				ControlStationCore.getLog().error(errorMsg, e);
+				pd.setMessage(errorMsg);
 			}
 				
 			// Preparo la lista

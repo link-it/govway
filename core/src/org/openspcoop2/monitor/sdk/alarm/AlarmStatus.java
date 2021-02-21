@@ -66,4 +66,14 @@ public class AlarmStatus {
 		}
 		return s;
 	}
+	
+	@Override
+	public String toString() {
+		if(this.stato!=null) {
+			return this.stato.name();
+		}
+		else {
+			return "Undefined";
+		}
+	}
 }

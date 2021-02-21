@@ -30,6 +30,8 @@ import org.openspcoop2.core.allarmi.dao.IAllarmeServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IAllarmeService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryService;
+import org.openspcoop2.core.allarmi.dao.IAllarmeNotificaServiceSearch;
+import org.openspcoop2.core.allarmi.dao.IAllarmeNotificaService;
 
 /**     
  * Manager that allows you to obtain the services of research and management of objects
@@ -131,6 +133,38 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 	@Override
 	public IAllarmeHistoryService getAllarmeHistoryService() throws ServiceException,NotImplementedException{
 		return new JDBCAllarmeHistoryService(this.unlimitedJdbcServiceManager);
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:allarme-notifica type:allarme-notifica
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IAllarmeNotificaServiceSearch getAllarmeNotificaServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCAllarmeNotificaServiceSearch(this.unlimitedJdbcServiceManager);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.allarmi.AllarmeNotifica}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IAllarmeNotificaService getAllarmeNotificaService() throws ServiceException,NotImplementedException{
+		return new JDBCAllarmeNotificaService(this.unlimitedJdbcServiceManager);
 	}
 	
 	

@@ -23,6 +23,7 @@ package org.openspcoop2.core.config.driver;
 
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -480,6 +481,35 @@ public interface IDriverConfigurazioneCRUD {
 	 * @throws DriverConfigurazioneException
 	 */
 	public void deleteRegistroPluginArchivio(String nomePlugin, RegistroPluginArchivio plugin) throws DriverConfigurazioneException;
+	
+	
+	
+	
+	// URL DI INVOCAZIONE - REGOLE
+	
+	/**
+	 * Crea una regola di proxy pass
+	 * 
+	 * @param regola
+	 * @throws DriverConfigurazioneException
+	 */
+	public void createUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException;
+	
+	/**
+	 * Aggiorna una regola di proxy pass
+	 * 
+	 * @param regola
+	 * @throws DriverConfigurazioneException
+	 */
+	public void updateUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException;
+	
+	/**
+	 * Elimina una regola di proxy pass
+	 * 
+	 * @param regola
+	 * @throws DriverConfigurazioneException
+	 */
+	public void deleteUrlInvocazioneRegola(ConfigurazioneUrlInvocazioneRegola regola) throws DriverConfigurazioneException;
 	
 	
 	

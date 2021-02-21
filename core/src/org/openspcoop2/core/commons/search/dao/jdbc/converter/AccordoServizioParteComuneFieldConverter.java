@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConve
 import org.openspcoop2.utils.TipiDatabase;
 
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -483,61 +484,61 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 		// the full definition of the table containing the alias
 		
 		if(model.equals(AccordoServizioParteComune.model())){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().ID_REFERENTE)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE)){
-			return "accordi_azioni";
+			return CostantiDB.ACCORDI_AZIONI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().PORT_TYPE)){
-			return "port_type";
+			return CostantiDB.PORT_TYPE;
 		}
 		if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION)){
-			return "port_type_azioni";
+			return CostantiDB.PORT_TYPE_AZIONI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.ID_PORT_TYPE)){
-			return "port_type";
+			return CostantiDB.PORT_TYPE;
 		}
 		if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().RESOURCE)){
-			return "api_resources";
+			return CostantiDB.API_RESOURCES;
 		}
 		if(model.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO)){
-			return "accordi_gruppi";
+			return CostantiDB.ACCORDI_GRUPPI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_GRUPPO)){
-			return "gruppi";
+			return CostantiDB.GRUPPI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-			return "accordi";
+			return CostantiDB.ACCORDI;
 		}
 		if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_GRUPPO.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			return CostantiDB.SOGGETTI;
 		}
 
 

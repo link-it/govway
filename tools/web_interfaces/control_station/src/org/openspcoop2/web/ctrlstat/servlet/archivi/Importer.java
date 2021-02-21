@@ -94,6 +94,7 @@ public final class Importer extends Action {
 	private boolean validazioneDocumenti = true;
 	private boolean updateEnabled = false;
 	private boolean importDeletePolicyConfig = false;
+	private boolean importDeletePluginConfig = false;
 	private boolean importConfig = false;
 
 	private int step = 0;
@@ -295,6 +296,21 @@ public final class Importer extends Action {
 				}
 			}
 			
+			// importPluginConfig
+			String tmpImportDeletePluginConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_DELETE_PLUGIN_CONFIG_ENABLED);
+			if(archiviHelper.isEditModeInProgress() && tmpImportDeletePluginConfig==null){
+				// primo accesso alla servlet
+				this.importDeletePluginConfig = false;
+			}
+			else{
+				if(ServletUtils.isCheckBoxEnabled(tmpImportDeletePluginConfig)){
+					this.importDeletePluginConfig = true;
+				}
+				else{
+					this.importDeletePluginConfig = false;
+				}
+			}
+			
 			// importConfig
 			String tmpImportConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED);
 			if(archiviHelper.isEditModeInProgress() && tmpImportConfig==null){
@@ -374,7 +390,9 @@ public final class Importer extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
-						this.importDeletePolicyConfig, this.importConfig,
+						this.importDeletePolicyConfig, 
+						this.importDeletePluginConfig,
+						this.importConfig,
 						showProtocols, protocolli, this.protocollo, 
 						importModes, this.importMode, 
 						importTypes, this.importType,
@@ -621,7 +639,9 @@ public final class Importer extends Action {
 					archiviHelper.addImportInformationMissingToDati(dati, importerUtils, ff, 
 							this.protocollo, this.importMode, protocolloEffettivo, this.importType, 
 							this.validazioneDocumenti, this.updateEnabled,
-							this.importDeletePolicyConfig, this.importConfig,
+							this.importDeletePolicyConfig, 
+							this.importDeletePluginConfig,
+							this.importConfig,
 							importInformationMissingCollection, importInformationMissingException, 
 							this.importInformationMissing_modalitaAcquisizioneInformazioniProtocollo,this.importInformationMissing_portTypes,
 							protocolliForModes,readedDatiConnettori,
@@ -632,7 +652,9 @@ public final class Importer extends Action {
 				}
 				else{
 					archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
-							this.importDeletePolicyConfig, this.importConfig,
+							this.importDeletePolicyConfig, 
+							this.importDeletePluginConfig,
+							this.importConfig,
 							showProtocols, protocolli, this.protocollo, 
 							importModes, this.importMode, 
 							importTypes, this.importType,
@@ -685,11 +707,15 @@ public final class Importer extends Action {
 			if(deleter){
 				esito = archiviCore.deleteArchive(archive, archiveMode, protocolloEffettivo, 
 						userLogin, archiviHelper.smista(),
-						this.importDeletePolicyConfig);
+						this.importDeletePolicyConfig,
+						this.importDeletePluginConfig);
 			}else{
 				esito = archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
 						userLogin, archiviHelper.smista(), 
-						this.updateEnabled, this.importDeletePolicyConfig, this.importConfig, nomePddOperativa,
+						this.updateEnabled, 
+						this.importDeletePolicyConfig, 
+						this.importDeletePluginConfig, archiviCore.isConfigurazionePluginsEnabled(),
+						this.importConfig, nomePddOperativa,
 						archiviHelper);
 			}
 									

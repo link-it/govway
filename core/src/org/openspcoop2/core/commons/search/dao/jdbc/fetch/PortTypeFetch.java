@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.Operation;
 import org.openspcoop2.core.commons.search.PortType;
+import org.openspcoop2.core.constants.CostantiDB;
 
 
 /**     
@@ -116,10 +117,10 @@ public class PortTypeFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(PortType.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("port_type","id","seq_port_type","port_type_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORT_TYPE,"id","seq_"+CostantiDB.PORT_TYPE,CostantiDB.PORT_TYPE+"_init_seq");
 			}
 			if(model.equals(PortType.model().OPERATION)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("port_type_azioni","id","seq_port_type_azioni","port_type_azioni_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PORT_TYPE_AZIONI,"id","seq_"+CostantiDB.PORT_TYPE_AZIONI,CostantiDB.PORT_TYPE_AZIONI+"_init_seq");
 			}
 			
 			else{

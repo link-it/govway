@@ -30,6 +30,10 @@ public class ModelFactory {
 
 	public static SoggettoModel SOGGETTO = new SoggettoModel();
 	
+	public static SoggettoRuoloModel SOGGETTO_RUOLO = new SoggettoRuoloModel();
+	
+	public static RuoloModel RUOLO = new RuoloModel();
+	
 	public static PortaDominioModel PORTA_DOMINIO = new PortaDominioModel();
 	
 	public static GruppoModel GRUPPO = new GruppoModel();

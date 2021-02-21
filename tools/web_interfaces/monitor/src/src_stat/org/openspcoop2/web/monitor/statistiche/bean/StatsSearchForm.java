@@ -141,6 +141,9 @@ public class StatsSearchForm extends BaseSearchForm{
 		
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(StatsSearchForm.log);
+			
+			initIdClusterAndCanali(govwayMonitorProperties);
+			
 			this.isMostraUnitaTempoDistribuzioneNonTemporale = govwayMonitorProperties.isMostraUnitaTempoDistribuzioneNonTemporale();
 		} catch (Exception e) {
 			StatsSearchForm.log.error("Errore il calcolo della proprieta' 'useDistribuzioneStatisticaGiornalieraPerElaborazioneSettimanaleMensile': " + e.getMessage(),e);
@@ -428,6 +431,8 @@ public class StatsSearchForm extends BaseSearchForm{
 		
 		this.setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
 		
+		this.clusterId = null;
+		this.canale = null;
 	}
 
 	@Override

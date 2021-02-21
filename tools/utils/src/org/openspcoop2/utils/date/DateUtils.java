@@ -189,6 +189,53 @@ public class DateUtils {
 		return calendar.getTime();
 	}
 	
+	public static Date incrementDate1Millisecond(Date date){
+		Calendar calendar = null;
+		try{
+			calendar = DateManager.getCalendar();
+		}catch(Exception e){
+			calendar = Calendar.getInstance();
+		}
+		calendar.setTime(date);
+		calendar.add(Calendar.MILLISECOND, 1);
+		return calendar.getTime();
+	}
+	
+	public Date decrementDate1Millisecond(Date date){
+		Calendar calendar = null;
+		try{
+			calendar = DateManager.getCalendar();
+		}catch(Exception e){
+			calendar = Calendar.getInstance();
+		}
+		calendar.setTime(date);
+		calendar.add(Calendar.MILLISECOND, -1);
+		return calendar.getTime();
+	}
+	
+	public static Date incredementDate1MsIf999(Date date){
+		
+		// se la data è impostata all'ultimo millisecondo (999), viene portato al successivo
+		
+		Calendar calendar = null;
+		try{
+			calendar = DateManager.getCalendar();
+		}catch(Exception e){
+			calendar = Calendar.getInstance();
+		}
+		calendar.setTime(date);
+		
+		int ms = calendar.get(Calendar.MILLISECOND);
+		if(ms>=999) {
+			calendar.add(Calendar.MILLISECOND, 1);
+			return calendar.getTime();
+		}
+		else {
+			return date;
+		}
+		
+	}
+	
 	private static final String DATETIME_PATTERN = "^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])[tT ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([zZ]|[+-]\\d{2}:\\d{2})$";
 	public static void validateDateTimeAsRFC3339_sec5_6(String dateTime) throws UtilsException {
 		// RFC 3339, section 5.6

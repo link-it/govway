@@ -115,16 +115,26 @@ public abstract class BaseComponent<T> extends Parameter<T>{
 	 * altrimenti viene sempre renderizzato.
 	 * @return true se il componente deve essere renderizzato false altrimenti.
 	 */
+	private Boolean render = null;
 	public boolean getRendered() {
-		if(this.getLoader()==null)
-			return true;
-		try{
-			//r potrebbe essere null qualora il loader non trovasse il componente tramite l'id fornito
-			this.getLoader().updateRendering(this, this.context);
-			return this.getRendering().isHidden()==false;
-		}catch (Exception e) {
-			BaseComponent.log.error("Impossibile recuperare le informazioni di rendering dal Loader: "+e.getMessage());
-			return true;
+		if(this.render!=null) {
+			return this.render;
+		}
+		else {
+			if(this.getLoader()==null) {
+				this.render = true;
+			}
+			else {
+				try{
+					//r potrebbe essere null qualora il loader non trovasse il componente tramite l'id fornito
+					this.getLoader().updateRendering(this, this.context);
+					this.render =  this.getRendering().isHidden()==false;
+				}catch (Exception e) {
+					BaseComponent.log.error("Impossibile recuperare le informazioni di rendering dal Loader: "+e.getMessage());
+					this.render = true;
+				}
+			}
+			return this.render;
 		}
 	}
 	

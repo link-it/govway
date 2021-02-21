@@ -31,6 +31,7 @@ import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.constants.CRUDType;
@@ -64,6 +65,10 @@ public class AlarmContext implements Context{
 		this.parameters = parameters;
 	}
 
+	public void setParameters(List<Parameter<?>> parameters) {
+		this.parameters = parameters;
+	}
+	
 	@Override
 	public SearchType getTipoRicerca() {
 		return SearchType.ALL;
@@ -171,6 +176,36 @@ public class AlarmContext implements Context{
 		return null;
 	}
 
+	@Override
+	public String getInterfaccia() {
+		if(this.allarme!=null && 
+				this.allarme.getFiltro()!=null &&
+				StringUtils.isNotEmpty(this.allarme.getFiltro().getNomePorta()) &&
+				!"*".equals(this.allarme.getFiltro().getNomePorta())
+			){
+			return this.allarme.getFiltro().getNomePorta();			
+		}
+		return null;
+	}
+	
+	@Override
+	public TipoPdD getRuolo() {
+		if(this.allarme!=null && 
+				this.allarme.getFiltro()!=null &&
+				this.allarme.getFiltro().getRuoloPorta()!=null)
+			{
+			switch (this.allarme.getFiltro().getRuoloPorta()) {
+			case DELEGATA:
+				return TipoPdD.DELEGATA;
+			case APPLICATIVA:
+				return TipoPdD.APPLICATIVA;
+			default:
+				return null;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public EsitoTransazione getEsitoTransazione() {
 		return null; // non dovrebbe venire usato

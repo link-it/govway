@@ -23,38 +23,43 @@ package org.openspcoop2.monitor.engine.alarm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
+import org.openspcoop2.core.allarmi.AllarmeNotifica;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.IdAllarme;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.dao.IAllarmeHistoryService;
+import org.openspcoop2.core.allarmi.dao.IAllarmeNotificaService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeService;
 import org.openspcoop2.core.allarmi.dao.IAllarmeServiceSearch;
 import org.openspcoop2.core.allarmi.dao.IServiceManager;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
 import org.openspcoop2.core.allarmi.utils.ProjectInfo;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.plugins.IdPlugin;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.monitor.engine.config.base.IdPlugin;
-import org.openspcoop2.monitor.engine.config.base.Plugin;
-import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
+import org.openspcoop2.monitor.sdk.alarm.IAlarmLogger;
 import org.openspcoop2.monitor.sdk.constants.AlarmStateValues;
 import org.openspcoop2.monitor.sdk.exceptions.AlarmException;
+import org.openspcoop2.monitor.sdk.exceptions.AlarmNotifyException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.monitor.sdk.plugins.IAlarmProcessing;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.mail.Mail;
 import org.openspcoop2.utils.mail.Sender;
 import org.openspcoop2.utils.mail.SenderFactory;
 import org.openspcoop2.utils.resources.ScriptInvoker;
+import org.slf4j.Logger;
 
 
 /**
@@ -107,7 +112,7 @@ public class AlarmManager {
 		} catch (Exception e) {
 			log.error("AlarmManager.getAlarm(" + idAllarme
 					+ ") ha rilevato un errore: " + e.getMessage(), e);
-			throw new AlarmException(e);
+			throw new AlarmException(e.getMessage(),e);
 		}
 		return alarm;
 	}
@@ -122,13 +127,13 @@ public class AlarmManager {
 	 */
 	public static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory)
 			throws AlarmException {
-		return getAlarm(allarme, log, daoFactory, null);
+		return _getAlarm(allarme, log, daoFactory, null);
 	}
-	public static IAlarm getAlarm(Allarme allarme,Logger log, org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginSM)
+	public static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.core.plugins.dao.IServiceManager pluginSM)
 			throws AlarmException {
-		return getAlarm(allarme, log, null, pluginSM);
+		return _getAlarm(allarme, log, daoFactory, pluginSM);
 	}
-	private static IAlarm getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginSM)
+	private static IAlarm _getAlarm(Allarme allarme,Logger log, DAOFactory daoFactory, org.openspcoop2.core.plugins.dao.IServiceManager pluginSM)
 			throws AlarmException {
 		
 		AlarmImpl alarm = null;
@@ -156,8 +161,8 @@ public class AlarmManager {
 				
 				if(pluginSM==null) {
 					pluginSM = 
-							(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) 
-							daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
+							(org.openspcoop2.core.plugins.dao.IServiceManager) 
+							daoFactory.getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance());
 				}
 				TipoPlugin tipoPlugin = TipoPlugin.ALLARME;
 				IdPlugin idPlugin = new IdPlugin();
@@ -169,6 +174,7 @@ public class AlarmManager {
 				
 				IDynamicLoader cAllarme = DynamicFactory.getInstance().newDynamicLoader(tipoPlugin, allarme.getTipo(), plugin.getClassName(), log);
 				IAlarmProcessing alarmProc = (IAlarmProcessing) cAllarme.newInstance();
+				alarm.setManuallyUpdateState(alarmProc.isManuallyUpdateState());
 				AlarmContext ctx = new AlarmContext(allarme, log, daoFactory);
 				List<Parameter<?>> listParameters = alarmProc.getParameters(ctx);
 				
@@ -192,22 +198,22 @@ public class AlarmManager {
 			log.error(
 					"AlarmManager.getAlarm(" + allarme.getNome()
 							+ ") ha rilevato un errore: " + e.getMessage(), e);
-			throw new AlarmException(e);
+			throw new AlarmException(e.getMessage(),e);
 		}
 		return alarm;
 	}
 	
-	protected static void changeStatus(AlarmStatus newStatoAllarme,IAlarm allarme,Logger log,DAOFactory  daoFactory,String username) throws AlarmException {
+	protected static void changeStatus(AlarmStatus newStatoAllarme,IAlarm allarme,IServiceManager allarmiSM,String username,boolean statusChanged, 
+			List<AllarmeHistory> repositoryHistory) throws AlarmException {
 		try {
 			
 			Allarme oldConfig = allarme.getConfigAllarme();
 			
-			IServiceManager pluginSM = (IServiceManager) daoFactory.getServiceManager(ProjectInfo.getInstance());
-			IAllarmeServiceSearch allarmeSearchDAO = pluginSM
+			IAllarmeServiceSearch allarmeSearchDAO = allarmiSM
 					.getAllarmeServiceSearch();
-			IAllarmeService allarmeDAO = pluginSM
+			IAllarmeService allarmeDAO = allarmiSM
 					.getAllarmeService();
-			IAllarmeHistoryService allarmeHistoryDAO = pluginSM
+			IAllarmeHistoryService allarmeHistoryDAO = allarmiSM
 					.getAllarmeHistoryService();
 
 			IExpression expr = allarmeSearchDAO.newExpression();
@@ -232,9 +238,9 @@ public class AlarmManager {
 					autoChangeAck = false;
 				}
 				
-				if(confAllarme.getStato()!=null){
+				if(statusChanged && confAllarme.getStato()!=null){
 					confAllarme.setStatoPrecedente(confAllarme.getStato());
-					oldConfig.setStatoPrecedente(confAllarme.getStatoPrecedente());
+					oldConfig.setStatoPrecedente(confAllarme.getStato());
 				}
 				
 				switch (newStatoAllarme.getStatus()) {
@@ -254,8 +260,8 @@ public class AlarmManager {
 				oldConfig.setLasttimestampUpdate(confAllarme.getLasttimestampUpdate());
 				
 				// Azzero acknoledgement in caso di cambio stato
-				if(confAllarme.getStatoPrecedente()!=null){
-					if(autoChangeAck && confAllarme.getStatoPrecedente().equals(confAllarme.getStato())==false){
+				if(statusChanged){
+					if(autoChangeAck){
 						// lo stato è modificato
 						confAllarme.setAcknowledged(0);
 						oldConfig.setAcknowledged(0);
@@ -284,8 +290,15 @@ public class AlarmManager {
 				//System.out.println("UPDATE ALLARME");
 				allarmeDAO.update(idConfAllarme, confAllarme);
 				
-				AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
-				if(alarmEngineConfig.isHistoryEnabled()) {
+				boolean checkHistory = false;
+				if(repositoryHistory!=null) {
+					checkHistory = true;
+				}
+				else {
+					AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
+					checkHistory = alarmEngineConfig.isHistoryEnabled();
+				}
+				if(checkHistory) {
 
 					boolean registraHistory = registraHistory(confAllarme, allarmeImmagineDB);
 					//System.out.println("REGISTRO HISTORY ALLARME ? "+registraHistory);
@@ -300,7 +313,12 @@ public class AlarmManager {
 						history.setIdAllarme(idAllarme);
 						history.setUtente(username);	
 						history.setTimestampUpdate(confAllarme.getLasttimestampUpdate());
-						allarmeHistoryDAO.create(history);
+						if(repositoryHistory!=null) {
+							repositoryHistory.add(history);
+						}
+						else {
+							allarmeHistoryDAO.create(history);
+						}
 						//System.out.println("REGISTRATO HISTORY ALLARME");
 					}
 					
@@ -311,10 +329,10 @@ public class AlarmManager {
 						+ "- non esistente");
 			
 		} catch (Exception e) {
-			log.error(
+			allarme.getLogger().error(
 					"AlarmManager.changeStatus() ha rilevato un errore: "
 							+ e.getMessage(), e);
-			throw new AlarmException(e);
+			throw new AlarmException(e.getMessage(),e);
 		}
 	}
 	
@@ -382,7 +400,7 @@ public class AlarmManager {
 		return false;
 	}
 	
-	protected static void sendMail(Allarme configAllarme, Logger log, String threadName) throws Exception{
+	protected static void sendMail(Allarme configAllarme, IAlarmLogger alarmLog, List<String> logEvents) throws Exception{
 		
 		AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
 		if(alarmEngineConfig==null){
@@ -406,7 +424,7 @@ public class AlarmManager {
 				throw new Exception("Configurazione mail errata [Parametro 'SenderType' non definito]");
 			}
 			else{
-				sender = SenderFactory.newSender(alarmEngineConfig.getMailSenderType(), log);
+				sender = SenderFactory.newSender(alarmEngineConfig.getMailSenderType(), alarmLog.getInternalLogger());
 			}
 			
 			if(alarmEngineConfig.getMailSenderConnectionTimeout()!=null){
@@ -420,6 +438,9 @@ public class AlarmManager {
 				
 				Mail mail = new Mail();
 			
+				// agent
+				mail.setUserAgent(alarmEngineConfig.getMailAgent());
+				
 				// from
 				if(alarmEngineConfig.getMailFrom()==null){ 
 					throw new Exception("Configurazione mail errata [Parametro 'From' non definito]");
@@ -485,15 +506,15 @@ public class AlarmManager {
 				sender.send(mail, alarmEngineConfig.isMailDebug());
 				
 				if(alarmEngineConfig.isMailDebug()){
-					log.debug("["+threadName+"] Allarme - " + configAllarme.getNome()
-						+ " - inviata mail per notifica stato ["+configAllarme.getStato()+"] al destinatario ["+destinatario+"]");
+					logEvents.add("eMail per notifica stato ["+configAllarme.getStato()+"] inviata correttamente al destinatario ["+destinatario+"]");
 				}
+				
 			}
 			
 		}
 	}
 	
-	protected static void invokeScript(Allarme configAllarme, Logger log, String threadName) throws Exception{
+	protected static void invokeScript(Allarme configAllarme, IAlarmLogger alarmLog, List<String> logEvents) throws Exception{
 		
 		AlarmEngineConfig alarmEngineConfig = AlarmManager.getAlarmEngineConfig();
 		if(alarmEngineConfig==null){
@@ -575,8 +596,7 @@ public class AlarmManager {
 		}
 		else{
 			if(alarmEngineConfig.isScriptDebug()){
-				log.debug("["+threadName+"] Allarme - " + configAllarme.getNome()
-				+	 " - "+msg);
+				logEvents.add(msg);
 			}
 		}
 		
@@ -584,7 +604,9 @@ public class AlarmManager {
 	
 	public static String replaceKeywordTemplate(String original, Allarme configAllarme, boolean script){
 		
-		String newS = original.replace(CostantiConfigurazione.ALARM_KEYWORD_TEMPLATE_NOME_ALLARME, configAllarme.getNome());
+		String newS = original.replace(CostantiConfigurazione.ALARM_KEYWORD_TEMPLATE_NOME_ALLARME, configAllarme.getAlias());
+		
+		newS = newS.replace(CostantiConfigurazione.ALARM_KEYWORD_TEMPLATE_ID_ALLARME, configAllarme.getNome());
 		
 		StatoAllarme statoAllarme = AllarmiConverterUtils.toStatoAllarme(configAllarme.getStato());
 		switch ( statoAllarme ) {
@@ -611,4 +633,244 @@ public class AlarmManager {
 		return newS;
 	}
 
+	public static void notifyChangeStatus(AlarmEngineConfig alarmEngineConfig, Allarme allarme,
+			IAlarm alarm, String pluginClassName,String threadName,
+			AlarmLogger alarmLogger,
+			AlarmStatus oldStatus, AlarmStatus nuovoStatoAllarme,
+			boolean checkAcknowledState) throws AlarmException, AlarmNotifyException {
+		
+		boolean statusChanged = false;
+		String prefix = null;
+		try{
+			
+			// Cambio di stato effettivo ?
+			if(oldStatus==null || oldStatus.getStatus()==null){
+				statusChanged = true;
+			}
+			else{
+				statusChanged = !oldStatus.getStatus().equals(nuovoStatoAllarme.getStatus());
+			}
+			
+			// Gestione invocazione script, mail e notifiche a plugin
+			boolean statusWarningError = AlarmStateValues.WARNING.equals(nuovoStatoAllarme) || AlarmStateValues.ERROR.equals(nuovoStatoAllarme);
+			if(!statusChanged && (!statusWarningError || !checkAcknowledState)){
+				alarmLogger.debug("Cambio di stato non rilevato (old:"+oldStatus+" new:"+nuovoStatoAllarme+")");
+				return;
+			}
+			
+			if(statusChanged) {
+				prefix = "Cambio di stato rilevato (old:"+oldStatus+" new:"+nuovoStatoAllarme+"); ";
+			}
+			else {
+				prefix = "Cambio di stato non rilevato; ";
+			}
+			
+		}catch(Exception e){
+			throw new AlarmException(e.getMessage(),e);
+		}
+		
+		boolean invokePlugin = statusChanged;
+		boolean sendMail = false;
+		boolean invokeScript = false;
+		try {
+			alarmLogger.debug(prefix+"lettura configurazione in corso ...");
+			
+			boolean mailCheckAcknowledgedStatus = alarmEngineConfig.isMailCheckAcknowledgedStatus();
+			boolean mailSendChangeStatusOk = alarmEngineConfig.isMailSendChangeStatusOk();
+			
+			boolean scriptCheckAcknowledgedStatus = alarmEngineConfig.isScriptCheckAcknowledgedStatus();
+			boolean scriptSendChangeStatusOk = alarmEngineConfig.isScriptSendChangeStatusOk();
+			
+			boolean acknowledged = (allarme.getAcknowledged()==null || allarme.getAcknowledged()==1);
+			
+			
+			alarmLogger.debug(prefix+"comprensione se è necessario una notifica di cambio stato per mail/script (acknowledged:"+acknowledged+") ...");
+			
+			alarmLogger.debug(prefix+"mail sendChangeStatusOk:"+mailSendChangeStatusOk+" checkAcknowledgedStatus:"+mailCheckAcknowledgedStatus+"");
+			alarmLogger.debug(prefix+"script sendChangeStatusOk:"+scriptSendChangeStatusOk+" checkAcknowledgedStatus:"+scriptCheckAcknowledgedStatus+"");
+			
+			if(nuovoStatoAllarme!=null) {
+				
+				if(AlarmStateValues.OK.equals(nuovoStatoAllarme.getStatus())){
+					if(mailSendChangeStatusOk){
+						// sia in ack mode che non in ack mode viene spedito da questo metodo.
+						// tanto deve essere spedita solo la prima volta e non continuamente
+						sendMail = (allarme.getMail()!=null &&
+								allarme.getMail().getInvia()!=null && 
+								allarme.getMail().getInvia()==1);
+					}
+					if(scriptSendChangeStatusOk){
+						// sia in ack mode che non in ack mode viene spedito da questo metodo.
+						// tanto deve essere spedita solo la prima volta e non continuamente
+						invokeScript = (allarme.getScript()!=null &&
+								allarme.getScript().getInvoca()!=null && 
+								allarme.getScript().getInvoca()==1);
+					}
+					
+				}
+				
+				
+				else if(AlarmStateValues.WARNING.equals(nuovoStatoAllarme.getStatus())){
+					
+					if( (statusChanged) || (mailCheckAcknowledgedStatus && !acknowledged) ){
+						// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
+						sendMail = (
+									allarme.getMail()!=null && 
+									allarme.getMail().getInvia()!=null && 
+									allarme.getMail().getInvia()==1
+								) 
+								&& 
+								(
+									allarme.getMail()!=null &&
+									allarme.getMail().getInviaWarning()!=null && 
+									allarme.getMail().getInviaWarning()==1
+								);
+					}
+					if( (statusChanged) || (scriptCheckAcknowledgedStatus && !acknowledged) ){
+						// NOTA: per come è impostata la pddMonitor il warning esiste solo se è attivo anche l'alert
+						invokeScript = (
+									allarme.getScript()!=null &&
+									allarme.getScript().getInvoca()!=null && 
+									allarme.getScript().getInvoca()==1
+								) 
+								&&
+								(
+									allarme.getScript()!=null && 
+									allarme.getScript().getInvocaWarning()!=null && 
+									allarme.getScript().getInvocaWarning()==1
+								);
+					}
+					
+				}
+				else if(AlarmStateValues.ERROR.equals(nuovoStatoAllarme.getStatus())){
+					
+					if( (statusChanged) || (mailCheckAcknowledgedStatus && !acknowledged) ){
+						sendMail = allarme.getMail()!=null &&
+								allarme.getMail().getInvia()!=null && 
+								allarme.getMail().getInvia()==1; // note: Alert rappresenta l'invio della mail nel db e non veramente solo il livello error
+					}
+					if( (statusChanged) || (scriptCheckAcknowledgedStatus && !acknowledged) ){
+						invokeScript = allarme.getScript()!=null &&
+								allarme.getScript().getInvoca()!=null && 
+								allarme.getScript().getInvoca()==1; // note: Alert rappresenta l'invio via script nel db e non veramente solo il livello error
+					}
+					
+				}
+			}
+			
+		}catch(Exception e){
+			throw new AlarmException(e.getMessage(),e);
+		}
+		
+		List<Exception> listExceptions = new ArrayList<Exception>();
+		
+		// Notifico cambio di stato all'interfaccia	
+		String pluginInvocationError = null;
+		try {
+			if(invokePlugin) {
+				alarmLogger.debug(prefix+"notifica plugin ...");
+				IDynamicLoader cPlugin = DynamicFactory.getInstance().newDynamicLoader(TipoPlugin.ALLARME,allarme.getTipo(),pluginClassName, alarmLogger.getInternalLogger());
+				IAlarmProcessing alarmProc = (IAlarmProcessing) cPlugin.newInstance();
+				alarmProc.changeStatusNotify(alarm, oldStatus, nuovoStatoAllarme);
+				alarmLogger.debug(prefix+"notifica plugin terminata");
+			}
+		} catch( Exception e) {
+			alarmLogger.error(prefix+"notifica plugin fallita: "+e.getMessage(),e);
+			pluginInvocationError = e.getMessage();
+			listExceptions.add(e);
+		}
+		
+		// Notifico cambio di stato via mail
+		String sendMailError = null;
+		try {
+			if(sendMail){
+				alarmLogger.debug(prefix+"notifica mail ...");
+				List<String> logEvents = new ArrayList<String>();
+				AlarmManager.sendMail(allarme, alarmLogger, logEvents);
+				if(logEvents!=null && !logEvents.isEmpty()) {
+					for (String logEvent : logEvents) {
+						String prefixLog = AlarmLogger.buildPrefix(threadName,allarme.getAlias(),allarme.getNome());
+						alarmLogger.debug(prefixLog+logEvent);
+					}
+				}
+				alarmLogger.debug(prefix+"notifica mail completata");
+			}
+		}	
+		catch( Exception e) {
+			alarmLogger.error(prefix+"notifica mail fallita: "+e.getMessage(),e);
+			sendMailError = e.getMessage();
+			listExceptions.add(e);
+		}
+		
+		// Notifico cambio di stato via script
+		String scriptInvocationError = null;
+		try {
+			if(invokeScript){
+				alarmLogger.debug(prefix+"notifica via script ...");
+				List<String> logEvents = new ArrayList<String>();
+				AlarmManager.invokeScript(allarme, alarmLogger, logEvents);
+				if(logEvents!=null && !logEvents.isEmpty()) {
+					for (String logEvent : logEvents) {
+						String prefixLog = AlarmLogger.buildPrefix(threadName,allarme.getAlias(),allarme.getNome());
+						alarmLogger.debug(prefixLog+logEvent);
+					}
+				}
+				alarmLogger.debug(prefix+"notifica via script completata");
+			}
+		}	
+		catch( Exception e) {
+			alarmLogger.error(prefix+"notifica via script fallita: "+e.getMessage(),e);
+			scriptInvocationError = e.getMessage();
+			listExceptions.add(e);
+		}
+		
+		if(!listExceptions.isEmpty()) {
+			AlarmNotifyException ane = null;
+			if(listExceptions.size()==1) {
+				Exception e = listExceptions.get(0);
+				ane = new AlarmNotifyException(e.getMessage(),e);
+			}
+			else {
+				org.openspcoop2.utils.UtilsMultiException multi = new UtilsMultiException(listExceptions.toArray(new Exception[listExceptions.size()]));
+				ane = new AlarmNotifyException("Notifiche di cambio stato fallite",multi);
+			}
+			ane.setPluginInvocationError(pluginInvocationError);
+			ane.setSendMailError(sendMailError);
+			ane.setScriptInvocationError(scriptInvocationError);
+			throw ane;
+		}
+	}
+	
+	protected static void registraNotifica(AlarmLogger alarmLogger, Allarme allarme, AlarmStatus oldStatoAllarme, AlarmStatus newStatoAllarme, AllarmeHistory repositoryHistory,
+			IServiceManager allarmiSM) throws AlarmException {
+		try {
+			IAllarmeNotificaService allarmeNotificaSearchDAO = allarmiSM
+					.getAllarmeNotificaService();
+			
+			AllarmeNotifica notifica = new AllarmeNotifica();
+			
+			notifica.setDataNotifica(DateManager.getDate());
+			
+			IdAllarme idAllarme = allarmiSM.getAllarmeServiceSearch().convertToId(allarme);
+			notifica.setIdAllarme(idAllarme);
+			
+			notifica.setOldStato(AllarmiConverterUtils.toIntegerValue(StatoAllarme.valueOf(oldStatoAllarme.getStatus().name())));
+			notifica.setOldDettaglioStato(oldStatoAllarme.getDetail());
+			
+			notifica.setNuovoStato(AllarmiConverterUtils.toIntegerValue(StatoAllarme.valueOf(newStatoAllarme.getStatus().name())));
+			notifica.setNuovoDettaglioStato(newStatoAllarme.getDetail());
+			
+			if(repositoryHistory!=null) {
+				org.openspcoop2.core.allarmi.utils.serializer.JaxbSerializer serializer = new org.openspcoop2.core.allarmi.utils.serializer.JaxbSerializer();
+				notifica.setHistoryEntry(serializer.toString(repositoryHistory));
+			}
+			allarmeNotificaSearchDAO.create(notifica);
+			
+		} catch (Exception e) {
+			alarmLogger.error(
+					"Registrazione notifica di cambio stato fallita: "
+							+ e.getMessage(), e);
+			throw new AlarmException(e.getMessage(),e);
+		}
+	}
 }

@@ -56,9 +56,8 @@
 
 	<xsd:complexType name="allarme-mail">
 		<xsd:sequence>
-			<xsd:element name="ack-mode" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="invia" type="xsd:integer" minOccurs="0"/>
 			<xsd:element name="invia-warning" type="xsd:integer" minOccurs="0"/>
-			<xsd:element name="invia-alert" type="xsd:integer" minOccurs="0"/>
 			<xsd:element name="destinatari" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="subject" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="body" type="xsd:string" minOccurs="0"/>
@@ -68,9 +67,8 @@
 	
 	<xsd:complexType name="allarme-script">
 		<xsd:sequence>
-			<xsd:element name="ack-mode" type="xsd:integer" minOccurs="0"/>
+			<xsd:element name="invoca" type="xsd:integer" minOccurs="0"/>
 			<xsd:element name="invoca-warning" type="xsd:integer" minOccurs="0"/>
-			<xsd:element name="invoca-alert" type="xsd:integer" minOccurs="0"/>
 			<xsd:element name="command" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="args" type="xsd:string" minOccurs="0"/>			
 		</xsd:sequence>
@@ -157,6 +155,23 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+	
+	
+	
+	
+	<xsd:element name="allarme-notifica">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="data-notifica" type="xsd:dateTime"/>
+				<xsd:element name="id-allarme" type="id-allarme"/>
+				<xsd:element name="old-stato" type="xsd:integer"/>
+				<xsd:element name="old-dettaglio-stato" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="nuovo-stato" type="xsd:integer"/>
+				<xsd:element name="nuovo-dettaglio-stato" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="history-entry" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
 		
 
@@ -175,7 +190,12 @@
 	<xsd:complexType name="id-allarme">
 		<xsd:sequence>
 			<xsd:element name="nome" type="xsd:string"/>
+			<!-- informazione aggiuntiva -->
 			<xsd:element name="tipo" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="enabled" type="xsd:integer" minOccurs="0" />
+			<xsd:element name="alias" type="xsd:string" minOccurs="0" />
+			<xsd:element name="filtro-ruolo-porta" type="ruolo-porta" minOccurs="0" />
+			<xsd:element name="filtro-nome-porta" type="xsd:string" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

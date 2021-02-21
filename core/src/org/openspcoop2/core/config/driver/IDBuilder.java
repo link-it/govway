@@ -30,6 +30,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -148,6 +149,14 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				String id = plugin.getNome();
 				if(this.prefix){
 					return "[RegistroPluginArchivio] "+ plugin.getNomePlugin()+"-"+id;
+				}else{
+					return id;
+				}
+			}else if(o instanceof ConfigurazioneUrlInvocazioneRegola){
+				ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) o;
+				String id = regola.getNome();
+				if(this.prefix){
+					return "[UrlInvocazioneRegola] "+ id;
 				}else{
 					return id;
 				}
@@ -280,6 +289,17 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof RegistroPluginArchivio){
 				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof ConfigurazioneUrlInvocazioneRegola){
+				ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) o;
+				if(regola.getOldNome()==null) {
+					return null; // non lancio un errore
+				}
+				String id = regola.getOldNome();
+				if(this.prefix){
+					return "[UrlInvocazioneRegola] "+ id;
+				}else{
+					return id;
+				}
 			}
 						
 		}catch(Exception e){
@@ -317,6 +337,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(SystemProperties.class.getSimpleName());
 			oggetti.add(RegistroPlugin.class.getSimpleName());
 			oggetti.add(RegistroPluginArchivio.class.getSimpleName());
+			oggetti.add(ConfigurazioneUrlInvocazioneRegola.class.getSimpleName());
 		}
 		else{
 			oggetti.add(Soggetto.class.getName());
@@ -333,7 +354,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoDatiAutorizzazione.class.getName());
 			oggetti.add(SystemProperties.class.getName());
 			oggetti.add(RegistroPlugin.class.getName());
-			oggetti.add(RegistroPluginArchivio.class.getName());			
+			oggetti.add(RegistroPluginArchivio.class.getName());	
+			oggetti.add(ConfigurazioneUrlInvocazioneRegola.class.getName());	
 		}
 		
 		String[]tmp = new String[1];
