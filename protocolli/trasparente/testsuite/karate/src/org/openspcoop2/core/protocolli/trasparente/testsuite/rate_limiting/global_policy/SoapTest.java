@@ -44,12 +44,22 @@ public class SoapTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione() {
-		testGlobalPolicy(TipoServizio.EROGAZIONE);
+		testGlobalPolicy(TipoServizio.EROGAZIONE, RestTest.ID_POLICY_GLOBALE, RestTest.HEADER_GLOBAL_POLICY);
 	}
 	
 	@Test
 	public void fruizione() {
-		testGlobalPolicy(TipoServizio.FRUIZIONE);
+		testGlobalPolicy(TipoServizio.FRUIZIONE, RestTest.ID_POLICY_GLOBALE, RestTest.HEADER_GLOBAL_POLICY);
+	}
+	
+	@Test
+	public void erogazione_filtroTag() {
+		testGlobalPolicy(TipoServizio.EROGAZIONE, RestTest.ID_POLICY_GLOBALE_FILTRO_TAG, RestTest.HEADER_GLOBAL_POLICY_FILTRO_TAG);
+	}
+	
+	@Test
+	public void fruizione_filtroTag() {
+		testGlobalPolicy(TipoServizio.FRUIZIONE, RestTest.ID_POLICY_GLOBALE_FILTRO_TAG, RestTest.HEADER_GLOBAL_POLICY_FILTRO_TAG);
 	}
 	
 	@BeforeClass
@@ -58,7 +68,7 @@ public class SoapTest extends ConfigLoader {
 	}
 	
 	
-	static void testGlobalPolicy(TipoServizio tipoServizio) {
+	static void testGlobalPolicy(TipoServizio tipoServizio, String nomePolicy, String headerName) {
 		// Usiamo l'erogazione già presente per il test numero_richieste
 		// visto che li ci sono policy sul numero di richieste parallele passando lo header
 		// GovWay-TestSuite-RL-GlobalPolicy=Orario per attivare la policy globale
@@ -66,7 +76,7 @@ public class SoapTest extends ConfigLoader {
 
 		final int maxRequests = 5;
 		final int windowSize = Utils.getPolicyWindowSize(PolicyAlias.ORARIO);
-		final String idPolicy = dbUtils.getIdGlobalPolicy("Orario");
+		final String idPolicy = dbUtils.getIdGlobalPolicy(nomePolicy);
 		final String url = tipoServizio == TipoServizio.EROGAZIONE
 				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoMedioRispostaSoap/v1"
 				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoMedioRispostaSoap/v1";
@@ -81,7 +91,7 @@ public class SoapTest extends ConfigLoader {
 		request.setContent(SoapBodies.get(PolicyAlias.RICHIESTE_SIMULTANEE).getBytes());
 		request.setMethod(HttpRequestMethod.POST);
 		request.setUrl(url);
-		request.addHeader("GovWay-TestSuite-RL-GlobalPolicy", "Orario");
+		request.addHeader(headerName, RestTest.HEADER_GLOBAL_POLICY_VALUE);
 		
 		Vector<HttpResponse> responseOk = Utils.makeSequentialRequests(request, maxRequests);
 		Vector<HttpResponse> responseBlocked = Utils.makeSequentialRequests(request, maxRequests);

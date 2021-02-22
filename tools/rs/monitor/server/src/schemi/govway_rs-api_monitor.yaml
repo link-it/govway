@@ -401,6 +401,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
@@ -483,6 +484,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
@@ -562,6 +564,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: '#/components/parameters/uri_api_implementata'
@@ -642,6 +645,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
@@ -722,6 +726,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: '#/components/parameters/distingui_api_implementata'                   
@@ -797,6 +802,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
@@ -877,6 +883,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: '#/components/parameters/soggetto_mittente'
@@ -959,6 +966,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
@@ -1039,6 +1047,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
@@ -1119,6 +1128,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_inizio"
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
+        - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
@@ -2064,6 +2074,10 @@ components:
           $ref: '#/components/schemas/FiltroTemporale'
         tipo:
           $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaRuoloTransazioneEnum'
+        id_cluster:  
+          description: >-
+            Identificativo del nodo su cui e' stata emessa la transazione
+          type: string
         tag:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
 

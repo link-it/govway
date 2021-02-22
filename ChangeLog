@@ -1,3 +1,11 @@
+2021-02-22  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio, ApiRsConfigurazione, TestsuiteProtocolloTrasparente]
+	Nella API di monitoraggio è stata aggiunta la possibilità di ottenere report statistici filtrando per l'identificativo del cluster.
+	Nella API di configurazione sono stati aggiunti i test finalizzati a verificare la nuova funzionalità di ricerca nel registro relativamente a qualsiasi profilo e/o soggetto.
+	Inoltre sono stati aggiunti dei test finalizzati alla ricerca delle erogazioni e fruizioni filtrando per api implementata.
+	Nella testsuite del protocollo trasparente sono stati aggiunti dei test finalizzati al filtro per tag attivato su politiche di Rate Limiting globali.
+
 2021-02-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, BatchStatistiche, GovWayMonitor]

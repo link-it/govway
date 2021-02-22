@@ -161,3 +161,33 @@ Scenario: Fruizioni FindAll di Api con Tags definiti
 * call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
 * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
 * call delete ({ resourcePath: api_petstore_path })
+
+
+@FindAllProfiloSoggettoQualsiasi
+Scenario: Fruizioni FindAll di Api con qualsiasi profilo e soggetto
+
+* call create ({ resourcePath: 'api', body: api_petstore })
+* call create ({ resourcePath: 'soggetti', body: erogatore })
+* call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+
+* def fruizioni_response = call read('classpath:findall_stub.feature') { resourcePath: 'fruizioni', query_params:  { profilo_qualsiasi: true, soggetto_qualsiasi: true } }
+* assert fruizioni_response.findall_response_body.items.length > 0
+
+* call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
+* call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+* call delete ({ resourcePath: api_petstore_path })
+
+
+@FindAllUriApiImplementata
+Scenario: Fruizioni FindAll di Api con indicazione della uri implementata
+
+* call create ({ resourcePath: 'api', body: api_petstore })
+* call create ({ resourcePath: 'soggetti', body: erogatore })
+* call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+
+* def fruizioni_response = call read('classpath:findall_stub.feature') { resourcePath: 'fruizioni', query_params:  { uri_api_implementata: 'api-config:1' } }
+* assert fruizioni_response.findall_response_body.items.length == 0
+
+* call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
+* call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+* call delete ({ resourcePath: api_petstore_path })

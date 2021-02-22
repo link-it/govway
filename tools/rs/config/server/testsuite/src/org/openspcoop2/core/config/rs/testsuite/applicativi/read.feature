@@ -12,6 +12,11 @@ Scenario: Applicativi FindAll 200 OK
 
     * call findall_200 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)' }
 
+@FindAll200ProfiloSoggettoQualsiasi
+Scenario: Applicativi FindAll ProfiloSoggettoQualsiasi 200 OK
+
+    * call findall_200 { resourcePath: 'applicativi', body: '#(applicativo)', key: '#(applicativo.nome)', query_params:  { profilo_qualsiasi: true, soggetto_qualsiasi: true } }
+
 @Get200
 Scenario: Applicativi Get 200 OK
 

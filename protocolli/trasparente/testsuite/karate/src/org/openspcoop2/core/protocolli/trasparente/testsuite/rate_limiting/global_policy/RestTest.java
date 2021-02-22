@@ -42,37 +42,54 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 */
 public class RestTest extends ConfigLoader {
 	
+	protected final static String HEADER_GLOBAL_POLICY_VALUE = "TestPolicyGlobale";
+	protected final static String HEADER_GLOBAL_POLICY = "GovWay-TestSuite-RL-GlobalPolicy";
+	protected final static String HEADER_GLOBAL_POLICY_FILTRO_TAG = "GovWay-TestSuite-RL-GlobalPolicy-FiltroTag";
+	
+	protected final static String ID_POLICY_GLOBALE = "EsempioPolicyGlobale-Orario";
+	protected final static String ID_POLICY_GLOBALE_FILTRO_TAG = "EsempioPolicyGlobale-Orario-FiltroTag";
+	
 	@BeforeClass
 	public static void initTest() {
 		String idPolicy = null;
-
 		try {
-			idPolicy = dbUtils.getIdGlobalPolicy("Orario");
+			idPolicy = dbUtils.getIdGlobalPolicy(ID_POLICY_GLOBALE);
 		} catch (Exception e) {
 		}
-		
 		if (idPolicy == null) {
-			// dovrebbe già esistere; l'ho aggiunta nello zip
-			createGlobalPolicy();
-			idPolicy = dbUtils.getIdGlobalPolicy("Orario");
+			throw new RuntimeException("Fallito il recupero della policy globale '"+ID_POLICY_GLOBALE+"'");
 		}
 		
+		try {
+			idPolicy = dbUtils.getIdGlobalPolicy(ID_POLICY_GLOBALE_FILTRO_TAG);
+		} catch (Exception e) {
+		}
 		if (idPolicy == null) {
-			throw new RuntimeException("Fallito il recupero della policy globale appena creata.");
+			throw new RuntimeException("Fallito il recupero della policy globale '"+ID_POLICY_GLOBALE_FILTRO_TAG+"'");
 		}
 	}
 	
 	@Test
 	public void erogazione() {
-		testGlobalPolicy(TipoServizio.EROGAZIONE);
+		testGlobalPolicy(TipoServizio.EROGAZIONE, ID_POLICY_GLOBALE, HEADER_GLOBAL_POLICY);
 	}
 	
 	@Test
 	public void fruizione() {
-		testGlobalPolicy(TipoServizio.FRUIZIONE);
+		testGlobalPolicy(TipoServizio.FRUIZIONE, ID_POLICY_GLOBALE, HEADER_GLOBAL_POLICY);
 	}
 	
-	static void testGlobalPolicy(TipoServizio tipoServizio) {
+	@Test
+	public void erogazione_filtroTag() {
+		testGlobalPolicy(TipoServizio.EROGAZIONE, ID_POLICY_GLOBALE_FILTRO_TAG, HEADER_GLOBAL_POLICY_FILTRO_TAG);
+	}
+	
+	@Test
+	public void fruizione_filtroTag() {
+		testGlobalPolicy(TipoServizio.FRUIZIONE, ID_POLICY_GLOBALE_FILTRO_TAG, HEADER_GLOBAL_POLICY_FILTRO_TAG);
+	}
+	
+	static void testGlobalPolicy(TipoServizio tipoServizio, String nomePolicy, String headerName) {
 		// Usiamo l'erogazione già presente per il test numero_richieste
 		// visto che li ci sono policy sul numero di richieste parallele passando lo header
 		// GovWay-TestSuite-RL-GlobalPolicy=Orario per attivare la policy globale
@@ -80,7 +97,7 @@ public class RestTest extends ConfigLoader {
 
 		final int maxRequests = 5;
 		final int windowSize = Utils.getPolicyWindowSize(PolicyAlias.ORARIO);
-		final String idPolicy = dbUtils.getIdGlobalPolicy("Orario");
+		final String idPolicy = dbUtils.getIdGlobalPolicy(nomePolicy);
 		final String url = tipoServizio == TipoServizio.EROGAZIONE
 				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteRest/v1/richieste-simultanee"
 				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/NumeroRichiesteRest/v1/richieste-simultanee";
@@ -94,7 +111,7 @@ public class RestTest extends ConfigLoader {
 		request.setContentType("application/json");
 		request.setMethod(HttpRequestMethod.GET);
 		request.setUrl(url);
-		request.addHeader("GovWay-TestSuite-RL-GlobalPolicy", "Orario");
+		request.addHeader(headerName, HEADER_GLOBAL_POLICY_VALUE);
 		
 		Vector<HttpResponse> responseOk = Utils.makeSequentialRequests(request, maxRequests);
 		Vector<HttpResponse> responseBlocked = Utils.makeSequentialRequests(request, maxRequests);
@@ -105,61 +122,6 @@ public class RestTest extends ConfigLoader {
 		// Sono solo questi due. Siamo sicuri? Chiedi ad andrea.
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkOkRequests(responseOk, windowSize, maxRequests);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkFailedRequests(responseBlocked, windowSize, maxRequests);
-	}
-	
-	
-	@Deprecated
-	static void createGlobalPolicy() {
-		String policy_id = "__TestsuiteGlobaleTestOrarioConFiltroPerChiave__";
-		String policy_alias = "Orario";
-		
-		Boolean policy_continue = false;
-		Boolean policy_enabled = true;
-		Boolean policy_redefined = true;
-		Boolean filtro_enabled = true;
-		Boolean filtro_key_enabled = true;
-
-		String query = "INSERT INTO ct_active_policy "
-				+ "("
-				+ 		"active_policy_id,"
-				+ 		"policy_update_time,"
-				+ 		"policy_alias,"
-				+ 		"policy_posizione,"
-				+ 		"policy_continue,"
-				+ 		"policy_id,"
-				+ 		"policy_enabled,"
-				+ 		"policy_redefined,"
-				+ 		"policy_valore,"
-				+ 		"filtro_enabled,"
-				+ 		"filtro_protocollo,"
-				+ 		"filtro_ruolo,"
-				+		"filtro_key_enabled,"
-				+ 		"filtro_key_type,"
-				+ 		"filtro_key_name,"
-				+ 		"filtro_key_value"
-				+ ")"
-				+ " VALUES ("
-				+ 		"'"+policy_id+"',"
-				+ 		"CURRENT_TIMESTAMP,"
-				+ 		"'"+policy_alias+"',"
-				+ 		"1,"
-				+ 		"?,"	// policy_continue
-				+ 		"'_built-in_NumeroRichiesteCompletateConSuccesso-ControlloRealtimeOrario',"
-				+ 		"?,"	// policy_enabled
-				+ 		"?,"	// policy_redefined
-				+ 		"5,"
-				+ 		"?,"	// filtro_enabled
-				+ 		"'trasparente',"
-				+ 		"'entrambi',"
-				+		"?,"	// filtro_key_enabled
-				+ 		"'HeaderBased', "
-				+ 		"'GovWay-TestSuite-RL-GlobalPolicy', "
-				+ 		"'Orario'"
-				+ 	")";
-		
-		
-		logRateLimiting.info(query);
-		dbUtils.jdbc.update(query,policy_continue, policy_enabled, policy_redefined, filtro_enabled, filtro_key_enabled);
 	}
 
 }

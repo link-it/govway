@@ -618,6 +618,15 @@ public class ReportExporter extends HttpServlet{
 			statSearchForm.setTipologiaRicerca(CostantiExporter.RICERCA_USCITA);
 		}
 		
+		
+		
+		// ** Id Cluster **
+		
+		String idCluster = req.getParameter(CostantiExporter.ID_CLUSTER);
+		if(idCluster!=null){
+			idCluster = idCluster.trim();
+			statSearchForm.setClusterId(idCluster);
+		}
 
 		
 		// ** Soggetto / Tag / Servizio / Azione **

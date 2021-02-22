@@ -132,3 +132,31 @@ Scenario: Erogazioni FindAll di Api con Tags definiti
 * call delete ({ resourcePath: api_petstore_path })
 
 
+@FindAllProfiloSoggettoQualsiasi
+Scenario: Erogazioni FindAll di Api con qualsiasi profilo e soggetto
+
+* call create ({ resourcePath: 'api', body: api_petstore })
+* call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+* def erogazioni_response = call read('classpath:findall_stub.feature') { resourcePath: 'erogazioni', query_params:  { profilo_qualsiasi: true, soggetto_qualsiasi: true } }
+* assert erogazioni_response.findall_response_body.items.length > 0
+
+* call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+* call delete ({ resourcePath: api_petstore_path })
+
+
+@FindAllUriApiImplementata
+Scenario: Erogazioni FindAll di Api con indicazione della uri implementata
+
+* call create ({ resourcePath: 'api', body: api_petstore })
+* call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+* def erogazioni_response = call read('classpath:findall_stub.feature') { resourcePath: 'erogazioni', query_params:  { uri_api_implementata: 'api-config:1' } }
+* assert erogazioni_response.findall_response_body.items.length > 0
+* match each erogazioni_response.findall_response_body.items[*].api_nome == 'api-config'
+* match each erogazioni_response.findall_response_body.items[*].api_versione == 1
+
+* call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+* call delete ({ resourcePath: api_petstore_path })
+
+

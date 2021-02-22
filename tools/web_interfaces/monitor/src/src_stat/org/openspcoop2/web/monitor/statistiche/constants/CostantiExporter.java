@@ -120,6 +120,8 @@ public class CostantiExporter {
 		TIPOLOGIE.add(TIPOLOGIA_EROGAZIONE_FRUIZIONE);
 	}
 	
+	public final static String ID_CLUSTER  = "idCluster";
+	
 	public final static String TIPO_RICERCA_MITTENTE  = "tipoRicercaMittente";
 	public static final String TIPO_RICERCA_MITTENTE_TOKEN_INFO = Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO;
 	public static final String TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO = Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO;

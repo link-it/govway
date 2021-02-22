@@ -36,6 +36,12 @@ public class RicercaBaseStatistica  {
   @Schema(required = true, description = "")
   private FiltroRicercaRuoloTransazioneEnum tipo = null;
   
+  @Schema(description = "Identificativo del nodo su cui e' stata emessa la transazione")
+ /**
+   * Identificativo del nodo su cui e' stata emessa la transazione  
+  **/
+  private String idCluster = null;
+  
   @Schema(description = "")
   private String tag = null;
  /**
@@ -98,6 +104,25 @@ public class RicercaBaseStatistica  {
   }
 
  /**
+   * Identificativo del nodo su cui e' stata emessa la transazione
+   * @return idCluster
+  **/
+  @JsonProperty("id_cluster")
+  @Valid
+  public String getIdCluster() {
+    return this.idCluster;
+  }
+
+  public void setIdCluster(String idCluster) {
+    this.idCluster = idCluster;
+  }
+
+  public RicercaBaseStatistica idCluster(String idCluster) {
+    this.idCluster = idCluster;
+    return this;
+  }
+
+ /**
    * Get tag
    * @return tag
   **/
@@ -125,6 +150,7 @@ public class RicercaBaseStatistica  {
     sb.append("    unitaTempo: ").append(RicercaBaseStatistica.toIndentedString(this.unitaTempo)).append("\n");
     sb.append("    intervalloTemporale: ").append(RicercaBaseStatistica.toIndentedString(this.intervalloTemporale)).append("\n");
     sb.append("    tipo: ").append(RicercaBaseStatistica.toIndentedString(this.tipo)).append("\n");
+    sb.append("    idCluster: ").append(RicercaBaseStatistica.toIndentedString(this.idCluster)).append("\n");
     sb.append("    tag: ").append(RicercaBaseStatistica.toIndentedString(this.tag)).append("\n");
     sb.append("}");
     return sb.toString();

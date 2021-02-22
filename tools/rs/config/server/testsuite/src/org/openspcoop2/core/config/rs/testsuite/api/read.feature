@@ -12,6 +12,11 @@ Scenario: Api FindAll 200 OK
     
     * call findall_200 ( { resourcePath: 'api', body: api, key: api.nome + '/' + api.versione } )
 
+@FindAll200ProfiloQualsiasi
+Scenario: Api FindAll ProfiloQualsiasi 200 OK
+    
+    * call findall_200 ( { resourcePath: 'api', body: api, key: api.nome + '/' + api.versione, query_params:  { profilo_qualsiasi: true } } )
+
 @Get200
 Scenario: Api Get 200 OK
 

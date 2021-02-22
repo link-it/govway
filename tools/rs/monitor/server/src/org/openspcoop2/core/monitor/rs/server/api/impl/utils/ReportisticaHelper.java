@@ -199,6 +199,10 @@ public class ReportisticaHelper {
 				Enums.toStatisticType.get(body.getUnitaTempo()).toString());
 		wrap.overrideParameter(CostantiExporter.TIPOLOGIA,
 				Enums.toTipologiaFiltroRicercaRuoloTransazioneEnum.get(body.getTipo()).toString());
+		if(body.getIdCluster()!=null) {
+			wrap.overrideParameter(CostantiExporter.ID_CLUSTER,
+					body.getIdCluster());
+		}
 		if(body.getTag()!=null) {
 			wrap.overrideParameter(CostantiExporter.GRUPPO,
 					body.getTag());

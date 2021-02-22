@@ -14,6 +14,11 @@ Scenario: Soggetti FindAll 200 OK
     
     * call findall_200 { resourcePath: 'soggetti', body: '#(soggetto)', key: '#(soggetto.nome)' }
 
+@FindAll200ProfiloQualsiasi
+Scenario: Soggetti FindAll ProfiloQualsiasi 200 OK
+    
+    * call findall_200 { resourcePath: 'soggetti', body: '#(soggetto)', key: '#(soggetto.nome)', query_params:  { profilo_qualsiasi: true } }
+
 @Get200
 Scenario: Soggetti Get 200 OK
 

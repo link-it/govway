@@ -267,7 +267,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
 	    public byte[] getReportDistribuzioneApiBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-	    		ProfiloEnum profilo, String soggetto, String soggettoRemoto, String tag, Boolean distinguiApiImplementata, 
+	    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String tag, Boolean distinguiApiImplementata, 
 	    		EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -295,6 +295,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
@@ -375,7 +376,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneApplicativoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore,String soggettoMittente, String tag, String uriApiImplementata, 
+    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore,String soggettoMittente, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -400,6 +401,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
@@ -479,7 +481,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneAzioneBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
+    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -501,6 +503,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
@@ -581,7 +584,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneEsitiBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
+    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -605,6 +608,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
@@ -671,7 +675,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneIdAutenticatoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata,
+    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata,
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -695,6 +699,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
@@ -774,7 +779,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneSoggettoLocaleBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		ProfiloEnum profilo, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
+    		ProfiloEnum profilo, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -796,6 +801,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
@@ -874,7 +880,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneSoggettoRemotoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		ProfiloEnum profilo, String soggetto, String soggettoErogatore, String tag, String uriApiImplementata, 
+    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -898,6 +904,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
@@ -978,7 +985,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneTemporaleBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
+    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -1002,6 +1009,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReportMultiLine opzioni = new OpzioniGenerazioneReportMultiLine();
 			opzioni.setFormato(formatoReport);
@@ -1080,7 +1088,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 */
 	@Override
     public byte[] getReportDistribuzioneTokenInfoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		TokenClaimEnum claim, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
+    		TokenClaimEnum claim, ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
@@ -1104,6 +1112,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
@@ -1181,7 +1190,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
      */
     @Override
     public byte[] getReportDistribuzioneIndirizzoIPBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
-    		ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
+    		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag, String uriApiImplementata, 
     		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
     	IContext context = this.getContext();
@@ -1205,6 +1214,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setIntervalloTemporale(intervallo);
 			ricerca.setUnitaTempo(unitaTempo);
 			ricerca.setTipo(tipo);
+			ricerca.setIdCluster(idCluster);
 
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
