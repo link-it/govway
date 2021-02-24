@@ -69,9 +69,12 @@ public class PropertiesReader extends MapReader<Object, Object> {
 					throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: ${ utilizzato senza la rispettiva chiusura }");
 				}
 				String nameSystemProperty = value.substring(indexStart+"${".length(),indexEnd);
-				String valueSystemProperty = System.getProperty(nameSystemProperty);
+				String valueSystemProperty = System.getenv(nameSystemProperty); // sistema
+				if(valueSystemProperty==null) {
+					valueSystemProperty = System.getProperty(nameSystemProperty); // java
+				}
 				if(valueSystemProperty==null){
-					throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
+					throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: variabile di sistema o java ${"+nameSystemProperty+"} non esistente");
 				}
 				value = value.replace("${"+nameSystemProperty+"}", valueSystemProperty);
 			}

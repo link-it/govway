@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.config.CanaliConfigurazione;
+import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -320,6 +321,17 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	
 	// CONFIGURAZIONE
+	
+	@Override
+	public ConfigurazioneMultitenant getConfigurazioneMultitenant() throws RegistryNotFound,RegistryException{
+		try{
+			return this.configurazionePdDMangager.getConfigurazioneMultitenant();
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
 	
 	@Override
 	public CanaliConfigurazione getCanaliConfigurazione() throws RegistryNotFound,RegistryException{

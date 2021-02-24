@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.config.CanaliConfigurazione;
+import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -88,6 +89,8 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	public List<Allarme> getAllarmi(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException;
 	
 	// CONFIGURAZIONE
+	
+	public ConfigurazioneMultitenant getConfigurazioneMultitenant() throws RegistryNotFound,RegistryException;
 	
 	public CanaliConfigurazione getCanaliConfigurazione() throws RegistryNotFound,RegistryException;
 	

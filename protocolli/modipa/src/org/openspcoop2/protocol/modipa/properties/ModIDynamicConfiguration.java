@@ -28,8 +28,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
@@ -244,7 +247,24 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			
 			BooleanProperty booleanModeItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_ID);
 			if(booleanModeItemValue!=null && booleanModeItemValue.getValue()!=null && booleanModeItemValue.getValue()) {
-				this.updateKeystoreConfig(consoleConfiguration, properties, false, true, true);
+				boolean hideSceltaArchivioFilePath = false;
+				ConfigurazioneMultitenant configurazioneMultitenant = null;
+				try {
+					configurazioneMultitenant = configIntegrationReader.getConfigurazioneMultitenant();
+				}
+				catch(RegistryNotFound notFound) {}
+				catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				/*
+				if(configurazioneMultitenant!=null &&
+						StatoFunzionalita.ABILITATO.equals(configurazioneMultitenant.getStato()) &&
+						!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazioneMultitenant.getErogazioneSceltaSoggettiFruitori())) {
+					hideSceltaArchivioFilePath = true;
+				}
+				FIX: visualizzo sempre: ho aggiunto un commento. Altrimenti se poi uno modifica la configurazione multitenat, gli applicativi gia' configurati con modalita 'path' vanno in errore
+				*/			
+				this.updateKeystoreConfig(consoleConfiguration, properties, false, hideSceltaArchivioFilePath, true, configurazioneMultitenant);
 			}
 			else {
 
@@ -3212,7 +3232,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		// KeyStore
 		
 		if(!fruizione && !request) {
-			this.updateKeystoreConfig(consoleConfiguration, properties, true, false, requiredValue);
+			this.updateKeystoreConfig(consoleConfiguration, properties, true, false, requiredValue, null);
 		}
 		
 	}
@@ -3314,7 +3334,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	}
 	
 	private void updateKeystoreConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, boolean checkRidefinisci, boolean addHiddenSubjectIssuer,
-			boolean requiredValue) throws ProtocolException {
+			boolean requiredValue, ConfigurazioneMultitenant configurazioneMultitenant) throws ProtocolException {
 		
 		boolean ridefinisci = true;
 		if(checkRidefinisci) {
@@ -3375,6 +3395,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				if(pathItemItemValue!=null) {
 					pathItemItemValue.setValue(null);
 				}
+				
+				modeItem.setNote(null);
 			}
 			else {
 				archiveItem.setType(ConsoleItemType.HIDDEN);
@@ -3389,6 +3411,15 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				pathItem.setType(ConsoleItemType.TEXT_AREA);
 				((StringConsoleItem)pathItem).setRows(3);
 				pathItem.setRequired(requiredValue);
+				
+				if(configurazioneMultitenant!=null &&
+						StatoFunzionalita.ABILITATO.equals(configurazioneMultitenant.getStato()) &&
+						!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazioneMultitenant.getErogazioneSceltaSoggettiFruitori())) {
+					modeItem.setNote(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_NOTE_PATH);
+				}
+				else {
+					modeItem.setNote(null);
+				}
 			}
 			
 			if(addHiddenSubjectIssuer) {

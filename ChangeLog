@@ -1,3 +1,10 @@
+2021-02-24  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA, Utils]
+	Aggiunta funzionalità OP-1146
+	Nella configurazione relativa alla sicurezza messaggio ModI di un applicativo di dominio interno è adesso possibile configurare il keystore per la firma indicandolo tramite un path su filesystem.
+	Inoltre è stata rivista l'utility per la lettura delle proprietà di un file, in modo che la risoluzione di una variabile venga verificata anche su variabili di sistema oltre che variabili java.
+
 2021-02-22  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio, ApiRsConfigurazione, TestsuiteProtocolloTrasparente]

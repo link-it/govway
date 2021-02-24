@@ -28,6 +28,7 @@ import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
 import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.config.CanaliConfigurazione;
+import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -450,6 +451,21 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	
 
 	// CONFIGURAZIONE
+	
+	@Override
+	public ConfigurazioneMultitenant getConfigurazioneMultitenant() throws RegistryNotFound,RegistryException{
+		try{
+			ConfigurazioneMultitenant conf = this.driverConfigurazioneGET.getConfigurazioneGenerale().getMultitenant();
+			if(conf==null) {
+				return new ConfigurazioneMultitenant();
+			}
+			return conf;
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
 	
 	@Override
 	public CanaliConfigurazione getCanaliConfigurazione() throws RegistryNotFound,RegistryException{

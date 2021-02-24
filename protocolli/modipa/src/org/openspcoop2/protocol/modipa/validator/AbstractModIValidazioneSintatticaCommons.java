@@ -24,6 +24,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
@@ -104,7 +105,8 @@ public class AbstractModIValidazioneSintatticaCommons {
 			if(idServizioApplicativo==null) {
 				// 5. provare a vedere se si tratta di un applicativo interno (multi-tenant)
 				
-				if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato())) {
+				if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
+						!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazionePdDManager.getConfigurazioneMultitenant().getErogazioneSceltaSoggettiFruitori())) {
 					
 					FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
 					
