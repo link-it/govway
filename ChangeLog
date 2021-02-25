@@ -1,3 +1,17 @@
+2021-02-25  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-845
+	È adesso possibile registrare le classi che implementano funzionalità personalizzate tramite la console di gestione. 
+	La loro registrazione permette di abilitare una personalizzazione all'interno delle erogazioni o fruizioni di API selezionando il plugin desiderato da una lista.
+	Le personalizzazioni registrabili riguardano: autenticazione, autorizzazione, autorizzazione dei contenuti, connettori, rate-limiting, header di integrazione e handlers.
+	È inoltre possibile caricare tramite la console gli archivi jar che implementano le personalizzazioni; 
+	gli archivi caricati risultano subito disponibili al gateway essendo stato implementato un meccanismo di class loader dedicato a tali componenti. 
+	È stato inoltre rivista la configurazione degli header di integrazione, tra le opzioni avanzate delle erogazioni e delle fruizioni, 
+	con il fine di rendere più agevole la configurazione tramite una semplice selezione da una lista di meccanismi di integrazione disponibili.
+	Infine è stata aggiunta la possibilità di registrare handler che agiscono sulle varie fasi di una richiesta in transito su GovWay. 
+	Gli handler sono registrabili sia a livello di configurazione generale che sulle specifiche erogazioni e fruizioni di API.
+
 2021-02-24  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA, Utils]

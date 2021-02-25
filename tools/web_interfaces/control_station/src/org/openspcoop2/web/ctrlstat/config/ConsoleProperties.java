@@ -443,6 +443,10 @@ public class ConsoleProperties {
 		return 300;
 	}
 	
+	public Boolean isConfigurazioneHandlersEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "handlers.enabled");
+	}
+	
 	public Boolean isConfigurazioneAllarmiEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "allarmi.enabled");
 	}

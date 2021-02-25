@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -72,6 +73,8 @@ import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
+import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -149,7 +152,6 @@ public final class PorteApplicativeChange extends Action {
 			String ricsim = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA);
 			String ricasim = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA);
 			String scadcorr = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA);
-			String integrazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
 			String servizioApplicativo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
 
 			String azid = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID);
@@ -173,6 +175,45 @@ public final class PorteApplicativeChange extends Action {
 			ServiceBinding serviceBinding = null;
 			if(StringUtils.isNotEmpty(serviceBindingS))
 				serviceBinding = ServiceBinding.valueOf(serviceBindingS);
+			
+			String integrazioneStato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE_STATO);
+			String integrazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
+			String[] integrazioneGruppi = porteApplicativeHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
+		
+			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
+			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
+			boolean isConfigurazione = parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE; 
+			boolean datiAltroPorta = isConfigurazione ? ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA)) : false;
+			boolean visualizzaSezioneOpzioniAvanzate = !(porteApplicativeHelper.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
+
+			// dal secondo accesso in poi il calcolo dei gruppi da visualizzare avviene leggendo i parametri dalla richiesta
+			if(integrazioneStato != null && visualizzaSezioneOpzioniAvanzate) {
+				if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
+					if(integrazioneGruppi != null) {
+						for (String gruppoSelezionato : integrazioneGruppi) {
+							integrazioneGruppiDaVisualizzare.add(GruppoIntegrazione.toEnumConstant(gruppoSelezionato));
+						}
+						
+						// leggere i valori selezionati per ogni gruppo selezionato
+						for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+							List<String> valoriGruppoList = new ArrayList<String>();
+							if(group.isMulti()) {
+								String[] valoriGruppo = porteApplicativeHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+								if(valoriGruppo != null) {
+									valoriGruppoList.addAll(Arrays.asList(valoriGruppo));
+								}
+							} else {
+								String valoreGruppo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+								if(valoreGruppo != null) {
+									valoriGruppoList.add(valoreGruppo);
+								}
+							}
+							
+							integrazioneGruppiValoriDeiGruppi.put(group.getValue(), valoriGruppoList);							
+						}
+					}
+				}
+			}
 			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
@@ -590,7 +631,7 @@ public final class PorteApplicativeChange extends Action {
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
-			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA));
+//			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA));
 			boolean datiAltroApi = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API));
 			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 						
@@ -715,9 +756,48 @@ public final class PorteApplicativeChange extends Action {
 				if ((scadcorr == null) && (ca != null)) {
 					scadcorr = ca.getScadenza();
 				}
+				
+				if (integrazioneStato == null) {
+					if(pa.getIntegrazione() == null) {
+						integrazioneStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT;
+					} else if(TipoIntegrazione.DISABILITATO.getValue().equals(pa.getIntegrazione())) {
+						integrazioneStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO;
+					} else {
+						integrazioneStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO;
+					}
+				}
 
 				if (integrazione == null) {
 					integrazione = pa.getIntegrazione();
+					
+					List<String> integrazioneGruppiList = new ArrayList<String>();
+					
+					if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
+						// decodificare il contenuto di integrazione per generare gli elementi grafici necessari.
+						List<String> valoriIntegrazione = integrazione != null ? Arrays.asList(integrazione.split(",")) : new ArrayList<String>();
+						for (String valoreIntegrazione : valoriIntegrazione) {
+							TipoIntegrazione tipoIntegrazione = TipoIntegrazione.toEnumConstant(valoreIntegrazione);
+							GruppoIntegrazione group = tipoIntegrazione != null ? tipoIntegrazione.getGroup() : GruppoIntegrazione.PLUGIN;
+							String gruppoValore = group.getValue();
+							
+							List<String> valoriIntegrazionePerGruppo = null;
+							if(integrazioneGruppiValoriDeiGruppi.containsKey(gruppoValore)) {
+								valoriIntegrazionePerGruppo = integrazioneGruppiValoriDeiGruppi.remove(gruppoValore);
+							} else {
+								valoriIntegrazionePerGruppo = new ArrayList<String>();
+							}
+							
+							valoriIntegrazionePerGruppo.add(valoreIntegrazione);
+							integrazioneGruppiValoriDeiGruppi.put(gruppoValore, valoriIntegrazionePerGruppo);
+							 
+							if(!integrazioneGruppiDaVisualizzare.contains(group)) {
+								integrazioneGruppiDaVisualizzare.add(group);
+								integrazioneGruppiList.add(gruppoValore);
+							}
+						}
+						
+						integrazioneGruppi = integrazioneGruppiList.size() > 0 ? integrazioneGruppiList.toArray(new String[integrazioneGruppiList.size()]) : null;
+					}
 				}
 				
 				if (messageEngine == null) {
@@ -998,7 +1078,8 @@ public final class PorteApplicativeChange extends Action {
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.CHANGE,dati, 
 						nomePorta, descr, soggvirt, soggettiList, soggettiListLabel, servizio,
 						serviziList, serviziListLabel, azione, azioniList, azioniListLabel, stateless, ricsim, ricasim, idsogg, 
-						idPorta, statoValidazione, tipoValidazione, gestBody, gestManifest,integrazione,
+						idPorta, statoValidazione, tipoValidazione, gestBody, gestManifest,integrazioneStato, integrazione, 
+						integrazioneGruppi, integrazioneGruppiDaVisualizzare, integrazioneGruppiValoriDeiGruppi,
 						numCorrApp,scadcorr,autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, protocollo,
 						numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
@@ -1170,7 +1251,8 @@ public final class PorteApplicativeChange extends Action {
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.CHANGE,dati,
 						nomePorta, descr, soggvirt, soggettiList, soggettiListLabel, servizio, 
 						serviziList, serviziListLabel, azione, azioniList, azioniListLabel,  stateless, ricsim,
-						ricasim, idsogg, idPorta, statoValidazione, tipoValidazione, gestBody, gestManifest,integrazione,
+						ricasim, idsogg, idPorta, statoValidazione, tipoValidazione, gestBody, gestManifest,integrazioneStato, integrazione,
+						integrazioneGruppi, integrazioneGruppiDaVisualizzare, integrazioneGruppiValoriDeiGruppi,
 						numCorrApp,scadcorr,autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,protocollo,
 						numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
@@ -1327,7 +1409,18 @@ public final class PorteApplicativeChange extends Action {
 			if (ca != null)
 				ca.setScadenza(scadcorr);
 			pa.setCorrelazioneApplicativa(ca);
-			pa.setIntegrazione(integrazione);
+			
+			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT)) {
+				pa.setIntegrazione(null);
+			} else if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO)) {
+				pa.setIntegrazione(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO);
+			} else {
+				List<String> valoriFinaliIntegrazione = new ArrayList<String>();
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					valoriFinaliIntegrazione.addAll(integrazioneGruppiValoriDeiGruppi.get(group.getValue()));
+				}
+				pa.setIntegrazione(StringUtils.join(valoriFinaliIntegrazione.toArray(new String[valoriFinaliIntegrazione.size()]), ","));
+			}
 			
 			if(!porteApplicativeCore.isConnettoriMultipliEnabled()) {
 				if(behaviour!=null && !"".equals(behaviour)){

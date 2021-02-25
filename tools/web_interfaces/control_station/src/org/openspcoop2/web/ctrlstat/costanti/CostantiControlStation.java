@@ -40,6 +40,8 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
+import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
 
@@ -299,8 +301,53 @@ public class CostantiControlStation {
 	public final static String LABEL_SOGGETTI = "Soggetti";
 	public final static String LABEL_APPLICATIVI = "Applicativi";
 	public final static String LABEL_INTEGRAZIONE = "Integrazione";
+	public final static String LABEL_INTEGRAZIONE_STATO = "Stato";
 	public final static String LABEL_METADATI = "Metadati";
-	public final static String LABEL_METADATI_INFO = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate tramite i tipi descritti di seguito<BR/>"+
+	
+	public final static String LABEL_METADATI_INFO = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate puntualmente su una API.<BR/>"+
+			"Il Gateway dispone di una sua configurazione di default per la generazione degli header. Tramite il campo '"+CostantiControlStation.LABEL_METADATI+"' è possibile ridefinire tale comportamento o disabilitare la generazione degli header di integrazione.";
+		
+	public final static String LABEL_METADATI_RIDEFINITI_INFO_START = "Tramite la seguente lista è possibile abilitare una o più modalità di interscambio delle informazioni tra applicativi e gateway.<BR/>"+
+			"- <b>"+GruppoIntegrazione.HTTP.getCompactLabel()+"</b>: le informazioni sono veicolate all'interno di header HTTP;<BR/>"+
+			"- <b>"+GruppoIntegrazione.URL.getCompactLabel()+"</b>: le informazioni sono veicolate come parametri della url;<BR/>";
+	public final static String LABEL_METADATI_RIDEFINITI_INFO_HEADER_SOAP =
+			"- <b>"+GruppoIntegrazione.SOAP.getCompactLabel()+"</b>: le informazioni sono incluse in uno specifico header SOAP proprietario di GovWay;<BR/>"+
+			"- <b>"+GruppoIntegrazione.WSA.getCompactLabel()+"</b>: le informazioni sono incluse in un header SOAP secondo il formato standard WS-Addressing;<BR/>";
+	public final static String LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD =
+			"<BR/>"+
+			"- <b>"+GruppoIntegrazione.TEMPLATE.getCompactLabel()+"</b>: modalità che consente di definire tramite un template freemaker o velocity (definito a livello globale) come le informazioni siano inserite nel messaggio.<BR/>"+
+			"Il tipo di template (freemarker/velocity) e il path del file template possono essere specifici per API indicandoli nelle proprietà 'integrazione.template.richiesta/risposta.tipo' e 'integrazione.template.richiesta/risposta.file'.<BR/>"+
+			"<BR/>"+
+			"- <b>"+GruppoIntegrazione.PLUGIN.getCompactLabel()+"</b>: consente di selezionare un plugin personalizzato;<BR/>"+
+			"<BR/>"+
+			"Sono infine disponibili modalità che generano gli header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:<BR/>"+
+			"Le informazioni sono veicolate all'interno di header HTTP tramite le seguenti modalità:<BR/>"+
+			"- <b>"+GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP.getCompactLabel()+"</b><BR/>"+
+			"- <b>"+GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP1_HTTP.getCompactLabel()+"</b><BR/>"+
+			"Le informazioni sono veicolate come parametri della url tramite le seguenti modalità:<BR/>"+
+			"- <b>"+GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_URL.getCompactLabel()+"</b><BR/>"+
+			"- <b>"+GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP1_URL.getCompactLabel()+"</b><BR/>";
+	public final static String LABEL_METADATI_RIDEFINITI_INFO_BACKWARD_SOAP =
+			"Le informazioni sono incluse in uno specifico header SOAP proprietario di OpenSPCoop 2.x o 1.x:<BR/>"+
+			"- <b>"+GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_SOAP.getCompactLabel()+"</b><BR/>"+
+			"- <b>"+GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_SOAP.getCompactLabel()+"</b><BR/>";
+	
+	public final static String LABEL_METADATI_RIDEFINITI_INFO_SOAP = 
+			LABEL_METADATI_RIDEFINITI_INFO_START+
+			LABEL_METADATI_RIDEFINITI_INFO_HEADER_SOAP+
+			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD+
+			LABEL_METADATI_RIDEFINITI_INFO_BACKWARD_SOAP;
+
+	public final static String LABEL_METADATI_RIDEFINITI_INFO_REST = 
+			LABEL_METADATI_RIDEFINITI_INFO_START+
+			LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD;
+	
+	public final static String LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_2 = "Backward Compatibility OpenSPCoop 2.x";
+	public final static String LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_1 = "Backward Compatibility OpenSPCoop 1.x";
+	public final static String LABEL_METADATI_BACKWARD_COMPATIBILITY_HEADER_SOAP = "Header SOAP";
+	
+	@Deprecated
+	public final static String LABEL_METADATI_INFO_OLD = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate tramite i tipi descritti di seguito<BR/>"+
 			"Il Gateway dispone di una sua configurazione di default per la generazione degli header. Tramite il campo '"+CostantiControlStation.LABEL_METADATI+"' è possibile ridefinire tale comportamento.<BR/>"+
 			"<BR/>"+
 			"<b>trasporto</b>: le informazioni sono veicolate all'interno di header HTTP<BR/>"+
@@ -721,6 +768,9 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_CANALE_RIDEFINITO_EROGAZIONE = "Configurazione ridefinita per l'erogazione";
 	public final static String LABEL_CONFIGURAZIONE_CANALE_RIDEFINITO_FRUIZIONE = "Configurazione ridefinita per la fruizione";
 	
+	public final static String LABEL_PARAMETRO_PORTE_METADATI = "Metadati";
+	public final static String LABEL_PARAMETRO_PORTE_METADATI_GRUPPO = "";
+	
 	
 	// POLICY RISORSA TIPO
 	
@@ -1026,6 +1076,12 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = "trReqParNome";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = "trReqParTipo";
 	public final static String PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE = "trReqParIden";
+	
+	
+	public final static String PARAMETRO_PORTE_INTEGRAZIONE_STATO = "integrazioneStato";
+	public final static String PARAMETRO_PORTE_INTEGRAZIONE = "integrazione";
+	public final static String PARAMETRO_PORTE_METADATI_GRUPPO = "metadatiGruppo";
+	public final static String PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO = "mdG_";
 	
 	/** PARAMETRI MESSAGE PAGE **/
 	
@@ -1898,6 +1954,28 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED = "-";
 	
 	
+	public final static String LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT = "default";
+	public final static String LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO = "disabilitato";
+	public final static String LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO = "ridefinito";
+	
+	public final static List<String> LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO = new ArrayList<>();
+	static {
+		LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT);
+		LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO);
+		LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(LABEL_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO);
+	}
+	
+	public final static String VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT = "default";
+	public final static String VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO = TipoIntegrazione.DISABILITATO.getValue();
+	public final static String VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO = "ridefinito";
+	
+	public final static List<String> VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO = new ArrayList<>();
+	static {
+		VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT);
+		VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO);
+		VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO.add(VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO);
+	}
+	
 	
 	/** MESSAGGI */
 	public static final String MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE = "Posizione della policy modificata correttamente.";
@@ -1996,6 +2074,8 @@ public class CostantiControlStation {
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrato il carattere separatore '='";
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX = "I controlli di autorizzazione del contenuto in ogni riga devono essere indicati come coppia (risorsa=valore); non è stato riscontrata l'indicazione di una risorsa, tramite espressioni dinamiche, nella linea ";
 
+	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI = "Non è stato selezionato nessun gruppo di metadati";
+	public static final String MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO = "Non è stato selezionato nessun valore per il gruppo di metadati {0}";
 	/** ICONE E TOOLTIP */
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE = "&#xE3C9;";
 	public final static String ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";

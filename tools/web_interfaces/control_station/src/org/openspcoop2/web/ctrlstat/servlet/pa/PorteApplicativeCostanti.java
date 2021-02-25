@@ -573,7 +573,8 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.PARAMETRO_NOME_GRUPPO;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA = "oldNomePA";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = "integrazione";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE_STATO = CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_IDENTIFICATIVO_MESSAGGIO = "idMessaggio";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_IDENTIFICAZIONE = "identificazione";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
@@ -841,6 +842,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI_CONFIG_DI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE = CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = CostantiControlStation.LABEL_INTEGRAZIONE;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE_STATO = CostantiControlStation.LABEL_INTEGRAZIONE_STATO;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI = CostantiControlStation.LABEL_METADATI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATELESS = CostantiControlStation.LABEL_STATELESS;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR = CostantiControlStation.LABEL_BEHAVIOUR;

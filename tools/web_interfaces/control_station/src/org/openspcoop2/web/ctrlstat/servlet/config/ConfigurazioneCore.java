@@ -58,11 +58,14 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.constants.FaseMessageHandler;
+import org.openspcoop2.core.config.constants.FaseServiceHandler;
 import org.openspcoop2.core.config.constants.PluginSorgenteArchivio;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
@@ -86,6 +89,7 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistory
 import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.utils.handlers.ConfigurazioneHandlerBean;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -556,6 +560,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
+	
 	public RegistroPlugins getRegistroPlugins() throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getRegistroPlugins";
@@ -728,6 +733,340 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 
+	}
+	
+	public int numeroHandlersRichiesta(String tipologia, TipoPdD ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroHandlersRichiestaList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.numeroHandlersRichiestaList(getTipologiaFromFaseMessageHandler(tipologia, true), ruoloPorta, idPorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int numeroHandlersRisposta(String tipologia, TipoPdD ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroHandlersRispostaList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.numeroHandlersRispostaList(getTipologiaFromFaseMessageHandler(tipologia, false), ruoloPorta, idPorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int numeroHandlersServizio(String tipologia) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "numeroHandlersServizioList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.numeroHandlersServizioList(getTipologiaFromFaseServiceHandler(tipologia), null, null);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ConfigurazioneHandlerBean> handlersRichiestaList(ISearch ricerca, String tipologia, TipoPdD ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "handlersRichiestaList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.handlersRichiestaList(ricerca, getTipologiaFromFaseMessageHandler(tipologia, true), ruoloPorta, idPorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ConfigurazioneHandlerBean> handlersRispostaList(ISearch ricerca, String tipologia, TipoPdD ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "handlersRispostaList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.handlersRispostaList(ricerca, getTipologiaFromFaseMessageHandler(tipologia, false), ruoloPorta, idPorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ConfigurazioneHandlerBean> handlersServizioList(ISearch ricerca, String tipologia) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "handlersServizioList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.handlersServizioList(ricerca, getTipologiaFromFaseServiceHandler(tipologia), null, null);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int getMaxPosizioneHandlersRichiesta(String tipologia, TipoPdD ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMaxPosizioneHandlersRichiesta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getMaxPosizioneHandlersRichiesta(getTipologiaFromFaseMessageHandler(tipologia, true), ruoloPorta, idPorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int getMaxPosizioneHandlersRisposta(String tipologia, TipoPdD ruoloPorta, Long idPorta) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMaxPosizioneHandlersRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getMaxPosizioneHandlersRisposta(getTipologiaFromFaseMessageHandler(tipologia, false), ruoloPorta, idPorta);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public int getMaxPosizioneHandlersServizio(String tipologia) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMaxPosizioneHandlersServizio";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione 
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getMaxPosizioneHandlersServizio(getTipologiaFromFaseServiceHandler(tipologia), null, null);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsHandlerRichiesta(String tipologia, TipoPdD ruoloPorta, Long idPorta, String tipo) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsHandlerRichiesta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.existsHandlerRichiesta(getTipologiaFromFaseMessageHandler(tipologia, true), ruoloPorta, idPorta, tipo);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsHandlerRisposta(String tipologia, TipoPdD ruoloPorta, Long idPorta, String tipo) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsHandlerRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.existsHandlerRisposta(getTipologiaFromFaseMessageHandler(tipologia, false), ruoloPorta, idPorta, tipo);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existsHandlerServizio(String tipologia, String tipo) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "existsHandlerServizio";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione 
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.existsHandlerServizio(getTipologiaFromFaseServiceHandler(tipologia), null, null, tipo);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public ConfigurazioneHandlerBean getHandlerRichiesta(String tipologia, TipoPdD ruoloPorta, Long idPorta, Long idHandler) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getHandlerRichiesta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getHandlerRichiesta(getTipologiaFromFaseMessageHandler(tipologia, true), ruoloPorta, idPorta, idHandler);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public ConfigurazioneHandlerBean getHandlerRisposta(String tipologia, TipoPdD ruoloPorta, Long idPorta, Long idHandler) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getHandlerRisposta";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getHandlerRisposta(getTipologiaFromFaseMessageHandler(tipologia, false), ruoloPorta, idPorta, idHandler);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public ConfigurazioneHandlerBean getHandlerServizio(String tipologia, Long idHandler) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getHandlerServizio";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione 
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getHandlerServizio(getTipologiaFromFaseServiceHandler(tipologia), null, null, idHandler);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	private String getTipologiaFromFaseMessageHandler(String fase, boolean request) {
+		if(fase != null) {
+			return getTipologiaFromFaseMessageHandler(FaseMessageHandler.toEnumConstant(fase), request);
+		}
+		return null;
+	}
+	private String getTipologiaFromFaseMessageHandler(FaseMessageHandler fase, boolean request) {
+		if(fase != null) {
+			String suffix = request ? CostantiDB.HANDLER_REQUEST_SUFFIX : CostantiDB.HANDLER_RESPONSE_SUFFIX; 
+			switch (fase) {
+			case IN:
+				return CostantiDB.HANDLER_IN+suffix;
+			case IN_PROTOCOL_INFO:
+				return CostantiDB.HANDLER_IN_PROTOCOL+suffix;
+			case OUT:
+				return CostantiDB.HANDLER_OUT+suffix;
+			case POST_OUT:
+				return CostantiDB.HANDLER_POST_OUT+suffix;
+			case PRE_IN:
+				return CostantiDB.HANDLER_PRE_IN+suffix;
+			}
+		}
+		
+		return null;
+	}
+	
+	private String getTipologiaFromFaseServiceHandler(String fase) {
+		if(fase != null) {
+			return getTipologiaFromFaseServiceHandler(FaseServiceHandler.toEnumConstant(fase));
+		}
+		return null;
+	}
+	private String getTipologiaFromFaseServiceHandler(FaseServiceHandler fase) {
+		if(fase != null) {
+			switch (fase) {
+			case EXIT:
+				return CostantiDB.HANDLER_EXIT;
+			case INIT:
+				return CostantiDB.HANDLER_INIT;
+			case INTEGRATION_MANAGER_REQUEST:
+				return CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST;
+			case INTEGRATION_MANAGER_RESPONSE:
+				return CostantiDB.HANDLER_INTEGRATION_MANAGER_RESPONSE;
+			}
+		}
+		
+		return null;
 	}
 		
 	/**

@@ -13596,11 +13596,11 @@ public class DriverConfigurazioneDB_LIB {
 					if(tipologia.startsWith(CostantiDB.HANDLER_PRE_IN)) {
 						config.setPreInList(list);
 					}
+					else if(tipologia.startsWith(CostantiDB.HANDLER_IN_PROTOCOL)) { // prima di in senno c'e' il bu
+						config.setInProtocolInfoList(list);
+					}
 					else if(tipologia.startsWith(CostantiDB.HANDLER_IN)) {
 						config.setInList(list);
-					}
-					else if(tipologia.startsWith(CostantiDB.HANDLER_IN_PROTOCOL)) {
-						config.setInProtocolInfoList(list);
 					}
 					else if(tipologia.startsWith(CostantiDB.HANDLER_OUT)) {
 						config.setOutList(list);
@@ -13750,10 +13750,10 @@ public class DriverConfigurazioneDB_LIB {
 				createConfigurazioneHandlers(con, config.getPreInList(), tabella, CostantiDB.HANDLER_PRE_IN+suffix, idPorta);
 				createConfigurazioneHandlers(con, config.getInList(), tabella, CostantiDB.HANDLER_IN+suffix, idPorta);
 				if(request) {
-					createConfigurazioneHandlers(con, config.getInList(), tabella, CostantiDB.HANDLER_IN_PROTOCOL+suffix, idPorta);
+					createConfigurazioneHandlers(con, config.getInProtocolInfoList(), tabella, CostantiDB.HANDLER_IN_PROTOCOL+suffix, idPorta);
 				}
-				createConfigurazioneHandlers(con, config.getInList(), tabella, CostantiDB.HANDLER_OUT+suffix, idPorta);
-				createConfigurazioneHandlers(con, config.getInList(), tabella, CostantiDB.HANDLER_POST_OUT+suffix, idPorta);
+				createConfigurazioneHandlers(con, config.getOutList(), tabella, CostantiDB.HANDLER_OUT+suffix, idPorta);
+				createConfigurazioneHandlers(con, config.getPostOutList(), tabella, CostantiDB.HANDLER_POST_OUT+suffix, idPorta);
 
 				break;
 				
@@ -13839,9 +13839,9 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				createConfigurazioneHandlers(con, config.getInitList(), tabella, CostantiDB.HANDLER_INIT, idPorta);
-				createConfigurazioneHandlers(con, config.getInitList(), tabella, CostantiDB.HANDLER_EXIT, idPorta);
-				createConfigurazioneHandlers(con, config.getInitList(), tabella, CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST, idPorta);
-				createConfigurazioneHandlers(con, config.getInitList(), tabella, CostantiDB.HANDLER_INTEGRATION_MANAGER_RESPONSE, idPorta);		
+				createConfigurazioneHandlers(con, config.getExitList(), tabella, CostantiDB.HANDLER_EXIT, idPorta);
+				createConfigurazioneHandlers(con, config.getIntegrationManagerRequestList(), tabella, CostantiDB.HANDLER_INTEGRATION_MANAGER_REQUEST, idPorta);
+				createConfigurazioneHandlers(con, config.getIntegrationManagerResponseList(), tabella, CostantiDB.HANDLER_INTEGRATION_MANAGER_RESPONSE, idPorta);		
 
 				break;
 				

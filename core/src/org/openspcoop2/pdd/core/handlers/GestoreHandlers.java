@@ -180,7 +180,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InitHandler BuiltIn ["+GestoreHandlers.tipiInitHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.initHandlersBuiltIn = reorder(GestoreHandlers.initHandlersBuiltIn);
+				GestoreHandlers.initHandlersBuiltIn = reorder(GestoreHandlers.initHandlersBuiltIn, new InitHandler[1]);
 			}
 			
 			// ExitHandler
@@ -198,7 +198,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione ExitHandler BuiltIn ["+GestoreHandlers.tipiExitHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.exitHandlersBuiltIn = reorder(GestoreHandlers.exitHandlersBuiltIn);
+				GestoreHandlers.exitHandlersBuiltIn = reorder(GestoreHandlers.exitHandlersBuiltIn, new ExitHandler[1]);
 			}
 			
 			// PreInRequestHandler
@@ -222,7 +222,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PreInRequestHandler BuiltIn ["+GestoreHandlers.tipiPreInRequestHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.preInRequestHandlersBuiltIn = reorder(GestoreHandlers.preInRequestHandlersBuiltIn);
+				GestoreHandlers.preInRequestHandlersBuiltIn = reorder(GestoreHandlers.preInRequestHandlersBuiltIn, new PreInRequestHandler[1]);
 			}
 			
 			// InRequestHandler
@@ -246,7 +246,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InRequestHandler BuiltIn ["+GestoreHandlers.tipiInRequestHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.inRequestHandlersBuiltIn = reorder(GestoreHandlers.inRequestHandlersBuiltIn);
+				GestoreHandlers.inRequestHandlersBuiltIn = reorder(GestoreHandlers.inRequestHandlersBuiltIn, new InRequestHandler[1]);
 			}
 			
 			// InRequestProtocolHandler
@@ -270,7 +270,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InRequestProtocolHandler BuiltIn ["+GestoreHandlers.tipiInRequestProtocolHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.inRequestProtocolHandlersBuiltIn = reorder(GestoreHandlers.inRequestProtocolHandlersBuiltIn);
+				GestoreHandlers.inRequestProtocolHandlersBuiltIn = reorder(GestoreHandlers.inRequestProtocolHandlersBuiltIn, new InRequestProtocolHandler[1]);
 			}
 			
 			// OutRequestHandler
@@ -294,7 +294,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione OutRequestHandler BuiltIn ["+GestoreHandlers.tipiOutRequestHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.outRequestHandlersBuiltIn = reorder(GestoreHandlers.outRequestHandlersBuiltIn);
+				GestoreHandlers.outRequestHandlersBuiltIn = reorder(GestoreHandlers.outRequestHandlersBuiltIn, new OutRequestHandler[1]);
 			}
 			
 			// PostOutRequestHandler
@@ -318,7 +318,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PostOutRequestHandler BuiltIn ["+GestoreHandlers.tipiPostOutRequestHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.postOutRequestHandlersBuiltIn = reorder(GestoreHandlers.postOutRequestHandlersBuiltIn);
+				GestoreHandlers.postOutRequestHandlersBuiltIn = reorder(GestoreHandlers.postOutRequestHandlersBuiltIn, new PostOutRequestHandler[1]);
 			}
 			
 			// PreInResponseHandler
@@ -342,7 +342,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PreInResponseHandler BuiltIn ["+GestoreHandlers.tipiPreInResponseHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.preInResponseHandlersBuiltIn = reorder(GestoreHandlers.preInResponseHandlersBuiltIn);
+				GestoreHandlers.preInResponseHandlersBuiltIn = reorder(GestoreHandlers.preInResponseHandlersBuiltIn, new PreInResponseHandler[1]);
 			}
 			
 			// InResponseHandler
@@ -366,7 +366,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InResponseHandler BuiltIn ["+GestoreHandlers.tipiInResponseHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.inResponseHandlersBuiltIn = reorder(GestoreHandlers.inResponseHandlersBuiltIn);
+				GestoreHandlers.inResponseHandlersBuiltIn = reorder(GestoreHandlers.inResponseHandlersBuiltIn, new InResponseHandler[1]);
 			}
 			
 			// OutResponseHandler
@@ -390,7 +390,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione OutResponseHandler BuiltIn ["+GestoreHandlers.tipiOutResponseHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.outResponseHandlersBuiltIn = reorder(GestoreHandlers.outResponseHandlersBuiltIn);
+				GestoreHandlers.outResponseHandlersBuiltIn = reorder(GestoreHandlers.outResponseHandlersBuiltIn, new OutResponseHandler[1]);
 			}
 			
 			// PostOutResponseHandler
@@ -414,7 +414,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PostOutResponseHandler BuiltIn ["+GestoreHandlers.tipiPostOutResponseHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.postOutResponseHandlersBuiltIn = reorder(GestoreHandlers.postOutResponseHandlersBuiltIn);
+				GestoreHandlers.postOutResponseHandlersBuiltIn = reorder(GestoreHandlers.postOutResponseHandlersBuiltIn, new PostOutResponseHandler[1]);
 			}
 			
 			// IntegrationManagerRequestHandler
@@ -432,7 +432,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerRequestHandler BuiltIn ["+GestoreHandlers.tipiIntegrationManagerRequestHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.integrationManagerRequestHandlersBuiltIn = reorder(GestoreHandlers.integrationManagerRequestHandlersBuiltIn);
+				GestoreHandlers.integrationManagerRequestHandlersBuiltIn = reorder(GestoreHandlers.integrationManagerRequestHandlersBuiltIn, new IntegrationManagerRequestHandler[1]);
 			}
 			
 			// IntegrationManagerResponseHandler
@@ -450,7 +450,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerResponseHandler BuiltIn ["+GestoreHandlers.tipiIntegrationManagerResponseHandlersBuiltIn[i]+"]");
 					}
 				}
-				GestoreHandlers.integrationManagerResponseHandlersBuiltIn = reorder(GestoreHandlers.integrationManagerResponseHandlersBuiltIn);
+				GestoreHandlers.integrationManagerResponseHandlersBuiltIn = reorder(GestoreHandlers.integrationManagerResponseHandlersBuiltIn, new IntegrationManagerResponseHandler[1]);
 			}
 			
 			
@@ -480,7 +480,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InitHandler ["+GestoreHandlers.tipiInitHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.initHandlers = reorder(GestoreHandlers.initHandlers);
+				GestoreHandlers.initHandlers = reorder(GestoreHandlers.initHandlers, new InitHandler[1]);
 			}
 			
 			// ExitHandler
@@ -504,7 +504,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione ExitHandler ["+GestoreHandlers.tipiExitHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.exitHandlers = reorder(GestoreHandlers.exitHandlers);
+				GestoreHandlers.exitHandlers = reorder(GestoreHandlers.exitHandlers, new ExitHandler[1]);
 			}
 			
 			// PreInRequestHandler
@@ -534,7 +534,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PreInRequestHandler ["+GestoreHandlers.tipiPreInRequestHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.preInRequestHandlers = reorder(GestoreHandlers.preInRequestHandlers);
+				GestoreHandlers.preInRequestHandlers = reorder(GestoreHandlers.preInRequestHandlers, new PreInRequestHandler[1]);
 			}
 			
 			// InRequestHandler
@@ -564,7 +564,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InRequestHandler ["+GestoreHandlers.tipiInRequestHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.inRequestHandlers = reorder(GestoreHandlers.inRequestHandlers);
+				GestoreHandlers.inRequestHandlers = reorder(GestoreHandlers.inRequestHandlers, new InRequestHandler[1]);
 			}
 			
 			// InRequestProtocolHandler
@@ -594,7 +594,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InRequestProtocolHandler ["+GestoreHandlers.tipiInRequestProtocolHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.inRequestProtocolHandlers = reorder(GestoreHandlers.inRequestProtocolHandlers);
+				GestoreHandlers.inRequestProtocolHandlers = reorder(GestoreHandlers.inRequestProtocolHandlers, new InRequestProtocolHandler[1]);
 			}
 			
 			// OutRequestHandler
@@ -624,7 +624,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione OutRequestHandler ["+GestoreHandlers.tipiOutRequestHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.outRequestHandlers = reorder(GestoreHandlers.outRequestHandlers);
+				GestoreHandlers.outRequestHandlers = reorder(GestoreHandlers.outRequestHandlers, new OutRequestHandler[1]);
 			}
 			
 			// PostOutRequestHandler
@@ -654,7 +654,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PostOutRequestHandler ["+GestoreHandlers.tipiPostOutRequestHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.postOutRequestHandlers = reorder(GestoreHandlers.postOutRequestHandlers);
+				GestoreHandlers.postOutRequestHandlers = reorder(GestoreHandlers.postOutRequestHandlers, new PostOutRequestHandler[1]);
 			}
 			
 			// PreInResponseHandler
@@ -684,7 +684,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PreInResponseHandler ["+GestoreHandlers.tipiPreInResponseHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.preInResponseHandlers = reorder(GestoreHandlers.preInResponseHandlers);
+				GestoreHandlers.preInResponseHandlers = reorder(GestoreHandlers.preInResponseHandlers, new PreInResponseHandler[1]);
 			}
 			
 			// InResponseHandler
@@ -714,7 +714,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione InResponseHandler ["+GestoreHandlers.tipiInResponseHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.inResponseHandlers = reorder(GestoreHandlers.inResponseHandlers);
+				GestoreHandlers.inResponseHandlers = reorder(GestoreHandlers.inResponseHandlers, new InResponseHandler[1]);
 			}
 			
 			// OutResponseHandler
@@ -744,7 +744,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione OutResponseHandler ["+GestoreHandlers.tipiOutResponseHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.outResponseHandlers = reorder(GestoreHandlers.outResponseHandlers);
+				GestoreHandlers.outResponseHandlers = reorder(GestoreHandlers.outResponseHandlers, new OutResponseHandler[1]);
 			}
 			
 			// PostOutResponseHandler
@@ -774,7 +774,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione PostOutResponseHandler ["+GestoreHandlers.tipiPostOutResponseHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.postOutResponseHandlers = reorder(GestoreHandlers.postOutResponseHandlers);
+				GestoreHandlers.postOutResponseHandlers = reorder(GestoreHandlers.postOutResponseHandlers, new PostOutResponseHandler[1]);
 			}
 			
 			// IntegrationManagerRequestHandler
@@ -798,7 +798,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerRequestHandler ["+GestoreHandlers.tipiIntegrationManagerRequestHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.integrationManagerRequestHandlers = reorder(GestoreHandlers.integrationManagerRequestHandlers);
+				GestoreHandlers.integrationManagerRequestHandlers = reorder(GestoreHandlers.integrationManagerRequestHandlers, new IntegrationManagerRequestHandler[1]);
 			}
 			
 			// IntegrationManagerResponseHandler
@@ -822,7 +822,7 @@ public class GestoreHandlers  {
 						msgDiag.logErroreGenerico(e, "Inizializzazione IntegrationManagerResponseHandler ["+GestoreHandlers.tipiIntegrationManagerResponseHandlers[i]+"]");
 					}
 				}
-				GestoreHandlers.integrationManagerResponseHandlers = reorder(GestoreHandlers.integrationManagerResponseHandlers);
+				GestoreHandlers.integrationManagerResponseHandlers = reorder(GestoreHandlers.integrationManagerResponseHandlers, new IntegrationManagerResponseHandler[1]);
 			}
 			
 		}
@@ -838,8 +838,8 @@ public class GestoreHandlers  {
 			}
 		}
 		if(fromConfig!=null && !fromConfig.isEmpty()) {
-			for (String tipo : merge) {
-				merge.add(tipo);
+			for (int i = 0; i < fromConfig.size(); i++) {
+				merge.add(fromConfig.get(i));
 			}
 		}
 		if(!merge.isEmpty()) {
@@ -849,7 +849,7 @@ public class GestoreHandlers  {
 	}
 	
 	private final static boolean printOrderInfo = false;
-	private static <T> T[] reorder(T [] handlers){
+	private static <T> T[] reorder(T [] handlers, T[] bufferReturn){
 		if(handlers!=null && handlers.length>0){
 			
 			List<String> handlerPositionHeadId = new ArrayList<String>();
@@ -865,6 +865,11 @@ public class GestoreHandlers  {
 				System.out.println("PRE ORDER:");
 			}
 			for(int i=0; i<handlers.length; i++){
+				
+				if(handlers[i]==null) {
+					continue;
+				}
+				
 				boolean position = false;
 				if(handlers[i] instanceof PositionHandler){
 					PositionHandler p = (PositionHandler) handlers[i];
@@ -912,14 +917,19 @@ public class GestoreHandlers  {
 				}
 			}
 			
-			if(printOrderInfo){
-				System.out.println("POST ORDER:");
-				for (T t : orderedList) {
-					System.out.println("\t["+t.getClass().getName()+"]");
+			if(orderedList!=null && !orderedList.isEmpty()) {
+				if(printOrderInfo){
+					System.out.println("POST ORDER:");
+					for (T t : orderedList) {
+						System.out.println("\t["+t.getClass().getName()+"]");
+					}
 				}
+				
+				return (T[]) orderedList.toArray(bufferReturn);
 			}
-			
-			return (T[]) orderedList.toArray(handlers);
+			else {
+				return null;
+			}
 		}
 		else{
 			return null;
@@ -928,7 +938,7 @@ public class GestoreHandlers  {
 	
 	@SuppressWarnings("unchecked")
 	private static <T> List<Object[]> merge(T [] handlers1, String [] tipiHandlers1, 
-			T [] handlers2, String [] tipiHandlers2){
+			T [] handlers2, String [] tipiHandlers2, T[] bufferReturn){
 		List<Object[]> lists = new ArrayList<>();
 		if(handlers1==null || handlers1.length<=0) {
 			lists.add(handlers2);
@@ -948,34 +958,36 @@ public class GestoreHandlers  {
 		for (int i = 0; i < handlers2.length; i++) {
 			listUnsorted.add(handlers2[i]);
 		}
-		T [] sorted = reorder((T[])listUnsorted.toArray());
-		lists.add(sorted);
-		
-		List<String> listSortedType = new ArrayList<>();
-		for (int i = 0; i < sorted.length; i++) {
-			T sortHandler = sorted[i];
-			boolean found = false;
-			for (int j = 0; j < handlers1.length; j++) {
-				if(sortHandler.getClass().getName().equals(handlers1[j].getClass().getName())) {
-					listSortedType.add(tipiHandlers1[j]);
-					found = true;
-					break;
-				}
-			}
-			if(!found) {
-				for (int j = 0; j < handlers2.length; j++) {
-					if(sortHandler.getClass().getName().equals(handlers2[j].getClass().getName())) {
-						listSortedType.add(tipiHandlers2[j]);
+		T [] sorted = reorder((T[])listUnsorted.toArray(), bufferReturn);
+		if(sorted!=null) {
+			lists.add(sorted);
+			
+			List<String> listSortedType = new ArrayList<>();
+			for (int i = 0; i < sorted.length; i++) {
+				T sortHandler = sorted[i];
+				boolean found = false;
+				for (int j = 0; j < handlers1.length; j++) {
+					if(sortHandler.getClass().getName().equals(handlers1[j].getClass().getName())) {
+						listSortedType.add(tipiHandlers1[j]);
 						found = true;
 						break;
 					}
 				}
+				if(!found) {
+					for (int j = 0; j < handlers2.length; j++) {
+						if(sortHandler.getClass().getName().equals(handlers2[j].getClass().getName())) {
+							listSortedType.add(tipiHandlers2[j]);
+							found = true;
+							break;
+						}
+					}
+				}
+				if(!found) {
+					throw new RuntimeException("Errore inatteso durante la gestione dell'handler: "+sortHandler.getClass().getName());
+				}
 			}
-			if(!found) {
-				throw new RuntimeException("Errore inatteso durante la gestione dell'handler: "+sortHandler.getClass().getName());
-			}
+			lists.add(listSortedType.toArray());
 		}
-		lists.add(listSortedType.toArray());
 		
 		return lists;
 		
@@ -1035,7 +1047,7 @@ public class GestoreHandlers  {
 		
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.initHandlersBuiltIn, GestoreHandlers.tipiInitHandlersBuiltIn,
-					GestoreHandlers.initHandlers, GestoreHandlers.tipiInitHandlers);
+					GestoreHandlers.initHandlers, GestoreHandlers.tipiInitHandlers, new InitHandler [1]);
 			InitHandler [] handlers = (InitHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_initHandler(context, msgDiag, log, handlers, tipiHandlers, "InitHandler");
@@ -1085,7 +1097,7 @@ public class GestoreHandlers  {
 			
 			if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 				List<Object[]> list =  merge(GestoreHandlers.exitHandlersBuiltIn, GestoreHandlers.tipiExitHandlersBuiltIn,
-						GestoreHandlers.exitHandlers, GestoreHandlers.tipiExitHandlers);
+						GestoreHandlers.exitHandlers, GestoreHandlers.tipiExitHandlers, new ExitHandler [1]);
 				ExitHandler [] handlers = (ExitHandler []) list.get(0);
 				String [] tipiHandlers = (String []) list.get(1);
 				_exitHandler(context, log, handlers, tipiHandlers, "ExitHandler");
@@ -1127,7 +1139,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.preInRequestHandlersBuiltIn, GestoreHandlers.tipiPreInRequestHandlersBuiltIn,
-					preInRequestHandlersUsers, tipiPreInRequestHandlersUsers);
+					preInRequestHandlersUsers, tipiPreInRequestHandlersUsers, new PreInRequestHandler [1]);
 			PreInRequestHandler [] handlers = (PreInRequestHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_preInRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "PreInRequestHandler");
@@ -1247,7 +1259,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.inRequestHandlersBuiltIn, GestoreHandlers.tipiInRequestHandlersBuiltIn,
-					inRequestHandlersUsers, tipiInRequestHandlersUsers);
+					inRequestHandlersUsers, tipiInRequestHandlersUsers, new InRequestHandler [1]);
 			InRequestHandler [] handlers = (InRequestHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_inRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "InRequestHandler");
@@ -1367,7 +1379,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.inRequestProtocolHandlersBuiltIn, GestoreHandlers.tipiInRequestProtocolHandlersBuiltIn,
-					inRequestProtocolHandlersUsers, tipiInRequestProtocolHandlersUsers);
+					inRequestProtocolHandlersUsers, tipiInRequestProtocolHandlersUsers, new InRequestProtocolHandler [1]);
 			InRequestProtocolHandler [] handlers = (InRequestProtocolHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_inRequestProtocolHandler(context, msgDiag, log, handlers, tipiHandlers, "InRequestProtocolHandler");
@@ -1483,7 +1495,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.outRequestHandlersBuiltIn, GestoreHandlers.tipiOutRequestHandlersBuiltIn,
-					outRequestHandlersUsers, tipiOutRequestHandlersUsers);
+					outRequestHandlersUsers, tipiOutRequestHandlersUsers, new OutRequestHandler [1]);
 			OutRequestHandler [] handlers = (OutRequestHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_outRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "OutRequestHandler");
@@ -1599,7 +1611,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.postOutRequestHandlersBuiltIn, GestoreHandlers.tipiPostOutRequestHandlersBuiltIn,
-					postOutRequestHandlersUsers, tipiPostOutRequestHandlersUsers);
+					postOutRequestHandlersUsers, tipiPostOutRequestHandlersUsers, new PostOutRequestHandler [1]);
 			PostOutRequestHandler [] handlers = (PostOutRequestHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_postOutRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "PostOutRequestHandler");
@@ -1715,7 +1727,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.preInResponseHandlersBuiltIn, GestoreHandlers.tipiPreInResponseHandlersBuiltIn,
-					preInResponseHandlersUsers, tipiPreInResponseHandlersUsers);
+					preInResponseHandlersUsers, tipiPreInResponseHandlersUsers, new PreInResponseHandler [1]);
 			PreInResponseHandler [] handlers = (PreInResponseHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_preInResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "PreInResponseHandler");
@@ -1831,7 +1843,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.inResponseHandlersBuiltIn, GestoreHandlers.tipiInResponseHandlersBuiltIn,
-					inResponseHandlersUsers, tipiInResponseHandlersUsers);
+					inResponseHandlersUsers, tipiInResponseHandlersUsers, new InResponseHandler [1]);
 			InResponseHandler [] handlers = (InResponseHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_inResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "InResponseHandler");
@@ -1947,7 +1959,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.outResponseHandlersBuiltIn, GestoreHandlers.tipiOutResponseHandlersBuiltIn,
-					outResponseHandlersUsers, tipiOutResponseHandlersUsers);
+					outResponseHandlersUsers, tipiOutResponseHandlersUsers, new OutResponseHandler [1]);
 			OutResponseHandler [] handlers = (OutResponseHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_outResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "OutResponseHandler");
@@ -2063,7 +2075,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.postOutResponseHandlersBuiltIn, GestoreHandlers.tipiPostOutResponseHandlersBuiltIn,
-					postOutResponseHandlersUsers, tipiPostOutResponseHandlersUsers);
+					postOutResponseHandlersUsers, tipiPostOutResponseHandlersUsers, new PostOutResponseHandler [1]);
 			PostOutResponseHandler [] handlers = (PostOutResponseHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_postOutResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "PostOutResponseHandler");
@@ -2177,7 +2189,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.integrationManagerRequestHandlersBuiltIn, GestoreHandlers.tipiIntegrationManagerRequestHandlersBuiltIn,
-					GestoreHandlers.integrationManagerRequestHandlers, GestoreHandlers.tipiIntegrationManagerRequestHandlers);
+					GestoreHandlers.integrationManagerRequestHandlers, GestoreHandlers.tipiIntegrationManagerRequestHandlers, new IntegrationManagerRequestHandler [1]);
 			IntegrationManagerRequestHandler [] handlers = (IntegrationManagerRequestHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_integrationManagerRequestHandler(context, msgDiag, log, handlers, tipiHandlers, "IntegrationManagerRequestHandler");
@@ -2229,7 +2241,7 @@ public class GestoreHandlers  {
 		// gestisco handler built-in e user
 		if(properties.isMergeHandlerBuiltInAndHandlerUser()) {
 			List<Object[]> list =  merge(GestoreHandlers.integrationManagerResponseHandlersBuiltIn, GestoreHandlers.tipiIntegrationManagerResponseHandlersBuiltIn,
-					GestoreHandlers.integrationManagerResponseHandlers, GestoreHandlers.tipiIntegrationManagerResponseHandlers);
+					GestoreHandlers.integrationManagerResponseHandlers, GestoreHandlers.tipiIntegrationManagerResponseHandlers, new IntegrationManagerResponseHandler [1]);
 			IntegrationManagerResponseHandler [] handlers = (IntegrationManagerResponseHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
 			_integrationManagerResponseHandler(context, msgDiag, log, handlers, tipiHandlers, "IntegrationManagerResponseHandler");

@@ -182,6 +182,8 @@ import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLo
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
+import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -8562,7 +8564,67 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(bfTooltips.length()>0) {
 				bfTooltips.append("\n");
 			}
-			bfTooltips.append(CostantiControlStation.LABEL_METADATI_INTEGRAZIONE).append(": ").append(integrazione);
+			
+			List<String> listGruppi = new ArrayList<String>();
+			List<String> listPlugins = new ArrayList<String>();
+			if(tmp.length>0) {
+				for (String tmpIntegrazione : tmp) {
+					if(tmpIntegrazione!=null) {
+						tmpIntegrazione = tmpIntegrazione.trim();
+						TipoIntegrazione tipo = TipoIntegrazione.toEnumConstant(tmpIntegrazione);
+						if(tipo!=null) {
+							String label = null;
+							if(tipo.getGroup()!=null) {
+								label = tipo.getGroup().getCompactLabel();
+							}
+							else {
+								label = tipo.getLabel();
+							}
+							if(!listGruppi.contains(label)) {
+								listGruppi.add(label);
+							}
+						}
+						else {
+							listPlugins.add(tmpIntegrazione);
+							String label = GruppoIntegrazione.PLUGIN.getCompactLabel();
+							if(!listGruppi.contains(label)) {
+								listGruppi.add(label);
+							}
+						}
+					}
+					else {
+						listPlugins.add(tmpIntegrazione);
+						String label = GruppoIntegrazione.PLUGIN.getCompactLabel();
+						if(!listGruppi.contains(label)) {
+							listGruppi.add(label);
+						}
+					}
+				}
+			}
+			StringBuilder integrazioneString = new StringBuilder("");
+			if(!listGruppi.isEmpty()) {
+				for (String gruppo : listGruppi) {
+					if(integrazioneString.length()>0) {
+						integrazioneString.append(", ");
+					}
+					integrazioneString.append(gruppo);
+					if(GruppoIntegrazione.PLUGIN.getCompactLabel().equals(gruppo)) {
+						if(!listPlugins.isEmpty()) {
+							integrazioneString.append(" (");
+							for (int i = 0; i < listPlugins.size(); i++) {
+								String plug = listPlugins.get(i);
+								if(i>0) {
+									integrazioneString.append(",");
+								}
+								integrazioneString.append(plug);
+							}
+							integrazioneString.append(")");
+						}
+					}
+				}
+			}
+			
+			bfTooltips.append(CostantiControlStation.LABEL_METADATI_INTEGRAZIONE).append(": ").append(integrazioneString.toString());
 		}
 		if(behaviour!=null && !"".equals(behaviour)) {
 			String [] tmp = behaviour.split(",");
@@ -16962,8 +17024,24 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST);
+				postBack_viaPOST, false, null, null);
 	}
+	public void addCustomFieldConValoriDaEscludere(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
+		addCustomField(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				value, null, false, 
+				hidden, dati,
+				postBack_viaPOST, true, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati);
+	}
+	
 	public void addMultiSelectCustomField(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
@@ -16977,7 +17055,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				null, value, true, 
 				hidden, dati,
-				postBack_viaPOST);
+				postBack_viaPOST, false, null, null);
 	}
 	private void addCustomField(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin (o anche configurazione per gli allarmi)
@@ -16986,7 +17064,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametro, String label, 
 			String value, String [] multiValue, boolean multiSelect,
 			boolean hidden, Vector<DataElement> dati,
-			boolean postBack_viaPOST) throws Exception {
+			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
 		
 		List<String> values = new ArrayList<String>();
 		List<String> labels = new ArrayList<String>();
@@ -17036,7 +17114,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			
 			List<Plugin> listaTmp = this.confCore.pluginsClassiList(ricerca);
+			boolean nessunValueDisponibile = false;
 			if(listaTmp!=null && !listaTmp.isEmpty()) {
+				if(listaValuesDaEscludere != null && !listaValuesDaEscludere.isEmpty()) {
+					for(int i = listaTmp.size() -1; i >= 0 ; i--) {
+						if(listaValuesDaEscludere.contains(listaTmp.get(i).getTipo())) {
+							listaTmp.remove(i);
+						}
+					}
+				}
+				
 				for (Plugin plugin : listaTmp) {
 					if(plugin.isStato()) {
 						
@@ -17061,6 +17148,16 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 					}
 				}
+			} 
+			
+			if(listaTmp ==null || listaTmp.isEmpty()) {
+				nessunValueDisponibile = true;
+			}
+			
+			// se non ci sono valori disponibili e voglio comunicarlo all'utente imposto il messaggio di info
+			if(messaggioErroreValoriDisponibiliTerminati != null && nessunValueDisponibile) {
+				this.pd.setMessage(messaggioErroreValoriDisponibiliTerminati, Costanti.MESSAGE_TYPE_INFO);
+				this.pd.disableEditMode();
 			}
 			
 			if(values.size()==2) {
@@ -17104,6 +17201,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			else {
 				if(multiSelect) {
+					de.setLabel(label);
 					de.setType(DataElementType.MULTI_SELECT);
 				}
 				else {
@@ -17124,13 +17222,395 @@ public class ConsoleHelper implements IConsoleHelper {
 				else {
 					de.setPostBack(true);
 				}
-				if(values.size()==1) {
+				if(!multiSelect && values.size()==1) {
 					de.setRequired(false);
+				}
+				if(mostraSempreLabel) {
+					de.setLabel(label);
 				}
 			}
 		}
 		
 		dati.addElement(de);
 		
+	}
+	
+	public void addIntegrazioneMetadatiToDati(Vector<DataElement> dati, String integrazioneStato, String integrazione,
+			String[] integrazioneGruppi, List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare,
+			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi, Vector<DataElement> deIntegrazione,
+			boolean nascondiSezioneOpzioniAvanzate, boolean isPortaDelegata,
+			ServiceBinding serviceBinding) throws Exception {
+		String ruoloConfigurazione = isPortaDelegata ? Filtri.FILTRO_RUOLO_VALORE_FRUIZIONE : 	Filtri.FILTRO_RUOLO_VALORE_EROGAZIONE;
+		
+		DataElement de;
+		// stato metadati
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+		de.setValue(integrazioneStato);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+		if(nascondiSezioneOpzioniAvanzate ){
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		} else {
+			de.setType(DataElementType.SELECT);
+			de.setValues(CostantiControlStation.VALUES_PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+			de.setLabels(CostantiControlStation.LABELS_PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+			de.setSelected(integrazioneStato);
+			de.setPostBack(true);
+			DataElementInfo dInfo = new DataElementInfo(CostantiControlStation.LABEL_METADATI);
+			dInfo.setBody(CostantiControlStation.LABEL_METADATI_INFO);
+			de.setInfo(dInfo);
+			deIntegrazione.addElement(de);
+		}
+		
+		if(nascondiSezioneOpzioniAvanzate ){
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+			de.setValue(integrazione);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		}else{
+			// valore del campo integrazione 
+			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO)) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+				de.setValue(integrazione);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
+				de.setType(DataElementType.HIDDEN);
+				deIntegrazione.addElement(de);
+			} else if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+				de.setValue(integrazione);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
+				de.setType(DataElementType.HIDDEN);
+				deIntegrazione.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI_GRUPPO);
+				de.setSelezionati(integrazioneGruppi);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
+				de.setType(DataElementType.MULTI_SELECT);
+				de.setValues(GruppoIntegrazione.toValues(serviceBinding));
+				de.setLabels(GruppoIntegrazione.toLabels(true, serviceBinding));
+				de.setPostBack_viaPOST(true);
+				de.setRequired(true);
+				DataElementInfo dInfo = new DataElementInfo(CostantiControlStation.LABEL_METADATI);
+				switch (serviceBinding) {
+				case REST:
+					dInfo.setBody(CostantiControlStation.LABEL_METADATI_RIDEFINITI_INFO_REST);	
+					break;
+				case SOAP:
+					dInfo.setBody(CostantiControlStation.LABEL_METADATI_RIDEFINITI_INFO_SOAP);	
+					break;
+				}
+				de.setInfo(dInfo);
+				deIntegrazione.addElement(de);
+				
+				// gruppi singoli
+				boolean subtitleOp2 = false;
+				boolean subtitleOp1 = false;
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					String [] valoriMulti = null;
+					String valoreSingolo = null;
+					List<String> listaValori = integrazioneGruppiValoriDeiGruppi.get(group.getValue());
+					if(listaValori != null && listaValori.size() > 0) {
+						valoriMulti = listaValori.toArray(new String[listaValori.size()]);
+						if(!group.isMulti()) {
+							valoreSingolo = valoriMulti[0];
+						}
+					}
+					
+					
+					if(!group.getValue().equals(GruppoIntegrazione.PLUGIN.getValue())) {
+						
+						de = new DataElement();
+												
+						if(group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP.getValue()) 
+								||
+							group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_URL.getValue()) 
+								||	
+							group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_SOAP.getValue()) ) {
+							if(!subtitleOp2) {
+								
+								DataElement deSub = new DataElement();
+								deSub.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_2);
+								deSub.setType(DataElementType.SUBTITLE);
+								deIntegrazione.addElement(deSub);
+								
+								subtitleOp2 = true;
+							}
+							if(group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP.getValue())) {
+								de.setLabel(GruppoIntegrazione.HTTP.getCompactLabel());	
+							}
+							else if(group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_URL.getValue())) {
+								de.setLabel(GruppoIntegrazione.URL.getCompactLabel());	
+							}
+							else {
+								de.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_HEADER_SOAP);	
+							}
+						}
+						else if(group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP1_HTTP.getValue()) 
+								||
+							group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP1_URL.getValue()) 
+								||	
+							group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP1_SOAP.getValue()) ) {
+							if(!subtitleOp1) {
+								
+								DataElement deSub = new DataElement();
+								deSub.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_1);
+								deSub.setType(DataElementType.SUBTITLE);
+								deIntegrazione.addElement(deSub);
+								
+								subtitleOp1 = true;
+							}
+							if(group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP1_HTTP.getValue())) {
+								de.setLabel(GruppoIntegrazione.HTTP.getCompactLabel());	
+							}
+							else if(group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP1_URL.getValue())) {
+								de.setLabel(GruppoIntegrazione.URL.getCompactLabel());	
+							}
+							else {
+								de.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_HEADER_SOAP);	
+							}
+						}
+						else {
+							de.setLabel(group.getCompactLabel());	
+						}
+						
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+						
+						if(group.isMulti()) {
+							de.setType(DataElementType.MULTI_SELECT);
+							de.setSelezionati(valoriMulti);
+						} else {
+							de.setType(DataElementType.SELECT);
+							de.setSelected(valoreSingolo);
+						}
+						de.setValues(TipoIntegrazione.toValues(group));
+						de.setLabels(TipoIntegrazione.toLabels(group));
+						de.setRequired(true);
+						deIntegrazione.addElement(de);
+					} else {
+						if(group.isMulti()) {
+							this.addMultiSelectCustomField(TipoPlugin.INTEGRAZIONE, ruoloConfigurazione, null, 
+									CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO, 
+									CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue(), 
+									GruppoIntegrazione.PLUGIN.getCompactLabel(), valoriMulti, false, deIntegrazione, false);
+						} else {
+							this.addCustomField(TipoPlugin.INTEGRAZIONE, ruoloConfigurazione, null, 
+									CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO, 
+									CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue(), 
+									GruppoIntegrazione.PLUGIN.getCompactLabel(), valoreSingolo, false, deIntegrazione, false);
+						}
+					}
+				}
+			} else {
+				// quando e' default ci deve finire null					
+			}
+//			deIntegrazione.addElement(de);
+		}
+	}
+	
+	
+	public boolean validaIntegrazioneMetadati() throws Exception {
+		String integrazioneStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+		
+		if(integrazioneStato!=null && !"".equals(integrazioneStato)){
+			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
+				String[] integrazioneGruppi = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
+				
+				if(integrazioneGruppi == null || integrazioneGruppi.length == 0) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI);
+					return false;
+				}
+				
+				List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
+				
+				for (String gruppoSelezionato : integrazioneGruppi) {
+					integrazioneGruppiDaVisualizzare.add(GruppoIntegrazione.toEnumConstant(gruppoSelezionato));
+				}
+				
+				// leggere i valori selezionati per ogni gruppo selezionato
+				Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					List<String> valoriGruppoList = new ArrayList<String>();
+					if(group.isMulti()) {
+						String[] valoriGruppo = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+						if(valoriGruppo == null || valoriGruppo.length == 0) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO, group.getCompactLabel()));
+							return false;
+						}
+						
+						valoriGruppoList.addAll(Arrays.asList(valoriGruppo));
+					} else {
+						String valoreGruppo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+						if(valoreGruppo == null) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO, group.getCompactLabel()));
+							return false;
+						}
+						valoriGruppoList.add(valoreGruppo);
+					}
+					
+					integrazioneGruppiValoriDeiGruppi.put(group.getValue(), valoriGruppoList);	
+				}
+				
+				// controllo sulla lunghezza finale del campo integrazione
+				List<String> valoriFinaliIntegrazione = new ArrayList<String>();
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					valoriFinaliIntegrazione.addAll(integrazioneGruppiValoriDeiGruppi.get(group.getValue()));
+				}
+				
+				String valoreFinaleCampoItegrazione = StringUtils.join(valoriFinaliIntegrazione.toArray(new String[valoriFinaliIntegrazione.size()]), ",");
+				if(valoreFinaleCampoItegrazione!=null && valoreFinaleCampoItegrazione.length()>4000) {
+					this.pd.setMessage("L'informazione fornita nel campo '"+CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI+"' deve possedere una lunghezza minore di 4000");
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	public void visualizzaLinkHandlers(Vector<DataElement> dati, boolean isConfigurazione, TipoPdD ruoloPorta, Long idPorta, ServiceBinding serviceBinding) throws DriverConfigurazioneException {
+		DataElement de;
+		boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		List<Parameter> listaParametriComuni = new ArrayList<Parameter>();
+		
+		Parameter parRuoloPorta = null;
+		if(ruoloPorta!=null) {
+			parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_RUOLO_PORTA, ruoloPorta.getTipo());
+			listaParametriComuni.add(parRuoloPorta);
+		}
+		Parameter parIdPorta = null;
+		if(idPorta!=null) {
+			parIdPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_PORTA, idPorta +"");
+			listaParametriComuni.add(parIdPorta);
+		}
+		Parameter parServiceBinding = null;
+		if(serviceBinding!=null) {
+			parServiceBinding = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_SERVICE_BINDING, serviceBinding.name());
+			listaParametriComuni.add(parServiceBinding);
+		}
+		
+		
+		// handler richiesta
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RICHIESTA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		for (int i = 0; i < PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA.size(); i++) {
+			String valueRichiesta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA.get(i);
+			String labelRichiesta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RICHIESTA.get(i);
+
+			int numeroHandlersRichiesta = this.confCore.numeroHandlersRichiesta(valueRichiesta, ruoloPorta, idPorta);
+			
+			List<Parameter> listaParametriRichiesta = new ArrayList<Parameter>();
+			if(!listaParametriComuni.isEmpty()) {
+				listaParametriRichiesta.addAll(listaParametriComuni);
+			}
+			listaParametriRichiesta.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, valueRichiesta));
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RICHIESTA_LIST, listaParametriRichiesta.toArray(new Parameter [listaParametriRichiesta.size()]));
+			if (contaListeFromSession)
+				de.setValue(labelRichiesta +" (" + numeroHandlersRichiesta + ")");
+			else
+				de.setValue(labelRichiesta);
+			dati.addElement(de);
+		}
+		
+		// handler risposta
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RISPOSTA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		for (int i = 0; i < PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA.size(); i++) {
+			String valueRisposta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA.get(i);
+			String labelRisposta = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RISPOSTA.get(i);
+			
+			int numeroHandlersRisposta = this.confCore.numeroHandlersRisposta(valueRisposta, ruoloPorta, idPorta);
+			
+			List<Parameter> listaParametriRisposta = new ArrayList<Parameter>();
+			if(!listaParametriComuni.isEmpty()) {
+				listaParametriRisposta.addAll(listaParametriComuni);
+			}
+			listaParametriRisposta.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, valueRisposta));
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_RISPOSTA_LIST, listaParametriRisposta.toArray(new Parameter [listaParametriRisposta.size()]));
+			if (contaListeFromSession)
+				de.setValue(labelRisposta+" (" + numeroHandlersRisposta + ")");
+			else
+				de.setValue(labelRisposta);
+			dati.addElement(de);
+		}
+		
+		if(isConfigurazione) {
+			// service handler
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_SERVIZIO);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			boolean integrationManagerEnabled = this.confCore.isIntegrationManagerEnabled();
+			
+			if(integrationManagerEnabled) {
+				for (int i = 0; i < PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_CON_INTEGRATION_MANAGER.size(); i++) {
+					String valueServizio = PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_CON_INTEGRATION_MANAGER.get(i);
+					String labelServizio = PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_CON_INTEGRATION_MANAGER.get(i);
+					
+					int numeroHandlersServizio = this.confCore.numeroHandlersServizio(valueServizio);
+					
+					List<Parameter> listaParametriServizio = new ArrayList<Parameter>();
+					if(!listaParametriComuni.isEmpty()) {
+						listaParametriServizio.addAll(listaParametriComuni);
+					}
+					listaParametriServizio.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, valueServizio));
+					
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO_LIST, listaParametriServizio.toArray(new Parameter [listaParametriServizio.size()]));
+					if (contaListeFromSession)
+						de.setValue(labelServizio +" (" + numeroHandlersServizio + ")");
+					else
+						de.setValue(labelServizio);
+					dati.addElement(de);
+				}
+			} else {
+				for (int i = 0; i < PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_SENZA_INTEGRATION_MANAGER.size(); i++) {
+					String valueServizio = PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_SENZA_INTEGRATION_MANAGER.get(i);
+					String labelServizio = PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_SENZA_INTEGRATION_MANAGER.get(i);
+					
+					int numeroHandlersServizio = this.confCore.numeroHandlersServizio(valueServizio);
+					
+					List<Parameter> listaParametriServizio = new ArrayList<Parameter>();
+					if(!listaParametriComuni.isEmpty()) {
+						listaParametriServizio.addAll(listaParametriComuni);
+					}
+					listaParametriServizio.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_FASE, valueServizio));
+					
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_HANDLERS_SERVIZIO_LIST, listaParametriServizio.toArray(new Parameter [listaParametriServizio.size()]));
+					if (contaListeFromSession)
+						de.setValue(labelServizio +" (" + numeroHandlersServizio + ")");
+					else
+						de.setValue(labelServizio);
+					dati.addElement(de);
+				}
+			}
+		}
 	}
 }

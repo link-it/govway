@@ -5512,7 +5512,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getPreInRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getRequest()!=null) {
 			fillListHandlers(confGenerale.getRequest().getPreInList(), list);
 		}
 		return list;
@@ -5520,7 +5520,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getInRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getRequest()!=null) {
 			fillListHandlers(confGenerale.getRequest().getInList(), list);
 		}
 		return list;
@@ -5528,7 +5528,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getInRequestProtocolHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getRequest()!=null) {
 			fillListHandlers(confGenerale.getRequest().getInProtocolInfoList(), list);
 		}
 		return list;
@@ -5536,7 +5536,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getOutRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getRequest()!=null) {
 			fillListHandlers(confGenerale.getRequest().getOutList(), list);
 		}
 		return list;
@@ -5544,7 +5544,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getPostOutRequestHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getRequest()!=null) {
 			fillListHandlers(confGenerale.getRequest().getPostOutList(), list);
 		}
 		return list;
@@ -5552,7 +5552,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getPreInResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getResponse()!=null) {
 			fillListHandlers(confGenerale.getResponse().getPreInList(), list);
 		}
 		return list;
@@ -5560,7 +5560,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getInResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getResponse()!=null) {
 			fillListHandlers(confGenerale.getResponse().getInList(), list);
 		}
 		return list;
@@ -5568,7 +5568,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getOutResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getResponse()!=null) {
 			fillListHandlers(confGenerale.getResponse().getOutList(), list);
 		}
 		return list;
@@ -5576,7 +5576,7 @@ public class ConfigurazionePdDReader {
 	protected List<String> getPostOutResponseHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
 		List<String> list = new ArrayList<String>();
-		if(confGenerale!=null && confGenerale.getService()!=null) {
+		if(confGenerale!=null && confGenerale.getResponse()!=null) {
 			fillListHandlers(confGenerale.getResponse().getPostOutList(), list);
 		}
 		return list;

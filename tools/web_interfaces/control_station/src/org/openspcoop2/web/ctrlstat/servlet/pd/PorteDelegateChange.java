@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -73,6 +74,8 @@ import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
+import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -143,7 +146,6 @@ public final class PorteDelegateChange extends Action {
 			String modeaz = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
 			String azione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 			String azid = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
-			String integrazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
 			String stateless = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATELESS);
 			String localForward = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD );
 			String paLocalForward = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA);
@@ -225,6 +227,44 @@ public final class PorteDelegateChange extends Action {
 			boolean usataInConfigurazioni = false;
 			boolean usataInConfigurazioneDefault = false;
 			boolean addTrattinoSelezioneNonEffettuata = false;
+			
+			String integrazioneStato = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
+			String integrazione = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
+			String[] integrazioneGruppi = porteDelegateHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
+		
+			List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare = new ArrayList<GruppoIntegrazione>();  
+			Map<String, List<String>> integrazioneGruppiValoriDeiGruppi = new HashMap<String, List<String>>();
+			boolean isConfigurazione = parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE; 
+			boolean visualizzaSezioneOpzioniAvanzate = !(porteDelegateHelper.isModalitaStandard() || (isConfigurazione && !datiAltroPorta));
+
+			// dal secondo accesso in poi il calcolo dei gruppi da visualizzare avviene leggendo i parametri dalla richiesta
+			if(integrazioneStato != null && visualizzaSezioneOpzioniAvanzate) {
+				if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
+					if(integrazioneGruppi != null) {
+						for (String gruppoSelezionato : integrazioneGruppi) {
+							integrazioneGruppiDaVisualizzare.add(GruppoIntegrazione.toEnumConstant(gruppoSelezionato));
+						}
+						
+						// leggere i valori selezionati per ogni gruppo selezionato
+						for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+							List<String> valoriGruppoList = new ArrayList<String>();
+							if(group.isMulti()) {
+								String[] valoriGruppo = porteDelegateHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+								if(valoriGruppo != null) {
+									valoriGruppoList.addAll(Arrays.asList(valoriGruppo));
+								}
+							} else {
+								String valoreGruppo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
+								if(valoreGruppo != null) {
+									valoriGruppoList.add(valoreGruppo);
+								}
+							}
+							
+							integrazioneGruppiValoriDeiGruppi.put(group.getValue(), valoriGruppoList);							
+						}
+					}
+				}
+			}
 			
 			// Prendo la porta delegata
 			IDPortaDelegata idpd = new IDPortaDelegata();
@@ -729,8 +769,48 @@ public final class PorteDelegateChange extends Action {
 						ricasim = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO; 
 					}
 				}
+				
+				if (integrazioneStato == null) {
+					if(pde.getIntegrazione() == null) {
+						integrazioneStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT;
+					} else if(TipoIntegrazione.DISABILITATO.getValue().equals(pde.getIntegrazione())) {
+						integrazioneStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO;
+					} else {
+						integrazioneStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO;
+					}
+				}
+
 				if (integrazione == null) {
 					integrazione = pde.getIntegrazione();
+					
+					List<String> integrazioneGruppiList = new ArrayList<String>();
+					
+					if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
+						// decodificare il contenuto di integrazione per generare gli elementi grafici necessari.
+						List<String> valoriIntegrazione = integrazione != null ? Arrays.asList(integrazione.split(",")) : new ArrayList<String>();
+						for (String valoreIntegrazione : valoriIntegrazione) {
+							TipoIntegrazione tipoIntegrazione = TipoIntegrazione.toEnumConstant(valoreIntegrazione);
+							GruppoIntegrazione group = tipoIntegrazione != null ? tipoIntegrazione.getGroup() : GruppoIntegrazione.PLUGIN;
+							String gruppoValore = group.getValue();
+							
+							List<String> valoriIntegrazionePerGruppo = null;
+							if(integrazioneGruppiValoriDeiGruppi.containsKey(gruppoValore)) {
+								valoriIntegrazionePerGruppo = integrazioneGruppiValoriDeiGruppi.remove(gruppoValore);
+							} else {
+								valoriIntegrazionePerGruppo = new ArrayList<String>();
+							}
+							
+							valoriIntegrazionePerGruppo.add(valoreIntegrazione);
+							integrazioneGruppiValoriDeiGruppi.put(gruppoValore, valoriIntegrazionePerGruppo);
+							 
+							if(!integrazioneGruppiDaVisualizzare.contains(group)) {
+								integrazioneGruppiDaVisualizzare.add(group);
+								integrazioneGruppiList.add(gruppoValore);
+							}
+						}
+						
+						integrazioneGruppi = integrazioneGruppiList.size() > 0 ? integrazioneGruppiList.toArray(new String[integrazioneGruppiList.size()]) : null;
+					}
 				}
 				
 				if (messageEngine == null) {
@@ -972,7 +1052,9 @@ public final class PorteDelegateChange extends Action {
 						azioniList, azione, patternAzione, numAzioni,
 						stateless, localForward, paLocalForward, ricsim, ricasim, statoValidazione,
 						tipoValidazione, numCorrApp, scadcorr, gestBody,
-						gestManifest,integrazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
+						gestManifest, integrazioneStato, integrazione,
+						integrazioneGruppi, integrazioneGruppiDaVisualizzare, integrazioneGruppiValoriDeiGruppi,
+						autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						autorizzazioneContenutiStato, autorizzazioneContenuti,autorizzazioneContenutiProperties,
 						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
@@ -1137,7 +1219,9 @@ public final class PorteDelegateChange extends Action {
 						azioniListLabel, azioniList, azione, azione,
 						numAzioni,  stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, numCorrApp, scadcorr, gestBody,
-						gestManifest,integrazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
+						gestManifest, integrazioneStato, integrazione,
+						integrazioneGruppi, integrazioneGruppiDaVisualizzare, integrazioneGruppiValoriDeiGruppi,
+						autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						autorizzazioneContenutiStato, autorizzazioneContenuti,autorizzazioneContenutiProperties,
 						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
@@ -1359,7 +1443,17 @@ public final class PorteDelegateChange extends Action {
 				ca.setScadenza(scadcorr);
 			portaDelegata.setCorrelazioneApplicativa(ca);
 
-			portaDelegata.setIntegrazione(integrazione);
+			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DEFAULT)) {
+				portaDelegata.setIntegrazione(null);
+			} else if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO)) {
+				portaDelegata.setIntegrazione(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO);
+			} else {
+				List<String> valoriFinaliIntegrazione = new ArrayList<String>();
+				for (GruppoIntegrazione group : integrazioneGruppiDaVisualizzare) {
+					valoriFinaliIntegrazione.addAll(integrazioneGruppiValoriDeiGruppi.get(group.getValue()));
+				}
+				portaDelegata.setIntegrazione(StringUtils.join(valoriFinaliIntegrazione.toArray(new String[valoriFinaliIntegrazione.size()]), ","));
+			}
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 

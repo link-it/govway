@@ -20,7 +20,11 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.message.constants.ServiceBinding;
 
 /**     
  * Enumeration TipoIntegrazione
@@ -31,18 +35,18 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  */
 public enum GruppoIntegrazione {
 
-	HTTP ("http", "Header HTTP", "Header HTTP", false),
-	URL ("urlBased", "Parametri della Url", "Parametri della Url", false),
-	SOAP ("soap", "Header SOAP proprietari di GovWay", "Header SOAP GovWay", false),
-	WSA ("wsa", "Header SOAP con formato standard WS-Addressing", "WS-Addressing", false),
-	TEMPLATE ("template" , "Metadati definiti in template freemaker o velocity", "Template", false),
-	PLUGIN ("plugin", "Plugin", "Plugin", true),
-	BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP ("backward_compatibility_op2_http", "Header HTTP generati come OpenSPCoop 2.x", "Header HTTP OpenSPCoop 2.x", false),
-	BACKWARD_COMPATIBILITY_OPENSPCOOP1_HTTP ("backward_compatibility_op1_http", "Header HTTP generati come OpenSPCoop 1.x", "Header HTTP OpenSPCoop 1.x", false),
-	BACKWARD_COMPATIBILITY_OPENSPCOOP2_URL ("backward_compatibility_op2_url", "Parametri della Url generati come OpenSPCoop 2.x", "Parametri Url OpenSPCoop 2.x", false),
-	BACKWARD_COMPATIBILITY_OPENSPCOOP1_URL ("backward_compatibility_op1_url", "Parametri della Url generati come OpenSPCoop 1.x", "Parametri Url OpenSPCoop 1.x", false),
-	BACKWARD_COMPATIBILITY_OPENSPCOOP2_SOAP ("backward_compatibility_op2_soap", "Header SOAP generati come OpenSPCoop 2.x", "Header SOAP OpenSPCoop 2.x", false),
-	BACKWARD_COMPATIBILITY_OPENSPCOOP1_SOAP ("backward_compatibility_op1_soap", "Header SOAP generati come OpenSPCoop 1.x", "Header SOAP OpenSPCoop 1.x", false);
+	HTTP ("http", "Header HTTP", "Header HTTP", false, null),
+	URL ("urlBased", "Parametri della Url", "Parametri della Url", false, null),
+	SOAP ("soap", "Header SOAP proprietari di GovWay", "Header SOAP GovWay", false, ServiceBinding.SOAP),
+	WSA ("wsa", "Header SOAP con formato standard WS-Addressing", "WS-Addressing", false, ServiceBinding.SOAP),
+	TEMPLATE ("template" , "Metadati definiti in template freemaker o velocity", "Template", false, null),
+	PLUGIN ("plugin", "Plugin", "Plugin", true, null),
+	BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP ("backward_compatibility_op2_http", "Header HTTP generati come OpenSPCoop 2.x", "Header HTTP OpenSPCoop 2.x", false, null),
+	BACKWARD_COMPATIBILITY_OPENSPCOOP2_URL ("backward_compatibility_op2_url", "Parametri della Url generati come OpenSPCoop 2.x", "Parametri Url OpenSPCoop 2.x", false, null),
+	BACKWARD_COMPATIBILITY_OPENSPCOOP2_SOAP ("backward_compatibility_op2_soap", "Header SOAP generati come OpenSPCoop 2.x", "Header SOAP OpenSPCoop 2.x", false, ServiceBinding.SOAP),
+	BACKWARD_COMPATIBILITY_OPENSPCOOP1_HTTP ("backward_compatibility_op1_http", "Header HTTP generati come OpenSPCoop 1.x", "Header HTTP OpenSPCoop 1.x", false, null),
+	BACKWARD_COMPATIBILITY_OPENSPCOOP1_URL ("backward_compatibility_op1_url", "Parametri della Url generati come OpenSPCoop 1.x", "Parametri Url OpenSPCoop 1.x", false, null),
+	BACKWARD_COMPATIBILITY_OPENSPCOOP1_SOAP ("backward_compatibility_op1_soap", "Header SOAP generati come OpenSPCoop 1.x", "Header SOAP OpenSPCoop 1.x", false, ServiceBinding.SOAP);
 
 	
 	/** Value */
@@ -72,14 +76,20 @@ public enum GruppoIntegrazione {
 		return this.multi;
 	}
 
+	/** ServiceBinding */
+	private ServiceBinding serviceBinding;
+	public ServiceBinding getServiceBinding() {
+		return this.serviceBinding;
+	}
 
 	/** Official Constructor */
-	GruppoIntegrazione(String value, String label, String compactLabel, boolean multi)
+	GruppoIntegrazione(String value, String label, String compactLabel, boolean multi, ServiceBinding serviceBinding)
 	{
 		this.value = value;
 		this.label = label;
 		this.compactLabel = compactLabel;
 		this.multi = multi;
+		this.serviceBinding = serviceBinding;
 	}
 	
 	@Override
@@ -100,23 +110,30 @@ public enum GruppoIntegrazione {
 	}
 	
 	
-	public static String[] toValues(){
-		String[] res = new String[values().length];
-		int i=0;
+	public static String[] toValues(ServiceBinding serviceBinding){
+		List<String> list = new ArrayList<String>();
 		for (GruppoIntegrazione tmp : values()) {
-			res[i]=tmp.getValue();
-			i++;
+			if(tmp.getServiceBinding()==null || serviceBinding==null) {
+				list.add(tmp.getValue());
+			}
+			else if(tmp.getServiceBinding().equals(serviceBinding)) {
+				list.add(tmp.getValue());
+			}
 		}
-		return res;
+		return list.toArray(new String[list.size()]);
 	}
-	public static String[] toLabels(){
-		String[] res = new String[values().length];
-		int i=0;
+	public static String[] toLabels(boolean compact, ServiceBinding serviceBinding){
+		List<String> list = new ArrayList<String>();
 		for (GruppoIntegrazione tmp : values()) {
-			res[i]=tmp.getLabel();
-			i++;
+			String label = compact?tmp.getCompactLabel():tmp.getLabel();
+			if(tmp.getServiceBinding()==null || serviceBinding==null) {
+				list.add(label);
+			}
+			else if(tmp.getServiceBinding().equals(serviceBinding)) {
+				list.add(label);
+			}
 		}
-		return res;
+		return list.toArray(new String[list.size()]);
 	}
 	
 	public static boolean contains(String value){

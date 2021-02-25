@@ -3525,6 +3525,87 @@
             <forward name="configurazioneAllarmiHistoryList" path="/jsplib/listElement.jsp"/>
             <forward name="configurazioneAllarmiHistoryError" path="/jsplib/info.jsp"/>
         </action>
+        
+         <!-- Configurazione Handlers Richiesta -->
+
+        <action path="/configurazioneHandlersRichiestaAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersRichiestaAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersRichiestaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersRichiestaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersRichiestaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersRichiestaList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersRichiestaList"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersRichiestaList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersRichiestaChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersRichiestaChange"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersRichiestaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersRichiestaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersRichiestaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersRichiestaDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersRichiestaDel"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersRichiestaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+         <!-- Configurazione Handlers Risposta -->
+
+        <action path="/configurazioneHandlersRispostaAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersRispostaAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersRispostaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersRispostaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersRispostaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersRispostaList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersRispostaList"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersRispostaList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersRispostaChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersRispostaChange"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersRispostaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersRispostaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersRispostaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersRispostaDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersRispostaDel"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersRispostaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+         <!-- Configurazione Handlers Servizio -->
+
+        <action path="/configurazioneHandlersServizioAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersServizioAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersServizioAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersServizioAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersServizioAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersServizioError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersServizioList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersServizioList"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersServizioList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersServizioError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersServizioChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersServizioChange"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersServizioChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersServizioChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersServizioChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneHandlersServizioError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneHandlersServizioDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHandlersServizioDel"
+            scope="request" validate="true">
+            <forward name="configurazioneHandlersServizioDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneHandlersServizioError" path="/jsplib/info.jsp"/>
+        </action>
     
      	<!-- Audit (Pagina Iniziale)  -->
     

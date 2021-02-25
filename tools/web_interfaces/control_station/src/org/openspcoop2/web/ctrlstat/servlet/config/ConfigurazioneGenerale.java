@@ -299,7 +299,7 @@ public final class ConfigurazioneGenerale extends Action {
 			List<ResponseCachingConfigurazioneRegola> listaRegoleCachingConfigurazione = cachingConfigurazione != null ?  cachingConfigurazione.getRegolaList() : null;
 			int numeroRegoleProxyPass = confHelper.numeroRegoleProxyPass(configurazione.getUrlInvocazione());
 			int numeroArchiviPlugins = confHelper.numeroPluginsRegistroArchivi();
-			int numeroClassiPlugins = confHelper.numeroPluginsRegistroClassi();  
+			int numeroClassiPlugins = confHelper.numeroPluginsRegistroClassi();
 			
 			String canaliEnabledTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_STATO);
 			boolean canaliEnabled = ServletUtils.isCheckBoxEnabled(canaliEnabledTmp);
