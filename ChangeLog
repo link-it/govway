@@ -1,3 +1,9 @@
+2021-03-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1148
+	Corretto problema presente su application server wildfly che non consentiva di accedere ai parametri di una richiesta 'application/x-www-form-urlencoded' se erano un numero maggiore di uno.
+
 2021-02-25  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

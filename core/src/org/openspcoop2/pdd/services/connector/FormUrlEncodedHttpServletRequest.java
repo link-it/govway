@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;
 
@@ -133,20 +134,48 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 		}
 		if(this.properties.isEmpty() && this.content!=null && this.content.length>0) {
 			// su wildfly non vengono ritornati i parameters name
-			try (ByteArrayInputStream bin = new ByteArrayInputStream(this.content)) {
-				Properties pTmp = new Properties();
-				pTmp.load(bin);
-				if(pTmp.size()>0) {
-					Enumeration<Object> enKeys = pTmp.keys();
-					while (enKeys.hasMoreElements()) {
-						Object oKey = (Object) enKeys.nextElement();
-						if(oKey instanceof String) {
-							String key = (String) oKey;
-							this.properties.put(key, pTmp.getProperty(key));
+				
+			/*
+			 * application/x-www-form-urlencoded: 
+			 *   the keys and values are encoded in key-value tuples separated by '&', with a '=' between the key and the value. 
+			 *   Non-alphanumeric characters in both keys and values are percent encoded
+			 **/
+			String contentUrlEncoding = new String(this.content);
+			
+			StringBuilder sbProperties = new StringBuilder();
+			if(contentUrlEncoding.contains("&")) {
+				String [] tmp = contentUrlEncoding.split("&");
+				if(tmp!=null && tmp.length>0) {
+					for (String pUrlEncoding : tmp) {
+						if(sbProperties.length()>0) {
+							sbProperties.append("\n");
 						}
+						String contentUrlDecoding = org.springframework.web.util.UriUtils.decode( pUrlEncoding, Charset.UTF_8.getValue());
+						sbProperties.append(contentUrlDecoding);
 					}
 				}
-			}catch(Throwable t) {}
+			}
+			else {
+				String contentUrlDecoding = org.springframework.web.util.UriUtils.decode( contentUrlEncoding, Charset.UTF_8.getValue());
+				sbProperties.append(contentUrlDecoding);
+			}
+			
+			if(sbProperties.length()>0) {
+				try (ByteArrayInputStream bin = new ByteArrayInputStream(sbProperties.toString().getBytes())) {
+					Properties pTmp = new Properties();
+					pTmp.load(bin);
+					if(pTmp.size()>0) {
+						Enumeration<Object> enKeys = pTmp.keys();
+						while (enKeys.hasMoreElements()) {
+							Object oKey = (Object) enKeys.nextElement();
+							if(oKey instanceof String) {
+								String key = (String) oKey;
+								this.properties.put(key, pTmp.getProperty(key));
+							}
+						}
+					}
+				}catch(Throwable t) {}
+			}
 		}
 	}
 	
