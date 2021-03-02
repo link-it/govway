@@ -8716,14 +8716,24 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void setStatoExtendedList(DataElement de, int size) {
+	public void setStatoExtendedList(DataElement de, int size, String stato, String statoTooltip) {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
 		if(size>0) {
 			de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
-			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO));
-			de.setStatusToolTip("Sono registrate "+size+" proprietà");
+			if(stato!=null) {
+				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [" +stato+ " ]");
+			}
+			else {
+				de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO));
+			}
+			if(statoTooltip!=null) {
+				de.setStatusToolTip(statoTooltip);
+			}
+			else {
+				de.setStatusToolTip("Sono registrate "+size+" proprietà");
+			}
 		}
 		else {
 			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);

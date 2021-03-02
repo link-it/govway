@@ -23,9 +23,6 @@ package org.openspcoop2.web.ctrlstat.plugins;
 import java.util.List;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -42,7 +39,9 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public interface IExtendedListServlet extends IExtendedCoreServlet {
 
-	public boolean showExtendedInfo(HttpServletRequest request,HttpSession session);
+	public boolean showExtendedInfo(ConsoleHelper consoleHelper,String protocollo);
+	public String getStatoTab(ConsoleHelper consoleHelper,Object originalObject,boolean gruppoDefault);
+	public String getTooltipStatoTab(ConsoleHelper consoleHelper,Object originalObject,boolean gruppoDefault);
 	
 	public String getFormTitle(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);
 	public String getFormTitleUrl(TipoOperazione tipoOperazione,ConsoleHelper consoleHelper);

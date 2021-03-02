@@ -2165,7 +2165,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioni_showModalitaStandard()))
 				labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
 			
-			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
+			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this, null)){
 				labelsList.add(extendedServletList.getListTitle(this));
 			}
 			
@@ -2331,7 +2331,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						e.addElement(de);
 					}
 
-					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
+					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this, null)){
 						de = new DataElement();
 						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST,
 								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),

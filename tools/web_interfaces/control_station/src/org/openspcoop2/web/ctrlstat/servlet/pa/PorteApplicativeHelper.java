@@ -2263,7 +2263,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //				//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
 //				listaLabel.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA);
 //			}
-			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
+			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this, null)){
 				listaLabel.add(extendedServletList.getListTitle(this));
 			}
 			
@@ -2462,7 +2462,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //					}
 
 					
-					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
+					if(extendedServletList!=null && extendedServletList.showExtendedInfo(this, null)){
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST,
 								pIdPorta,pIdNome,pIdPorta, pIdSogg, pIdAsps

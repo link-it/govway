@@ -177,6 +177,8 @@ public abstract class AbstractServletListUtilities extends Action {
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
+			pd.setAddButton(true); // prima della chiamata ad addDatiToList, in modo da permettere di disattivarlo
+			
 			if (lista != null) {
 				Iterator<IExtendedBean> it = lista.iterator();
 				while (it.hasNext()) {
@@ -192,7 +194,7 @@ public abstract class AbstractServletListUtilities extends Action {
 			}
 
 			pd.setDati(dati);
-			pd.setAddButton(true);
+			
 		} catch (Exception e) {
 			log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

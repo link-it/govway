@@ -20,18 +20,12 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -58,7 +52,7 @@ public class PorteDelegateExtendedUtilities {
 	}
 	
 	public static Object getObject(ConsoleHelper consoleHelper) throws Exception {
-		PorteDelegateCore porteDelegateCore = (PorteDelegateCore) consoleHelper.getCore();
+		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(consoleHelper.getCore());
 		String id = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 		int idInt = Integer.parseInt(id);
 		return porteDelegateCore.getPortaDelegata(idInt);
@@ -69,7 +63,7 @@ public class PorteDelegateExtendedUtilities {
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, consoleHelper.getSession());
 		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-		List<Parameter> lstParam = new ArrayList<>();
+		//List<Parameter> lstParam = new ArrayList<>();
 		
 		String idSoggettoFruitore = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 
@@ -81,6 +75,11 @@ public class PorteDelegateExtendedUtilities {
 		if(idFruizione == null)
 			idFruizione = "";
 		
+		PorteDelegateHelper pdHelper = new PorteDelegateHelper(consoleHelper.getCore(), consoleHelper.getRequest(), consoleHelper.getPd(), consoleHelper.getSession());
+		
+		List<Parameter> lstParam = pdHelper.getTitoloPD(parentPD, idSoggettoFruitore, idAsps, idFruizione); 
+		
+		/*
 		SoggettiCore soggettiCore = new SoggettiCore(consoleHelper.getCore());
 		String tipoSoggettoFruitore = null;
 		String nomeSoggettoFruitore = null;
@@ -127,6 +126,7 @@ public class PorteDelegateExtendedUtilities {
 			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST));
 			break;
 		}
+		*/
 		return lstParam;
 		
 	}
