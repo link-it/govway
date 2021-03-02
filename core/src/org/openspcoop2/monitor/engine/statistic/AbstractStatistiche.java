@@ -271,11 +271,18 @@ public abstract class AbstractStatistiche {
 			Date nowMenoUno = decrementDate(now, false);
 
 			
+			// Incremento la data sul database solamente se non sono avvenuti errori durante la generazione, altrimenti dovro' ricalcolarle tutti gli intervalli da quanto e' successo l'errore
+			boolean saveDataStatistica = true; 
+			
+			
 			// Genero statistiche per transazioni emessi in data > dataUltimaGenerazioneStatistiche AND data <= now
 			while(dataUltimaGenerazioneStatistiche.compareTo(nowMenoUno) <= 0){
 
 				// genera
-				generaStatistica(dataUltimaGenerazioneStatistiche);
+				boolean generazioneCompletataConSuccesso = generaStatistica(dataUltimaGenerazioneStatistiche);
+				if(!generazioneCompletataConSuccesso) {
+					saveDataStatistica = false;
+				}
 												
 				// increment
 				dataUltimaGenerazioneStatistiche = incrementDate(dataUltimaGenerazioneStatistiche, false);
@@ -283,19 +290,14 @@ public abstract class AbstractStatistiche {
 					this.logger.debug("-----------------------");
 
 				// Salvo nuova data di ultima generazione statistiche (entro nel prossimo intervallo)
-				Date next = this.truncDate(this.incrementDate(dataUltimaGenerazioneStatistiche, false),false);
-				if(this.debug)
-					this.logger.debug("Save data ultima generazione statistiche: "+next.toString());
-				StatisticsInfoUtils.updateDataUltimaGenerazioneStatistiche(this.statisticaInfoSearchDAO, this.statisticaInfoDAO, 
-						this.getTipoStatistiche(), this.logger, next);
-				/*Calendar cTmp = Calendar.getInstance();
-				cTmp.setTime(dataUltimaGenerazioneStatistiche);
-				cTmp.add(Calendar.MILLISECOND, 1);
-				if(this.debug)
-					this.log.debug("Save data ultima generazione statistiche: "+cTmp.getTime().toString());
-				this.log.debug("SAVE: ");
-				this.printDate(cTmp.getTime());
-				this.updateDataUltimaGenerazioneStatistiche(con, cTmp.getTime());*/
+				if(saveDataStatistica) {
+					Date next = this.truncDate(this.incrementDate(dataUltimaGenerazioneStatistiche, false),false);
+					if(this.debug)
+						this.logger.debug("Save data ultima generazione statistiche: "+next.toString());
+					StatisticsInfoUtils.updateDataUltimaGenerazioneStatistiche(this.statisticaInfoSearchDAO, this.statisticaInfoDAO, 
+							this.getTipoStatistiche(), this.logger, next);
+				}
+				
 			}
 
 
@@ -315,11 +317,11 @@ public abstract class AbstractStatistiche {
 		}
 	}
 
-	private void generaStatistica(Date dataUltimaGenerazioneStatistiche) {
+	private boolean generaStatistica(Date dataUltimaGenerazioneStatistiche) {
 		
 		// Algoritmo
 		// Per la data in fase di aggiornamento:
-		// - 1) si elimina eventuali record rimasti "sporchi" (stato_record <>1)
+		// - 1) si elimina eventuali record rimasti "sporchi" (stato_record <1)
 		// - 2) i record esistenti nell'intervallo vengono portati al valore stato_record=2
 		// - 3) i nuovi record aggiunti vengono creati con stato_record=0
 		// - 4) si fa un unico comando di update nell'intervallo con CASE WHEN stato_record==2 THEN -2 WHEN stato_record==0 THEN 1
@@ -331,47 +333,92 @@ public abstract class AbstractStatistiche {
 		// Eliminazione (Fase 1)
 		if(this.debug)
 			this.logger.debug("----------- pulizia Fase1 (DataUguale) ------------");
-		this.deleteFisicoStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO, false);
+		boolean esito = this.deleteFisicoStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO, false);
+		if(!esito) {
+			return false;
+		}
 		if(this.debug)
 			this.logger.debug("------------ pulizia Fase1 (DataUguale) -----------");
-		this.deleteFisicoStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO, false);
+		esito = this.deleteFisicoStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO, false);
+		if(!esito) {
+			return false;
+		}
 		//}
 
 		// Aggiornamento (Fase 2)
 		if(this.debug)
 			this.logger.debug("----------- aggiornamento Fase2 (DataUguale) ------------");
-		this.updateStatoRecordStatistiche(TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO);
+		esito = this.updateStatoRecordStatistiche(TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO);
+		if(!esito) {
+			return false;
+		}
 		if(this.debug)
 			this.logger.debug("------------ aggiornamento Fase2 (DataUguale) -----------");
-		this.updateStatoRecordStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO);
+		esito = this.updateStatoRecordStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO);
+		if(!esito) {
+			return false;
+		}
 		
 		// Generazione (Fase 3)
 		if(this.debug)
 			this.logger.debug("----------- generazione Fase3 (DataUguale) ------------");
-		this.generaStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		esito = this.generaStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		if(!esito) {
+			return false;
+		}
 		if(this.debug)
 			this.logger.debug("------------ generazione Fase3 (DataUguale) -----------");
-		this.generaStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		esito = this.generaStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		if(!esito) {
+			return false;
+		}
 
 		// Promozione Record (Fase4)
-		if(this.debug)
-			this.logger.debug("----------- promozione Fase4 (DataUguale) ------------");
-		this.updateStatoRecordStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, 
-				CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
-				CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
-		if(this.debug)
-			this.logger.debug("------------ promozione Fase4 (DataUguale) -----------");
-		this.updateStatoRecordStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, 
-				CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
-				CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+		boolean unicaPromozione = true; // deve essere un unico comando sql
+		if(unicaPromozione) {
+			if(this.debug)
+				this.logger.debug("----------- promozione Fase4 (DataUguale) ------------");
+			esito = this.updateStatoRecordStatistiche( null, dataUltimaGenerazioneStatistiche, 
+					CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
+					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+			if(!esito) {
+				return false;
+			}
+		}
+		else {
+			if(this.debug)
+				this.logger.debug("----------- promozione Fase4 (DataUguale) ------------");
+			esito = this.updateStatoRecordStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, 
+					CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
+					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+			if(!esito) {
+				return false;
+			}
+			if(this.debug)
+				this.logger.debug("------------ promozione Fase4 (DataUguale) -----------");
+			esito = this.updateStatoRecordStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, 
+					CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
+					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+			if(!esito) {
+				return false;
+			}
+		}
 
 		// Eliminazione (Fase 5)
+		boolean pulituraOk = true;
 		if(this.debug)
 			this.logger.debug("----------- eliminazione Fase5 (DataUguale) ------------");
-		this.deleteFisicoStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO, true);
+		esito = this.deleteFisicoStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO, true);
+		if(!esito) {
+			pulituraOk=false;
+		}
 		if(this.debug)
 			this.logger.debug("------------ eliminazione Fase5 (DataUguale) -----------");
-		this.deleteFisicoStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO, true);
+		esito = this.deleteFisicoStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO, true);
+		if(!esito) {
+			pulituraOk=false;
+		}
+		return pulituraOk;
 	}
 
 	
@@ -379,8 +426,10 @@ public abstract class AbstractStatistiche {
 	
 	// ---- GENERAZIONE STATISTICHE BASE ----
 	
-	private void generaStatistiche(  TipoPdD tipoPdD, Date data, int statoRecord) {
+	private boolean generaStatistiche(  TipoPdD tipoPdD, Date data, int statoRecord) {
 
+		boolean generazioneOk = true;
+		
 		if(this.debug){
 			this.logger.debug("Generazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
 		}
@@ -419,44 +468,71 @@ public abstract class AbstractStatistiche {
 
 			for (Map<String, Object> row : list) {
 				
-				// Leggo informazioni di base dalla statistica
-				StatisticBean stat = this.readStatisticBean(data, row);
+				StatisticBean stat = null;
+				try {
 				
-				// Aggiungo informazioni sul numero di transazioni e size delle transazioni
-				StatisticsUtils.updateStatisticBeanCountTransactionInfo(stat, row);
-				StatisticsUtils.updateStatisticBeanSizeTransactionInfo(stat, row);
-
-				// Aggiungo informazioni che richiedono ulteriori condizioni di where (es. date not null) 
-				this.addLatenze(data, dateNext, tipoPdD, stat, fieldConverter);
-								
-				// Inserisco statistica
-				insertStatistica(stat, statoRecord);
-
-				if(this.generazioneStatisticheCustom){
-					createCustomStatistic(stat);
+					// Leggo informazioni di base dalla statistica
+					stat = this.readStatisticBean(data, row);
+					
+					// Aggiungo informazioni sul numero di transazioni e size delle transazioni
+					StatisticsUtils.updateStatisticBeanCountTransactionInfo(stat, row);
+					StatisticsUtils.updateStatisticBeanSizeTransactionInfo(stat, row);
+	
+					// Aggiungo informazioni che richiedono ulteriori condizioni di where (es. date not null) 
+					try {
+						this.addLatenze(data, dateNext, tipoPdD, stat, fieldConverter);
+					}catch(Throwable eSingoloRecordAddLatenze) {
+						this.logger.error("Rilevato errore durante la lettura delle latenze di un singolo record di informazione statistica: "+eSingoloRecordAddLatenze.getMessage()+
+								"\nRecord: "+stat.toString(),eSingoloRecordAddLatenze);
+						generazioneOk = false;
+					}
+									
+					// Inserisco statistica
+					insertStatistica(stat, statoRecord);
+	
+					if(this.generazioneStatisticheCustom){
+						createCustomStatistic(stat);
+					}
+					
+				}catch(Throwable eSingoloRecord) {
+					String r = "";
+					if(stat!=null) {
+						try {
+							r ="\nRecord: "+stat.toString();
+						}catch(Throwable tPrint) {}
+					}
+					this.logger.error("Rilevato errore durante la registrazione del singolo record di informazione statistica: "+eSingoloRecord.getMessage()+r,eSingoloRecord);
+					generazioneOk = false;
 				}
 			}
 
 
 		} catch (ServiceException e){
 			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
 		} catch (NotImplementedException e) {
 			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
 		} catch (ExpressionNotImplementedException e) {
 			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
 		} catch (ExpressionException e) {
 			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
 		} catch (NotFoundException e) {
 			if(this.debug){
 				this.logger.debug(e.getMessage(),e);
 			}
-		}catch (Exception e) {
+		}catch (Throwable e) {
 			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
 		}  
 
 		if(this.debug){
 			this.logger.debug("Generazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
 		}
+				
+		return generazioneOk;
 	}
 	
 	private StatisticBean readStatisticBean(Date data,Map<String, Object> row){
@@ -944,7 +1020,7 @@ public abstract class AbstractStatistiche {
 	// ---- CRUD ----
 
 
-	private void updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data, int stato) {
+	private boolean updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data, int stato) {
 
 		if(this.debug){
 			this.logger.debug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
@@ -975,18 +1051,22 @@ public abstract class AbstractStatistiche {
 				this.logger.debug("Modificate ["+righeModificate+"] entry");
 			}
 
+			return true;
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.logger.error(e.getMessage(), e);
+			
+			return false;
 		}
-
-		if(this.debug){
-			this.logger.debug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+		finally {
+			if(this.debug){
+				this.logger.debug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+			}
 		}
 
 	}
 	
-	private void updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data, 
+	private boolean updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data, 
 			int case1_when_stato, int case1_then_stato,
 			int case2_when_stato, int case2_then_stato) {
 
@@ -1007,7 +1087,9 @@ public abstract class AbstractStatistiche {
 			sqlQueryObject.addUpdateTable(fieldConverter.toTable(this.model));
 			sqlQueryObject.addUpdateField(nomeColonna, caseSql);
 			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.DATA, false)+"=?");
-			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.TIPO_PORTA, false)+"=?");
+			if(tipoPdD!=null) {
+				sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.TIPO_PORTA, false)+"=?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			
 			Date next = this.truncDate(this.incrementDate(data, false),false);
@@ -1015,28 +1097,36 @@ public abstract class AbstractStatistiche {
 				this.logger.debug("Aggiorno statistiche ["+this.getTipoStatistiche()+"]");
 				this.logger.debug("Valori update stato record CASE ("+case1_when_stato+"->"+case1_then_stato+") e ("+case2_when_stato+"->"+case2_then_stato+") tr.data_ingresso_richiesta=["+next.getTime()+"]");
 			}
+			List<Object> l = new ArrayList<Object>();
+			l.add(case1_when_stato); l.add(case1_then_stato);
+			l.add(case2_when_stato); l.add(case2_then_stato);
+			l.add(next);
+			if(tipoPdD!=null) {
+				l.add(TipoPdD.DELEGATA.equals(tipoPdD)? PddRuolo.DELEGATA.getValue() : PddRuolo.APPLICATIVA.getValue());
+			}
 			int righeModificate = this.statisticaServiceDAO.nativeUpdate(sqlQueryObject.createSQLUpdate(), 
-					case1_when_stato, case1_then_stato,
-					case2_when_stato, case2_then_stato,
-					next, 
-					TipoPdD.DELEGATA.equals(tipoPdD)? PddRuolo.DELEGATA.getValue() : PddRuolo.APPLICATIVA.getValue());
+					l.toArray(new Object[1]));
 			
 			if(this.debug){
 				this.logger.debug("Modificate ["+righeModificate+"] entry");
 			}
 
+			return true;
 
-		}catch(Exception e){
+		}catch(Throwable e){
 			this.logger.error(e.getMessage(), e);
+			
+			return false;
 		}
-
-		if(this.debug){
-			this.logger.debug("Update record statistiche negli stati con CASE ("+case1_when_stato+"->"+case1_then_stato+") e ("+case2_when_stato+"->"+case2_then_stato+") ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+		finally {
+			if(this.debug){
+				this.logger.debug("Update record statistiche negli stati con CASE ("+case1_when_stato+"->"+case1_then_stato+") e ("+case2_when_stato+"->"+case2_then_stato+") ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+			}
 		}
 
 	}
 	
-	private void deleteFisicoStatistiche( TipoPdD tipoPdD, Date data , int statoRecord, boolean equalsStatoRecord) {
+	private boolean deleteFisicoStatistiche( TipoPdD tipoPdD, Date data , int statoRecord, boolean equalsStatoRecord) {
 
 		if(this.debug){
 			this.logger.debug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
@@ -1054,7 +1144,8 @@ public abstract class AbstractStatistiche {
 				sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.STATO_RECORD, false)+"=?");
 			}
 			else {
-				sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.STATO_RECORD, false)+"<>?");
+				//sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.STATO_RECORD, false)+"<>?");
+				sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.STATO_RECORD, false)+"<?"); // non devo eliminare ne quelli nello stato 1 ne quello nello stato 2
 			}
 			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.TIPO_PORTA, false)+"=?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -1074,12 +1165,17 @@ public abstract class AbstractStatistiche {
 				this.logger.debug("Eliminate ["+righeEliminate+"] entry");
 			}
 
-		}catch (Exception e) {
+			return true;
+			
+		}catch (Throwable e) {
 			this.logger.error(e.getMessage(), e);
+			
+			return false;
 		}
-
-		if(this.debug){
-			this.logger.debug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+		finally {
+			if(this.debug){
+				this.logger.debug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+			}
 		}
 
 	}
