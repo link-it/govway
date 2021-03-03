@@ -65,6 +65,8 @@ public class GeneratorProperties {
 	
 	private StatisticsForceIndexConfig statisticheGenerazioneForceIndexConfig = null;
 	
+	private boolean generazioneStatisticheUseUnionForLatency = true;
+	
 	private boolean generazioneStatisticheCustom = false;
 	private boolean analisiTransazioniCustom = false;
 
@@ -95,6 +97,8 @@ public class GeneratorProperties {
 		this.statisticheGenerazioneBaseMensileGestioneUltimoMese = this.getBooleanProperty(props, "statistiche.generazione.baseMensile.gestioneUltimoMese", true);
 	
 		this.statisticheGenerazioneForceIndexConfig = new StatisticsForceIndexConfig(props);
+		
+		this.generazioneStatisticheUseUnionForLatency = this.getBooleanProperty(props, "statistiche.generazione.useUnionForLatency", true);
 		
 		this.generazioneStatisticheCustom = this.getBooleanProperty(props, "statistiche.generazione.custom.enabled", true);
 		this.analisiTransazioniCustom = this.getBooleanProperty(props, "statistiche.generazione.custom.transazioniSdk.enabled", true);
@@ -159,6 +163,10 @@ public class GeneratorProperties {
 		return this.statisticheGenerazioneForceIndexConfig;
 	}
 		
+	public boolean isGenerazioneStatisticheUseUnionForLatency() {
+		return this.generazioneStatisticheUseUnionForLatency;
+	}
+	
 	public boolean isGenerazioneStatisticheCustom() {
 		return this.generazioneStatisticheCustom;
 	}

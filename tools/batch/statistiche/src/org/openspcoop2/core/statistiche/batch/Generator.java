@@ -116,6 +116,7 @@ public class Generator {
 			statisticsConfig.setGenerazioneStatisticheCustom(generatorProperties.isGenerazioneStatisticheCustom());
 			statisticsConfig.setAnalisiTransazioniCustom(generatorProperties.isAnalisiTransazioniCustom());
 			statisticsConfig.setDebug(generatorProperties.isStatisticheGenerazioneDebug());
+			statisticsConfig.setUseUnionForLatency(generatorProperties.isGenerazioneStatisticheUseUnionForLatency());
 			switch (tipoStatistica) {
 			case STATISTICHE_ORARIE:
 				statisticsConfig.setStatisticheOrarie(true);

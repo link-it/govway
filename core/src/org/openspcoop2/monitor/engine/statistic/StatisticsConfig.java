@@ -41,6 +41,9 @@ public class StatisticsConfig {
 	/** Indicazione se deve essere effettuato il log delle query */
 	private boolean debug = false;	
 	
+	/** Indicazione se deve essere usata la union per calcolare i tempi di latenza */
+	private boolean useUnionForLatency = false;	
+	
 	/** Indicazione se devono essere generate le statistiche custom */
 	private boolean generazioneStatisticheCustom = false;
 	
@@ -78,6 +81,12 @@ public class StatisticsConfig {
 					this.debug = true;
 				} else {
 					this.debug = false;
+				}
+				
+				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_USE_UNION_FOR_LATENCY, "false", true))) {
+					this.useUnionForLatency = true;
+				} else {
+					this.useUnionForLatency = false;
 				}
 				
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_CUSTOM_STATISTICS, "false", true))) {
@@ -170,6 +179,14 @@ public class StatisticsConfig {
 		this.debug = debug;
 	}
 
+	public boolean isUseUnionForLatency() {
+		return this.useUnionForLatency;
+	}
+
+	public void setUseUnionForLatency(boolean useUnionForLatency) {
+		this.useUnionForLatency = useUnionForLatency;
+	}
+	
 	public boolean isGenerazioneStatisticheCustom() {
 		return this.generazioneStatisticheCustom;
 	}

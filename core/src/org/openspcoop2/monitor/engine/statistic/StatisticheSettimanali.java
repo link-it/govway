@@ -53,7 +53,8 @@ public class StatisticheSettimanali extends AbstractStatistiche {
 			super();
 	}
 	public StatisticheSettimanali( 
-			Logger logger, boolean logQuery, boolean generazioneStatisticheCustom, boolean analisiTransazioniCustom,
+			Logger logger, boolean logQuery, boolean useUnionForLatency,  
+			boolean generazioneStatisticheCustom, boolean analisiTransazioniCustom,
 			StatisticsForceIndexConfig forceIndexConfig,
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
@@ -61,7 +62,8 @@ public class StatisticheSettimanali extends AbstractStatistiche {
 			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM) {
-		super( logger, logQuery,generazioneStatisticheCustom,analisiTransazioniCustom,
+		super( logger, logQuery, useUnionForLatency,
+				generazioneStatisticheCustom,analisiTransazioniCustom,
 				forceIndexConfig,
 				statisticheSM,transazioniSM,
 				pluginsStatisticheSM,pluginsBaseSM,utilsSM,pluginsTransazioniSM);

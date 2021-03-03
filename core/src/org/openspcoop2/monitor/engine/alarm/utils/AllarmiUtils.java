@@ -100,7 +100,7 @@ public class AllarmiUtils {
 				//				tipiDisponibiliServizio = protocolFactory.createProtocolConfiguration().getTipiServizi();
 			}
 
-			// Inserisco tutti i tipi trovati in una mappa, se i tre tipi sono compatibili, l'elenco delle chiavi coincide con la dimesione delle liste di quelli settati.
+			// Inserisco tutti i tipi trovati in una mappa, se i tre tipi sono compatibili, l'elenco delle chiavi coincide con la dimensione delle liste di quelli settati.
 			Map<String, String> mappaProtocolli = new HashMap<String, String>();
 			if(protocolloServizio != null && protocolloServizio.size() > 0)
 				for (String tipo : protocolloServizio) {

@@ -82,6 +82,9 @@ public class TimerStatisticheLib {
 	/** Indicazione se deve essere effettuato il log delle query */
 	private boolean debug = false;	
 	
+	/** Indicazione se deve essere usata la union per calcolare i tempi di latenza */
+	private boolean useUnionForLatency = false;	
+	
 	/** Tipologie di statistiche */
 	private TipoIntervalloStatistico tipoStatistica;
 	private boolean statisticheOrarie = false;
@@ -132,6 +135,7 @@ public class TimerStatisticheLib {
 		this.logSql = OpenSPCoop2Logger.getLoggerOpenSPCoopStatisticheSql(tipoStatistica, this.debug);
 		this.logTimer = logTimer;
 		
+		this.useUnionForLatency = this.op2Properties.isStatisticheGenerazioneUseUnionForLatency();
 		this.generazioneStatisticheCustom = this.op2Properties.isStatisticheGenerazioneCustomEnabled();
 		this.analisiTransazioniCustom = this.op2Properties.isStatisticheGenerazioneCustomSdkEnabled();
 		
@@ -233,6 +237,7 @@ public class TimerStatisticheLib {
 			this.statisticsConfig.setGenerazioneStatisticheCustom(this.generazioneStatisticheCustom);
 			this.statisticsConfig.setAnalisiTransazioniCustom(this.analisiTransazioniCustom);
 			this.statisticsConfig.setDebug(this.debug);
+			this.statisticsConfig.setUseUnionForLatency(this.useUnionForLatency);
 			this.statisticsConfig.setStatisticheOrarie(this.statisticheOrarie);
 			this.statisticsConfig.setStatisticheGiornaliere(this.statisticheGiornaliere);
 			this.statisticsConfig.setStatisticheSettimanali(this.statisticheSettimanali);

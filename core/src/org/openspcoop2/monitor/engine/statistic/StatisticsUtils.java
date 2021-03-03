@@ -25,21 +25,24 @@ import java.util.Map;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.utils.FilterUtils;
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.generic_project.beans.AliasTableComplexField;
 import org.openspcoop2.generic_project.beans.ComplexField;
+import org.openspcoop2.generic_project.beans.ConstantField;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IAliasTableField;
 import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.UnionExpression;
 import org.openspcoop2.generic_project.beans.UnixTimestampIntervalField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
-import org.openspcoop2.core.plugins.utils.FilterUtils;
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.monitor.engine.exceptions.EngineException;
 import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
@@ -72,27 +75,55 @@ public class StatisticsUtils {
 		return null;
 	}
 	
-	public static void setExpression(IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
+	public static void setExpressionNotNullDate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
 			ISQLFieldConverter fieldConverter) throws Exception{
-		StatisticsUtils.setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter, false, null,null);
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
+				true, false, 
+				stat, fieldConverter, 
+				false, 
+				null,null);
 	}
-	public static void setExpressionByStato(IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
+	public static void setExpressionNullDate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
 			ISQLFieldConverter fieldConverter) throws Exception{
-		StatisticsUtils.setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter, true, null,null);
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
+				false, true, 
+				stat, fieldConverter, 
+				false, 
+				null,null);
 	}
-	public static void setExpressionStatsPersonalizzate(IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
+	public static void setExpression(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
+			ISQLFieldConverter fieldConverter) throws Exception{
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
+				setNotNullDate, false, 
+				stat, fieldConverter, 
+				false, 
+				null,null);
+	}
+	public static void setExpressionByStato(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
+			ISQLFieldConverter fieldConverter) throws Exception{
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
+				setNotNullDate, false, 
+				stat, fieldConverter, 
+				true, 
+				null,null);
+	}
+	public static void setExpressionStatsPersonalizzate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
 			ISQLFieldConverter fieldConverter,
 			List<AliasFilter> aliases,
 			String idRisorsa,
 			StatisticResourceFilter ... risorseFiltri) throws Exception{
-		StatisticsUtils.setExpressionEngine(expr, data, dateNext, tipoPdD, setNotNullDate, stat, fieldConverter,false,
-				aliases,idRisorsa, risorseFiltri);
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
+				setNotNullDate, false,
+				stat, fieldConverter,
+				false,
+				aliases,idRisorsa, 
+				risorseFiltri);
 	}
-	private static void setExpressionEngine(IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
-			ISQLFieldConverter fieldConverter,
+	private static void setExpressionEngine(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, 
+			boolean setNotNullDate, boolean setNullDate, 
+			StatisticBean stat, ISQLFieldConverter fieldConverter,
 			boolean groupByStato,
-			List<AliasFilter> aliases,
-			String idRisorsa,
+			List<AliasFilter> aliases, String idRisorsa,
 			StatisticResourceFilter ... risorseFiltri) throws Exception{
 		
 		expr.and();
@@ -210,6 +241,14 @@ public class StatisticsUtils {
 			expr.isNotNull(Transazione.model().DATA_INGRESSO_RISPOSTA);
 			expr.isNotNull(Transazione.model().DATA_USCITA_RISPOSTA);
 		}
+		else if(setNullDate) {
+			IExpression exprNullDate = transazioneSearchDAO.newExpression();
+			exprNullDate.isNotNull(Transazione.model().DATA_USCITA_RICHIESTA);
+			exprNullDate.isNotNull(Transazione.model().DATA_INGRESSO_RISPOSTA);
+			exprNullDate.isNotNull(Transazione.model().DATA_USCITA_RISPOSTA);
+			exprNullDate.and();
+			expr.not(exprNullDate);
+		}
 
 		if(idRisorsa!=null){
 			expr.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME,idRisorsa);
@@ -294,6 +333,63 @@ public class StatisticsUtils {
 		}
 	}
 	
+	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter) throws Exception {
+			addSelectUnionField(expr, fieldConverter,
+					false,
+					null, null);
+	}
+	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter,
+			boolean groupByStato,
+			List<AliasFilter> aliases, String idRisorsa) throws Exception {
+		expr.addSelectField(Transazione.model().PDD_RUOLO, fieldConverter.toColumn(Transazione.model().PDD_RUOLO, false));
+		expr.addSelectField(Transazione.model().PDD_CODICE, fieldConverter.toColumn(Transazione.model().PDD_CODICE, false));
+		expr.addSelectField(Transazione.model().TIPO_SOGGETTO_FRUITORE, fieldConverter.toColumn(Transazione.model().TIPO_SOGGETTO_FRUITORE, false));
+		expr.addSelectField(Transazione.model().NOME_SOGGETTO_FRUITORE, fieldConverter.toColumn(Transazione.model().NOME_SOGGETTO_FRUITORE, false));
+		expr.addSelectField(Transazione.model().TIPO_SOGGETTO_EROGATORE, fieldConverter.toColumn(Transazione.model().TIPO_SOGGETTO_EROGATORE, false));
+		expr.addSelectField(Transazione.model().NOME_SOGGETTO_EROGATORE, fieldConverter.toColumn(Transazione.model().NOME_SOGGETTO_EROGATORE, false));
+		expr.addSelectField(Transazione.model().TIPO_SERVIZIO, fieldConverter.toColumn(Transazione.model().TIPO_SERVIZIO, false));
+		expr.addSelectField(Transazione.model().NOME_SERVIZIO, fieldConverter.toColumn(Transazione.model().NOME_SERVIZIO, false));
+		expr.addSelectField(Transazione.model().VERSIONE_SERVIZIO, fieldConverter.toColumn(Transazione.model().VERSIONE_SERVIZIO, false));
+		expr.addSelectField(Transazione.model().AZIONE, fieldConverter.toColumn(Transazione.model().AZIONE, false));
+		// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
+//		if(TipoPdD.DELEGATA.equals(tipoPdD)){
+		expr.addSelectField(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE, fieldConverter.toColumn(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE, false));
+//		}else{
+//			expr.addSelectField(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE, fieldConverter.toColumn(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE, false));
+//		}
+		expr.addSelectField(Transazione.model().TRASPORTO_MITTENTE, fieldConverter.toColumn(Transazione.model().TRASPORTO_MITTENTE, false));
+		expr.addSelectField(Transazione.model().TOKEN_ISSUER, fieldConverter.toColumn(Transazione.model().TOKEN_ISSUER, false));
+		expr.addSelectField(Transazione.model().TOKEN_CLIENT_ID, fieldConverter.toColumn(Transazione.model().TOKEN_CLIENT_ID, false));
+		expr.addSelectField(Transazione.model().TOKEN_SUBJECT, fieldConverter.toColumn(Transazione.model().TOKEN_SUBJECT, false));
+		expr.addSelectField(Transazione.model().TOKEN_USERNAME, fieldConverter.toColumn(Transazione.model().TOKEN_USERNAME, false));
+		expr.addSelectField(Transazione.model().TOKEN_MAIL, fieldConverter.toColumn(Transazione.model().TOKEN_MAIL, false));
+		expr.addSelectField(Transazione.model().CLIENT_ADDRESS, fieldConverter.toColumn(Transazione.model().CLIENT_ADDRESS, false));
+		expr.addSelectField(Transazione.model().GRUPPI, fieldConverter.toColumn(Transazione.model().GRUPPI, false));
+		expr.addSelectField(Transazione.model().URI_API, fieldConverter.toColumn(Transazione.model().URI_API, false));
+		expr.addSelectField(Transazione.model().CLUSTER_ID, fieldConverter.toColumn(Transazione.model().CLUSTER_ID, false));
+		expr.addSelectField(Transazione.model().ESITO, fieldConverter.toColumn(Transazione.model().ESITO, false));
+		expr.addSelectField(Transazione.model().ESITO_CONTESTO, fieldConverter.toColumn(Transazione.model().ESITO_CONTESTO, false));
+		if(groupByStato){
+			expr.addSelectField(Transazione.model().STATO, fieldConverter.toColumn(Transazione.model().STATO, false));
+		}
+		if(idRisorsa!=null){
+			expr.addSelectField(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME, fieldConverter.toColumn(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME, false));
+			expr.addSelectField(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE, fieldConverter.toColumn(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE, false));
+		}
+		if(aliases!=null && aliases.size()>0){
+			for (AliasFilter aliasFilter : aliases) {
+				IAliasTableField afName = aliasFilter.getNomeFiltro(); 
+				expr.addSelectField(afName, afName.getFieldName());
+				
+				String tableAlias = afName.getAliasTable();
+				IAliasTableField afValue = new AliasTableComplexField((ComplexField)Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE, tableAlias);
+				aliasFilter.setValoreFiltro(afValue);
+				
+				expr.addSelectField(afValue, afValue.getFieldName());
+			}
+		}
+	}
+	
 	public static void addSelectFieldCountTransaction(List<FunctionField> selectList) throws ExpressionException{
 		
 		// Numero Transazioni
@@ -323,39 +419,70 @@ public class StatisticsUtils {
 		selectList.add(fSum4);
 	}
 	
-	public static void addSelectFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter, List<FunctionField> selectList) throws ExpressionException, SQLQueryObjectException{
+	public static void addSelectFunctionFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter, 
+			List<FunctionField> selectFunctionList) throws ExpressionException, SQLQueryObjectException{
+		_addSelectFieldLatencyTransaction(tipoPdD, fieldConverter, selectFunctionList, null);
+	}
+	public static void addSelectConstantFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter, 
+			List<ConstantField> selectConstantList) throws ExpressionException, SQLQueryObjectException{
+		_addSelectFieldLatencyTransaction(tipoPdD, fieldConverter, null, selectConstantList);
+	}
+	private static void _addSelectFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter, 
+			List<FunctionField> selectFunctionList,
+			List<ConstantField> selectConstantList) throws ExpressionException, SQLQueryObjectException{
 		
-		// Latenza Totale
-		UnixTimestampIntervalField latenzaTotale = new UnixTimestampIntervalField("unix_latenza_totale", fieldConverter, true, 
-				Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
-		FunctionField fLatenzaTotaleAvg = new FunctionField(latenzaTotale, Function.AVG, "latenza_totale");
-		selectList.add(fLatenzaTotaleAvg);
+		if(selectFunctionList!=null) {
 		
-		// Latenza Servizio
-		UnixTimestampIntervalField latenzaServizio = new UnixTimestampIntervalField("unix_latenza_servizio", fieldConverter, true, 
-				Transazione.model().DATA_INGRESSO_RISPOSTA, Transazione.model().DATA_USCITA_RICHIESTA);
-		FunctionField fLatenzaServizioAvg = new FunctionField(latenzaServizio, Function.AVG, "latenza_servizio");
-		selectList.add(fLatenzaServizioAvg);
-		
-		// Latenza Gateway Richiesta
-		UnixTimestampIntervalField latenzaPortaRichiesta = new UnixTimestampIntervalField("unix_latenza_richiesta", fieldConverter, true, 
-				Transazione.model().DATA_USCITA_RICHIESTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
-		FunctionField fLatenzaPortaRichiestaAvg = new FunctionField(latenzaPortaRichiesta, Function.AVG, "latenza_porta_richiesta");
-		selectList.add(fLatenzaPortaRichiestaAvg);
-		
-		// Latenza Gateway Risposta
-		UnixTimestampIntervalField latenzaPortaRisposta = new UnixTimestampIntervalField("unix_latenza_risposta", fieldConverter, true, 
-				Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RISPOSTA);
-		FunctionField fLatenzaPortaRispostaAvg = new FunctionField(latenzaPortaRisposta, Function.AVG, "latenza_porta_risposta");
-		selectList.add(fLatenzaPortaRispostaAvg);
+			// Latenza Totale
+			UnixTimestampIntervalField latenzaTotale = new UnixTimestampIntervalField("unix_latenza_totale", fieldConverter, true, 
+					Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
+			FunctionField fLatenzaTotaleAvg = new FunctionField(latenzaTotale, Function.AVG, "latenza_totale");
+			selectFunctionList.add(fLatenzaTotaleAvg);
+			
+			// Latenza Servizio
+			UnixTimestampIntervalField latenzaServizio = new UnixTimestampIntervalField("unix_latenza_servizio", fieldConverter, true, 
+					Transazione.model().DATA_INGRESSO_RISPOSTA, Transazione.model().DATA_USCITA_RICHIESTA);
+			FunctionField fLatenzaServizioAvg = new FunctionField(latenzaServizio, Function.AVG, "latenza_servizio");
+			selectFunctionList.add(fLatenzaServizioAvg);
+			
+			// Latenza Gateway Richiesta
+			UnixTimestampIntervalField latenzaPortaRichiesta = new UnixTimestampIntervalField("unix_latenza_richiesta", fieldConverter, true, 
+					Transazione.model().DATA_USCITA_RICHIESTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
+			FunctionField fLatenzaPortaRichiestaAvg = new FunctionField(latenzaPortaRichiesta, Function.AVG, "latenza_porta_richiesta");
+			selectFunctionList.add(fLatenzaPortaRichiestaAvg);
+			
+			// Latenza Gateway Risposta
+			UnixTimestampIntervalField latenzaPortaRisposta = new UnixTimestampIntervalField("unix_latenza_risposta", fieldConverter, true, 
+					Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RISPOSTA);
+			FunctionField fLatenzaPortaRispostaAvg = new FunctionField(latenzaPortaRisposta, Function.AVG, "latenza_porta_risposta");
+			selectFunctionList.add(fLatenzaPortaRispostaAvg);
+			
+		}
+		else {
+			
+			// Latenza Totale
+			ConstantField latenzaTotale = new ConstantField("latenza_totale", Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
+			selectConstantList.add(latenzaTotale);
+			
+			// Latenza Servizio
+			ConstantField latenzaServizio = new ConstantField("latenza_servizio", Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
+			selectConstantList.add(latenzaServizio);
+			
+			// Latenza Gateway Richiesta
+			ConstantField latenzaPortaRichiesta = new ConstantField("latenza_porta_richiesta", Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
+			selectConstantList.add(latenzaPortaRichiesta);
+			
+			// Latenza Gateway Risposta
+			ConstantField latenzaPortaRisposta = new ConstantField("latenza_porta_risposta", Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
+			selectConstantList.add(latenzaPortaRisposta);
+		}
 		
 	}
 	
-	
-	public static StatisticBean readStatisticBean(StatisticBean stat,Map<String, Object> row){
+	public static StatisticBean readStatisticBean(StatisticBean stat,Map<String, Object> row, ISQLFieldConverter fieldConverter, boolean useFieldConverter) throws ExpressionException{
 		
-		stat.setIdPorta(StatisticsUtils.getValueFromMap(Transazione.model().PDD_CODICE,row));
-		String TipoPortaS = (String) row.get(Transazione.model().PDD_RUOLO.getFieldName());
+		stat.setIdPorta(StatisticsUtils.getValueFromMap(Transazione.model().PDD_CODICE,row,fieldConverter,useFieldConverter));
+		String TipoPortaS = StatisticsUtils.getValueFromMap(Transazione.model().PDD_RUOLO,row,fieldConverter,useFieldConverter);
 		TipoPdD tipo = TipoPdD.toTipoPdD(TipoPortaS);
 		stat.setTipoPorta(tipo);
 		
@@ -383,23 +510,23 @@ public class StatisticsUtils {
 		// poichè un applicativo viene identificato univocamente se si considera sia il nome dell'applicativo che il soggetto proprietario.
 		// Il group by sulle fruizioni, se si usa l'informazione anonima, non porta problemi perchè l'entry anonima sarà 1 sempre, essendo il soggetto fruitore uno solo (Soggetto locale impostato).
 		// Il group by sulle erogazioni produrrà invece più entry anonime se si hanno più soggetto che la invocano senza un applicativo specifico.
-		stat.setServizioApplicativo(StatisticsUtils.getValueFromMap(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,row));
+		stat.setServizioApplicativo(StatisticsUtils.getValueFromMap(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,row,fieldConverter,useFieldConverter));
 						
-		stat.setTrasportoMittente(StatisticsUtils.getValueFromMap(Transazione.model().TRASPORTO_MITTENTE,row));
+		stat.setTrasportoMittente(StatisticsUtils.getValueFromMap(Transazione.model().TRASPORTO_MITTENTE,row,fieldConverter,useFieldConverter));
 		
-		stat.setTokenIssuer(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_ISSUER,row));
-		stat.setTokenClientId(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_CLIENT_ID,row));
-		stat.setTokenSubject(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_SUBJECT,row));
-		stat.setTokenUsername(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_USERNAME,row));
-		stat.setTokenMail(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_MAIL,row));
+		stat.setTokenIssuer(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_ISSUER,row,fieldConverter,useFieldConverter));
+		stat.setTokenClientId(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_CLIENT_ID,row,fieldConverter,useFieldConverter));
+		stat.setTokenSubject(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_SUBJECT,row,fieldConverter,useFieldConverter));
+		stat.setTokenUsername(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_USERNAME,row,fieldConverter,useFieldConverter));
+		stat.setTokenMail(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_MAIL,row,fieldConverter,useFieldConverter));
 		
-		stat.setClientAddress(StatisticsUtils.getValueFromMap(Transazione.model().CLIENT_ADDRESS,row));
+		stat.setClientAddress(StatisticsUtils.getValueFromMap(Transazione.model().CLIENT_ADDRESS,row,fieldConverter,useFieldConverter));
 		
-		stat.setGruppo(StatisticsUtils.getValueFromMap(Transazione.model().GRUPPI,row));
+		stat.setGruppo(StatisticsUtils.getValueFromMap(Transazione.model().GRUPPI,row,fieldConverter,useFieldConverter));
 		
-		stat.setApi(StatisticsUtils.getValueFromMap(Transazione.model().URI_API,row));
+		stat.setApi(StatisticsUtils.getValueFromMap(Transazione.model().URI_API,row,fieldConverter,useFieldConverter));
 		
-		stat.setClusterId(StatisticsUtils.getValueFromMap(Transazione.model().CLUSTER_ID,row));
+		stat.setClusterId(StatisticsUtils.getValueFromMap(Transazione.model().CLUSTER_ID,row,fieldConverter,useFieldConverter));
 		
 //		stat.setMittente(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldName()), (String)row.get(Transazione.model().NOME_SOGGETTO_FRUITORE .getFieldName())));
 //		stat.setDestinatario(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_EROGATORE.getFieldName()),(String)row.get(Transazione.model().NOME_SOGGETTO_EROGATORE.getFieldName())));
@@ -414,26 +541,33 @@ public class StatisticsUtils {
 		
 		// Gestisco i possibili valori null con '-'.
 		// Sono state prese le informazioni anche con null poichè senno non venivano contate nelle statistiche le transazioni che non possedevano info sui servizi. (es porta delegata non trovata)
-		stat.setMittente(new IDSoggetto(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_FRUITORE,row), 
-										StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_FRUITORE,row)));
+		stat.setMittente(new IDSoggetto(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_FRUITORE,row,fieldConverter,useFieldConverter), 
+										StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_FRUITORE,row,fieldConverter,useFieldConverter)));
 		
-		stat.setDestinatario(new IDSoggetto(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_EROGATORE,row), 
-											StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_EROGATORE,row)));
+		stat.setDestinatario(new IDSoggetto(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_EROGATORE,row,fieldConverter,useFieldConverter), 
+											StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_EROGATORE,row,fieldConverter,useFieldConverter)));
 		
-		stat.setTipoServizio(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SERVIZIO,row));
-		stat.setServizio(StatisticsUtils.getValueFromMap(Transazione.model().NOME_SERVIZIO,row));
-		stat.setVersioneServizio(StatisticsUtils.getVersionValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row));
+		stat.setTipoServizio(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SERVIZIO,row,fieldConverter,useFieldConverter));
+		stat.setServizio(StatisticsUtils.getValueFromMap(Transazione.model().NOME_SERVIZIO,row,fieldConverter,useFieldConverter));
+		stat.setVersioneServizio(StatisticsUtils.getIntegerValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row,false,fieldConverter,useFieldConverter));
 		
-		stat.setAzione(StatisticsUtils.getValueFromMap(Transazione.model().AZIONE,row));
+		stat.setAzione(StatisticsUtils.getValueFromMap(Transazione.model().AZIONE,row,fieldConverter,useFieldConverter));
 		
-		stat.setEsito((Integer)row.get(Transazione.model().ESITO.getFieldName()));
+		stat.setEsito(StatisticsUtils.getIntegerValueFromMap(Transazione.model().ESITO,row,true,fieldConverter,useFieldConverter));
 		
-		stat.setEsitoContesto(StatisticsUtils.getValueFromMap(Transazione.model().ESITO_CONTESTO,row));
+		stat.setEsitoContesto(StatisticsUtils.getValueFromMap(Transazione.model().ESITO_CONTESTO,row,fieldConverter,useFieldConverter));
 		
 		return stat;
 	}
-	private static String getValueFromMap(IField field, Map<String, Object> row){
-		Object tmpObject = row.get(field.getFieldName());
+	private static String getValueFromMap(IField field, Map<String, Object> row, ISQLFieldConverter fieldConverter, boolean useFieldConverter) throws ExpressionException{
+		String nomeKeyMappa = null;
+		if(useFieldConverter) {
+			nomeKeyMappa = fieldConverter.toColumn(field, false);
+		}
+		else {
+			nomeKeyMappa = field.getFieldName();
+		}
+		Object tmpObject = row.get(nomeKeyMappa);
 		String tmp = null;
 		if(tmpObject!=null && !(tmpObject instanceof org.apache.commons.lang.ObjectUtils.Null)){ 
 			tmp = (String) tmpObject;
@@ -445,13 +579,23 @@ public class StatisticsUtils {
 			return Costanti.INFORMAZIONE_NON_DISPONIBILE;
 		}
 	}
-	private static Integer getVersionValueFromMap(IField field, Map<String, Object> row){
-		Object tmpObject = row.get(field.getFieldName());
+	private static Integer getIntegerValueFromMap(IField field, Map<String, Object> row, boolean acceptZeroValue, ISQLFieldConverter fieldConverter, boolean useFieldConverter) throws ExpressionException{
+		String nomeKeyMappa = null;
+		if(useFieldConverter) {
+			nomeKeyMappa = fieldConverter.toColumn(field, false);
+		}
+		else {
+			nomeKeyMappa = field.getFieldName();
+		}
+		Object tmpObject = row.get(nomeKeyMappa);
 		Integer tmp = null;
 		if(tmpObject!=null && !(tmpObject instanceof org.apache.commons.lang.ObjectUtils.Null)){ 
 			tmp = (Integer) tmpObject;
 		}
 		if(tmp!=null && tmp.intValue()>0){
+			return tmp;
+		}
+		else if(tmp!=null && tmp.intValue()==0 && acceptZeroValue) {
 			return tmp;
 		}
 		else{

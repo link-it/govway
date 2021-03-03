@@ -1,3 +1,12 @@
+2021-03-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, BatchStatistiche]
+	Aggiunta funzionalità OP-1150
+	Il generatore delle statistiche effettuava una prima select con group by per calcolare i dati statistici relativi alle transazioni, comprese il numero di richieste e la dimensione.
+	Poi per ogni gruppo ritornato dalla group by calcolava le latenze effettuando una nuova query escludendo le transazioni in cui tutte le date ingresso/uscita della richiesta/risposta non erano disponibili.
+	Questo algoritmo generava 1+N query che rendevano la generazione delle statistiche inefficente in presenza di grandi mole di dati.
+	È stato rivisto l'algoritmo al fine di calcolare anche le latenze tramite una unica query.
+
 2021-03-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

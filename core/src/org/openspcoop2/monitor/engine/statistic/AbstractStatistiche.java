@@ -40,7 +40,10 @@ import org.openspcoop2.core.statistiche.dao.IStatisticaInfoServiceSearch;
 import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
+import org.openspcoop2.generic_project.beans.ConstantField;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.dao.IServiceWithoutId;
@@ -93,6 +96,7 @@ public abstract class AbstractStatistiche {
 
 	protected Logger logger = LoggerWrapperFactory.getLogger(AbstractStatistiche.class);
 	protected boolean debug = false;
+	protected boolean useUnionForLatency = true;
 	protected boolean generazioneStatisticheCustom = false;
 	protected boolean analisiTransazioniCustom = false;
 	protected IServiceManager statisticheSM = null;
@@ -118,7 +122,8 @@ public abstract class AbstractStatistiche {
 	AbstractStatistiche(){
 		
 	}
-	public AbstractStatistiche(Logger logger,boolean debug, boolean generazioneStatisticheCustom, boolean analisiTransazioniCustom,
+	public AbstractStatistiche(Logger logger,boolean debug,boolean useUnionForLatency, 
+			boolean generazioneStatisticheCustom, boolean analisiTransazioniCustom,
 			StatisticsForceIndexConfig forceIndexConfig,
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
@@ -130,6 +135,7 @@ public abstract class AbstractStatistiche {
 			this.logger = logger;
 		}
 		this.debug = debug;
+		this.useUnionForLatency = useUnionForLatency;
 		this.generazioneStatisticheCustom = generazioneStatisticheCustom;
 		this.analisiTransazioniCustom = analisiTransazioniCustom;
 		
@@ -362,13 +368,23 @@ public abstract class AbstractStatistiche {
 		// Generazione (Fase 3)
 		if(this.debug)
 			this.logger.debug("----------- generazione Fase3 (DataUguale) ------------");
-		esito = this.generaStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		if(this.useUnionForLatency) {
+			esito = this.generaStatisticheUnion( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		}
+		else {
+			esito = this.generaStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		}
 		if(!esito) {
 			return false;
 		}
 		if(this.debug)
 			this.logger.debug("------------ generazione Fase3 (DataUguale) -----------");
-		esito = this.generaStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		if(this.useUnionForLatency) {
+			esito = this.generaStatisticheUnion( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		}
+		else {
+			esito = this.generaStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO );
+		}
 		if(!esito) {
 			return false;
 		}
@@ -426,6 +442,143 @@ public abstract class AbstractStatistiche {
 	
 	// ---- GENERAZIONE STATISTICHE BASE ----
 	
+	private boolean generaStatisticheUnion(TipoPdD tipoPdD, Date data, int statoRecord) {
+
+		boolean generazioneOk = true;
+		
+		if(this.debug){
+			this.logger.debug("Generazione statistiche (union) ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+		}
+		try{
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.transazioneSearchDAO).getFieldConverter(); 
+			
+			// ** Select field **
+			List<FunctionField> selectList = new ArrayList<FunctionField>();
+			StatisticsUtils.addSelectFieldCountTransaction(selectList);
+			StatisticsUtils.addSelectFieldSizeTransaction(tipoPdD, selectList);
+			
+			List<FunctionField> selectListConLatenze = new ArrayList<FunctionField>();
+			selectListConLatenze.addAll(selectList);
+			StatisticsUtils.addSelectFunctionFieldLatencyTransaction(tipoPdD, fieldConverter, selectListConLatenze);
+			
+			List<FunctionField> selectListSenzaLatenze = new ArrayList<FunctionField>();
+			selectListSenzaLatenze.addAll(selectList);
+			List<ConstantField> selectListCostantiLatenze = new ArrayList<ConstantField>();
+			StatisticsUtils.addSelectConstantFieldLatencyTransaction(tipoPdD, fieldConverter, selectListCostantiLatenze);
+
+			// ** Where **
+			// Creo intervallo
+			Date dateNext = incrementDate(data, false);
+			
+			IExpression exprConLatenze = this.transazioneSearchDAO.newExpression();
+			StatisticsUtils.setExpressionNotNullDate(this.transazioneSearchDAO, exprConLatenze, data, dateNext, tipoPdD, null, fieldConverter);
+			
+			IExpression exprSenzaLatenze = this.transazioneSearchDAO.newExpression();
+			StatisticsUtils.setExpressionNullDate(this.transazioneSearchDAO, exprSenzaLatenze, data, dateNext, tipoPdD, null, fieldConverter);
+
+			if(this.debug){
+				this.logger.debug("Genero statistiche ["+this.getTipoStatistiche()+"] Intervallo date: ["+data.toString()+" - "+dateNext.toString()+"]");
+				this.logger.debug("Valori query (ms) tr.data_ingresso_richiesta>["+data.getTime()+"] AND tr.data_ingresso_richiesta<=["+dateNext.getTime()+"]");
+			}
+
+			if(this.forceIndexConfig!=null){
+				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimensione()!=null){
+					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimensione();
+					if(listForceIndexes.size()>0){
+						for (Index index : listForceIndexes) {
+							exprConLatenze.addForceIndex(index);
+							exprSenzaLatenze.addForceIndex(index);
+						}
+					}
+				}
+			}
+			
+			// ** Union **
+			
+			UnionExpression latenze_UnionExpr = new UnionExpression(exprConLatenze);
+			for (FunctionField functionField : selectListConLatenze) {
+				latenze_UnionExpr.addSelectFunctionField(functionField);
+			}
+			StatisticsUtils.addSelectUnionField(latenze_UnionExpr, fieldConverter);
+			
+			UnionExpression senza_latenze_UnionExpr = new UnionExpression(exprSenzaLatenze);
+			for (FunctionField functionField : selectListSenzaLatenze) {
+				senza_latenze_UnionExpr.addSelectFunctionField(functionField);
+			}
+			for (ConstantField constantField : selectListCostantiLatenze) {
+				senza_latenze_UnionExpr.addSelectField(constantField, constantField.getAlias());
+			}
+			StatisticsUtils.addSelectUnionField(senza_latenze_UnionExpr, fieldConverter);
+			
+			Union union = new Union();
+			union.setUnionAll(true);
+			for (String alias : latenze_UnionExpr.getReturnFieldAliases()) {
+				union.addField(alias);
+			}
+			
+			List<Map<String, Object>> list = this.transazioneSearchDAO.union(union, latenze_UnionExpr, senza_latenze_UnionExpr);
+			
+			for (Map<String, Object> row : list) {
+				
+				StatisticBean stat = null;
+				try {
+				
+					// Leggo informazioni di base dalla statistica
+					stat = this.readStatisticBean(data, row, fieldConverter, true);
+					
+					// Aggiungo informazioni sul numero di transazioni e size delle transazioni
+					StatisticsUtils.updateStatisticBeanCountTransactionInfo(stat, row);
+					StatisticsUtils.updateStatisticBeanSizeTransactionInfo(stat, row);
+					StatisticsUtils.updateStatisticsBeanLatencyTransactionInfo(stat, row);
+			
+					// Inserisco statistica
+					insertStatistica(stat, statoRecord);
+	
+					if(this.generazioneStatisticheCustom){
+						createCustomStatistic(stat);
+					}
+					
+				}catch(Throwable eSingoloRecord) {
+					String r = "";
+					if(stat!=null) {
+						try {
+							r ="\nRecord: "+stat.toString();
+						}catch(Throwable tPrint) {}
+					}
+					this.logger.error("Rilevato errore durante la registrazione del singolo record di informazione statistica: "+eSingoloRecord.getMessage()+r,eSingoloRecord);
+					generazioneOk = false;
+				}
+			}
+
+
+		} catch (ServiceException e){
+			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
+		} catch (NotImplementedException e) {
+			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
+		} catch (ExpressionNotImplementedException e) {
+			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
+		} catch (ExpressionException e) {
+			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
+		} catch (NotFoundException e) {
+			if(this.debug){
+				this.logger.debug(e.getMessage(),e);
+			}
+		}catch (Throwable e) {
+			this.logger.error(e.getMessage(),e);
+			generazioneOk = false;
+		}  
+
+		if(this.debug){
+			this.logger.debug("Generazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+		}
+				
+		return generazioneOk;
+	}
+	
 	private boolean generaStatistiche(  TipoPdD tipoPdD, Date data, int statoRecord) {
 
 		boolean generazioneOk = true;
@@ -446,7 +599,7 @@ public abstract class AbstractStatistiche {
 			// ** Where **
 			// Creo intervallo
 			Date dateNext = incrementDate(data, false);
-			StatisticsUtils.setExpression(expr, data, dateNext, tipoPdD, false, null, fieldConverter);
+			StatisticsUtils.setExpression(this.transazioneSearchDAO, expr, data, dateNext, tipoPdD, false, null, fieldConverter);
 
 			if(this.debug){
 				this.logger.debug("Genero statistiche ["+this.getTipoStatistiche()+"] Intervallo date: ["+data.toString()+" - "+dateNext.toString()+"]");
@@ -454,8 +607,8 @@ public abstract class AbstractStatistiche {
 			}
 
 			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimesione()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimesione();
+				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimensione()!=null){
+					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_numero_dimensione();
 					if(listForceIndexes.size()>0){
 						for (Index index : listForceIndexes) {
 							expr.addForceIndex(index);
@@ -472,7 +625,7 @@ public abstract class AbstractStatistiche {
 				try {
 				
 					// Leggo informazioni di base dalla statistica
-					stat = this.readStatisticBean(data, row);
+					stat = this.readStatisticBean(data, row, null, false);
 					
 					// Aggiungo informazioni sul numero di transazioni e size delle transazioni
 					StatisticsUtils.updateStatisticBeanCountTransactionInfo(stat, row);
@@ -535,7 +688,7 @@ public abstract class AbstractStatistiche {
 		return generazioneOk;
 	}
 	
-	private StatisticBean readStatisticBean(Date data,Map<String, Object> row){
+	private StatisticBean readStatisticBean(Date data,Map<String, Object> row, ISQLFieldConverter fieldConverter, boolean useFieldConverter) throws ExpressionException{
 		StatisticBean stat = new StatisticBean();
 
 		stat.setDateIntervalLeft(data);
@@ -545,17 +698,17 @@ public abstract class AbstractStatistiche {
 		if(this.debug)
 			this.logger.debug("Salvo statistica con data ["+next+"]");
 	
-		return StatisticsUtils.readStatisticBean(stat, row);
+		return StatisticsUtils.readStatisticBean(stat, row, fieldConverter, useFieldConverter);
 	}
 	
 	private void addLatenze(Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat, ISQLFieldConverter fieldConverter) throws Exception{
 		
 		IExpression exprDateNotNull = this.transazioneSearchDAO.newExpression();
-		StatisticsUtils.setExpression(exprDateNotNull, data, dateNext, tipoPdD, true, stat, fieldConverter);
+		StatisticsUtils.setExpression(this.transazioneSearchDAO, exprDateNotNull, data, dateNext, tipoPdD, true, stat, fieldConverter);
 		
 		List<FunctionField> selectListDateNotNull = new ArrayList<FunctionField>();
 		
-		StatisticsUtils.addSelectFieldLatencyTransaction(tipoPdD, fieldConverter, selectListDateNotNull);
+		StatisticsUtils.addSelectFunctionFieldLatencyTransaction(tipoPdD, fieldConverter, selectListDateNotNull);
 		
 		if(this.debug){
 			this.logger.debug("Leggo ulteriormente statistiche con campi data not null ["+this.getTipoStatistiche()+"] Intervallo date: ["+data.toString()+" - "+dateNext.toString()+"]");
@@ -823,9 +976,9 @@ public abstract class AbstractStatistiche {
 			// Creo espressione
 			List<AliasFilter> aliases = new ArrayList<AliasFilter>();
 			if(gropuByStato){
-				StatisticsUtils.setExpressionByStato(expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter);
+				StatisticsUtils.setExpressionByStato(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter);
 			}else{
-				StatisticsUtils.setExpressionStatsPersonalizzate(expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter, 
+				StatisticsUtils.setExpressionStatsPersonalizzate(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter, 
 						aliases, idRisorsa, risorseFiltri);
 			}
 
@@ -843,8 +996,8 @@ public abstract class AbstractStatistiche {
 			}
 
 			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_custom_numero_dimesione()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_custom_numero_dimesione();
+				if(this.forceIndexConfig.getTransazioniForceIndexGroupBy_custom_numero_dimensione()!=null){
+					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupBy_custom_numero_dimensione();
 					if(listForceIndexes.size()>0){
 						for (Index index : listForceIndexes) {
 							expr.addForceIndex(index);
@@ -899,14 +1052,14 @@ public abstract class AbstractStatistiche {
 				expr = this.transazioneSearchDAO.newExpression();
 				
 				selectList = new ArrayList<FunctionField>();
-				StatisticsUtils.addSelectFieldLatencyTransaction(tipoPdD, fieldConverter, selectList);
+				StatisticsUtils.addSelectFunctionFieldLatencyTransaction(tipoPdD, fieldConverter, selectList);
 				
 				// Creo espressione
 				aliases = new ArrayList<AliasFilter>();
 				if(gropuByStato){
-					StatisticsUtils.setExpressionByStato(expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter);
+					StatisticsUtils.setExpressionByStato(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter);
 				}else{
-					StatisticsUtils.setExpressionStatsPersonalizzate(expr, dateLeft, dateRight, tipoPdD, true, stat, fieldConverter, 
+					StatisticsUtils.setExpressionStatsPersonalizzate(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, true, stat, fieldConverter, 
 							aliases, idRisorsa, risorseFiltri);
 				}
 

@@ -873,21 +873,55 @@ public class JDBCUtilities {
 			
 			UnionExpression ue = unionExpression[i];
 			IExpression exp = ue.getExpression();
-			List<IField> listField = new ArrayList<IField>();
-			List<FunctionField> listFunctionField = new ArrayList<FunctionField>();		
-			List<String> aliasUe = ue.getReturnFieldAliases();
-			for (String alias : aliasUe) {
+//			List<IField> listField = new ArrayList<IField>();
+//			List<FunctionField> listFunctionField = new ArrayList<FunctionField>();		
+			List<String> aliasUE = ue.getReturnFieldAliases();
+			for (String alias : aliasUE) {
 				Object o = ue.getReturnField(alias);
 				if(o instanceof IField){
 					IField field = (IField) o;
-					listField.add(field);
+					//listField.add(field);
+					
+					if(set){
+						List<String> lAlias = new ArrayList<String>();
+						lAlias.add(alias);
+						if(exp instanceof JDBCExpression){
+							setFields(sqlQueryObject, ((JDBCExpression)exp), lAlias, field);
+						}else{
+							setFields(sqlQueryObject, ((JDBCPaginatedExpression)exp), lAlias, field);
+						}
+					}
+					else{
+						if(exp instanceof JDBCExpression){
+							removeFields(sqlQueryObject, ((JDBCExpression)exp), field);
+						}else{
+							removeFields(sqlQueryObject, ((JDBCPaginatedExpression)exp), field);
+						}
+					}
+					
 				}
 				else if(o instanceof FunctionField){
 					FunctionField field = (FunctionField) o;
-					listFunctionField.add(field);		
+					//listFunctionField.add(field);		
+					
+					if(set){
+						if(exp instanceof JDBCExpression){
+							setFields(sqlQueryObject, ((JDBCExpression)exp), field);
+						}else{
+							setFields(sqlQueryObject, ((JDBCPaginatedExpression)exp), field);
+						}
+					}
+					else{
+						if(exp instanceof JDBCExpression){
+							removeFields(sqlQueryObject, ((JDBCExpression)exp), field);
+						}else{
+							removeFields(sqlQueryObject, ((JDBCPaginatedExpression)exp), field);
+						}
+					}
 				}
 			}
 			
+			/*
 			IField[] fields = null;
 			if(listField.size()>0){
 				fields = listField.toArray(new IField[1]);
@@ -925,6 +959,7 @@ public class JDBCUtilities {
 					removeFields(sqlQueryObject, ((JDBCPaginatedExpression)exp), functionFields);
 				}
 			}
+			*/
 		}
 	}
 	
@@ -946,8 +981,14 @@ public class JDBCUtilities {
 			ISQLQueryObject sqlQueryObjectInner = sqlQueryObject.newSQLQueryObject();
 			sqlQueryObjectInner.setANDLogicOperator(true);
 			sqlQueryObjectInnerList.add(sqlQueryObjectInner);
+			//System.out.println("UE["+i+"]: "+unionExpression[i].getReturnFieldAliases());
 		}
 		setFields(sqlQueryObjectInnerList, unionExpression);
+//		if(sqlQueryObjectInnerList.size()==2) {
+//			System.out.println("SET FIELDS AAAAAAAAAAAAA: "+sqlQueryObjectInnerList.size());
+//			System.out.println("SET FIELDS AAAAAAAAAAAAA [0]="+sqlQueryObjectInnerList.get(0).getFieldsName());
+//			System.out.println("SET FIELDS AAAAAAAAAAAAA [1]="+sqlQueryObjectInnerList.get(1).getFieldsName());
+//		}
 		// non serve il remove,  SONO SQL FIELD CREATI INTERNAMENTE
 		
 		// Create sql query object
@@ -964,6 +1005,12 @@ public class JDBCUtilities {
 			}
 			
 		}
+		
+//		if(sqlQueryObjectInnerList.size()==2) {
+//			System.out.println("DOPO AAAAAAAAAAAAA: "+sqlQueryObjectInnerList.size());
+//			System.out.println("DOPO AAAAAAAAAAAAA [0]="+sqlQueryObjectInnerList.get(0).getFieldsName());
+//			System.out.println("DOPO AAAAAAAAAAAAA [1]="+sqlQueryObjectInnerList.get(1).getFieldsName());
+//		}
 		
 		return returnClassTypes;
 	}

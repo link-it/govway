@@ -60,6 +60,7 @@ public class StatisticsLibrary {
 					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche orarie ....");
 				}
 				StatisticheOrarie sg = new StatisticheOrarie( this.config.getLogCore(), this.config.isDebug(), 
+						this.config.isUseUnionForLatency(),
 						this.config.isGenerazioneStatisticheCustom(),
 						this.config.isAnalisiTransazioniCustom(),
 						this.config.getForceIndexConfig(),
@@ -88,6 +89,7 @@ public class StatisticsLibrary {
 					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche giornaliere ....");
 				}
 				StatisticheGiornaliere sg = new StatisticheGiornaliere( this.config.getLogCore(), this.config.isDebug(), 
+						this.config.isUseUnionForLatency(),
 						this.config.isGenerazioneStatisticheCustom(),
 						this.config.isAnalisiTransazioniCustom(),
 						this.config.getForceIndexConfig(),
@@ -115,6 +117,7 @@ public class StatisticsLibrary {
 					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche settimanali ....");
 				}
 				StatisticheSettimanali sg = new StatisticheSettimanali( this.config.getLogCore(), this.config.isDebug(), 
+						this.config.isUseUnionForLatency(),
 						this.config.isGenerazioneStatisticheCustom(),
 						this.config.isAnalisiTransazioniCustom(),
 						this.config.getForceIndexConfig(),
@@ -141,6 +144,7 @@ public class StatisticsLibrary {
 					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche mensili ....");
 				}
 				StatisticheMensili sg = new StatisticheMensili( this.config.getLogCore(), this.config.isDebug(), 
+						this.config.isUseUnionForLatency(),
 						this.config.isGenerazioneStatisticheCustom(),
 						this.config.isAnalisiTransazioniCustom(),
 						this.config.getForceIndexConfig(),

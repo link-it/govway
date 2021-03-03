@@ -2030,6 +2030,7 @@ public class OpenSPCoop2Properties {
 					this.getStatisticheDatasourceJndiContext();
 					this.isStatisticheDatasourceUseDBUtils();
 				}
+				this.isStatisticheGenerazioneUseUnionForLatency();
 				if(this.isStatisticheGenerazioneCustomEnabled()) {
 					this.isStatisticheGenerazioneCustomSdkEnabled();
 				}
@@ -22503,7 +22504,27 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isStatisticheDatasourceUseDBUtils;
 	}
-	
+
+	private static Boolean isStatisticheGenerazioneUseUnionForLatency = null;
+	public boolean isStatisticheGenerazioneUseUnionForLatency() {	
+		if(OpenSPCoop2Properties.isStatisticheGenerazioneUseUnionForLatency==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isStatisticheGenerazioneUseUnionForLatency = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isStatisticheGenerazioneUseUnionForLatency = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isStatisticheGenerazioneUseUnionForLatency;
+	}
 	
 	private static Boolean isStatisticheGenerazioneCustomEnabled = null;
 	public boolean isStatisticheGenerazioneCustomEnabled() {	

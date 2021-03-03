@@ -40,9 +40,9 @@ import org.openspcoop2.core.transazioni.Transazione;
 public class StatisticsForceIndexConfig {
 
 	/** Lista di indici forzati */
-	private List<Index> transazioniForceIndexGroupBy_numero_dimesione = null;
+	private List<Index> transazioniForceIndexGroupBy_numero_dimensione = null;
 	private List<Index> transazioniForceIndexGroupBy_latenze = null;
-	private List<Index> transazioniForceIndexGroupBy_custom_numero_dimesione = null;
+	private List<Index> transazioniForceIndexGroupBy_custom_numero_dimensione = null;
 	private List<Index> transazioniForceIndexGroupBy_custom_latenze = null;
 	
 	public StatisticsForceIndexConfig(){}
@@ -63,7 +63,7 @@ public class StatisticsForceIndexConfig {
 		if(groupByNumeroDimensione!=null){
 			groupByNumeroDimensione = groupByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_numero_dimesione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupBy_numero_dimensione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
 		
 		String groupByLatenza = p.getProperty(StatisticsForceIndexConfig.pGroupBy_latenza);
 		if(groupByLatenza!=null){
@@ -75,7 +75,7 @@ public class StatisticsForceIndexConfig {
 		if(groupCustomByNumeroDimensione!=null){
 			groupCustomByNumeroDimensione = groupCustomByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_numero_dimesione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupBy_custom_numero_dimensione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
 		
 		String groupCustomByLatenza = p.getProperty(StatisticsForceIndexConfig.pGroupBy_custom_latenza);
 		if(groupCustomByLatenza!=null){
@@ -96,7 +96,7 @@ public class StatisticsForceIndexConfig {
 		if(groupByNumeroDimensione!=null){
 			groupByNumeroDimensione = groupByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_numero_dimesione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupBy_numero_dimensione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_numero_dimensione, groupByNumeroDimensione, pRepoExternal);
 		
 		String groupByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_latenza);
 		if(groupByLatenza!=null){
@@ -108,7 +108,7 @@ public class StatisticsForceIndexConfig {
 		if(groupCustomByNumeroDimensione!=null){
 			groupCustomByNumeroDimensione = groupCustomByNumeroDimensione.trim();
 		}
-		this.transazioniForceIndexGroupBy_custom_numero_dimesione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
+		this.transazioniForceIndexGroupBy_custom_numero_dimensione = this.getIndexList(StatisticsForceIndexConfig.pGroupBy_custom_numero_dimensione, groupCustomByNumeroDimensione, pRepoExternal);
 		
 		String groupCustomByLatenza = p.getValue_convertEnvProperties(StatisticsForceIndexConfig.pGroupBy_custom_latenza);
 		if(groupCustomByLatenza!=null){
@@ -170,13 +170,13 @@ public class StatisticsForceIndexConfig {
 	}
 	
 
-	public List<Index> getTransazioniForceIndexGroupBy_numero_dimesione() {
-		return this.transazioniForceIndexGroupBy_numero_dimesione;
+	public List<Index> getTransazioniForceIndexGroupBy_numero_dimensione() {
+		return this.transazioniForceIndexGroupBy_numero_dimensione;
 	}
 
-	public void setTransazioniForceIndexGroupBy_numero_dimesione(
-			List<Index> transazioniForceIndexGroupBy_numero_dimesione) {
-		this.transazioniForceIndexGroupBy_numero_dimesione = transazioniForceIndexGroupBy_numero_dimesione;
+	public void setTransazioniForceIndexGroupBy_numero_dimensione(
+			List<Index> transazioniForceIndexGroupBy_numero_dimensione) {
+		this.transazioniForceIndexGroupBy_numero_dimensione = transazioniForceIndexGroupBy_numero_dimensione;
 	}
 
 	public List<Index> getTransazioniForceIndexGroupBy_latenze() {
@@ -187,13 +187,13 @@ public class StatisticsForceIndexConfig {
 		this.transazioniForceIndexGroupBy_latenze = transazioniForceIndexGroupBy_latenze;
 	}
 	
-	public List<Index> getTransazioniForceIndexGroupBy_custom_numero_dimesione() {
-		return this.transazioniForceIndexGroupBy_custom_numero_dimesione;
+	public List<Index> getTransazioniForceIndexGroupBy_custom_numero_dimensione() {
+		return this.transazioniForceIndexGroupBy_custom_numero_dimensione;
 	}
 
-	public void setTransazioniForceIndexGroupBy_custom_numero_dimesione(
-			List<Index> transazioniForceIndexGroupBy_custom_numero_dimesione) {
-		this.transazioniForceIndexGroupBy_custom_numero_dimesione = transazioniForceIndexGroupBy_custom_numero_dimesione;
+	public void setTransazioniForceIndexGroupBy_custom_numero_dimensione(
+			List<Index> transazioniForceIndexGroupBy_custom_numero_dimensione) {
+		this.transazioniForceIndexGroupBy_custom_numero_dimensione = transazioniForceIndexGroupBy_custom_numero_dimensione;
 	}
 
 	public List<Index> getTransazioniForceIndexGroupBy_custom_latenze() {
