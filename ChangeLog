@@ -1,3 +1,10 @@
+2021-03-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug che si presentava durante la negoziazione di un token, se l'url dell'AuthorizationServer ritornava un codice http 3xx con header Location.
+	L'errore segnalato nei diagnostici era il seguente:
+	"Errore durante l'aggiornamento dell'header 'Location' attraverso la funzione di proxy pass reverse: [getAccordoServizioParteComune]: Parametro non definito"
+
 2021-03-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, BatchStatistiche]

@@ -97,8 +97,11 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected boolean rest_proxyPassReverse = false;
 	protected boolean rest_proxyPassReverse_usePrefixProtocol = false;
 	protected List<String> rest_proxyPassReverse_headers = null;
-	
-	
+	private boolean forceDisable_rest_proxyPassReverse = false;
+	public void setForceDisable_rest_proxyPassReverse(boolean forceDisable_rest_proxyPassReverse) {
+		this.forceDisable_rest_proxyPassReverse = forceDisable_rest_proxyPassReverse;
+	}
+
 	/** ForwardProxy */
 	protected ForwardProxy forwardProxy;
 	protected String forwardProxy_headerName;
@@ -130,7 +133,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			}
 		}
 		
-		if(this.isRest) {
+		if(this.isRest && !this.forceDisable_rest_proxyPassReverse) {
 			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
 				this.rest_proxyPassReverse = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
 				this.rest_proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();

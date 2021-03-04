@@ -2576,6 +2576,7 @@ public class GestoreToken {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		
 		if(basic && basicAsAuthorizationHeader){
