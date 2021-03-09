@@ -2805,6 +2805,205 @@ public class TestOpenApi4j {
 		}
 		
 		System.out.println("Test #19 (Enumeration con valori NO, YES ...) completato\n\n");
+		
+		
+		
+		
+		
+		
+		
+		
+		// ** Test su oggetti che contengono elementi nullable ... **
+		
+		System.out.println("Test #20 (Elementi nullable ...) ...");
+		String testUrl20 = baseUri+"/test-nullable";
+		
+		String json20_object = "{"+
+				"\"identificativo\": \"IDXX\", \"stato\": \"ON\""+
+				", \"valoreintero\": 3, \"descrizione\": \"esempio di test\""+
+				"}";
+		
+		String json20_messaggio_valorizzato = "{"+
+					"\"string_required\": \"ValoreEsempio\", \"string_optional\": \"ValoreEsempio2\""+
+					", \"enum_required\": \"ON\", \"enum_optional\": \"OFF\""+
+					", \"integer_required\": 2, \"integer_optional\": 3"+
+					", \"boolean_required\": false, \"boolean_optional\": true"+
+					", \"array_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+					", \"array_nullable_values_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_nullable_values_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+					", \"object_required\": "+json20_object+",\"object_optional\": "+json20_object+
+					"}";
+		
+		String json20_messaggio_non_valorizzato_string = "{"+
+				"\"string_required\": null, \"string_optional\": null"+
+				", \"enum_required\": \"ON\", \"enum_optional\": \"OFF\""+
+				", \"integer_required\": 2, \"integer_optional\": 3"+
+				", \"boolean_required\": false, \"boolean_optional\": true"+
+				", \"array_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"array_nullable_values_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_nullable_values_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"object_required\": "+json20_object+",\"object_optional\": "+json20_object+
+				"}";
+		
+		String json20_messaggio_non_valorizzato_enum = "{"+
+				"\"string_required\": \"ValoreEsempio\", \"string_optional\": \"ValoreEsempio2\""+
+				", \"enum_required\": null, \"enum_optional\": null"+
+				", \"integer_required\": 2, \"integer_optional\": 3"+
+				", \"boolean_required\": false, \"boolean_optional\": true"+
+				", \"array_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"array_nullable_values_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_nullable_values_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"object_required\": "+json20_object+",\"object_optional\": "+json20_object+
+				"}";
+
+		String json20_messaggio_non_valorizzato_integer = "{"+
+				"\"string_required\": \"ValoreEsempio\", \"string_optional\": \"ValoreEsempio2\""+
+				", \"enum_required\": \"ON\", \"enum_optional\": \"OFF\""+
+				", \"integer_required\": null, \"integer_optional\": null"+
+				", \"boolean_required\": false, \"boolean_optional\": true"+
+				", \"array_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"array_nullable_values_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_nullable_values_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"object_required\": "+json20_object+",\"object_optional\": "+json20_object+
+				"}";
+		
+		String json20_messaggio_non_valorizzato_boolean = "{"+
+				"\"string_required\": \"ValoreEsempio\", \"string_optional\": \"ValoreEsempio2\""+
+				", \"enum_required\": \"ON\", \"enum_optional\": \"OFF\""+
+				", \"integer_required\": 2, \"integer_optional\": 3"+
+				", \"boolean_required\": null, \"boolean_optional\": null"+
+				", \"array_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"array_nullable_values_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_nullable_values_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"object_required\": "+json20_object+",\"object_optional\": "+json20_object+
+				"}";
+		
+		String json20_messaggio_non_valorizzato_array = "{"+
+				"\"string_required\": \"ValoreEsempio\", \"string_optional\": \"ValoreEsempio2\""+
+				", \"enum_required\": \"ON\", \"enum_optional\": \"OFF\""+
+				", \"integer_required\": 2, \"integer_optional\": 3"+
+				", \"boolean_required\": false, \"boolean_optional\": true"+
+				", \"array_required\": null, \"array_optional\": null"+
+				", \"array_nullable_values_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_nullable_values_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"object_required\": "+json20_object+",\"object_optional\": "+json20_object+
+				"}";
+		
+		String json20_messaggio_non_valorizzato_array_values = "{"+
+				"\"string_required\": \"ValoreEsempio\", \"string_optional\": \"ValoreEsempio2\""+
+				", \"enum_required\": \"ON\", \"enum_optional\": \"OFF\""+
+				", \"integer_required\": 2, \"integer_optional\": 3"+
+				", \"boolean_required\": false, \"boolean_optional\": true"+
+				", \"array_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"array_nullable_values_required\": [null,\"ValoreEsempio2\" ], \"array_nullable_values_optional\": [null,null]"+
+				", \"object_required\": "+json20_object+",\"object_optional\": "+json20_object+
+				"}";
+		
+		String json20_messaggio_valorizzato_array_vuoto = "{"+
+				"\"string_required\": \"ValoreEsempio\", \"string_optional\": \"ValoreEsempio2\""+
+				", \"enum_required\": \"ON\", \"enum_optional\": \"OFF\""+
+				", \"integer_required\": 2, \"integer_optional\": 3"+
+				", \"boolean_required\": false, \"boolean_optional\": true"+
+				", \"array_required\": [], \"array_optional\": []"+
+				", \"array_nullable_values_required\": [], \"array_nullable_values_optional\": []"+
+				", \"object_required\": "+json20_object+",\"object_optional\": "+json20_object+
+				"}";
+		
+		String json20_messaggio_non_valorizzato_object = "{"+
+				"\"string_required\": \"ValoreEsempio\", \"string_optional\": \"ValoreEsempio2\""+
+				", \"enum_required\": \"ON\", \"enum_optional\": \"OFF\""+
+				", \"integer_required\": 2, \"integer_optional\": 3"+
+				", \"boolean_required\": false, \"boolean_optional\": true"+
+				", \"array_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"array_nullable_values_required\": [\"ValoreEsempio\",\"ValoreEsempio2\" ], \"array_nullable_values_optional\": [\"ValoreEsempio\",\"ValoreEsempio2\" ]"+
+				", \"object_required\": null,\"object_optional\": null"+
+				"}";
+		
+		List<String> valori_test20 = new ArrayList<String>();
+		List<Boolean> esito_test20 = new ArrayList<Boolean>();
+		List<String> tipoTest_test20 = new ArrayList<String>();
+		tipoTest_test20.add("ValorizzazioneCompleta"); valori_test20.add(json20_messaggio_valorizzato); esito_test20.add(true);
+		tipoTest_test20.add("StringNull"); valori_test20.add(json20_messaggio_non_valorizzato_string); esito_test20.add(true);
+		tipoTest_test20.add("EnumNull"); valori_test20.add(json20_messaggio_non_valorizzato_enum); esito_test20.add(true);
+		tipoTest_test20.add("IntegerNull"); valori_test20.add(json20_messaggio_non_valorizzato_integer); esito_test20.add(true);
+		tipoTest_test20.add("BooleanNull"); valori_test20.add(json20_messaggio_non_valorizzato_boolean); esito_test20.add(true);
+		tipoTest_test20.add("ArrayNull"); valori_test20.add(json20_messaggio_non_valorizzato_array); esito_test20.add(true);
+		tipoTest_test20.add("ArrayValuesNull"); valori_test20.add(json20_messaggio_non_valorizzato_array_values); esito_test20.add(true);
+		tipoTest_test20.add("ArrayEmpty"); valori_test20.add(json20_messaggio_valorizzato_array_vuoto); esito_test20.add(true);
+		tipoTest_test20.add("ObjectNull"); valori_test20.add(json20_messaggio_non_valorizzato_object); esito_test20.add(true);
+		
+		String testYaml = "[test con elementi nullable] ";
+		
+		for (int i = 0; i < valori_test20.size(); i++) {
+			String tipologia = tipoTest_test20.get(i);
+			String valore = valori_test20.get(i);
+			boolean esito = esito_test20.get(i);
+			
+			
+			TextHttpRequestEntity httpEntity20 = new TextHttpRequestEntity();
+			httpEntity20.setMethod(HttpRequestMethod.POST);
+			httpEntity20.setUrl(testUrl20); 
+			Map<String, List<String>> parametersTrasporto20 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto20, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpEntity20.setHeaders(parametersTrasporto20);
+			httpEntity20.setContentType(HttpConstants.CONTENT_TYPE_JSON); 
+			httpEntity20.setContent(valore);
+			
+			
+			TextHttpResponseEntity httpEntityResponse_test20 = new TextHttpResponseEntity();
+			httpEntityResponse_test20.setStatus(200);
+			httpEntityResponse_test20.setMethod(HttpRequestMethod.POST);
+			httpEntityResponse_test20.setUrl(testUrl20);	
+			Map<String, List<String>> parametersTrasportoRisposta_test20 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasportoRisposta_test20,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpEntityResponse_test20.setHeaders(parametersTrasportoRisposta_test20);
+			httpEntityResponse_test20.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			httpEntityResponse_test20.setContent(valore);
+
+			
+			for (int j = 0; j < 2; j++) {
+				
+				boolean openapi4j = (j==0);
+				IApiValidator apiValidator = null;
+				String tipoTest = testYaml+ (esito ? "["+tipologia+"-MessaggioConforme: '"+valore+"']" : "["+tipologia+"-MessaggioNonConforme: '"+valore+"']");
+				if(openapi4j) {
+					apiValidator = apiValidatorOpenApi4j;
+					tipoTest = tipoTest+"[openapi4j]";
+				}
+				else {
+					apiValidator = apiValidatorNoOpenApi4j;
+					tipoTest = tipoTest+"[json]";
+				}
+			
+				try {
+					System.out.println("\t "+tipoTest+" validate ...");
+					apiValidator.validate(httpEntity20);
+					if(esito) {
+						System.out.println("\t "+tipoTest+" validate ok");
+					}
+					else {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
+					}
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+				
+				try {
+					System.out.println("\t "+tipoTest+" validate response ...");
+					apiValidator.validate(httpEntityResponse_test20);	
+					System.out.println("\t "+tipoTest+" validate response ok");
+				} catch(ValidatorException e) {
+					String error = e.getMessage();
+					if(error.length()>200) {
+						error = error.substring(0, 198)+" ...";
+					}
+					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		System.out.println("Test #20 (Elementi nullable) completato\n\n");
 	}
 
 }

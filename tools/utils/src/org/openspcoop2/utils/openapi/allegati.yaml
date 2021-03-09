@@ -872,6 +872,40 @@ paths:
           $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-nullable:
+    post:
+      tags:
+        - enum
+      description: Esempio di scambio di messaggi che contengono nullable object
+      operationId: testNullable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessaggioClaimNullable'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessaggioClaimNullable'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
           
 components:
 
@@ -1364,6 +1398,99 @@ components:
           enum:
             - on
             - off
+
+    MessaggioClaimNullable:
+      type: object
+      required:
+        - string_required
+        - enum_required
+        - integer_required
+        - boolean_required
+        - array_required
+        - array_nullable_values_required
+        - object_required
+      properties:
+        string_required:
+          type: string
+          nullable: true
+        string_optional:
+          type: string
+          nullable: true
+        enum_required:
+          type: string
+          nullable: true
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        enum_optional:
+          type: string
+          nullable: true
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        integer_required:
+          type: integer
+          format: int32
+          nullable: true
+        integer_optional:
+          type: integer
+          format: int32
+          nullable: true
+        boolean_required:
+          type: boolean
+          nullable: true
+        boolean_optional:
+          type: boolean
+          nullable: true
+        array_required:
+          type: array
+          nullable: true
+          items:
+            type: string
+        array_optional:
+          type: array
+          nullable: true
+          items:
+            type: string
+        array_nullable_values_required:
+          type: array
+          nullable: true
+          items:
+            type: string
+            nullable: true
+        array_nullable_values_optional:
+          type: array
+          nullable: true
+          items:
+            type: string
+            nullable: true     
+        object_required:
+          $ref: '#/components/schemas/ObjectNullable'
+        object_optional:
+          $ref: '#/components/schemas/ObjectNullable'
+
+    ObjectNullable:
+      type: object
+      nullable: true
+      required:
+        - identificativo
+        - stato
+        - valoreintero
+      properties:
+        identificativo:
+          type: string
+        stato:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+        valoreintero:
+          type: integer
+          format: int32 
+        descrizione:
+          type: string
 
     ProblemInLineOriginaleTeamDigitale:
       type: object

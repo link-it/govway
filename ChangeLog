@@ -1,5 +1,12 @@
 2021-03-09  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug OP-1153
+	Corretto problema di validazione errata segnalata su oggetti serializzati con il valore null, nonostante fossero stati definiti con 'nullable: true'.
+	Veniva segnalato erroneamente la mancanza degli elementi obbligatori definiti per l'oggetto.
+
+2021-03-09  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole, TestsuiteProtocolloTrasparente]
 	Risolto Bug OP-1027
 	In presenza di parametri della query con lo stesso nome, veniva inoltrato all'API di backend solamente il primo.
