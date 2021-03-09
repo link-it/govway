@@ -69,6 +69,11 @@ import net.minidev.json.JSONObject;
 */
 public class Utils {
 	
+	@SuppressWarnings("deprecation")
+	private static String buildUrl(Map<String,String> propertiesURLBased, String urlBase) {
+		return TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
+	}
+	
 	public enum PolicyAlias {
 		RICHIESTE_SIMULTANEE("RichiesteSimultanee"), 
 		MINUTO("Minuto"),	
@@ -145,7 +150,7 @@ public class Utils {
 		logRateLimiting.info("RESPONSES: ");
 		responses.forEach(r -> {
 			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + r.getHeaders());
+			logRateLimiting.info("headers: " + r.getHeadersValues());
 		});
 
 		return responses;
@@ -158,7 +163,7 @@ public class Utils {
 			logRateLimiting.info(request.getMethod() + " " + request.getUrl());
 			HttpResponse ret = HttpUtilities.httpInvoke(request);
 			logRateLimiting.info("statusCode: " + ret.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + ret.getHeaders());
+			logRateLimiting.info("headers: " + ret.getHeadersValues());
 			return ret;
 		} catch (UtilsException e) {
 			throw new RuntimeException(e);
@@ -182,7 +187,7 @@ public class Utils {
 		logRateLimiting.info("RESPONSES: ");
 		responses.forEach(r -> {
 			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + r.getHeaders());
+			logRateLimiting.info("headers: " + r.getHeadersValues());
 		});
 		
 		return responses;		
@@ -267,7 +272,7 @@ public class Utils {
 				"methodName", "resetPolicyCounters",
 				"paramValue", idPolicy
 			);
-		String jmxUrl = TransportUtils.buildLocationWithURLBasedParameter(queryParams, System.getProperty("govway_base_path") + "/check");
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
 		logRateLimiting.info("Resetto la policy di rate limiting sulla url: " + jmxUrl );
 		
 		try {
@@ -286,7 +291,7 @@ public class Utils {
 				"methodName", "getPolicy",
 				"paramValue", idPolicy
 			);
-		String jmxUrl = TransportUtils.buildLocationWithURLBasedParameter(queryParams, System.getProperty("govway_base_path") + "/check");
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
 		logRateLimiting.info("Ottengo le informazioni sullo stato della policy: " + jmxUrl );
 		try {
 			return new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
@@ -322,7 +327,7 @@ public class Utils {
 				);
 				
 		requestsParams.forEach( queryParams -> {
-			String jmxUrl = TransportUtils.buildLocationWithURLBasedParameter(queryParams, System.getProperty("govway_base_path") + "/check");
+			String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
 			logRateLimiting.info("Imposto la error disclosure: " + jmxUrl );
 				
 			try {
@@ -341,7 +346,7 @@ public class Utils {
 				"attributeName", "threadsAttivi"
 			);
 		
-		String jmxUrl = TransportUtils.buildLocationWithURLBasedParameter(queryParams, System.getProperty("govway_base_path") + "/check");
+		String jmxUrl = buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
 		logRateLimiting.info("Ottengo le informazioni sul numero dei threads attivi: " + jmxUrl );
 		try {
 			return Integer.valueOf(
@@ -662,7 +667,7 @@ public class Utils {
 				responses.add(r);
 				logRateLimiting.info("Richiesta effettuata..");
 				logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-				logRateLimiting.info("headers: " + r.getHeaders());
+				logRateLimiting.info("headers: " + r.getHeadersValues());
 				checkConditionsNumeroRichieste(idPolicy, 0, i+1, 0);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
@@ -684,12 +689,12 @@ public class Utils {
 	public static void checkHeaderRemaining(Vector<HttpResponse> responses, String header, int limit) {
 		for(int i=0;i<limit;i++) {
 			var r = responses.get(i);
-			assertEquals(limit-i-1, Integer.parseInt(r.getHeader(header)));
+			assertEquals(limit-i-1, Integer.parseInt(r.getHeaderFirstValue(header)));
 		}
 	}
 
 	public static void checkHeaderTooManyRequest(HttpResponse r) {
-		String returnCode = r.getHeader(Headers.ReturnCode);
+		String returnCode = r.getHeaderFirstValue(Headers.ReturnCode);
 		boolean equalsWithReason = HeaderValues.RETURNCODE_TOO_MANY_REQUESTS.equalsIgnoreCase(returnCode);
 		boolean equalsWithoutReason = HeaderValues.RETURNCODE_TOO_MANY_REQUESTS_NO_REASON.equalsIgnoreCase(returnCode);
 		assertTrue("Verifico return code 429: '"+returnCode+"'", (equalsWithReason || equalsWithoutReason));

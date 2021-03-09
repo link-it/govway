@@ -398,8 +398,6 @@ CREATE TABLE dump_multipart_header
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	id_messaggio NUMBER NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_dump_multipart_header_1 UNIQUE (id,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_multipart_header_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
 	CONSTRAINT pk_dump_multipart_header PRIMARY KEY (id)
@@ -431,8 +429,6 @@ CREATE TABLE dump_header_trasporto
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	id_messaggio NUMBER NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_dump_header_trasporto_1 UNIQUE (id,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_header_trasporto_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
 	CONSTRAINT pk_dump_header_trasporto PRIMARY KEY (id)
@@ -498,8 +494,6 @@ CREATE TABLE dump_header_allegato
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	id_allegato NUMBER NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_dump_header_allegato_1 UNIQUE (id,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_header_allegato_1 FOREIGN KEY (id_allegato) REFERENCES dump_allegati(id),
 	CONSTRAINT pk_dump_header_allegato PRIMARY KEY (id)

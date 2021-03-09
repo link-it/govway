@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -126,13 +127,13 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
-	public String getHeader(String key) throws ConnectorException{
-		return TransportUtils.getHeader(this.req, key);
+	public List<String> getHeaderValues(String key) throws ConnectorException{
+		return TransportUtils.getHeaderValues(this.req, key);
 	}
 	
 	@Override
-	public String getParameter(String key) throws ConnectorException{
-		return TransportUtils.getParameter(this.req, key);
+	public List<String> getParameterValues(String key) throws ConnectorException{
+		return TransportUtils.getParameterValues(this.req, key);
 	}
 
 	@Override

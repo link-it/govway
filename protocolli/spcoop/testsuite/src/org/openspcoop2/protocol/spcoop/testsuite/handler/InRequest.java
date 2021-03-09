@@ -21,6 +21,7 @@
 
 package org.openspcoop2.protocol.spcoop.testsuite.handler;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -60,7 +61,7 @@ public class InRequest implements InRequestHandler {
 					return;
 				}
 				
-				Map<String,String> p = context.getConnettore().getUrlProtocolContext().getParametersTrasporto();
+				Map<String,List<String>> p = context.getConnettore().getUrlProtocolContext().getHeaders();
 				if(p!=null){
 					TestContext testContext = new TestContext(context.getTipoPorta(),p);
 					context.getPddContext().addObject(Costanti.TEST_CONTEXT, testContext);

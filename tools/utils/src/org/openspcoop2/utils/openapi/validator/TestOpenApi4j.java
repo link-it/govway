@@ -45,6 +45,7 @@ import org.openspcoop2.utils.rest.entity.ElementHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpResponseEntity;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.XMLUtils;
@@ -107,10 +108,10 @@ public class TestOpenApi4j {
 		TextHttpRequestEntity httpEntity = new TextHttpRequestEntity();
 		httpEntity.setMethod(HttpRequestMethod.POST);
 		httpEntity.setUrl(testUrl1);	
-		Map<String, String> parametersTrasporto = new HashMap<>();
-		parametersTrasporto.put("api_key", "aaa");
-		parametersTrasporto.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-		httpEntity.setParametersTrasporto(parametersTrasporto);
+		Map<String, List<String>> parametersTrasporto = new HashMap<>();
+		TransportUtils.addHeader(parametersTrasporto,"api_key", "aaa");
+		TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+		httpEntity.setHeaders(parametersTrasporto);
 		httpEntity.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		String json = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\",\"allegati\":"+
 				"["+
@@ -226,10 +227,10 @@ public class TestOpenApi4j {
 		TextHttpRequestEntity httpEntityDynamicPath = new TextHttpRequestEntity();
 		httpEntityDynamicPath.setMethod(HttpRequestMethod.POST);
 		httpEntityDynamicPath.setUrl(testUrl5);	
-		Map<String, String> parametersTrasportoDynamicPath = new HashMap<>();
-		parametersTrasportoDynamicPath.put("api_key", "aaa");
-		parametersTrasportoDynamicPath.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-		httpEntityDynamicPath.setParametersTrasporto(parametersTrasportoDynamicPath);
+		Map<String, List<String>> parametersTrasportoDynamicPath = new HashMap<>();
+		TransportUtils.addHeader(parametersTrasportoDynamicPath,"api_key", "aaa");
+		TransportUtils.addHeader(parametersTrasportoDynamicPath,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+		httpEntityDynamicPath.setHeaders(parametersTrasportoDynamicPath);
 		httpEntityDynamicPath.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		httpEntityDynamicPath.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
 		apiValidatorOpenApi4j.validate(httpEntityDynamicPath);
@@ -277,16 +278,16 @@ public class TestOpenApi4j {
 			httpEntityResponse.setStatus(200);
 			httpEntityResponse.setMethod(HttpRequestMethod.GET);
 			httpEntityResponse.setUrl(testUrl5);	
-			Map<String, String> parametersTrasportoRisposta = new HashMap<>();
-			parametersTrasportoRisposta.put("api_key", "aaa");
-			parametersTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, ct);
-			httpEntityResponse.setParametersTrasporto(parametersTrasportoRisposta);
+			Map<String, List<String>> parametersTrasportoRisposta = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasportoRisposta,"api_key", "aaa");
+			TransportUtils.addHeader(parametersTrasportoRisposta,HttpConstants.CONTENT_TYPE, ct);
+			httpEntityResponse.setHeaders(parametersTrasportoRisposta);
 			httpEntityResponse.setContentType(ct);
 			if(ct.contains("json") || ct.contains("plain")) {
 				if(ct.contains("Uncorrect")) {
 					((TextHttpResponseEntity)httpEntityResponse).setContent("{ a }");
 					parametersTrasportoRisposta.remove(HttpConstants.CONTENT_TYPE);
-					parametersTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+					TransportUtils.setHeader(parametersTrasportoRisposta,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
 					httpEntityResponse.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 				}
 				else if(ct.contains("plain")) {
@@ -300,7 +301,7 @@ public class TestOpenApi4j {
 				if(ct.contains("Uncorrect")) {
 					((TextHttpResponseEntity)httpEntityResponse).setContent("<prova>aaaprova>");
 					parametersTrasportoRisposta.remove(HttpConstants.CONTENT_TYPE);
-					parametersTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_XML);
+					TransportUtils.setHeader(parametersTrasportoRisposta,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_XML);
 					httpEntityResponse.setContentType(HttpConstants.CONTENT_TYPE_XML);
 				}
 				else if(HttpConstants.CONTENT_TYPE_XML.equals(ct)) {
@@ -372,10 +373,10 @@ public class TestOpenApi4j {
 		TextHttpRequestEntity httpEntity7 = new TextHttpRequestEntity();
 		httpEntity7.setMethod(HttpRequestMethod.POST);
 		httpEntity7.setUrl(testUrl7);	
-		Map<String, String> parametersTrasporto7 = new HashMap<>();
-		parametersTrasporto7.put("api_key", "aaa");
-		parametersTrasporto7.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-		httpEntity7.setParametersTrasporto(parametersTrasporto7);
+		Map<String, List<String>> parametersTrasporto7 = new HashMap<>();
+		TransportUtils.addHeader(parametersTrasporto7,"api_key", "aaa");
+		TransportUtils.addHeader(parametersTrasporto7,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+		httpEntity7.setHeaders(parametersTrasporto7);
 		httpEntity7.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		String json7 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\","+
 				"\"string_nullable\":null,"+
@@ -421,10 +422,10 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity8 = new TextHttpRequestEntity();
 			httpEntity8.setMethod(HttpRequestMethod.POST);
 			httpEntity8.setUrl(testUrl8);	
-			Map<String, String> parametersTrasporto8 = new HashMap<>();
-			parametersTrasporto8.put("api_key", "aaa");
-			parametersTrasporto8.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			httpEntity8.setParametersTrasporto(parametersTrasporto8);
+			Map<String, List<String>> parametersTrasporto8 = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto8,"api_key", "aaa");
+			TransportUtils.addHeader(parametersTrasporto8,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpEntity8.setHeaders(parametersTrasporto8);
 			httpEntity8.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			String json8 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\","+
 					"\"allegati\":"+
@@ -502,10 +503,10 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity9 = new TextHttpRequestEntity();
 			httpEntity9.setMethod(HttpRequestMethod.POST);
 			httpEntity9.setUrl(testUrl9);	
-			Map<String, String> parametersTrasporto9 = new HashMap<>();
-			parametersTrasporto9.put("api_key", "aaa");
-			parametersTrasporto9.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			httpEntity9.setParametersTrasporto(parametersTrasporto9);
+			Map<String, List<String>> parametersTrasporto9 = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto9,"api_key", "aaa");
+			TransportUtils.addHeader(parametersTrasporto9,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpEntity9.setHeaders(parametersTrasporto9);
 			httpEntity9.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			String json9 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\","+
 					"\"allegati\":"+
@@ -562,10 +563,10 @@ public class TestOpenApi4j {
 		TextHttpRequestEntity httpEntityTest10 = new TextHttpRequestEntity();
 		httpEntityTest10.setMethod(HttpRequestMethod.POST);
 		httpEntityTest10.setUrl(testUrl10);	
-		Map<String, String> parametersTrasportoTest10 = new HashMap<>();
-		parametersTrasportoTest10.put("api_key", "aaa");
-		parametersTrasportoTest10.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-		httpEntityTest10.setParametersTrasporto(parametersTrasportoTest10);
+		Map<String, List<String>> parametersTrasportoTest10 = new HashMap<>();
+		TransportUtils.addHeader(parametersTrasportoTest10,"api_key", "aaa");
+		TransportUtils.addHeader(parametersTrasportoTest10,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+		httpEntityTest10.setHeaders(parametersTrasportoTest10);
 		httpEntityTest10.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		String jsonTest10 = "{\"mittente\":\"Mittente\",\"destinatario\":\"EnteDestinatario\",\"procedimento\":\"DescrizioneGenerica ...\",\"allegati\":"+
 				"["+
@@ -587,9 +588,9 @@ public class TestOpenApi4j {
 		httpEntityResponseTest10.setStatus(201);
 		httpEntityResponseTest10.setMethod(HttpRequestMethod.POST);
 		httpEntityResponseTest10.setUrl(testUrl10);	
-		Map<String, String> parametersTrasportoRispostaTest10 = new HashMap<>();
-		parametersTrasportoRispostaTest10.put("api_key", "aaa");
-		httpEntityResponseTest10.setParametersTrasporto(parametersTrasportoRispostaTest10);
+		Map<String, List<String>> parametersTrasportoRispostaTest10 = new HashMap<>();
+		TransportUtils.addHeader(parametersTrasportoRispostaTest10,"api_key", "aaa");
+		httpEntityResponseTest10.setHeaders(parametersTrasportoRispostaTest10);
 		
 		System.out.println("\t Validazione senza content-type ...");
 		apiValidatorOpenApi4j.validate(httpEntityResponseTest10);	
@@ -624,9 +625,9 @@ public class TestOpenApi4j {
 
 				
 				System.out.println("\t Validazione con content-type '"+contentTypeTest10+"' "+tipoTest+" contenuto ...");
-				parametersTrasportoRispostaTest10.put(HttpConstants.CONTENT_TYPE, contentTypeTest10);
+				TransportUtils.setHeader(parametersTrasportoRispostaTest10,HttpConstants.CONTENT_TYPE, contentTypeTest10);
 				httpEntityResponseTest10.setContentType(contentTypeTest10);
-				httpEntityResponseTest10.setParametersTrasporto(parametersTrasportoRispostaTest10);
+				httpEntityResponseTest10.setHeaders(parametersTrasportoRispostaTest10);
 				if(addContenuto) {
 					httpEntityResponseTest10.setContent(jsonTest10); // contenuto a caso
 				}
@@ -703,9 +704,9 @@ public class TestOpenApi4j {
 		TextHttpRequestEntity httpEntityTest11 = new TextHttpRequestEntity();
 		httpEntityTest11.setMethod(HttpRequestMethod.POST);
 		httpEntityTest11.setUrl(testUrl11);	
-		Map<String, String> parametersTrasportoTest11 = new HashMap<>();
-		parametersTrasportoTest11.put("api_key", "aaa");
-		httpEntityTest11.setParametersTrasporto(parametersTrasportoTest11);
+		Map<String, List<String>> parametersTrasportoTest11 = new HashMap<>();
+		TransportUtils.addHeader(parametersTrasportoTest11,"api_key", "aaa");
+		httpEntityTest11.setHeaders(parametersTrasportoTest11);
 		
 		System.out.println("\t Validazione richiesta senza content-type ...");
 		apiValidatorOpenApi4j.validate(httpEntityTest11);	
@@ -732,7 +733,7 @@ public class TestOpenApi4j {
 				}
 				
 				System.out.println("\t Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto ...");
-				parametersTrasportoTest11.put(HttpConstants.CONTENT_TYPE, contentTypeTest11);
+				TransportUtils.setHeader(parametersTrasportoTest11,HttpConstants.CONTENT_TYPE, contentTypeTest11);
 				httpEntityTest11.setContentType(contentTypeTest11);
 				if(addContenuto) {
 					httpEntityTest11.setContent(jsonTest11);
@@ -785,9 +786,9 @@ public class TestOpenApi4j {
 		httpEntityResponseTest11.setStatus(201);
 		httpEntityResponseTest11.setMethod(HttpRequestMethod.POST);
 		httpEntityResponseTest11.setUrl(testUrl11);	
-		Map<String, String> parametersTrasportoRispostaTest11 = new HashMap<>();
-		parametersTrasportoRispostaTest11.put("api_key", "aaa");
-		httpEntityResponseTest11.setParametersTrasporto(parametersTrasportoRispostaTest11);
+		Map<String, List<String>> parametersTrasportoRispostaTest11 = new HashMap<>();
+		TransportUtils.addHeader(parametersTrasportoRispostaTest11,"api_key", "aaa");
+		httpEntityResponseTest11.setHeaders(parametersTrasportoRispostaTest11);
 		
 		System.out.println("\t Validazione risposta senza content-type ...");
 		apiValidatorOpenApi4j.validate(httpEntityResponseTest11);	
@@ -814,9 +815,9 @@ public class TestOpenApi4j {
 				}
 				
 				System.out.println("\t Validazione risposta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto ...");
-				parametersTrasportoRispostaTest11.put(HttpConstants.CONTENT_TYPE, contentTypeTest11);
+				TransportUtils.setHeader(parametersTrasportoRispostaTest11,HttpConstants.CONTENT_TYPE, contentTypeTest11);
 				httpEntityResponseTest11.setContentType(contentTypeTest11);
-				httpEntityResponseTest11.setParametersTrasporto(parametersTrasportoRispostaTest11);
+				httpEntityResponseTest11.setHeaders(parametersTrasportoRispostaTest11);
 				if(addContenuto) {
 					httpEntityResponseTest11.setContent(jsonTest11); // contenuto a caso
 				}
@@ -873,22 +874,22 @@ public class TestOpenApi4j {
 		TextHttpRequestEntity httpEntity12_default = new TextHttpRequestEntity();
 		httpEntity12_default.setMethod(HttpRequestMethod.POST);
 		httpEntity12_default.setUrl(testUrl12_default);
-		Map<String, String> parametersTrasporto12_default = new HashMap<>();
-		httpEntity12_default.setParametersTrasporto(parametersTrasporto12_default);
+		Map<String, List<String>> parametersTrasporto12_default = new HashMap<>();
+		httpEntity12_default.setHeaders(parametersTrasporto12_default);
 		
 		String testUrl12_optional = baseUri+"/documenti/in-line/sendOptional";
 		TextHttpRequestEntity httpEntity12_optional = new TextHttpRequestEntity();
 		httpEntity12_optional.setMethod(HttpRequestMethod.POST);
 		httpEntity12_optional.setUrl(testUrl12_optional);
-		Map<String, String> parametersTrasporto12_optional = new HashMap<>();
-		httpEntity12_optional.setParametersTrasporto(parametersTrasporto12_optional);
+		Map<String, List<String>> parametersTrasporto12_optional = new HashMap<>();
+		httpEntity12_optional.setHeaders(parametersTrasporto12_optional);
 		
 		String testUrl12_required = baseUri+"/documenti/in-line/sendRequired";
 		TextHttpRequestEntity httpEntity12_required = new TextHttpRequestEntity();
 		httpEntity12_required.setMethod(HttpRequestMethod.POST);
 		httpEntity12_required.setUrl(testUrl12_required);
-		Map<String, String> parametersTrasporto12_required = new HashMap<>();
-		httpEntity12_required.setParametersTrasporto(parametersTrasporto12_required);
+		Map<String, List<String>> parametersTrasporto12_required = new HashMap<>();
+		httpEntity12_required.setHeaders(parametersTrasporto12_required);
 		
 		List<String> contentTypeTest12List = new ArrayList<String>();
 		contentTypeTest12List.add(null);
@@ -899,11 +900,11 @@ public class TestOpenApi4j {
 			
 			String tipoTestPrefix = "Content-Type:'"+contentTypeTest12+"' ";
 		
-			parametersTrasporto12_default.put(HttpConstants.CONTENT_TYPE, contentTypeTest12);
+			TransportUtils.setHeader(parametersTrasporto12_default,HttpConstants.CONTENT_TYPE, contentTypeTest12);
 			httpEntity12_default.setContentType(contentTypeTest12);
-			parametersTrasporto12_optional.put(HttpConstants.CONTENT_TYPE, contentTypeTest12);
+			TransportUtils.setHeader(parametersTrasporto12_optional,HttpConstants.CONTENT_TYPE, contentTypeTest12);
 			httpEntity12_optional.setContentType(contentTypeTest12);
-			parametersTrasporto12_required.put(HttpConstants.CONTENT_TYPE, contentTypeTest12);
+			TransportUtils.setHeader(parametersTrasporto12_required,HttpConstants.CONTENT_TYPE, contentTypeTest12);
 			httpEntity12_required.setContentType(contentTypeTest12);
 			
 			for (int i = 0; i < 6; i++) {
@@ -1004,8 +1005,8 @@ public class TestOpenApi4j {
 			httpEntityResponseTest12.setStatus(200);
 			httpEntityResponseTest12.setMethod(HttpRequestMethod.POST);
 			httpEntityResponseTest12.setUrl(testUrl12_default);	 // per la risposta una risorsa vale l'altra come test
-			Map<String, String> parametersTrasportoRispostaTest12 = new HashMap<>();
-			httpEntityResponseTest12.setParametersTrasporto(parametersTrasportoRispostaTest12);
+			Map<String, List<String>> parametersTrasportoRispostaTest12 = new HashMap<>();
+			httpEntityResponseTest12.setHeaders(parametersTrasportoRispostaTest12);
 			
 			for (int i = 0; i < 2; i++) {
 				
@@ -1087,13 +1088,13 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
 			httpEntity13.setMethod(HttpRequestMethod.POST);
 			httpEntity13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' sul body
-			Map<String, String> parametersUrl13 = new HashMap<>();
-			parametersUrl13.put("data_documento_query","2020-07-19"); // uso data valida, il test e' sul body	
-			httpEntity13.setParametersQuery(parametersUrl13);
-			Map<String, String> parametersTrasporto13 = new HashMap<>();
-			parametersTrasporto13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto13.put("data_documento_header","2020-07-23"); // uso data valida, il test e' sul body	
-			httpEntity13.setParametersTrasporto(parametersTrasporto13);
+			Map<String, List<String>> parametersUrl13 = new HashMap<>();
+			TransportUtils.setParameter(parametersUrl13,"data_documento_query","2020-07-19"); // uso data valida, il test e' sul body	
+			httpEntity13.setParameters(parametersUrl13);
+			Map<String, List<String>> parametersTrasporto13 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto13,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasporto13,"data_documento_header","2020-07-23"); // uso data valida, il test e' sul body	
+			httpEntity13.setHeaders(parametersTrasporto13);
 			httpEntity13.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			String json13 = "{\"data\": \""+valore+"\"}";
 			httpEntity13.setContent(json13);
@@ -1155,10 +1156,10 @@ public class TestOpenApi4j {
 			httpEntityResponseTest13.setStatus(200);
 			httpEntityResponseTest13.setMethod(HttpRequestMethod.POST);
 			httpEntityResponseTest13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' sul body
-			Map<String, String> parametersTrasportoRispostaTest13 = new HashMap<>();
-			httpEntityResponseTest13.setParametersTrasporto(parametersTrasportoRispostaTest13);
-			parametersTrasportoRispostaTest13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto13.put("data_documento_risposta_header","2020-07-23"); // uso data valida, il test e' sul body	
+			Map<String, List<String>> parametersTrasportoRispostaTest13 = new HashMap<>();
+			httpEntityResponseTest13.setHeaders(parametersTrasportoRispostaTest13);
+			TransportUtils.setHeader(parametersTrasportoRispostaTest13,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasportoRispostaTest13,"data_documento_risposta_header","2020-07-23"); // uso data valida, il test e' sul body	
 			httpEntityResponseTest13.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			httpEntityResponseTest13.setContent(json13); 
 			
@@ -1225,13 +1226,13 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
 			httpEntity13.setMethod(HttpRequestMethod.POST);
 			httpEntity13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' su header
-			Map<String, String> parametersUrl13 = new HashMap<>();
-			parametersUrl13.put("data_documento_query","2020-07-19"); // uso data valida, il test e' su header	
-			httpEntity13.setParametersQuery(parametersUrl13);
-			Map<String, String> parametersTrasporto13 = new HashMap<>();
-			parametersTrasporto13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto13.put("data_documento_header",valore);	
-			httpEntity13.setParametersTrasporto(parametersTrasporto13);
+			Map<String, List<String>> parametersUrl13 = new HashMap<>();
+			TransportUtils.setParameter(parametersUrl13,"data_documento_query","2020-07-19"); // uso data valida, il test e' su header	
+			httpEntity13.setParameters(parametersUrl13);
+			Map<String, List<String>> parametersTrasporto13 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto13,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasporto13,"data_documento_header",valore);	
+			httpEntity13.setHeaders(parametersTrasporto13);
 			httpEntity13.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' su header	
 			String json13 = "{\"data\": \"2020-07-20\"}";
 			httpEntity13.setContent(json13);
@@ -1293,10 +1294,10 @@ public class TestOpenApi4j {
 			httpEntityResponseTest13.setStatus(200);
 			httpEntityResponseTest13.setMethod(HttpRequestMethod.POST);
 			httpEntityResponseTest13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' su header
-			Map<String, String> parametersTrasportoRispostaTest13 = new HashMap<>();
-			httpEntityResponseTest13.setParametersTrasporto(parametersTrasportoRispostaTest13);
-			parametersTrasportoRispostaTest13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasportoRispostaTest13.put("data_documento_risposta_header",valore);
+			Map<String, List<String>> parametersTrasportoRispostaTest13 = new HashMap<>();
+			httpEntityResponseTest13.setHeaders(parametersTrasportoRispostaTest13);
+			TransportUtils.setHeader(parametersTrasportoRispostaTest13,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasportoRispostaTest13,"data_documento_risposta_header",valore);
 			httpEntityResponseTest13.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			httpEntityResponseTest13.setContent(json13); 
 			
@@ -1363,13 +1364,13 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
 			httpEntity13.setMethod(HttpRequestMethod.POST);
 			httpEntity13.setUrl(testUrl13+"2020-07-21"); // uso data valida, il test e' su query parameter
-			Map<String, String> parametersUrl13 = new HashMap<>();
-			parametersUrl13.put("data_documento_query",valore); 	
-			httpEntity13.setParametersQuery(parametersUrl13);
-			Map<String, String> parametersTrasporto13 = new HashMap<>();
-			parametersTrasporto13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto13.put("data_documento_header","2020-07-19"); // uso data valida, il test e' su query parameter	
-			httpEntity13.setParametersTrasporto(parametersTrasporto13);
+			Map<String, List<String>> parametersUrl13 = new HashMap<>();
+			TransportUtils.setParameter(parametersUrl13,"data_documento_query",valore); 	
+			httpEntity13.setParameters(parametersUrl13);
+			Map<String, List<String>> parametersTrasporto13 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto13,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasporto13,"data_documento_header","2020-07-19"); // uso data valida, il test e' su query parameter	
+			httpEntity13.setHeaders(parametersTrasporto13);
 			httpEntity13.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' su query parameter	
 			String json13 = "{\"data\": \"2020-07-20\"}";
 			httpEntity13.setContent(json13);
@@ -1444,13 +1445,13 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity13 = new TextHttpRequestEntity();
 			httpEntity13.setMethod(HttpRequestMethod.POST);
 			httpEntity13.setUrl(testUrl13+valore); 
-			Map<String, String> parametersUrl13 = new HashMap<>();
-			parametersUrl13.put("data_documento_query","2020-07-21"); // uso data valida, il test e' su path
-			httpEntity13.setParametersQuery(parametersUrl13);
-			Map<String, String> parametersTrasporto13 = new HashMap<>();
-			parametersTrasporto13.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto13.put("data_documento_header","2020-07-19"); // uso data valida, il test e' su path
-			httpEntity13.setParametersTrasporto(parametersTrasporto13);
+			Map<String, List<String>> parametersUrl13 = new HashMap<>();
+			TransportUtils.setParameter(parametersUrl13,"data_documento_query","2020-07-21"); // uso data valida, il test e' su path
+			httpEntity13.setParameters(parametersUrl13);
+			Map<String, List<String>> parametersTrasporto13 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto13,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasporto13,"data_documento_header","2020-07-19"); // uso data valida, il test e' su path
+			httpEntity13.setHeaders(parametersTrasporto13);
 			httpEntity13.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' path
 			String json13 = "{\"data\": \"2020-07-20\"}";
 			httpEntity13.setContent(json13);
@@ -1548,13 +1549,13 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
 			httpEntity14.setMethod(HttpRequestMethod.POST);
 			httpEntity14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' sul body
-			Map<String, String> parametersUrl14 = new HashMap<>();
-			parametersUrl14.put("datetime_documento_query","2020-07-19T17:32:28Z"); // uso data valida, il test e' sul body	
-			httpEntity14.setParametersQuery(parametersUrl14);
-			Map<String, String> parametersTrasporto14 = new HashMap<>();
-			parametersTrasporto14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto14.put("datetime_documento_header","2020-07-23T17:32:28Z"); // uso data valida, il test e' sul body	
-			httpEntity14.setParametersTrasporto(parametersTrasporto14);
+			Map<String, List<String>> parametersUrl14 = new HashMap<>();
+			TransportUtils.setParameter(parametersUrl14,"datetime_documento_query","2020-07-19T17:32:28Z"); // uso data valida, il test e' sul body	
+			httpEntity14.setParameters(parametersUrl14);
+			Map<String, List<String>> parametersTrasporto14 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto14,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasporto14,"datetime_documento_header","2020-07-23T17:32:28Z"); // uso data valida, il test e' sul body	
+			httpEntity14.setHeaders(parametersTrasporto14);
 			httpEntity14.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			String json14 = "{\"data\": \""+valore+"\"}";
 			httpEntity14.setContent(json14);
@@ -1621,10 +1622,10 @@ public class TestOpenApi4j {
 			httpEntityResponseTest14.setStatus(200);
 			httpEntityResponseTest14.setMethod(HttpRequestMethod.POST);
 			httpEntityResponseTest14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' sul body
-			Map<String, String> parametersTrasportoRispostaTest14 = new HashMap<>();
-			httpEntityResponseTest14.setParametersTrasporto(parametersTrasportoRispostaTest14);
-			parametersTrasportoRispostaTest14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto14.put("data_documento_risposta_header","2020-07-23T17:32:28Z"); // uso data valida, il test e' sul body	
+			Map<String, List<String>> parametersTrasportoRispostaTest14 = new HashMap<>();
+			httpEntityResponseTest14.setHeaders(parametersTrasportoRispostaTest14);
+			TransportUtils.setHeader(parametersTrasportoRispostaTest14,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasportoRispostaTest14,"data_documento_risposta_header","2020-07-23T17:32:28Z"); // uso data valida, il test e' sul body	
 			httpEntityResponseTest14.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			httpEntityResponseTest14.setContent(json14); 
 			
@@ -1696,13 +1697,13 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
 			httpEntity14.setMethod(HttpRequestMethod.POST);
 			httpEntity14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' su header
-			Map<String, String> parametersUrl14 = new HashMap<>();
-			parametersUrl14.put("datetime_documento_query","2020-07-19T17:32:28Z"); // uso data valida, il test e' su header	
-			httpEntity14.setParametersQuery(parametersUrl14);
-			Map<String, String> parametersTrasporto14 = new HashMap<>();
-			parametersTrasporto14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto14.put("datetime_documento_header",valore);	
-			httpEntity14.setParametersTrasporto(parametersTrasporto14);
+			Map<String, List<String>> parametersUrl14 = new HashMap<>();
+			TransportUtils.setParameter(parametersUrl14,"datetime_documento_query","2020-07-19T17:32:28Z"); // uso data valida, il test e' su header	
+			httpEntity14.setParameters(parametersUrl14);
+			Map<String, List<String>> parametersTrasporto14 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto14,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasporto14,"datetime_documento_header",valore);	
+			httpEntity14.setHeaders(parametersTrasporto14);
 			httpEntity14.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' su header	
 			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
 			httpEntity14.setContent(json14);
@@ -1770,10 +1771,10 @@ public class TestOpenApi4j {
 			httpEntityResponseTest14.setStatus(200);
 			httpEntityResponseTest14.setMethod(HttpRequestMethod.POST);
 			httpEntityResponseTest14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' su header
-			Map<String, String> parametersTrasportoRispostaTest14 = new HashMap<>();
-			httpEntityResponseTest14.setParametersTrasporto(parametersTrasportoRispostaTest14);
-			parametersTrasportoRispostaTest14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasportoRispostaTest14.put("datetime_documento_risposta_header",valore);
+			Map<String, List<String>> parametersTrasportoRispostaTest14 = new HashMap<>();
+			httpEntityResponseTest14.setHeaders(parametersTrasportoRispostaTest14);
+			TransportUtils.setHeader(parametersTrasportoRispostaTest14,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasportoRispostaTest14,"datetime_documento_risposta_header",valore);
 			httpEntityResponseTest14.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 			httpEntityResponseTest14.setContent(json14); 
 			
@@ -1846,13 +1847,13 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
 			httpEntity14.setMethod(HttpRequestMethod.POST);
 			httpEntity14.setUrl(testUrl14+"2020-07-21T17:32:28Z"); // uso data valida, il test e' su query parameter
-			Map<String, String> parametersUrl14 = new HashMap<>();
-			parametersUrl14.put("datetime_documento_query",valore); 	
-			httpEntity14.setParametersQuery(parametersUrl14);
-			Map<String, String> parametersTrasporto14 = new HashMap<>();
-			parametersTrasporto14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto14.put("datetime_documento_header","2020-07-19T17:32:28Z"); // uso data valida, il test e' su query parameter	
-			httpEntity14.setParametersTrasporto(parametersTrasporto14);
+			Map<String, List<String>> parametersUrl14 = new HashMap<>();
+			TransportUtils.setParameter(parametersUrl14,"datetime_documento_query",valore); 	
+			httpEntity14.setParameters(parametersUrl14);
+			Map<String, List<String>> parametersTrasporto14 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto14,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasporto14,"datetime_documento_header","2020-07-19T17:32:28Z"); // uso data valida, il test e' su query parameter	
+			httpEntity14.setHeaders(parametersTrasporto14);
 			httpEntity14.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' su query parameter	
 			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
 			httpEntity14.setContent(json14);
@@ -1933,13 +1934,13 @@ public class TestOpenApi4j {
 			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
 			httpEntity14.setMethod(HttpRequestMethod.POST);
 			httpEntity14.setUrl(testUrl14+valore); 
-			Map<String, String> parametersUrl14 = new HashMap<>();
-			parametersUrl14.put("datetime_documento_query","2020-07-21T17:32:28Z"); // uso data valida, il test e' su path
-			httpEntity14.setParametersQuery(parametersUrl14);
-			Map<String, String> parametersTrasporto14 = new HashMap<>();
-			parametersTrasporto14.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-			parametersTrasporto14.put("datetime_documento_header","2020-07-19T17:32:28Z"); // uso data valida, il test e' su path
-			httpEntity14.setParametersTrasporto(parametersTrasporto14);
+			Map<String, List<String>> parametersUrl14 = new HashMap<>();
+			TransportUtils.setParameter(parametersUrl14,"datetime_documento_query","2020-07-21T17:32:28Z"); // uso data valida, il test e' su path
+			httpEntity14.setParameters(parametersUrl14);
+			Map<String, List<String>> parametersTrasporto14 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasporto14,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			TransportUtils.setHeader(parametersTrasporto14,"datetime_documento_header","2020-07-19T17:32:28Z"); // uso data valida, il test e' su path
+			httpEntity14.setHeaders(parametersTrasporto14);
 			httpEntity14.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' path
 			String json14 = "{\"data\": \"2020-07-20T17:32:28Z\"}";
 			httpEntity14.setContent(json14);
@@ -2082,11 +2083,11 @@ public class TestOpenApi4j {
 			httpEntityResponseTest15.setStatus(code);
 			httpEntityResponseTest15.setMethod(HttpRequestMethod.GET);
 			httpEntityResponseTest15.setUrl(testUrl15);	
-			Map<String, String> parametersTrasportoRispostaTest15 = new HashMap<>();
+			Map<String, List<String>> parametersTrasportoRispostaTest15 = new HashMap<>();
 			if(ct!=null) {
-				parametersTrasportoRispostaTest15.put(HttpConstants.CONTENT_TYPE, ct);
+				TransportUtils.setHeader(parametersTrasportoRispostaTest15,HttpConstants.CONTENT_TYPE, ct);
 			}
-			httpEntityResponseTest15.setParametersTrasporto(parametersTrasportoRispostaTest15);
+			httpEntityResponseTest15.setHeaders(parametersTrasportoRispostaTest15);
 			httpEntityResponseTest15.setContentType(ct);
 			httpEntityResponseTest15.setContent(msg);
 			
@@ -2206,9 +2207,9 @@ public class TestOpenApi4j {
 			httpEntityResponseTest16.setStatus(code);
 			httpEntityResponseTest16.setMethod(HttpRequestMethod.GET);
 			httpEntityResponseTest16.setUrl(urltest);	
-			Map<String, String> parametersTrasportoRispostaTest16 = new HashMap<>();
-			parametersTrasportoRispostaTest16.put(HttpConstants.CONTENT_TYPE, ct);
-			httpEntityResponseTest16.setParametersTrasporto(parametersTrasportoRispostaTest16);
+			Map<String, List<String>> parametersTrasportoRispostaTest16 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasportoRispostaTest16,HttpConstants.CONTENT_TYPE, ct);
+			httpEntityResponseTest16.setHeaders(parametersTrasportoRispostaTest16);
 			httpEntityResponseTest16.setContentType(ct);
 			httpEntityResponseTest16.setContent(msg);
 			
@@ -2341,9 +2342,9 @@ public class TestOpenApi4j {
 			httpEntityResponseTest17.setStatus(code);
 			httpEntityResponseTest17.setMethod(HttpRequestMethod.GET);
 			httpEntityResponseTest17.setUrl(testUrl17);	
-			Map<String, String> parametersTrasportoRispostaTest17 = new HashMap<>();
-			parametersTrasportoRispostaTest17.put(HttpConstants.CONTENT_TYPE, ct);
-			httpEntityResponseTest17.setParametersTrasporto(parametersTrasportoRispostaTest17);
+			Map<String, List<String>> parametersTrasportoRispostaTest17 = new HashMap<>();
+			TransportUtils.setHeader(parametersTrasportoRispostaTest17,HttpConstants.CONTENT_TYPE, ct);
+			httpEntityResponseTest17.setHeaders(parametersTrasportoRispostaTest17);
 			httpEntityResponseTest17.setContentType(ct);
 			httpEntityResponseTest17.setContent(msg);
 			
@@ -2503,17 +2504,17 @@ public class TestOpenApi4j {
 					httpEntityResponse_test18.setStatus(code);
 					httpEntityResponse_test18.setMethod(HttpRequestMethod.GET);
 					httpEntityResponse_test18.setUrl(testUrl18);	
-					Map<String, String> parametersTrasportoRisposta_test18 = new HashMap<>();
-					parametersTrasportoRisposta_test18.put("api_key", "aaa");
-					parametersTrasportoRisposta_test18.put(HttpConstants.CONTENT_TYPE, ct);
-					httpEntityResponse_test18.setParametersTrasporto(parametersTrasportoRisposta_test18);
+					Map<String, List<String>> parametersTrasportoRisposta_test18 = new HashMap<>();
+					TransportUtils.setHeader(parametersTrasportoRisposta_test18,"api_key", "aaa");
+					TransportUtils.setHeader(parametersTrasportoRisposta_test18,HttpConstants.CONTENT_TYPE, ct);
+					httpEntityResponse_test18.setHeaders(parametersTrasportoRisposta_test18);
 					httpEntityResponse_test18.setContentType(ct);
 					
 					if(ct.contains("json") || ct.contains("plain")) {
 						if(ct.contains("Uncorrect")) {
 							((TextHttpResponseEntity)httpEntityResponse_test18).setContent("{ a }");
 							parametersTrasportoRisposta_test18.remove(HttpConstants.CONTENT_TYPE);
-							parametersTrasportoRisposta_test18.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+							TransportUtils.setHeader(parametersTrasportoRisposta_test18,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
 							httpEntityResponse_test18.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 						}
 						else if(ct.contains("plain")) {
@@ -2633,9 +2634,9 @@ public class TestOpenApi4j {
 				TextHttpRequestEntity httpEntity19 = new TextHttpRequestEntity();
 				httpEntity19.setMethod(HttpRequestMethod.POST);
 				httpEntity19.setUrl(testUrl19); 
-				Map<String, String> parametersTrasporto19 = new HashMap<>();
-				parametersTrasporto19.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-				httpEntity19.setParametersTrasporto(parametersTrasporto19);
+				Map<String, List<String>> parametersTrasporto19 = new HashMap<>();
+				TransportUtils.setHeader(parametersTrasporto19, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				httpEntity19.setHeaders(parametersTrasporto19);
 				httpEntity19.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' path
 				String json19 = "{\"stato1\": "+valoreInserito.toUpperCase()+",\"stato2\": "+valoreInserito.toLowerCase()+"}";
 				httpEntity19.setContent(json19);
@@ -2645,9 +2646,9 @@ public class TestOpenApi4j {
 				httpEntityResponse_test19.setStatus(200);
 				httpEntityResponse_test19.setMethod(HttpRequestMethod.POST);
 				httpEntityResponse_test19.setUrl(testUrl19);	
-				Map<String, String> parametersTrasportoRisposta_test19 = new HashMap<>();
-				parametersTrasportoRisposta_test19.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
-				httpEntityResponse_test19.setParametersTrasporto(parametersTrasportoRisposta_test19);
+				Map<String, List<String>> parametersTrasportoRisposta_test19 = new HashMap<>();
+				TransportUtils.setHeader(parametersTrasportoRisposta_test19,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				httpEntityResponse_test19.setHeaders(parametersTrasportoRisposta_test19);
 				httpEntityResponse_test19.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 				httpEntityResponse_test19.setContent(json19);
 	

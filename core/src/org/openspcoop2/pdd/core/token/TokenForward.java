@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.token;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**     
@@ -39,19 +40,19 @@ public class TokenForward implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Map<String, String> trasporto = new HashMap<String, String>();
-	private Map<String, String> url = new HashMap<String, String>();
+	private Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
+	private Map<String, List<String>> url = new HashMap<String, List<String>>();
 	
-	public Map<String, String> getTrasporto() {
+	public Map<String, List<String>> getTrasporto() {
 		return this.trasporto;
 	}
-	public void setTrasporto(Map<String, String> trasporto) {
+	public void setTrasporto(Map<String, List<String>> trasporto) {
 		this.trasporto = trasporto;
 	}
-	public Map<String, String> getUrl() {
+	public Map<String, List<String>> getUrl() {
 		return this.url;
 	}
-	public void setUrl(Map<String, String> url) {
+	public void setUrl(Map<String, List<String>> url) {
 		this.url = url;
 	}
 }

@@ -37,6 +37,7 @@ public interface ConnectorOutMessage {
 	public void sendResponseHeaders(OpenSPCoop2Message message) throws ConnectorException; 
 	
 	public void setHeader(String key,String value) throws ConnectorException; 
+	public void addHeader(String key,String value) throws ConnectorException; 
 	
 	public void setContentLength(int length) throws ConnectorException; 
 	

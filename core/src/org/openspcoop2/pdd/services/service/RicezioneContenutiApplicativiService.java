@@ -772,21 +772,34 @@ public class RicezioneContenutiApplicativiService {
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
 		}
-		if(context.getHeaderIntegrazioneRisposta()==null) {
-			context.setHeaderIntegrazioneRisposta(new HashMap<String, String>());
+		if(context.getResponseHeaders()==null) {
+			context.setResponseHeaders(new HashMap<String, List<String>>());
 		}
-		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, true, context.getPddContext(), requestInfo.getProtocolContext());
-		if(context.getHeaderIntegrazioneRisposta()!=null){
-			Iterator<String> keys = context.getHeaderIntegrazioneRisposta().keySet().iterator();
+		ServicesUtils.setGovWayHeaderResponse(responseMessage, openSPCoopProperties,
+				context.getResponseHeaders(), logCore, true, context.getPddContext(), requestInfo.getProtocolContext());
+		if(context.getResponseHeaders()!=null){
+			Iterator<String> keys = context.getResponseHeaders().keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = null;
-	    		try{
-	    			value = context.getHeaderIntegrazioneRisposta().get(key);
-	    			res.setHeader(key,value);
-	    		}catch(Exception e){
-	    			logCore.error("Response.setHeader("+key+","+value+") error: "+e.getMessage(),e);
-	    		}
+				List<String> values = context.getResponseHeaders().get(key);
+				if(values!=null && !values.isEmpty()) {
+					for (int i = 0; i < values.size(); i++) {
+						String value = values.get(i);
+						String verbo = "";
+						try{
+							if(i==0) {
+								verbo = "set";
+								res.setHeader(key,value);
+							}
+							else {
+								verbo = "add";
+								res.addHeader(key,value);
+							}
+			    		}catch(Exception e){
+			    			logCore.error("Response."+verbo+"Header("+key+","+value+") error: "+e.getMessage(),e);
+			    		}	
+					}
+				}
 	    	}	
 		}
 		if(context!=null && context.getProtocol()!=null){
@@ -950,18 +963,30 @@ public class RicezioneContenutiApplicativiService {
 					}
 				}
 				
-				if(responseMessage.getForcedResponse().getHeaders()!=null &&
-						responseMessage.getForcedResponse().getHeaders().size()>0) {
-					Iterator<String> keys = responseMessage.getForcedResponse().getHeaders().keySet().iterator();
+				if(responseMessage.getForcedResponse().getHeadersValues()!=null &&
+						responseMessage.getForcedResponse().getHeadersValues().size()>0) {
+					Iterator<String> keys = responseMessage.getForcedResponse().getHeadersValues().keySet().iterator();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
-						String value = null;
-			    		try{
-			    			value = responseMessage.getForcedResponse().getHeaders().get(key);
-			    			res.setHeader(key,value);
-			    		}catch(Exception e){
-			    			logCore.error("Response(Forced).setHeader("+key+","+value+") error: "+e.getMessage(),e);
-			    		}
+						List<String> values = responseMessage.getForcedResponse().getHeadersValues().get(key);
+						if(values!=null && !values.isEmpty()) {
+							for (int i = 0; i < values.size(); i++) {
+								String value = values.get(i);
+								String verbo = "";
+								try{
+									if(i==0) {
+										verbo = "set";
+										res.setHeader(key,value);
+									}
+									else {
+										verbo = "add";
+										res.addHeader(key,value);
+									}
+					    		}catch(Exception e){
+					    			logCore.error("Response(Forced)."+verbo+"Header("+key+","+value+") error: "+e.getMessage(),e);
+					    		}	
+							}
+						}
 			    	}	
 				}
 				
@@ -1260,7 +1285,7 @@ public class RicezioneContenutiApplicativiService {
 				postOutResponseContext.setDataPrimaSpedizioneRisposta(dataPrimaSpedizioneRisposta);
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setReturnCode(statoServletResponse);
-				postOutResponseContext.setPropertiesRispostaTrasporto(context.getHeaderIntegrazioneRisposta());
+				postOutResponseContext.setResponseHeaders(context.getResponseHeaders());
 				postOutResponseContext.setProtocollo(context.getProtocol());
 				postOutResponseContext.setIntegrazione(context.getIntegrazione());
 				if(context.getTipoPorta()!=null)

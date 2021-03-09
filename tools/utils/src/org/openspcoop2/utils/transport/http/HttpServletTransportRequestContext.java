@@ -21,7 +21,10 @@
 package org.openspcoop2.utils.transport.http;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -72,21 +75,48 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 			this.httpServletRequest = req;
 			
 			// Properties FORM Based
-			this.parametersFormBased = new HashMap<String, String>();	       
+			this.parameters = new HashMap<String, List<String>>();	       
 			java.util.Enumeration<?> en = req.getParameterNames();
 			while(en.hasMoreElements()){
 				String nomeProperty = (String)en.nextElement();
-				this.parametersFormBased.put(nomeProperty,req.getParameter(nomeProperty));
-				//log.info("Proprieta': nome["+nomeProperty+"] valore["+req.getParameter(nomeProperty)+"]");
+				String [] s = req.getParameterValues(nomeProperty);
+				List<String> values = new ArrayList<String>();
+				if(s!=null && s.length>0) {
+					for (int i = 0; i < s.length; i++) {
+						String value = s[i];
+						values.add(value);
+						//logCore.info("Parameter ["+nomeProperty+"] valore-"+i+" ["+value+"]");
+					}
+				}
+				else {
+					//logCore.info("Parameter ["+nomeProperty+"] valore ["+req.getParameter(nomeProperty)+"]");
+					values.add(req.getParameter(nomeProperty));
+				}
+				this.parameters.put(nomeProperty,values);
 			}
 
 			// Hedear Trasporto
-			this.parametersTrasporto = new HashMap<String, String>();	    
+			this.headers = new HashMap<String, List<String>>();		    
 			java.util.Enumeration<?> enTrasporto = req.getHeaderNames();
 			while(enTrasporto.hasMoreElements()){
-				String nomeProperty = (String)enTrasporto.nextElement();
-				this.parametersTrasporto.put(nomeProperty,req.getHeader(nomeProperty));
-				//log.info("Proprieta' Trasporto: nome["+nomeProperty+"] valore["+req.getHeader(nomeProperty)+"]");
+				String nomeHeader = (String)enTrasporto.nextElement();
+				Enumeration<String> enValues = req.getHeaders(nomeHeader);
+				List<String> values = new ArrayList<String>();
+				if(enValues!=null) {
+					@SuppressWarnings("unused")
+					int i = 0;
+					while (enValues.hasMoreElements()) {
+						String value = (String) enValues.nextElement();
+						values.add(value);
+						//logCore.info("Header ["+nomeHeader+"] valore-"+i+" ["+value+"]");
+						i++;
+					}
+				}
+				if(values.isEmpty()) {
+					//logCore.info("Header ["+nomeHeader+"] valore ["+req.getHeader(nomeHeader)+"]");
+					values.add(req.getHeader(nomeHeader));
+				}
+				this.headers.put(nomeHeader,values);
 			}
 			
 			// Cookies

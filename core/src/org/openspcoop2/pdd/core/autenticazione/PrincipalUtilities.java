@@ -65,7 +65,7 @@ public class PrincipalUtilities {
 				throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Nome dell'header, da cui estrarre il principal, non indicato");
 			}
 			if(nome!=null && infoConnettore!=null && infoConnettore.getUrlProtocolContext()!=null) {
-				principal = infoConnettore.getUrlProtocolContext().getParameterTrasporto(nome);
+				principal = infoConnettore.getUrlProtocolContext().getHeaderFirstValue(nome);
 			}
 			if(principal==null || "".equals(principal)) {
 				if(throwException) {
@@ -82,7 +82,7 @@ public class PrincipalUtilities {
 				throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Nome del parametro della query, da cui estrarre il principal, non indicato");
 			}
 			if(nome!=null && infoConnettore!=null && infoConnettore.getUrlProtocolContext()!=null) {
-				principal = infoConnettore.getUrlProtocolContext().getParameterFormBased(nome);
+				principal = infoConnettore.getUrlProtocolContext().getParameterFirstValue(nome);
 			}
 			if(principal==null || "".equals(principal)) {
 				if(throwException) {

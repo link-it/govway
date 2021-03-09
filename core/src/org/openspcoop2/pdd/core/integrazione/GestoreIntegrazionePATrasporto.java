@@ -65,7 +65,7 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException {
 		try{
-			this.utilitiesRequest.readTransportProperties(inRequestPAMessage.getUrlProtocolContext().getParametersTrasporto(), 
+			this.utilitiesRequest.readTransportProperties(inRequestPAMessage.getUrlProtocolContext().getHeaders(), 
 					integrazione);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);
@@ -78,7 +78,7 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilitiesRequest.setTransportProperties(integrazione, outRequestPAMessage.getProprietaTrasporto(),
+			this.utilitiesRequest.setTransportProperties(integrazione, outRequestPAMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.TRASPORTO));
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);
@@ -91,7 +91,7 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilitiesResponse.readTransportProperties(inResponsePAMessage.getProprietaTrasporto(), integrazione);
+			this.utilitiesResponse.readTransportProperties(inResponsePAMessage.getHeaders(), integrazione);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);
 		}
@@ -108,7 +108,7 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 			// Per questo non forniamo integrazione.
 			// Per il protocollo trasparente vien apoosta definita la classe WithResponseOut che estende questa,
 			// ridefinisce questo metodo e fornisce anche integrazione.
-			this.utilitiesResponse.setTransportProperties(null, outResponsePAMessage.getProprietaTrasporto(),
+			this.utilitiesResponse.setTransportProperties(null, outResponsePAMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outResponsePAMessage.getBustaRichiesta(), false, TipoIntegrazione.TRASPORTO));
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);

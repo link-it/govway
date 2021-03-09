@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.as4.services.message;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
@@ -102,13 +103,13 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 						
 			URLProtocolContext urlProtocolContext = new URLProtocolContext();
 			
-			Map<String, String> pFormBased = new HashMap<String, String>();
+			Map<String, List<String>> pFormBased = new HashMap<String, List<String>>();
 			pFormBased.putAll(this.parameters);
-			urlProtocolContext.setParametersFormBased(pFormBased);
+			urlProtocolContext.setParameters(pFormBased);
 			
-			Map<String, String> pTrasporto = new HashMap<String, String>();
+			Map<String, List<String>> pTrasporto = new HashMap<String, List<String>>();
 			pTrasporto.putAll(this.headers);
-			urlProtocolContext.setParametersFormBased(pTrasporto);
+			urlProtocolContext.setHeaders(pTrasporto);
 			
 			urlProtocolContext.setFunction(this.function);
 			
@@ -168,23 +169,23 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	
-	private Map<String, String> headers = new Hashtable<String, String>();
-	public void setHeader(String key, String value) throws ConnectorException {
-		this.headers.put(key, value);
+	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+	public void addHeader(String key, String value) throws ConnectorException {
+		TransportUtils.addHeader(this.headers, key, value);
 	}
 	@Override
-	public String getHeader(String key) throws ConnectorException{
-		return TransportUtils.getObjectAsString(this.headers, key);
+	public List<String> getHeaderValues(String key) throws ConnectorException{
+		return TransportUtils.getRawObject(this.headers, key);
 	}
 	
 	
-	private Map<String, String> parameters = new Hashtable<String, String>();
-	public void setParameter(String key, String value) throws ConnectorException {
-		this.parameters.put(key, value);
+	private Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+	public void addParameter(String key, String value) throws ConnectorException {
+		TransportUtils.addParameter(this.parameters,key, value);
 	}
 	@Override
-	public String getParameter(String key) throws ConnectorException{
-		return TransportUtils.getObjectAsString(this.parameters, key);
+	public List<String> getParameterValues(String key) throws ConnectorException{
+		return TransportUtils.getRawObject(this.parameters, key);
 	}
 
 	

@@ -36,6 +36,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 /**
@@ -175,9 +176,9 @@ public class ModIProtocolManager extends BasicManager {
 							
 							if(ServiceBinding.REST.equals(msg.getServiceBinding())) {
 								String headerCorrelationId = this.modipaProperties.getRestCorrelationIdHeader();
-								String correlationIdFound = msg.getTransportResponseContext().getParameterTrasporto(headerCorrelationId);
+								String correlationIdFound = msg.getTransportResponseContext().getHeaderFirstValue(headerCorrelationId);
 								if(correlationIdFound==null || "".equals(correlationIdFound)) {
-									msg.getTransportResponseContext().getParametersTrasporto().put(headerCorrelationId, ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE_AGGIUNTO_PER_CONSENTIRE_VALIDAZIONE_CONTENUTI);
+									TransportUtils.addHeader(msg.getTransportResponseContext().getHeaders(),headerCorrelationId, ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE_AGGIUNTO_PER_CONSENTIRE_VALIDAZIONE_CONTENUTI);
 								}
 							}
 							else {

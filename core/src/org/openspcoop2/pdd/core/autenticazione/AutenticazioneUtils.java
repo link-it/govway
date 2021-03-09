@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.autenticazione;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
@@ -39,10 +40,10 @@ public class AutenticazioneUtils {
 	public static void finalizeProcessHeaderAuthorization(OpenSPCoop2Message message, boolean clean) throws AutenticazioneException {
 		try {
 			if(message.getTransportRequestContext()!=null) {
-				if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
-					String headerValue = message.getTransportRequestContext().getParameterTrasporto(HttpConstants.AUTHORIZATION);
+				if(message.getTransportRequestContext().getHeaders()!=null) {
+					String headerValue = message.getTransportRequestContext().getHeaderFirstValue(HttpConstants.AUTHORIZATION);
 					if(headerValue!=null) {
-						message.getTransportRequestContext().removeParameterTrasporto(HttpConstants.AUTHORIZATION);
+						message.getTransportRequestContext().removeHeader(HttpConstants.AUTHORIZATION);
 						if(!clean) {
 							message.forceTransportHeader(HttpConstants.AUTHORIZATION, headerValue); // serve soprattutto per soap
 						}
@@ -65,10 +66,10 @@ public class AutenticazioneUtils {
 				break;
 			case HEADER:
 				if(nome!=null && message.getTransportRequestContext()!=null) {
-					if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
-						String headerValue = message.getTransportRequestContext().getParameterTrasporto(nome);
+					if(message.getTransportRequestContext().getHeaders()!=null) {
+						String headerValue = message.getTransportRequestContext().getHeaderFirstValue(nome);
 						if(headerValue!=null) {
-							message.getTransportRequestContext().removeParameterTrasporto(nome);
+							message.getTransportRequestContext().removeHeader(nome);
 							if(!clean) {
 								message.forceTransportHeader(nome, headerValue); // serve soprattutto per soap
 							}
@@ -78,10 +79,10 @@ public class AutenticazioneUtils {
 				break;
 			case FORM:
 				if(message.getTransportRequestContext()!=null) {
-					if(message.getTransportRequestContext().getParametersFormBased()!=null) {
-						String propertyValue = message.getTransportRequestContext().getParameterFormBased(nome);
+					if(message.getTransportRequestContext().getParameters()!=null) {
+						String propertyValue = message.getTransportRequestContext().getParameterFirstValue(nome);
 						if(propertyValue!=null) {
-							message.getTransportRequestContext().removeParameterFormBased(nome);
+							message.getTransportRequestContext().removeParameter(nome);
 							if(!clean) {
 								message.forceUrlProperty(nome, propertyValue); // serve soprattutto per soap
 							}
@@ -102,10 +103,10 @@ public class AutenticazioneUtils {
 		
 		if(header) {
 			if(nomeHeader!=null && message.getTransportRequestContext()!=null) {
-				if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
-					String headerValue = message.getTransportRequestContext().getParameterTrasporto(nomeHeader);
+				if(message.getTransportRequestContext().getHeaders()!=null) {
+					String headerValue = message.getTransportRequestContext().getHeaderFirstValue(nomeHeader);
 					if(headerValue!=null) {
-						message.getTransportRequestContext().removeParameterTrasporto(nomeHeader);
+						message.getTransportRequestContext().removeHeader(nomeHeader);
 						if(!clean) {
 							message.forceTransportHeader(nomeHeader, headerValue); // serve soprattutto per soap
 						}
@@ -115,12 +116,12 @@ public class AutenticazioneUtils {
 		}
 		if(cookie) { 
 			if(nomeCookie!=null && message.getTransportRequestContext()!=null) {
-				if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
-					String headerValue = message.getTransportRequestContext().getParameterTrasporto(HttpConstants.COOKIE);
+				if(message.getTransportRequestContext().getHeaders()!=null) {
+					String headerValue = message.getTransportRequestContext().getHeaderFirstValue(HttpConstants.COOKIE);
 					if(headerValue!=null) {
-						message.getTransportRequestContext().removeParameterTrasporto(HttpConstants.COOKIE);
+						message.getTransportRequestContext().removeHeader(HttpConstants.COOKIE);
 						if(!clean) {
-							message.getTransportRequestContext().getParametersTrasporto().put(HttpConstants.COOKIE, headerValue); // inserisco anche qua in modo che il valore aggiornato sia disponibile sulle trasformazioni
+							TransportUtils.setHeader(message.getTransportRequestContext().getHeaders(), HttpConstants.COOKIE, headerValue); // inserisco anche qua in modo che il valore aggiornato sia disponibile sulle trasformazioni
 							message.forceTransportHeader(HttpConstants.COOKIE, headerValue); // serve soprattutto per soap
 						}
 						else {
@@ -142,7 +143,7 @@ public class AutenticazioneUtils {
 								}
 							}
 							if(sb.length()>0) {
-								message.getTransportRequestContext().getParametersTrasporto().put(HttpConstants.COOKIE, sb.toString());
+								TransportUtils.setHeader(message.getTransportRequestContext().getHeaders(),HttpConstants.COOKIE, sb.toString());
 							}
 						}
 					}
@@ -151,10 +152,10 @@ public class AutenticazioneUtils {
 		}
 		if(queryParameter) {
 			if(message.getTransportRequestContext()!=null) {
-				if(message.getTransportRequestContext().getParametersFormBased()!=null) {
-					String propertyValue = message.getTransportRequestContext().getParameterFormBased(nomeQueryParameter);
+				if(message.getTransportRequestContext().getParameters()!=null) {
+					String propertyValue = message.getTransportRequestContext().getParameterFirstValue(nomeQueryParameter);
 					if(propertyValue!=null) {
-						message.getTransportRequestContext().removeParameterFormBased(nomeQueryParameter);
+						message.getTransportRequestContext().removeParameter(nomeQueryParameter);
 						if(!clean) {
 							message.forceUrlProperty(nomeQueryParameter, propertyValue); // serve soprattutto per soap
 						}

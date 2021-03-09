@@ -447,8 +447,8 @@ public class RestTest extends ConfigLoader {
 		assertEquals("Too many requests detected", jsonPath.getStringMatchPattern(jsonResp, "$.detail").get(0));
 		assertNotEquals(null, jsonPath.getStringMatchPattern(jsonResp, "$.govway_id").get(0));
 		
-		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
-		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		assertNotEquals(null, failedResponse.getHeaderFirstValue(Headers.RetryAfter));
+		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
 
 		
@@ -477,8 +477,8 @@ public class RestTest extends ConfigLoader {
 		// Tutte le richieste devono avere lo header ConcurrentRequestsRemaining impostato ad un numero positivo		
 		
 		responses.forEach(r -> {
-			assertEquals(String.valueOf(maxConcurrentRequests), r.getHeader(Headers.ConcurrentRequestsLimit));
-			assertTrue(Integer.valueOf(r.getHeader(Headers.ConcurrentRequestsRemaining)) >= 0);
+			assertEquals(String.valueOf(maxConcurrentRequests), r.getHeaderFirstValue(Headers.ConcurrentRequestsLimit));
+			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.ConcurrentRequestsRemaining)) >= 0);
 		});
 			
 		// La richiesta fallita deve avere status code 429
@@ -497,10 +497,10 @@ public class RestTest extends ConfigLoader {
 		assertNotEquals(null, jsonPath.getStringMatchPattern(jsonResp, "$.govway_id").get(0));
 		
 
-		assertEquals("0", failedResponse.getHeader(Headers.ConcurrentRequestsRemaining));
-		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.ConcurrentRequestsRemaining));
+		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
-		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
+		assertNotEquals(null, failedResponse.getHeaderFirstValue(Headers.RetryAfter));
 	}
 
 	
@@ -511,15 +511,15 @@ public class RestTest extends ConfigLoader {
 		
 		responses.forEach(r -> { 			
 				
-				Utils.checkXLimitHeader(logRateLimiting, Headers.RateLimitLimit, r.getHeader(Headers.RateLimitLimit), maxRequests);
+				Utils.checkXLimitHeader(logRateLimiting, Headers.RateLimitLimit, r.getHeaderFirstValue(Headers.RateLimitLimit), maxRequests);
 				
 				if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 					Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
-					Utils.checkXLimitWindows(r.getHeader(Headers.RateLimitLimit), maxRequests, windowMap);
+					Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.RateLimitLimit), maxRequests, windowMap);
 				}
 				
-				assertTrue(Integer.valueOf(r.getHeader(Headers.RateLimitReset)) <= windowSize);
-				assertNotEquals(null, Integer.valueOf(r.getHeader(Headers.RateLimitRemaining)));
+				assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.RateLimitReset)) <= windowSize);
+				assertNotEquals(null, Integer.valueOf(r.getHeaderFirstValue(Headers.RateLimitRemaining)));
 			});
 
 		// Tutte le richieste tranne una devono restituire 200
@@ -549,15 +549,15 @@ public class RestTest extends ConfigLoader {
 			assertEquals("Limit exceeded detected", jsonPath.getStringMatchPattern(jsonResp, "$.detail").get(0));
 		}
 		
-		assertEquals("0", failedResponse.getHeader(Headers.RateLimitRemaining));
-		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.RateLimitRemaining));
+		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
-		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
+		assertNotEquals(null, failedResponse.getHeaderFirstValue(Headers.RetryAfter));
 
 		// Lo header X-RateLimit-Remaining deve assumere tutti i
 		// i valori possibili da 0 a maxRequests-1
 		List<Integer> counters = responses.stream()
-				.map(resp -> Integer.parseInt(resp.getHeader(Headers.RateLimitRemaining))).collect(Collectors.toList());
+				.map(resp -> Integer.parseInt(resp.getHeaderFirstValue(Headers.RateLimitRemaining))).collect(Collectors.toList());
 		assertTrue(IntStream.range(0, maxRequests).allMatch(v -> counters.contains(v)));	
 	}
 	

@@ -22,6 +22,8 @@
 
 package org.openspcoop2.message.config;
 
+import java.util.List;
+
 import org.openspcoop2.message.constants.IntegrationErrorMessageType;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -75,35 +77,37 @@ public class IntegrationErrorConfiguration implements java.io.Serializable {
 	
 	public MessageType getMessageType(HttpServletTransportRequestContext request, ServiceBinding serviceBinding, MessageType requestMsgType){
 		if(ServiceBinding.REST.equals(serviceBinding) && this.rfc7807!=null) {
-			if(this.rfc7807.isUseAcceptHeader() && request!=null && request.getParameterTrasporto(HttpConstants.ACCEPT)!=null) {
+			if(this.rfc7807.isUseAcceptHeader() && request!=null && request.getHeaderValues(HttpConstants.ACCEPT)!=null && !request.getHeaderValues(HttpConstants.ACCEPT).isEmpty()) {
 				boolean asJson = false;
 				boolean asXml = false;
-				String value = request.getParameterTrasporto(HttpConstants.ACCEPT);
-				String [] acceptHeaders = null;
-				if(value.contains(",")) {
-					acceptHeaders = value.split(",");
-					for (int i = 0; i < acceptHeaders.length; i++) {
-						acceptHeaders[i] = acceptHeaders[i].trim();
+				List<String> values = request.getHeaderValues(HttpConstants.ACCEPT);
+				for (String value : values) {
+					String [] acceptHeaders = null;
+					if(value.contains(",")) {
+						acceptHeaders = value.split(",");
+						for (int i = 0; i < acceptHeaders.length; i++) {
+							acceptHeaders[i] = acceptHeaders[i].trim();
+						}
 					}
-				}
-				else {
-					acceptHeaders = new String [] {value.trim()};
-				}
-				for (String hdr : acceptHeaders) {
-					if(hdr.toLowerCase().endsWith("/x-json") || hdr.toLowerCase().endsWith("/json") || hdr.toLowerCase().endsWith("+json")){
-						asJson = true;
-						break;
+					else {
+						acceptHeaders = new String [] {value.trim()};
 					}
-					else if(hdr.toLowerCase().endsWith("/x-xml") || hdr.toLowerCase().endsWith("/xml") || hdr.toLowerCase().endsWith("+xml")){
-						asXml = true;
-						break;
+					for (String hdr : acceptHeaders) {
+						if(hdr.toLowerCase().endsWith("/x-json") || hdr.toLowerCase().endsWith("/json") || hdr.toLowerCase().endsWith("+json")){
+							asJson = true;
+							break;
+						}
+						else if(hdr.toLowerCase().endsWith("/x-xml") || hdr.toLowerCase().endsWith("/xml") || hdr.toLowerCase().endsWith("+xml")){
+							asXml = true;
+							break;
+						}
 					}
-				}
-				if(asJson) {
-					return MessageType.JSON;
-				}
-				else if(asXml) {
-					return MessageType.XML;
+					if(asJson) {
+						return MessageType.JSON;
+					}
+					else if(asXml) {
+						return MessageType.XML;
+					}
 				}
 			}
 		}

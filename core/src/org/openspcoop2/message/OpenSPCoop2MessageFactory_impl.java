@@ -186,11 +186,11 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 			TransportResponseContext transportResponseContext = null;
 			if(context instanceof TransportRequestContext){
 				transportRequestContext = (TransportRequestContext) context;
-				contentType = transportRequestContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+				contentType = transportRequestContext.getHeaderFirstValue(HttpConstants.CONTENT_TYPE);
 			}
 			else if(context instanceof TransportResponseContext){
 				transportResponseContext = (TransportResponseContext) context;
-				contentType = transportResponseContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+				contentType = transportResponseContext.getHeaderFirstValue(HttpConstants.CONTENT_TYPE);
 			}
 			else if(context instanceof String){
 				contentType = (String) context;

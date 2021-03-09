@@ -538,10 +538,11 @@ public class InformazioniServizioURLMapping {
 			if(mappingInfo.getName()==null){
 				throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.HEADER_BASED.toString()+" non riuscita: nome header nell'omonima proprieta' con suffisso '.name' non fornito");
 			}
-			if(this.urlProtocolContext.getParametersTrasporto().containsKey(mappingInfo.getName())==false){
+			String value = this.urlProtocolContext.getHeaderFirstValue(mappingInfo.getName());
+			if(value==null){
 				throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.HEADER_BASED.toString()+" non riuscita: header di trasporto con nome ["+mappingInfo.getName()+"] non trovato");
 			}
-			return this.urlProtocolContext.getParametersTrasporto().get(mappingInfo.getName());
+			return value;
 		}
 		
 		else if(ModalitaIdentificazione.IDENTITY_BASED.equals(mappingInfo.getModalitaIdentificazione())){

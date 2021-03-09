@@ -25,8 +25,10 @@ import java.io.ByteArrayOutputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -162,12 +164,12 @@ public class ModIImbustamentoRest {
 					String headerReplyName = this.modiProperties.getRestReplyToHeader();
 					
 					if(this.modiProperties.isRestSecurityTokenPushReplyToUpdateOrCreateInFruizione()) {
-						msg.getTransportRequestContext().removeParameterTrasporto(headerReplyName); // rimuovo se già esiste
+						msg.getTransportRequestContext().removeHeader(headerReplyName); // rimuovo se già esiste
 						msg.forceTransportHeader(headerReplyName, replyTo);
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO, replyTo);
 					}
 					else {
-						String replyToFound = msg.getTransportRequestContext().getParameterTrasporto(headerReplyName);
+						String replyToFound = msg.getTransportRequestContext().getHeaderFirstValue(headerReplyName);
 						if(replyToFound!=null && !"".equals(replyToFound)) {
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO, replyToFound);
 						}
@@ -183,7 +185,7 @@ public class ModIImbustamentoRest {
 					
 					String headerCorrelationId = this.modiProperties.getRestCorrelationIdHeader();
 					
-					String correlationIdFound = msg.getTransportRequestContext().getParameterTrasporto(headerCorrelationId);
+					String correlationIdFound = msg.getTransportRequestContext().getHeaderFirstValue(headerCorrelationId);
 					
 					if(correlationIdFound!=null && !"".equals(correlationIdFound)) {
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, correlationIdFound);
@@ -266,7 +268,7 @@ public class ModIImbustamentoRest {
 					
 						String headerCorrelationId = this.modiProperties.getRestCorrelationIdHeader();
 						
-						String correlationIdFound = msg.getTransportResponseContext().getParameterTrasporto(headerCorrelationId);
+						String correlationIdFound = msg.getTransportResponseContext().getHeaderFirstValue(headerCorrelationId);
 						if(correlationIdFound!=null && !"".equals(correlationIdFound) && 
 								!ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE_AGGIUNTO_PER_CONSENTIRE_VALIDAZIONE_CONTENUTI.equals(correlationIdFound)) {
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, correlationIdFound);
@@ -308,7 +310,7 @@ public class ModIImbustamentoRest {
 						locationHeader = this.modiProperties.getRestLocationHeader();
 						if(msg!=null) {
 							if(msg.getTransportResponseContext()!=null) {
-								location = msg.getTransportResponseContext().getParameterTrasporto(locationHeader);
+								location = msg.getTransportResponseContext().getHeaderFirstValue(locationHeader);
 							}
 						}
 					}
@@ -551,42 +553,44 @@ public class ModIImbustamentoRest {
 					
 					ObjectNode httpHeaderNode = null;
 					String hdrName = null;
-					String hdrValue = null;
+					List<String> hdrValues = new ArrayList<String>();
 					
 					if(httpHeader.toLowerCase().equals(HttpConstants.DIGEST.toLowerCase())) {
 						if(digestValue!=null) {
 							hdrName = HttpConstants.DIGEST;
-							hdrValue = digestValue;
+							hdrValues.add(digestValue);
 						}
 						else if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && msg.getTransportResponseContext()!=null && 
 								msg.getTransportRequestContext()!=null && org.openspcoop2.utils.transport.http.HttpRequestMethod.HEAD.equals(msg.getTransportRequestContext().getRequestType()) &&
 								this.modiProperties.isRestSecurityTokenResponseDigestHEADuseServerHeader()) {
-							String digestValueHEAD = msg.getTransportResponseContext().getParameterTrasporto(HttpConstants.DIGEST);
-							if(digestValueHEAD!=null) {
+							List<String> digestValueHEAD = msg.getTransportResponseContext().getHeaderValues(HttpConstants.DIGEST);
+							if(digestValueHEAD!=null && !digestValueHEAD.isEmpty()) {
 								hdrName = HttpConstants.DIGEST;
-								hdrValue = digestValueHEAD;
+								hdrValues.addAll(digestValueHEAD);
 							}
 						}
 					}
 					else {
-						String value = null;
+						List<String> values = null;
 						if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) && msg.getTransportRequestContext()!=null) {
-							value = msg.getTransportRequestContext().getParameterTrasporto(httpHeader);
+							values = msg.getTransportRequestContext().getHeaderValues(httpHeader);
 						}
 						else if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && msg.getTransportResponseContext()!=null) {
-							value = msg.getTransportResponseContext().getParameterTrasporto(httpHeader);
+							values = msg.getTransportResponseContext().getHeaderValues(httpHeader);
 						}
-						if(value!=null) {
+						if(values!=null && !values.isEmpty()) {
 							hdrName = httpHeader;
-							hdrValue = value;
+							hdrValues.addAll(values);
 						}
 					}
 					if(hdrName!=null) {
-						httpHeaderNode = jsonUtils.newObjectNode();
-						String hdrNameLowerCase = hdrName.toLowerCase(); // uso come nome dell'header tutto minuscolo come indicato nella specifica, tra gli esempi
-						httpHeaderNode.put(hdrNameLowerCase, hdrValue); 
-						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_PREFIX+hdrNameLowerCase, hdrValue);
-						signedHeaders.add(httpHeaderNode);
+						for (String hdrValue : hdrValues) {
+							httpHeaderNode = jsonUtils.newObjectNode();
+							String hdrNameLowerCase = hdrName.toLowerCase(); // uso come nome dell'header tutto minuscolo come indicato nella specifica, tra gli esempi
+							httpHeaderNode.put(hdrNameLowerCase, hdrValue); 
+							ModIUtilities.addHeaderProperty(busta, hdrNameLowerCase, hdrValue);
+							signedHeaders.add(httpHeaderNode);	
+						}
 					}
 				}
 				

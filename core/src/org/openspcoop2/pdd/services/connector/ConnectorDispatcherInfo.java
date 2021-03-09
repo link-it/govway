@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.services.connector;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -34,7 +35,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
  */
 public class ConnectorDispatcherInfo {
 
-	public static ConnectorDispatcherInfo getGeneric(OpenSPCoop2Message message,int status, String contentType, Map<String, String> trasporto,EsitoTransazione esito) throws Exception {
+	public static ConnectorDispatcherInfo getGeneric(OpenSPCoop2Message message,int status, String contentType, Map<String, List<String>> trasporto,EsitoTransazione esito) throws Exception {
 		ConnectorDispatcherInfo c = new ConnectorDispatcherInfo();
 		c.setMessage(message);
 		c.setEsitoTransazione(esito);
@@ -52,12 +53,12 @@ public class ConnectorDispatcherInfo {
 	private EsitoTransazione esitoTransazione;
 	private int status;
 	private String contentType;
-	private Map<String, String> trasporto;
+	private Map<String, List<String>> trasporto;
 	
-	public Map<String, String> getTrasporto() {
+	public Map<String, List<String>> getTrasporto() {
 		return this.trasporto;
 	}
-	public void setTrasporto(Map<String, String> trasporto) {
+	public void setTrasporto(Map<String, List<String>> trasporto) {
 		this.trasporto = trasporto;
 	}
 	public OpenSPCoop2Message getMessage() {

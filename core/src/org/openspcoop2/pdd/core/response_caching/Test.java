@@ -21,10 +21,13 @@
 package org.openspcoop2.pdd.core.response_caching;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -33,6 +36,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.w3c.dom.Node;
 
 /**     
@@ -61,15 +65,18 @@ public class Test {
 		protocolContext.setInterfaceName("nomePortaDelegataXXXX");
 		protocolContext.setFunction("PD");
 		protocolContext.setRequestURI("http://govway/in/GW_serv/RGT");
-		protocolContext.setParametersFormBased(new HashMap<String, String>());
-		protocolContext.getParametersFormBased().put("p1", "v1");
-		protocolContext.getParametersFormBased().put("p2", "v2");
 		
-		protocolContext.setParametersTrasporto(new HashMap<String, String>());
-		protocolContext.getParametersTrasporto().put("h1", "v1");
-		protocolContext.getParametersTrasporto().put("h2", "v2");
-		protocolContext.getParametersTrasporto().put("h3", "v3");
-		protocolContext.getParametersTrasporto().put("Content-Type", "text/xml");
+		protocolContext.setParameters(new HashMap<String, List<String>>());
+		TransportUtils.addParameter(protocolContext.getParameters(),"p1", "v1");
+		TransportUtils.addParameter(protocolContext.getParameters(),"p2", "v2a");
+		TransportUtils.addParameter(protocolContext.getParameters(),"p2", "v2b");
+		
+		protocolContext.setHeaders(new HashMap<String, List<String>>());
+		TransportUtils.addHeader(protocolContext.getHeaders(),"h1", "v1");
+		TransportUtils.addHeader(protocolContext.getHeaders(),"h2", "v2a");
+		TransportUtils.addHeader(protocolContext.getHeaders(),"h2", "v2b");
+		TransportUtils.addHeader(protocolContext.getHeaders(),"h3", "v3");
+		TransportUtils.addHeader(protocolContext.getHeaders(),"Content-Type", "text/xml");
 		
 		String messaggio = SOAP_ENVELOPE_RISPOSTA + SOAP_ENVELOPE_RISPOSTA_END;
 		byte [] messaggioArray = messaggio.getBytes();
@@ -87,21 +94,25 @@ public class Test {
 		
 		ResponseCachingConfigurazione responseCachingConfig = new ResponseCachingConfigurazione();
 		responseCachingConfig.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
+		List<String> headers = new ArrayList<String>();
+		headers.addAll(protocolContext.getHeaders().keySet());
+		responseCachingConfig.getHashGenerator().setHeaders(StatoFunzionalita.ABILITATO);
+		responseCachingConfig.getHashGenerator().setHeaderList(headers);
 		
 		
 		System.out.println("TEST1: "+generator.buildKeyCache(msg, requestInfo, responseCachingConfig));
 		System.out.println("TEST2: "+generator.buildKeyCache(msg, requestInfo, responseCachingConfig));
 		
-		protocolContext.getParametersFormBased().remove("p1");
+		protocolContext.getParameters().remove("p1");
 		System.out.println("TEST3 ko: "+generator.buildKeyCache(msg, requestInfo, responseCachingConfig));
 		
-		protocolContext.getParametersFormBased().put("p1", "v1");
+		TransportUtils.addParameter(protocolContext.getParameters(),"p1", "v1");
 		System.out.println("TEST3 ok: "+generator.buildKeyCache(msg, requestInfo, responseCachingConfig));
 		
-		protocolContext.getParametersTrasporto().remove("h1");
+		protocolContext.getHeaders().remove("h1");
 		System.out.println("TEST4 ko: "+generator.buildKeyCache(msg, requestInfo, responseCachingConfig));
 		
-		protocolContext.getParametersTrasporto().put("h1", "v1");
+		TransportUtils.addHeader(protocolContext.getHeaders(),"h1", "v1");
 		System.out.println("TEST4 ok: "+generator.buildKeyCache(msg, requestInfo, responseCachingConfig));
 		
 		Node n = msg.castAsSoap().getSOAPBody().addChildElement("empty");

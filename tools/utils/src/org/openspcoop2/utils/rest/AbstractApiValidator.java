@@ -186,17 +186,21 @@ public abstract class AbstractApiValidator   {
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeHeaderParameters()>0){
 					for (ApiHeaderParameter paramHeader : operation.getRequest().getHeaderParameters()) {
 						String name = paramHeader.getName();
-						String value = TransportUtils.get(request.getParametersTrasporto(), name);
-						if(value==null){
+						List<String> values = TransportUtils.getRawObject(request.getHeaders(), name);
+						if(values==null || values.isEmpty()){
 							if(paramHeader.isRequired()){
 								throw new ValidatorException("Required http header '"+name+"' not found");
 							}
 						}
-						if(value!=null){
-							try{
-								validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
-							}catch(ValidatorException val){
-								throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
+						else {
+							for (String value : values) {
+								if(value!=null){
+									try{
+										validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
+									}catch(ValidatorException val){
+										throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
+									}
+								}	
 							}
 						}
 					}
@@ -231,17 +235,21 @@ public abstract class AbstractApiValidator   {
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeQueryParameters()>0){
 					for (ApiRequestQueryParameter paramQuery : operation.getRequest().getQueryParameters()) {
 						String name = paramQuery.getName();
-						String value = TransportUtils.get(request.getParametersQuery(), name);
-						if(value==null){
+						List<String> values = TransportUtils.getRawObject(request.getParameters(), name);
+						if(values==null || values.isEmpty()){
 							if(paramQuery.isRequired()){
 								throw new ValidatorException("Required query parameter '"+name+"' not found");
 							}
 						}
-						if(value!=null){
-							try{
-								validateValueAsType(value,paramQuery.getType(),paramQuery.getSchema());
-							}catch(ValidatorException val){
-								throw new ValidatorException("Invalid value '"+value+"' in query parameter '"+name+"' (expected type '"+paramQuery.getType()+"'): "+val.getMessage(),val);
+						else {
+							for (String value : values) {
+								if(value!=null){
+									try{
+										validateValueAsType(value,paramQuery.getType(),paramQuery.getSchema());
+									}catch(ValidatorException val){
+										throw new ValidatorException("Invalid value '"+value+"' in query parameter '"+name+"' (expected type '"+paramQuery.getType()+"'): "+val.getMessage(),val);
+									}
+								}
 							}
 						}
 					}
@@ -283,17 +291,21 @@ public abstract class AbstractApiValidator   {
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeFormParameters()>0){
 					for (ApiRequestFormParameter paramForm : operation.getRequest().getFormParameters()) {
 						String name = paramForm.getName();
-						String value = TransportUtils.get(request.getParametersForm(), name);
-						if(value==null){
+						List<String> values = TransportUtils.getRawObject(request.getParameters(), name);
+						if(values==null || values.isEmpty()){
 							if(paramForm.isRequired()){
 								throw new ValidatorException("Required form parameter '"+name+"' not found");
 							}
 						}
-						if(value!=null){
-							try{
-								validateValueAsType(value,paramForm.getType(),paramForm.getSchema());
-							}catch(ValidatorException val){
-								throw new ValidatorException("Invalid value '"+value+"' in form parameter '"+name+"' (expected type '"+paramForm.getType()+"'): "+val.getMessage(),val);
+						else {
+							for (String value : values) {
+								if(value!=null){
+									try{
+										validateValueAsType(value,paramForm.getType(),paramForm.getSchema());
+									}catch(ValidatorException val){
+										throw new ValidatorException("Invalid value '"+value+"' in form parameter '"+name+"' (expected type '"+paramForm.getType()+"'): "+val.getMessage(),val);
+									}
+								}
 							}
 						}
 					}
@@ -327,17 +339,21 @@ public abstract class AbstractApiValidator   {
 				if(apiResponseFound.sizeHeaderParameters()>0){
 					for (ApiHeaderParameter paramHeader : apiResponseFound.getHeaderParameters()) {
 						String name = paramHeader.getName();
-						String value = TransportUtils.get(response.getParametersTrasporto(), name);
-						if(value==null){
+						List<String> values = TransportUtils.getRawObject(response.getHeaders(), name);
+						if(values==null || values.isEmpty()){
 							if(paramHeader.isRequired()){
 								throw new ValidatorException("Required http header '"+name+"' not found");
 							}
 						}
-						if(value!=null){
-							try{
-								validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
-							}catch(ValidatorException val){
-								throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
+						else {
+							for (String value : values) {
+								if(value!=null){
+									try{
+										validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
+									}catch(ValidatorException val){
+										throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
+									}
+								}
 							}
 						}
 					}

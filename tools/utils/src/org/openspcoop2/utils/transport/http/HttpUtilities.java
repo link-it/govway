@@ -102,30 +102,42 @@ public class HttpUtilities {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	public static String getClientAddressFirstValue(HttpServletRequest request) throws UtilsException{
+		return getClientAddress(request);
+	}
 	private static String getClientAddress(List<String> headers, HttpServletRequest request) throws UtilsException{
 		if(headers.size()>0){
 			for (String header : headers) {
-				String transportAddr = TransportUtils.getHeader(request,header);
-				if(transportAddr!=null){
-					return transportAddr;
+				List<String> l = TransportUtils.getHeaderValues(request,header);
+				if(l!=null && !l.isEmpty()) {
+					return l.get(0);
 				}
 			}
 		}
 		return null;
 	}
+	
+	@Deprecated
 	public static String getClientAddress(Map<String, String> transportProperties) throws UtilsException{
 		try{
-			return getClientAddress(getClientAddressHeaders(), transportProperties);
+			return getClientAddress(getClientAddressHeaders(), TransportUtils.convertToMapListValues(transportProperties));
 		}catch(Throwable e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	private static String getClientAddress(List<String> headers, Map<String, String> transportProperties) throws UtilsException{
+	public static String getClientAddressFirstValue(Map<String, List<String>> headers) throws UtilsException{
+		try{
+			return getClientAddress(getClientAddressHeaders(), headers);
+		}catch(Throwable e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	private static String getClientAddress(List<String> headers, Map<String, List<String>> transportProperties) throws UtilsException{
 		if(headers.size()>0){
 			for (String header : headers) {
-				String transportAddr = TransportUtils.get(transportProperties,header);
-				if(transportAddr!=null){
-					return transportAddr;
+				List<String> l = TransportUtils.getRawObject(transportProperties,header);
+				if(l!=null && !l.isEmpty()) {
+					return l.get(0);
 				}
 			}
 		}
@@ -401,10 +413,14 @@ public class HttpUtilities {
 	}
 	
 	
+	@Deprecated
 	public static boolean isNoCache(Map<String, String> headers) throws UtilsException{
-		List<String> l = getDirectiveCacheControl(headers);
+		return isDirectiveNoCache(TransportUtils.convertToMapListValues(headers));
+	}
+	public static boolean isDirectiveNoCache(Map<String, List<String>> headers) throws UtilsException{
+		List<String> l = getCacheControlDirectives(headers);
 		if(l==null || l.isEmpty()) {
-			l = getDirectivePragma(headers);
+			l = getPragmaDirectives(headers);
 		}
 		if(l==null || l.isEmpty()) {
 			return false;
@@ -413,10 +429,15 @@ public class HttpUtilities {
 			return l.contains(HttpConstants.CACHE_STATUS_DIRECTIVE_NO_CACHE);
 		}
 	}
+	
+	@Deprecated
 	public static boolean isNoStore(Map<String, String> headers) throws UtilsException{
-		List<String> l = getDirectiveCacheControl(headers);
+		return isDirectiveNoStore(TransportUtils.convertToMapListValues(headers));
+	}
+	public static boolean isDirectiveNoStore(Map<String, List<String>> headers) throws UtilsException{
+		List<String> l = getCacheControlDirectives(headers);
 		if(l==null || l.isEmpty()) {
-			l = getDirectivePragma(headers);
+			l = getPragmaDirectives(headers);
 			if(l==null || l.isEmpty()) {
 				return false;
 			}else{
@@ -427,8 +448,13 @@ public class HttpUtilities {
 			return l.contains(HttpConstants.CACHE_STATUS_DIRECTIVE_NO_STORE);
 		}
 	}
+	
+	@Deprecated
 	public static Integer getCacheMaxAge(Map<String, String> headers) throws UtilsException{
-		List<String> l = getDirectiveCacheControl(headers);
+		return getDirectiveCacheMaxAge(TransportUtils.convertToMapListValues(headers));
+	}
+	public static Integer getDirectiveCacheMaxAge(Map<String, List<String>> headers) throws UtilsException{
+		List<String> l = getCacheControlDirectives(headers);
 		if(l==null || l.isEmpty()) {
 			return null;
 		}
@@ -444,9 +470,18 @@ public class HttpUtilities {
 			return null;
 		}
 	}
+	
+	@Deprecated
 	public static List<String> getDirectiveCacheControl(Map<String, String> headers){
+		return getCacheControlDirectives(TransportUtils.convertToMapListValues(headers));
+	}
+	public static List<String> getCacheControlDirectives(Map<String, List<String>> headers){
 		
-		String cacheControl = TransportUtils.get(headers, HttpConstants.CACHE_STATUS_HTTP_1_1);
+		List<String> l = TransportUtils.getRawObject(headers, HttpConstants.CACHE_STATUS_HTTP_1_1);
+		String cacheControl = null;
+		if(l!=null && !l.isEmpty()) {
+			cacheControl = l.get(0);
+		}
 		
 		List<String> values = new ArrayList<>();
 		if(cacheControl!=null) {
@@ -463,9 +498,18 @@ public class HttpUtilities {
 		
 		return values;
 	}
+	
+	@Deprecated
 	public static List<String> getDirectivePragma(Map<String, String> headers){
+		return getPragmaDirectives(TransportUtils.convertToMapListValues(headers));
+	}
+	public static List<String> getPragmaDirectives(Map<String, List<String>> headers){
 		
-		String cacheControl = TransportUtils.get(headers, HttpConstants.CACHE_STATUS_HTTP_1_0);
+		List<String> l = TransportUtils.getRawObject(headers, HttpConstants.CACHE_STATUS_HTTP_1_0);
+		String cacheControl = null;
+		if(l!=null && !l.isEmpty()) {
+			cacheControl = l.get(0);
+		}
 		
 		List<String> values = new ArrayList<>();
 		if(cacheControl!=null) {
@@ -1064,13 +1108,17 @@ public class HttpUtilities {
 				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
 			}
 			
-			Map<String, String> requestHeaders = request.getHeaders();
+			Map<String, List<String>> requestHeaders = request.getHeadersValues();
 			if(requestHeaders!=null && requestHeaders.size()>0){
 				Iterator<String> itReq = requestHeaders.keySet().iterator();
 				while (itReq.hasNext()) {
 					String key = (String) itReq.next();
-					String value = request.getHeader(key);
-					httpConn.setRequestProperty(key,value);
+					List<String> values = requestHeaders.get(key);
+					if(values!=null && !values.isEmpty()) {
+						for (String value : values) {
+							httpConn.addRequestProperty(key, value);		
+						}
+					}
 				}
 			}
 			
@@ -1124,23 +1172,16 @@ public class HttpUtilities {
 				while(itHttpResponse.hasNext()){
 					String keyHttpResponse = itHttpResponse.next();
 					List<String> valueHttpResponse = mapHeaderHttpResponse.get(keyHttpResponse);
-					StringBuilder bfHttpResponse = new StringBuilder();
-					for(int i=0;i<valueHttpResponse.size();i++){
-						if(i>0){
-							bfHttpResponse.append(",");
-						}
-						bfHttpResponse.append(valueHttpResponse.get(i));
-					}
 					if(keyHttpResponse==null){ // Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
 						keyHttpResponse=HttpConstants.RETURN_CODE;
 					}
-					response.addHeader(keyHttpResponse, bfHttpResponse.toString());
+					response.addHeader(keyHttpResponse, valueHttpResponse);
 				}
 			}
 			
 			// ContentType Risposta
-			if(response.getHeaders()!=null && response.getHeaders().size()>0){
-				response.setContentType(response.getHeader(HttpConstants.CONTENT_TYPE));
+			if(response.getHeadersValues()!=null && !response.getHeadersValues().isEmpty()){
+				response.setContentType(response.getHeaderFirstValue(HttpConstants.CONTENT_TYPE));
 			}
 
 			// Ricezione Result HTTP Code

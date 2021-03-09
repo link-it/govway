@@ -1,3 +1,12 @@
+- Su application server wildfly realizzare quanto descritto in https://govway.org/documentazione/installazione/finalizzazione/wildflyUrlEncoded.html
+
+  Per poter gestire correttamente richieste con Content-Type “application/x-www-form-urlencoded” su application server “WildFly”, 
+  è richiesto di abilitare l’attributo “allow-non-standard-wrappers” nell’elemento “servlet-container” della configurazione di WildFly (es. in standalone/configuration/standalone.xml).
+
+  <servlet-container name="default" allow-non-standard-wrappers="true">
+        ...
+  </servlet-container>
+
 - Impostare a <15> il massimo numero di richieste simultanee generali nella console di govway sotto 
 		
 		Configurazione->Controllo del Traffico->Limitazione Numero di Richieste Complessive
@@ -84,7 +93,7 @@ Per eseguire solo un metodo, indicare il nome del metodo e il sottopackage+class
 	ant run_test -Dmethods=richiesteSimultaneeGlobali -Dtest=rate_limiting.numero_richieste.SoapTest 
 
 
-Di seguito vengono descritti i test:
+Di seguito vengono descritti i test del package 'rate_limiting':
 
 - 'congestione', verifica policy che usano l'applicabilità con degrado prestazionale e/o congestione (invocarli separati tra rest e soap per non incorrere in errori di sincronizzazione temporale). Verifica anche gli eventi:
   ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.congestione -Dtest=RestTest
@@ -134,3 +143,12 @@ Di seguito vengono descritti i test:
   ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.warning_only                                         
 
 
+Di seguito vengono descritti i test del package 'validazione':
+
+- 'parametri', verifica la serializzazione descritta in 'https://swagger.io/docs/specification/serialization/' oltre alla verifica che sia header che parametri possono esistere molteplici volte nella richiesta e nella risposta.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.parametri     
+
+Di seguito vengono descritti i test del package 'trasformazione':
+
+- 'form', verifica la trasformazione utilizzata per riconoscere casi di errori generati durante la certificazione di uno SPIDProvider 
+  ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.form

@@ -66,7 +66,7 @@ public class GestoreIntegrazionePDTrasporto extends AbstractCore implements IGes
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilitiesRequest.readTransportProperties(inRequestPDMessage.getUrlProtocolContext().getParametersTrasporto(), integrazione);	
+			this.utilitiesRequest.readTransportProperties(inRequestPDMessage.getUrlProtocolContext().getHeaders(), integrazione);	
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);
 		}
@@ -97,7 +97,7 @@ public class GestoreIntegrazionePDTrasporto extends AbstractCore implements IGes
 	public void setOutResponseHeader(HeaderIntegrazione integrazione,
 			OutResponsePDMessage outResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilitiesResponse.setTransportProperties(integrazione, outResponsePDMessage.getProprietaTrasporto(),
+			this.utilitiesResponse.setTransportProperties(integrazione, outResponsePDMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outResponsePDMessage.getBustaRichiesta(), false, TipoIntegrazione.TRASPORTO));		
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);

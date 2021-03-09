@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -39,8 +40,8 @@ import org.openspcoop2.protocol.sdk.Busta;
 public class OutRequestPAMessage {
 
 	private OpenSPCoop2Message message;
-	private Map<String, String> proprietaTrasporto;
-	private Map<String, String> proprietaUrlBased;
+	private Map<String, List<String>> headers;
+	private Map<String, List<String>> parameters;
 	private PortaApplicativa portaApplicativa;
 	private PortaDelegata portaDelegata; // presente al posto della PA in caso di SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA
 	private IDSoggetto soggettoMittente;
@@ -59,11 +60,11 @@ public class OutRequestPAMessage {
 	public void setMessage(OpenSPCoop2Message message) {
 		this.message = message;
 	}
-	public Map<String, String> getProprietaTrasporto() {
-		return this.proprietaTrasporto;
+	public Map<String, List<String>> getHeaders() {
+		return this.headers;
 	}
-	public void setProprietaTrasporto(Map<String, String> proprietaTrasporto) {
-		this.proprietaTrasporto = proprietaTrasporto;
+	public void setHeaders(Map<String, List<String>> proprietaTrasporto) {
+		this.headers = proprietaTrasporto;
 	}
 	public IDSoggetto getSoggettoMittente() {
 		return this.soggettoMittente;
@@ -89,11 +90,11 @@ public class OutRequestPAMessage {
 	public void setPortaDelegata(PortaDelegata portaDelegata) {
 		this.portaDelegata = portaDelegata;
 	}
-	public Map<String, String> getProprietaUrlBased() {
-		return this.proprietaUrlBased;
+	public Map<String, List<String>> getParameters() {
+		return this.parameters;
 	}
-	public void setProprietaUrlBased(Map<String, String> proprietaUrlBased) {
-		this.proprietaUrlBased = proprietaUrlBased;
+	public void setParameters(Map<String, List<String>> proprietaUrlBased) {
+		this.parameters = proprietaUrlBased;
 	}
 	
 }

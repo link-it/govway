@@ -47,7 +47,7 @@ public class AbstractGestoreIntegrazionePDTrasportoWithRequestOutBC extends Abst
 			OutRequestPDMessage outRequestPDMessage) throws HeaderIntegrazioneException{
 	
 		try{
-			this.utilitiesRequestBC.setTransportProperties(integrazione, outRequestPDMessage.getProprietaTrasporto(),
+			this.utilitiesRequestBC.setTransportProperties(integrazione, outRequestPDMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.TRASPORTO));		
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);

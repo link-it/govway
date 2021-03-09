@@ -23,7 +23,9 @@ package org.openspcoop2.utils.openapi.validator;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -40,6 +42,7 @@ import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpResponseEntity;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -81,9 +84,11 @@ public class Test {
 				HttpBaseEntity<?> httpEntity = new TextHttpRequestEntity();
 				httpEntity.setMethod(HttpRequestMethod.GET);
 				httpEntity.setUrl(testUrl1);	
-				Map<String, String> parametersTrasporto = new HashMap<>();
-				parametersTrasporto.put("api_key", "aaa");
-				httpEntity.setParametersTrasporto(parametersTrasporto);
+				Map<String, List<String>> parametersTrasporto = new HashMap<>();
+				List<String> headersValues = new ArrayList<String>();
+				headersValues.add("aaa");
+				parametersTrasporto.put("api_key", headersValues);
+				httpEntity.setHeaders(parametersTrasporto);
 				apiValidator.validate(httpEntity);	
 				System.out.println("["+testName+"] Test #1 completato\n\n");
 		
@@ -101,27 +106,27 @@ public class Test {
 				}
 				
 				System.out.println("["+testName+"] Test #3 (Richiesta GET con parametri query)");
-				Map<String, String> parametersQuery = new HashMap<String, String>();
+				Map<String, List<String>> parametersQuery = new HashMap<String, List<String>>();
 				HttpBaseRequestEntity<?> httpEntity3 = new TextHttpRequestEntity();
-				parametersQuery.put("status", "available");
+				TransportUtils.setParameter(parametersQuery,"status", "available");
 				if(addParameterTipizzati) {
-					parametersQuery.put("profiloRefInLineByStatus", "APIGateway");
-					parametersQuery.put("soggettoRefInLineByStatus", "PROVA");
-					parametersQuery.put("numeroLimitatoRefInLineByStatus", "130");
+					TransportUtils.setParameter(parametersQuery,"profiloRefInLineByStatus", "APIGateway");
+					TransportUtils.setParameter(parametersQuery,"soggettoRefInLineByStatus", "PROVA");
+					TransportUtils.setParameter(parametersQuery,"numeroLimitatoRefInLineByStatus", "130");
 					
-					parametersQuery.put("profiloInLineByStatus", "SPCoop");
-					parametersQuery.put("soggettoInLineByStatus", "PROVA2");
-					parametersQuery.put("numeroLimitatoInLineByStatus", "150");
+					TransportUtils.setParameter(parametersQuery,"profiloInLineByStatus", "SPCoop");
+					TransportUtils.setParameter(parametersQuery,"soggettoInLineByStatus", "PROVA2");
+					TransportUtils.setParameter(parametersQuery,"numeroLimitatoInLineByStatus", "150");
 					
-					parametersQuery.put("profiloRef", "FatturaPA");
-					parametersQuery.put("soggettoRef", "PROVA3");
-					parametersQuery.put("esempioNumericoRef", "200");
+					TransportUtils.setParameter(parametersQuery,"profiloRef", "FatturaPA");
+					TransportUtils.setParameter(parametersQuery,"soggettoRef", "PROVA3");
+					TransportUtils.setParameter(parametersQuery,"esempioNumericoRef", "200");
 					
-					parametersQuery.put("profilo", "eDelivery");
-					parametersQuery.put("soggetto", "PROVA4");
-					parametersQuery.put("esempioNumerico", "500");
+					TransportUtils.setParameter(parametersQuery,"profilo", "eDelivery");
+					TransportUtils.setParameter(parametersQuery,"soggetto", "PROVA4");
+					TransportUtils.setParameter(parametersQuery,"esempioNumerico", "500");
 				}
-				httpEntity3.setParametersQuery(parametersQuery);
+				httpEntity3.setParameters(parametersQuery);
 				httpEntity3.setMethod(HttpRequestMethod.GET);
 				httpEntity3.setUrl(testUrl2);
 				apiValidator.validate(httpEntity3);		
@@ -129,8 +134,8 @@ public class Test {
 				
 				if(addParameterTipizzati) {
 					System.out.println("["+testName+"] Test #3-a (Richiesta GET con parametri query errati)");
-					httpEntity3.getParametersQuery().remove("profiloRefInLineByStatus");
-					parametersQuery.put("profiloRefInLineByStatus", "APIGatewayERRATO");
+					httpEntity3.getParameters().remove("profiloRefInLineByStatus");
+					TransportUtils.setParameter(parametersQuery,"profiloRefInLineByStatus", "APIGatewayERRATO");
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -152,12 +157,12 @@ public class Test {
 						}
 						System.out.println("["+testName+"] Test #3-a (Richiesta GET con parametri query errati) completato\n\n");
 					}
-					httpEntity3.getParametersQuery().remove("profiloRefInLineByStatus");
-					httpEntity3.getParametersQuery().put("profiloRefInLineByStatus", "APIGateway");
+					httpEntity3.getParameters().remove("profiloRefInLineByStatus");
+					TransportUtils.setParameter(httpEntity3.getParameters(),"profiloRefInLineByStatus", "APIGateway");
 					
 					System.out.println("["+testName+"] Test #3-b (Richiesta GET con parametri query errati)");
-					httpEntity3.getParametersQuery().remove("soggettoInLineByStatus");
-					parametersQuery.put("soggettoInLineByStatus", "PROVA_PROVA");
+					httpEntity3.getParameters().remove("soggettoInLineByStatus");
+					TransportUtils.setParameter(parametersQuery,"soggettoInLineByStatus", "PROVA_PROVA");
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -179,12 +184,12 @@ public class Test {
 						}
 						System.out.println("["+testName+"] Test #3-b (Richiesta GET con parametri query errati) completato\n\n");
 					}
-					httpEntity3.getParametersQuery().remove("soggettoInLineByStatus");
-					httpEntity3.getParametersQuery().put("soggettoInLineByStatus", "PROVA");
+					httpEntity3.getParameters().remove("soggettoInLineByStatus");
+					TransportUtils.setParameter(httpEntity3.getParameters(),"soggettoInLineByStatus", "PROVA");
 					
 					System.out.println("["+testName+"] Test #3-c (Richiesta GET con parametri query errati)");
-					httpEntity3.getParametersQuery().remove("soggettoInLineByStatus");
-					parametersQuery.put("soggettoInLineByStatus", "P");
+					httpEntity3.getParameters().remove("soggettoInLineByStatus");
+					TransportUtils.setParameter(parametersQuery,"soggettoInLineByStatus", "P");
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -206,13 +211,13 @@ public class Test {
 						}
 						System.out.println("["+testName+"] Test #3-c (Richiesta GET con parametri query errati) completato\n\n");
 					}
-					httpEntity3.getParametersQuery().remove("soggettoInLineByStatus");
-					httpEntity3.getParametersQuery().put("soggettoInLineByStatus", "PROVA");
+					httpEntity3.getParameters().remove("soggettoInLineByStatus");
+					TransportUtils.setParameter(httpEntity3.getParameters(),"soggettoInLineByStatus", "PROVA");
 					
 					System.out.println("["+testName+"] Test #3-d (Richiesta GET con parametri query errati)");
-					httpEntity3.getParametersQuery().remove("soggettoRef");
+					httpEntity3.getParameters().remove("soggettoRef");
 					String pLongValue = "P12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
-					parametersQuery.put("soggettoRef", pLongValue);
+					TransportUtils.setParameter(parametersQuery,"soggettoRef", pLongValue);
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -234,12 +239,12 @@ public class Test {
 						}
 						System.out.println("["+testName+"] Test #3-d (Richiesta GET con parametri query errati) completato\n\n");
 					}
-					httpEntity3.getParametersQuery().remove("soggettoRef");
-					httpEntity3.getParametersQuery().put("soggettoRef", "PROVA");
+					httpEntity3.getParameters().remove("soggettoRef");
+					TransportUtils.setParameter(httpEntity3.getParameters(),"soggettoRef", "PROVA");
 					
 					System.out.println("["+testName+"] Test #3-e (Richiesta GET con parametri query errati)");
-					httpEntity3.getParametersQuery().remove("esempioNumerico");
-					parametersQuery.put("esempioNumerico", "23");
+					httpEntity3.getParameters().remove("esempioNumerico");
+					TransportUtils.setParameter(parametersQuery,"esempioNumerico", "23");
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -261,12 +266,12 @@ public class Test {
 						}
 						System.out.println("["+testName+"] Test #3-e (Richiesta GET con parametri query errati) completato\n\n");
 					}
-					httpEntity3.getParametersQuery().remove("esempioNumerico");
-					httpEntity3.getParametersQuery().put("esempioNumerico", "500");
+					httpEntity3.getParameters().remove("esempioNumerico");
+					TransportUtils.setParameter(httpEntity3.getParameters(),"esempioNumerico", "500");
 					
 					System.out.println("["+testName+"] Test #3-f (Richiesta GET con parametri query errati)");
-					httpEntity3.getParametersQuery().remove("esempioNumerico");
-					parametersQuery.put("esempioNumerico", "600");
+					httpEntity3.getParameters().remove("esempioNumerico");
+					TransportUtils.setParameter(parametersQuery,"esempioNumerico", "600");
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -288,12 +293,12 @@ public class Test {
 						}
 						System.out.println("["+testName+"] Test #3-f (Richiesta GET con parametri query errati) completato\n\n");
 					}
-					httpEntity3.getParametersQuery().remove("esempioNumerico");
-					httpEntity3.getParametersQuery().put("esempioNumerico", "500");
+					httpEntity3.getParameters().remove("esempioNumerico");
+					TransportUtils.setParameter(httpEntity3.getParameters(),"esempioNumerico", "500");
 					
 					System.out.println("["+testName+"] Test #3-g (Richiesta GET con parametri query errati)");
-					httpEntity3.getParametersQuery().remove("esempioNumerico");
-					parametersQuery.put("esempioNumerico", "800");
+					httpEntity3.getParameters().remove("esempioNumerico");
+					TransportUtils.setParameter(parametersQuery,"esempioNumerico", "800");
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -313,12 +318,12 @@ public class Test {
 						}
 						System.out.println("["+testName+"] Test #3-g (Richiesta GET con parametri query errati) completato\n\n");
 					}
-					httpEntity3.getParametersQuery().remove("esempioNumerico");
-					httpEntity3.getParametersQuery().put("esempioNumerico", "500");
+					httpEntity3.getParameters().remove("esempioNumerico");
+					TransportUtils.setParameter(httpEntity3.getParameters(),"esempioNumerico", "500");
 					
 					System.out.println("["+testName+"] Test #3-h (Richiesta GET con parametri query errati)");
-					httpEntity3.getParametersQuery().remove("esempioNumerico");
-					parametersQuery.put("esempioNumerico", "55GG33");
+					httpEntity3.getParameters().remove("esempioNumerico");
+					TransportUtils.setParameter(parametersQuery,"esempioNumerico", "55GG33");
 					try {
 						apiValidator.validate(httpEntity3);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -340,8 +345,8 @@ public class Test {
 						}
 						System.out.println("["+testName+"] Test #3-h (Richiesta GET con parametri query errati) completato\n\n");
 					}
-					httpEntity3.getParametersQuery().remove("esempioNumerico");
-					httpEntity3.getParametersQuery().put("esempioNumerico", "500");
+					httpEntity3.getParameters().remove("esempioNumerico");
+					TransportUtils.setParameter(httpEntity3.getParameters(),"esempioNumerico", "500");
 				}
 				
 				// [request] Test senza import
@@ -1130,12 +1135,15 @@ public class Test {
 	
 	private static void setContentType(String contentType, HttpBaseEntity<?> httpEntity) {
 		httpEntity.setContentType(contentType);
-		if(httpEntity.getParametersTrasporto()==null) {
-			httpEntity.setParametersTrasporto(new HashMap<String, String>());
+		if(httpEntity.getHeaders()==null) {
+			httpEntity.setHeaders(new HashMap<String, List<String>>());
 		}
-		httpEntity.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
-		httpEntity.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
-		httpEntity.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toLowerCase());
-		httpEntity.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentType);
+		httpEntity.getHeaders().remove(HttpConstants.CONTENT_TYPE);
+		httpEntity.getHeaders().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
+		httpEntity.getHeaders().remove(HttpConstants.CONTENT_TYPE.toLowerCase());
+		List<String> l = new ArrayList<String>();
+		l.add(contentType);
+		httpEntity.getHeaders().put(HttpConstants.CONTENT_TYPE, l);
 	}
+	
 }

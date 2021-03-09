@@ -21,6 +21,7 @@ package org.openspcoop2.utils.wadl.validator;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -40,6 +41,7 @@ import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.DocumentHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.ElementHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.wadl.WADLApi;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -98,15 +100,15 @@ public class Test {
 			TextHttpRequestEntity httpEntity = new TextHttpRequestEntity();
 			httpEntity.setUrl("/prova2");
 			httpEntity.setMethod(HttpRequestMethod.GET);
-			Map<String, String> parametersFormBased = new HashMap<String, String>();
-			parametersFormBased.put("idTrasmissionePROVA2Required", "24");
-			parametersFormBased.put("idTrasmissionePROVA2NOTRequired", "true");
-			httpEntity.setParametersQuery(parametersFormBased);
+			Map<String, List<String>> parametersFormBased = new HashMap<String, List<String>>();
+			TransportUtils.setParameter(parametersFormBased,"idTrasmissionePROVA2Required", "24");
+			TransportUtils.setParameter(parametersFormBased,"idTrasmissionePROVA2NOTRequired", "true");
+			httpEntity.setParameters(parametersFormBased);
 	
-			Map<String, String> parametersTrasporto = new HashMap<String, String>();
-			parametersTrasporto.put("idTrasmissionePROVA2headerRequired", "67");
-			parametersTrasporto.put("idTrasmissionePROVA2headerNOTRequired", "true");
-			httpEntity.setParametersTrasporto(parametersTrasporto);
+			Map<String, List<String>> parametersTrasporto = new HashMap<String, List<String>>();
+			TransportUtils.setHeader(parametersTrasporto,"idTrasmissionePROVA2headerRequired", "67");
+			TransportUtils.setHeader(parametersTrasporto,"idTrasmissionePROVA2headerNOTRequired", "true");
+			httpEntity.setHeaders(parametersTrasporto);
 			
 			validator.validate(httpEntity);
 	

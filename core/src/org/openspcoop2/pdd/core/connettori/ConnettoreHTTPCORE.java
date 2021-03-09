@@ -177,9 +177,9 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			
 			// Collezione header di trasporto per dump
-			Map<String, String> propertiesTrasportoDebug = null;
+			Map<String, List<String>> propertiesTrasportoDebug = null;
 			if(this.isDumpBinario()) {
-				propertiesTrasportoDebug = new HashMap<String, String>();
+				propertiesTrasportoDebug = new HashMap<String, List<String>>();
 			}
 
 			
@@ -388,7 +388,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			NameValue nv = this.getTokenHeader();
 	    	if(nv!=null) {
 	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-	    			this.requestMsg.getTransportRequestContext().removeParameterTrasporto(nv.getName()); // Fix: senno sovrascriveva il vecchio token
+	    			this.requestMsg.getTransportRequestContext().removeHeader(nv.getName()); // Fix: senno sovrascriveva il vecchio token
 	    		}
 	    		this.setRequestHeader(nv.getName(),nv.getValue(), propertiesTrasportoDebug);
 	    		if(this.debug)
@@ -401,7 +401,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	    	// ForwardProxy
 	    	if(this.forwardProxy_headerName!=null && this.forwardProxy_headerValue!=null) {
 	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-	    			this.requestMsg.getTransportRequestContext().removeParameterTrasporto(this.forwardProxy_headerName); // Fix: senno sovrascriveva il vecchio token
+	    			this.requestMsg.getTransportRequestContext().removeHeader(this.forwardProxy_headerName); // Fix: senno sovrascriveva il vecchio token
 	    		}
 	    		setRequestHeader(this.forwardProxy_headerName,this.forwardProxy_headerValue, propertiesTrasportoDebug);
 	    		if(this.debug)
@@ -418,24 +418,35 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
-					String value = (String) this.propertiesTrasporto.get(key);
-					if(this.debug)
-						this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);
+					List<String> values = this.propertiesTrasporto.get(key);
+					if(this.debug) {
+			    		if(values!=null && !values.isEmpty()) {
+			        		for (String value : values) {
+			        			this.logger.info("Set Transport Header ["+key+"]=["+value+"]",false);
+			        		}
+			    		}
+			    	}
 					
 					if(this.encodingRFC2047){
-						if(RFC2047Utilities.isAllCharactersInCharset(value, this.charsetRFC2047)==false){
-							String encoded = RFC2047Utilities.encode(new String(value), this.charsetRFC2047, this.encodingAlgorithmRFC2047);
-							//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
-							if(this.debug)
-								this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
-							this.setRequestHeader(this.validazioneHeaderRFC2047, key, encoded, this.logger, propertiesTrasportoDebug);
+						List<String> valuesEncoded = new ArrayList<String>();
+						if(values!=null && !values.isEmpty()) {
+			        		for (String value : values) {
+			        			if(RFC2047Utilities.isAllCharactersInCharset(value, this.charsetRFC2047)==false){
+									String encoded = RFC2047Utilities.encode(new String(value), this.charsetRFC2047, this.encodingAlgorithmRFC2047);
+									//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+									if(this.debug)
+										this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
+									valuesEncoded.add(encoded);
+								}
+								else{
+									valuesEncoded.add(value);
+								}
+			        		}
 						}
-						else{
-							this.setRequestHeader(this.validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
-						}
+						setRequestHeader(this.validazioneHeaderRFC2047, key, valuesEncoded, this.logger, propertiesTrasportoDebug);
 					}
 					else{
-						this.setRequestHeader(this.validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
+						this.setRequestHeader(this.validazioneHeaderRFC2047, key, values, this.logger, propertiesTrasportoDebug);
 					}
 				}
 			}
@@ -519,7 +530,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 						value = hdrRisposta[i].getValue();
 					}
 					
-					this.propertiesTrasportoRisposta.put(key, value);
+					TransportUtils.addHeader(this.propertiesTrasportoRisposta, key, value);
 					
 					List<String> list = null;
 					if(mapHeaderHttpResponse.containsKey(key)) {
@@ -719,12 +730,12 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
     	NameValue nv = this.getTokenQueryParameter();
     	if(nv!=null) {
     		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-    			this.requestMsg.getTransportRequestContext().removeParameterFormBased(nv.getName()); // Fix: senno sovrascriveva il vecchio token
+    			this.requestMsg.getTransportRequestContext().removeParameter(nv.getName()); // Fix: senno sovrascriveva il vecchio token
     		}
     		if(this.propertiesUrlBased==null) {
-    			this.propertiesUrlBased = new HashMap<String,String>();
+    			this.propertiesUrlBased = new HashMap<String,List<String>>();
     		}
-    		this.propertiesUrlBased.put(nv.getName(), nv.getValue());
+    		TransportUtils.setParameter(this.propertiesUrlBased, nv.getName(), nv.getValue());
     	}
 		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, 
 				ConnettoreHTTPCORE.ENDPOINT_TYPE, 
@@ -736,24 +747,28 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	
 	
 	
-    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Map<String, String> propertiesTrasportoDebug) throws Exception {
+    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, List<String> values, ConnettoreLogger logger, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
     	if(validazioneHeaderRFC2047){
     		try{
-        		RFC2047Utilities.validHeader(key, value);
-        		setRequestHeader(key,value, propertiesTrasportoDebug);
+        		RFC2047Utilities.validHeader(key, values);
+        		setRequestHeader(key, values, propertiesTrasportoDebug);
         	}catch(UtilsException e){
         		logger.error(e.getMessage(),e);
         	}
     	}
     	else{
-    		setRequestHeader(key,value, propertiesTrasportoDebug);
+    		setRequestHeader(key, values, propertiesTrasportoDebug);
     	}
     	
     }
     
     @Override
-	protected void setRequestHeader(String key,String value) throws Exception {
-    	this.httpRequest.setHeader(key,value);
+	protected void setRequestHeader(String key, List<String> values) throws Exception {
+    	if(values!=null && !values.isEmpty()) {
+    		for (String value : values) {
+    			this.httpRequest.addHeader(key,value);		
+			}
+    	}
     }
 }
 

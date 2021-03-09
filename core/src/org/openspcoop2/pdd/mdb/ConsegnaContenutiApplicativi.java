@@ -158,6 +158,7 @@ import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
@@ -1457,8 +1458,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			headerIntegrazione.setIdApplicativo(idCorrelazioneApplicativa);
 			headerIntegrazione.setServizioApplicativo(servizioApplicativoFruitore);
 
-			Map<String, String> propertiesTrasporto = new HashMap<String, String>();
-			Map<String, String> propertiesUrlBased = new HashMap<String, String>();
+			Map<String, List<String>> propertiesTrasporto = new HashMap<String, List<String>>();
+			Map<String, List<String>> propertiesUrlBased = new HashMap<String, List<String>>();
 
 			if(tipiIntegrazione==null){
 				if(ConsegnaContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePA.containsKey(protocolFactory.getProtocol())){
@@ -1475,8 +1476,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				outRequestPAMessage.setPortaApplicativa(pa);
 			else
 				outRequestPAMessage.setPortaDelegata(pd);
-			outRequestPAMessage.setProprietaTrasporto(propertiesTrasporto);
-			outRequestPAMessage.setProprietaUrlBased(propertiesUrlBased);
+			outRequestPAMessage.setHeaders(propertiesTrasporto);
+			outRequestPAMessage.setParameters(propertiesUrlBased);
 			if(servizioHeaderIntegrazione!=null){
 				outRequestPAMessage.setServizio(servizioHeaderIntegrazione);
 			}else{
@@ -1842,8 +1843,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				InfoConnettoreUscita infoConnettoreUscita = new InfoConnettoreUscita();
 				infoConnettoreUscita.setLocation(location);
 				infoConnettoreUscita.setProperties(connettoreMsg.getConnectorProperties());
-				infoConnettoreUscita.setPropertiesTrasporto(connettoreMsg.getPropertiesTrasporto());
-				infoConnettoreUscita.setPropertiesUrlBased(connettoreMsg.getPropertiesUrlBased());
+				infoConnettoreUscita.setHeaders(connettoreMsg.getPropertiesTrasporto());
+				infoConnettoreUscita.setParameters(connettoreMsg.getPropertiesUrlBased());
 				infoConnettoreUscita.setSbustamentoSoap(connettoreMsg.isSbustamentoSOAP());
 				infoConnettoreUscita.setSbustamentoInformazioniProtocollo(connettoreMsg.isSbustamentoInformazioniProtocollo());
 				infoConnettoreUscita.setTipoAutenticazione(connettoreMsg.getAutenticazione());
@@ -2153,8 +2154,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					restProblem = gestoreErrore.getProblem();
 					faultMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
-					transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
-							connectorSender.getCodiceTrasporto()+"", connectorSender.getContentLength(), 
+					transportResponseContext = new TransportResponseContext(connectorSender.getCodiceTrasporto()+"", 
+							connectorSender.getHeaderTrasporto(), 
+							connectorSender.getContentLength(), 
 							motivoErroreConsegna, connectorSender.getEccezioneProcessamento());
 					responseMessage = connectorSender.getResponse();
 					if(responseMessage!=null){
@@ -2431,7 +2433,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					
 					// Informazioni sulla consegna
 					inResponseContext.setErroreConsegna(motivoErroreConsegna);
-					inResponseContext.setPropertiesRispostaTrasporto(connectorSender.getHeaderTrasporto());
+					inResponseContext.setResponseHeaders(connectorSender.getHeaderTrasporto());
 					inResponseContext.setReturnCode(codiceRitornato);
 					
 					// Altre informazioni
@@ -2595,7 +2597,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					if(transazioneApplicativoServer!=null) {
 						dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA, dataConsegna);
 					}
-					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());
+					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getResponseHeaders());
 				}
 				
 			}
@@ -3309,7 +3311,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							inResponsePAMessage.setPortaApplicativa(pa);
 						else
 							inResponsePAMessage.setPortaDelegata(pd);
-						inResponsePAMessage.setProprietaTrasporto(connectorSender.getHeaderTrasporto());
+						inResponsePAMessage.setHeaders(connectorSender.getHeaderTrasporto());
 						inResponsePAMessage.setServizio(outRequestPAMessage.getServizio());
 						inResponsePAMessage.setSoggettoMittente(outRequestPAMessage.getSoggettoMittente());
 						Utilities.printFreeMemory("ConsegnaContenutiApplicativi - Gestione Header Integrazione... ");					
@@ -3846,7 +3848,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 	}
 
-	private void mappingProtocolProperties(Map<String, String> protocolProperties,Map<String, String> propertiesDaImpostare,
+	private void mappingProtocolProperties(Map<String, List<String>> protocolProperties,Map<String, List<String>> propertiesDaImpostare,
 			IDSoggetto soggettoFruitoreHeaderIntegrazione, IDServizio servizioHeaderIntegrazione,
 			IDSoggetto soggettoFruitore,IDServizio idServizio,
 			Busta bustaRichiesta, String idCorrelazioneApplicativa){
@@ -3855,117 +3857,118 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			Iterator<String> keys = protocolProperties.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = (String) protocolProperties.get(key);
+				List<String> values = protocolProperties.get(key);
+				String value = TransportUtils.getFirstValue(values);
 				
 				if(ProprietaProtocolloValore.TIPO_MITTENTE.equals(value)){
 					if(soggettoFruitoreHeaderIntegrazione!=null && soggettoFruitoreHeaderIntegrazione.getTipo()!=null){
-						propertiesDaImpostare.put(key,soggettoFruitoreHeaderIntegrazione.getTipo());
+						TransportUtils.setHeader(propertiesDaImpostare,key,soggettoFruitoreHeaderIntegrazione.getTipo());
 					}else if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null){
-						propertiesDaImpostare.put(key,soggettoFruitore.getTipo());
+						TransportUtils.setHeader(propertiesDaImpostare,key,soggettoFruitore.getTipo());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getTipoMittente()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getTipoMittente());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getTipoMittente());
 					}
 				}
 				if(ProprietaProtocolloValore.MITTENTE.equals(value)){
 					if(soggettoFruitoreHeaderIntegrazione!=null && soggettoFruitoreHeaderIntegrazione.getNome()!=null){
-						propertiesDaImpostare.put(key,soggettoFruitoreHeaderIntegrazione.getNome());
+						TransportUtils.setHeader(propertiesDaImpostare,key,soggettoFruitoreHeaderIntegrazione.getNome());
 					}else if(soggettoFruitore!=null && soggettoFruitore.getNome()!=null){
-						propertiesDaImpostare.put(key,soggettoFruitore.getNome());
+						TransportUtils.setHeader(propertiesDaImpostare,key,soggettoFruitore.getNome());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getMittente()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getMittente());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getMittente());
 					}
 				}
 				if(ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_MITTENTE.equals(value)){
 					if(soggettoFruitoreHeaderIntegrazione!=null && soggettoFruitoreHeaderIntegrazione.getCodicePorta()!=null){
-						propertiesDaImpostare.put(key,soggettoFruitoreHeaderIntegrazione.getCodicePorta());
+						TransportUtils.setHeader(propertiesDaImpostare,key,soggettoFruitoreHeaderIntegrazione.getCodicePorta());
 					}else if(soggettoFruitore!=null && soggettoFruitore.getCodicePorta()!=null){
-						propertiesDaImpostare.put(key,soggettoFruitore.getCodicePorta());
+						TransportUtils.setHeader(propertiesDaImpostare,key,soggettoFruitore.getCodicePorta());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getIdentificativoPortaMittente()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getIdentificativoPortaMittente());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getIdentificativoPortaMittente());
 					}
 				}
 					
 				if(ProprietaProtocolloValore.TIPO_DESTINATARIO.equals(value)){
 					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getSoggettoErogatore()!=null &&
 							servizioHeaderIntegrazione.getSoggettoErogatore().getTipo()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getSoggettoErogatore().getTipo());
+						TransportUtils.setHeader(propertiesDaImpostare,key,servizioHeaderIntegrazione.getSoggettoErogatore().getTipo());
 					}else if(idServizio!=null && idServizio.getSoggettoErogatore()!=null &&
 							idServizio.getSoggettoErogatore().getTipo()!=null){
-						propertiesDaImpostare.put(key,idServizio.getSoggettoErogatore().getTipo());
+						TransportUtils.setHeader(propertiesDaImpostare,key,idServizio.getSoggettoErogatore().getTipo());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getTipoDestinatario()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getTipoDestinatario());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getTipoDestinatario());
 					}
 				}	
 				if(ProprietaProtocolloValore.DESTINATARIO.equals(value)){
 					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getSoggettoErogatore()!=null &&
 							servizioHeaderIntegrazione.getSoggettoErogatore().getNome()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getSoggettoErogatore().getNome());
+						TransportUtils.setHeader(propertiesDaImpostare,key,servizioHeaderIntegrazione.getSoggettoErogatore().getNome());
 					}else if(idServizio!=null && idServizio.getSoggettoErogatore()!=null &&
 							idServizio.getSoggettoErogatore().getNome()!=null){
-						propertiesDaImpostare.put(key,idServizio.getSoggettoErogatore().getNome());
+						TransportUtils.setHeader(propertiesDaImpostare,key,idServizio.getSoggettoErogatore().getNome());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getDestinatario()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getDestinatario());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getDestinatario());
 					}
 				}
 				if(ProprietaProtocolloValore.IDENTIFICATIVO_PORTA_DESTINATARIO.equals(value)){
 					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getSoggettoErogatore()!=null && 
 							servizioHeaderIntegrazione.getSoggettoErogatore().getCodicePorta()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getSoggettoErogatore().getCodicePorta());
+						TransportUtils.setHeader(propertiesDaImpostare,key,servizioHeaderIntegrazione.getSoggettoErogatore().getCodicePorta());
 					}else if(idServizio!=null && idServizio.getSoggettoErogatore()!=null && 
 							idServizio.getSoggettoErogatore().getCodicePorta()!=null){
-						propertiesDaImpostare.put(key,idServizio.getSoggettoErogatore().getCodicePorta());
+						TransportUtils.setHeader(propertiesDaImpostare,key,idServizio.getSoggettoErogatore().getCodicePorta());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getIdentificativoPortaDestinatario()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getIdentificativoPortaDestinatario());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getIdentificativoPortaDestinatario());
 					}
 				}
 
 				if(ProprietaProtocolloValore.TIPO_SERVIZIO.equals(value)){
 					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getTipo()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getTipo());
+						TransportUtils.setHeader(propertiesDaImpostare,key,servizioHeaderIntegrazione.getTipo());
 					}else if(idServizio!=null && idServizio.getTipo()!=null){
-						propertiesDaImpostare.put(key,idServizio.getTipo());
+						TransportUtils.setHeader(propertiesDaImpostare,key,idServizio.getTipo());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getTipoServizio()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getTipoServizio());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getTipoServizio());
 					}
 				}
 				if(ProprietaProtocolloValore.SERVIZIO.equals(value)){
 					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getNome()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getNome());
+						TransportUtils.setHeader(propertiesDaImpostare,key,servizioHeaderIntegrazione.getNome());
 					}else if(idServizio!=null && idServizio.getNome()!=null){
-						propertiesDaImpostare.put(key,idServizio.getNome());
+						TransportUtils.setHeader(propertiesDaImpostare,key,idServizio.getNome());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getServizio()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getServizio());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getServizio());
 					}
 				}
 				if(ProprietaProtocolloValore.VERSIONE_SERVIZIO.equals(value)){
 					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getVersione()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getVersione().intValue()+"");
+						TransportUtils.setHeader(propertiesDaImpostare,key,servizioHeaderIntegrazione.getVersione().intValue()+"");
 					}else if(idServizio!=null && idServizio.getVersione()!=null){
-						propertiesDaImpostare.put(key,idServizio.getVersione().intValue()+"");
+						TransportUtils.setHeader(propertiesDaImpostare,key,idServizio.getVersione().intValue()+"");
 					}else if(bustaRichiesta!=null && bustaRichiesta.getVersioneServizio()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getVersioneServizio().intValue()+"");
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getVersioneServizio().intValue()+"");
 					}
 				}
 				
 				if(ProprietaProtocolloValore.AZIONE.equals(value)){
 					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getAzione()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getAzione());
+						TransportUtils.setHeader(propertiesDaImpostare,key,servizioHeaderIntegrazione.getAzione());
 					}else if(idServizio!=null && idServizio.getAzione()!=null){
-						propertiesDaImpostare.put(key,idServizio.getAzione());
+						TransportUtils.setHeader(propertiesDaImpostare,key,idServizio.getAzione());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getAzione()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getAzione());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getAzione());
 					}
 				}
 				
 				if(ProprietaProtocolloValore.IDENTIFICATIVO.equals(value)){
 					if(bustaRichiesta!=null && bustaRichiesta.getID()!=null){
-						propertiesDaImpostare.put(key,bustaRichiesta.getID());
+						TransportUtils.setHeader(propertiesDaImpostare,key,bustaRichiesta.getID());
 					}
 				}
 
 				if(ProprietaProtocolloValore.IDENTIFICATIVO_CORRELAZIONE_APPLICATIVA.equals(value)){
 					if(idCorrelazioneApplicativa!=null){
-						propertiesDaImpostare.put(key,idCorrelazioneApplicativa);
+						TransportUtils.setHeader(propertiesDaImpostare,key,idCorrelazioneApplicativa);
 					}
 				}
 			}

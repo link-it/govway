@@ -276,6 +276,8 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 	
 - <messageType>Header(name): valore dell'header http indicato come parametro;
 
+- <messageType>Header(name, multiValueSeparator): elenco di valori, separati con il carattere indicato nel parametro 'multiValueSeparator', relativi agli header http che possiedono il nome indicato dal parametro 'name';
+
 - <messageType>Headers: elenco degli headers http nel formato <nome>=<valore> separati dal carattere ',' ;
 
 - <messageType>Headers(headersSeparator, nameValueSeparator, prefix, suffix): i parametri permettono di personalizzare il formato degli headers http.

@@ -160,7 +160,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 
 	// Controlla i dati della porta applicativa
-	public boolean porteAppCheckData(TipoOperazione tipoOp, String oldNomePA, boolean isSupportatoAutenticazione) throws Exception {
+	public boolean porteAppCheckData(TipoOperazione tipoOp, String oldNomePA, boolean isSupportatoAutenticazione, boolean datiAltroPorta) throws Exception {
 		try {
 			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String nomePorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
@@ -243,7 +243,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			// integrazione metadati
-			if(tipoOp == TipoOperazione.CHANGE) {
+			if(tipoOp == TipoOperazione.CHANGE && datiAltroPorta) {
 				boolean validazioneIntegrazione = this.validaIntegrazioneMetadati();
 				if(!validazioneIntegrazione)
 					return false;

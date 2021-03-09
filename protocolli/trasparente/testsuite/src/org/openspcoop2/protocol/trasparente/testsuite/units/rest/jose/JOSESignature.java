@@ -238,17 +238,17 @@ public class JOSESignature {
 		HttpResponse response = utils.invoke(repository, azione);
 		
 		Assert.assertNotNull(response);
-		Assert.assertNotNull(response.getHeaders());
+		Assert.assertNotNull(response.getHeadersValues());
 		
-		Iterator<String> it = response.getHeaders().keySet().iterator();
+		Iterator<String> it = response.getHeadersValues().keySet().iterator();
 		while (it.hasNext()) {
 			String hdrName = (String) it.next();
-			String hdrValue = response.getHeader(hdrName);
+			String hdrValue = response.getHeaderFirstValue(hdrName);
 			Reporter.log("Hdr response ["+hdrName+"] ["+hdrValue+"]");
 		}
 		
 		String searchHdr = prefix + header;
-		String hdr = response.getHeader(searchHdr);
+		String hdr = response.getHeaderFirstValue(searchHdr);
 		Assert.assertNotNull(hdr,"Header '"+searchHdr+"' atteso non presente");
 		
 		String [] tmp = hdr.split("\\.");
@@ -500,17 +500,17 @@ public class JOSESignature {
 		HttpResponse response = utils.invoke(repository, azione);
 		
 		Assert.assertNotNull(response);
-		Assert.assertNotNull(response.getHeaders());
+		Assert.assertNotNull(response.getHeadersValues());
 		
-		Iterator<String> it = response.getHeaders().keySet().iterator();
+		Iterator<String> it = response.getHeadersValues().keySet().iterator();
 		while (it.hasNext()) {
 			String hdrName = (String) it.next();
-			String hdrValue = response.getHeader(hdrName);
+			String hdrValue = response.getHeaderFirstValue(hdrName);
 			Reporter.log("Hdr response ["+hdrName+"] ["+hdrValue+"]");
 		}
 		
 		String searchHdr = prefix + header;
-		String hdr = response.getHeader(searchHdr);
+		String hdr = response.getHeaderFirstValue(searchHdr);
 		if(base64Encoded) {
 			hdr = new String(Base64Utilities.decode(hdr));
 		}

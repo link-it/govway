@@ -284,12 +284,12 @@ public class RestTest extends ConfigLoader {
 	private void checkAssertions(Vector<HttpResponse> responses, int maxKb, int windowSize) throws Exception {
 		
 		responses.forEach(r -> { 			
-				assertNotEquals(null,Integer.valueOf(r.getHeader(Headers.BandWidthQuotaReset)));
-				Utils.checkXLimitHeader(logRateLimiting, Headers.BandWidthQuotaLimit, r.getHeader(Headers.BandWidthQuotaLimit), maxKb);
+				assertNotEquals(null,Integer.valueOf(r.getHeaderFirstValue(Headers.BandWidthQuotaReset)));
+				Utils.checkXLimitHeader(logRateLimiting, Headers.BandWidthQuotaLimit, r.getHeaderFirstValue(Headers.BandWidthQuotaLimit), maxKb);
 				
 				if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 					Map<Integer,Integer> windowMap = Map.of(windowSize,maxKb);							
-					Utils.checkXLimitWindows(r.getHeader(Headers.BandWidthQuotaLimit), maxKb, windowMap);
+					Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.BandWidthQuotaLimit), maxKb, windowMap);
 				}
 			});
 
@@ -313,10 +313,10 @@ public class RestTest extends ConfigLoader {
 		assertNotEquals(null, jsonPath.getStringMatchPattern(jsonResp, "$.govway_id").get(0));	
 		assertEquals("Limit exceeded detected", jsonPath.getStringMatchPattern(jsonResp, "$.detail").get(0));
 		
-		assertEquals("0", failedResponse.getHeader(Headers.BandWidthQuotaRemaining));
-		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.BandWidthQuotaRemaining));
+		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
-		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
+		assertNotEquals(null, failedResponse.getHeaderFirstValue(Headers.RetryAfter));
 	}
 	
 

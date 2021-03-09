@@ -22,7 +22,8 @@
 package org.openspcoop2.protocol.sdk.dump;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,14 +44,14 @@ public class BodyMultipartInfo implements Serializable{
 	private String contentLocation;
 	private String contentType;
 	
-	private Map<String, String> headers = new Hashtable<String, String>();
+	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
 	
 
-	public Map<String, String> getHeaders() {
+	public Map<String, List<String>> getHeaders() {
 		return this.headers;
 	}
 
-	public void setHeaders(Map<String, String> headers) {
+	public void setHeaders(Map<String, List<String>> headers) {
 		this.headers = headers;
 	}
 

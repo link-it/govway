@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.handlers;
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.ProtocolContext;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.IntegrationContext;
@@ -53,7 +54,7 @@ public class OutResponseContext extends BaseContext {
 	private IntegrationContext integrazione;
 
 	/** Proprieta' di trasporto della risposta */
-	private Map<String, String> propertiesRispostaTrasporto;
+	private Map<String, List<String>> responseHeaders;
 	
 	public ProtocolContext getProtocollo() {
 		return this.protocollo;
@@ -71,12 +72,12 @@ public class OutResponseContext extends BaseContext {
 		this.integrazione = integrazione;
 	}
 
-	public Map<String, String> getPropertiesRispostaTrasporto() {
-		return this.propertiesRispostaTrasporto;
+	public Map<String, List<String>> getResponseHeaders() {
+		return this.responseHeaders;
 	}
 
-	public void setPropertiesRispostaTrasporto(
-			Map<String, String> propertiesRispostaTrasporto) {
-		this.propertiesRispostaTrasporto = propertiesRispostaTrasporto;
+	public void setResponseHeaders(
+			Map<String, List<String>> propertiesRispostaTrasporto) {
+		this.responseHeaders = propertiesRispostaTrasporto;
 	}
 }

@@ -384,7 +384,7 @@ public class RestTest extends ConfigLoader {
 				logRateLimiting.info("["+i+"] Invocazione ...");
 				Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
 				
-				if(responses==null || responses.isEmpty() || responses.get(0)==null || responses.get(0).getHeader(Headers.RequestSuccesfulLimit)==null) {
+				if(responses==null || responses.isEmpty() || responses.get(0)==null || responses.get(0).getHeaderFirstValue(Headers.RequestSuccesfulLimit)==null) {
 					logRateLimiting.info("["+i+"] la risposta non contiene l'header '"+Headers.RequestSuccesfulLimit+"' ; riprovo tra 2 secondi attendendo che le statistiche girano");
 					Utilities.sleep(2000);
 					continue;
@@ -393,12 +393,12 @@ public class RestTest extends ConfigLoader {
 				logRateLimiting.info("["+i+"] Verifico header ...");
 			
 				for (var r: responses) {
-					Utils.checkXLimitHeader(logRateLimiting, Headers.RequestSuccesfulLimit, r.getHeader(Headers.RequestSuccesfulLimit), maxRequests);			
+					Utils.checkXLimitHeader(logRateLimiting, Headers.RequestSuccesfulLimit, r.getHeaderFirstValue(Headers.RequestSuccesfulLimit), maxRequests);			
 					if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 						Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
-						Utils.checkXLimitWindows(r.getHeader(Headers.RequestSuccesfulLimit), maxRequests, windowMap);
+						Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.RequestSuccesfulLimit), maxRequests, windowMap);
 					}
-					assertTrue(Integer.valueOf(r.getHeader(Headers.RequestSuccesfulReset)) <= windowSize);
+					assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.RequestSuccesfulReset)) <= windowSize);
 					assertEquals(429, r.getResultHTTPOperation());
 					
 					try {
@@ -410,10 +410,10 @@ public class RestTest extends ConfigLoader {
 						assertNotEquals(null, jsonPath.getStringMatchPattern(jsonResp, "$.govway_id").get(0));	
 						assertEquals("Limit exceeded detected", jsonPath.getStringMatchPattern(jsonResp, "$.detail").get(0));
 						
-						assertEquals("0", r.getHeader(Headers.RequestSuccesfulRemaining));
-						assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeader(Headers.GovWayTransactionErrorType));
+						assertEquals("0", r.getHeaderFirstValue(Headers.RequestSuccesfulRemaining));
+						assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 						Utils.checkHeaderTooManyRequest(r);
-						assertNotEquals(null, r.getHeader(Headers.RetryAfter));
+						assertNotEquals(null, r.getHeaderFirstValue(Headers.RetryAfter));
 					} catch (Exception e) {
 						throw new RuntimeException(e);
 					}

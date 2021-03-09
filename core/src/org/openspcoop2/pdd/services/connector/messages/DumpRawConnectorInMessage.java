@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.services.connector.messages;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
@@ -253,15 +254,15 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	}
 
 	@Override
-	public String getHeader(String key) throws ConnectorException {
+	public List<String> getHeaderValues(String key) throws ConnectorException {
 		// wrapped method
-		return this.connectorInMessage.getHeader(key);
+		return this.connectorInMessage.getHeaderValues(key);
 	}
 
 	@Override
-	public String getParameter(String key) throws ConnectorException {
+	public List<String> getParameterValues(String key) throws ConnectorException {
 		// wrapped method
-		return this.connectorInMessage.getParameter(key);
+		return this.connectorInMessage.getParameterValues(key);
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -363,7 +365,7 @@ public class ConnectorDispatcherUtils {
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		
-		Map<String, String> trasporto = new HashMap<String, String>();
+		Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
 		try {
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
@@ -383,9 +385,12 @@ public class ConnectorDispatcherUtils {
 				Iterator<String> keys = trasporto.keySet().iterator();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
-					String value = null;
-		    		value = trasporto.get(key);
-		    		res.setHeader(key,value);
+					List<String> values = trasporto.get(key);
+					if(values!=null && !values.isEmpty()) {
+						for (String value : values) {
+				    		res.addHeader(key,value);
+						}
+					}
 		    	}	
 			}
 			
@@ -414,7 +419,7 @@ public class ConnectorDispatcherUtils {
 				contentTypeRisposta = msg.getContentType();
 				if (contentTypeRisposta != null) {
 					res.setContentType(contentTypeRisposta);
-					trasporto.put(HttpConstants.CONTENT_TYPE, contentTypeRisposta);
+					TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, contentTypeRisposta);
 				}
 			}
 		}catch(Throwable error){
@@ -467,7 +472,7 @@ public class ConnectorDispatcherUtils {
 		
 		OpenSPCoop2Message msg = info.getMessage();
 		
-		Map<String, String> trasporto = info.getTrasporto();
+		Map<String, List<String>> trasporto = info.getTrasporto();
 		try {
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
@@ -487,9 +492,12 @@ public class ConnectorDispatcherUtils {
 				Iterator<String> keys = trasporto.keySet().iterator();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
-					String value = null;
-		    		value = trasporto.get(key);
-		    		res.setHeader(key,value);
+					List<String> values = trasporto.get(key);
+					if(values!=null && !values.isEmpty()) {
+						for (String value : values) {
+				    		res.addHeader(key,value);
+						}
+					}
 		    	}	
 			}
 			
@@ -523,7 +531,7 @@ public class ConnectorDispatcherUtils {
 				contentTypeRisposta = msg.getContentType();
 				if (contentTypeRisposta != null) {
 					res.setContentType(contentTypeRisposta);
-					trasporto.put(HttpConstants.CONTENT_TYPE, contentTypeRisposta);
+					TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, contentTypeRisposta);
 				}
 			}
 		}catch(Throwable error){

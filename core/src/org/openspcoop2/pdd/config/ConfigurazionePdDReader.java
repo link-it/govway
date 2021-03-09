@@ -163,6 +163,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 
@@ -3264,9 +3265,9 @@ public class ConfigurazionePdDReader {
 
 
 		// PROTOCOL-PROPERTIES
-		Map<String, String> protocol_properties = new HashMap<String, String>();
+		Map<String, List<String>> protocol_properties = new HashMap<String, List<String>>();
 		for(int i=0;i<pa.sizeProprietaList();i++){
-			protocol_properties.put(pa.getProprieta(i).getNome(),pa.getProprieta(i).getValore());
+			TransportUtils.put(protocol_properties, pa.getProprieta(i).getNome(),pa.getProprieta(i).getValore(), false);
 		}
 
 		// Autenticazione
@@ -3528,9 +3529,9 @@ public class ConfigurazionePdDReader {
 
 
 		// PROTOCOL-PROPERTIES
-		Map<String, String> protocol_properties = new HashMap<String, String>();
+		Map<String, List<String>> protocol_properties = new HashMap<String, List<String>>();
 		for(int i=0;i<pa.sizeProprietaList();i++){
-			protocol_properties.put(pa.getProprieta(i).getNome(),pa.getProprieta(i).getValore());
+			TransportUtils.put(protocol_properties, pa.getProprieta(i).getNome(),pa.getProprieta(i).getValore(), false);
 		}
 
 		// Autenticazione

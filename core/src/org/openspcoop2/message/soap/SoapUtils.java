@@ -141,16 +141,16 @@ public class SoapUtils {
 
 		if(MessageType.SOAP_11.equals(messageType)){
 		
-			if(transportRequestContext.getParametersTrasporto().size()<=0){
+			if(transportRequestContext.getHeaders()==null || transportRequestContext.getHeaders().size()<=0){
 				throw new MessageException("Header http '"+Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION+"' non valorizzato (nessun header di trasporto trovato)");
 			}
 			
-			Iterator<String> enTrasporto = transportRequestContext.getParametersTrasporto().keySet().iterator();
+			Iterator<String> enTrasporto = transportRequestContext.getHeaders().keySet().iterator();
 			while(enTrasporto.hasNext()){
 				String nomeProperty = (String)enTrasporto.next();
 				if(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION.equalsIgnoreCase(nomeProperty)){
 					//System.out.println("TROVATO SOAP ACTION: "+req.getHeader(nomeProperty));
-					String soapAction = transportRequestContext.getParameterTrasporto(nomeProperty);
+					String soapAction = transportRequestContext.getHeaderFirstValue(nomeProperty);
 					if(soapAction==null){
 						throw new MessageException("Header http '"+Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION+"' non valorizzato (null)");
 					}

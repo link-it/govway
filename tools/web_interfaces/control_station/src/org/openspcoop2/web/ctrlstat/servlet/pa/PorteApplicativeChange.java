@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -75,6 +74,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -802,9 +802,9 @@ public final class PorteApplicativeChange extends Action {
 				
 				if (messageEngine == null) {
 					if(pa.getOptions()!=null) {
-						Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(pa.getOptions());
+						Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(pa.getOptions());
 						if(props!=null && props.size()>0) {
-							String msgFactory = props.get(CostantiPdD.OPTIONS_MESSAGE_FACTORY);
+							String msgFactory = TransportUtils.getFirstValue(props,CostantiPdD.OPTIONS_MESSAGE_FACTORY);
 							if(msgFactory!=null) {
 								messageEngine = msgFactory;
 							}
@@ -1109,7 +1109,7 @@ public final class PorteApplicativeChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, isSupportatoAutenticazioneSoggetti);
+			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, isSupportatoAutenticazioneSoggetti, datiAltroPorta);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd,lstParm);
@@ -1311,10 +1311,10 @@ public final class PorteApplicativeChange extends Action {
 			pa.setRicevutaAsincronaSimmetrica(StatoFunzionalita.toEnumConstant(ricsim));
 			pa.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.toEnumConstant(ricasim));
 			
-			Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(pa.getOptions());
+			Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(pa.getOptions());
 			props.remove(CostantiPdD.OPTIONS_MESSAGE_FACTORY);
 			if(messageEngine!=null && !"".equals(messageEngine) && !CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT.equals(messageEngine)) {
-				props.put(CostantiPdD.OPTIONS_MESSAGE_FACTORY, messageEngine);
+				TransportUtils.put(props,CostantiPdD.OPTIONS_MESSAGE_FACTORY, messageEngine, false);
 			}
 			if(props.size()>0) {
 				PropertiesSerializator ps = new PropertiesSerializator(props);

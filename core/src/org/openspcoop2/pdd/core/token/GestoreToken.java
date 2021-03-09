@@ -381,7 +381,7 @@ public class GestoreToken {
     			}
     			else {
     				URLProtocolContext urlProtocolContext = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext();
-    				if(urlProtocolContext.getParametersTrasporto()==null || urlProtocolContext.getParametersTrasporto().size()<=0) {
+    				if(urlProtocolContext.getHeaders()==null || urlProtocolContext.getHeaders().size()<=0) {
     					detailsErrorHeader = "Header di trasporto non presenti";
         			}
     				if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source) ||
@@ -402,9 +402,15 @@ public class GestoreToken {
     				}
     				else {
     					String headerName = policyGestioneToken.getTokenSourceHeaderName();
-    					token =  urlProtocolContext.getParameterTrasporto(headerName);
+    					List<String> values =  urlProtocolContext.getHeaderValues(headerName);
+    					if(values!=null && !values.isEmpty()) {
+    						token = values.get(0);
+    					}
     					if(token==null) {
     						detailsErrorHeader = "Non è stato riscontrato l'header http '"+headerName+"' contenente il token";
+    					}
+    					else if(values.size()>1) {
+    						detailsErrorHeader = "Sono stati rilevati più di un header http '"+headerName+"'";
     					}
     					else {
     						esitoPresenzaToken.setHeaderHttp(headerName);
@@ -423,7 +429,7 @@ public class GestoreToken {
     			}
     			else {
     				URLProtocolContext urlProtocolContext = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext();
-    				if(urlProtocolContext.getParametersFormBased()==null || urlProtocolContext.getParametersFormBased().size()<=0) {
+    				if(urlProtocolContext.getParameters()==null || urlProtocolContext.getParameters().size()<=0) {
     					detailsErrorUrl = "Parametri nella URL non presenti";
         			}
     				String propertyUrlName = null;
@@ -434,9 +440,15 @@ public class GestoreToken {
     				else {
     					propertyUrlName = policyGestioneToken.getTokenSourceUrlPropertyName();
     				}
-    				token =  urlProtocolContext.getParameterFormBased(propertyUrlName);
+    				List<String> values = urlProtocolContext.getParameterValues(propertyUrlName);
+					if(values!=null && !values.isEmpty()) {
+						token = values.get(0);
+					}
 					if(token==null) {
 						detailsErrorUrl = "Non è stato riscontrata la proprietà della URL '"+propertyUrlName+"' contenente il token";
+					}
+					else if(values.size()>1) {
+						detailsErrorHeader = "Sono state rilevate più proprietà della URL '"+propertyUrlName+"'";
 					}
 					else {
 						esitoPresenzaToken.setPropertyUrl(propertyUrlName);
@@ -456,18 +468,30 @@ public class GestoreToken {
     				HttpServletRequest httpServletRequest = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext().getHttpServletRequest();
     				if(httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
     					FormUrlEncodedHttpServletRequest form = (FormUrlEncodedHttpServletRequest) httpServletRequest;
-    					token = form.getFormUrlEncodedParameter(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
+    					List<String> values = form.getFormUrlEncodedParameterValues(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
+    					if(values!=null && !values.isEmpty()) {
+    						token = values.get(0);
+    					}
     					if(token==null) {
     						detailsErrorForm = "Non è stato riscontrata la proprietà della Form '"+Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN+"' contenente il token";
+    					}
+    					else if(values.size()>1) {
+    						detailsErrorHeader = "Sono state rilevate più proprietà della Form '"+Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN+"'";
     					}
     					else {
     						esitoPresenzaToken.setPropertyFormBased(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
     					}
     				}
     				else if(FormUrlEncodedHttpServletRequest.isFormUrlEncodedRequest(httpServletRequest)) {
-    					token = TransportUtils.getHeader(httpServletRequest, Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
+    					List<String> values = TransportUtils.getParameterValues(httpServletRequest, Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
+    					if(values!=null && !values.isEmpty()) {
+    						token = values.get(0);
+    					}
     					if(token==null) {
     						detailsErrorForm = "Non è stato riscontrata la proprietà della Form '"+Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN+"' contenente il token";
+    					}
+    					else if(values.size()>1) {
+    						detailsErrorHeader = "Sono state rilevate più proprietà della Form '"+Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN+"'";
     					}
     					else {
     						esitoPresenzaToken.setPropertyFormBased(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
@@ -1261,7 +1285,7 @@ public class GestoreToken {
 				remove = true;
 			}
 			if(remove) {
-				datiInvocazione.getMessage().getTransportRequestContext().removeParameterTrasporto(esitoPresenzaToken.getHeaderHttp());
+				datiInvocazione.getMessage().getTransportRequestContext().removeHeader(esitoPresenzaToken.getHeaderHttp());
 			}
 		}
 		else if(esitoPresenzaToken.getPropertyUrl()!=null) {
@@ -1275,7 +1299,7 @@ public class GestoreToken {
 				remove = true;
 			}
 			if(remove) {
-				datiInvocazione.getMessage().getTransportRequestContext().removeParameterFormBased(esitoPresenzaToken.getPropertyUrl());
+				datiInvocazione.getMessage().getTransportRequestContext().removeParameter(esitoPresenzaToken.getPropertyUrl());
 			}
 		}
 		else if(esitoPresenzaToken.getPropertyFormBased()!=null) {
@@ -1325,30 +1349,30 @@ public class GestoreToken {
 		if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(forwardTrasparenteMode)) {
 			if(esitoPresenzaToken.getHeaderHttp()!=null) {
 				if(HttpConstants.AUTHORIZATION.equals(esitoPresenzaToken.getHeaderHttp())) {
-					tokenForward.getTrasporto().put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+token);
+					TransportUtils.setHeader(tokenForward.getTrasporto(),HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+token);
 				}
 				else {
-					tokenForward.getTrasporto().put(esitoPresenzaToken.getHeaderHttp(), token);
+					TransportUtils.setHeader(tokenForward.getTrasporto(),esitoPresenzaToken.getHeaderHttp(), token);
 				}
 			}
 			else if(esitoPresenzaToken.getPropertyUrl()!=null) {
-				tokenForward.getUrl().put(esitoPresenzaToken.getPropertyUrl(), token);
+				TransportUtils.setParameter(tokenForward.getUrl(),esitoPresenzaToken.getPropertyUrl(), token);
 			}
 			else if(esitoPresenzaToken.getPropertyFormBased()!=null) {
 				throw new Exception("Configurazione non supportata"); // non dovrebbe mai entrare in questo ramo poichè il token non viene eliminato
 			}
 		}
 		else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER.equals(forwardTrasparenteMode)) {
-			tokenForward.getTrasporto().put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+token);
+			TransportUtils.setHeader(tokenForward.getTrasporto(),HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+token);
 		}
 		else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL.equals(forwardTrasparenteMode)) {
-			tokenForward.getUrl().put(Costanti.RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN, token);
+			TransportUtils.setParameter(tokenForward.getUrl(),Costanti.RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN, token);
 		}
 		else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(forwardTrasparenteMode)) {
-			tokenForward.getTrasporto().put(forwardTrasparenteMode_header, token);
+			TransportUtils.setHeader(tokenForward.getTrasporto(),forwardTrasparenteMode_header, token);
 		}
 		else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(forwardTrasparenteMode)) {
-			tokenForward.getUrl().put(forwardTrasparenteMode_url, token);
+			TransportUtils.setParameter(tokenForward.getUrl(),forwardTrasparenteMode_url, token);
 		}
 	}
 	
@@ -1403,7 +1427,7 @@ public class GestoreToken {
 			if(informazioniTokenNormalizzate.getIss()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER), informazioniTokenNormalizzate.getIss());
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER), informazioniTokenNormalizzate.getIss());
 					}
 					else {
 						jsonNode.put("issuer", informazioniTokenNormalizzate.getIss());
@@ -1413,7 +1437,7 @@ public class GestoreToken {
 			if(informazioniTokenNormalizzate.getSub()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT), informazioniTokenNormalizzate.getSub());
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT), informazioniTokenNormalizzate.getSub());
 					}
 					else {
 						jsonNode.put("subject", informazioniTokenNormalizzate.getSub());
@@ -1423,7 +1447,7 @@ public class GestoreToken {
 			if(informazioniTokenNormalizzate.getUsername()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME), informazioniTokenNormalizzate.getUsername());
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME), informazioniTokenNormalizzate.getUsername());
 					}
 					else {
 						jsonNode.put("username", informazioniTokenNormalizzate.getUsername());
@@ -1449,7 +1473,7 @@ public class GestoreToken {
 						}
 					}
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE), bf.toString());
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE), bf.toString());
 					}
 					else {
 						jsonNode.set("audience", array);
@@ -1459,7 +1483,7 @@ public class GestoreToken {
 			if(informazioniTokenNormalizzate.getClientId()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID), informazioniTokenNormalizzate.getClientId());
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID), informazioniTokenNormalizzate.getClientId());
 					}
 					else {
 						jsonNode.put("clientId", informazioniTokenNormalizzate.getClientId());
@@ -1476,7 +1500,7 @@ public class GestoreToken {
 						else {
 							value = (informazioniTokenNormalizzate.getIat().getTime() / 1000) + "";
 						}
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUED_AT), value);
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUED_AT), value);
 					}
 					else {
 						jsonNode.put("iat", jsonUtils.getDateFormat().format(informazioniTokenNormalizzate.getIat()));
@@ -1493,7 +1517,7 @@ public class GestoreToken {
 						else {
 							value = (informazioniTokenNormalizzate.getExp().getTime() / 1000) + "";
 						}
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EXPIRED), value);
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EXPIRED), value);
 					}
 					else {
 						jsonNode.put("expire", jsonUtils.getDateFormat().format(informazioniTokenNormalizzate.getExp()));
@@ -1510,7 +1534,7 @@ public class GestoreToken {
 						else {
 							value = (informazioniTokenNormalizzate.getNbf().getTime() / 1000) + "";
 						}
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_NBF), value);
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_NBF), value);
 					}
 					else {
 						jsonNode.put("nbf", jsonUtils.getDateFormat().format(informazioniTokenNormalizzate.getNbf()));
@@ -1536,7 +1560,7 @@ public class GestoreToken {
 						}
 					}
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ROLES), bf.toString());
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ROLES), bf.toString());
 					}
 					else {
 						jsonNode.set("roles", array);
@@ -1562,7 +1586,7 @@ public class GestoreToken {
 						}
 					}
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SCOPES), bf.toString());
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SCOPES), bf.toString());
 					}
 					else {
 						jsonNode.set("scopes", array);
@@ -1580,7 +1604,7 @@ public class GestoreToken {
 				if(informazioniTokenNormalizzate.getUserInfo().getFullName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME), informazioniTokenNormalizzate.getUserInfo().getFullName());
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME), informazioniTokenNormalizzate.getUserInfo().getFullName());
 						}
 						else {
 							userInfoNode.put("fullName", informazioniTokenNormalizzate.getUserInfo().getFullName());
@@ -1591,7 +1615,7 @@ public class GestoreToken {
 				if(informazioniTokenNormalizzate.getUserInfo().getFirstName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME), informazioniTokenNormalizzate.getUserInfo().getFirstName());
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME), informazioniTokenNormalizzate.getUserInfo().getFirstName());
 						}
 						else {
 							userInfoNode.put("firstName", informazioniTokenNormalizzate.getUserInfo().getFirstName());
@@ -1602,7 +1626,7 @@ public class GestoreToken {
 				if(informazioniTokenNormalizzate.getUserInfo().getMiddleName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME), informazioniTokenNormalizzate.getUserInfo().getMiddleName());
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME), informazioniTokenNormalizzate.getUserInfo().getMiddleName());
 						}
 						else {
 							userInfoNode.put("middleName", informazioniTokenNormalizzate.getUserInfo().getMiddleName());
@@ -1613,7 +1637,7 @@ public class GestoreToken {
 				if(informazioniTokenNormalizzate.getUserInfo().getFamilyName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME), informazioniTokenNormalizzate.getUserInfo().getFamilyName());
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME), informazioniTokenNormalizzate.getUserInfo().getFamilyName());
 						}
 						else {
 							userInfoNode.put("familyName", informazioniTokenNormalizzate.getUserInfo().getFamilyName());
@@ -1624,7 +1648,7 @@ public class GestoreToken {
 				if(informazioniTokenNormalizzate.getUserInfo().getEMail()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL), informazioniTokenNormalizzate.getUserInfo().getEMail());
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL), informazioniTokenNormalizzate.getUserInfo().getEMail());
 						}
 						else {
 							userInfoNode.put("eMail", informazioniTokenNormalizzate.getUserInfo().getEMail());
@@ -1683,7 +1707,7 @@ public class GestoreToken {
 							if(setCustomClaims) {
 								String claimValue = TokenUtilities.getClaimValuesAsString(claimValues);
 								if(op2headers) {
-									tokenForward.getTrasporto().put(headerName, claimValue);
+									TransportUtils.setHeader(tokenForward.getTrasporto(),headerName, claimValue);
 								}
 								else {
 									ObjectNode propertyNode = jsonUtils.newObjectNode();
@@ -1713,7 +1737,7 @@ public class GestoreToken {
 					else {
 						value = (processTime.getTime() / 1000) + "";
 					}
-					tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PROCESS_TIME), value);
+					TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PROCESS_TIME), value);
 				}
 				else {
 					jsonNode.put("processTime", jsonUtils.getDateFormat().format(processTime));
@@ -1725,10 +1749,10 @@ public class GestoreToken {
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(forwardInforRaccolteMode)) {
 					String headerName = properties.getGestioneTokenHeaderTrasportoJSON();
 					if(encodeBase64) {
-						tokenForward.getTrasporto().put(headerName, Base64Utilities.encodeAsString(json.getBytes()));
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerName, Base64Utilities.encodeAsString(json.getBytes()));
 					}
 					else {
-						tokenForward.getTrasporto().put(headerName, json);
+						TransportUtils.setHeader(tokenForward.getTrasporto(),headerName, json);
 					}
 				}
 				else {
@@ -1737,7 +1761,7 @@ public class GestoreToken {
 	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,jwsOptions);
 	    			String compact = jsonCompactSignature.sign(json);
 	    			String headerName = properties.getGestioneTokenHeaderTrasportoJWT();
-	    			tokenForward.getTrasporto().put(headerName, compact);
+	    			TransportUtils.setHeader(tokenForward.getTrasporto(),headerName, compact);
 				}
 			}
 		} 
@@ -1767,10 +1791,10 @@ public class GestoreToken {
 					}
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardValidazioneJWT_mode)) {
-					tokenForward.getTrasporto().put(forwardValidazioneJWT_name, value);
+					TransportUtils.setHeader(tokenForward.getTrasporto(),forwardValidazioneJWT_name, value);
 				}
 				else {
-					tokenForward.getUrl().put(forwardValidazioneJWT_name, value);
+					TransportUtils.setParameter(tokenForward.getUrl(),forwardValidazioneJWT_name, value);
 				}
 				
 			}
@@ -1799,10 +1823,10 @@ public class GestoreToken {
 					}
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardIntrospection_mode)) {
-					tokenForward.getTrasporto().put(forwardIntrospection_name, value);
+					TransportUtils.setHeader(tokenForward.getTrasporto(),forwardIntrospection_name, value);
 				}
 				else {
-					tokenForward.getUrl().put(forwardIntrospection_name, value);
+					TransportUtils.setParameter(tokenForward.getUrl(),forwardIntrospection_name, value);
 				}
 				
 			}
@@ -1831,10 +1855,10 @@ public class GestoreToken {
 					}
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardUserInfo_mode)) {
-					tokenForward.getTrasporto().put(forwardUserInfo_name, value);
+					TransportUtils.setHeader(tokenForward.getTrasporto(),forwardUserInfo_name, value);
 				}
 				else {
-					tokenForward.getUrl().put(forwardUserInfo_name, value);
+					TransportUtils.setParameter(tokenForward.getUrl(),forwardUserInfo_name, value);
 				}
 				
 			}
@@ -2179,30 +2203,30 @@ public class GestoreToken {
 		
 		TransportRequestContext transportRequestContext = new TransportRequestContext();
 		transportRequestContext.setRequestType(httpMethod.name());
-		transportRequestContext.setParametersTrasporto(new HashMap<String, String>());
+		transportRequestContext.setHeaders(new HashMap<String, List<String>>());
 		if(bearer) {
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
-			transportRequestContext.getParametersTrasporto().put(HttpConstants.AUTHORIZATION, authorizationHeader);
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
 		}
 		if(contentType!=null) {
-			transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentType);
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentType);
 		}
 		switch (tipoTokenRequest) {
 		case authorization:
-			transportRequestContext.removeParameterTrasporto(HttpConstants.AUTHORIZATION);
+			transportRequestContext.removeHeader(HttpConstants.AUTHORIZATION);
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+token;
-			transportRequestContext.getParametersTrasporto().put(HttpConstants.AUTHORIZATION, authorizationHeader);
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
 			break;
 		case header:
-			transportRequestContext.getParametersTrasporto().put(positionTokenName, token);
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),positionTokenName, token);
 			break;
 		case url:
-			transportRequestContext.setParametersFormBased(new HashMap<String, String>());
-			transportRequestContext.getParametersFormBased().put(positionTokenName, token);
+			transportRequestContext.setParameters(new HashMap<String, List<String>>());
+			TransportUtils.setParameter(transportRequestContext.getParameters(),positionTokenName, token);
 			break;
 		case form:
-			transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-			transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
+			transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
 			content = (positionTokenName+"="+token).getBytes();
 			break;
 		}
@@ -2604,31 +2628,31 @@ public class GestoreToken {
 		
 		TransportRequestContext transportRequestContext = new TransportRequestContext();
 		transportRequestContext.setRequestType(httpMethod.name());
-		transportRequestContext.setParametersTrasporto(new HashMap<String, String>());
+		transportRequestContext.setHeaders(new HashMap<String, List<String>>());
 		if(bearer) {
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
-			transportRequestContext.getParametersTrasporto().put(HttpConstants.AUTHORIZATION, authorizationHeader);
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
 		}
-		transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-		transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
+		transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
+		TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
 		
-		Map<String, String> pContent = new HashMap<String, String>();
+		Map<String, List<String>> pContent = new HashMap<String, List<String>>();
 		if(policyNegoziazioneToken.isClientCredentialsGrant()) {
-			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT);
 		}
 		else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT);
 		}
 		else {
 			throw new Exception("Nessuna modalità definita");
 		}
 		if(basic && !basicAsAuthorizationHeader){
-			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ID, username);
-			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_SECRET, password);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ID, username);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_SECRET, password);
 		}
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, policyNegoziazioneToken.getUsernamePasswordGrant_username());
-			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, policyNegoziazioneToken.getUsernamePasswordGrant_username());
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
 		}
 		List<String> scopes = policyNegoziazioneToken.getScopes();
 		if(scopes!=null && !scopes.isEmpty()) {
@@ -2640,15 +2664,15 @@ public class GestoreToken {
 				bf.append(scope);
 			}
 			if(bf.length()>0) {
-				pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
+				TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
 			}
 		}
 		String aud = policyNegoziazioneToken.getAudience();
 		if(aud!=null && !"".equals(aud)) {
-			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
 		}
 		String prefixUrl = "PREFIX?";
-		String contentString = TransportUtils.buildLocationWithURLBasedParameter(pContent, prefixUrl , log);
+		String contentString = TransportUtils.buildUrlWithParameters(pContent, prefixUrl , log);
 		contentString = contentString.substring(prefixUrl.length());
 		if(contentString.startsWith("&") && contentString.length()>1) {
 			contentString = contentString.substring(1);

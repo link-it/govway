@@ -70,7 +70,7 @@ public abstract class AbstractGestoreIntegrazionePDUrlBasedBC extends AbstractCo
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		
 		try{
-			this.utilitiesBC.readUrlProperties(inRequestPDMessage.getUrlProtocolContext().getParametersFormBased(), 
+			this.utilitiesBC.readUrlProperties(inRequestPDMessage.getUrlProtocolContext().getParameters(), 
 					integrazione);	
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDUrlBased, "+e.getMessage(),e);

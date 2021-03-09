@@ -84,17 +84,17 @@ public class ModIRESTSecurity {
 		
 		if(RuoloMessaggio.RICHIESTA.equals(this.ruoloMessaggio)) {
 			if(msg!=null && msg.getTransportRequestContext()!=null) {
-				msg.getTransportRequestContext().removeParameterTrasporto(this.tokenHeaderName);
+				msg.getTransportRequestContext().removeHeader(this.tokenHeaderName);
 				if(this.cleanDigest) {
-					msg.getTransportRequestContext().removeParameterTrasporto(HttpConstants.DIGEST);
+					msg.getTransportRequestContext().removeHeader(HttpConstants.DIGEST);
 				}
 			}
 		}
 		else {
 			if(msg!=null && msg.getTransportResponseContext()!=null) {
-				msg.getTransportResponseContext().removeParameterTrasporto(this.tokenHeaderName);
+				msg.getTransportResponseContext().removeHeader(this.tokenHeaderName);
 				if(this.cleanDigest) {
-					msg.getTransportResponseContext().removeParameterTrasporto(HttpConstants.DIGEST);
+					msg.getTransportResponseContext().removeHeader(HttpConstants.DIGEST);
 				}
 			}
 		}

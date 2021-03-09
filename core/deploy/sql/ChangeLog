@@ -1,3 +1,11 @@
+2021-03-05  Andrea Poli <apoli@link.it>
+
+	Aggiunta possibilità di registrare header multipli con lo stesso nome
+	
+	ALTER TABLE plugins DROP CONSTRAINT unique_dump_multipart_header_1;
+	ALTER TABLE plugins DROP CONSTRAINT unique_dump_header_trasporto_1;
+	ALTER TABLE plugins DROP CONSTRAINT unique_dump_header_allegato_1;
+
 2021-02-12  Andrea Poli <apoli@link.it>
 
 	Aggiunta informazione sull'identificativo del cluster tra i criteri di ricerca delle informazioni statistiche.

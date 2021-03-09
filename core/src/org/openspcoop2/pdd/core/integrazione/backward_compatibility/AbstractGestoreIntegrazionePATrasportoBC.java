@@ -72,7 +72,7 @@ public abstract class AbstractGestoreIntegrazionePATrasportoBC extends AbstractC
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException {
 		try{
-			this.utilitiesRequestBC.readTransportProperties(inRequestPAMessage.getUrlProtocolContext().getParametersTrasporto(), 
+			this.utilitiesRequestBC.readTransportProperties(inRequestPAMessage.getUrlProtocolContext().getHeaders(), 
 					integrazione);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);
@@ -85,7 +85,7 @@ public abstract class AbstractGestoreIntegrazionePATrasportoBC extends AbstractC
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilitiesRequestBC.setTransportProperties(integrazione, outRequestPAMessage.getProprietaTrasporto(),
+			this.utilitiesRequestBC.setTransportProperties(integrazione, outRequestPAMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.TRASPORTO));
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);
@@ -98,7 +98,7 @@ public abstract class AbstractGestoreIntegrazionePATrasportoBC extends AbstractC
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilitiesResponseBC.readTransportProperties(inResponsePAMessage.getProprietaTrasporto(), integrazione);
+			this.utilitiesResponseBC.readTransportProperties(inResponsePAMessage.getHeaders(), integrazione);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);
 		}
@@ -115,7 +115,7 @@ public abstract class AbstractGestoreIntegrazionePATrasportoBC extends AbstractC
 			// Per questo non forniamo integrazione.
 			// Per il protocollo trasparente vien apoosta definita la classe WithResponseOut che estende questa,
 			// ridefinisce questo metodo e fornisce anche integrazione.
-			this.utilitiesResponseBC.setTransportProperties(null, outResponsePAMessage.getProprietaTrasporto(),
+			this.utilitiesResponseBC.setTransportProperties(null, outResponsePAMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outResponsePAMessage.getBustaRichiesta(), false, TipoIntegrazione.TRASPORTO));
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);

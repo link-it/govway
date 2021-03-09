@@ -153,7 +153,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		// 6.1.1 e 6.2.1
 		// If the Origin header is not present terminate this set of steps. The request is outside the scope of this specification.
 		
-		String accessControlRequestOrigin = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
+		String accessControlRequestOrigin = TransportUtils.getHeaderFirstValue(req, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
 		if(accessControlRequestOrigin==null) {
 			if(config.throwExceptionIfNotFoundOrigin || config.terminateIfNotFoundOrigin) {
 				String msgError = "CORSE Configuration error: the request hasn't "+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+" header";
@@ -279,7 +279,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 			// Let method be the value as result of parsing the Access-Control-Request-Method header.
 			// If there is no Access-Control-Request-Method header or if parsing failed, do not set any additional headers and terminate this set of steps. 
 			// The request is outside the scope of this specification.
-			String accessControlRequestMethod = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+			String accessControlRequestMethod = TransportUtils.getHeaderFirstValue(req, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
 			if(accessControlRequestMethod==null) {
 				if(config.throwExceptionIfNotFoundRequestMethod || config.terminateIfNotFoundRequestMethod) {
 					String msgError = "CORSE Configuration error: the request hasn't an "+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+" header";
@@ -306,7 +306,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 			// If there are no Access-Control-Request-Headers headers let header field-names be the empty list.
 			// If parsing failed do not set any additional headers and terminate this set of steps. The request is outside the scope of this specification.
 			List<String> accessControlRequestHeadersList = new ArrayList<>();
-			String accessControlRequestHeaders = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
+			String accessControlRequestHeaders = TransportUtils.getHeaderFirstValue(req, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
 			if(accessControlRequestHeaders!=null && !StringUtils.isEmpty(accessControlRequestHeaders.trim())) {
 				accessControlRequestHeaders = accessControlRequestHeaders.trim();
 				if(accessControlRequestHeaders.contains(",")) {
@@ -527,7 +527,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
             throw new IllegalArgumentException(
                     "HttpServletRequest object is null");
         }
-        String accessControlRequestOrigin = TransportUtils.getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
+        String accessControlRequestOrigin = TransportUtils.getHeaderFirstValue(request, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
         // Section 6.1.1 and Section 6.2.1
         if (accessControlRequestOrigin != null) {
             if (accessControlRequestOrigin.isEmpty()) {
@@ -562,7 +562,7 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
                 }
                 if(requestMethod!=null) {
 	                if (HttpRequestMethod.OPTIONS.equals(requestMethod)) {
-	                	String accessControlRequestMethod = TransportUtils.getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+	                	String accessControlRequestMethod = TransportUtils.getHeaderFirstValue(request, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
 	                    if (accessControlRequestMethod != null && !StringUtils.isEmpty(accessControlRequestMethod)) {
 	                        requestType = CORSRequestType.PRE_FLIGHT;
 	                    } else if (accessControlRequestMethod != null

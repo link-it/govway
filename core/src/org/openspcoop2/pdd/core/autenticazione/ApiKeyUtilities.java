@@ -59,7 +59,7 @@ public class ApiKeyUtilities {
 				throw new AutenticazioneException("Nome del parametro della query, da cui estrarre l'"+tipo+", non indicato");
 			}
 			if(nomeQueryParameter!=null && infoConnettore!=null && infoConnettore.getUrlProtocolContext()!=null) {
-				key = infoConnettore.getUrlProtocolContext().getParameterFormBased(nomeQueryParameter);
+				key = infoConnettore.getUrlProtocolContext().getParameterFirstValue(nomeQueryParameter);
 				if(key!=null && "".equals(key.trim())) {
 					key = null;
 				}
@@ -82,7 +82,7 @@ public class ApiKeyUtilities {
 				throw new AutenticazioneException("Nome dell'header, da cui estrarre l'"+tipo+", non indicato");
 			}
 			if(nomeHeader!=null && infoConnettore!=null && infoConnettore.getUrlProtocolContext()!=null) {
-				key = infoConnettore.getUrlProtocolContext().getParameterTrasporto(nomeHeader);
+				key = infoConnettore.getUrlProtocolContext().getHeaderFirstValue(nomeHeader);
 				if(key!=null && "".equals(key.trim())) {
 					key = null;
 				}

@@ -23,6 +23,7 @@ package org.openspcoop2.security.message;
 
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.constants.MessageRole;
@@ -82,10 +83,10 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 					if(restMessage.getTransportRequestContext()==null) {
 						throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 					}
-					if(restMessage.getTransportRequestContext().getParametersFormBased()==null) {
-						restMessage.getTransportRequestContext().setParametersFormBased(new HashMap<String, String>());
+					if(restMessage.getTransportRequestContext().getParameters()==null) {
+						restMessage.getTransportRequestContext().setParameters(new HashMap<String, List<String>>());
 					}
-					restMessage.getTransportRequestContext().removeParameterFormBased(signatureDetachedPropertyUrl); // sovrascrivo
+					restMessage.getTransportRequestContext().removeParameter(signatureDetachedPropertyUrl); // sovrascrivo
 					//restMessage.getTransportRequestContext().getParametersFormBased().put(signatureDetachedPropertyUrl, detachedSignature);
 					restMessage.forceUrlProperty(signatureDetachedPropertyUrl, detachedSignature);
 				}
@@ -99,10 +100,10 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 				if(restMessage.getTransportRequestContext()==null) {
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 				}
-				if(restMessage.getTransportRequestContext().getParametersTrasporto()==null) {
-					restMessage.getTransportRequestContext().setParametersTrasporto(new HashMap<String, String>());
+				if(restMessage.getTransportRequestContext().getHeaders()==null) {
+					restMessage.getTransportRequestContext().setHeaders(new HashMap<String, List<String>>());
 				}
-				restMessage.getTransportRequestContext().removeParameterTrasporto(signatureDetachedHeader); // sovrascrivo
+				restMessage.getTransportRequestContext().removeHeader(signatureDetachedHeader); // sovrascrivo
 				//restMessage.getTransportRequestContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);
 				restMessage.forceTransportHeader(signatureDetachedHeader, detachedSignature);
 			}
@@ -110,10 +111,10 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 				if(restMessage.getTransportResponseContext()==null) {
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 				}
-				if(restMessage.getTransportResponseContext().getParametersTrasporto()==null) {
-					restMessage.getTransportResponseContext().setParametersTrasporto(new HashMap<String, String>());
+				if(restMessage.getTransportResponseContext().getHeaders()==null) {
+					restMessage.getTransportResponseContext().setHeaders(new HashMap<String, List<String>>());
 				}
-				restMessage.getTransportResponseContext().removeParameterTrasporto(signatureDetachedHeader); // sovrascrivo
+				restMessage.getTransportResponseContext().removeHeader(signatureDetachedHeader); // sovrascrivo
 				//restMessage.getTransportResponseContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);
 				restMessage.forceTransportHeader(signatureDetachedHeader, detachedSignature);
 			}

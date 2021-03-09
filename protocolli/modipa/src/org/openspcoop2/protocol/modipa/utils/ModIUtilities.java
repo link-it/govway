@@ -56,6 +56,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -578,5 +579,23 @@ public class ModIUtilities {
 			}
 		}
 		throw new UtilsMultiException("Non è stato possibile recuperare un valore da associare alla risorsa '"+tipoRisorsa+"'", exceptions.toArray(new Throwable[1]));
+	}
+	
+	public static void addHeaderProperty(Busta busta, String hdrName, String hdrValue) {
+		String pName = ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_PREFIX+hdrName;
+		String actualValue = busta.getProperty(pName);
+		if(actualValue!=null) {
+			for (int i = 2; i < 1000; i++) { // 1000 header con solito nome ?
+				pName = ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_PREFIX+hdrName+ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX+i;
+				actualValue = busta.getProperty(pName);
+				if(actualValue==null) {
+					busta.addProperty(pName, hdrValue);
+					break;
+				}
+			}
+		}
+		else {
+			busta.addProperty(pName, hdrValue);
+		}
 	}
 }

@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.BodyPart;
@@ -62,20 +63,20 @@ public class DumpRestMessageUtils {
 			DumpMessaggio dumpMessaggio = new DumpMessaggio();
 			dumpMessaggio.setMessageType(msg.getMessageType());
 						
-			Map<String, String> pTrasporto = null;
+			Map<String, List<String>> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
-				if(msg.getTransportRequestContext().getParametersTrasporto()!=null && 
-						msg.getTransportRequestContext().getParametersTrasporto().size()>0){
+				if(msg.getTransportRequestContext().getHeaders()!=null && 
+						msg.getTransportRequestContext().getHeaders().size()>0){
 					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportRequestContext().getParametersTrasporto();
+						pTrasporto = msg.getTransportRequestContext().getHeaders();
 					}
 				}
 			}
 			else if(msg.getTransportResponseContext()!=null) {
-				if(msg.getTransportResponseContext().getParametersTrasporto()!=null && 
-						msg.getTransportResponseContext().getParametersTrasporto().size()>0){
+				if(msg.getTransportResponseContext().getHeaders()!=null && 
+						msg.getTransportResponseContext().getHeaders().size()>0){
 					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportResponseContext().getParametersTrasporto();
+						pTrasporto = msg.getTransportResponseContext().getHeaders();
 					}
 				}
 			}
@@ -84,8 +85,8 @@ public class DumpRestMessageUtils {
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					if(key!=null){
-						String value = pTrasporto.get(key);
-						dumpMessaggio.getHeaders().put(key, value);
+						List<String> values = pTrasporto.get(key);
+						dumpMessaggio.getHeadersValues().put(key, values);
 					}
 				}
 			}
@@ -159,20 +160,19 @@ public class DumpRestMessageUtils {
 					    		if(keyO instanceof String) {
 					    			String key = (String) keyO;
 					    			String [] values = bodyPart.getHeader(key);
-					    			String value = "";
+					    			List<String> lValues = new ArrayList<String>();
 					    			if(values!=null && values.length>0) {
 					    				for (int j = 0; j < values.length; j++) {
-											if(j>0) {
-												value = value + ",";
-											}
-											value = value + values[j];
+					    					lValues.add(values[j]);
 										}
 					    			}
-					    			if(multipartInfoBody!=null) {
-					    				multipartInfoBody.getHeaders().put(key, value);
-					    			}
-					    			else {
-					    				dumpAttach.getHeaders().put(key, value);
+					    			if(!lValues.isEmpty()) {
+						    			if(multipartInfoBody!=null) {
+						    				multipartInfoBody.getHeadersValues().put(key, lValues);
+						    			}
+						    			else {
+						    				dumpAttach.getHeadersValues().put(key, lValues);
+						    			}
 					    			}
 					    		}
 					    	}
@@ -243,20 +243,20 @@ public class DumpRestMessageUtils {
 		try{
 			StringBuilder out = new StringBuilder();
 			
-			Map<String,String> pTrasporto = null;
+			Map<String,List<String>> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
-				if(msg.getTransportRequestContext().getParametersTrasporto()!=null && 
-						msg.getTransportRequestContext().getParametersTrasporto().size()>0){
+				if(msg.getTransportRequestContext().getHeaders()!=null && 
+						msg.getTransportRequestContext().getHeaders().size()>0){
 					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportRequestContext().getParametersTrasporto();
+						pTrasporto = msg.getTransportRequestContext().getHeaders();
 					}
 				}
 			}
 			else if(msg.getTransportResponseContext()!=null) {
-				if(msg.getTransportResponseContext().getParametersTrasporto()!=null && 
-						msg.getTransportResponseContext().getParametersTrasporto().size()>0){
+				if(msg.getTransportResponseContext().getHeaders()!=null && 
+						msg.getTransportResponseContext().getHeaders().size()>0){
 					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportResponseContext().getParametersTrasporto();
+						pTrasporto = msg.getTransportResponseContext().getHeaders();
 					}
 				}
 			}
@@ -267,8 +267,12 @@ public class DumpRestMessageUtils {
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
 						if(key!=null){
-							String value = pTrasporto.get(key);
-							out.append("- "+key+": "+value+"\n");
+							List<String> values = pTrasporto.get(key);
+							if(values!=null && !values.isEmpty()) {
+								for (String value : values) {
+									out.append("- "+key+": "+value+"\n");
+								}
+							}
 						}
 					}
 				}
@@ -344,16 +348,11 @@ public class DumpRestMessageUtils {
 					    				continue;
 					    			}
 					    			String [] values = bodyPart.getHeader(key);
-					    			String value = "";
 					    			if(values!=null && values.length>0) {
 					    				for (int j = 0; j < values.length; j++) {
-											if(j>0) {
-												value = value + ",";
-											}
-											value = value + values[j];
+							    			out.append("- "+key+": "+values[j]+"\n");
 										}
 					    			}
-					    			out.append("- "+key+": "+value+"\n");
 					    		}
 					    	}
 						}

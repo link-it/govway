@@ -259,24 +259,34 @@ public class XACMLPolicyUtilities {
 
 		xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_URL_ATTRIBUTE_ID, urlProtocolContext.getRequestURI());    	
 
-		if(urlProtocolContext.getParametersFormBased()!=null && urlProtocolContext.getParametersFormBased().size()>0){
-			Iterator<String> keys = urlProtocolContext.getParametersFormBased().keySet().iterator();
+		if(urlProtocolContext.getParameters()!=null && urlProtocolContext.getParameters().size()>0){
+			Iterator<String> keys = urlProtocolContext.getParameters().keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = urlProtocolContext.getParametersFormBased().get(key);
-				if(key!=null && !key.contains(" ") && value!=null){
-					xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_URL_PARAMETER_ATTRIBUTE_ID+key, value);    	
+				List<String> values = urlProtocolContext.getParameterValues(key);
+				if(key!=null && !key.contains(" ") && values!=null && !values.isEmpty()){
+					if(values.size()==1) {
+						xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_URL_PARAMETER_ATTRIBUTE_ID+key, values.get(0));
+					}
+					else {
+						xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_URL_PARAMETER_ATTRIBUTE_ID+key, values);
+					}
 				}
 			}
 		}
 
-		if(urlProtocolContext.getParametersTrasporto()!=null && urlProtocolContext.getParametersTrasporto().size()>0){
-			Iterator<String> keys = urlProtocolContext.getParametersTrasporto().keySet().iterator();
+		if(urlProtocolContext.getHeaders()!=null && urlProtocolContext.getHeaders().size()>0){
+			Iterator<String> keys = urlProtocolContext.getHeaders().keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = urlProtocolContext.getParametersTrasporto().get(key);
-				if(key!=null && !key.contains(" ") && value!=null){
-					xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TRANSPORT_HEADER_ATTRIBUTE_ID+key, value);    	
+				List<String> values = urlProtocolContext.getHeaderValues(key);
+				if(key!=null && !key.contains(" ") && values!=null && !values.isEmpty()){
+					if(values.size()==1) {
+						xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TRANSPORT_HEADER_ATTRIBUTE_ID+key, values.get(0));
+					}
+					else {
+						xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TRANSPORT_HEADER_ATTRIBUTE_ID+key, values);
+					}
 				}
 			}
 		}

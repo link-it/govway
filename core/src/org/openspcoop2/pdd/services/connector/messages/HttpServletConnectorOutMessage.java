@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -82,8 +83,12 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			Iterator<String> keys = forwardHeader.getKeys();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = forwardHeader.getProperty(key);
-				this.setHeader(key, value);
+				List<String> values = forwardHeader.getPropertyValues(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						this.addHeader(key, value);	
+					}
+				}
 			}
 		}
 	}
@@ -142,6 +147,13 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	
 	@Override
 	public void setHeader(String key,String value) throws ConnectorException{
+		_putHeader(key,value,false);
+	}
+	@Override
+	public void addHeader(String key,String value) throws ConnectorException{
+		_putHeader(key,value,true);
+	}
+	private void _putHeader(String key,String value, boolean add) throws ConnectorException{
 		try{		
 			boolean encodingRFC2047 = false;
 			Charset charsetRFC2047 = null;
@@ -172,14 +184,14 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 				if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
 					String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
 					//System.out.println("@@@@ RESPONSE CODIFICA ["+value+"] in ["+encoded+"]");
-					this.setResponseHeader(validazioneHeaderRFC2047, key, encoded);
+					this.putResponseHeader(validazioneHeaderRFC2047, key, encoded, add);
 				}
 				else{
-					this.setResponseHeader(validazioneHeaderRFC2047, key, value);
+					this.putResponseHeader(validazioneHeaderRFC2047, key, value, add);
 				}
 			}
 			else{
-				this.setResponseHeader(validazioneHeaderRFC2047, key, value);
+				this.putResponseHeader(validazioneHeaderRFC2047, key, value, add);
 			}	
 			
 		}catch(Exception e){
@@ -187,12 +199,17 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 		}
 	}
 	
-	private void setResponseHeader(boolean validazioneHeaderRFC2047, String key, String value) {
+	private void putResponseHeader(boolean validazioneHeaderRFC2047, String key, String value, boolean add) {
     	
     	if(validazioneHeaderRFC2047){
     		try{
         		RFC2047Utilities.validHeader(key, value);
-        		this.res.setHeader(key,value);
+        		if(add) {
+        			this.res.addHeader(key,value);
+        		}
+        		else {
+        			this.res.setHeader(key,value);
+        		}
         	}catch(UtilsException e){
         		if(this.protocolFactory!=null && this.protocolFactory.getLogger()!=null){
         			this.protocolFactory.getLogger().error(e.getMessage(),e);
@@ -203,7 +220,12 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
         	}
     	}
     	else{
-    		this.res.setHeader(key,value);
+    		if(add) {
+    			this.res.addHeader(key,value);
+    		}
+    		else {
+    			this.res.setHeader(key,value);
+    		}
     	}
     	
     }

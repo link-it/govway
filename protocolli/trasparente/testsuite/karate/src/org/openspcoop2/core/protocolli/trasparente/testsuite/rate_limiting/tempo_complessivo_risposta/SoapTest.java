@@ -62,7 +62,7 @@ public class SoapTest extends ConfigLoader {
 		responses.add(response);
 		logRateLimiting.info("Request: " + request.getUrl());
 		logRateLimiting.info("ResponseStatus: " + response.getResultHTTPOperation());
-		logRateLimiting.info("ResponseHeaders:\n" + response.getHeaders());
+		logRateLimiting.info("ResponseHeaders:\n" + response.getHeadersValues());
 		logRateLimiting.info("ResponseBody: " + new String(response.getContent()));
 		
 		Utils.waitForZeroActiveRequests(idPolicy, 1);
@@ -71,7 +71,7 @@ public class SoapTest extends ConfigLoader {
 		responses.add(response);
 		logRateLimiting.info("Request: " + request.getUrl());
 		logRateLimiting.info("ResponseStatus: " + response.getResultHTTPOperation());
-		logRateLimiting.info("ResponseHeaders:\n" + response.getHeaders());
+		logRateLimiting.info("ResponseHeaders:\n" + response.getHeadersValues());
 		logRateLimiting.info("ResponseBody: " + new String(response.getContent()));
 		
 		return responses;
@@ -280,12 +280,12 @@ public class SoapTest extends ConfigLoader {
 	private void checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize) throws DynamicException {
 	
 		responses.forEach(r -> { 			
-			assertNotEquals(null,Integer.valueOf(r.getHeader(Headers.RateLimitTimeResponseQuotaReset)));
-			Utils.checkXLimitHeader(logRateLimiting, Headers.RateLimitTimeResponseQuotaLimit, r.getHeader(Headers.RateLimitTimeResponseQuotaLimit), maxSeconds);
+			assertNotEquals(null,Integer.valueOf(r.getHeaderFirstValue(Headers.RateLimitTimeResponseQuotaReset)));
+			Utils.checkXLimitHeader(logRateLimiting, Headers.RateLimitTimeResponseQuotaLimit, r.getHeaderFirstValue(Headers.RateLimitTimeResponseQuotaLimit), maxSeconds);
 			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,maxSeconds);							
-				Utils.checkXLimitWindows(r.getHeader(Headers.RateLimitTimeResponseQuotaLimit), maxSeconds, windowMap);
+				Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.RateLimitTimeResponseQuotaLimit), maxSeconds, windowMap);
 			}
 		});
 
@@ -305,10 +305,10 @@ public class SoapTest extends ConfigLoader {
 		Element element = Utils.buildXmlElement(failedResponse.getContent());
 		Utils.matchLimitExceededSoap(element);		
 		
-		assertEquals("0", failedResponse.getHeader(Headers.RateLimitTimeResponseQuotaRemaining));
-		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.RateLimitTimeResponseQuotaRemaining));
+		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
-		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
+		assertNotEquals(null, failedResponse.getHeaderFirstValue(Headers.RetryAfter));
 	}
 	
 

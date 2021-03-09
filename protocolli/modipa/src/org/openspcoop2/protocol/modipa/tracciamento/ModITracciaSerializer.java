@@ -142,6 +142,11 @@ public class ModITracciaSerializer extends TracciaSerializer {
 								}
 							}
 						}
+						else if(ModIConsoleCostanti.MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADERS_LABEL.equals(tracciaExtInfo.getLabel()) && 
+								p.getNome()!=null && p.getNome().contains(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX) &&
+									!p.getNome().endsWith(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX)) {
+							p.setNome(p.getNome().substring(0, p.getNome().indexOf(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX)));
+						}
 					}
 				}
 			}

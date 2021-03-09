@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.handlers;
 
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -54,17 +55,17 @@ public class PostOutRequestContext extends OutRequestContext {
 	}
 	
 	/** Proprieta' di trasporto della risposta */
-	private Map<String, String> propertiesTrasportoRisposta;
+	private Map<String, List<String>> responseHeaders;
 	
 	private int codiceTrasporto;
 
-	public Map<String, String> getPropertiesTrasportoRisposta() {
-		return this.propertiesTrasportoRisposta;
+	public Map<String, List<String>> getResponseHeaders() {
+		return this.responseHeaders;
 	}
 
-	public void setPropertiesTrasportoRisposta(
-			Map<String, String> propertiesTrasportoRisposta) {
-		this.propertiesTrasportoRisposta = propertiesTrasportoRisposta;
+	public void setResponseHeaders(
+			Map<String, List<String>> propertiesRispostaTrasporto) {
+		this.responseHeaders = propertiesRispostaTrasporto;
 	}
 
 	public int getCodiceTrasporto() {

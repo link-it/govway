@@ -22,6 +22,7 @@
 package org.openspcoop2.protocol.utils;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -79,89 +80,93 @@ public class EsitoTransportContextIdentification  {
 		this.type = type;
 	}
 	
-	public boolean match(Map<String, String> p) throws ProtocolException{
+	public boolean match(Map<String, List<String>> p) throws ProtocolException{
 		Iterator<String> keys = p.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
-			String valueKey = TransportUtils.get(p, key);
-			if(key.equalsIgnoreCase(this.name)){
-				
-				// trovato header con nome atteso
-				switch (this.mode) {
-				case EXISTS:
-					return true;
-				case MATCH:
-					try{
-						if(RegularExpressionEngine.isMatch(valueKey, this.regularExpr, RegularExpressionPatternCompileMode.CASE_INSENSITIVE)){
+			List<String> values = TransportUtils.getRawObject(p, key);
+			if(values!=null && !values.isEmpty()) {
+				for (String valueKey : values) {
+					if(key.equalsIgnoreCase(this.name)){
+						
+						// trovato header con nome atteso
+						switch (this.mode) {
+						case EXISTS:
 							return true;
-						}
-					}catch(RegExpNotFoundException notFound){	
-						continue;
-					}catch(RegExpException exp){
-						throw new ProtocolException(exp.getMessage(),exp);
-					}
-					break;
-				case CONTAINS:
-					if(this.regularExpr==null){
-						if(this.value!=null && valueKey!=null && valueKey.toLowerCase().contains(this.value.toLowerCase())){
-							return true;
-						}
-						// else devo iterare sulla prossima key
-					}
-					else{
-						String valueRexExp = null;
-						try{
-							valueRexExp = RegularExpressionEngine.getStringMatchPattern(valueKey, this.regularExpr, RegularExpressionPatternCompileMode.CASE_INSENSITIVE);
-						}catch(RegExpNotFoundException notFound){	
-							continue;
-						}catch(RegExpException exp){
-							throw new ProtocolException(exp.getMessage(),exp);
-						}
-						if(this.value!=null && valueRexExp!=null && valueRexExp.toLowerCase().contains(this.value.toLowerCase())){
-							return true;
-						}
-						// else devo iterare sulla prossima key
-					}
-					break;
-				case EQUALS:
-					if(this.regularExpr==null){
-						if(this.value==null){
-							if(valueKey==null){
-								return true;
+						case MATCH:
+							try{
+								if(RegularExpressionEngine.isMatch(valueKey, this.regularExpr, RegularExpressionPatternCompileMode.CASE_INSENSITIVE)){
+									return true;
+								}
+							}catch(RegExpNotFoundException notFound){	
+								continue;
+							}catch(RegExpException exp){
+								throw new ProtocolException(exp.getMessage(),exp);
 							}
-							// else devo iterare sulla prossima key
-						}
-						else{
-							if(this.value.equalsIgnoreCase(valueKey)){
-								return true;
+							break;
+						case CONTAINS:
+							if(this.regularExpr==null){
+								if(this.value!=null && valueKey!=null && valueKey.toLowerCase().contains(this.value.toLowerCase())){
+									return true;
+								}
+								// else devo iterare sulla prossima key
 							}
-							// else devo iterare sulla prossima key
-						}
-					}
-					else{
-						String valueRexExp = null;
-						try{
-							valueRexExp = RegularExpressionEngine.getStringMatchPattern(valueKey, this.regularExpr, RegularExpressionPatternCompileMode.CASE_INSENSITIVE);
-						}catch(RegExpNotFoundException notFound){	
-							continue;
-						}catch(RegExpException exp){
-							throw new ProtocolException(exp.getMessage(),exp);
-						}
-						if(this.value==null){
-							if(valueRexExp==null){
-								return true;
+							else{
+								String valueRexExp = null;
+								try{
+									valueRexExp = RegularExpressionEngine.getStringMatchPattern(valueKey, this.regularExpr, RegularExpressionPatternCompileMode.CASE_INSENSITIVE);
+								}catch(RegExpNotFoundException notFound){	
+									continue;
+								}catch(RegExpException exp){
+									throw new ProtocolException(exp.getMessage(),exp);
+								}
+								if(this.value!=null && valueRexExp!=null && valueRexExp.toLowerCase().contains(this.value.toLowerCase())){
+									return true;
+								}
+								// else devo iterare sulla prossima key
 							}
-							// else devo iterare sulla prossima key
-						}
-						else{
-							if(this.value.equalsIgnoreCase(valueRexExp)){
-								return true;
+							break;
+						case EQUALS:
+							if(this.regularExpr==null){
+								if(this.value==null){
+									if(valueKey==null){
+										return true;
+									}
+									// else devo iterare sulla prossima key
+								}
+								else{
+									if(this.value.equalsIgnoreCase(valueKey)){
+										return true;
+									}
+									// else devo iterare sulla prossima key
+								}
 							}
-							// else devo iterare sulla prossima key
+							else{
+								String valueRexExp = null;
+								try{
+									valueRexExp = RegularExpressionEngine.getStringMatchPattern(valueKey, this.regularExpr, RegularExpressionPatternCompileMode.CASE_INSENSITIVE);
+								}catch(RegExpNotFoundException notFound){	
+									continue;
+								}catch(RegExpException exp){
+									throw new ProtocolException(exp.getMessage(),exp);
+								}
+								if(this.value==null){
+									if(valueRexExp==null){
+										return true;
+									}
+									// else devo iterare sulla prossima key
+								}
+								else{
+									if(this.value.equalsIgnoreCase(valueRexExp)){
+										return true;
+									}
+									// else devo iterare sulla prossima key
+								}
+							}
 						}
-					}
+						
+					}		
 				}
-				
 			}
 		}
 		return false;

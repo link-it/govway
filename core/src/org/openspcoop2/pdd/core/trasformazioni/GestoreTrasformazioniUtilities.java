@@ -120,7 +120,7 @@ public class GestoreTrasformazioniUtilities {
 		
 	}
 	
-	public static void trasformazione(Logger log, List<TrasformazioneRegolaParametro> list, Map<String, String> properties, Map<String, String> forceAddProperties, String oggetto,
+	public static void trasformazione(Logger log, List<TrasformazioneRegolaParametro> list, Map<String, List<String>> properties, Map<String, List<String>> forceAddProperties, String oggetto,
 			Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
 		if(list!=null && list.size()>0) {
 			for (TrasformazioneRegolaParametro parametro : list) {
@@ -154,44 +154,44 @@ public class GestoreTrasformazioniUtilities {
 					if(valore==null) {
 						throw new Exception("["+oggetto+"] Valore per '"+nome+"' non indicato");
 					}
-					Object vOld = null;
+					List<String> vOld = null;
 					if(properties!=null) {
-						vOld = TransportUtils.remove(properties, nome);
-						if(vOld!=null) {
+						vOld = TransportUtils.removeRawObject(properties, nome);
+						if(vOld!=null && !vOld.isEmpty()) {
 							throw new Exception("["+oggetto+"] '"+nome+"' già esistente; utilizzare direttiva 'updateOrAdd' per aggiornarlo");
 						}
 					}
 					if(properties!=null) {
-						properties.put(nome, valore);
+						TransportUtils.put(properties, nome, valore, true);
 					}
-					forceAddProperties.put(nome, valore);
+					TransportUtils.put(forceAddProperties, nome, valore, true);
 					break;
 				case UPDATE_OR_ADD:
 					if(valore==null) {
 						throw new Exception("["+oggetto+"] Valore per '"+nome+"' non indicato");
 					}
 					if(properties!=null) {
-						TransportUtils.remove(properties, nome);
-						properties.put(nome, valore);
+						TransportUtils.removeRawObject(properties, nome);
+						TransportUtils.put(properties, nome, valore, true);
 					}
-					forceAddProperties.put(nome, valore);
+					TransportUtils.put(forceAddProperties, nome, valore, true);
 					break;
 				case UPDATE:
-					Object v = null;
+					List<String> v = null;
 					if(properties!=null) {
-						v = TransportUtils.remove(properties, nome);
-						if(v!=null) {
+						v = TransportUtils.removeRawObject(properties, nome);
+						if(v!=null && !v.isEmpty()) {
 							if(valore==null) {
 								throw new Exception("["+oggetto+"] Valore del parametro '"+nome+"' non indicato");
 							}
-							properties.put(nome, valore);
-							forceAddProperties.put(nome, valore);
+							TransportUtils.put(properties, nome, valore, false);
+							TransportUtils.put(forceAddProperties, nome, valore, false);
 						}
 					}
 					break;
 				case DELETE:
 					if(properties!=null) {
-						TransportUtils.remove(properties, nome);
+						TransportUtils.removeRawObject(properties, nome);
 					}
 					break;
 				default:
@@ -365,8 +365,8 @@ public class GestoreTrasformazioniUtilities {
 	
 	public static OpenSPCoop2Message trasformaMessaggio(Logger log, OpenSPCoop2Message message, Element element, 
 			RequestInfo requestInfo, Map<String, Object> dynamicMap, PdDContext pddContext, OpenSPCoop2Properties op2Properties,
-			Map<String, String> trasporto, Map<String, String> forceAddTrasporto, 
-			Map<String, String> url, Map<String, String> forceAddUrl,
+			Map<String, List<String>> trasporto, Map<String, List<String>> forceAddTrasporto, 
+			Map<String, List<String>> url, Map<String, List<String>> forceAddUrl,
 			int status,
 			String contentTypeInput, Integer returnCodeInput,
 			RisultatoTrasformazioneContenuto risultato,
@@ -387,12 +387,12 @@ public class GestoreTrasformazioniUtilities {
 			TransportResponseContext transportResponseContext = null;
 			if(MessageRole.REQUEST.equals(message.getMessageRole())) {
 				transportRequestContext = new TransportRequestContext();
-				transportRequestContext.setParametersTrasporto(trasporto);
-				transportRequestContext.setParametersFormBased(url);
+				transportRequestContext.setHeaders(trasporto);
+				transportRequestContext.setParameters(url);
 			}
 			else {
 				transportResponseContext = new TransportResponseContext();
-				transportResponseContext.setParametersTrasporto(trasporto);
+				transportResponseContext.setHeaders(trasporto);
 				if(returnCodeInput!=null) {
 					transportResponseContext.setCodiceTrasporto(returnCodeInput.intValue()+"");
 					forceResponseStatus = returnCodeInput;
@@ -415,10 +415,10 @@ public class GestoreTrasformazioniUtilities {
 						contentType = null;
 						// aggiorno contentType
 						if(transportRequestContext!=null) {
-							transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+							transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
 						}
 						else {
-							transportResponseContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+							transportResponseContext.removeHeader(HttpConstants.CONTENT_TYPE);
 						}
 					}
 					else {
@@ -565,12 +565,12 @@ public class GestoreTrasformazioniUtilities {
 					
 					// aggiorno contentType
 					if(transportRequestContext!=null) {
-						transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-						transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
+						transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
+						TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 					}
 					else {
-						transportResponseContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-						transportResponseContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
+						transportResponseContext.removeHeader(HttpConstants.CONTENT_TYPE);
+						TransportUtils.setHeader(transportResponseContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 					}
 					
 					String soapAction = null;
@@ -857,21 +857,21 @@ public class GestoreTrasformazioniUtilities {
 		}
 	}
 	
-	public static void addTransportInfo(Map<String, String> forceAddTrasporto, Map<String, String> forceAddUrl, Integer forceResponseStatus, OpenSPCoop2Message msg) {
+	public static void addTransportInfo(Map<String, List<String>> forceAddTrasporto, Map<String, List<String>> forceAddUrl, Integer forceResponseStatus, OpenSPCoop2Message msg) {
 		if(forceAddTrasporto!=null && !forceAddTrasporto.isEmpty()) {
 			Iterator<String> keys = forceAddTrasporto.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = forceAddTrasporto.get(key);
-				msg.forceTransportHeader(key, value);	
+				List<String> values = forceAddTrasporto.get(key);
+				msg.forceTransportHeader(key, values);	
 			}
 		}
 		if(forceAddUrl!=null && !forceAddUrl.isEmpty()) {
 			Iterator<String> keys = forceAddUrl.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = forceAddUrl.get(key);
-				msg.forceUrlProperty(key, value);	
+				List<String> values = forceAddUrl.get(key);
+				msg.forceUrlProperty(key, values);	
 			}
 		}
 		if(forceResponseStatus!=null && forceResponseStatus.intValue()>0) {

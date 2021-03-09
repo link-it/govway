@@ -567,7 +567,7 @@ public final class PorteApplicativeAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.ADD, null, isSupportatoAutenticazioneSoggetti);
+			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.ADD, null, isSupportatoAutenticazioneSoggetti, false);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 

@@ -112,8 +112,8 @@ public class RestTest extends ConfigLoader {
 			// Vedo quante ne mancano per ogni header
 			HttpResponse firstResp = Utils.makeRequest(request);
 			assertEquals(200, firstResp.getResultHTTPOperation());
-			succesfullHeaderRemaining[i] = Integer.valueOf(firstResp.getHeader(Headers.RequestSuccesfulRemaining));
-			bandwidthQuotaRemaining[i] = Integer.valueOf(firstResp.getHeader(Headers.BandWidthQuotaRemaining));
+			succesfullHeaderRemaining[i] = Integer.valueOf(firstResp.getHeaderFirstValue(Headers.RequestSuccesfulRemaining));
+			bandwidthQuotaRemaining[i] = Integer.valueOf(firstResp.getHeaderFirstValue(Headers.BandWidthQuotaRemaining));
 						
 			// Faccio n richieste
 			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, nrequests);
@@ -169,7 +169,7 @@ public class RestTest extends ConfigLoader {
 				
 				if(!requestSuccesful) {
 					logRateLimiting.info("["+j+"] Controllo " + Headers.RequestSuccesfulRemaining);
-					int updatedHeaderRemaining = Integer.valueOf(lastResp.getHeader(Headers.RequestSuccesfulRemaining));
+					int updatedHeaderRemaining = Integer.valueOf(lastResp.getHeaderFirstValue(Headers.RequestSuccesfulRemaining));
 					int shouldRemaining = succesfullHeaderRemaining[i] - (nrequests+1);
 					//assertEquals(shouldRemaining, updatedHeaderRemaining);
 					logRateLimiting.info("["+j+"] Richieste completate con successo su "+policies[i]+": " + updatedHeaderRemaining);
@@ -180,7 +180,7 @@ public class RestTest extends ConfigLoader {
 				
 				if(!bandwidth) {
 					logRateLimiting.info("["+j+"] Controllo " + Headers.BandWidthQuotaRemaining);
-					int updatedHeaderRemaining = Integer.valueOf(lastResp.getHeader(Headers.BandWidthQuotaRemaining));
+					int updatedHeaderRemaining = Integer.valueOf(lastResp.getHeaderFirstValue(Headers.BandWidthQuotaRemaining));
 					int shouldRemaining = bandwidthQuotaRemaining[i] - (2*(nrequests+1)*body.getBytes().length)/1024;
 					logRateLimiting.info("["+j+"] Banda rimanente su "+policies[i]+": " + updatedHeaderRemaining);
 					logRateLimiting.info("["+j+"] Dovrebbero rimanerne meno di: " + shouldRemaining);
@@ -190,7 +190,7 @@ public class RestTest extends ConfigLoader {
 				
 				if(!avg) {
 					logRateLimiting.info("["+j+"] Controllo presenza header:" + Headers.AvgTimeResponseLimit);
-					avg = lastResp.getHeader(Headers.AvgTimeResponseLimit) != null;
+					avg = lastResp.getHeaderFirstValue(Headers.AvgTimeResponseLimit) != null;
 					logRateLimiting.info("["+j+"] Esito: " + avg);
 				}
 				

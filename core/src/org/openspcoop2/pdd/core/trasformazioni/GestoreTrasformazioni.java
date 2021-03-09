@@ -24,7 +24,10 @@ package org.openspcoop2.pdd.core.trasformazioni;
 
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.TrasformazioneRegola;
@@ -49,6 +52,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -60,6 +64,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
@@ -199,8 +204,9 @@ public class GestoreTrasformazioni {
 		Element element = null;
 		String elementJson = null;
 		boolean contenutoNonNavigabile = false;
-		Map<String, String> parametriTrasporto = null;
-		Map<String, String> parametriUrl = null;
+		Map<String, List<String>> parametriTrasporto = null;
+		Map<String, List<String>> parametriUrl = null;
+		Map<String, List<String>> parametriForm = null;
 		String urlInvocazione = null;
 		
 		try{
@@ -224,22 +230,37 @@ public class GestoreTrasformazioni {
 			
 
 			if(message.getTransportRequestContext()!=null) {
-				if(message.getTransportRequestContext().getParametersTrasporto()!=null &&
-					!message.getTransportRequestContext().getParametersTrasporto().isEmpty()) {
-					parametriTrasporto = message.getTransportRequestContext().getParametersTrasporto();
+				
+				if(message.getTransportRequestContext().getHeaders()!=null &&
+					!message.getTransportRequestContext().getHeaders().isEmpty()) {
+					parametriTrasporto = message.getTransportRequestContext().getHeaders();
 				}
 				else {
-					parametriTrasporto = new HashMap<String, String>();
-					message.getTransportRequestContext().setParametersTrasporto(parametriTrasporto);
+					parametriTrasporto = new HashMap<String, List<String>>();
+					message.getTransportRequestContext().setHeaders(parametriTrasporto);
 				}
-				if(message.getTransportRequestContext().getParametersFormBased()!=null &&
-						!message.getTransportRequestContext().getParametersFormBased().isEmpty()) {
-					parametriUrl = message.getTransportRequestContext().getParametersFormBased();
+				
+				if(message.getTransportRequestContext().getParameters()!=null &&
+						!message.getTransportRequestContext().getParameters().isEmpty()) {
+					parametriUrl = message.getTransportRequestContext().getParameters();
 				}
 				else {
-					parametriUrl = new HashMap<String, String>();
-					message.getTransportRequestContext().setParametersFormBased(parametriUrl);
+					parametriUrl = new HashMap<String, List<String>>();
+					message.getTransportRequestContext().setParameters(parametriUrl);
 				}
+				
+				if(message.getTransportRequestContext() instanceof HttpServletTransportRequestContext) {
+					HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) message.getTransportRequestContext();
+					HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+					if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+						FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+						if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+								!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+							parametriForm = formServlet.getFormUrlEncodedParametersValues();
+						}
+					}
+				}
+				
 				urlInvocazione = message.getTransportRequestContext().getUrlInvocazione_formBased();
 			}
 			else {
@@ -404,7 +425,10 @@ public class GestoreTrasformazioni {
 		DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 				message,
 				element, elementJson, 
-				busta, parametriTrasporto, parametriUrl,
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
 				errorHandler);
 		this.dynamicMapRequest = dynamicMap;
 		this.log.debug("Costruzione dynamic map completata");
@@ -456,17 +480,17 @@ public class GestoreTrasformazioni {
 		
 		try {	
 			// conversione header
-			Map<String, String> trasporto = parametriTrasporto;
-			Map<String, String> forceAddTrasporto = new HashMap<String, String>();
+			Map<String, List<String>> trasporto = parametriTrasporto;
+			Map<String, List<String>> forceAddTrasporto = new HashMap<String, List<String>>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(richiesta.getContentType()!=null) {
-				TransportUtils.remove(trasporto, HttpConstants.CONTENT_TYPE);
-				trasporto.put(HttpConstants.CONTENT_TYPE, richiesta.getContentType());
+				TransportUtils.removeRawObject(trasporto, HttpConstants.CONTENT_TYPE);
+				TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, richiesta.getContentType());
 			}
 			
 			// conversione url
-			Map<String, String> url = parametriUrl;
-			Map<String, String> forceAddUrl = new HashMap<String, String>();
+			Map<String, List<String>> url = parametriUrl;
+			Map<String, List<String>> forceAddUrl = new HashMap<String, List<String>>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getParametroUrlList(), url, forceAddUrl, "QueryParameter", dynamicMap, this.pddContext);
 			
 			if(!trasformazioneContenuto) {
@@ -560,7 +584,7 @@ public class GestoreTrasformazioni {
 		Element element = null;
 		String elementJson = null;
 		boolean contenutoNonNavigabile = false;
-		Map<String, String> parametriTrasporto = null;
+		Map<String, List<String>> parametriTrasporto = null;
 		int httpStatus = -1;
 		try{
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
@@ -582,13 +606,13 @@ public class GestoreTrasformazioni {
 			}
 			
 			if(message.getTransportResponseContext()!=null) {
-				if(message.getTransportResponseContext().getParametersTrasporto()!=null &&
-					!message.getTransportResponseContext().getParametersTrasporto().isEmpty()) {
-					parametriTrasporto = message.getTransportResponseContext().getParametersTrasporto();
+				if(message.getTransportResponseContext().getHeaders()!=null &&
+					!message.getTransportResponseContext().getHeaders().isEmpty()) {
+					parametriTrasporto = message.getTransportResponseContext().getHeaders();
 				}
 				else {
-					parametriTrasporto = new HashMap<String, String>();
-					message.getTransportResponseContext().setParametersTrasporto(parametriTrasporto);
+					parametriTrasporto = new HashMap<String, List<String>>();
+					message.getTransportResponseContext().setHeaders(parametriTrasporto);
 				}
 				try {
 					httpStatus = Integer.parseInt(message.getTransportResponseContext().getCodiceTrasporto());
@@ -788,12 +812,12 @@ public class GestoreTrasformazioni {
 		try {
 			
 			// conversione header
-			Map<String, String> trasporto = parametriTrasporto!=null ? parametriTrasporto : new HashMap<String, String>();
-			Map<String, String> forceAddTrasporto = new HashMap<String, String>();
+			Map<String, List<String>> trasporto = parametriTrasporto!=null ? parametriTrasporto : new HashMap<String, List<String>>();
+			Map<String, List<String>> forceAddTrasporto = new HashMap<String, List<String>>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(trasformazioneRisposta.getContentType()!=null) {
-				TransportUtils.remove(trasporto, HttpConstants.CONTENT_TYPE);
-				trasporto.put(HttpConstants.CONTENT_TYPE, trasformazioneRisposta.getContentType());
+				TransportUtils.removeRawObject(trasporto, HttpConstants.CONTENT_TYPE);
+				TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, trasformazioneRisposta.getContentType());
 			}
 			
 			if(!trasformazioneContenuto) {

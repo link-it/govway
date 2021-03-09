@@ -80,6 +80,8 @@ public class Info {
 	private String headerSeparator;
 	private String headerPrefix;
 	private String headerSuffix;
+	
+	private String headerMultiValueSeparator;
 
 	private String defaultValue="";
 	private int defaultIntegerValue=0;
@@ -116,6 +118,7 @@ public class Info {
 		this.headerSeparator = config.getHeaderSeparator();
 		this.headerPrefix = config.getHeaderPrefix();
 		this.headerSuffix = config.getHeaderSuffix();
+		this.headerMultiValueSeparator = config.getHeaderMultiValueSeparator();
 		this.base64 = base64;
 	}
 		
@@ -1361,9 +1364,13 @@ public class Info {
 	}
 	
 	public java.lang.String getInRequestHeader(String name) {
+		return getInRequestHeader(name, this.headerMultiValueSeparator);
+	}
+	public java.lang.String getInRequestHeader(String name, String multiValueSeparator) {
 		String s = null;
 		if(this.richiestaIngresso!=null && this.richiestaIngresso.getHeaders()!=null) {
-			s = TransportUtils.get(this.richiestaIngresso.getHeaders(), name);
+			List<String> values = TransportUtils.getRawObject(this.richiestaIngresso.getHeaders(), name);
+			s = this.format(values, multiValueSeparator);
 		}
 		return correctValue(s, null);
 	}
@@ -1432,9 +1439,13 @@ public class Info {
 	}
 
 	public java.lang.String getOutRequestHeader(String name) {
+		return getOutRequestHeader(name, this.headerMultiValueSeparator);
+	}
+	public java.lang.String getOutRequestHeader(String name, String multiValueSeparator) {
 		String s = null;
 		if(this.richiestaUscita!=null && this.richiestaUscita.getHeaders()!=null) {
-			s = TransportUtils.get(this.richiestaUscita.getHeaders(), name);
+			List<String> values = TransportUtils.getRawObject(this.richiestaUscita.getHeaders(), name);
+			s = this.format(values, multiValueSeparator);
 		}
 		return correctValue(s, null);
 	}
@@ -1502,9 +1513,13 @@ public class Info {
 	}
 	
 	public java.lang.String getInResponseHeader(String name) {
+		return getInResponseHeader(name, this.headerMultiValueSeparator);
+	}
+	public java.lang.String getInResponseHeader(String name, String multiValueSeparator) {
 		String s = null;
 		if(this.rispostaIngresso!=null && this.rispostaIngresso.getHeaders()!=null) {
-			s = TransportUtils.get(this.rispostaIngresso.getHeaders(), name);
+			List<String> values = TransportUtils.getRawObject(this.rispostaIngresso.getHeaders(), name);
+			s = this.format(values, multiValueSeparator);
 		}
 		return correctValue(s, null);
 	}
@@ -1572,9 +1587,13 @@ public class Info {
 	}
 	
 	public java.lang.String getOutResponseHeader(String name) {
+		return getOutResponseHeader(name, this.headerMultiValueSeparator);
+	}
+	public java.lang.String getOutResponseHeader(String name, String multiValueSeparator) {
 		String s = null;
 		if(this.rispostaUscita!=null && this.rispostaUscita.getHeaders()!=null) {
-			s = TransportUtils.get(this.rispostaUscita.getHeaders(), name);
+			List<String> values = TransportUtils.getRawObject(this.rispostaUscita.getHeaders(), name);
+			s = this.format(values, multiValueSeparator);
 		}
 		return correctValue(s, null);
 	}
@@ -1842,7 +1861,7 @@ public class Info {
 		return s!=null ? this.escape(s) : defaultValue;
 	}
 	
-	private String format( Map<String, String>  map, String defaultValueParam, String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
+	private String format( Map<String, List<String>>  map, String defaultValueParam, String hdrsSeparatpr, String hdrSeparator, String hdrPrefix, String hdrSuffix) {
 		if(map!=null && !map.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
 			for (String hdr : map.keySet()) {
@@ -1851,15 +1870,20 @@ public class Info {
 					continue;
 				}
 				
-				String hdrValue = map.get(hdr);
-				if(sb.length()>0) {
-					sb.append(hdrsSeparatpr==null ? this.headersSeparator : hdrsSeparatpr);
+				List<String> hdrValues = map.get(hdr);
+				if(hdrValues!=null && !hdrValues.isEmpty()) {
+					for (String hdrValue : hdrValues) {
+						if(sb.length()>0) {
+							sb.append(hdrsSeparatpr==null ? this.headersSeparator : hdrsSeparatpr);
+						}
+						sb.append(hdrPrefix==null ? this.headerPrefix : hdrPrefix);
+						sb.append(this.correctValue(hdr, defaultValueParam));
+						sb.append(hdrSeparator==null ? this.headerSeparator : hdrSeparator);
+						sb.append(this.correctValue(hdrValue, defaultValueParam));
+						sb.append(hdrSuffix == null ? this.headerSuffix: hdrSuffix);		
+					}
 				}
-				sb.append(hdrPrefix==null ? this.headerPrefix : hdrPrefix);
-				sb.append(this.correctValue(hdr, defaultValueParam));
-				sb.append(hdrSeparator==null ? this.headerSeparator : hdrSeparator);
-				sb.append(this.correctValue(hdrValue, defaultValueParam));
-				sb.append(hdrSuffix == null ? this.headerSuffix: hdrSuffix);
+				
 			}
 			String res = sb.toString();
 			if(this.base64 && res!=null && res.length()>0) {
@@ -1870,5 +1894,20 @@ public class Info {
 			}
 		}
 		return correctValue(null, defaultValueParam);
+	}
+	
+	private String format(List<String> values, String separator) {
+		String s = null;
+		if(values!=null && !values.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			for (String value : values) {
+				if(sb.length()>0) {
+					sb.append(separator);
+				}
+				sb.append(value);
+			}
+			s = sb.toString();
+		}
+		return s;
 	}
 }

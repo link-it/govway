@@ -68,6 +68,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Element;
 
@@ -285,11 +286,11 @@ public class AS4Sbustamento {
 					transportRequestContext.setRequestType(resourceInvoke.getMethod().getValue());
 				}
 			}
-			if(transportRequestContext.getParametersTrasporto()==null) {
-				transportRequestContext.setParametersTrasporto(new HashMap<>());
+			if(transportRequestContext.getHeaders()==null) {
+				transportRequestContext.setHeaders(new HashMap<>());
 			}
-			transportRequestContext.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
-			transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, mimeTypeRoot);
+			transportRequestContext.getHeaders().remove(HttpConstants.CONTENT_TYPE);
+			TransportUtils.addHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, mimeTypeRoot);
 			
 			OpenSPCoop2MessageParseResult result = null;
 			if(MessageType.MIME_MULTIPART.equals(messageType)==false) {
@@ -376,8 +377,8 @@ public class AS4Sbustamento {
 				}
 				
 				if(MessageType.MIME_MULTIPART.equals(messageType)) {
-					transportRequestContext.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
-					transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, mm.getContentType());
+					transportRequestContext.getHeaders().remove(HttpConstants.CONTENT_TYPE);
+					TransportUtils.addHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, mm.getContentType());
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					mm.writeTo(bout);
 					bout.flush();

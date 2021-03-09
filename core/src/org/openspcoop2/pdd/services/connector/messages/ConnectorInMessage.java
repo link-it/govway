@@ -20,6 +20,7 @@
 package org.openspcoop2.pdd.services.connector.messages;
 
 import java.util.Date;
+import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -48,9 +49,9 @@ public interface ConnectorInMessage {
 	
 	public Object getAttribute(String key) throws ConnectorException;
 	
-	public String getHeader(String key) throws ConnectorException;
+	public List<String> getHeaderValues(String key) throws ConnectorException;
 	
-	public String getParameter(String key) throws ConnectorException;
+	public List<String> getParameterValues(String key) throws ConnectorException;
 	
 	public IProtocolFactory<?> getProtocolFactory() throws ConnectorException;
 	

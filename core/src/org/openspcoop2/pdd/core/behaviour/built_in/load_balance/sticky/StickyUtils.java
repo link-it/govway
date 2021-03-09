@@ -21,9 +21,11 @@ package org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -40,11 +42,13 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
@@ -76,13 +80,25 @@ public class StickyUtils  {
 		
 		String pattern = "";
 		try {
-			Map<String, String> pTrasporto = null;
+			Map<String, List<String>> pTrasporto = null;
 			String urlInvocazione = null;
-			Map<String, String> pForm = null;
+			Map<String, List<String>> pQuery = null;
+			Map<String, List<String>> pForm = null;
 			if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
-				pTrasporto = requestInfo.getProtocolContext().getParametersTrasporto();
+				pTrasporto = requestInfo.getProtocolContext().getHeaders();
 				urlInvocazione = requestInfo.getProtocolContext().getUrlInvocazione_formBased();
-				pForm = requestInfo.getProtocolContext().getParametersFormBased();
+				pQuery = requestInfo.getProtocolContext().getParameters();
+				if(requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
+					HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) requestInfo.getProtocolContext();
+					HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+					if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+						FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+						if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+								!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+							pForm = formServlet.getFormUrlEncodedParametersValues();
+						}
+					}
+				}
 			}
 			Element element = null;
 			String elementJson = null;
@@ -151,7 +167,7 @@ public class StickyUtils  {
 			case HEADER_BASED:
 				pattern = " (Header HTTP: "+patternSelettore+")";
 				msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-				condition = TransportUtils.get(pTrasporto, patternSelettore);
+				condition = TransportUtils.getFirstValue(pTrasporto, patternSelettore);
 				if(condition==null) {
 					throw new Exception("header non presente");
 				}
@@ -168,7 +184,7 @@ public class StickyUtils  {
 			case FORM_BASED:
 				pattern = " (Parametro URL: "+patternSelettore+")";
 				msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-				condition = TransportUtils.get(pForm, patternSelettore);
+				condition = TransportUtils.getFirstValue(pQuery, patternSelettore);
 				if(condition==null) {
 					throw new Exception("parametro della url non presente");
 				}
@@ -214,7 +230,10 @@ public class StickyUtils  {
 				DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 						message,
 						element, elementJson, 
-						busta, pTrasporto, pForm,
+						busta, 
+						pTrasporto, 
+						pQuery,
+						pForm,
 						errorHandler);
 				condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", patternSelettore, dynamicMap, pddContext, true);
 				break;
@@ -232,7 +251,10 @@ public class StickyUtils  {
 				DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 						message,
 						element, elementJson, 
-						busta, pTrasporto, pForm,
+						busta, 
+						pTrasporto, 
+						pQuery,
+						pForm,
 						errorHandler);
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				DynamicUtils.convertFreeMarkerTemplate("ConditionalConfig.ftl", patternSelettore.getBytes(), dynamicMap, bout);
@@ -254,7 +276,10 @@ public class StickyUtils  {
 				DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 						message,
 						element, elementJson, 
-						busta, pTrasporto, pForm,
+						busta, 
+						pTrasporto, 
+						pQuery,
+						pForm,
 						errorHandler);
 				bout = new ByteArrayOutputStream();
 				DynamicUtils.convertVelocityTemplate("ConditionalConfig.vm", patternSelettore.getBytes(), dynamicMap, bout);

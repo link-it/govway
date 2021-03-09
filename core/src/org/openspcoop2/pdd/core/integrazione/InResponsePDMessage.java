@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.PortaDelegata;
@@ -38,7 +39,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 public class InResponsePDMessage {
 
 	private OpenSPCoop2Message message;
-	private Map<String, String> proprietaTrasporto;
+	private Map<String, List<String>> headers;
 	private PortaDelegata portaDelegata;
 	private IDSoggetto soggettoMittente;
 	private IDServizio servizio;
@@ -56,11 +57,11 @@ public class InResponsePDMessage {
 	public void setMessage(OpenSPCoop2Message message) {
 		this.message = message;
 	}
-	public Map<String, String> getProprietaTrasporto() {
-		return this.proprietaTrasporto;
+	public Map<String, List<String>> getHeaders() {
+		return this.headers;
 	}
-	public void setProprietaTrasporto(Map<String, String> proprietaTrasporto) {
-		this.proprietaTrasporto = proprietaTrasporto;
+	public void setHeaders(Map<String, List<String>> proprietaTrasporto) {
+		this.headers = proprietaTrasporto;
 	}
 	public PortaDelegata getPortaDelegata() {
 		return this.portaDelegata;

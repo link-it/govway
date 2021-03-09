@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core.handlers;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class InResponseContext extends BaseContext {
 	private String erroreConsegna;
 	
 	/** Proprieta' di trasporto della risposta */
-	private Map<String, String> propertiesRispostaTrasporto;
+	private Map<String, List<String>> responseHeaders;
 	
 	/** Data accettazione Risposta (prima della lettura della risposta) */
 	private Date dataAccettazioneRisposta;
@@ -151,13 +152,13 @@ public class InResponseContext extends BaseContext {
 		this.erroreConsegna = erroreConsegna;
 	}
 
-	public Map<String, String> getPropertiesRispostaTrasporto() {
-		return this.propertiesRispostaTrasporto;
+	public Map<String, List<String>> getResponseHeaders() {
+		return this.responseHeaders;
 	}
 
-	public void setPropertiesRispostaTrasporto(
-			Map<String, String> propertiesRispostaTrasporto) {
-		this.propertiesRispostaTrasporto = propertiesRispostaTrasporto;
+	public void setResponseHeaders(
+			Map<String, List<String>> propertiesRispostaTrasporto) {
+		this.responseHeaders = propertiesRispostaTrasporto;
 	}
 
 }

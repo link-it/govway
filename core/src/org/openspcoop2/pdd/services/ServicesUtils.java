@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -388,8 +389,9 @@ public class ServicesUtils {
 	}
 	
 	
-	public static void setGovWayHeaderResponse(Map<String, String> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
-		try {
+	public static void setGovWayHeaderResponse(OpenSPCoop2Message msg, OpenSPCoop2Properties openspcoopProperties,
+			Map<String, List<String>> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
+		try {						
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
 				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePDResponse(logCore);
@@ -398,10 +400,10 @@ public class ServicesUtils {
 				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(logCore);
 			}
 			
-			String idTransazione = TransportUtils.get(propertiesTrasporto, Costanti.ID_TRANSAZIONE);
+			List<String> idTransazioneValues = TransportUtils.getRawObject(propertiesTrasporto, Costanti.ID_TRANSAZIONE);
 			
-			if(idTransazione==null) {
-				idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
+			if(idTransazioneValues==null || idTransazioneValues.isEmpty()) {
+				String idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
 				HeaderIntegrazione hdr = new HeaderIntegrazione(idTransazione);
 				utilitiesIntegrazione.setTransportProperties(hdr,propertiesTrasporto,null);
 			}
@@ -417,16 +419,40 @@ public class ServicesUtils {
 				java.util.Enumeration<?> en = pHeaderRateLimiting.keys();
 		    	while(en.hasMoreElements()){
 		    		String key = (String) en.nextElement();
-		    		propertiesTrasporto.put(key, pHeaderRateLimiting.getProperty(key));
+		    		TransportUtils.setHeader(propertiesTrasporto,key, pHeaderRateLimiting.getProperty(key));
 		    	}	
 			}
 		}
 		setCORSAllowOrigin(propertiesTrasporto, logCore, portaDelegata, pddContext, protocolContext);
+		
+		try {
+			if(propertiesTrasporto!=null && !propertiesTrasporto.isEmpty()) {
+				
+				OpenSPCoop2MessageProperties forwardHeader = null;
+				if(msg!=null &&
+						openspcoopProperties!=null // Puo' non essere inizializzato
+						) {
+					if(ServiceBinding.REST.equals(msg.getServiceBinding())) {
+						forwardHeader = msg.getForwardTransportHeader(openspcoopProperties.getRESTServicesHeadersForwardConfig(false));
+					}
+					else {
+						forwardHeader = msg.getForwardTransportHeader(openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
+					}
+				}
+				if(forwardHeader!=null && forwardHeader.size()>0) {
+					for (String key : propertiesTrasporto.keySet()) {
+						forwardHeader.removePropertyValues(key);
+					}
+				}
+			}
+		}catch(Exception e){
+			logCore.error("Pulizia forward header, rispetto a quelli generati da GovWay, fallito: "+e.getMessage(),e);
+		}
 	}
 	
 	
 	
-	private static void setCORSAllowOrigin(Map<String, String> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
+	private static void setCORSAllowOrigin(Map<String, List<String>> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
 		try {
 			
 			Object nomePortaObject = pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
@@ -476,7 +502,7 @@ public class ServicesUtils {
 					CORSFilter corsFilter = new CORSFilter(logCore, cors);
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
 					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.ACTUAL, true);
-					propertiesTrasporto.putAll(res.getHeader());
+					propertiesTrasporto.putAll(res.getHeadersValues());
 				}
 			}
 			
@@ -644,6 +670,15 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 	public void setHeader(String arg0, String arg1) {
 		try {
 			this.outMessage.setHeader(arg0, arg1);
+		}catch(Exception e) {
+			new RuntimeException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void addHeader(String arg0, String arg1) {
+		try {
+			this.outMessage.addHeader(arg0, arg1);
 		}catch(Exception e) {
 			new RuntimeException(e.getMessage(),e);
 		}

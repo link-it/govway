@@ -1129,7 +1129,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			ErogazioniApiHelper.overrideFruizioneUrlInvocazione(env.requestWrapper, idErogatore, idServizio, pd, pdAzione, setPattern, idAzione);
 
-			if (!env.pdHelper.porteDelegateCheckData(TipoOperazione.CHANGE, pd.getNome())) {
+			if (!env.pdHelper.porteDelegateCheckData(TipoOperazione.CHANGE, pd.getNome(), false)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 			}
 

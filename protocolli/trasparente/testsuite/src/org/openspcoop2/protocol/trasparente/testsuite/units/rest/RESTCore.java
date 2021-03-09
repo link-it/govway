@@ -228,7 +228,7 @@ public class RESTCore {
 			String hdrName = (String) itKeys.next();
 			String hdrValue = headers.get(hdrName);
 			
-			String trovato = httpResponse.getHeader(hdrName);
+			String trovato = httpResponse.getHeaderFirstValue(hdrName);
 			
 			if(hdrValue!=null) {
 				Reporter.log("Atteso header '"+hdrName+"' ["+hdrValue+"] trovato ["+trovato+"]");
@@ -244,7 +244,7 @@ public class RESTCore {
 	}
 	
 	public String postInvokeCheckExistsHeader(HttpResponse httpResponse, String hdrName) throws TestSuiteException, Exception{
-		String trovato = httpResponse.getHeader(hdrName);
+		String trovato = httpResponse.getHeaderFirstValue(hdrName);
 		if(trovato!=null) {
 			Reporter.log("Atteso header '"+hdrName+"', trovato con valore: ["+trovato+"]");
 		}
@@ -255,7 +255,7 @@ public class RESTCore {
 		return trovato;
 	}
 	public String postInvokeCheckNotExistsHeader(HttpResponse httpResponse, String hdrName) throws TestSuiteException, Exception{
-		String trovato = httpResponse.getHeader(hdrName);
+		String trovato = httpResponse.getHeaderFirstValue(hdrName);
 		if(trovato!=null) {
 			Reporter.log("Non atteso header '"+hdrName+"', trovato con valore: ["+trovato+"]");
 		}
@@ -687,7 +687,7 @@ public class RESTCore {
 					urlBase = urlBase + "/ALTRO/PARAMETRO";
 				}
 			}
-			String urlDaUtilizzare = TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
+			String urlDaUtilizzare = buildUrl(propertiesURLBased, urlBase);
 
 			Reporter.log("URL: "+urlDaUtilizzare);
 			request.setUrl(urlDaUtilizzare);
@@ -700,23 +700,23 @@ public class RESTCore {
 			// Raccolgo identificativo per verifica traccia
 			String idMessaggio = null;
 			if(!"preflight".equals(tipoTest)) {
-				if(httpResponse.getHeaders()!=null) {
-					Reporter.log("Headers: ("+httpResponse.getHeaders().keySet()+")");
+				if(httpResponse.getHeadersValues()!=null) {
+					Reporter.log("Headers: ("+httpResponse.getHeadersValues().keySet()+")");
 				}
 				if(!authenticationError) {
 					Reporter.log("Leggo id da header ["+TestSuiteProperties.getInstance().getIdMessaggioTrasporto()+"]");
-					idMessaggio = httpResponse.getHeader(TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
+					idMessaggio = httpResponse.getHeaderFirstValue(TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
 					Assert.assertTrue(idMessaggio!=null);
 					Reporter.log("Ricevuto id ["+idMessaggio+"]");
 					repository.add(idMessaggio);
 				}
 				else {
 					Reporter.log("Leggo id transazione da header ["+TestSuiteProperties.getInstance().getIDTransazioneTrasporto()+"]");
-					idMessaggio = "AuthnError-"+httpResponse.getHeader(TestSuiteProperties.getInstance().getIDTransazioneTrasporto());
+					idMessaggio = "AuthnError-"+httpResponse.getHeaderFirstValue(TestSuiteProperties.getInstance().getIDTransazioneTrasporto());
 				}
 			}
 			else {
-				idMessaggio = "Preflight-"+httpResponse.getHeader(TestSuiteProperties.getInstance().getIDTransazioneTrasporto());
+				idMessaggio = "Preflight-"+httpResponse.getHeaderFirstValue(TestSuiteProperties.getInstance().getIDTransazioneTrasporto());
 			}
 			
 			Reporter.log("["+idMessaggio+"] Atteso ["+returnCodeAtteso+"] ritornato ["+httpResponse.getResultHTTPOperation()+"]");
@@ -732,7 +732,7 @@ public class RESTCore {
 			
 			// Controllo risposta redirect
 			if(redirect) {
-				String location = httpResponse.getHeader(headerLocation);
+				String location = httpResponse.getHeaderFirstValue(headerLocation);
 				Reporter.log("Location ricevuta ["+location+"]");
 				Assert.assertTrue(location!=null);
 				String urlBaseSenzaHostPort = urlBase.substring(urlBase.indexOf("/govway/"), urlBase.length());
@@ -745,10 +745,10 @@ public class RESTCore {
 					urlAttesa = "/";
 				}
 				else if(returnCodeAtteso==307) {
-					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new HashMap<String,String>(), urlBaseSenzaHostPort);
+					urlAttesa = buildUrl(new HashMap<String,String>(), urlBaseSenzaHostPort);
 				}
 				else {
-					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new HashMap<String,String>(), urlBase);
+					urlAttesa = buildUrl(new HashMap<String,String>(), urlBase);
 				}
 				if(urlAttesa.contains("govway/api/in/")) {
 					//urlAttesa = urlAttesa.replace("govway/api/in/", "govway/in/"); // la url ritornata e' normalizzata
@@ -779,7 +779,7 @@ public class RESTCore {
 			// Controllo header di risposta atteso
 			if(!redirect && !authorizationError && !authenticationError &&
 					!"soap11".equals(tipoTest) && !"soap12".equals(tipoTest) && !"preflight".equals(tipoTest)) {
-				String headerRispostaRitornatoValore = httpResponse.getHeader(nomeHeaderHttpDaRicevere);
+				String headerRispostaRitornatoValore = httpResponse.getHeaderFirstValue(nomeHeaderHttpDaRicevere);
 				Reporter.log("["+idMessaggio+"] Atteso Header ["+nomeHeaderHttpDaRicevere+"] con valore atteso ["+valoreHeaderHttpDaRicevere+"] e valore ritornato ["+headerRispostaRitornatoValore+"]");
 				Assert.assertTrue(headerRispostaRitornatoValore!=null);
 				Assert.assertTrue(headerRispostaRitornatoValore.equals(valoreHeaderHttpDaRicevere));
@@ -859,6 +859,11 @@ public class RESTCore {
 		}
 		
 		
+	}
+	
+	@SuppressWarnings("deprecation")
+	private String buildUrl(Map<String,String> propertiesURLBased, String urlBase) {
+		return TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
 	}
 	
 }

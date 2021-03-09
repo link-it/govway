@@ -20,12 +20,13 @@
 package org.openspcoop2.pdd.services.connector.messages;
 
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * DirectVMConnectorOutMessage
@@ -79,19 +80,27 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 		this.responseHeaderMessage = message;
 	}
 	
-	private Map<String, String> headers = new Hashtable<String, String>();
-	public String getHeader(String key) throws ConnectorException{
-		return this.headers.get(key);
+	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
+	public List<String> getHeaderValues(String key) throws ConnectorException{
+		return TransportUtils.getRawObject(this.headers,key);
 	}
-	public Map<String, String> getHeaders(){
-		Map<String, String> pH = new HashMap<String, String>();
+	public Map<String,  List<String>> getHeaders(){
+		Map<String,  List<String>> pH = new HashMap<String,  List<String>>();
 		pH.putAll(this.headers);
 		return pH;
 	}
 	@Override
 	public void setHeader(String key,String value) throws ConnectorException{
 		try{
-			this.headers.put(key,value);
+			TransportUtils.setHeader(this.headers, key,value);
+		}catch(Exception e){
+			throw new ConnectorException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void addHeader(String key,String value) throws ConnectorException{
+		try{
+			TransportUtils.addHeader(this.headers, key,value);
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}

@@ -53,6 +53,7 @@ import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.jose.MessageSecurityReceiver_jose;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -144,10 +145,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		String correlationId = null;
 		if(msg!=null) {
 			if(request && msg.getTransportRequestContext()!=null) {
-				correlationId = msg.getTransportRequestContext().getParameterTrasporto(correlationIdHeader);
+				correlationId = msg.getTransportRequestContext().getHeaderFirstValue(correlationIdHeader);
 			}
 			else if(!request && msg.getTransportResponseContext()!=null) {
-				correlationId = msg.getTransportResponseContext().getParameterTrasporto(correlationIdHeader);
+				correlationId = msg.getTransportResponseContext().getHeaderFirstValue(correlationIdHeader);
 			}
 		}
 		
@@ -155,10 +156,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		String replyToAddress = null;
 		if(msg!=null) {
 			if(request && msg.getTransportRequestContext()!=null) {
-				replyToAddress = msg.getTransportRequestContext().getParameterTrasporto(replyToHeader);
+				replyToAddress = msg.getTransportRequestContext().getHeaderFirstValue(replyToHeader);
 			}
 			else if(!request && msg.getTransportResponseContext()!=null) {
-				replyToAddress = msg.getTransportResponseContext().getParameterTrasporto(replyToHeader);
+				replyToAddress = msg.getTransportResponseContext().getHeaderFirstValue(replyToHeader);
 			}
 		}
 		
@@ -166,10 +167,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		String location = null;
 		if(msg!=null) {
 			if(request && msg.getTransportRequestContext()!=null) {
-				location = msg.getTransportRequestContext().getParameterTrasporto(locationHeader);
+				location = msg.getTransportRequestContext().getHeaderFirstValue(locationHeader);
 			}
 			else if(!request && msg.getTransportResponseContext()!=null) {
-				location = msg.getTransportResponseContext().getParameterTrasporto(locationHeader);
+				location = msg.getTransportResponseContext().getHeaderFirstValue(locationHeader);
 			}
 		}
 		
@@ -213,7 +214,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						}
 						if(this.modiProperties.isRestSecurityTokenPushReplyToUpdateInErogazione()) {
 							if(msg.getTransportRequestContext()!=null) {
-								msg.getTransportRequestContext().removeParameterTrasporto(replyToHeader); // rimuovo se già esiste
+								msg.getTransportRequestContext().removeHeader(replyToHeader); // rimuovo se già esiste
 							}
 							msg.forceTransportHeader(replyToHeader, replyTo);
 						}
@@ -369,15 +370,20 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			boolean buildSecurityTokenInRequest) throws Exception {
 		
 		String securityTokenHeader = headerTokenRest;
-		String securityToken = null;
+		List<String> securityTokens = null;
 		if(msg!=null) {
 			if(request && msg.getTransportRequestContext()!=null) {
-				securityToken = msg.getTransportRequestContext().getParameterTrasporto(securityTokenHeader);
+				securityTokens = msg.getTransportRequestContext().getHeaderValues(securityTokenHeader);
 			}
 			else if(!request && msg.getTransportResponseContext()!=null) {
-				securityToken = msg.getTransportResponseContext().getParameterTrasporto(securityTokenHeader);
+				securityTokens = msg.getTransportResponseContext().getHeaderValues(securityTokenHeader);
 			}
 		}
+		String securityToken = null;
+		if(securityTokens!=null && !securityTokens.isEmpty()) {
+			securityToken = securityTokens.get(0);
+		}
+		
 		
 		boolean attesoSecurityHeader = true;
 		if(!request) {
@@ -392,7 +398,13 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						"Header HTTP '"+securityTokenHeader+"' non presente"));
 			}
 			return null;
-			
+		}
+		if(securityTokens.size()>1) {
+			if(attesoSecurityHeader) {
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_TOKEN_PRESENTE_PIU_VOLTE, 
+						"Header HTTP '"+securityTokenHeader+"' presente più volte"));
+			}
+			return null;
 		}
 		
 		String token = securityToken;
@@ -733,18 +745,26 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			String digestValueInHeaderHTTP = null;
 			if(integrita && msg.castAsRest().hasContent()) {
 				
-				String digest = null;
+				List<String> digests = null;
 				if(msg!=null) {
 					if(request && msg.getTransportRequestContext()!=null) {
-						digest = msg.getTransportRequestContext().getParameterTrasporto(digestHeader);
+						digests = msg.getTransportRequestContext().getHeaderValues(digestHeader);
 					}
 					else if(!request && msg.getTransportResponseContext()!=null) {
-						digest = msg.getTransportResponseContext().getParameterTrasporto(digestHeader);
+						digests = msg.getTransportResponseContext().getHeaderValues(digestHeader);
 					}
-				}				
+				}	
+				String digest = null;
+				if(digests!=null && !digests.isEmpty()) {
+					digest = digests.get(0);
+				}
 				if(digest==null) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_NON_PRESENTE, 
 							"Header HTTP '"+digestHeader+"' non presente"));
+				}
+				else if(digests.size()>1) {
+					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_PRESENTE_PIU_VOLTE, 
+							"Header HTTP '"+digestHeader+"' presente più volte"));
 				}
 				else {
 					digestValueInHeaderHTTP = toString(digest);
@@ -790,7 +810,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			String claimSignedHeader = this.modiProperties.getRestSecurityTokenClaimSignedHeaders();
 			if(objectNode.has(claimSignedHeader)) {
 				
-				Map<String, String> headerHttpAttesi = new HashMap<String, String>();
+				Map<String, List<String>> headerHttpAttesi = new HashMap<String, List<String>>();
 				
 				Object signedHeaders = objectNode.get(claimSignedHeader);
 				if(signedHeaders==null) {
@@ -823,8 +843,8 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 									String hdrName = (String) fieldNames.next();
 									try {
 										String hdrValue = toString(oNode.get(hdrName));
-										busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_PREFIX+hdrName, hdrValue);
-										headerHttpAttesi.put(hdrName, hdrValue);
+										ModIUtilities.addHeaderProperty(busta, hdrName, hdrValue);
+										TransportUtils.addHeader(headerHttpAttesi, hdrName, hdrValue);
 									}catch(Exception e) {
 										throw new Exception("array["+i+"] possiede header '"+hdrName+"' con un valore non valido: "+e.getMessage(),e);
 									}
@@ -845,33 +865,35 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					Iterator<String> headers = headerHttpAttesi.keySet().iterator();
 					while (headers.hasNext()) {
 						String hdrName = (String) headers.next();
-						String hdrValue = headerHttpAttesi.get(hdrName);
-						boolean valid = false;
-						if(digestHeader.toLowerCase().equals(hdrName)) {
-							valid = hdrValue.equals(digestValueInHeaderHTTP); 
-							//System.out.println("VALID DIGEST: "+valid);
-						}
-						else {
-							String hdrFound = null;
-							if(request && msg.getTransportRequestContext()!=null) {
-								hdrFound = msg.getTransportRequestContext().getParameterTrasporto(hdrName);
-							}
-							else if(!request && msg.getTransportResponseContext()!=null) {
-								hdrFound = msg.getTransportResponseContext().getParameterTrasporto(hdrName);
-							}
-							if(hdrFound==null) {
-								valid = true;
-								erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
-										"Header HTTP '"+hdrName+"', dichiarato tra gli header firmati, non trovato"));
+						List<String> hrdValues = headerHttpAttesi.get(hdrName);
+						for (String hdrValue : hrdValues) {
+							boolean valid = false;
+							if(digestHeader.toLowerCase().equals(hdrName)) {
+								valid = hdrValue.equals(digestValueInHeaderHTTP); 
+								//System.out.println("VALID DIGEST: "+valid);
 							}
 							else {
-								valid = hdrValue.equals(hdrFound); 
+								List<String> hdrFound = null;
+								if(request && msg.getTransportRequestContext()!=null) {
+									hdrFound = msg.getTransportRequestContext().getHeaderValues(hdrName);
+								}
+								else if(!request && msg.getTransportResponseContext()!=null) {
+									hdrFound = msg.getTransportResponseContext().getHeaderValues(hdrName);
+								}
+								if(hdrFound==null || hdrFound.isEmpty()) {
+									valid = true;
+									erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
+											"Header HTTP '"+hdrName+"', dichiarato tra gli header firmati, non trovato"));
+								}
+								else {
+									valid = hdrFound.contains(hdrValue); 
+								}
+								//System.out.println("VALID HDR '"+hdrName+"': "+valid);
 							}
-							//System.out.println("VALID HDR '"+hdrName+"': "+valid);
-						}
-						if(!valid) {
-							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
-									"Header HTTP '"+hdrName+"' possiede un valore differente rispetto a quello presente negli header firmati"));
+							if(!valid) {
+								erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
+										"Header HTTP '"+hdrName+"' possiede un valore differente rispetto a quello presente negli header firmati"));
+							}
 						}
 					}
 				}

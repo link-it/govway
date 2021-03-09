@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneBusta;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneException;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.slf4j.Logger;
@@ -550,7 +551,7 @@ public class UtilitiesIntegrazioneBC {
 		return hdr;
 	}
 	
-	public void readTransportProperties(Map<String, String> prop,
+	public void readTransportProperties(Map<String, List<String>> prop,
 			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
 		try{
 			if(prop!=null && integrazione!=null){
@@ -570,52 +571,55 @@ public class UtilitiesIntegrazioneBC {
 								
 									// Busta
 									if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoMittente(prop.get(key));	
+										integrazione.getBusta().setTipoMittente(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setMittente(prop.get(key));	
+										integrazione.getBusta().setMittente(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoDestinatario(prop.get(key));	
+										integrazione.getBusta().setTipoDestinatario(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setDestinatario(prop.get(key));	
+										integrazione.getBusta().setDestinatario(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoServizio(prop.get(key));	
+										integrazione.getBusta().setTipoServizio(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setServizio(prop.get(key));	
+										integrazione.getBusta().setServizio(TransportUtils.getFirstValue(prop,key));	
 									}
 //									else if(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO.equals(keywordIntegrazione)) {
+//										String v = TransportUtils.getFirstValue(prop,key);
 //										try{
-//											integrazione.getBusta().setVersioneServizio(Integer.parseInt(prop.getProperty(key)));
+//											if(v!=null) {
+//												integrazione.getBusta().setVersioneServizio(Integer.parseInt(v));
+//											}
 //										}catch(Exception e){
-//											throw new Exception("Formato versione ["+prop.getProperty(key)+"] non corretto: "+e.getMessage(),e);
+//											throw new Exception("Formato versione ["+v+"] non corretto: "+e.getMessage(),e);
 //										}
 //									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setAzione(prop.get(key));	
+										integrazione.getBusta().setAzione(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setID(prop.get(key));	
+										integrazione.getBusta().setID(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setRiferimentoMessaggio(prop.get(key));	
+										integrazione.getBusta().setRiferimentoMessaggio(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setIdCollaborazione(prop.get(key));	
+										integrazione.getBusta().setIdCollaborazione(TransportUtils.getFirstValue(prop,key));	
 									}
 									
 									// id e servizio applicativo
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO.equals(keywordIntegrazione)) {
-										integrazione.setIdApplicativo(prop.get(key));	
+										integrazione.setIdApplicativo(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO.equals(keywordIntegrazione)) {
-										integrazione.setServizioApplicativo(prop.get(key));	
+										integrazione.setServizioApplicativo(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(this.openspcoop2 && CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE.equals(keywordIntegrazione)) {
-										integrazione.setIdTransazione(prop.get(key));	
+										integrazione.setIdTransazione(TransportUtils.getFirstValue(prop,key));	
 									}
 								}
 								break;
@@ -630,7 +634,7 @@ public class UtilitiesIntegrazioneBC {
 		}
 	}
 	
-	public void readUrlProperties(Map<String, String> prop,
+	public void readUrlProperties(Map<String, List<String>> prop,
 			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
 		try{
 			if(prop!=null && integrazione!=null){
@@ -649,52 +653,55 @@ public class UtilitiesIntegrazioneBC {
 								
 									// Busta
 									if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoMittente(prop.get(key));	
+										integrazione.getBusta().setTipoMittente(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setMittente(prop.get(key));	
+										integrazione.getBusta().setMittente(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoDestinatario(prop.get(key));	
+										integrazione.getBusta().setTipoDestinatario(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setDestinatario(prop.get(key));	
+										integrazione.getBusta().setDestinatario(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoServizio(prop.get(key));	
+										integrazione.getBusta().setTipoServizio(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setServizio(prop.get(key));	
+										integrazione.getBusta().setServizio(TransportUtils.getFirstValue(prop,key));	
 									}
 //									else if(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO.equals(keywordIntegrazione)) {
+//										String v = TransportUtils.getFirstValue(prop,key);
 //										try{
-//											integrazione.getBusta().setVersioneServizio(Integer.parseInt(prop.get(key)));
+//											if(v!=null) {
+//												integrazione.getBusta().setVersioneServizio(Integer.parseInt(v));
+//											}
 //										}catch(Exception e){
-//											throw new Exception("Formato versione ["+prop.get(key)+"] non corretto: "+e.getMessage(),e);
+//											throw new Exception("Formato versione ["+v+"] non corretto: "+e.getMessage(),e);
 //										}
 //									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setAzione(prop.get(key));	
+										integrazione.getBusta().setAzione(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setID(prop.get(key));	
+										integrazione.getBusta().setID(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setRiferimentoMessaggio(prop.get(key));	
+										integrazione.getBusta().setRiferimentoMessaggio(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setIdCollaborazione(prop.get(key));	
+										integrazione.getBusta().setIdCollaborazione(TransportUtils.getFirstValue(prop,key));	
 									}
 									
 									// id e servizio applicativo
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO.equals(keywordIntegrazione)) {
-										integrazione.setIdApplicativo(prop.get(key));	
+										integrazione.setIdApplicativo(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO.equals(keywordIntegrazione)) {
-										integrazione.setServizioApplicativo(prop.get(key));	
+										integrazione.setServizioApplicativo(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(this.openspcoop2 && CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE.equals(keywordIntegrazione)) {
-										integrazione.setIdTransazione(prop.get(key));	
+										integrazione.setIdTransazione(TransportUtils.getFirstValue(prop,key));	
 									}
 								}
 								break;
@@ -712,7 +719,7 @@ public class UtilitiesIntegrazioneBC {
 
 
 	public void setUrlProperties(HeaderIntegrazione integrazione,
-			Map<String, String> properties,
+			Map<String, List<String>> properties,
 			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
 
 		try{
@@ -720,94 +727,94 @@ public class UtilitiesIntegrazioneBC {
 				if(integrazione.getBusta()!=null){				
 					if(integrazione.getBusta().getTipoMittente()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE), integrazione.getBusta().getTipoMittente());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE), integrazione.getBusta().getTipoMittente());
 						}
 					}
 					if(integrazione.getBusta().getMittente()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE), integrazione.getBusta().getMittente());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE), integrazione.getBusta().getMittente());
 						}
 					}
 					if(integrazione.getBusta().getTipoDestinatario()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO), integrazione.getBusta().getTipoDestinatario());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO), integrazione.getBusta().getTipoDestinatario());
 						}
 					}
 					if(integrazione.getBusta().getDestinatario()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO), integrazione.getBusta().getDestinatario());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO), integrazione.getBusta().getDestinatario());
 						}
 					}
 					if(integrazione.getBusta().getTipoServizio()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO), integrazione.getBusta().getTipoServizio());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO), integrazione.getBusta().getTipoServizio());
 						}
 					}
 					if(integrazione.getBusta().getServizio()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO), integrazione.getBusta().getServizio());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO), integrazione.getBusta().getServizio());
 						}
 					}
 //					if(integrazione.getBusta().getVersioneServizio()!=null) {
 //						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO)) {
-//							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO), integrazione.getBusta().getVersioneServizio().intValue()+"");
+//							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO), integrazione.getBusta().getVersioneServizio().intValue()+"");
 //						}
 //					}
 					if(integrazione.getBusta().getAzione()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE), integrazione.getBusta().getAzione());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE), integrazione.getBusta().getAzione());
 						}
 					}
 					if(integrazione.getBusta().getID()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO), integrazione.getBusta().getID());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO), integrazione.getBusta().getID());
 						}
 					}
 					if(integrazione.getBusta().getRiferimentoMessaggio()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO), integrazione.getBusta().getRiferimentoMessaggio());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO), integrazione.getBusta().getRiferimentoMessaggio());
 						}
 					}
 					if(integrazione.getBusta().getIdCollaborazione()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE)) {
-							properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE), integrazione.getBusta().getIdCollaborazione());
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE), integrazione.getBusta().getIdCollaborazione());
 						}
 					}
 				}
 				if(integrazione.getIdApplicativo()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)) {
-						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO), integrazione.getIdApplicativo());
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO), integrazione.getIdApplicativo());
 					}
 				}
 				if(integrazione.getServizioApplicativo()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)) {
-						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
 					}
 				}
 				if(this.openspcoop2 && integrazione.getIdTransazione()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE)) {
-						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE), integrazione.getIdTransazione());
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE), integrazione.getIdTransazione());
 					}
 				}
 			}
 			if(properties!=null){
-//				properties.put(CostantiPdD.URL_BASED_PDD,URLEncoder.encode(this.openspcoopProperties.getHttpServer(),"UTF-8"));
+//				TransportUtils.setParameter(properties,CostantiPdD.URL_BASED_PDD,URLEncoder.encode(this.openspcoopProperties.getHttpServer(),"UTF-8"));
 //				if(this.openspcoopProperties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoopProperties.getHttpXPdDDetails())){
-//					properties.put(CostantiPdD.URL_BASED_PDD_DETAILS,URLEncoder.encode(this.openspcoopProperties.getHttpXPdDDetails(),"UTF-8"));
+//					TransportUtils.setParameter(properties,CostantiPdD.URL_BASED_PDD_DETAILS,URLEncoder.encode(this.openspcoopProperties.getHttpXPdDDetails(),"UTF-8"));
 //				}
 				// Non deve essere effettuato a questo livello l'URLEncoder altrimenti si ottiene una doppia codifica, essendo poi fatta anche per tutti i valori in ConnettoreUtils.
 				
 				if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_INFO)) {
 					if(this.openspcoop2) {
-						properties.put(OPENSPCOOP2_URL_BASED_PDD,this.openspcoopProperties.getHttpServer());
+						TransportUtils.setParameter(properties,OPENSPCOOP2_URL_BASED_PDD,this.openspcoopProperties.getHttpServer());
 						if(this.openspcoopProperties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoopProperties.getHttpXPdDDetails())){
-							properties.put(OPENSPCOOP2_URL_BASED_PDD_DETAILS,this.openspcoopProperties.getHttpXPdDDetails());
+							TransportUtils.setParameter(properties,OPENSPCOOP2_URL_BASED_PDD_DETAILS,this.openspcoopProperties.getHttpXPdDDetails());
 						}
 					}
 					else {
-						properties.put(OPENSPCOOP1_URL_BASED_PDD,this.openspcoopProperties.getHttpServer());
+						TransportUtils.setParameter(properties,OPENSPCOOP1_URL_BASED_PDD,this.openspcoopProperties.getHttpServer());
 						if(this.openspcoopProperties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoopProperties.getHttpXPdDDetails())){
-							properties.put(OPENSPCOOP1_URL_BASED_PDD_DETAILS,this.openspcoopProperties.getHttpXPdDDetails());
+							TransportUtils.setParameter(properties,OPENSPCOOP1_URL_BASED_PDD_DETAILS,this.openspcoopProperties.getHttpXPdDDetails());
 						}
 					}
 				}
@@ -823,7 +830,7 @@ public class UtilitiesIntegrazioneBC {
 							String name = (String) itProtocolInfos.next();
 							String value = protocolInfos.get(name);
 							String nameWithPrefix = (prefixProtocolInfo!=null) ? prefixProtocolInfo.trim()+name : name;
-							properties.put(nameWithPrefix,value);
+							TransportUtils.setParameter(properties,nameWithPrefix,value);
 						}
 					}
 				}
@@ -834,11 +841,11 @@ public class UtilitiesIntegrazioneBC {
 		}
 	}
 	
-	public void setInfoProductTransportProperties(Map<String, String> properties) throws HeaderIntegrazioneException{
+	public void setInfoProductTransportProperties(Map<String, List<String>> properties) throws HeaderIntegrazioneException{
 		setTransportProperties(null, properties, null);
 	}
 	public void setTransportProperties(HeaderIntegrazione integrazione,
-			Map<String, String> properties,
+			Map<String, List<String>> properties,
 			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
 
 		try{
@@ -846,73 +853,73 @@ public class UtilitiesIntegrazioneBC {
 				if(integrazione.getBusta()!=null){
 					if(integrazione.getBusta().getTipoMittente()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)), integrazione.getBusta().getTipoMittente());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)), integrazione.getBusta().getTipoMittente());
 						}
 					}
 					if(integrazione.getBusta().getMittente()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE)), integrazione.getBusta().getMittente());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE)), integrazione.getBusta().getMittente());
 						}
 					}
 					if(integrazione.getBusta().getTipoDestinatario()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)), integrazione.getBusta().getTipoDestinatario());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)), integrazione.getBusta().getTipoDestinatario());
 						}
 					}
 					if(integrazione.getBusta().getDestinatario()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO)), integrazione.getBusta().getDestinatario());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO)), integrazione.getBusta().getDestinatario());
 						}
 					}
 					if(integrazione.getBusta().getTipoServizio()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)), integrazione.getBusta().getTipoServizio());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)), integrazione.getBusta().getTipoServizio());
 						}
 					}
 					if(integrazione.getBusta().getServizio()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)), integrazione.getBusta().getServizio());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)), integrazione.getBusta().getServizio());
 						}
 					}
 //					if(integrazione.getBusta().getVersioneServizio()!=null) {
 //						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO)) {
-//							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO)), integrazione.getBusta().getVersioneServizio().intValue()+"");
+//							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO)), integrazione.getBusta().getVersioneServizio().intValue()+"");
 //						}
 //					}
 					if(integrazione.getBusta().getAzione()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)), integrazione.getBusta().getAzione());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)), integrazione.getBusta().getAzione());
 						}
 					}
 					if(integrazione.getBusta().getID()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)), integrazione.getBusta().getID());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)), integrazione.getBusta().getID());
 						}
 					}
 					if(integrazione.getBusta().getRiferimentoMessaggio()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO)), integrazione.getBusta().getRiferimentoMessaggio());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO)), integrazione.getBusta().getRiferimentoMessaggio());
 						}
 					}
 					if(integrazione.getBusta().getIdCollaborazione()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE)) {
-							properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE)), integrazione.getBusta().getIdCollaborazione());
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE)), integrazione.getBusta().getIdCollaborazione());
 						}
 					}
 				}
 				if(integrazione.getIdApplicativo()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)) {
-						properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)), integrazione.getIdApplicativo());
+						TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)), integrazione.getIdApplicativo());
 					}
 				}
 				if(integrazione.getServizioApplicativo()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)) {
-						properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)), integrazione.getServizioApplicativo());
+						TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)), integrazione.getServizioApplicativo());
 					}
 				}
 				if(this.openspcoop2 && integrazione.getIdTransazione()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE)) {
-						properties.put(normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE)), integrazione.getIdTransazione());
+						TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE)), integrazione.getIdTransazione());
 					}
 				}
 			}
@@ -931,11 +938,11 @@ public class UtilitiesIntegrazioneBC {
 						hdrPddDetails = normalizeX_(OPENSPCOOP1_HEADER_HTTP_X_PDD_DETAILS);
 					}
 					if(properties.containsKey(hdrPdd)==false) {
-						properties.put(hdrPdd,this.openspcoopProperties.getHttpServer());
+						TransportUtils.setParameter(properties,hdrPdd,this.openspcoopProperties.getHttpServer());
 					}
 					if(this.openspcoopProperties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoopProperties.getHttpXPdDDetails())){
 						if(properties.containsKey(hdrPddDetails)==false) {
-							properties.put(hdrPddDetails,this.openspcoopProperties.getHttpXPdDDetails());
+							TransportUtils.setParameter(properties,hdrPddDetails,this.openspcoopProperties.getHttpXPdDDetails());
 						}
 					}
 				}
@@ -944,12 +951,12 @@ public class UtilitiesIntegrazioneBC {
 				if(userAgent) {
 					if(this.request) {
 						if(properties.containsKey(HttpConstants.USER_AGENT)==false) {
-							properties.put(HttpConstants.USER_AGENT,this.openspcoopProperties.getHttpUserAgent());
+							TransportUtils.setParameter(properties,HttpConstants.USER_AGENT,this.openspcoopProperties.getHttpUserAgent());
 						}
 					}
 					else {
 						if(properties.containsKey(HttpConstants.SERVER)==false) {
-							properties.put(HttpConstants.SERVER,this.openspcoopProperties.getHttpUserAgent());
+							TransportUtils.setParameter(properties,HttpConstants.SERVER,this.openspcoopProperties.getHttpUserAgent());
 						}
 					}
 				}
@@ -964,7 +971,7 @@ public class UtilitiesIntegrazioneBC {
 							String name = (String) itProtocolInfos.next();
 							String value = protocolInfos.get(name);
 							String nameWithPrefix = (prefixProtocolInfo!=null) ? prefixProtocolInfo.trim()+name : name;
-							properties.put(normalizeX_(nameWithPrefix),value);
+							TransportUtils.setParameter(properties,normalizeX_(nameWithPrefix),value);
 						}
 					}
 				}

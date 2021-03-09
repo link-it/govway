@@ -200,13 +200,13 @@ public class RestTest extends ConfigLoader {
 		
 		responses.forEach( r -> {
 			
-			Utils.checkXLimitHeader(logRateLimiting, Headers.AvgTimeResponseLimit, r.getHeader(Headers.AvgTimeResponseLimit), soglia);			
+			Utils.checkXLimitHeader(logRateLimiting, Headers.AvgTimeResponseLimit, r.getHeaderFirstValue(Headers.AvgTimeResponseLimit), soglia);			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,soglia);							
-				Utils.checkXLimitWindows(r.getHeader(Headers.AvgTimeResponseLimit), soglia, windowMap);
+				Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.AvgTimeResponseLimit), soglia, windowMap);
 			}
 			
-			assertTrue(Integer.valueOf(r.getHeader(Headers.AvgTimeResponseReset)) <= windowSize);
+			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.AvgTimeResponseReset)) <= windowSize);
 			assertEquals(200, r.getResultHTTPOperation());			
 		});
 	}
@@ -215,21 +215,21 @@ public class RestTest extends ConfigLoader {
 		
 		
 		for (var r: responses) {
-			Utils.checkXLimitHeader(logRateLimiting, Headers.AvgTimeResponseLimit, r.getHeader(Headers.AvgTimeResponseLimit), soglia);			
+			Utils.checkXLimitHeader(logRateLimiting, Headers.AvgTimeResponseLimit, r.getHeaderFirstValue(Headers.AvgTimeResponseLimit), soglia);			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,soglia);							
-				Utils.checkXLimitWindows(r.getHeader(Headers.AvgTimeResponseLimit), soglia, windowMap);
+				Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.AvgTimeResponseLimit), soglia, windowMap);
 			}
 			
-			assertTrue(Integer.valueOf(r.getHeader(Headers.AvgTimeResponseReset)) <= windowSize);
+			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.AvgTimeResponseReset)) <= windowSize);
 			assertEquals(429, r.getResultHTTPOperation());
 			
 			JSONObject jsonResp = JsonPathExpressionEngine.getJSONObject(new String(r.getContent()));
 			Utils.matchLimitExceededRest(jsonResp);
 			
-			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeader(Headers.GovWayTransactionErrorType));
+			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 			Utils.checkHeaderTooManyRequest(r);
-			assertNotEquals(null, r.getHeader(Headers.RetryAfter));
+			assertNotEquals(null, r.getHeaderFirstValue(Headers.RetryAfter));
 		}	
 	}
 	

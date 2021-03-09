@@ -80,6 +80,8 @@ public class FileTraceConfig {
 	private String headerPrefix = "";
 	private String headerSuffix = "";
 	
+	private String headerMultiValueSeparator = ","; // per singolo header
+	
 	private List<String> propertiesSortKeys = new ArrayList<String>();
 	private Map<String, String> propertiesNames = new HashMap<String, String>();
 	private Map<String, String> propertiesValues = new HashMap<String, String>();
@@ -352,6 +354,11 @@ public class FileTraceConfig {
 		if(tmp!=null) {
 			this.headerSuffix = tmp;
 		}
+		
+		tmp = getProperty(reader, "format.header.multiValueSeparator", false);
+		if(tmp!=null) {
+			this.headerMultiValueSeparator = tmp;
+		}
 	}
 	
 	private String getProperty(PropertiesReader reader, String key, boolean required) throws UtilsException {
@@ -387,6 +394,10 @@ public class FileTraceConfig {
 	}
 	public String getHeaderSuffix() {
 		return this.headerSuffix;
+	}
+	
+	public String getHeaderMultiValueSeparator() {
+		return this.headerMultiValueSeparator;
 	}
 	
 	public List<String> getPropertiesSortKeys() {

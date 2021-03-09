@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.sdk.dump;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +40,7 @@ import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * Messaggio
@@ -70,9 +71,9 @@ public class Messaggio implements Serializable{
 
 	private List<Attachment> attachments = new ArrayList<>();
 	
-	private Map<String, String> headers = new Hashtable<String, String>();
+	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
 	
-	private Map<String, String> contenuti = new Hashtable<String, String>();
+	private Map<String, String> contenuti = new HashMap<String, String>();
 	
 	private String idTransazione;
 
@@ -124,7 +125,7 @@ public class Messaggio implements Serializable{
 					if(valore==null) {
 						valore = "";
 					}
-					this.bodyMultipartInfo.getHeaders().put(hdr.getNome(), valore);
+					TransportUtils.addHeader(this.bodyMultipartInfo.getHeaders(), hdr.getNome(), valore);
 				}
 			}
 		}
@@ -142,7 +143,7 @@ public class Messaggio implements Serializable{
 						if(valore==null) {
 							valore = "";
 						}
-						attachment.getHeaders().put(hdr.getNome(), valore);
+						TransportUtils.addHeader(attachment.getHeaders(), hdr.getNome(), valore);
 					}
 				}
 				this.attachments.add(attachment);
@@ -155,7 +156,7 @@ public class Messaggio implements Serializable{
 				if(valore==null) {
 					valore = "";
 				}
-				this.headers.put(hdr.getNome(), valore);
+				TransportUtils.addHeader(this.headers, hdr.getNome(), valore);
 			}
 		}
 		
@@ -201,12 +202,16 @@ public class Messaggio implements Serializable{
 				Iterator<String> its = this.bodyMultipartInfo.getHeaders().keySet().iterator();
 				while (its.hasNext()) {
 					String key = (String) its.next();
-					String value = this.bodyMultipartInfo.getHeaders().get(key);
-					DumpMultipartHeader multipartHeader = new DumpMultipartHeader();
-					multipartHeader.setDumpTimestamp(this.gdo);
-					multipartHeader.setNome(key);
-					multipartHeader.setValore(value);
-					dumpMessaggio.addMultipartHeader(multipartHeader);
+					List<String> values = this.bodyMultipartInfo.getHeaders().get(key);
+					if(values!=null && !values.isEmpty()) {
+						for (String value : values) {
+							DumpMultipartHeader multipartHeader = new DumpMultipartHeader();
+							multipartHeader.setDumpTimestamp(this.gdo);
+							multipartHeader.setNome(key);
+							multipartHeader.setValore(value);
+							dumpMessaggio.addMultipartHeader(multipartHeader);		
+						}
+					}
 				}
 			}
 		}
@@ -223,12 +228,16 @@ public class Messaggio implements Serializable{
 					Iterator<String> its = attachment.getHeaders().keySet().iterator();
 					while (its.hasNext()) {
 						String key = (String) its.next();
-						String value = attachment.getHeaders().get(key);
-						DumpHeaderAllegato dumpHeaderAllegato = new DumpHeaderAllegato();
-						dumpHeaderAllegato.setDumpTimestamp(this.gdo);
-						dumpHeaderAllegato.setNome(key);
-						dumpHeaderAllegato.setValore(value);
-						dumpAllegato.addHeader(dumpHeaderAllegato);
+						List<String> values = attachment.getHeaders().get(key);
+						if(values!=null && !values.isEmpty()) {
+							for (String value : values) {
+								DumpHeaderAllegato dumpHeaderAllegato = new DumpHeaderAllegato();
+								dumpHeaderAllegato.setDumpTimestamp(this.gdo);
+								dumpHeaderAllegato.setNome(key);
+								dumpHeaderAllegato.setValore(value);
+								dumpAllegato.addHeader(dumpHeaderAllegato);		
+							}
+						}
 					}
 				}
 				dumpMessaggio.addAllegato(dumpAllegato);
@@ -239,12 +248,16 @@ public class Messaggio implements Serializable{
 			Iterator<String> its = this.headers.keySet().iterator();
 			while (its.hasNext()) {
 				String key = (String) its.next();
-				String value = this.headers.get(key);
-				DumpHeaderTrasporto dumpHeaderTrasporto = new DumpHeaderTrasporto();
-				dumpHeaderTrasporto.setDumpTimestamp(this.gdo);
-				dumpHeaderTrasporto.setNome(key);
-				dumpHeaderTrasporto.setValore(value);
-				dumpMessaggio.addHeaderTrasporto(dumpHeaderTrasporto);
+				List<String> values = this.headers.get(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						DumpHeaderTrasporto dumpHeaderTrasporto = new DumpHeaderTrasporto();
+						dumpHeaderTrasporto.setDumpTimestamp(this.gdo);
+						dumpHeaderTrasporto.setNome(key);
+						dumpHeaderTrasporto.setValore(value);
+						dumpMessaggio.addHeaderTrasporto(dumpHeaderTrasporto);		
+					}
+				}
 			}
 		}
 		
@@ -317,11 +330,11 @@ public class Messaggio implements Serializable{
 		this.contenuti = contenuti;
 	}
 	
-	public Map<String, String> getHeaders() {
+	public Map<String, List<String>> getHeaders() {
 		return this.headers;
 	}
 
-	public void setHeaders(Map<String, String> headers) {
+	public void setHeaders(Map<String, List<String>> headers) {
 		this.headers = headers;
 	}
 

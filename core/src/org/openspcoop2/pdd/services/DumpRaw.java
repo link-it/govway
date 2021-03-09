@@ -46,6 +46,7 @@ import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -352,18 +353,17 @@ public class DumpRaw {
 //					this.bfRequest.append("\n");
 //				}
 				
-				Map<String, String> transportHeader = urlProtocolContext.getParametersTrasporto();
+				Map<String, List<String>> transportHeader = urlProtocolContext.getHeaders();
 				if(transportHeader!=null && transportHeader.size()>0){
 					this.bfRequest.append("TransportHeaders: "+transportHeader.size()+"\n");
 					Iterator<String> keys = transportHeader.keySet().iterator();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
-						Object value = transportHeader.get(key);
-						if(value instanceof String){
-							this.bfRequest.append("\t"+key+"="+value+"\n");
-						}
-						else{
-							this.bfRequest.append("\t"+key+"=ObjectType("+value.getClass().getName()+")\n");
+						List<String> values = transportHeader.get(key);
+						if(values!=null && !values.isEmpty()) {
+							for (String value : values) {
+								this.bfRequest.append("\t"+key+"="+value+"\n");
+							}
 						}
 					}
 				}
@@ -371,18 +371,17 @@ public class DumpRaw {
 					this.bfRequest.append("TransportHeaders: "+0+"\n");
 				}
 				
-				Map<String, String> parameterUrl = urlProtocolContext.getParametersFormBased();
+				Map<String, List<String>> parameterUrl = urlProtocolContext.getParameters();
 				if(parameterUrl!=null && parameterUrl.size()>0){
 					this.bfRequest.append("URLParameters: "+parameterUrl.size()+"\n");
 					Iterator<String> keys = parameterUrl.keySet().iterator();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
-						Object value = parameterUrl.get(key);
-						if(value instanceof String){
-							this.bfRequest.append("\t"+key+"="+value+"\n");
-						}
-						else{
-							this.bfRequest.append("\t"+key+"=ObjectType("+value.getClass().getName()+")\n");
+						List<String> values = parameterUrl.get(key);
+						if(values!=null && !values.isEmpty()) {
+							for (String value : values) {
+								this.bfRequest.append("\t"+key+"="+value+"\n");
+							}
 						}
 					}
 				}
@@ -440,7 +439,7 @@ public class DumpRaw {
 			//if(rawMessage!=null){ // devono essere registrati anche solamente gli header
 			try {
 				if(res.getContentType()!=null) {
-					res.getTrasporto().put(HttpConstants.CONTENT_TYPE,res.getContentType());
+					TransportUtils.setHeader(res.getTrasporto(),HttpConstants.CONTENT_TYPE,res.getContentType());
 				}
 				this.dump.dumpBinarioRispostaUscita(this.onlyLogFileTrace, rawMessage, this.urlProtocolContext, res.getTrasporto());
 			}catch(Throwable t){
@@ -450,7 +449,7 @@ public class DumpRaw {
 		}
 	}
 	
-	public void serializeResponse(String rawMessage,String parsingError,Map<String, String> transportHeader,Integer contentLength, String contentType, Integer status) {
+	public void serializeResponse(String rawMessage,String parsingError,Map<String, List<String>> transportHeader,Integer contentLength, String contentType, Integer status) {
 		
 		this.bfResponse.append("------ Response ("+this.idTransaction+") ------\n");
 		
@@ -492,12 +491,11 @@ public class DumpRaw {
 			Iterator<String> keys = transportHeader.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				Object value = transportHeader.get(key);
-				if(value instanceof String){
-					this.bfResponse.append("\t"+key+"="+value+"\n");
-				}
-				else{
-					this.bfResponse.append("\t"+key+"=ObjectType("+value.getClass().getName()+")\n");
+				List<String> values = transportHeader.get(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						this.bfResponse.append("\t"+key+"="+value+"\n");
+					}
 				}
 			}
 		}

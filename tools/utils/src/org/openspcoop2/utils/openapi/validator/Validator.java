@@ -1035,7 +1035,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				
 				HttpBaseRequestEntity<?> httpRequest = (HttpBaseRequestEntity<?>) httpEntity;
 				Request requestOpenApi4j = buildRequestOpenApi4j(httpRequest.getUrl(), httpRequest.getMethod().toString(), 
-						httpRequest.getParametersQuery(), httpRequest.getCookies(), httpRequest.getParametersTrasporto(),
+						httpRequest.getParameters(), httpRequest.getCookies(), httpRequest.getHeaders(),
 						httpRequest.getContent());
 				//val.validatePath(requestOpenApi4j, vData); LA URL deve corrispondere al base path del server
 				if(this.openApi4jConfig.isValidateRequestQuery()) {
@@ -1054,7 +1054,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			else if(httpEntity instanceof HttpBaseResponseEntity<?>) {
 					
 				HttpBaseResponseEntity<?> response = (HttpBaseResponseEntity<?>) httpEntity;
-				Response responseOpenApi4j = buildResponseOpenApi4j(response.getStatus(), response.getParametersTrasporto(), 
+				Response responseOpenApi4j = buildResponseOpenApi4j(response.getStatus(), response.getHeaders(), 
 						response.getContent());
 				if(this.openApi4jConfig.isValidateResponseHeaders()) {
 					val.validateHeaders(responseOpenApi4j, vData);
@@ -1080,7 +1080,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 	}
 	private Request buildRequestOpenApi4j(String urlInvocazione, String method, 
-			Map<String, String> queryParams, List<Cookie> cookies, Map<String, String> headers, 
+			Map<String, List<String>> queryParams, List<Cookie> cookies, Map<String, List<String>> headers, 
 			Object content) throws ProcessingException {
 
 		try {
@@ -1095,11 +1095,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				StringBuilder sb = new StringBuilder();
 				Iterator<String> keys = queryParams.keySet().iterator();
 				while (keys.hasNext()) {
-					if(sb.length()>0) {
-						sb.append("&");
-					}
 					String key = (String) keys.next();
-					String value = (String) queryParams.get(key);
+					List<String> values = queryParams.get(key);
 					try{
 						key = TransportUtils.urlEncodeParam(key,Charset.UTF_8.getValue());
 					}catch(Exception e){
@@ -1109,20 +1106,26 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						else {
 							e.printStackTrace(System.out);
 						}
-					}			
-					try{
-						value = TransportUtils.urlEncodeParam(value,Charset.UTF_8.getValue());
-					}catch(Exception e){
-						if(this.log!=null) {
-							this.log.error("URLEncode value["+value+"] error: "+e.getMessage(),e);
-						}
-						else {
-							e.printStackTrace(System.out);
-						}
 					}
-					sb.append(key);
-					sb.append("=");
-					sb.append(value);
+					
+					for (String value : values) {
+						if(sb.length()>0) {
+							sb.append("&");
+						}
+						try{
+							value = TransportUtils.urlEncodeParam(value,Charset.UTF_8.getValue());
+						}catch(Exception e){
+							if(this.log!=null) {
+								this.log.error("URLEncode value["+value+"] error: "+e.getMessage(),e);
+							}
+							else {
+								e.printStackTrace(System.out);
+							}
+						}
+						sb.append(key);
+						sb.append("=");
+						sb.append(value);	
+					}
 				}
 				queryString = sb.toString();
 			}
@@ -1189,7 +1192,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 	}
 	
-	private static Response buildResponseOpenApi4j(int status, Map<String, String> headers, Object content) throws ProcessingException {
+	private static Response buildResponseOpenApi4j(int status, Map<String, List<String>> headers, Object content) throws ProcessingException {
 		
 		try {
 		

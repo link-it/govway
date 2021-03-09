@@ -20,7 +20,9 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -36,7 +38,7 @@ public abstract class AbstractHttp {
 
 	private String contentType;
 	private byte[] content;
-	private Map<String, String> headers = new Hashtable<String,String>();
+	private Map<String, List<String>> headers = new Hashtable<String,List<String>>();
 	
 	public byte[] getContent() {
 		return this.content;
@@ -46,13 +48,46 @@ public abstract class AbstractHttp {
 	}
 	
 	public void addHeader(String key,String value){
-		this.headers.put(key, value);
+		List<String> l = this.headers.remove(key);
+		if(l==null) {
+			l = new ArrayList<String>();
+		}
+		l.add(value);
+		this.headers.put(key, l);
 	}
+	public void addHeader(String key,List<String> values){
+		List<String> l = this.headers.remove(key);
+		if(l==null) {
+			l = new ArrayList<String>();
+		}
+		l.addAll(values);
+		this.headers.put(key, l);
+	}
+	
+	@Deprecated
 	public Map<String, String> getHeaders() {
+		return TransportUtils.convertToMapSingleValue(this.headers);
+	}
+	public Map<String, List<String>> getHeadersValues() {
 		return this.headers;
 	}
+	
+	@Deprecated
 	public String getHeader(String header) {
 		return TransportUtils.getObjectAsString(this.headers, header);
+	}
+	public String getHeader_compactMultipleValues(String name){
+		return TransportUtils.getObjectAsString(this.headers, name);
+	}
+	public String getHeaderFirstValue(String name){
+		List<String> l = getHeaderValues(name);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
+	}
+	public List<String> getHeaderValues(String header) {
+		return TransportUtils.getRawObject(this.headers, header);
 	}
 	
 	public String getContentType() {

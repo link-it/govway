@@ -103,13 +103,13 @@ public class IntegrazioneUtils {
 					false, HttpConstants.CONTENT_TYPE_JSON, false, badRequest,
 					null,null,
 					path);
-			String errorType = httpResponse.getHeader(CostantiTestSuite.ERROR_TYPE);
+			String errorType = httpResponse.getHeaderFirstValue(CostantiTestSuite.ERROR_TYPE);
 			Reporter.log(CostantiTestSuite.ERROR_TYPE+"='"+errorType+"'");
 			Assert.assertEquals(errorType, 
 					expectedIdCorrelazioneRichiesta ? CostantiTestSuite.ERROR_TYPE_APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED :
 						CostantiTestSuite.ERROR_TYPE_INVALID_RESPONSE);
 			
-			String idTransazione = httpResponse.getHeader(ID_TRANSAZIONE);
+			String idTransazione = httpResponse.getHeaderFirstValue(ID_TRANSAZIONE);
 			Reporter.log(ID_TRANSAZIONE+"='"+idTransazione+"'");
 			Assert.assertNotNull(idTransazione);
 			
@@ -147,11 +147,11 @@ public class IntegrazioneUtils {
 					null, propertiesRequest,
 					path);
 			
-			String errorType = httpResponse.getHeader(CostantiTestSuite.ERROR_TYPE);
+			String errorType = httpResponse.getHeaderFirstValue(CostantiTestSuite.ERROR_TYPE);
 			Reporter.log(CostantiTestSuite.ERROR_TYPE+"='"+errorType+"'");
 			Assert.assertNull(errorType);
 			
-			String idTransazione = httpResponse.getHeader(ID_TRANSAZIONE);
+			String idTransazione = httpResponse.getHeaderFirstValue(ID_TRANSAZIONE);
 			Reporter.log(ID_TRANSAZIONE+"='"+idTransazione+"'");
 			Assert.assertNotNull(idTransazione);
 					

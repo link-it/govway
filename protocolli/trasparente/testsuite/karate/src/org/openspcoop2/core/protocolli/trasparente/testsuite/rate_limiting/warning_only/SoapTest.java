@@ -113,7 +113,7 @@ public class SoapTest extends ConfigLoader {
 		// Pesco dal db l'esito collegato ad una delle warningResponses e controllo che abbia esito Warning RateLimiting
 		org.openspcoop2.utils.Utilities.sleep(Integer.valueOf(System.getProperty("db_sleep_before_read")));
 		int idx = (int) (Math.random()*maxRequests);
-		String tid = warningResponses.get(idx).getHeader("GovWay-Transaction-ID");
+		String tid = warningResponses.get(idx).getHeaderFirstValue("GovWay-Transaction-ID");
 		Map<String, Object> result = dbUtils.readRow("select id,esito from transazioni where id ='"+tid+"'");
 		Integer esito = (Integer) result.get("esito");
 		

@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.input.CountingInputStream;
@@ -115,7 +116,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	protected void dumpResponse(Map<String, String> trasporto) throws Exception{
+	protected void dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		if(this.isResponse!=null){
 			// Registro Debug.
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -222,7 +223,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		TransportResponseContext responseContext = new TransportResponseContext();
 		responseContext.setCodiceTrasporto(this.codice+"");
 		responseContext.setContentLength(this.contentLength);
-		responseContext.setParametersTrasporto(this.propertiesTrasportoRisposta);
+		responseContext.setHeaders(this.propertiesTrasportoRisposta);
 		
 		OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
 				createMessage(messageTypeResponse,responseContext,
@@ -360,7 +361,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			TransportResponseContext responseContext = new TransportResponseContext();
 			responseContext.setCodiceTrasporto(this.codice+"");
 			responseContext.setContentLength(this.contentLength);
-			responseContext.setParametersTrasporto(this.propertiesTrasportoRisposta);
+			responseContext.setHeaders(this.propertiesTrasportoRisposta);
 			
 			try{
 				

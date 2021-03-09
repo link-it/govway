@@ -22,7 +22,8 @@
 package org.openspcoop2.protocol.sdk.dump;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,7 +46,7 @@ public class Attachment implements Serializable{
 	
 	private byte[] content;
 	
-	private Map<String, String> headers = new Hashtable<String, String>();
+	private Map<String, List<String>> headers = new HashMap<String, List<String>>();
 	
 	public String getContentId() {
 		return this.contentId;
@@ -72,11 +73,11 @@ public class Attachment implements Serializable{
 		this.content = content;
 	}
 	
-	public Map<String, String> getHeaders() {
+	public Map<String, List<String>> getHeaders() {
 		return this.headers;
 	}
 
-	public void setHeaders(Map<String, String> headers) {
+	public void setHeaders(Map<String, List<String>> headers) {
 		this.headers = headers;
 	}
 	

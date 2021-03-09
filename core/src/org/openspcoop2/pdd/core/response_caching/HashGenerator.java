@@ -101,14 +101,14 @@ public class HashGenerator {
 				sb = new StringBuilder();
 				sb.append("ParametriURL");
 				if(StatoFunzionalitaCacheDigestQueryParameter.ABILITATO.equals(configHash.getQueryParameters())) {
-					this.addList(requestInfo.getProtocolContext().getParametersFormBased(), false, sb);
+					this.addList(requestInfo.getProtocolContext().getParameters(), false, sb);
 				}
 				else {
-					Map<String, String> pUrlForDigest = new HashMap<String, String>();
-					if(requestInfo.getProtocolContext().getParametersFormBased()!=null && configHash.sizeQueryParameterList()>0) {
+					Map<String, List<String>> pUrlForDigest = new HashMap<String, List<String>>();
+					if(requestInfo.getProtocolContext().getParameters()!=null && configHash.sizeQueryParameterList()>0) {
 						for (String queryParameter : configHash.getQueryParameterList()) {
-							String v = requestInfo.getProtocolContext().getParameterFormBased(queryParameter);
-							if(v!=null) {
+							List<String> v = requestInfo.getProtocolContext().getParameterValues(queryParameter);
+							if(v!=null && !v.isEmpty()) {
 								pUrlForDigest.put(queryParameter, v);
 							}
 						}
@@ -127,11 +127,11 @@ public class HashGenerator {
 				
 				// Gli header vengono riordinati e le chiavi vengono prese lowerCase proprio per far si che tali differenze non impattano nel digest
 				
-				Map<String, String> pTrasportoForDigest = new HashMap<String, String>();
-				if(requestInfo.getProtocolContext().getParametersTrasporto()!=null && configHash.sizeHeaderList()>0) {
+				Map<String, List<String>> pTrasportoForDigest = new HashMap<String, List<String>>();
+				if(requestInfo.getProtocolContext().getHeaders()!=null && configHash.sizeHeaderList()>0) {
 					for (String header : configHash.getHeaderList()) {
-						String v = requestInfo.getProtocolContext().getParameterTrasporto(header);
-						if(v!=null) {
+						List<String> v = requestInfo.getProtocolContext().getHeaderValues(header);
+						if(v!=null && !v.isEmpty()) {
 							pTrasportoForDigest.put(header, v);
 						}
 					}
@@ -169,7 +169,7 @@ public class HashGenerator {
 		return Base64Utilities.encodeAsString(digest.digest());
 	}
 	
-	private void addList(Map<String, String> p, boolean toLowerCase, StringBuilder sb) {
+	private void addList(Map<String, List<String>> p, boolean toLowerCase, StringBuilder sb) {
 		if(p!=null &&
 				!p.isEmpty()) {
 			List<String> sortKeys = new ArrayList<>();
@@ -180,12 +180,21 @@ public class HashGenerator {
 			}
 			Collections.sort(sortKeys);
 			for (String sortKey : sortKeys) {
-				String value = TransportUtils.get(p, sortKey);
+				List<String> values = TransportUtils.getRawObject(p, sortKey);
+				List<String> ordinatedValues = new ArrayList<String>();
+				ordinatedValues.addAll(values);
+				if(ordinatedValues.size()>1) {
+					Collections.sort(ordinatedValues);
+				}
 				String key = sortKey;
 				if(toLowerCase) {
 					key = key.toLowerCase();
 				}
-				sb.append("\n").append(key).append("=").append(value);
+				if(ordinatedValues!=null && !ordinatedValues.isEmpty()) {
+					for (String value : ordinatedValues) {
+						sb.append("\n").append(key).append("=").append(value);		
+					}
+				}
 			}
 
 		}

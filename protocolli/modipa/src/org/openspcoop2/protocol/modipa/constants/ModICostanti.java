@@ -82,6 +82,7 @@ public class ModICostanti {
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO = "ProfiloSicurezzaMessaggio-WSA-To";
     
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_PREFIX = "ProfiloSicurezzaMessaggioSignedHeader-";
+    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX = "___#";
     
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE = "ProfiloSicurezzaMessaggio-CorniceSicurezza-Ente";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER = "ProfiloSicurezzaMessaggio-CorniceSicurezza-User";

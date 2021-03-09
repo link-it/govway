@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -128,7 +129,7 @@ public class NotifierDump {
 
 	
 	private int save(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio,Map<String, String> headerTrasporto,
+			String idTransazione,TipoMessaggio tipoMessaggio,Map<String, List<String>> headerTrasporto,
 			long idDumpConfigurazione,
 			String contentType,
 			InputStream is,File file,byte[]buffer,
@@ -228,16 +229,21 @@ public class NotifierDump {
 		}
 	}
 	
-	private String toString(Map<String, String> headerTrasporto){
+	private String toString(Map<String, List<String>> headerTrasporto){
 		StringBuilder bf = new StringBuilder();
 		if(headerTrasporto!=null && headerTrasporto.size()>0){
 			Iterator<String> keys = headerTrasporto.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				if(bf.length()>0){
-					bf.append("\n");
+				List<String> values = headerTrasporto.get(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						if(bf.length()>0){
+							bf.append("\n");
+						}
+						bf.append(key).append("=").append(value);		
+					}
 				}
-				bf.append(key).append("=").append(headerTrasporto.get(key));
 			}
 		}
 		if(bf.length()>0){
@@ -249,7 +255,7 @@ public class NotifierDump {
 	}
 	
 	public int saveOnDatabase(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, String> headerTrasporto, 
+			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, List<String>> headerTrasporto, 
 			long idDumpConfigurazione,
 			String contentType,InputStream is,
 			IDSoggetto dominio) throws Exception{
@@ -257,7 +263,7 @@ public class NotifierDump {
 	}
 	
 	public int saveOnFileSystem(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, String> headerTrasporto, 
+			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, List<String>> headerTrasporto, 
 			long idDumpConfigurazione,
 			String contentType,File file,
 			IDSoggetto dominio) throws Exception{
@@ -265,7 +271,7 @@ public class NotifierDump {
 	}
 	
 	public int saveBuffer(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, String> headerTrasporto, 
+			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, List<String>> headerTrasporto, 
 			long idDumpConfigurazione,
 			String contentType,byte[] content,
 			IDSoggetto dominio) throws Exception{
@@ -274,7 +280,7 @@ public class NotifierDump {
 	
 	
 	public int update(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio,Map<String, String> headerTrasporto,
+			String idTransazione,TipoMessaggio tipoMessaggio,Map<String, List<String>> headerTrasporto,
 			IDSoggetto dominio) throws Exception{
 
 		PreparedStatement stmt = null;

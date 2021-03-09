@@ -40,7 +40,7 @@ public class GestoreIntegrazionePATrasportoWithResponseOut extends GestoreIntegr
 			OutResponsePAMessage outResponsePAMessage) throws HeaderIntegrazioneException{
 		
 		try{
-			this.utilitiesResponse.setTransportProperties(integrazione, outResponsePAMessage.getProprietaTrasporto(),
+			this.utilitiesResponse.setTransportProperties(integrazione, outResponsePAMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outResponsePAMessage.getBustaRichiesta(), false, TipoIntegrazione.TRASPORTO));
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);

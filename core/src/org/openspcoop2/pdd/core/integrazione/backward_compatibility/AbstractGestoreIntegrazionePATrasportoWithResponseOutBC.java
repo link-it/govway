@@ -47,7 +47,7 @@ public class AbstractGestoreIntegrazionePATrasportoWithResponseOutBC extends Abs
 			OutResponsePAMessage outResponsePAMessage) throws HeaderIntegrazioneException{
 		
 		try{
-			this.utilitiesResponseBC.setTransportProperties(integrazione, outResponsePAMessage.getProprietaTrasporto(),
+			this.utilitiesResponseBC.setTransportProperties(integrazione, outResponsePAMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outResponsePAMessage.getBustaRichiesta(), false, TipoIntegrazione.TRASPORTO));
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePATrasporto, "+e.getMessage(),e);

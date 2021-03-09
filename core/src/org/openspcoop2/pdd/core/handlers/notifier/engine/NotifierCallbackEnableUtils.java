@@ -20,6 +20,7 @@
 package org.openspcoop2.pdd.core.handlers.notifier.engine;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.DumpConfigurazione;
@@ -44,6 +45,7 @@ import org.openspcoop2.pdd.core.handlers.notifier.NotifierType;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.utils.io.notifier.unblocked.PipedInputOutputStreamHandler;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 /**     
@@ -89,18 +91,18 @@ public class NotifierCallbackEnableUtils {
 				notifierCallback.debug("ReturnCode ["+op2Context.getCodiceTrasporto()+"]");
 				
 				int length = -1;
-				if(op2Context.getPropertiesTrasportoRisposta()!=null && op2Context.getPropertiesTrasportoRisposta().size()>0){
-					Iterator<String> keys = op2Context.getPropertiesTrasportoRisposta().keySet().iterator();
+				if(op2Context.getResponseHeaders()!=null && op2Context.getResponseHeaders().size()>0){
+					Iterator<String> keys = op2Context.getResponseHeaders().keySet().iterator();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
 						//notifierCallback.debug("TRANSPORT ["+key+"]=["+op2Context.getPropertiesTrasportoRisposta().getProperty(key)+"]");
 						if("Content-Length".equalsIgnoreCase(key)){
-							String lengthParam = op2Context.getPropertiesTrasportoRisposta().get(key);
+							String lengthParam = TransportUtils.getFirstValue(op2Context.getResponseHeaders(),key);
 							length = Integer.parseInt(lengthParam);
 							notifierCallback.debug("CONTENT LENGTH RESPONSE ["+length+"]");				
 						}
 						else if("Content-Type".equalsIgnoreCase(key)){
-							String contentType = op2Context.getPropertiesTrasportoRisposta().get(key);
+							String contentType = TransportUtils.getFirstValue(op2Context.getResponseHeaders(),key);
 							notifierCallback.debug("CONTENT TYPE RESPONSE ["+contentType+"]");	
 							op2Context.getPddContext().addObject(NotifierConstants.RESPONSE_CONTENT_TYPE, contentType);
 						}
@@ -165,10 +167,10 @@ public class NotifierCallbackEnableUtils {
 			Boolean requestDumpPostProcessEnabled = (Boolean) op2Context.getPddContext().getObject(NotifierConstants.REQUEST_DUMP_POST_PROCESS_ENABLED);
 			if(requestDumpPostProcessEnabled){
 				
-				Map<String, String> headerTrasporto = null;
+				Map<String, List<String>> headerTrasporto = null;
 				if(TipoPdD.DELEGATA.equals(op2Context.getTipoPorta())){
-					if(op2Context.getConnettore()!=null && op2Context.getConnettore().getUrlProtocolContext().getParametersTrasporto()!=null){
-						headerTrasporto = op2Context.getConnettore().getUrlProtocolContext().getParametersTrasporto();
+					if(op2Context.getConnettore()!=null && op2Context.getConnettore().getUrlProtocolContext().getHeaders()!=null){
+						headerTrasporto = op2Context.getConnettore().getUrlProtocolContext().getHeaders();
 						op2Context.getPddContext().addObject(NotifierConstants.REQUEST_DUMP_POST_PROCESS_HEADER_TRASPORTO, headerTrasporto);
 					}
 				}
@@ -202,10 +204,10 @@ public class NotifierCallbackEnableUtils {
 			Boolean responseDumpPostProcessEnabled = (Boolean) op2Context.getPddContext().getObject(NotifierConstants.RESPONSE_DUMP_POST_PROCESS_ENABLED);
 			if(responseDumpPostProcessEnabled){
 				
-				Map<String, String> headerTrasporto = null;
+				Map<String, List<String>> headerTrasporto = null;
 				if(TipoPdD.APPLICATIVA.equals(op2Context.getTipoPorta())){
-					if(op2Context.getPropertiesTrasportoRisposta()!=null){
-						headerTrasporto = op2Context.getPropertiesTrasportoRisposta();
+					if(op2Context.getResponseHeaders()!=null){
+						headerTrasporto = op2Context.getResponseHeaders();
 						op2Context.getPddContext().addObject(NotifierConstants.RESPONSE_DUMP_POST_PROCESS_HEADER_TRASPORTO, headerTrasporto);
 					}
 				}
@@ -235,7 +237,7 @@ public class NotifierCallbackEnableUtils {
 	}
 	
 	private static NotifierStreamingHandler newHandler(NotifierCallback notifierCallback, Logger log, TipoMessaggio tipoMessaggio,
-			PdDContext pddContext,Map<String, String> headerTrasporto, IDSoggetto dominio) throws Exception{
+			PdDContext pddContext,Map<String, List<String>> headerTrasporto, IDSoggetto dominio) throws Exception{
 		long dumpPostProcessConfigId = (Long) pddContext.getObject(NotifierConstants.DUMP_POST_PROCESS_ID_CONFIG);
 		String idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
 		String contentType = null;
@@ -310,16 +312,16 @@ public class NotifierCallbackEnableUtils {
 			Boolean requestDumpPostProcessEnabled = (Boolean) op2Context.getPddContext().getObject(NotifierConstants.REQUEST_DUMP_POST_PROCESS_ENABLED);
 			if(requestDumpPostProcessEnabled){
 			
-				Map<String, String> headerTrasporto = null;
+				Map<String, List<String>> headerTrasporto = null;
 				if(TipoPdD.DELEGATA.equals(op2Context.getTipoPorta())){
 					Object o = op2Context.getPddContext().getObject(NotifierConstants.REQUEST_DUMP_POST_PROCESS_HEADER_TRASPORTO);
 					if(o!=null){
-						headerTrasporto = (Map<String, String>) o;
+						headerTrasporto = (Map<String, List<String>>) o;
 					}
 				}
 				else{
 					if(op2Context.getConnettore()!=null){
-						headerTrasporto = op2Context.getConnettore().getPropertiesTrasporto();
+						headerTrasporto = op2Context.getConnettore().getHeaders();
 					}
 				}
 				
@@ -431,16 +433,16 @@ public class NotifierCallbackEnableUtils {
 			Boolean responseDumpPostProcessEnabled = (Boolean) op2Context.getPddContext().getObject(NotifierConstants.RESPONSE_DUMP_POST_PROCESS_ENABLED);	
 			if(responseDumpPostProcessEnabled){
 			
-				Map<String, String> headerTrasporto = null;
+				Map<String, List<String>> headerTrasporto = null;
 				if(TipoPdD.APPLICATIVA.equals(op2Context.getTipoPorta())){
 					Object o = op2Context.getPddContext().getObject(NotifierConstants.RESPONSE_DUMP_POST_PROCESS_HEADER_TRASPORTO);
 					if(o!=null){
-						headerTrasporto = (Map<String, String>) o;
+						headerTrasporto = (Map<String, List<String>>) o;
 					}
 				}
 				else{
-					if(op2Context.getPropertiesRispostaTrasporto()!=null){
-						headerTrasporto = op2Context.getPropertiesRispostaTrasporto();
+					if(op2Context.getResponseHeaders()!=null){
+						headerTrasporto = op2Context.getResponseHeaders();
 					}
 				}
 				

@@ -486,11 +486,11 @@ public class GestoreCorrelazioneApplicativa {
 						try{
 							if(message==null ||
 									message.getTransportRequestContext()==null || 
-									message.getTransportRequestContext().getParametersTrasporto()==null ||
-									message.getTransportRequestContext().getParametersTrasporto().isEmpty()) {
+									message.getTransportRequestContext().getHeaders()==null ||
+									message.getTransportRequestContext().getHeaders().isEmpty()) {
 								throw new Exception ("Header trasporto non disponibile");
 							}
-							idCorrelazioneApplicativa = message.getTransportRequestContext().getParameterTrasporto(elemento.getPattern());
+							idCorrelazioneApplicativa = message.getTransportRequestContext().getHeaderFirstValue(elemento.getPattern());
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -927,11 +927,11 @@ public class GestoreCorrelazioneApplicativa {
 						try{
 							if(message==null ||
 									message.getTransportResponseContext()==null || 
-									message.getTransportResponseContext().getParametersTrasporto()==null ||
-									message.getTransportResponseContext().getParametersTrasporto().isEmpty()) {
+									message.getTransportResponseContext().getHeaders()==null ||
+									message.getTransportResponseContext().getHeaders().isEmpty()) {
 								throw new Exception ("Header trasporto non disponibile");
 							}
-							idCorrelazioneApplicativa = message.getTransportResponseContext().getParameterTrasporto(elemento.getPattern());
+							idCorrelazioneApplicativa = message.getTransportResponseContext().getHeaderFirstValue(elemento.getPattern());
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.

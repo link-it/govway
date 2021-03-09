@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -47,9 +48,9 @@ public class InfoConnettoreUscita {
 	/** Indicazione su di un eventuale sbustamento delle informazioni di Protocollo */
 	private boolean sbustamentoInformazioniProtocollo;
 	/** Proprieta' di trasporto che deve utilizzare il connettore */
-	private Map<String, String> propertiesTrasporto;
+	private Map<String, List<String>> headers;
 	/** Proprieta' urlBased che deve utilizzare il connettore */
-	private Map<String, String> propertiesUrlBased;
+	private Map<String, List<String>> parameters;
 	/** Tipo di Autenticazione */
 	private String tipoAutenticazione;
 	/** Credenziali */
@@ -79,17 +80,17 @@ public class InfoConnettoreUscita {
 	public void setSbustamentoSoap(boolean sbustamentoSoap) {
 		this.sbustamentoSoap = sbustamentoSoap;
 	}
-	public Map<String, String> getPropertiesTrasporto() {
-		return this.propertiesTrasporto;
+	public Map<String, List<String>> getHeaders() {
+		return this.headers;
 	}
-	public void setPropertiesTrasporto(Map<String, String> propertiesTrasporto) {
-		this.propertiesTrasporto = propertiesTrasporto;
+	public void setHeaders(Map<String, List<String>> propertiesTrasporto) {
+		this.headers = propertiesTrasporto;
 	}
-	public Map<String, String> getPropertiesUrlBased() {
-		return this.propertiesUrlBased;
+	public Map<String, List<String>> getParameters() {
+		return this.parameters;
 	}
-	public void setPropertiesUrlBased(Map<String, String> propertiesUrlBased) {
-		this.propertiesUrlBased = propertiesUrlBased;
+	public void setParameters(Map<String, List<String>> propertiesUrlBased) {
+		this.parameters = propertiesUrlBased;
 	}
 	public String getTipoAutenticazione() {
 		return this.tipoAutenticazione;

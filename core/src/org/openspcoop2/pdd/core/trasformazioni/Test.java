@@ -51,6 +51,7 @@ import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.Entry;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
@@ -75,20 +76,29 @@ public class Test {
 	private static final String HEADER1_VALORE = "ValoreHeader1";
 	private static final String HEADER2 = "Header2";
 	private static final String HEADER2_VALORE = "ValoreHeader2";
+	private static final String HEADER2_VALORE_POSIZIONE_2 = "ValoreHeaderPosizione2";
 	
 	private static final String HEADER1_RISPOSTA = "ResponseHeader1";
 	private static final String HEADER1_VALORE_RISPOSTA = "ResponseValoreHeader1";
 	private static final String HEADER2_RISPOSTA = "ResponseHeader2";
 	private static final String HEADER2_VALORE_RISPOSTA = "ResponseValoreHeader2";
+	private static final String HEADER2_VALORE_RISPOSTA_POSIZIONE_2 = "ResponseValoreHeaderPosizione2";
 	
 	private static final String QUERY1 = "Query1";
 	private static final String QUERY1_VALORE = "QueryValore1";
 	private static final String QUERY2 = "Query2";
 	private static final String QUERY2_VALORE = "QueryValore2";
+	private static final String QUERY2_VALORE_POSIZIONE_2 = "QueryValorePosizione2";
 	private static final String QUERY3 = "Query3";
 	private static final String QUERY3_VALORE = "QueryValore3";
 	private static final String QUERY4 = "Query4";
 	private static final String QUERY4_VALORE = "QueryValore4";
+	
+	private static final String FORM1 = "Form1";
+	private static final String FORM1_VALORE = "FormValore1";
+	private static final String FORM2 = "Form2";
+	private static final String FORM2_VALORE = "FormValore2";
+	private static final String FORM2_VALORE_POSIZIONE_2 = "FormValorePosizione2";
 	
 	private static final String CONFIG1 = "Config1";
 	private static final String CONFIG1_VALORE = "ConfigValore1";
@@ -189,6 +199,8 @@ public class Test {
 			"\""+HEADER2+"\": \"${header:"+HEADER2+"}\",\n"+
 			"\""+QUERY1+"\": \"${query:"+QUERY1+"}\",\n"+
 			"\""+QUERY2+"\": \"${query:"+QUERY2+"}\",\n"+
+			"\""+FORM1+"\": \"${form:"+FORM1+"}\",\n"+
+			"\""+FORM2+"\": \"${form:"+FORM2+"}\",\n"+
             "\""+PATH1+"\": \"${xpath://"+PATH1+"/text()}\",\n"+
             "\""+PATH2+"\": \"${xPath://"+PATH2+"/text()}\",\n"+
             "\"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
@@ -222,6 +234,8 @@ public class Test {
 			"<"+HEADER2+">"+"${header:"+HEADER2+"}"+"</"+HEADER2+">\n"+
 			"<"+QUERY1+">"+"${query:"+QUERY1+"}"+"</"+QUERY1+">\n"+
 			"<"+QUERY2+">"+"${query:"+QUERY2+"}"+"</"+QUERY2+">\n"+
+			"<"+FORM1+">"+"${form:"+FORM1+"}"+"</"+FORM1+">\n"+
+			"<"+FORM2+">"+"${form:"+FORM2+"}"+"</"+FORM2+">\n"+
 			"<"+PATH1+">"+"${jsonpath:$."+PATH1+"}"+"</"+PATH1+">\n"+
 			"<"+PATH2+">"+"${jsonPath:$."+PATH2+"}"+"</"+PATH2+">\n"+
 			"<"+TRANSACTION_ID+">"+"${transaction:id}"+"</"+TRANSACTION_ID+">\n"+
@@ -254,9 +268,14 @@ public class Test {
 	private static final String JSON_TEMPLATE_FREEMARKER_BODY = 	   
 			"\""+DATA+"\": \"${date?string('dd.MM.yyyy HH:mm:ss')}\",\n"+
 			"\""+HEADER1+"\": \"${header[\""+HEADER1+"\"]}\",\n"+
-			"\""+HEADER2+"\": \"${header[\""+HEADER2+"\"]}\",\n"+
+			"\""+HEADER2+"\": \"${headerValues[\""+HEADER2+"\"][0]}\",\n"+
+			"\""+HEADER2+"\": \"${headerValues[\""+HEADER2+"\"][1]}\",\n"+
 			"\""+QUERY1+"\": \"${query[\""+QUERY1+"\"]}\",\n"+
-			"\""+QUERY2+"\": \"${query[\""+QUERY2+"\"]}\",\n"+
+			"\""+QUERY2+"\": \"${queryValues[\""+QUERY2+"\"][0]}\",\n"+
+			"\""+QUERY2+"\": \"${queryValues[\""+QUERY2+"\"][1]}\",\n"+
+			"\""+FORM1+"\": \"${form[\""+FORM1+"\"]}\",\n"+
+			"\""+FORM2+"\": \"${formValues[\""+FORM2+"\"][0]}\",\n"+
+			"\""+FORM2+"\": \"${formValues[\""+FORM2+"\"][1]}\",\n"+
             "\""+PATH1+"\": \"${xpath.read(\"//"+PATH1+"/text()\")}\",\n"+
             "\""+PATH2+"\": \"${xPath.read(\"//"+PATH2+"/text()\")}\",\n"+
             "\""+PATH1+"boolean\": \"${xpath.match(\"//"+PATH1+"/text()\")?string('yes', 'no')}\",\n"+
@@ -274,7 +293,8 @@ public class Test {
 	private static final String JSON_TEMPLATE_FREEMARKER_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}\",\n"+
 			"\""+HEADER1_RISPOSTA+"\": \"${headerResponse[\""+HEADER1_RISPOSTA+"\"]}\",\n"+
-			"\""+HEADER2_RISPOSTA+"\": \"${headerResponse[\""+HEADER2_RISPOSTA+"\"]}\",\n"+
+			"\""+HEADER2_RISPOSTA+"\": \"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][0]}\",\n"+
+			"\""+HEADER2_RISPOSTA+"\": \"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][1]}\",\n"+
             "\""+PATH1_RISPOSTA+"\": \"${xpathResponse.read(\"//"+PATH1_RISPOSTA+"/text()\")}\",\n"+
             "\""+PATH2_RISPOSTA+"\": \"${xPathResponse.read(\"//"+PATH2_RISPOSTA+"/text()\")}\",\n"+
             "\""+PATH1_RISPOSTA+"boolean\": \"${xpathResponse.match(\"//"+PATH1_RISPOSTA+"/text()\")?string('yes', 'no')}\",\n"+
@@ -315,9 +335,14 @@ public class Test {
 	private static final String XML_TEMPLATE_FREEMARKER_BODY =
 			"<"+DATA+">"+"${date?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA+">\n"+
 			"<"+HEADER1+">"+"${header[\""+HEADER1+"\"]}"+"</"+HEADER1+">\n"+
-			"<"+HEADER2+">"+"${header[\""+HEADER2+"\"]}"+"</"+HEADER2+">\n"+
+			"<"+HEADER2+">"+"${headerValues[\""+HEADER2+"\"][0]}"+"</"+HEADER2+">\n"+
+			"<"+HEADER2+">"+"${headerValues[\""+HEADER2+"\"][1]}"+"</"+HEADER2+">\n"+
 			"<"+QUERY1+">"+"${query[\""+QUERY1+"\"]}"+"</"+QUERY1+">\n"+
-			"<"+QUERY2+">"+"${query[\""+QUERY2+"\"]}"+"</"+QUERY2+">\n"+
+			"<"+QUERY2+">"+"${queryValues[\""+QUERY2+"\"][0]}"+"</"+QUERY2+">\n"+
+			"<"+QUERY2+">"+"${queryValues[\""+QUERY2+"\"][1]}"+"</"+QUERY2+">\n"+
+			"<"+FORM1+">"+"${form[\""+FORM1+"\"]}"+"</"+FORM1+">\n"+
+			"<"+FORM2+">"+"${formValues[\""+FORM2+"\"][0]}"+"</"+FORM2+">\n"+
+			"<"+FORM2+">"+"${formValues[\""+FORM2+"\"][1]}"+"</"+FORM2+">\n"+
 			"<"+PATH1+">"+"${jsonpath.read(\"$."+PATH1+"\")}"+"</"+PATH1+">\n"+
 			"<"+PATH2+">"+"${jsonPath.read(\"$."+PATH2+"\")}"+"</"+PATH2+">\n"+
 			"<"+PATH1+"boolean>"+"${jsonpath.match(\"$."+PATH1+"\")?string('yes', 'no')}"+"</"+PATH1+"boolean>\n"+
@@ -331,7 +356,8 @@ public class Test {
 	private static final String XML_TEMPLATE_FREEMARKER_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"${headerResponse[\""+HEADER1_RISPOSTA+"\"]}"+"</"+HEADER1_RISPOSTA+">\n"+
-			"<"+HEADER2_RISPOSTA+">"+"${headerResponse[\""+HEADER2_RISPOSTA+"\"]}"+"</"+HEADER2_RISPOSTA+">\n"+
+			"<"+HEADER2_RISPOSTA+">"+"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][0]}"+"</"+HEADER2_RISPOSTA+">\n"+
+			"<"+HEADER2_RISPOSTA+">"+"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][1]}"+"</"+HEADER2_RISPOSTA+">\n"+
 			"<"+PATH1_RISPOSTA+">"+"${jsonpathResponse.read(\"$."+PATH1_RISPOSTA+"\")}"+"</"+PATH1_RISPOSTA+">\n"+
 			"<"+PATH2_RISPOSTA+">"+"${jsonPathResponse.read(\"$."+PATH2_RISPOSTA+"\")}"+"</"+PATH2_RISPOSTA+">\n"+
 			"<"+PATH1_RISPOSTA+"boolean>"+"${jsonpathResponse.match(\"$."+PATH1_RISPOSTA+"\")?string('yes', 'no')}"+"</"+PATH1_RISPOSTA+"boolean>\n"+
@@ -384,9 +410,14 @@ public class Test {
 	private static final String JSON_TEMPLATE_VELOCITY_BODY = 	   
 			"\""+DATA+"\": \"$date\",\n"+
 			"\""+HEADER1+"\": \"${header[\""+HEADER1+"\"]}\",\n"+
-			"\""+HEADER2+"\": \"${header[\""+HEADER2+"\"]}\",\n"+
+			"\""+HEADER2+"\": \"${headerValues[\""+HEADER2+"\"][0]}\",\n"+
+			"\""+HEADER2+"\": \"${headerValues[\""+HEADER2+"\"][1]}\",\n"+
 			"\""+QUERY1+"\": \"${query[\""+QUERY1+"\"]}\",\n"+
-			"\""+QUERY2+"\": \"${query[\""+QUERY2+"\"]}\",\n"+
+			"\""+QUERY2+"\": \"${queryValues[\""+QUERY2+"\"][0]}\",\n"+
+			"\""+QUERY2+"\": \"${queryValues[\""+QUERY2+"\"][1]}\",\n"+
+			"\""+FORM1+"\": \"${form[\""+FORM1+"\"]}\",\n"+
+			"\""+FORM2+"\": \"${formValues[\""+FORM2+"\"][0]}\",\n"+
+			"\""+FORM2+"\": \"${formValues[\""+FORM2+"\"][1]}\",\n"+
             "\""+PATH1+"\": \"${xpath.read(\"//"+PATH1+"/text()\")}\",\n"+
             "\""+PATH2+"\": \"${xPath.read(\"//"+PATH2+"/text()\")}\",\n"+
             "\""+PATH1+"boolean\": \"${xpath.match(\"//"+PATH1+"/text()\")}\",\n"+
@@ -404,7 +435,8 @@ public class Test {
 	private static final String JSON_TEMPLATE_VELOCITY_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse}\",\n"+
 			"\""+HEADER1_RISPOSTA+"\": \"${headerResponse[\""+HEADER1_RISPOSTA+"\"]}\",\n"+
-			"\""+HEADER2_RISPOSTA+"\": \"${headerResponse[\""+HEADER2_RISPOSTA+"\"]}\",\n"+
+			"\""+HEADER2_RISPOSTA+"\": \"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][0]}\",\n"+
+			"\""+HEADER2_RISPOSTA+"\": \"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][1]}\",\n"+
             "\""+PATH1_RISPOSTA+"\": \"${xpathResponse.read(\"//"+PATH1_RISPOSTA+"/text()\")}\",\n"+
             "\""+PATH2_RISPOSTA+"\": \"${xPathResponse.read(\"//"+PATH2_RISPOSTA+"/text()\")}\",\n"+
             "\""+PATH1_RISPOSTA+"boolean\": \"${xpathResponse.match(\"//"+PATH1_RISPOSTA+"/text()\")}\",\n"+
@@ -444,9 +476,14 @@ public class Test {
 	private static final String XML_TEMPLATE_VELOCITY_BODY =
 			"<"+DATA+">"+"${date}"+"</"+DATA+">\n"+
 			"<"+HEADER1+">"+"${header[\""+HEADER1+"\"]}"+"</"+HEADER1+">\n"+
-			"<"+HEADER2+">"+"${header[\""+HEADER2+"\"]}"+"</"+HEADER2+">\n"+
+			"<"+HEADER2+">"+"${headerValues[\""+HEADER2+"\"][0]}"+"</"+HEADER2+">\n"+
+			"<"+HEADER2+">"+"${headerValues[\""+HEADER2+"\"][1]}"+"</"+HEADER2+">\n"+
 			"<"+QUERY1+">"+"${query[\""+QUERY1+"\"]}"+"</"+QUERY1+">\n"+
-			"<"+QUERY2+">"+"${query[\""+QUERY2+"\"]}"+"</"+QUERY2+">\n"+
+			"<"+QUERY2+">"+"${queryValues[\""+QUERY2+"\"][0]}"+"</"+QUERY2+">\n"+
+			"<"+QUERY2+">"+"${queryValues[\""+QUERY2+"\"][1]}"+"</"+QUERY2+">\n"+
+			"<"+FORM1+">"+"${form[\""+FORM1+"\"]}"+"</"+FORM1+">\n"+
+			"<"+FORM2+">"+"${formValues[\""+FORM2+"\"][0]}"+"</"+FORM2+">\n"+
+			"<"+FORM2+">"+"${formValues[\""+FORM2+"\"][1]}"+"</"+FORM2+">\n"+
 			"<"+PATH1+">"+"${jsonpath.read(\"$."+PATH1+"\")}"+"</"+PATH1+">\n"+
 			"<"+PATH2+">"+"${jsonPath.read(\"$."+PATH2+"\")}"+"</"+PATH2+">\n"+
 			"<"+PATH1+"boolean>"+"${jsonpath.match(\"$."+PATH1+"\")}"+"</"+PATH1+"boolean>\n"+
@@ -460,7 +497,8 @@ public class Test {
 	private static final String XML_TEMPLATE_VELOCITY_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"${headerResponse[\""+HEADER1_RISPOSTA+"\"]}"+"</"+HEADER1_RISPOSTA+">\n"+
-			"<"+HEADER2_RISPOSTA+">"+"${headerResponse[\""+HEADER2_RISPOSTA+"\"]}"+"</"+HEADER2_RISPOSTA+">\n"+
+			"<"+HEADER2_RISPOSTA+">"+"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][0]}"+"</"+HEADER2_RISPOSTA+">\n"+
+			"<"+HEADER2_RISPOSTA+">"+"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][1]}"+"</"+HEADER2_RISPOSTA+">\n"+
 			"<"+PATH1_RISPOSTA+">"+"${jsonpathResponse.read(\"$."+PATH1_RISPOSTA+"\")}"+"</"+PATH1_RISPOSTA+">\n"+
 			"<"+PATH2_RISPOSTA+">"+"${jsonPathResponse.read(\"$."+PATH2_RISPOSTA+"\")}"+"</"+PATH2_RISPOSTA+">\n"+
 			"<"+PATH1_RISPOSTA+"boolean>"+"${jsonpathResponse.match(\"$."+PATH1_RISPOSTA+"\")}"+"</"+PATH1_RISPOSTA+"boolean>\n"+
@@ -628,6 +666,7 @@ public class Test {
 		String urlInvocazione =  "/govway/out/ENTE/Erogatore/Servizio/v1/azione/test?"+
 				QUERY1+"="+QUERY1_VALORE+"&"+
 				QUERY2+"="+QUERY2_VALORE+"&"+
+				QUERY2+"="+QUERY2_VALORE_POSIZIONE_2+"&"+
 				QUERY3+"="+QUERY3_VALORE+"&"+
 				QUERY4+"="+QUERY4_VALORE;
 		
@@ -635,19 +674,27 @@ public class Test {
 		busta.setMittente(BUSTA_MITTENTE_VALORE);
 		busta.addProperty(BUSTA_PROPERTY, BUSTA_PROPERTY_VALORE);
 		
-		Map<String, String> parametriTrasporto = new HashMap<String, String>();
-		parametriTrasporto.put(HEADER1, HEADER1_VALORE);
-		parametriTrasporto.put(HEADER2, HEADER2_VALORE);
+		Map<String, List<String>> parametriTrasporto = new HashMap<String, List<String>>();
+		TransportUtils.addHeader(parametriTrasporto,HEADER1, HEADER1_VALORE);
+		TransportUtils.addHeader(parametriTrasporto,HEADER2, HEADER2_VALORE);
+		TransportUtils.addHeader(parametriTrasporto,HEADER2, HEADER2_VALORE_POSIZIONE_2);
 		
-		Map<String, String> parametriTrasportoRisposta = new HashMap<String, String>();
-		parametriTrasportoRisposta.put(HEADER1_RISPOSTA, HEADER1_VALORE_RISPOSTA);
-		parametriTrasportoRisposta.put(HEADER2_RISPOSTA, HEADER2_VALORE_RISPOSTA);
+		Map<String, List<String>> parametriTrasportoRisposta = new HashMap<String, List<String>>();
+		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER1_RISPOSTA, HEADER1_VALORE_RISPOSTA);
+		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER2_RISPOSTA, HEADER2_VALORE_RISPOSTA);
+		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER2_RISPOSTA, HEADER2_VALORE_RISPOSTA_POSIZIONE_2);
 		
-		Map<String, String> parametriUrl = new HashMap<String, String>();
-		parametriUrl.put(QUERY1, QUERY1_VALORE);
-		parametriUrl.put(QUERY2, QUERY2_VALORE);
-		parametriUrl.put(QUERY3, QUERY3_VALORE);
-		parametriUrl.put(QUERY4, QUERY4_VALORE);
+		Map<String, List<String>> parametriUrl = new HashMap<String, List<String>>();
+		TransportUtils.addParameter(parametriUrl,QUERY1, QUERY1_VALORE);
+		TransportUtils.addParameter(parametriUrl,QUERY2, QUERY2_VALORE);
+		TransportUtils.addParameter(parametriUrl,QUERY2, QUERY2_VALORE_POSIZIONE_2);
+		TransportUtils.addParameter(parametriUrl,QUERY3, QUERY3_VALORE);
+		TransportUtils.addParameter(parametriUrl,QUERY4, QUERY4_VALORE);
+		
+		Map<String, List<String>> parametriForm = new HashMap<String, List<String>>();
+		TransportUtils.addParameter(parametriForm,FORM1, FORM1_VALORE);
+		TransportUtils.addParameter(parametriForm,FORM2, FORM2_VALORE);
+		TransportUtils.addParameter(parametriForm,FORM2, FORM2_VALORE_POSIZIONE_2);
 		
 		Map<String, String> config = new HashMap<String, String>();
 		config.put(CONFIG1, CONFIG1_VALORE);
@@ -697,7 +744,10 @@ public class Test {
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapXmlRequest, pddContext, urlInvocazione,
 				xmlMessageRequest,
 				elementRequest, null, 
-				busta, parametriTrasporto, parametriUrl,
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
 				errorHandlerXmlRequest);
 		
 		Map<String, Object> dynamicMapXmlResponse = new Hashtable<String, Object>();
@@ -713,7 +763,10 @@ public class Test {
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonRequest, pddContext, urlInvocazione,
 				jsonMessageRequest,
 				null, JSON_REQUEST, 
-				busta, parametriTrasporto, parametriUrl,
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
 				errorHandlerJsonRequest);
 		
 		Map<String, Object> dynamicMapJsonResponse = new Hashtable<String, Object>();
@@ -729,7 +782,10 @@ public class Test {
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonTestAlterazioni, pddContext, urlInvocazione,
 				jsonMessageTestAlterazioni,
 				null, JSON_REQUEST, 
-				busta, parametriTrasporto, parametriUrl,
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
 				errorHandlerJsonTestAlterazioni);
 		
 		if(tipoTest==null || TipoTrasformazione.TEMPLATE.equals(tipoTest)) {
@@ -1002,9 +1058,9 @@ public class Test {
 						}				
 					}
 					else if(entryName2.equals(entry.getName())) {
-						String contentEntry2 = COMPRESS_ENTRY_NAME2_VALUE_PREFIX+HEADER2_VALORE+COMPRESS_ENTRY_NAME2_VALUE_SUFFIX;
+						String contentEntry2 = COMPRESS_ENTRY_NAME2_VALUE_PREFIX+HEADER2_VALORE+","+HEADER2_VALORE_POSIZIONE_2+COMPRESS_ENTRY_NAME2_VALUE_SUFFIX;
 						if(!contentEntry2.equals(contentEntry)) {
-							throw new Exception("Payload entry '"+entryName2+"' differente da quello atteso: "+contentEntry);
+							throw new Exception("Payload entry '"+entryName2+"' con un valore '"+contentEntry2+"' differente da quello atteso: "+contentEntry);
 						}
 					}
 					else if("soap".equals(prefix) && COMPRESS_ENTRY_NAME_SOAPENVELOPE.equals(entry.getName())) {
@@ -1147,9 +1203,9 @@ public class Test {
 						}				
 					}
 					else if(entryName2.equals(entry.getName())) {
-						String contentEntry2 = COMPRESS_ENTRY_NAME2_VALUE_PREFIX+HEADER2_VALORE+COMPRESS_ENTRY_NAME2_VALUE_SUFFIX;
+						String contentEntry2 = COMPRESS_ENTRY_NAME2_VALUE_PREFIX+HEADER2_VALORE+","+HEADER2_VALORE_POSIZIONE_2+COMPRESS_ENTRY_NAME2_VALUE_SUFFIX;
 						if(!contentEntry2.equals(contentEntry)) {
-							throw new Exception("Payload entry '"+entryName2+"' differente da quello atteso: "+contentEntry);
+							throw new Exception("Payload entry '"+entryName2+"' con valore '"+contentEntry2+"' differente da quello atteso: "+contentEntry);
 						}
 					}
 					else if(entryName3.equals(entry.getName())) {
@@ -1222,6 +1278,9 @@ public class Test {
 		if(!contenuto.contains(HEADER2_VALORE)) {
 			throw new Exception("Valore '"+HEADER2_VALORE+"' per field '"+HEADER2+"' non trovato");
 		}
+		if(!contenuto.contains(HEADER2_VALORE_POSIZIONE_2)) {
+			throw new Exception("Valore '"+HEADER2_VALORE_POSIZIONE_2+"' per field '"+HEADER2+"' non trovato");
+		}
 		
 		if(!contenuto.contains(QUERY1)) {
 			throw new Exception("Nome '"+QUERY1+"' non trovato");
@@ -1235,6 +1294,9 @@ public class Test {
 		if(!contenuto.contains(QUERY2_VALORE)) {
 			throw new Exception("Valore '"+QUERY2_VALORE+"' per field '"+QUERY2+"' non trovato");
 		}
+		if(!contenuto.contains(QUERY2_VALORE_POSIZIONE_2)) {
+			throw new Exception("Valore '"+QUERY2_VALORE_POSIZIONE_2+"' per field '"+QUERY2+"' non trovato");
+		}
 		if(!contenuto.contains(QUERY3)) {
 			throw new Exception("Nome '"+QUERY3+"' non trovato");
 		}
@@ -1246,6 +1308,22 @@ public class Test {
 		}
 		if(!contenuto.contains(QUERY4_VALORE)) {
 			throw new Exception("Valore '"+QUERY4_VALORE+"' per field '"+QUERY4+"' non trovato");
+		}
+		
+		if(!contenuto.contains(FORM1)) {
+			throw new Exception("Nome '"+FORM1+"' non trovato");
+		}
+		if(!contenuto.contains(FORM1_VALORE)) {
+			throw new Exception("Valore '"+FORM1_VALORE+"' per field '"+FORM1+"' non trovato");
+		}		
+		if(!contenuto.contains(FORM2)) {
+			throw new Exception("Nome '"+FORM2+"' non trovato");
+		}
+		if(!contenuto.contains(FORM2_VALORE)) {
+			throw new Exception("Valore '"+FORM2_VALORE+"' per field '"+FORM2+"' non trovato");
+		}
+		if(!contenuto.contains(FORM2_VALORE_POSIZIONE_2)) {
+			throw new Exception("Valore '"+FORM2_VALORE_POSIZIONE_2+"' per field '"+FORM2+"' non trovato");
 		}
 		
 		String uuid = (String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
@@ -1301,6 +1379,9 @@ public class Test {
 		}
 		if(!contenuto.contains(HEADER2_VALORE_RISPOSTA)) {
 			throw new Exception("Valore '"+HEADER2_VALORE_RISPOSTA+"' per field '"+HEADER2_RISPOSTA+"' non trovato");
+		}
+		if(!contenuto.contains(HEADER2_VALORE_RISPOSTA_POSIZIONE_2)) {
+			throw new Exception("Valore '"+HEADER2_VALORE_RISPOSTA_POSIZIONE_2+"' per field '"+HEADER2_RISPOSTA+"' non trovato");
 		}
 		
 		if(!contenuto.contains(PATH1_RISPOSTA)) {

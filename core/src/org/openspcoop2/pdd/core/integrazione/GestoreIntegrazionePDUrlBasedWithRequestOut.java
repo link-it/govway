@@ -40,7 +40,7 @@ public class GestoreIntegrazionePDUrlBasedWithRequestOut extends GestoreIntegraz
 			OutRequestPDMessage outRequestPDMessage) throws HeaderIntegrazioneException{
 	
 		try{
-			this.utilities.setUrlProperties(integrazione, outRequestPDMessage.getProprietaUrlBased(),
+			this.utilities.setUrlProperties(integrazione, outRequestPDMessage.getParameters(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.URL));
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDUrlBased, "+e.getMessage(),e);

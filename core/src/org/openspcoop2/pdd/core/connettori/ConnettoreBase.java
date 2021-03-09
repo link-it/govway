@@ -22,9 +22,11 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -75,6 +77,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -107,10 +110,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected boolean sbustamentoSoap;
 	
 	/** Proprieta' del trasporto che deve gestire il connettore */
-	protected Map<String, String> propertiesTrasporto;
+	protected Map<String, List<String>> propertiesTrasporto;
 	
 	/** Proprieta' urlBased che deve gestire il connettore */
-	protected Map<String, String> propertiesUrlBased;
+	protected Map<String, List<String>> propertiesUrlBased;
 	
 	/** Tipo di Autenticazione */
 	//private String tipoAutenticazione;
@@ -154,7 +157,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Eccezione processamento */
 	protected Exception eccezioneProcessamento = null;
 	/** Proprieta' del trasporto della risposta */
-	protected Map<String, String> propertiesTrasportoRisposta = new HashMap<String, String>();
+	protected Map<String, List<String>> propertiesTrasportoRisposta = new HashMap<String, List<String>>();
 	/** CreationDate */
 	protected Date creationDate;
 	
@@ -346,14 +349,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							}
 							if(cacheControl!=null) {
 						
-								Map<String, String> trasportoRichiesta = null;
+								Map<String, List<String>> trasportoRichiesta = null;
 								if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
-										this.requestMsg.getTransportRequestContext().getParametersTrasporto()!=null) {
-									trasportoRichiesta = this.requestMsg.getTransportRequestContext().getParametersTrasporto();
+										this.requestMsg.getTransportRequestContext().getHeaders()!=null) {
+									trasportoRichiesta = this.requestMsg.getTransportRequestContext().getHeaders();
 								}
 								
 								if(cacheControl.isNoCache()) {
-									if(HttpUtilities.isNoCache(trasportoRichiesta)) {
+									if(HttpUtilities.isDirectiveNoCache(trasportoRichiesta)) {
 										GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
 										responseCached = null;
 									}
@@ -361,7 +364,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 								
 								if(responseCached!=null) {
 									if(cacheControl.isMaxAge()) {
-										Integer maxAge = HttpUtilities.getCacheMaxAge(trasportoRichiesta);
+										Integer maxAge = HttpUtilities.getDirectiveCacheMaxAge(trasportoRichiesta);
 										if(maxAge!=null && maxAge.intValue()>0) {
 											if(responseCached.getAgeInSeconds() > maxAge.intValue()) {
 												GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
@@ -399,7 +402,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 								}
 								
 								if(transportResponseContenxt!=null) {
-									this.propertiesTrasportoRisposta = transportResponseContenxt.getParametersTrasporto();
+									this.propertiesTrasportoRisposta = transportResponseContenxt.getHeaders();
 								}
 								
 								this.contentLength = responseCached.getMessageLength();
@@ -564,10 +567,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					byteMax = kbMax.longValue() * 1024;
 				}
 				
-				Map<String, String> trasportoRichiesta = null;
+				Map<String, List<String>> trasportoRichiesta = null;
 				if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
-						this.requestMsg.getTransportRequestContext().getParametersTrasporto()!=null) {
-					trasportoRichiesta = this.requestMsg.getTransportRequestContext().getParametersTrasporto();
+						this.requestMsg.getTransportRequestContext().getHeaders()!=null) {
+					trasportoRichiesta = this.requestMsg.getTransportRequestContext().getHeaders();
 				}
 				
 				ResponseCachingConfigurazioneControl cacheControl = this.responseCachingConfig.getControl();
@@ -576,7 +579,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				}
 				if(cacheControl!=null) {
 					if(cacheControl.isNoStore()) {
-						if(HttpUtilities.isNoStore(trasportoRichiesta)) {
+						if(HttpUtilities.isDirectiveNoStore(trasportoRichiesta)) {
 							saveInCache = false;
 						}
 					}
@@ -729,7 +732,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
      * 
      */
     @Override
-	public Map<String, String> getHeaderTrasporto(){
+	public Map<String, List<String>> getHeaderTrasporto(){
     	if(this.propertiesTrasportoRisposta.size()<=0){
     		return null;
     	}else{
@@ -842,7 +845,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		
     		this.postOutRequestContext = new PostOutRequestContext(this.outRequestContext);
     		this.postOutRequestContext.setCodiceTrasporto(this.getCodiceTrasporto());
-    		this.postOutRequestContext.setPropertiesTrasportoRisposta(this.getHeaderTrasporto());
+    		this.postOutRequestContext.setResponseHeaders(this.getHeaderTrasporto());
     		
     		// invocazione handler
     		try{
@@ -875,7 +878,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		if(postContext==null){
     			postContext = new PostOutRequestContext(this.outRequestContext);
     			postContext.setCodiceTrasporto(this.getCodiceTrasporto());
-    			postContext.setPropertiesTrasportoRisposta(this.getHeaderTrasporto());
+    			postContext.setResponseHeaders(this.getHeaderTrasporto());
     		}
     		
     		this.preInResponseContext = new PreInResponseContext(postContext);
@@ -1034,7 +1037,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     private InfoConnettoreUscita infoConnettoreUscita = null;
-    protected void dumpBinarioRichiestaUscita(ByteArrayOutputStream bout,String contentTypeRichiesta,String location, Map<String, String> trasporto) throws DumpException {
+    protected void dumpBinarioRichiestaUscita(ByteArrayOutputStream bout,String contentTypeRichiesta,String location, Map<String, List<String>> trasporto) throws DumpException {
     	if(this.debug){
     		String content = null;
 	    	if(bout!=null) {
@@ -1048,7 +1051,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	if(this.dump!=null) {
 			this.infoConnettoreUscita = new InfoConnettoreUscita();
 			this.infoConnettoreUscita.setLocation(location);
-			this.infoConnettoreUscita.setPropertiesTrasporto(trasporto);
+			this.infoConnettoreUscita.setHeaders(trasporto);
 			boolean onlyLogFileTrace = !this.debug && this.logFileTrace;
 	    	byte[]content = null;
 	    	if(bout!=null) {
@@ -1057,7 +1060,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.dump.dumpBinarioRichiestaUscita(onlyLogFileTrace, content, this.infoConnettoreUscita);
     	}
     }
-    protected void dumpBinarioRispostaIngresso(byte[]raw,Map<String, String> trasportoRisposta) throws DumpException {
+    protected void dumpBinarioRispostaIngresso(byte[]raw,Map<String, List<String>> trasportoRisposta) throws DumpException {
     	if(this.dump!=null) {
     		boolean onlyLogFileTrace = !this.debug && this.logFileTrace;
 			this.dump.dumpBinarioRispostaIngresso(onlyLogFileTrace, raw, this.infoConnettoreUscita, trasportoRisposta);
@@ -1133,15 +1136,20 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     
     
     
-    private HashMap<String,String> headersImpostati = new HashMap<String,String>(); // per evitare che header generati nel conettore siano sovrascritti da eventuali forward. Gli header del connettore vengono impostati prima del forward.
+    private Map<String,List<String>> headersImpostati = new HashMap<String,List<String>>(); // per evitare che header generati nel conettore siano sovrascritti da eventuali forward. Gli header del connettore vengono impostati prima del forward.
     private Messaggio messaggioDumpUscita = null;
-    protected void setRequestHeader(String key,String value) throws Exception {} // ridefinito nei connettori dove esistono header da spedire 
-    protected void setRequestHeader(String key,String value, Map<String, String> propertiesTrasportoDebug) throws Exception {
+    protected void setRequestHeader(String key,List<String> values) throws Exception {} // ridefinito nei connettori dove esistono header da spedire 
+    protected void setRequestHeader(String key, String value, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
+    	List<String> list = new ArrayList<>(); 
+    	list.add(value);
+    	this.setRequestHeader(key, list, propertiesTrasportoDebug);
+    }
+    protected void setRequestHeader(String key,List<String> values, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
     	if(!this.headersImpostati.containsKey(key)) {
-    		this.headersImpostati.put(key,value);
-	    	this.setRequestHeader(key,value);
+    		this.headersImpostati.put(key,values);
+	    	this.setRequestHeader(key,values);
 	    	if(propertiesTrasportoDebug!=null) {
-	    		propertiesTrasportoDebug.put(key, value);
+	    		propertiesTrasportoDebug.put(key, values);
 	    	}
     	}
     	else {
@@ -1169,11 +1177,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		}
     		if(this.messaggioDumpUscita!=null) {
     			if(this.messaggioDumpUscita.getHeaders()==null) {
-    				this.messaggioDumpUscita.setHeaders(new HashMap<String, String>());
+    				this.messaggioDumpUscita.setHeaders(new HashMap<String, List<String>>());
     			}
-    			this.messaggioDumpUscita.getHeaders().remove(key);
-    			this.messaggioDumpUscita.getHeaders().remove(key.toLowerCase());
-    			this.messaggioDumpUscita.getHeaders().remove(key.toUpperCase());
+    			TransportUtils.removeRawObject(this.messaggioDumpUscita.getHeaders(), key);
     			this.messaggioDumpUscita.getHeaders().put(key, this.headersImpostati.get(key));
     		}
     	}

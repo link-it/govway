@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.dynamic;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
@@ -67,13 +68,18 @@ public class ContentExtractor {
 			this.message.forceTransportHeader(name, value);
 		}
 	}
+	public void addTransportHeader(String name, List<String> values) {
+		if(this.message!=null) {
+			this.message.forceTransportHeader(name, values);
+		}
+	}
 	public void removeTransportHeader(String name) {
 		if(this.message!=null) {
 			if(this.message.getTransportRequestContext()!=null) {
-				this.message.getTransportRequestContext().removeParameterTrasporto(name);
+				this.message.getTransportRequestContext().removeHeader(name);
 			}
 			else if(this.message.getTransportResponseContext()!=null) {
-				this.message.getTransportResponseContext().removeParameterTrasporto(name);
+				this.message.getTransportResponseContext().removeHeader(name);
 			}
 		}
 	}
@@ -83,10 +89,15 @@ public class ContentExtractor {
 			this.message.forceUrlProperty(name, value);
 		}
 	}
+	public void addUrlProperty(String name, List<String> values) {
+		if(this.message!=null) {
+			this.message.forceUrlProperty(name, values);
+		}
+	}
 	public void removeUrlProperty(String name) {
 		if(this.message!=null) {
 			if(this.message.getTransportRequestContext()!=null) {
-				this.message.getTransportRequestContext().removeParameterFormBased(name);
+				this.message.getTransportRequestContext().removeParameter(name);
 			}
 		}
 	}

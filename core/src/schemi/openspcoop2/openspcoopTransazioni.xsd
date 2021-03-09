@@ -2633,10 +2633,12 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:sql-table-mapping sequence-cycle="true"
 						comment="Dump degli header di trasporto all'interno della parte del Multipart contenente il messaggio principale">
+						<!-- Sono possibili header con stesso nome
 						<linkit:sql-table-unique>
 							<linkit:sql-table-unique-column name="id"/>
 							<linkit:sql-table-unique-field name="nome"/>
 						</linkit:sql-table-unique>
+						 -->
 						<!-- Indici per ottimizzare le ricerche basate sull'id del messaggio -->
 						<linkit:sql-table-index>
 							<linkit:sql-table-index-column name="id_messaggio"/>
@@ -2686,10 +2688,12 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:sql-table-mapping sequence-cycle="true"
 						comment="Dump degli header di trasporto associati ai messaggi transitati nella Porta di Dominio">
+						<!-- Sono possibili header con stesso nome
 						<linkit:sql-table-unique>
 							<linkit:sql-table-unique-column name="id"/>
 							<linkit:sql-table-unique-field name="nome"/>
 						</linkit:sql-table-unique>
+						-->
 						<!-- Indici per ottimizzare le ricerche basate sull'id del messaggio -->
 						<linkit:sql-table-index>
 							<linkit:sql-table-index-column name="id_messaggio"/>
@@ -2832,10 +2836,12 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:sql-table-mapping sequence-cycle="true"
 						comment="Dump degli header di trasporto associati ad un allegato transitato nella Porta di Dominio">
+						<!-- Sono possibili header con stesso nome
 						<linkit:sql-table-unique>
 							<linkit:sql-table-unique-column name="id"/>
 							<linkit:sql-table-unique-field name="nome"/>
 						</linkit:sql-table-unique>
+						-->
 						<!-- Indici per ottimizzare le ricerche basate sull'id delll'allegato -->
 						<linkit:sql-table-index>
 							<linkit:sql-table-index-column name="id_allegato"/>

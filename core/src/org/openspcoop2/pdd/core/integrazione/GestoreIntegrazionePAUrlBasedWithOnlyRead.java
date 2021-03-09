@@ -63,7 +63,7 @@ public class GestoreIntegrazionePAUrlBasedWithOnlyRead extends AbstractCore impl
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException {
 		try{
-			this.utilities.readUrlProperties(inRequestPAMessage.getUrlProtocolContext().getParametersFormBased(), 
+			this.utilities.readUrlProperties(inRequestPAMessage.getUrlProtocolContext().getParameters(), 
 					integrazione);	
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePAUrlBased, "+e.getMessage(),e);

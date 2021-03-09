@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.dynamic;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -40,8 +41,9 @@ public class DynamicInfo {
 
 	private Context pddContext;
 	private Busta busta;
-	private Map<String, String> trasporto;
-	private Map<String, String> queryParameters;
+	private Map<String, List<String>> trasporto;
+	private Map<String, List<String>> queryParameters;
+	private Map<String, List<String>> formParameters;
 	
 	// non disponibili nel connettore
 	private String url;
@@ -80,17 +82,23 @@ public class DynamicInfo {
 	public void setPddContext(Context pddContext) {
 		this.pddContext = pddContext;
 	}
-	public Map<String, String> getTrasporto() {
+	public Map<String, List<String>> getHeaders() {
 		return this.trasporto;
 	}
-	public void setTrasporto(Map<String, String> trasporto) {
+	public void setHeaders(Map<String, List<String>> trasporto) {
 		this.trasporto = trasporto;
 	}
-	public Map<String, String> getQueryParameters() {
+	public Map<String, List<String>> getParameters() {
 		return this.queryParameters;
 	}
-	public void setQueryParameters(Map<String, String> queryParameters) {
+	public void setParameters(Map<String, List<String>> queryParameters) {
 		this.queryParameters = queryParameters;
+	}
+	public Map<String, List<String>> getFormParameters() {
+		return this.formParameters;
+	}
+	public void setFormParameters(Map<String, List<String>> formParameters) {
+		this.formParameters = formParameters;
 	}
 	public String getUrl() {
 		return this.url;

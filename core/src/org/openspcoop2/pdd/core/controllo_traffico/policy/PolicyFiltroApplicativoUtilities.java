@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
-import java.util.Map;
-
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
@@ -32,7 +30,6 @@ import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
-import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
@@ -99,13 +96,11 @@ public class PolicyFiltroApplicativoUtilities {
 
 		case FORM_BASED:
 			
-			Map<String, String> pForm = context.getConnettore().getUrlProtocolContext().getParametersFormBased();
-			return TransportUtils.get(pForm, nome);
+			return context.getConnettore().getUrlProtocolContext().getParameterFirstValue(nome);
 			
 		case HEADER_BASED:
 			
-			Map<String, String> pTrasporto = context.getConnettore().getUrlProtocolContext().getParametersTrasporto();
-			return TransportUtils.get(pTrasporto, nome);
+			return context.getConnettore().getUrlProtocolContext().getHeaderFirstValue(nome);
 						
 		case SOAPACTION_BASED:
 			

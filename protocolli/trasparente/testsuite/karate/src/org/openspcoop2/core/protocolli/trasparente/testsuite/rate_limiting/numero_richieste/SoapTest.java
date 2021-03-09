@@ -141,9 +141,9 @@ public class SoapTest extends ConfigLoader {
 		assertEquals("Too Many Requests", matcher.read("/html/body/h1/text()"));
 		assertEquals("Too many requests detected", matcher.read("/html/body/p/text()"));
 		
-		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
-		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));		
+		assertNotEquals(null, failedResponse.getHeaderFirstValue(Headers.RetryAfter));		
 		
 		Utils.waitForZeroGovWayThreads();		
 	}
@@ -451,13 +451,13 @@ public class SoapTest extends ConfigLoader {
 		// Tutte le richieste devono avere lo header X-RateLimit-Limit
 		
 		responses.forEach(r -> { 			
-				assertTrue( Integer.valueOf(r.getHeader(Headers.RateLimitReset)) != null);
-				Utils.checkXLimitHeader(logRateLimiting, Headers.RateLimitLimit, r.getHeader(Headers.RateLimitLimit), maxRequests);
+				assertTrue( Integer.valueOf(r.getHeaderFirstValue(Headers.RateLimitReset)) != null);
+				Utils.checkXLimitHeader(logRateLimiting, Headers.RateLimitLimit, r.getHeaderFirstValue(Headers.RateLimitLimit), maxRequests);
 				
 				
 				if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 					Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
-					Utils.checkXLimitWindows(r.getHeader(Headers.RateLimitLimit), maxRequests, windowMap);
+					Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.RateLimitLimit), maxRequests, windowMap);
 				}
 			});
 
@@ -482,16 +482,16 @@ public class SoapTest extends ConfigLoader {
 		assertEquals("Limit Exceeded", matcher.read("/html/body/h1/text()"));
 		assertEquals("Limit exceeded detected", matcher.read("/html/body/p/text()"));		
 		
-		assertEquals("0", failedResponse.getHeader(Headers.RateLimitRemaining));
-		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.RateLimitRemaining));
+		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
-		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
+		assertNotEquals(null, failedResponse.getHeaderFirstValue(Headers.RetryAfter));
 		
 		// Lo header X-RateLimit-Remaining deve assumere tutti i
 		// i valori possibili da 0 a maxRequests-1
 		
 		List<Integer> counters = responses.stream()
-				.map(resp -> Integer.parseInt(resp.getHeader(Headers.RateLimitRemaining))).collect(Collectors.toList());
+				.map(resp -> Integer.parseInt(resp.getHeaderFirstValue(Headers.RateLimitRemaining))).collect(Collectors.toList());
 		assertTrue(IntStream.range(0, maxRequests).allMatch(v -> counters.contains(v)));		
 	}
 	
@@ -505,8 +505,8 @@ public class SoapTest extends ConfigLoader {
 		// Tutte le richieste devono avere lo header ConcurrentRequestsRemaining impostato ad un numero positivo		
 		
 		responses.forEach(r -> {
-			assertTrue(r.getHeader(Headers.ConcurrentRequestsLimit).equals(String.valueOf(maxConcurrentRequests)));
-			assertTrue(Integer.valueOf(r.getHeader(Headers.ConcurrentRequestsRemaining)) >= 0);
+			assertTrue(r.getHeaderFirstValue(Headers.ConcurrentRequestsLimit).equals(String.valueOf(maxConcurrentRequests)));
+			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.ConcurrentRequestsRemaining)) >= 0);
 		});
 			
 		// La richiesta fallita deve avere status code 429
@@ -524,10 +524,10 @@ public class SoapTest extends ConfigLoader {
 		assertEquals("Too Many Requests", matcher.read("/html/body/h1/text()"));
 		assertEquals("Too many requests detected", matcher.read("/html/body/p/text()"));
 		
-		assertEquals("0", failedResponse.getHeader(Headers.ConcurrentRequestsRemaining));
-		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeader(Headers.GovWayTransactionErrorType));
+		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.ConcurrentRequestsRemaining));
+		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
-		assertNotEquals(null, failedResponse.getHeader(Headers.RetryAfter));
+		assertNotEquals(null, failedResponse.getHeaderFirstValue(Headers.RetryAfter));
 	}
 
 }

@@ -21,14 +21,15 @@
 
 package org.openspcoop2.pdd.core.handlers;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.slf4j.Logger;
 
 /**
  * PreInRequestContext
@@ -44,7 +45,7 @@ public class PreInRequestContext {
 	public final static String CONTEXT = "CONTEXT";
 	
 	/** Trasporto */
-	private Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
+	private Map<String, Object> transportContext = new HashMap<String, Object>();
 
 	/** Tipo porta di dominio */
 	private TipoPdD tipoPorta;
@@ -76,11 +77,11 @@ public class PreInRequestContext {
 		return this.pddContext;
 	}
 
-	public Hashtable<String, Object> getTransportContext() {
+	public Map<String, Object> getTransportContext() {
 		return this.transportContext;
 	}
 
-	public void setTransportContext(Hashtable<String, Object> transportContext) {
+	public void setTransportContext(Map<String, Object> transportContext) {
 		this.transportContext = transportContext;
 	}
 

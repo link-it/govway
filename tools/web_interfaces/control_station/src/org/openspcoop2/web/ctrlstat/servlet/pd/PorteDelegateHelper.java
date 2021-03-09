@@ -1666,7 +1666,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 
 	// Controlla i dati della porta delegata
-	public boolean porteDelegateCheckData(TipoOperazione tipoOp, String oldNomePD)
+	public boolean porteDelegateCheckData(TipoOperazione tipoOp, String oldNomePD, boolean datiAltroPorta)
 			throws Exception {
 		try {
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -1749,7 +1749,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 
 			// integrazione metadati
-			if(tipoOp == TipoOperazione.CHANGE) {
+			if(tipoOp == TipoOperazione.CHANGE && datiAltroPorta) {
 				boolean validazioneIntegrazione = this.validaIntegrazioneMetadati();
 				if(!validazioneIntegrazione)
 					return false;

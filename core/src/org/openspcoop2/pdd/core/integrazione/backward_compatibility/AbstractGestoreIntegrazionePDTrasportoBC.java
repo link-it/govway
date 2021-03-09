@@ -73,7 +73,7 @@ public abstract class AbstractGestoreIntegrazionePDTrasportoBC extends AbstractC
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilitiesRequestBC.readTransportProperties(inRequestPDMessage.getUrlProtocolContext().getParametersTrasporto(), integrazione);	
+			this.utilitiesRequestBC.readTransportProperties(inRequestPDMessage.getUrlProtocolContext().getHeaders(), integrazione);	
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);
 		}
@@ -104,7 +104,7 @@ public abstract class AbstractGestoreIntegrazionePDTrasportoBC extends AbstractC
 	public void setOutResponseHeader(HeaderIntegrazione integrazione,
 			OutResponsePDMessage outResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilitiesResponseBC.setTransportProperties(integrazione, outResponsePDMessage.getProprietaTrasporto(),
+			this.utilitiesResponseBC.setTransportProperties(integrazione, outResponsePDMessage.getHeaders(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outResponsePDMessage.getBustaRichiesta(), false, TipoIntegrazione.TRASPORTO));		
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);

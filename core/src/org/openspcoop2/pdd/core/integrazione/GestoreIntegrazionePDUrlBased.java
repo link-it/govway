@@ -63,7 +63,7 @@ public class GestoreIntegrazionePDUrlBased extends AbstractCore implements IGest
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		
 		try{
-			this.utilities.readUrlProperties(inRequestPDMessage.getUrlProtocolContext().getParametersFormBased(), 
+			this.utilities.readUrlProperties(inRequestPDMessage.getUrlProtocolContext().getParameters(), 
 					integrazione);	
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDUrlBased, "+e.getMessage(),e);

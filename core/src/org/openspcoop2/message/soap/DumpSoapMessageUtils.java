@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -64,20 +65,20 @@ public class DumpSoapMessageUtils {
 			dumpMessaggio.setMessageType(msg.getMessageType());
 			dumpMessaggio.setContentType(msg.getContentType());
 						
-			Map<String, String> pTrasporto = null;
+			Map<String, List<String>> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
-				if(msg.getTransportRequestContext().getParametersTrasporto()!=null && 
-						msg.getTransportRequestContext().getParametersTrasporto().size()>0){
+				if(msg.getTransportRequestContext().getHeaders()!=null && 
+						msg.getTransportRequestContext().getHeaders().size()>0){
 					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportRequestContext().getParametersTrasporto();
+						pTrasporto = msg.getTransportRequestContext().getHeaders();
 					}
 				}
 			}
 			else if(msg.getTransportResponseContext()!=null) {
-				if(msg.getTransportResponseContext().getParametersTrasporto()!=null && 
-						msg.getTransportResponseContext().getParametersTrasporto().size()>0){
+				if(msg.getTransportResponseContext().getHeaders()!=null && 
+						msg.getTransportResponseContext().getHeaders().size()>0){
 					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportResponseContext().getParametersTrasporto();
+						pTrasporto = msg.getTransportResponseContext().getHeaders();
 					}
 				}
 			}
@@ -86,8 +87,8 @@ public class DumpSoapMessageUtils {
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					if(key!=null){
-						String value = pTrasporto.get(key);
-						dumpMessaggio.getHeaders().put(key, value);
+						List<String> values = pTrasporto.get(key);
+						dumpMessaggio.getHeadersValues().put(key, values);
 					}
 				}
 			}
@@ -116,36 +117,36 @@ public class DumpSoapMessageUtils {
 				    				continue;
 				    			}
 				    			
-				    			String value = mh.getValue();
-//				    			String [] values = soapPart.getMimeHeader(key);
-//				    			String value = "";
-//				    			if(values!=null && values.length>0) {
-//				    				for (int j = 0; j < values.length; j++) {
-//										if(j>0) {
-//											value = value + ",";
-//										}
-//										value = value + values[j];
-//									}
-//				    			}
-				    			
-				    			if(multipartInfoBody==null) {
-				    				multipartInfoBody = new DumpMessaggioMultipartInfo();
+				    			List<String> l = new ArrayList<String>();
+				    			String [] values = soapPart.getMimeHeader(key);
+				    			if(values!=null && values.length>0) {
+				    				for (String value : values) {
+										l.add(value);
+									}
+				    			}
+				    			else {
+				    				l.add(mh.getValue());
 				    			}
 				    			
-				    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key)) {
-				    				multipartInfoBody.setContentId(value);
+				    			if(!l.isEmpty()) {
+					    			if(multipartInfoBody==null) {
+					    				multipartInfoBody = new DumpMessaggioMultipartInfo();
+					    			}
+					    			
+					    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key)) {
+					    				multipartInfoBody.setContentId(l.get(0));
+					    			}
+					    			else if(HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key)) {
+					    				multipartInfoBody.setContentLocation(l.get(0));
+					    			}
+					    			else if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
+					    				multipartInfoBody.setContentType(l.get(0));
+					    			}
+					    			
+					    			if(config.isDumpMultipartHeaders()) {
+					    				multipartInfoBody.getHeadersValues().put(key, l);
+					    			}
 				    			}
-				    			else if(HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key)) {
-				    				multipartInfoBody.setContentLocation(value);
-				    			}
-				    			else if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
-				    				multipartInfoBody.setContentType(value);
-				    			}
-				    			
-				    			if(config.isDumpMultipartHeaders()) {
-				    				multipartInfoBody.getHeaders().put(key, value);
-				    			}
-				    			
 				    			
 				    		}
 				    	}
@@ -184,19 +185,20 @@ public class DumpSoapMessageUtils {
 					    			javax.xml.soap.MimeHeader mh = (javax.xml.soap.MimeHeader) keyO;
 					    			String key = mh.getName();
 					    			
-					    			String value = mh.getValue();
-//					    			String [] values = ap.getMimeHeader(key);
-//					    			String value = "";
-//					    			if(values!=null && values.length>0) {
-//					    				for (int j = 0; j < values.length; j++) {
-//											if(j>0) {
-//												value = value + ",";
-//											}
-//											value = value + values[j];
-//										}
-//					    			}
+					    			List<String> l = new ArrayList<String>();
+					    			String [] values = ap.getMimeHeader(key);
+					    			if(values!=null && values.length>0) {
+					    				for (String value : values) {
+											l.add(value);
+										}
+					    			}
+					    			else {
+					    				l.add(mh.getValue());
+					    			}
 					    			
-					    			dumpAttach.getHeaders().put(key, value);
+					    			if(!l.isEmpty()) {
+					    				dumpAttach.getHeadersValues().put(key, l);
+					    			}
 					    		}
 					    	}
 				    	}
@@ -262,20 +264,20 @@ public class DumpSoapMessageUtils {
 		try{
 			StringBuilder out = new StringBuilder();
 			
-			Map<String, String> pTrasporto = null;
+			Map<String, List<String>> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
-				if(msg.getTransportRequestContext().getParametersTrasporto()!=null && 
-						msg.getTransportRequestContext().getParametersTrasporto().size()>0){
+				if(msg.getTransportRequestContext().getHeaders()!=null && 
+						msg.getTransportRequestContext().getHeaders().size()>0){
 					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportRequestContext().getParametersTrasporto();
+						pTrasporto = msg.getTransportRequestContext().getHeaders();
 					}
 				}
 			}
 			else if(msg.getTransportResponseContext()!=null) {
-				if(msg.getTransportResponseContext().getParametersTrasporto()!=null && 
-						msg.getTransportResponseContext().getParametersTrasporto().size()>0){
+				if(msg.getTransportResponseContext().getHeaders()!=null && 
+						msg.getTransportResponseContext().getHeaders().size()>0){
 					if(config.isDumpHeaders()) {
-						pTrasporto = msg.getTransportResponseContext().getParametersTrasporto();
+						pTrasporto = msg.getTransportResponseContext().getHeaders();
 					}
 				}
 			}
@@ -286,8 +288,12 @@ public class DumpSoapMessageUtils {
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
 						if(key!=null){
-							String value = pTrasporto.get(key);
-							out.append("- "+key+": "+value+"\n");
+							List<String> values = pTrasporto.get(key);
+							if(values!=null && !values.isEmpty()) {
+								for (String value : values) {
+									out.append("- "+key+": "+value+"\n");	
+								}
+							}
 						}
 					}
 				}
@@ -305,7 +311,7 @@ public class DumpSoapMessageUtils {
 				
 				if(msgWithAttachments) {
 					
-					HashMap<String, String> mime = new HashMap<>();
+					Map<String, List<String>> mime = new HashMap<>();
 					Iterator<?> itM = soapPart.getAllMimeHeaders();
 			    	if(itM!=null) {
 				    	while(itM.hasNext()) {
@@ -320,31 +326,29 @@ public class DumpSoapMessageUtils {
 				    				continue;
 				    			}
 				    			
+				    			List<String> l = new ArrayList<String>();
 				    			String [] values = soapPart.getMimeHeader(key);
-				    			String value = "";
 				    			if(values!=null && values.length>0) {
-				    				for (int j = 0; j < values.length; j++) {
-										if(j>0) {
-											value = value + ",";
-										}
-										value = value + values[j];
+				    				for (String value : values) {
+										l.add(value);
 									}
 				    			}
 				    			
-				    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key)) {
-				    				mime.put(key, value);
+				    			if(!l.isEmpty()) {
+				    				if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key)) {
+					    				mime.put(key, l);
+					    			}
+					    			else if(HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key)) {
+					    				mime.put(key, l);
+					    			}
+					    			else if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
+					    				mime.put(key, l);
+					    			}
+					    			else if(config.isDumpMultipartHeaders()) {
+					    				mime.put(key, l);
+					    			}
 				    			}
-				    			else if(HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key)) {
-				    				mime.put(key, value);
-				    			}
-				    			else if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
-				    				mime.put(key, value);
-				    			}
-				    			else if(config.isDumpMultipartHeaders()) {
-				    				mime.put(key, value);
-				    			}
-				    			
-				    			
+
 				    		}
 				    	}
 			    	}
@@ -354,7 +358,12 @@ public class DumpSoapMessageUtils {
 			    		Iterator<String> it = mime.keySet().iterator();
 			    		while (it.hasNext()) {
 							String key = (String) it.next();
-							out.append("- "+key+": "+mime.get(key)+"\n");	
+							List<String> l = mime.get(key);
+							if(l!=null && !l.isEmpty()) {
+								for (String v : l) {
+									out.append("- "+key+": "+v+"\n");			
+								}
+							}
 						}
 			    	}
 					
@@ -397,16 +406,11 @@ public class DumpSoapMessageUtils {
 					    				continue;
 					    			}
 					    			String [] values = ap.getMimeHeader(key);
-					    			String value = "";
 					    			if(values!=null && values.length>0) {
-					    				for (int j = 0; j < values.length; j++) {
-											if(j>0) {
-												value = value + ",";
-											}
-											value = value + values[j];
+					    				for (String value : values) {
+					    					out.append("- "+key+": "+value+"\n");
 										}
 					    			}
-					    			out.append("- "+key+": "+value+"\n");
 					    		}
 					    	}
 						}

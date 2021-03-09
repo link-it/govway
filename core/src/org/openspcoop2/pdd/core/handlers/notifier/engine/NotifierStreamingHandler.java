@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.handlers.notifier.engine;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.id.IDSoggetto;
@@ -45,14 +46,14 @@ public class NotifierStreamingHandler extends AbstractStreamingHandler {
 	
 	private String idTransazione;
 	private TipoMessaggio tipoMessaggio;
-	private Map<String, String> headerTrasporto;
+	private Map<String, List<String>> headerTrasporto;
 	private long idDumpConfigurazione;
 	private String contentType;
 	private NotifierCallback notifierCallback;
 	private IDSoggetto dominio;
 	
 	public NotifierStreamingHandler(NotifierCallback notifierCallback, String idTransazione, TipoMessaggio tipoMessaggio,
-			Map<String, String> headerTrasporto,
+			Map<String, List<String>> headerTrasporto,
 			long idDumpConfigurazione,
 			String contentType, Logger log,
 			IDSoggetto dominio) throws Exception{

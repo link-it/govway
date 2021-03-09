@@ -213,10 +213,10 @@ public class ModIImbustamentoSoap {
 			String headerCorrelationIdHttp = this.modiProperties.getRestCorrelationIdHeader();
 			String correlationIdFoundHttp = null;
 			if(soapMessage.getTransportRequestContext()!=null) {
-				correlationIdFoundHttp = soapMessage.getTransportRequestContext().getParameterTrasporto(headerCorrelationIdHttp);
+				correlationIdFoundHttp = soapMessage.getTransportRequestContext().getHeaderFirstValue(headerCorrelationIdHttp);
 			}
 			else if(soapMessage.getTransportResponseContext()!=null) {
-				correlationIdFoundHttp = soapMessage.getTransportResponseContext().getParameterTrasporto(headerCorrelationIdHttp);
+				correlationIdFoundHttp = soapMessage.getTransportResponseContext().getHeaderFirstValue(headerCorrelationIdHttp);
 			}
 			
 			if(correlationIdFoundHttp!=null && !"".equals(correlationIdFoundHttp)) {

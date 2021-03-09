@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.credenziali.engine;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -96,7 +97,7 @@ public class GestoreCredenzialiEngine {
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
-		Map<String, String> headerTrasporto = infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto();
+		Map<String, List<String>> headerTrasporto = infoConnettoreIngresso.getUrlProtocolContext().getHeaders();
 		
 		Credenziali credenzialiTrasporto = infoConnettoreIngresso.getCredenziali();
 		
@@ -641,17 +642,17 @@ public class GestoreCredenzialiEngine {
 		return this.identita;
 	}
 	
-	private boolean existsHeader(Map<String, String> properties, String name){
+	private boolean existsHeader(Map<String, List<String>> properties, String name){
 		if(properties!=null){
-			return TransportUtils.hasKey(properties, name);
+			return TransportUtils.containsKey(properties, name);
 		}else{
 			return false;
 		}
 	}
 	
-	private String getProperty(Map<String, String> properties, String name){
+	private String getProperty(Map<String, List<String>> properties, String name){
 		if(properties!=null){
-			return TransportUtils.get(properties, name);
+			return TransportUtils.getFirstValue(properties, name);
 		}else{
 			return null;
 		}

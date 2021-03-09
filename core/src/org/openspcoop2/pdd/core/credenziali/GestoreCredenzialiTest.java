@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.credenziali;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -56,9 +57,9 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 		String realm = "GovWay";
 		String authType = "ProxyAuth";
 		
-		if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME)){
-			String username = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(),GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME);	
-			String password = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(),GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD);
+		if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getHeaders(), GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME)){
+			String username = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getHeaders(),GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME);	
+			String password = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getHeaders(),GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD);
 			if(username==null || "".equals(username)){
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
 						GestoreCredenzialiEngine.buildWWWProxyAuthBasic(authType, realm, true),
@@ -72,8 +73,8 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 			c.setUsername(username);
 			c.setPassword(password);
 		}
-		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT)){
-			String subject = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(),GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT);
+		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getHeaders(), GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT)){
+			String subject = getProperty(infoConnettoreIngresso.getUrlProtocolContext().getHeaders(),GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT);
 			if(subject==null || "".equals(subject)){
 				throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_CREDENTIALS_NOT_FOUND, 
 						GestoreCredenzialiEngine.buildWWWProxyAuthSSL(authType, realm, true),
@@ -81,15 +82,15 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 			}
 			c.setSubject(subject);
 		}
-		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE)){
+		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getHeaders(), GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE)){
 			throw new GestoreCredenzialiException("Eccezione generale richiesta dalla testsuite");
 		}
-		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_CONFIGURAZIONE)){
+		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getHeaders(), GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_CONFIGURAZIONE)){
 			throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_INVALID_CREDENTIALS, 
 					GestoreCredenzialiEngine.buildWWWProxyAuthSSL(authType, realm, false),
 					"Eccezione, di configurazione, richiesta dalla testsuite");
 		}
-		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getParametersTrasporto(), GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_FORWARD)){
+		else if(existsHeader(infoConnettoreIngresso.getUrlProtocolContext().getHeaders(), GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_FORWARD)){
 			throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 					GestoreCredenzialiEngine.buildWWWAuthSSL(),
 					"Eccezione, di configurazione, richiesta dalla testsuite");
@@ -113,17 +114,17 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 		return this.identita;
 	}
 	
-	private boolean existsHeader(Map<String, String> properties, String name){
+	private boolean existsHeader(Map<String, List<String>> properties, String name){
 		if(properties!=null){
-			return TransportUtils.hasKey(properties, name);
+			return TransportUtils.containsKey(properties, name);
 		}else{
 			return false;
 		}
 	}
 	
-	private String getProperty(Map<String, String> properties, String name){
+	private String getProperty(Map<String, List<String>> properties, String name){
 		if(properties!=null){
-			return TransportUtils.get(properties, name);
+			return TransportUtils.getFirstValue(properties, name);
 		}else{
 			return null;
 		}

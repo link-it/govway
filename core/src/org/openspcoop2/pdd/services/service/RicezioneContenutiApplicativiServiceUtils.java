@@ -22,7 +22,7 @@ package org.openspcoop2.pdd.services.service;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,6 +73,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -197,9 +198,9 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				// Lettura eventuale MessageFactory da utilizzare
 				try {
 					if(pdDefault!=null && pdDefault.getOptions()!=null && !StringUtils.isEmpty(pdDefault.getOptions())) {
-						Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(pdDefault.getOptions());
+						Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(pdDefault.getOptions());
 						if(props!=null && props.size()>0) {
-							String msgFactory = props.get(CostantiPdD.OPTIONS_MESSAGE_FACTORY);
+							String msgFactory = TransportUtils.getFirstValue(props,CostantiPdD.OPTIONS_MESSAGE_FACTORY);
 							if(msgFactory!=null) {
 								requestInfo.setMessageFactory(msgFactory);
 							}
@@ -522,10 +523,12 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 			postOutResponseContext.setEsito(info.getEsitoTransazione());
 			postOutResponseContext.setReturnCode(info.getStatus());
-			postOutResponseContext.setPropertiesRispostaTrasporto(info.getTrasporto());
+			postOutResponseContext.setResponseHeaders(info.getTrasporto());
 			if(info.getContentType()!=null) {
-				postOutResponseContext.setPropertiesRispostaTrasporto(new HashMap<String, String>());
-				postOutResponseContext.getPropertiesRispostaTrasporto().put(HttpConstants.CONTENT_TYPE, info.getContentType());
+				if(postOutResponseContext.getResponseHeaders()==null) {
+					postOutResponseContext.setResponseHeaders(new HashMap<String, List<String>>());
+				}
+				TransportUtils.setHeader(postOutResponseContext.getResponseHeaders(),HttpConstants.CONTENT_TYPE, info.getContentType());
 			}
 					
 			if(info.getMessage()!=null){

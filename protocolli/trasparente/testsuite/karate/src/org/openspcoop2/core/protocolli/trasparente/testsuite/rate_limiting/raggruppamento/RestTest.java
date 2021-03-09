@@ -170,7 +170,7 @@ public class RestTest extends ConfigLoader {
 		
 		responsesOk.forEach(r -> {
 			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + r.getHeaders());
+			logRateLimiting.info("headers: " + r.getHeadersValues());
 		});
 		Utils.waitForZeroGovWayThreads();
 		
@@ -208,7 +208,7 @@ public class RestTest extends ConfigLoader {
 		
 		responsesFailed.forEach(r -> {
 			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());
-			logRateLimiting.info("headers: " + r.getHeaders());
+			logRateLimiting.info("headers: " + r.getHeadersValues());
 		});
 		Utils.waitForZeroGovWayThreads();
 		logRateLimiting.info(Utils.getPolicy(idPolicy));

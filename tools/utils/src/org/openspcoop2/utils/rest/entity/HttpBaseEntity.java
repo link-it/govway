@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
@@ -42,9 +43,9 @@ public abstract class HttpBaseEntity<T> {
 	private String contentType;
 
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
-	private Map<String, String> parametersTrasporto = new HashMap<>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	/* ---- Coppie nome/valori di invocazione form ----- */
-	private Map<String, String> parametersForm = new HashMap<>();
+	//Solo nella richiesta: private Map<String, List<String>> parameters = new HashMap<>();
 	/* ---- Cookies ----- */
 	private List<Cookie> cookies = new ArrayList<>();
 	
@@ -75,18 +76,41 @@ public abstract class HttpBaseEntity<T> {
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
+	
+	/*
+	 * Solo nella richiesta
+	@Deprecated
 	public Map<String, String> getParametersForm() {
-		return this.parametersForm;
+		return TransportUtils.convertToMapSingleValue(this.parameters);
 	}
+	public Map<String, List<String>> getParameters(){
+		return this.parameters;
+	}
+	@Deprecated
 	public void setParametersForm(Map<String, String> parametersForm) {
-		this.parametersForm = parametersForm;
+		this.parameters = TransportUtils.convertToMapListValues(parametersForm);
 	}
+	public void setParameters(Map<String, List<String>> parametersFormBased) {
+		this.parameters = parametersFormBased;
+	}
+	*/
+	
+	@Deprecated
 	public Map<String, String> getParametersTrasporto() {
-		return this.parametersTrasporto;
+		return TransportUtils.convertToMapSingleValue(this.headers);
 	}
+	public Map<String, List<String>> getHeaders(){
+		return this.headers;
+	}
+	
+	@Deprecated
 	public void setParametersTrasporto(Map<String, String> parametersTrasporto) {
-		this.parametersTrasporto = parametersTrasporto;
+		this.headers = TransportUtils.convertToMapListValues(parametersTrasporto);
 	}
+	public void setHeaders(Map<String, List<String>> parametersFormBased) {
+		this.headers = parametersFormBased;
+	}
+	
 	public List<Cookie> getCookies() {
 		return this.cookies;
 	}

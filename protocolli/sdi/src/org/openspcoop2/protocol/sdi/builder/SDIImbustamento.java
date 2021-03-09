@@ -117,12 +117,12 @@ public class SDIImbustamento {
 				
 				// versioneFattura
 				if(msg.getTransportRequestContext()!=null){
-					versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA);
+					versioneFattura =  msg.getTransportRequestContext().getParameterFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA);
 					if(versioneFattura==null){
-						versioneFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
+						versioneFattura =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
 					}
 					if(versioneFattura==null){
-						versioneFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
+						versioneFattura =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
 					}
 				}
 				if(versioneFattura==null){
@@ -136,30 +136,12 @@ public class SDIImbustamento {
 				// nomeFileFattura
 				String tipoFileFattura = null;
 				if(msg.getTransportRequestContext()!=null){
-					tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE);
+					tipoFileFattura =  msg.getTransportRequestContext().getParameterFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE);
 					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toLowerCase());
+						tipoFileFattura =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1);
 					}
 					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toUpperCase());
-					}
-					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1);
-					}
-					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toLowerCase());
-					}
-					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toUpperCase());
-					}
-					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2);
-					}
-					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toLowerCase());
-					}
-					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toUpperCase());
+						tipoFileFattura =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2);
 					}
 				}
 				if(tipoFileFattura==null){
@@ -183,12 +165,12 @@ public class SDIImbustamento {
 				
 				// idPaese
 				if(msg.getTransportRequestContext()!=null){
-					idPaese =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_PAESE);
+					idPaese =  msg.getTransportRequestContext().getParameterFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_PAESE);
 					if(idPaese==null){
-						idPaese =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_1);
+						idPaese =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_1);
 					}
 					if(idPaese==null){
-						idPaese =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_2);
+						idPaese =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_2);
 					}
 				}
 				if(idPaese==null){
@@ -199,12 +181,12 @@ public class SDIImbustamento {
 				
 				// idCodice
 				if(msg.getTransportRequestContext()!=null){
-					idCodice =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_CODICE);
+					idCodice =  msg.getTransportRequestContext().getParameterFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_CODICE);
 					if(idCodice==null){
-						idCodice =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_1);
+						idCodice =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_1);
 					}
 					if(idCodice==null){
-						idCodice =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2);
+						idCodice =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2);
 					}
 				}
 				if(idCodice==null){
@@ -225,12 +207,12 @@ public class SDIImbustamento {
 				
 				// versioneFattura
 				if(msg.getTransportRequestContext()!=null){
-					versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA);
+					versioneFattura =  msg.getTransportRequestContext().getParameterFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA);
 					if(versioneFattura==null){
-						versioneFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
+						versioneFattura =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
 					}
 					if(versioneFattura==null){
-						versioneFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
+						versioneFattura =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
 					}
 				}
 				if(versioneFattura==null){
@@ -285,12 +267,12 @@ public class SDIImbustamento {
 			}
 			if(readNomeFromTrasporto) {
 				if(msg.getTransportRequestContext()!=null){
-					nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_NOME_FILE);
+					nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getParameterFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_NOME_FILE);
 					if(nomeFileFatturaDaSpedire==null){
-						nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_1);
+						nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_1);
 					}
 					if(nomeFileFatturaDaSpedire==null){
-						nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_2);
+						nomeFileFatturaDaSpedire =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_NOME_FILE_2);
 					}
 				}
 				if(nomeFileFatturaDaSpedire==null && (!this.sdiProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura()) ){
@@ -520,12 +502,12 @@ public class SDIImbustamento {
 			// nomeFileFattura
 			String nomeFileFattura = null;
 			if(msg.getTransportRequestContext()!=null){
-				nomeFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_NOME_FILE);
+				nomeFileFattura =  msg.getTransportRequestContext().getParameterFirstValue(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_NOME_FILE);
 				if(nomeFileFattura==null){
-					nomeFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_1);
+					nomeFileFattura =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_1);
 				}
 				if(nomeFileFattura==null){
-					nomeFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2);
+					nomeFileFattura =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2);
 				}
 			}
 			if(nomeFileFattura==null){
@@ -541,12 +523,12 @@ public class SDIImbustamento {
 			String identificativoSdi = null;
 			String tmpIdentificativoSdi = null;
 			if(msg.getTransportRequestContext()!=null){
-				tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_IDENTIFICATIVO_SDI);
+				tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFirstValue(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_IDENTIFICATIVO_SDI);
 				if(tmpIdentificativoSdi==null){
-					tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_1);
+					tmpIdentificativoSdi =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_1);
 				}
 				if(tmpIdentificativoSdi==null){
-					tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_2);
+					tmpIdentificativoSdi =  msg.getTransportRequestContext().getHeaderFirstValue(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_2);
 				}
 			}
 			boolean accessoNotificaDaInviare = this.sdiProperties.isEnableAccessoNotificaDaInviare();

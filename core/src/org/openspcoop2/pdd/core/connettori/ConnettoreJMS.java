@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core.connettori;
 import java.io.ByteArrayOutputStream;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -43,6 +44,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * Classe utilizzata per effettuare consegne di messaggi Soap, attraverso
@@ -475,7 +477,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
-					String value = (String) this.propertiesTrasporto.get(key);
+					List<String> values = this.propertiesTrasporto.get(key);
+					String value = TransportUtils.getFirstValue(values);
 					// Replace X--Value con Value
 					key = key.replace("X-", "");
 					key = key.replaceAll("-", "");

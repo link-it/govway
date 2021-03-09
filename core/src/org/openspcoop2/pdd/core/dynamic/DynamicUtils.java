@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
@@ -50,6 +51,7 @@ import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
@@ -63,6 +65,8 @@ import org.openspcoop2.utils.resources.FreemarkerTemplateLoader;
 import org.openspcoop2.utils.resources.TemplateUtils;
 import org.openspcoop2.utils.resources.VelocityTemplateLoader;
 import org.openspcoop2.utils.resources.VelocityTemplateUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -88,27 +92,36 @@ public class DynamicUtils {
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
-			Busta busta, Map<String, String> trasporto, Map<String, String> url,
+			Busta busta, 
+			Map<String, List<String>> trasporto, 
+			Map<String, List<String>> url, 
+			Map<String, List<String>> form,
 			ErrorHandler errorHandler) {
 		_fillDynamicMap(log, dynamicMap, pddContext, urlInvocazione, 
 				message,
 				element, 
 				elementJson, 
-				busta, trasporto, url,
+				busta, 
+				trasporto, 
+				url,
+				form,
 				errorHandler);	
     }
 	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, Context pddContext,
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
-			Busta busta, Map<String, String> trasporto,
+			Busta busta, Map<String, List<String>> trasporto,
 			ErrorHandler errorHandler) {
 		Map<String, Object> dynamicMapResponse = new HashMap<>();
 		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
 				message,
 				element, 
 				elementJson, 
-				busta, trasporto, null,
+				busta, 
+				trasporto, 
+				null, 
+				null,
 				errorHandler);
 		if(dynamicMapResponse!=null && !dynamicMapResponse.isEmpty()) {
 			Iterator<String> it = dynamicMapResponse.keySet().iterator();
@@ -124,6 +137,11 @@ public class DynamicUtils {
 					String keyResponse = key+Costanti.MAP_SUFFIX_RESPONSE;
 					dynamicMap.put(keyResponse, o);
 					dynamicMap.put(keyResponse.toLowerCase(), o);
+					if(Costanti.MAP_HEADER_VALUES.equals(key)) {
+						// scritta piu' corretta, pero' lascio anche la precedente
+						dynamicMap.put(Costanti.MAP_HEADER_RESPONSE_VALUES, o);
+						dynamicMap.put(Costanti.MAP_HEADER_RESPONSE_VALUES.toLowerCase(), o);
+					}
 				}
 			}
 		}
@@ -149,7 +167,10 @@ public class DynamicUtils {
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
-			Busta busta, Map<String, String> trasporto, Map<String, String> url,
+			Busta busta, 
+			Map<String, List<String>> trasporto, 
+			Map<String, List<String>> url,
+			Map<String, List<String>> form,
 			ErrorHandler errorHandler) {
 		DynamicInfo dInfo = new DynamicInfo();
 		dInfo.setBusta(busta);
@@ -160,7 +181,7 @@ public class DynamicUtils {
 			//pNew.putAll(trasporto);
 			//dInfo.setTrasporto(pNew);
 			// Fix per permettere la modifica degli header direttamente dentro la trasformazione
-			dInfo.setTrasporto(trasporto);
+			dInfo.setHeaders(trasporto);
 		}
 		if(url!=null) {
 			//&& !url.isEmpty()) {
@@ -168,7 +189,15 @@ public class DynamicUtils {
 			//pNew.putAll(url);
 			//dInfo.setQueryParameters(pNew);
 			// Fix per permettere la modifica dei parametri direttamente dentro la trasformazione
-			dInfo.setQueryParameters(url);
+			dInfo.setParameters(url);
+		}
+		if(form!=null) {
+			//&& !url.isEmpty()) {
+			//Map<String, String> pNew = new HashMap<String, String>();
+			//pNew.putAll(url);
+			//dInfo.setQueryParameters(pNew);
+			// Fix per permettere la modifica dei parametri direttamente dentro la trasformazione
+			dInfo.setFormParameters(form);
 		}
 		if(urlInvocazione!=null) {
 			dInfo.setUrl(urlInvocazione);
@@ -255,20 +284,56 @@ public class DynamicUtils {
 		}
 		
 		if(dynamicMap.containsKey(Costanti.MAP_HEADER)==false) {
-			if(dynamicInfo!=null && dynamicInfo.getTrasporto()!=null) {
-				dynamicMap.put(Costanti.MAP_HEADER, dynamicInfo.getTrasporto());
+			if(dynamicInfo!=null && dynamicInfo.getHeaders()!=null && !dynamicInfo.getHeaders().isEmpty()) {
+				dynamicMap.put(Costanti.MAP_HEADER, TransportUtils.convertToMapSingleValue(dynamicInfo.getHeaders()));
 			}
 			else {
 				dynamicMap.put(Costanti.MAP_HEADER, new HashMap<String, String>()); // aggiungo sempre, piu' pratico il controllo nei template engine
 			}
 		}
 		
+		if(dynamicMap.containsKey(Costanti.MAP_HEADER_VALUES)==false) {
+			if(dynamicInfo!=null && dynamicInfo.getHeaders()!=null) {
+				dynamicMap.put(Costanti.MAP_HEADER_VALUES, dynamicInfo.getHeaders());
+			}
+			else {
+				dynamicMap.put(Costanti.MAP_HEADER_VALUES, new HashMap<String, List<String>>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+			}
+		}
+		
 		if(dynamicMap.containsKey(Costanti.MAP_QUERY_PARAMETER)==false) {
-			if(dynamicInfo!=null && dynamicInfo.getQueryParameters()!=null) {
-				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, dynamicInfo.getQueryParameters());
+			if(dynamicInfo!=null && dynamicInfo.getParameters()!=null && !dynamicInfo.getParameters().isEmpty()) {
+				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, TransportUtils.convertToMapSingleValue(dynamicInfo.getParameters()));
 			}
 			else {
 				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, new HashMap<String, String>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+			}
+		}
+		
+		if(dynamicMap.containsKey(Costanti.MAP_QUERY_PARAMETER_VALUES)==false) {
+			if(dynamicInfo!=null && dynamicInfo.getParameters()!=null) {
+				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER_VALUES, dynamicInfo.getParameters());
+			}
+			else {
+				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER_VALUES, new HashMap<String, List<String>>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+			}
+		}
+		
+		if(dynamicMap.containsKey(Costanti.MAP_FORM_PARAMETER)==false) {
+			if(dynamicInfo!=null && dynamicInfo.getFormParameters()!=null && !dynamicInfo.getFormParameters().isEmpty()) {
+				dynamicMap.put(Costanti.MAP_FORM_PARAMETER, TransportUtils.convertToMapSingleValue(dynamicInfo.getFormParameters()));
+			}
+			else {
+				dynamicMap.put(Costanti.MAP_FORM_PARAMETER, new HashMap<String, String>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+			}
+		}
+		
+		if(dynamicMap.containsKey(Costanti.MAP_FORM_PARAMETER_VALUES)==false) {
+			if(dynamicInfo!=null && dynamicInfo.getFormParameters()!=null) {
+				dynamicMap.put(Costanti.MAP_FORM_PARAMETER_VALUES, dynamicInfo.getFormParameters());
+			}
+			else {
+				dynamicMap.put(Costanti.MAP_FORM_PARAMETER_VALUES, new HashMap<String, List<String>>()); // aggiungo sempre, piu' pratico il controllo nei template engine
 			}
 		}
 		
@@ -319,15 +384,19 @@ public class DynamicUtils {
 		DynamicInfo dInfo = DynamicUtils.readDynamicInfo(msg);
 		Element element = dInfo.getXml();
 		String elementJson = dInfo.getJson();
-		Map<String, String> parametriTrasporto = dInfo.getTrasporto();
-		Map<String, String> parametriUrl = dInfo.getQueryParameters();
+		Map<String, List<String>> parametriTrasporto = dInfo.getHeaders();
+		Map<String, List<String>> parametriUrl = dInfo.getParameters();
+		Map<String, List<String>> parametriForm = dInfo.getFormParameters();
 		String urlInvocazione = dInfo.getUrl();
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, context, urlInvocazione,
 				msg,
 				element, elementJson, 
-				busta, parametriTrasporto, parametriUrl,
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
 				errorHandler);
 		
 		return dynamicMap;
@@ -343,8 +412,9 @@ public class DynamicUtils {
 	public static DynamicInfo readDynamicInfo(OpenSPCoop2Message message) throws DynamicException {
 		Element element = null;
 		String elementJson = null;
-		Map<String, String> parametriTrasporto = null;
-		Map<String, String> parametriUrl = null;
+		Map<String, List<String>> parametriTrasporto = null;
+		Map<String, List<String>> parametriUrl = null;
+		Map<String, List<String>> parametriForm = null;
 		String urlInvocazione = null;
 		
 		try{
@@ -365,20 +435,31 @@ public class DynamicUtils {
 			
 
 			if(message.getTransportRequestContext()!=null) {
-				if(message.getTransportRequestContext().getParametersTrasporto()!=null &&
-					!message.getTransportRequestContext().getParametersTrasporto().isEmpty()) {
-					parametriTrasporto = message.getTransportRequestContext().getParametersTrasporto();
+				if(message.getTransportRequestContext().getHeaders()!=null &&
+					!message.getTransportRequestContext().getHeaders().isEmpty()) {
+					parametriTrasporto = message.getTransportRequestContext().getHeaders();
 				}
-				if(message.getTransportRequestContext().getParametersFormBased()!=null &&
-						!message.getTransportRequestContext().getParametersFormBased().isEmpty()) {
-					parametriUrl = message.getTransportRequestContext().getParametersFormBased();
+				if(message.getTransportRequestContext().getParameters()!=null &&
+						!message.getTransportRequestContext().getParameters().isEmpty()) {
+					parametriUrl = message.getTransportRequestContext().getParameters();
+				}
+				if(message.getTransportRequestContext() instanceof HttpServletTransportRequestContext) {
+					HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) message.getTransportRequestContext();
+					HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+					if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+						FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+						if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+								!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+							parametriForm = formServlet.getFormUrlEncodedParametersValues();
+						}
+					}
 				}
 				urlInvocazione = message.getTransportRequestContext().getUrlInvocazione_formBased();
 			}
 			else if(message.getTransportResponseContext()!=null) {
-				if(message.getTransportResponseContext().getParametersTrasporto()!=null &&
-						!message.getTransportResponseContext().getParametersTrasporto().isEmpty()) {
-					parametriTrasporto = message.getTransportResponseContext().getParametersTrasporto();
+				if(message.getTransportResponseContext().getHeaders()!=null &&
+						!message.getTransportResponseContext().getHeaders().isEmpty()) {
+					parametriTrasporto = message.getTransportResponseContext().getHeaders();
 				}
 			}
 			
@@ -389,8 +470,9 @@ public class DynamicUtils {
 		DynamicInfo dInfo = new DynamicInfo();
 		dInfo.setJson(elementJson);
 		dInfo.setXml(element);
-		dInfo.setTrasporto(parametriTrasporto);
-		dInfo.setQueryParameters(parametriUrl);
+		dInfo.setHeaders(parametriTrasporto);
+		dInfo.setParameters(parametriUrl);
+		dInfo.setFormParameters(parametriForm);
 		dInfo.setUrl(urlInvocazione);
 		return dInfo;
 	}

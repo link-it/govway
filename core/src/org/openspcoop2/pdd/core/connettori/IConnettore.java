@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
@@ -91,7 +92,7 @@ public interface IConnettore extends ICore {
      * @return se avvenuta una consegna ritorna l'header del trasporto
      * 
      */
-    public Map<String, String> getHeaderTrasporto();
+    public Map<String, List<String>> getHeaderTrasporto();
     
     /**
      * Ritorna la risposta pervenuta in seguita alla consegna effettuata

@@ -174,15 +174,19 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");
 			if(this.propertiesTrasporto==null){
-				this.propertiesTrasporto = new HashMap<String, String>();
+				this.propertiesTrasporto = new HashMap<String, List<String>>();
 			}
 			Iterator<String> keys = forwardHeader.getKeys();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = forwardHeader.getProperty(key);
-				if(this.debug)
-					this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
-				this.propertiesTrasporto.put(key, value);
+				List<String> values = forwardHeader.getPropertyValues(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						if(this.debug)
+							this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
+						TransportUtils.addHeader(this.propertiesTrasporto, key, value);		
+					}
+				}
 			}
 		}
 	}
@@ -224,16 +228,16 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				}
 			}
 			
-			Map<String, String> queryParameters = new HashMap<String, String>();
+			Map<String, List<String>> queryParameters = new HashMap<String, List<String>>();
 			if(config.getQuery()!=null) {
 				if(config.isQueryBase64()) {
 					if(base64Location==null) {
 						base64Location = Base64Utilities.encodeAsString(location.getBytes());
 					}
-					queryParameters.put(config.getQuery(), base64Location);
+					TransportUtils.addParameter(queryParameters,config.getQuery(), base64Location);
 				}
 				else {
-					queryParameters.put(config.getQuery(), location);
+					TransportUtils.addParameter(queryParameters,config.getQuery(), location);
 				}
 			}
 			
@@ -247,7 +251,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			}
 			
 			boolean encodeBaseLocation = true; // la base location può contenere dei parametri
-			this.location = TransportUtils.buildLocationWithURLBasedParameter(queryParameters, newUrl, encodeBaseLocation, this.logger!=null ? this.logger.getLogger() : OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+			this.location = TransportUtils.buildUrlWithParameters(queryParameters, newUrl, encodeBaseLocation, this.logger!=null ? this.logger.getLogger() : OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			
 			return true;
 		}
@@ -310,7 +314,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		 if(this.rest_proxyPassReverse && this.rest_proxyPassReverse_headers!=null) {
 			 
 			 for (String header : this.rest_proxyPassReverse_headers) {
-				 String redirectLocation = TransportUtils.get(this.propertiesTrasportoRisposta, header); 
+				 String redirectLocation = TransportUtils.getFirstValue(this.propertiesTrasportoRisposta, header); 
 				 if(redirectLocation!=null) {
 					 if(this.debug)
 						 this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"] ...");
@@ -354,8 +358,8 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 						 if(this.debug)
 							 this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
 	               
-						 TransportUtils.remove(this.propertiesTrasportoRisposta, header);
-						 this.propertiesTrasportoRisposta.put(header, newRedirectLocation);
+						 TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);
+						 TransportUtils.addHeader(this.propertiesTrasportoRisposta,header, newRedirectLocation);
 					 }catch(Exception e) {
 						 throw new Exception("Errore durante l'aggiornamento dell'header '"+header+
 								 "' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);

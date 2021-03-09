@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.xml.XMLUtils;
@@ -29,6 +30,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 /**
@@ -82,13 +84,13 @@ public class Test {
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
 		
-		connettoreMsg.setPropertiesTrasporto(new HashMap<String, String>());
-		connettoreMsg.getPropertiesTrasporto().put("Header1", "Valore1");
-		connettoreMsg.getPropertiesTrasporto().put("Header2", "Valore2");
+		connettoreMsg.setPropertiesTrasporto(new HashMap<String, List<String>>());
+		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header1", "Valore1");
+		TransportUtils.addHeader(connettoreMsg.getPropertiesTrasporto(),"Header2", "Valore2");
 		
-		connettoreMsg.setPropertiesUrlBased(new HashMap<String, String>());
-		connettoreMsg.getPropertiesUrlBased().put("P1", "Valore1URL");
-		connettoreMsg.getPropertiesUrlBased().put("P2", "Valore2URL");
+		connettoreMsg.setPropertiesUrlBased(new HashMap<String, List<String>>());
+		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P1", "Valore1URL");
+		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P2", "Valore2URL");
 		
 		
 		PdDContext pddContext = new PdDContext();

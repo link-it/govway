@@ -1098,7 +1098,7 @@ public class InoltroRisposte extends GenericLib{
 			// User-Agent e X-* header
 			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstancePAResponse(this.log);
 			if(connettoreMsg.getPropertiesTrasporto()==null){
-				Map<String, String>  trasporto = new HashMap<String, String> ();
+				Map<String, List<String>>  trasporto = new HashMap<String, List<String>> ();
 				connettoreMsg.setPropertiesTrasporto(trasporto);
 			}
 			httpUtilities.setInfoProductTransportProperties(connettoreMsg.getPropertiesTrasporto());
@@ -1108,8 +1108,8 @@ public class InoltroRisposte extends GenericLib{
 			InfoConnettoreUscita infoConnettoreUscita = new InfoConnettoreUscita();
 			infoConnettoreUscita.setLocation(location);
 			infoConnettoreUscita.setProperties(connettoreMsg.getConnectorProperties());
-			infoConnettoreUscita.setPropertiesTrasporto(connettoreMsg.getPropertiesTrasporto());
-			infoConnettoreUscita.setPropertiesUrlBased(connettoreMsg.getPropertiesUrlBased());
+			infoConnettoreUscita.setHeaders(connettoreMsg.getPropertiesTrasporto());
+			infoConnettoreUscita.setParameters(connettoreMsg.getPropertiesUrlBased());
 			infoConnettoreUscita.setSbustamentoSoap(connettoreMsg.isSbustamentoSOAP());
 			infoConnettoreUscita.setSbustamentoInformazioniProtocollo(connettoreMsg.isSbustamentoInformazioniProtocollo());
 			infoConnettoreUscita.setTipoAutenticazione(connettoreMsg.getAutenticazione());
@@ -1141,7 +1141,7 @@ public class InoltroRisposte extends GenericLib{
 				faultConnectionReplyMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 				codiceRitornato = connectorSender.getCodiceTrasporto();
 				responseHttpReply = connectorSender.getResponse();
-				Map<String, String>  headerTrasportoReply = connectorSender.getHeaderTrasporto();
+				Map<String, List<String>>  headerTrasportoReply = connectorSender.getHeaderTrasporto();
 				// gestione connessione connettore
 				// Sono nella casistica di messaggio preso in carico.
 				// Non si deve chiudere immediatamente la connessione, poiche' nel resto del modulo, il messaggio puo' ancora essere utilizzato (es. dump)

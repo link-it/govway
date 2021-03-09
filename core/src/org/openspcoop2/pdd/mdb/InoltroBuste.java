@@ -1170,8 +1170,8 @@ public class InoltroBuste extends GenericLib{
 			headerIntegrazione.setIdApplicativo(idCorrelazioneApplicativa);
 			headerIntegrazione.setServizioApplicativo(servizioApplicativoFruitore);
 
-			Map<String, String>  propertiesTrasporto = new HashMap<String, String> ();
-			Map<String, String>  propertiesUrlBased = new HashMap<String, String> ();
+			Map<String, List<String>>  propertiesTrasporto = new HashMap<String, List<String>> ();
+			Map<String, List<String>>  propertiesUrlBased = new HashMap<String, List<String>> ();
 
 			String [] tipiIntegrazionePD = null;
 			try {
@@ -1227,8 +1227,8 @@ public class InoltroBuste extends GenericLib{
 			outRequestPDMessage.setBustaRichiesta(bustaRichiesta);
 			outRequestPDMessage.setMessage(requestMessagePrimaTrasformazione);
 			outRequestPDMessage.setPortaDelegata(pd);
-			outRequestPDMessage.setProprietaTrasporto(propertiesTrasporto);
-			outRequestPDMessage.setProprietaUrlBased(propertiesUrlBased);
+			outRequestPDMessage.setHeaders(propertiesTrasporto);
+			outRequestPDMessage.setParameters(propertiesUrlBased);
 			outRequestPDMessage.setServizio(idServizio);
 			outRequestPDMessage.setSoggettoMittente(soggettoFruitore);
 			
@@ -1994,7 +1994,7 @@ public class InoltroBuste extends GenericLib{
 			// User-Agent e X-* header
 			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstancePDRequest(this.log);
 			if(connettoreMsg.getPropertiesTrasporto()==null){
-				Map<String, String> trasporto = new HashMap<String, String>();
+				Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
 				connettoreMsg.setPropertiesTrasporto(trasporto);
 			}
 			httpUtilities.setInfoProductTransportProperties(connettoreMsg.getPropertiesTrasporto());
@@ -2015,8 +2015,8 @@ public class InoltroBuste extends GenericLib{
 				InfoConnettoreUscita infoConnettoreUscita = new InfoConnettoreUscita();
 				infoConnettoreUscita.setLocation(location);
 				infoConnettoreUscita.setProperties(connettoreMsg.getConnectorProperties());
-				infoConnettoreUscita.setPropertiesTrasporto(connettoreMsg.getPropertiesTrasporto());
-				infoConnettoreUscita.setPropertiesUrlBased(connettoreMsg.getPropertiesUrlBased());
+				infoConnettoreUscita.setHeaders(connettoreMsg.getPropertiesTrasporto());
+				infoConnettoreUscita.setParameters(connettoreMsg.getPropertiesUrlBased());
 				infoConnettoreUscita.setSbustamentoSoap(connettoreMsg.isSbustamentoSOAP());
 				infoConnettoreUscita.setSbustamentoInformazioniProtocollo(connettoreMsg.isSbustamentoInformazioniProtocollo());
 				infoConnettoreUscita.setTipoAutenticazione(connettoreMsg.getAutenticazione());
@@ -2336,8 +2336,9 @@ public class InoltroBuste extends GenericLib{
 					restProblem = gestoreErrore.getProblem();
 					faultMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
-					transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
-							connectorSender.getCodiceTrasporto()+"", connectorSender.getContentLength(), 
+					transportResponseContext = new TransportResponseContext(connectorSender.getCodiceTrasporto()+"", 
+							connectorSender.getHeaderTrasporto(), 
+							connectorSender.getContentLength(), 
 							motivoErroreConsegna, connectorSender.getEccezioneProcessamento());
 					responseMessage = connectorSender.getResponse();	
 					if(responseMessage!=null){
@@ -2668,7 +2669,7 @@ public class InoltroBuste extends GenericLib{
 					
 					// Informazioni sulla consegna
 					inResponseContext.setErroreConsegna(motivoErroreConsegna);
-					inResponseContext.setPropertiesRispostaTrasporto(connectorSender.getHeaderTrasporto());
+					inResponseContext.setResponseHeaders(connectorSender.getHeaderTrasporto());
 					inResponseContext.setReturnCode(codiceRitornato);
 					
 					// Altre informazioni
@@ -2788,7 +2789,7 @@ public class InoltroBuste extends GenericLib{
 							soggettoFruitore,idServizio,tipoPdD,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 							dumpConfig);
-					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());
+					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getResponseHeaders());
 				}
 				
 			}
@@ -3593,7 +3594,7 @@ public class InoltroBuste extends GenericLib{
 				inResponsePDMessage.setBustaRichiesta(bustaRichiesta);
 				inResponsePDMessage.setMessage(responseMessage);
 				inResponsePDMessage.setPortaDelegata(pd);
-				inResponsePDMessage.setProprietaTrasporto(connectorSender.getHeaderTrasporto());
+				inResponsePDMessage.setHeaders(connectorSender.getHeaderTrasporto());
 				inResponsePDMessage.setServizio(idServizio);
 				inResponsePDMessage.setSoggettoMittente(soggettoFruitore);
 				for (int i = 0; i < tipiIntegrazionePD_risposta.length; i++) {

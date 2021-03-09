@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.ForcedResponseMessage;
@@ -30,6 +31,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.WrappedHttpServletResponse;
 
 /**
@@ -41,7 +43,7 @@ import org.openspcoop2.utils.transport.http.WrappedHttpServletResponse;
  */
 public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 
-	private Map<String, String> properties = new HashMap<String, String>();
+	private Map<String, List<String>> properties = new HashMap<String, List<String>>();
 	private boolean portaApplicativa;
 	
 	public CORSWrappedHttpServletResponse(boolean portaApplicativa) {
@@ -50,8 +52,12 @@ public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 	}
 
 	@Override
+	public void setHeader(String key, String value) {
+		TransportUtils.setHeader(this.properties,key, value);
+	}
+	@Override
 	public void addHeader(String key, String value) {
-		this.properties.put(key, value);
+		TransportUtils.addHeader(this.properties,key, value);
 	}
 	
 	
@@ -71,7 +77,7 @@ public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 			this.status = OpenSPCoop2Properties.getInstance().getGestioneCORS_returnCode_ricezioneContenutiApplicativi();
 		}
 		forcedResponseMessage.setResponseCode(this.status+"");
-		forcedResponseMessage.setHeaders(this.properties);
+		forcedResponseMessage.setHeadersValues(this.properties);
 		this.message.forceResponse(forcedResponseMessage);
 		
 		return this.message;
@@ -81,7 +87,7 @@ public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 	public int getStatus() {
 		return this.status;
 	}
-	public Map<String, String> getHeader() {
+	public Map<String, List<String>> getHeadersValues() {
 		return this.properties;
 	}
 }

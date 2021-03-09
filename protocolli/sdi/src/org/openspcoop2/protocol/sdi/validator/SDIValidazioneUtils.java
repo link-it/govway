@@ -47,6 +47,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazio
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * SDIValidazioneUtils
@@ -178,7 +179,7 @@ public class SDIValidazioneUtils {
 		if(msg==null) {
 			return;
 		}
-		if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getParametersTrasporto()==null) {
+		if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getHeaders()==null) {
 			return;
 		}
 		
@@ -186,10 +187,10 @@ public class SDIValidazioneUtils {
 			return;
 		}
 		if(idSdiRiferimentoArchivio!=null) {
-			msg.getTransportRequestContext().getParametersTrasporto().put(SDICostanti.SDI_HEADER_ID_CORRELAZIONE,idSdi + " "+idSdiRiferimentoArchivio);
+			TransportUtils.addHeader(msg.getTransportRequestContext().getHeaders(),SDICostanti.SDI_HEADER_ID_CORRELAZIONE,idSdi + " "+idSdiRiferimentoArchivio);
 		}
 		else {
-			msg.getTransportRequestContext().getParametersTrasporto().put(SDICostanti.SDI_HEADER_ID_CORRELAZIONE,idSdi);
+			TransportUtils.addHeader(msg.getTransportRequestContext().getHeaders(),SDICostanti.SDI_HEADER_ID_CORRELAZIONE,idSdi);
 		}
 
 	}

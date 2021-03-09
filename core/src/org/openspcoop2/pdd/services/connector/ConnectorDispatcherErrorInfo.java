@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.services.connector;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -37,7 +38,7 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
  */
 public class ConnectorDispatcherErrorInfo extends ConnectorDispatcherInfo {
 
-	public static ConnectorDispatcherErrorInfo getGenericError(OpenSPCoop2Message errorMessage,int status, String contentType, Map<String, String> trasporto,
+	public static ConnectorDispatcherErrorInfo getGenericError(OpenSPCoop2Message errorMessage,int status, String contentType, Map<String, List<String>> trasporto,
 			RequestInfo requestInfo,IProtocolFactory<?> protocolFactory) throws Exception {
 		ConnectorDispatcherErrorInfo c = new ConnectorDispatcherErrorInfo();
 		EsitoTransazione esito = protocolFactory.createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
@@ -48,7 +49,7 @@ public class ConnectorDispatcherErrorInfo extends ConnectorDispatcherInfo {
 		c.setTrasporto(trasporto);
 		return c;
 	}
-	public static ConnectorDispatcherErrorInfo getClientError(OpenSPCoop2Message errorMessage,int status, String contentType, Map<String, String> trasporto,
+	public static ConnectorDispatcherErrorInfo getClientError(OpenSPCoop2Message errorMessage,int status, String contentType, Map<String, List<String>> trasporto,
 			RequestInfo requestInfo,IProtocolFactory<?> protocolFactory) throws Exception {
 		ConnectorDispatcherErrorInfo c = new ConnectorDispatcherErrorInfo();
 		EsitoTransazione esito = protocolFactory.createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX);

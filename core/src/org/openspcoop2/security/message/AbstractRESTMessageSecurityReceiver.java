@@ -96,11 +96,11 @@ public abstract class AbstractRESTMessageSecurityReceiver implements IMessageSec
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") require '"+SecurityConstants.SIGNATURE_DETACHED_HEADER+"'/'"+SecurityConstants.SIGNATURE_DETACHED_PROPERTY_URL+"' property");
 				}
 				else {
-					if(restMessage.getTransportRequestContext()==null || restMessage.getTransportRequestContext().getParametersFormBased()==null ||
-							restMessage.getTransportRequestContext().getParametersFormBased().size()<=0) {
+					if(restMessage.getTransportRequestContext()==null || restMessage.getTransportRequestContext().getParameters()==null ||
+							restMessage.getTransportRequestContext().getParameters().size()<=0) {
 						throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+this.signatureDetachedPropertyUrl+"' not found (properties url not exists)");
 					}
-					detachedSignature = restMessage.getTransportRequestContext().getParameterFormBased(this.signatureDetachedPropertyUrl);
+					detachedSignature = restMessage.getTransportRequestContext().getParameterFirstValue(this.signatureDetachedPropertyUrl);
 					if(detachedSignature==null) {
 						throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+this.signatureDetachedPropertyUrl+"' not found");
 					}
@@ -112,18 +112,18 @@ public abstract class AbstractRESTMessageSecurityReceiver implements IMessageSec
 		}
 		else {
 			if(MessageRole.REQUEST.equals(restMessage.getMessageRole())) {
-				if(restMessage.getTransportRequestContext()==null || restMessage.getTransportRequestContext().getParametersTrasporto()==null ||
-						restMessage.getTransportRequestContext().getParametersTrasporto().size()<=0) {
+				if(restMessage.getTransportRequestContext()==null || restMessage.getTransportRequestContext().getHeaders()==null ||
+						restMessage.getTransportRequestContext().getHeaders().size()<=0) {
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") header '"+this.signatureDetachedHeader+"' not found (header empty)");
 				}
-				detachedSignature = restMessage.getTransportRequestContext().getParameterTrasporto(this.signatureDetachedHeader);
+				detachedSignature = restMessage.getTransportRequestContext().getHeaderFirstValue(this.signatureDetachedHeader);
 			}
 			else {
-				if(restMessage.getTransportResponseContext()==null || restMessage.getTransportResponseContext().getParametersTrasporto()==null ||
-						restMessage.getTransportResponseContext().getParametersTrasporto().size()<=0) {
+				if(restMessage.getTransportResponseContext()==null || restMessage.getTransportResponseContext().getHeaders()==null ||
+						restMessage.getTransportResponseContext().getHeaders().size()<=0) {
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") header '"+this.signatureDetachedHeader+"' not found (header empty)");
 				}
-				detachedSignature = restMessage.getTransportResponseContext().getParameterTrasporto(this.signatureDetachedHeader);
+				detachedSignature = restMessage.getTransportResponseContext().getHeaderFirstValue(this.signatureDetachedHeader);
 			}
 			if(detachedSignature==null) {
 				throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") header '"+this.signatureDetachedHeader+"' not found");
@@ -151,26 +151,26 @@ public abstract class AbstractRESTMessageSecurityReceiver implements IMessageSec
 	protected void deleteDetachedSignatureFromMessage(OpenSPCoop2RestMessage<?> restMessage, String descriptionEngine) throws SecurityException {
 		if(this.signatureDetachedHeader!=null) {
 			if(MessageRole.REQUEST.equals(restMessage.getMessageRole())) {
-				if(restMessage.getTransportRequestContext()==null || restMessage.getTransportRequestContext().getParametersTrasporto()==null ||
-						restMessage.getTransportRequestContext().getParametersTrasporto().size()<=0) {
+				if(restMessage.getTransportRequestContext()==null || restMessage.getTransportRequestContext().getHeaders()==null ||
+						restMessage.getTransportRequestContext().getHeaders().size()<=0) {
 					return;
 				}
-				restMessage.getTransportRequestContext().removeParameterTrasporto(this.signatureDetachedHeader);
+				restMessage.getTransportRequestContext().removeHeader(this.signatureDetachedHeader);
 			}
 			else {
-				if(restMessage.getTransportResponseContext()==null || restMessage.getTransportResponseContext().getParametersTrasporto()==null ||
-						restMessage.getTransportResponseContext().getParametersTrasporto().size()<=0) {
+				if(restMessage.getTransportResponseContext()==null || restMessage.getTransportResponseContext().getHeaders()==null ||
+						restMessage.getTransportResponseContext().getHeaders().size()<=0) {
 					return;
 				}
-				restMessage.getTransportResponseContext().removeParameterTrasporto(this.signatureDetachedHeader);
+				restMessage.getTransportResponseContext().removeHeader(this.signatureDetachedHeader);
 			}
 		}
 		else if(this.signatureDetachedPropertyUrl!=null) {
-			if(restMessage.getTransportRequestContext()==null || restMessage.getTransportRequestContext().getParametersFormBased()==null ||
-					restMessage.getTransportRequestContext().getParametersFormBased().size()<=0) {
+			if(restMessage.getTransportRequestContext()==null || restMessage.getTransportRequestContext().getParameters()==null ||
+					restMessage.getTransportRequestContext().getParameters().size()<=0) {
 				return;
 			}
-			restMessage.getTransportRequestContext().removeParameterFormBased(this.signatureDetachedPropertyUrl);
+			restMessage.getTransportRequestContext().removeParameter(this.signatureDetachedPropertyUrl);
 		}
 		else {
 			throw new SecurityException(descriptionEngine+"; this method required preProcess detached signature");			

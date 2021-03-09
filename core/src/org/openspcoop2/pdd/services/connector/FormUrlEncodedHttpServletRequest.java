@@ -24,12 +24,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.mail.internet.ContentType;
 import javax.servlet.ReadListener;
@@ -102,7 +103,7 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 	}
 	
 	private byte[] content;
-	private Map<String, String> properties;
+	private Map<String, List<String>> properties;
 	public FormUrlEncodedHttpServletRequest(HttpServletRequest httpServletRequest) throws UtilsException{
 		super(httpServletRequest);
 		
@@ -126,11 +127,23 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 		}
 		
 		java.util.Enumeration<?> en = httpServletRequest.getParameterNames();
-		this.properties = new HashMap<String, String>();
+		this.properties = new HashMap<String, List<String>>();
 		while(en.hasMoreElements()){
 			String nomeProperty = (String)en.nextElement();
-			String valueProperty = httpServletRequest.getParameter(nomeProperty);
-			this.properties.put(nomeProperty, valueProperty);
+			String [] s = httpServletRequest.getParameterValues(nomeProperty);
+			List<String> values = new ArrayList<String>();
+			if(s!=null && s.length>0) {
+				for (int i = 0; i < s.length; i++) {
+					String value = s[i];
+					values.add(value);
+					//logCore.info("Parameter ["+nomeProperty+"] valore-"+i+" ["+value+"]");
+				}
+			}
+			else {
+				//logCore.info("Parameter ["+nomeProperty+"] valore ["+req.getParameter(nomeProperty)+"]");
+				values.add(httpServletRequest.getParameter(nomeProperty));
+			}
+			this.properties.put(nomeProperty, values);
 		}
 		if(this.properties.isEmpty() && this.content!=null && this.content.length>0) {
 			// su wildfly non vengono ritornati i parameters name
@@ -142,24 +155,27 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 			 **/
 			String contentUrlEncoding = new String(this.content);
 			
-			StringBuilder sbProperties = new StringBuilder();
+//			StringBuilder sbProperties = new StringBuilder();
 			if(contentUrlEncoding.contains("&")) {
 				String [] tmp = contentUrlEncoding.split("&");
 				if(tmp!=null && tmp.length>0) {
 					for (String pUrlEncoding : tmp) {
-						if(sbProperties.length()>0) {
-							sbProperties.append("\n");
-						}
+//						if(sbProperties.length()>0) {
+//							sbProperties.append("\n");
+//						}
 						String contentUrlDecoding = org.springframework.web.util.UriUtils.decode( pUrlEncoding, Charset.UTF_8.getValue());
-						sbProperties.append(contentUrlDecoding);
+//						sbProperties.append(contentUrlDecoding);
+						addParameter(contentUrlDecoding);
 					}
 				}
 			}
 			else {
 				String contentUrlDecoding = org.springframework.web.util.UriUtils.decode( contentUrlEncoding, Charset.UTF_8.getValue());
-				sbProperties.append(contentUrlDecoding);
+//				sbProperties.append(contentUrlDecoding);
+				addParameter(contentUrlDecoding);
 			}
 			
+			/*
 			if(sbProperties.length()>0) {
 				try (ByteArrayInputStream bin = new ByteArrayInputStream(sbProperties.toString().getBytes())) {
 					Properties pTmp = new Properties();
@@ -170,11 +186,25 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 							Object oKey = (Object) enKeys.nextElement();
 							if(oKey instanceof String) {
 								String key = (String) oKey;
-								this.properties.put(key, pTmp.getProperty(key));
+								TransportUtils.addParameter(this.properties, key, pTmp.getProperty(key));
 							}
 						}
 					}
 				}catch(Throwable t) {}
+			}
+			*/
+		}
+	}
+	
+	private void addParameter(String line) {
+		if(line!=null) {
+			if(line.contains("=")) {
+				int indexOf = line.indexOf("=");
+				if(indexOf>0 && indexOf<(line.length()-1)) {
+					String key = line.substring(0, indexOf);
+					String value = line.substring(indexOf+1);
+					TransportUtils.addParameter(this.properties, key, value);
+				}
 			}
 		}
 	}
@@ -235,15 +265,31 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 		return null;
 	}
 	
+	@Deprecated
 	public String getFormUrlEncodedParameter(String key) {
-		return TransportUtils.get(this.properties, key);
+		return getFormUrlEncodedParameter_compactMultipleValues(key);
+	}
+	public String getFormUrlEncodedParameter_compactMultipleValues(String key) {
+		return TransportUtils.getObjectAsString(this.properties, key);
+	}
+	public List<String> getFormUrlEncodedParameterValues(String key) {
+		return TransportUtils.getRawObject(this.properties, key);
+	}
+	public String getFormUrlEncodedParameterFirstValue(String key) {
+		List<String> l = TransportUtils.getRawObject(this.properties, key);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
 	}
 
 	public Iterator<String> getFormUrlEncodedParameterNames() {
 		return this.properties.keySet().iterator();
 	}
 	
-	
+	public Map<String, List<String>> getFormUrlEncodedParametersValues(){
+		return this.properties;
+	}
 }
 
 

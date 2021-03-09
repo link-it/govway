@@ -19,8 +19,11 @@
  */
 package org.openspcoop2.core.transazioni.utils;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**     
  * PropertiesSerializator
@@ -34,45 +37,50 @@ public class PropertiesSerializator {
 	
 	public static final String TEMPLATE_RITORNO_A_CAPO = "#@$#@$#@$#";
 	
-	protected Hashtable<String, String> properties;
+	protected Map<String, List<String>> properties;
 
-	public Hashtable<String, String> getProperties() {
+	public Map<String, List<String>> getProperties() {
 		return this.properties;
 	}
 	
-	public PropertiesSerializator(Hashtable<String, String> properties){
+	public PropertiesSerializator(Map<String, List<String>> properties){
 		this.properties = properties;
 	}
 	
 	public String convertToDBColumnValue() throws Exception{
 		
-		Enumeration<String> keys = this.properties.keys();
 		StringBuilder bf = new StringBuilder();
-		while (keys.hasMoreElements()) {
-			if(bf.length()>0){
-				bf.append("\n");
-			}
-			String key = (String) keys.nextElement();
-			if(key.contains(" ")){
-				throw new Exception("Chiave ["+key+"] contiene il carattere ' ' non ammesso");
-			}
-			String value = this.properties.get(key);
-			if(value.contains("\n")){
-				//throw new Exception("Valore ["+value+"] della chiave ["+key+"] contiene il carattere '\\n' non ammesso");
-				while(value.contains("\n")){
-					value = value.replace("\n", TEMPLATE_RITORNO_A_CAPO);
+		
+		if(this.properties!=null && !this.properties.isEmpty()) {
+			for (String key : this.properties.keySet()) {
+				if(key.contains(" ")){
+					throw new Exception("Chiave ["+key+"] contiene il carattere ' ' non ammesso");
+				}
+				List<String> values = this.properties.get(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						if(value.contains("\n")){
+							//throw new Exception("Valore ["+value+"] della chiave ["+key+"] contiene il carattere '\\n' non ammesso");
+							while(value.contains("\n")){
+								value = value.replace("\n", TEMPLATE_RITORNO_A_CAPO);
+							}
+						}
+						if(bf.length()>0){
+							bf.append("\n");
+						}
+						bf.append(key).append("=").append(value);		
+					}
 				}
 			}
-			bf.append(key).append("=").append(value);
 		}
 		
 		return bf.toString();
 		
 	}
 	
-	public static Hashtable<String, String> convertoFromDBColumnValue(String dbValue) throws Exception{
+	public static Map<String, List<String>> convertoFromDBColumnValue(String dbValue) throws Exception{
 		
-		Hashtable<String, String> table = new Hashtable<String, String>();
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		
 		if(dbValue!=null && !"".equals(dbValue)){
 			
@@ -90,12 +98,12 @@ public class PropertiesSerializator {
 						value = value.replace(TEMPLATE_RITORNO_A_CAPO, "\n");
 					}
 				}
-				table.put(key, value);
+				TransportUtils.addHeader(map, key, value);
 			}
 			
 		}
 		
-		return table;
+		return map;
 		
 	}
 }

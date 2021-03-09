@@ -23,6 +23,7 @@ package org.openspcoop2.message.rest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.constants.Costanti;
@@ -56,7 +57,7 @@ public class RestUtilities {
 		return resourcePath;
 	}
 	
-	public static String buildUrl(String url,Map<String, String>  p,TransportRequestContext requestContext, String normalizedInterfaceName){
+	public static String buildUrl(String url,Map<String, List<String>>  p,TransportRequestContext requestContext, String normalizedInterfaceName){
 		
 		String baseUrl = url;
 		String parameterOriginalUrl = null;
@@ -105,7 +106,7 @@ public class RestUtilities {
 			String [] split = parameterOriginalUrl.split("&");
 			if(split!=null){
 				if(p==null){
-					p = new HashMap<String, String> ();
+					p = new HashMap<String, List<String>> ();
 				}
 				for (int i = 0; i < split.length; i++) {
 					if(split[i].contains("=")){
@@ -131,7 +132,7 @@ public class RestUtilities {
 						}
 						
 						if(nome!=null && valore!=null){
-							p.put(nome,valore);
+							TransportUtils.addParameter(p, nome, valore);
 						}
 						
 					}
@@ -139,7 +140,7 @@ public class RestUtilities {
 			}
 		}
 		
-		return TransportUtils.buildLocationWithURLBasedParameter(p, newUrl.toString());
+		return TransportUtils.buildUrlWithParameters(p, newUrl.toString());
 		
 	}
 	

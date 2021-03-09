@@ -21,7 +21,10 @@
 package org.openspcoop2.utils.rest.entity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * HttpBaseRequestEntity
@@ -33,13 +36,21 @@ import java.util.Map;
  */
 public abstract class HttpBaseRequestEntity<T> extends HttpBaseEntity<T> {
 	
-	/* ---- Coppie nome/valori di invocazione della query --- */
-	private Map<String, String> parametersQuery = new HashMap<>();
+	/* ---- Coppie nome/valori di invocazione form ----- */
+	private Map<String, List<String>> parameters = new HashMap<>();
 	
+	@Deprecated
 	public Map<String, String> getParametersQuery() {
-		return this.parametersQuery;
+		return TransportUtils.convertToMapSingleValue(this.parameters);
 	}
+	public Map<String, List<String>> getParameters(){
+		return this.parameters;
+	}
+	@Deprecated
 	public void setParametersQuery(Map<String, String> parametersQuery) {
-		this.parametersQuery = parametersQuery;
+		this.parameters = TransportUtils.convertToMapListValues(parametersQuery);
+	}
+	public void setParameters(Map<String, List<String>> parametersFormBased) {
+		this.parameters = parametersFormBased;
 	}
 }

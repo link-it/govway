@@ -381,14 +381,14 @@ public class RestTest extends ConfigLoader {
 		
 		responses.forEach( r -> {
 			
-			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeader(Headers.FailedLimit), maxRequests);			
+			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeaderFirstValue(Headers.FailedLimit), maxRequests);			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
-				Utils.checkXLimitWindows(r.getHeader(Headers.FailedLimit), maxRequests, windowMap);
+				Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.FailedLimit), maxRequests, windowMap);
 			}
 			
-			assertTrue(Integer.valueOf(r.getHeader(Headers.FailedReset)) <= windowSize);
-			assertNotEquals(null, Integer.valueOf(r.getHeader(Headers.FailedRemaining)));
+			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.FailedReset)) <= windowSize);
+			assertNotEquals(null, Integer.valueOf(r.getHeaderFirstValue(Headers.FailedRemaining)));
 			assertEquals(500, r.getResultHTTPOperation());			
 		});
 	}
@@ -398,13 +398,13 @@ public class RestTest extends ConfigLoader {
 		JsonPathExpressionEngine jsonPath = new JsonPathExpressionEngine();
 		
 		for (var r: responses) {
-			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeader(Headers.FailedLimit), maxRequests);			
+			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeaderFirstValue(Headers.FailedLimit), maxRequests);			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
-				Utils.checkXLimitWindows(r.getHeader(Headers.FailedLimit), maxRequests, windowMap);
+				Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.FailedLimit), maxRequests, windowMap);
 			}
 			
-			assertTrue(Integer.valueOf(r.getHeader(Headers.FailedReset)) <= windowSize);
+			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.FailedReset)) <= windowSize);
 			assertEquals(429, r.getResultHTTPOperation());
 			
 			JSONObject jsonResp = JsonPathExpressionEngine.getJSONObject(new String(r.getContent()));
@@ -415,10 +415,10 @@ public class RestTest extends ConfigLoader {
 			assertNotEquals(null, jsonPath.getStringMatchPattern(jsonResp, "$.govway_id").get(0));	
 			assertEquals("Limit exceeded detected", jsonPath.getStringMatchPattern(jsonResp, "$.detail").get(0));
 			
-			assertEquals("0", r.getHeader(Headers.FailedRemaining));
-			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeader(Headers.GovWayTransactionErrorType));
+			assertEquals("0", r.getHeaderFirstValue(Headers.FailedRemaining));
+			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 			Utils.checkHeaderTooManyRequest(r);
-			assertNotEquals(null, r.getHeader(Headers.RetryAfter));
+			assertNotEquals(null, r.getHeaderFirstValue(Headers.RetryAfter));
 		}	
 	}
 	

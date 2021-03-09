@@ -22,6 +22,7 @@ package org.openspcoop2.message;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -35,7 +36,7 @@ import org.openspcoop2.utils.transport.TransportUtils;
  */
 public class OpenSPCoop2MessageProperties {
 
-	private Map<String, String> props = new HashMap<String, String>();	
+	private Map<String, List<String>> props = new HashMap<String, List<String>>();	
 
 	private boolean initialize = false;
 	
@@ -48,23 +49,38 @@ public class OpenSPCoop2MessageProperties {
 	}
 
 	public void addProperty(String key,String value){
-		this.props.put(key, value);
+		TransportUtils.put(this.props, key, value, true);
+	}
+	public void setProperty(String key,List<String> values){
+		this.props.put(key, values);
 	}
 	
+	@Deprecated
 	public String removeProperty(String key){
-		Object o = TransportUtils.remove(this.props, key);
+		Object o = TransportUtils.removeObjectAsString(this.props, key);
 		return (o!=null && o instanceof String) ? ((String)o) : null;
+	}
+	public List<String> removePropertyValues(String key){
+		return TransportUtils.removeRawObject(this.props, key);
 	}
 	
 	public Iterator<String> getKeys(){
 		return this.props.keySet().iterator();
 	}
 	
+	@Deprecated
 	public String getProperty(String key){
-		return TransportUtils.get(this.props, key);
+		return TransportUtils.getObjectAsString(this.props, key);
+	}
+	public List<String> getPropertyValues(String key){
+		return TransportUtils.getRawObject(this.props, key);
 	}
 	
+	@Deprecated
 	public Map<String, String> getAsMap(){
+		return TransportUtils.convertToMapSingleValue(this.props);
+	}
+	public Map<String, List<String>> map(){
 		return this.props;
 	}
 	

@@ -78,6 +78,15 @@ public class HttpConstants {
 	public final static String COOKIE_SEPARATOR = ";";
 	public final static String COOKIE_NAME_VALUE_SEPARATOR = "=";
 	
+	/** SetCookie */
+	public final static String SET_COOKIE = "Set-Cookie";
+	public final static String SET_COOKIE_EXPIRES_PARAMETER = "Expires"; // <date>
+	public final static String SET_COOKIE_MAX_AGE_PARAMETER = "Max-Age"; // <non-zero-digit>
+	public final static String SET_COOKIE_PATH_PARAMETER = "Path"; // <path-value>
+	public final static String SET_COOKIE_DOMAIN_PARAMETER = "Domain"; // <domain-value>
+	public final static String SET_COOKIE_SECURE_PARAMETER = "Secure";
+	public final static String SET_COOKIE_HTTP_ONLY_PARAMETER = "HttpOnly";
+	
 	/** Digest */
 	public final static String DIGEST = "Digest";
 	public final static String DIGEST_ALGO_MD5 = "MD5";

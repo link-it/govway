@@ -125,7 +125,7 @@ public class OperationFinder {
 						}						
 						else if(ModalitaIdentificazioneAzione.HEADER_BASED.equals(modalitaIdentificazione)){
 							// HEADER-BASED
-							azione = transportContext.getParameterTrasporto(pattern);
+							azione = transportContext.getHeaderFirstValue(pattern);
 						}
 						else if(ModalitaIdentificazioneAzione.CONTENT_BASED.equals(modalitaIdentificazione)){
 							// CONTENT-BASED

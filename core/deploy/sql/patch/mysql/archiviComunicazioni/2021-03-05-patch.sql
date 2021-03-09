@@ -1,0 +1,3 @@
+ALTER TABLE dump_multipart_header DROP CONSTRAINT unique_dump_multipart_header_1;
+ALTER TABLE dump_header_trasporto DROP CONSTRAINT unique_dump_header_trasporto_1;
+ALTER TABLE dump_header_allegato DROP CONSTRAINT unique_dump_header_allegato_1;

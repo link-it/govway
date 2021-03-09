@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * Libreria per handler testsuite
@@ -50,7 +52,7 @@ public class TestContext implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Map<String,String> forwardProperties;
+	private Map<String,List<String>> forwardProperties;
 	private boolean generaErroreVerificaInstallazioneArchivioTest;
 	private EsitoTransazioneName esito;
 	private Integer returnCodePDReq;
@@ -77,14 +79,14 @@ public class TestContext implements Serializable {
 	public TestContext() throws HandlerException{
 		// Utilizzato dalla Testsuite
 	}
-	public TestContext(TipoPdD tipoPdD,Map<String,String> p) throws HandlerException{
+	public TestContext(TipoPdD tipoPdD,Map<String,List<String>> p) throws HandlerException{
 		
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-			this.forwardProperties = new HashMap<String,String>();
+			this.forwardProperties = new HashMap<String,List<String>>();
 		}
 		
 		// Generazione errore
-		Object o = getProperty(p,Costanti.TEST_CONTEXT_GENERA_ERRORE);
+		String o = getStringProperty(p,Costanti.TEST_CONTEXT_GENERA_ERRORE);
 		if( (o!=null) && (o instanceof String) ){
 			if("true".equals((String)o)){
 				this.setGeneraErroreVerificaInstallazioneArchivioTest(true);
@@ -92,7 +94,7 @@ public class TestContext implements Serializable {
 		}
 
 		// Data inizio Test
-		Object oDataTest = getProperty(p,Costanti.TEST_CONTEXT_DATA_INIZIO_TEST);
+		String oDataTest = getStringProperty(p,Costanti.TEST_CONTEXT_DATA_INIZIO_TEST);
 		if( (oDataTest!=null) && (oDataTest instanceof String) ){
 			try{
 				SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd_HH:mm:ss.SSS");
@@ -103,25 +105,25 @@ public class TestContext implements Serializable {
 		}
 	
 		// Dimensione risposta
-		Object oRispostaVuotaSA_PD = getProperty(p,Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_SA_PD);
+		String oRispostaVuotaSA_PD = getStringProperty(p,Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_SA_PD);
 		if( (oRispostaVuotaSA_PD!=null) && (oRispostaVuotaSA_PD instanceof String) ){
 			if("true".equals((String)oRispostaVuotaSA_PD)){
 				this.setRispostaVuotaSA_PD(true);
 			}
 		}
-		Object oRispostaVuotaPD_PA = getProperty(p,Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_PD_PA);
+		String oRispostaVuotaPD_PA = getStringProperty(p,Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_PD_PA);
 		if( (oRispostaVuotaPD_PA!=null) && (oRispostaVuotaPD_PA instanceof String) ){
 			if("true".equals((String)oRispostaVuotaPD_PA)){
 				this.setRispostaVuotaPD_PA(true);
 			}
 		}
-		Object oRispostaVuotaPA_SA = getProperty(p,Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_PA_SA);
+		String oRispostaVuotaPA_SA = getStringProperty(p,Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_PA_SA);
 		if( (oRispostaVuotaPA_SA!=null) && (oRispostaVuotaPA_SA instanceof String) ){
 			if("true".equals((String)oRispostaVuotaPA_SA)){
 				this.setRispostaVuotaPA_SA(true);
 			}
 		}
-		Object oRispostaVuotaPA_PD = getProperty(p,Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_PA_PD);
+		String oRispostaVuotaPA_PD = getStringProperty(p,Costanti.TEST_CONTEXT_RISPOSTA_VUOTA_PA_PD);
 		if( (oRispostaVuotaPA_PD!=null) && (oRispostaVuotaPA_PD instanceof String) ){
 			if("true".equals((String)oRispostaVuotaPA_PD)){
 				this.setRispostaVuotaPA_PD(true);
@@ -129,7 +131,7 @@ public class TestContext implements Serializable {
 		}
 		
 		// Esito
-		Object oEsito = getProperty(p,Costanti.TEST_CONTEXT_ESITO);
+		String oEsito = getStringProperty(p,Costanti.TEST_CONTEXT_ESITO);
 		if( (oEsito!=null) && (oEsito instanceof String) ){
 			EsitoTransazioneName e = EsitoTransazioneName.convertoTo((String)oEsito);
 			if(e==null){
@@ -153,7 +155,7 @@ public class TestContext implements Serializable {
 		this.setTipoConnettorePA(getStringValue(p, Costanti.TEST_CONTEXT_APPLICATIVA_TIPO_CONNETTORE));
 		
 		// EGov Context
-		Object oEGovContext = getProperty(p,Costanti.TEST_CONTEXT_EGOV);
+		Object oEGovContext = getStringProperty(p,Costanti.TEST_CONTEXT_EGOV);
 		if(oEGovContext!=null && "true".equals(oEGovContext)){
 			ProtocolContext egov = new ProtocolContext();
 			egov.setFruitore(getIDSoggettoValue(p, Costanti.TEST_CONTEXT_EGOV_TIPO_MITTENTE, Costanti.TEST_CONTEXT_EGOV_MITTENTE));
@@ -179,37 +181,33 @@ public class TestContext implements Serializable {
 		this.statelessPA = getBooleanValue(p, Costanti.TEST_CONTEXT_STATELESS_PA);
 	}
 	
-	private String getStringValue(Map<String,String> p,String key){
-		Object o = getProperty(p, key);
+	private String getStringValue(Map<String,List<String>> p,String key){
+		String o = getStringProperty(p, key);
 		if(o!=null && o instanceof String){
 			return (String) o;
 		}else{
 			return null;
 		}
 	}
-	private Integer getIntValue(Map<String,String> p,String key){
-		Object o = getProperty(p, key);
-		if( (o!=null) && (o instanceof Integer) ){
-			return(Integer)o;
-		}else if( (o!=null) && (o instanceof String) ){
+	private Integer getIntValue(Map<String,List<String>> p,String key){
+		String o = getStringProperty(p, key);
+		if( (o!=null) && (o instanceof String) ){
 			return Integer.parseInt((String)o);
 		}
 		else{
 			return null;
 		}
 	}
-	private Boolean getBooleanValue(Map<String,String> p,String key){
-		Object o = getProperty(p, key);
-		if( (o!=null) && (o instanceof Boolean) ){
-			return(Boolean)o;
-		}else if( (o!=null) && (o instanceof String) ){
+	private Boolean getBooleanValue(Map<String,List<String>> p,String key){
+		String o = getStringProperty(p, key);
+		if( (o!=null) && (o instanceof String) ){
 			return Boolean.parseBoolean((String)o);
 		}
 		else{
 			return null;
 		}
 	}
-	private IDSoggetto getIDSoggettoValue(Map<String,String> p,String tipoKey,String nomeKey){
+	private IDSoggetto getIDSoggettoValue(Map<String,List<String>> p,String tipoKey,String nomeKey){
 		Object tipo =  getStringValue(p, tipoKey);
 		Object nome =  getStringValue(p, nomeKey);
 		if(tipo!=null || nome!=null){
@@ -227,21 +225,14 @@ public class TestContext implements Serializable {
 		}
 	}
 	
-	private Object getProperty(Map<String,String> p,String key){
+	private String getStringProperty(Map<String,List<String>> p,String key){
 		
-		Object o = p.get(key);
-		if(o == null){
-			o = p.get(key.toLowerCase());
-		}
-		if(o == null){
-			o = p.get(key.toUpperCase());
+		String value = TransportUtils.getFirstValue(p, key);
+		if(this.forwardProperties!=null){
+			TransportUtils.put(this.forwardProperties, key, value, false);
 		}
 		
-		if(this.forwardProperties!=null && (o instanceof String)){
-			this.forwardProperties.put(key, (String)o);
-		}
-		
-		return o;
+		return value;
 	}
 	
 	public void writeTo(Properties p) throws HandlerException{
@@ -353,11 +344,11 @@ public class TestContext implements Serializable {
 		this.esito = esito;
 	}
 
-	public Map<String,String> getForwardProperties() {
+	public Map<String,List<String>> getForwardProperties() {
 		return this.forwardProperties;
 	}
 
-	public void setForwardProperties(Map<String,String> forwardProperties) {
+	public void setForwardProperties(Map<String,List<String>> forwardProperties) {
 		this.forwardProperties = forwardProperties;
 	}
 

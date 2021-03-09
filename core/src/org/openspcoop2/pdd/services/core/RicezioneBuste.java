@@ -578,7 +578,7 @@ public class RicezioneBuste {
 		outResponseContext.setProtocollo(this.msgContext.getProtocol());
 		outResponseContext.setIntegrazione(this.msgContext.getIntegrazione());
 		// Header di trasporto della risposta
-		outResponseContext.setPropertiesRispostaTrasporto(this.msgContext.getHeaderIntegrazioneRisposta());
+		outResponseContext.setResponseHeaders(this.msgContext.getResponseHeaders());
 		// Messaggio
 		OpenSPCoop2Message msgResponse = this.msgContext.getMessageResponse();
 		outResponseContext.setMessaggio(msgResponse);
@@ -634,14 +634,15 @@ public class RicezioneBuste {
 				if (msgRisposta!=null) {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
-					if(outResponseContext.getPropertiesRispostaTrasporto()==null) {
-						outResponseContext.setPropertiesRispostaTrasporto(new HashMap<String, String>());
+					if(outResponseContext.getResponseHeaders()==null) {
+						outResponseContext.setResponseHeaders(new HashMap<String, List<String>>());
 					}
-					Map<String, String> propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
-					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
+					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
+					ServicesUtils.setGovWayHeaderResponse(msgRisposta, OpenSPCoop2Properties.getInstance(),
+							propertiesTrasporto, logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
-							outResponseContext.getPropertiesRispostaTrasporto());
+							outResponseContext.getResponseHeaders());
 				}
 			}catch(DumpException dumpException){
 				setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, dumpException, "DumpNonRiuscito");
@@ -1081,7 +1082,7 @@ public class RicezioneBuste {
 		}
 		
 		// Imposto header di risposta
-		Map<String, String> headerRisposta = new HashMap<String, String>();
+		Map<String, List<String>> headerRisposta = new HashMap<String, List<String>>();
 		UtilitiesIntegrazione utilitiesHttpRisposta = UtilitiesIntegrazione.getInstancePAResponse(logCore);
 		try{
 			utilitiesHttpRisposta.setInfoProductTransportProperties(headerRisposta);
@@ -1092,7 +1093,7 @@ public class RicezioneBuste {
 					"InizializzazioneHeaderRisposta");
 			return;
 		}
-		this.msgContext.setHeaderIntegrazioneRisposta(headerRisposta);
+		this.msgContext.setResponseHeaders(headerRisposta);
 
 		// OPENSPCOOPSTATE 
 		OpenSPCoopState openspcoopstate = null;
@@ -2034,10 +2035,10 @@ public class RicezioneBuste {
 				try {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(true);
 					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT, true);
-					if(this.msgContext.getHeaderIntegrazioneRisposta()==null) {
-						this.msgContext.setHeaderIntegrazioneRisposta(new HashMap<String, String>());
+					if(this.msgContext.getResponseHeaders()==null) {
+						this.msgContext.setResponseHeaders(new HashMap<String, List<String>>());
 					}
-					this.msgContext.getHeaderIntegrazioneRisposta().putAll(res.getHeader());
+					this.msgContext.getResponseHeaders().putAll(res.getHeadersValues());
 					this.msgContext.setMessageResponse(res.buildMessage());
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
 				}catch(Exception e) {
@@ -3072,7 +3073,9 @@ public class RicezioneBuste {
 									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 									errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 								}
-								else if(CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO.equals(erroreCooperazione.getCodiceErrore())) {
+								else if(CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO.equals(erroreCooperazione.getCodiceErrore())
+										||
+										CodiceErroreCooperazione.SICUREZZA_TOKEN_PRESENTE_PIU_VOLTE.equals(erroreCooperazione.getCodiceErrore())) {
 									if(integrationFunctionError==null) {
 										integrationFunctionError = IntegrationFunctionError.TOKEN_INVALID;
 									}
@@ -7780,8 +7783,8 @@ public class RicezioneBuste {
 				OutResponsePAMessage outResponsePAMessage = new OutResponsePAMessage();
 				outResponsePAMessage.setBustaRichiesta(bustaRichiesta);
 				outResponsePAMessage.setMessage(responseMessage);
-				Map<String, String> propertiesIntegrazioneRisposta = new HashMap<String, String>();
-				outResponsePAMessage.setProprietaTrasporto(propertiesIntegrazioneRisposta);
+				Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<String, List<String>>();
+				outResponsePAMessage.setHeaders(propertiesIntegrazioneRisposta);
 				outResponsePAMessage.setPortaDelegata(pd);
 				outResponsePAMessage.setPortaApplicativa(pa);
 				outResponsePAMessage.setSoggettoMittente(soggettoFruitore);
@@ -7835,7 +7838,7 @@ public class RicezioneBuste {
 				}
 				
 				// Imposto header di trasporto per la risposta
-				this.msgContext.setHeaderIntegrazioneRisposta(propertiesIntegrazioneRisposta);
+				this.msgContext.setResponseHeaders(propertiesIntegrazioneRisposta);
 				
 			}			
 				

@@ -85,11 +85,11 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		
 		if(transportRequestContext!=null){
 		
-			if(transportRequestContext.getParametersTrasporto()!=null && transportRequestContext.getParametersTrasporto().size()>0){
+			if(transportRequestContext.getHeaders()!=null && transportRequestContext.getHeaders().size()>0){
 				List<EsitoTransportContextIdentification> list = this.esitiProperties.getEsitoTransactionContextHeaderTrasportoDynamicIdentification();
 				if(list!=null && list.size()>0){
 					for (EsitoTransportContextIdentification esitoTransportContextIdentification : list) {
-						if(esitoTransportContextIdentification.match(transportRequestContext.getParametersTrasporto())){
+						if(esitoTransportContextIdentification.match(transportRequestContext.getHeaders())){
 							tipoContext = esitoTransportContextIdentification.getType();
 							break;
 						}
@@ -98,11 +98,11 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			}
 			
 			// urlBased eventualmente sovrascrive l'header
-			if(transportRequestContext.getParametersFormBased()!=null && transportRequestContext.getParametersFormBased().size()>0){
+			if(transportRequestContext.getParameters()!=null && transportRequestContext.getParameters().size()>0){
 				List<EsitoTransportContextIdentification> list = this.esitiProperties.getEsitoTransactionContextHeaderFormBasedDynamicIdentification();
 				if(list!=null && list.size()>0){
 					for (EsitoTransportContextIdentification esitoTransportContextIdentification : list) {
-						if(esitoTransportContextIdentification.match(transportRequestContext.getParametersFormBased())){
+						if(esitoTransportContextIdentification.match(transportRequestContext.getParameters())){
 							tipoContext = esitoTransportContextIdentification.getType();
 							break;
 						}
@@ -111,9 +111,9 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			}
 			
 			// trasporto con header openspcoop sovrascrive un valore trovato in precedenza
-			if(transportRequestContext.getParametersTrasporto()!=null && transportRequestContext.getParametersTrasporto().size()>0){
+			if(transportRequestContext.getHeaders()!=null && transportRequestContext.getHeaders().size()>0){
 				String headerName = this.esitiProperties.getEsitoTransactionContextHeaderTrasportoName();
-				String value = transportRequestContext.getParameterTrasporto(headerName);
+				String value = transportRequestContext.getHeaderFirstValue(headerName);
 				if(value!=null){
 					if(this.esitiProperties.getEsitiTransactionContextCode().contains(value)==false){
 						this.log.error("Trovato nell'header http un header con nome ["+headerName+"] il cui valore ["+value+"] non rientra tra i tipi di contesto supportati");
@@ -125,9 +125,9 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			}
 	
 			// urlBased eventualmente sovrascrive l'header
-			if(transportRequestContext.getParametersFormBased()!=null && transportRequestContext.getParametersFormBased().size()>0){
+			if(transportRequestContext.getParameters()!=null && transportRequestContext.getParameters().size()>0){
 				String propertyName = this.esitiProperties.getEsitoTransactionContextFormBasedPropertyName();
-				String value = transportRequestContext.getParameterFormBased(propertyName);
+				String value = transportRequestContext.getParameterFirstValue(propertyName);
 				if(value!=null){
 					if(this.esitiProperties.getEsitiTransactionContextCode().contains(value)==false){
 						this.log.error("Trovato nella url una proprietà con nome ["+propertyName+"] il cui valore ["+value+"] non rientra tra i tipi di contesto supportati");

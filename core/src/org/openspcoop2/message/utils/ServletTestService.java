@@ -136,8 +136,8 @@ public class ServletTestService extends HttpServlet {
 		if(existsHttpHeaders!=null){
 			existsHttpHeaders = existsHttpHeaders.trim();
 			if(existsHttpHeaders.contains(",")==false) {
-				String v = TransportUtils.getHeader(request, existsHttpHeaders);
-				if(v==null){
+				List<String> v = TransportUtils.getHeaderValues(request, existsHttpHeaders);
+				if(v==null || v.isEmpty()){
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza header ("+existsHttpHeaders+"). Header non presente");
 				}
 			}
@@ -147,7 +147,7 @@ public class ServletTestService extends HttpServlet {
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza header non conforme (split null)");
 				}
 				for (String header : split) {
-					String v = TransportUtils.getHeader(request, header);
+					List<String> v = TransportUtils.getHeaderValues(request, header);
 					if(v==null){
 						throw new ServletException("Ricevuta una richiesta di verifica esistenza header ("+header+"). Header non presente");
 					}
@@ -159,8 +159,8 @@ public class ServletTestService extends HttpServlet {
 		if(notExistsHttpHeaders!=null){
 			notExistsHttpHeaders = notExistsHttpHeaders.trim();
 			if(notExistsHttpHeaders.contains(",")==false) {
-				String v = TransportUtils.getHeader(request, notExistsHttpHeaders);
-				if(v!=null){
+				List<String> v = TransportUtils.getHeaderValues(request, notExistsHttpHeaders);
+				if(v!=null && !v.isEmpty()){
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza header ("+notExistsHttpHeaders+"). Header presente");
 				}
 			}
@@ -170,8 +170,8 @@ public class ServletTestService extends HttpServlet {
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza header non conforme (split null)");
 				}
 				for (String header : split) {
-					String v = TransportUtils.getHeader(request, header);
-					if(v!=null){
+					List<String> v = TransportUtils.getHeaderValues(request, header);
+					if(v!=null && !v.isEmpty()){
 						throw new ServletException("Ricevuta una richiesta di verifica non esistenza header ("+header+"). Header presente");
 					}
 				}
@@ -182,8 +182,8 @@ public class ServletTestService extends HttpServlet {
 		if(existsQueryParameters!=null){
 			existsQueryParameters = existsQueryParameters.trim();
 			if(existsQueryParameters.contains(",")==false) {
-				String v = TransportUtils.getParameter(request, existsQueryParameters);
-				if(v==null){
+				List<String> v = TransportUtils.getParameterValues(request, existsQueryParameters);
+				if(v==null || v.isEmpty()){
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter ("+existsQueryParameters+"). Parametro non presente");
 				}
 			}
@@ -193,8 +193,8 @@ public class ServletTestService extends HttpServlet {
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter non conforme (split null)");
 				}
 				for (String header : split) {
-					String v = TransportUtils.getParameter(request, header);
-					if(v==null){
+					List<String> v = TransportUtils.getParameterValues(request, header);
+					if(v==null || v.isEmpty()){
 						throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter ("+header+"). Parametro non presente");
 					}
 				}
@@ -205,8 +205,8 @@ public class ServletTestService extends HttpServlet {
 		if(notExistsQueryParameters!=null){
 			notExistsQueryParameters = notExistsQueryParameters.trim();
 			if(notExistsQueryParameters.contains(",")==false) {
-				String v = TransportUtils.getParameter(request, notExistsQueryParameters);
-				if(v!=null){
+				List<String> v = TransportUtils.getParameterValues(request, notExistsQueryParameters);
+				if(v!=null && !v.isEmpty()){
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter ("+notExistsQueryParameters+"). Parametro presente");
 				}
 			}
@@ -216,8 +216,8 @@ public class ServletTestService extends HttpServlet {
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter non conforme (split null)");
 				}
 				for (String header : split) {
-					String v = TransportUtils.getParameter(request, header);
-					if(v!=null){
+					List<String> v = TransportUtils.getParameterValues(request, header);
+					if(v!=null && !v.isEmpty()){
 						throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter ("+header+"). Parametro presente");
 					}
 				}
@@ -298,7 +298,7 @@ public class ServletTestService extends HttpServlet {
 				}
 			}
 			
-			String v = TransportUtils.getHeader(request, key);
+			String v = TransportUtils.getHeaderFirstValue(request, key);
 			if(v==null){
 				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Header ["+key+"] non presente");
 			}
@@ -331,7 +331,7 @@ public class ServletTestService extends HttpServlet {
 				}
 			}
 			
-			String v = TransportUtils.getParameter(request, key);
+			String v = TransportUtils.getParameterFirstValue(request, key);
 			if(v==null){
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Parametro ["+key+"] non presente");
 			}
@@ -380,18 +380,18 @@ public class ServletTestService extends HttpServlet {
 				
 				boolean preflight = HttpRequestMethod.OPTIONS.equals(request.getMethod());
 				
-				String origin = TransportUtils.getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
+				String origin = TransportUtils.getHeaderFirstValue(request, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
 				if(origin==null || "".equals(origin)) {
 					throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN+"). Header non presente");
 				}
 				
 				if(preflight) {
 					
-					String method = TransportUtils.getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+					String method = TransportUtils.getHeaderFirstValue(request, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
 					if(method==null || "".equals(method)) {
 						throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+"). Header non presente");
 					}
-					String header = TransportUtils.getHeader(request, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
+					String header = TransportUtils.getHeaderFirstValue(request, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
 					if(header==null || "".equals(header)) {
 						throw new ServletException("Ricevuta una richiesta di verifica header ("+HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS+"). Header non presente");
 					}
@@ -510,34 +510,34 @@ public class ServletTestService extends HttpServlet {
 					redirect = true;
 			}
 			if(redirect) {
-				Map<String, String> p = new HashMap<String, String>();
+				Map<String, List<String>> p = new HashMap<String, List<String>>();
 				
 				Integer returnCode = 307;
 				String returnCodeOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectReturnCode");
 				if(returnCodeOpt!=null) {
 					returnCode = Integer.parseInt(returnCodeOpt.trim());
-					p.put("redirectReturnCode", returnCode+"");
+					TransportUtils.addParameter(p, "redirectReturnCode", returnCode+"");
 				}
 				
 				String protocol = "http";
 				String protocolOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectProtocol");
 				if(protocolOpt!=null) {
 					protocol = protocolOpt.trim();
-					p.put("redirectProtocol", protocol);
+					TransportUtils.addParameter(p, "redirectProtocol", protocol);
 				}
 				
 				String host = "localhost";
 				String hostOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHost");
 				if(hostOpt!=null) {
 					host = hostOpt.trim();
-					p.put("redirectHost", host);
+					TransportUtils.addParameter(p, "redirectHost", host);
 				}
 				
 				String port = "8080";
 				String portOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectPort");
 				if(portOpt!=null) {
 					port = portOpt.trim();
-					p.put("redirectPort", port);
+					TransportUtils.addParameter(p, "redirectPort", port);
 				}
 				
 				String contesto = req.getRequestURI();
@@ -547,28 +547,28 @@ public class ServletTestService extends HttpServlet {
 					if(contesto.startsWith("/")==false) {
 						contesto = "/" + contesto;
 					}
-					p.put("redirectContext", contesto);
+					TransportUtils.addParameter(p, "redirectContext", contesto);
 				}
 				
 				Integer maxHop = 1;
 				String maxOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectMaxHop");
 				if(maxOpt!=null) {
 					maxHop = Integer.parseInt(maxOpt.trim());
-					p.put("redirectMaxHop", maxHop+"");
+					TransportUtils.addParameter(p, "redirectMaxHop", maxHop+"");
 				}
 				
 				Integer hop = 1;
 				String hopOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHop");
 				if(hopOpt!=null) {
 					hop = Integer.parseInt(hopOpt.trim());
-					p.put("redirectHop", hop+"");
+					TransportUtils.addParameter(p, "redirectHop", hop+"");
 				}
 				
 				boolean absoluteUrl = true;
 				String absoluteUrlParam = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectAbsoluteUrl");
 				if(absoluteUrlParam!=null) {
 					absoluteUrl = Boolean.parseBoolean(absoluteUrlParam.trim());
-					p.put("redirectAbsoluteUrl", absoluteUrlParam+"");
+					TransportUtils.addParameter(p, "redirectAbsoluteUrl", absoluteUrlParam+"");
 				}
 				
 				String headerLocationName = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHeaderLocation");
@@ -581,8 +581,8 @@ public class ServletTestService extends HttpServlet {
 				
 				if(hop<maxHop) {
 					p.remove("redirectHop");
-					p.put("redirectHop", (hop+1)+"");
-					p.put("redirect", "true");
+					TransportUtils.addParameter(p,"redirectHop", (hop+1)+"");
+					TransportUtils.addParameter(p,"redirect", "true");
 				}
 				else {
 					// terminato redirect hop
@@ -593,7 +593,7 @@ public class ServletTestService extends HttpServlet {
 				if(!absoluteUrl) {
 					redirectUrl = contesto;
 				}
-				redirectUrl = TransportUtils.buildLocationWithURLBasedParameter(p, redirectUrl, this.log);
+				redirectUrl = TransportUtils.buildUrlWithParameters(p, redirectUrl, this.log);
 				
 				res.setHeader(headerLocationName,redirectUrl);
 			
@@ -767,7 +767,7 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzione returnHttpHeader
-			Map<String, String> headers = new HashMap<>();
+			Map<String, List<String>> headers = new HashMap<>();
 			String returnHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeader");
 			if(returnHeaderString!=null){
 				returnHeaderString = returnHeaderString.trim();
@@ -792,7 +792,31 @@ public class ServletTestService extends HttpServlet {
 						returnHeaderValue = returnHeaderValue + ":"+ split[j];
 					}
 				}
-				headers.put(returnHeaderKey, returnHeaderValue);
+				
+				boolean checkMultiValue = true;
+				String returnHttpHeaderSingleValue = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeaderSingleValue");
+				if(returnHttpHeaderSingleValue!=null) {
+					boolean b = Boolean.valueOf(returnHttpHeaderSingleValue);
+					if(b) {
+						checkMultiValue = false;
+					}
+				}
+				if(checkMultiValue) {
+					if(!returnHeaderValue.contains(",")) {
+						TransportUtils.addHeader(headers, returnHeaderKey, returnHeaderValue);
+					}
+					else {
+						String [] splitMultiHeaders = returnHeaderValue.split(",");
+						if(splitMultiHeaders!=null && splitMultiHeaders.length>0) {
+							for (String hdrValue : splitMultiHeaders) {
+								TransportUtils.addHeader(headers, returnHeaderKey, hdrValue);
+							}
+						}
+					}
+				}
+				else {
+					TransportUtils.addHeader(headers, returnHeaderKey, returnHeaderValue);
+				}
 			}
 			
 			String checkCORS = getParameter_checkWhiteList(req, this.whitePropertiesList, "CORS");
@@ -801,16 +825,16 @@ public class ServletTestService extends HttpServlet {
 				if("true".equalsIgnoreCase(checkCORS)) {
 					boolean preflight = HttpRequestMethod.OPTIONS.equals(req.getMethod());
 					
-					String origin = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
-					headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN,origin);
+					String origin = TransportUtils.getHeaderFirstValue(req, HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
+					TransportUtils.addHeader(headers,HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN,origin);
 					
 					if(preflight) {
 						
-						String method = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
-						headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS,method);
+						String method = TransportUtils.getHeaderFirstValue(req, HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+						TransportUtils.addHeader(headers,HttpConstants.ACCESS_CONTROL_ALLOW_METHODS,method);
 						
-						String header = TransportUtils.getHeader(req, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
-						headers.put(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS,header);
+						String header = TransportUtils.getHeaderFirstValue(req, HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
+						TransportUtils.addHeader(headers,HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS,header);
 						
 					}
 					
@@ -834,8 +858,8 @@ public class ServletTestService extends HttpServlet {
 					}
 					
 					for (String hdrName : tmp) {
-						String reqHdr = TransportUtils.getHeader(req, hdrName); 
-						if(reqHdr!=null) {
+						List<String> reqHdr = TransportUtils.getHeaderValues(req, hdrName); 
+						if(reqHdr!=null && !reqHdr.isEmpty()) {
 							headers.put(replyPrefix+hdrName, reqHdr);
 						}
 					}
@@ -854,8 +878,8 @@ public class ServletTestService extends HttpServlet {
 					}
 					
 					for (String queryParmName : tmp) {
-						String reqQueryPar = TransportUtils.getParameter(req, queryParmName); 
-						if(reqQueryPar!=null) {
+						List<String> reqQueryPar = TransportUtils.getParameterValues(req, queryParmName); 
+						if(reqQueryPar!=null && !reqQueryPar.isEmpty()) {
 							headers.put(replyPrefix+queryParmName, reqQueryPar);
 						}
 					}
@@ -1089,8 +1113,12 @@ public class ServletTestService extends HttpServlet {
 	            	Iterator<String> itHdr = headers.keySet().iterator();
 	            	while (itHdr.hasNext()) {
 						String returnHeaderKey = (String) itHdr.next();
-						String returnHeaderValue = headers.get(returnHeaderKey);
-						res.setHeader(returnHeaderKey,returnHeaderValue);
+						List<String> returnHeaderValue = headers.get(returnHeaderKey);
+						if(returnHeaderValue!=null && !returnHeaderValue.isEmpty()) {
+							for (String value : returnHeaderValue) {
+								res.addHeader(returnHeaderKey, value);	
+							}
+						}
 					}
 	            }
 	            
@@ -1109,8 +1137,12 @@ public class ServletTestService extends HttpServlet {
 	            	Iterator<String> itHdr = headers.keySet().iterator();
 	            	while (itHdr.hasNext()) {
 						String returnHeaderKey = (String) itHdr.next();
-						String returnHeaderValue = headers.get(returnHeaderKey);
-						res.setHeader(returnHeaderKey,returnHeaderValue);
+						List<String> returnHeaderValue = headers.get(returnHeaderKey);
+						if(returnHeaderValue!=null && !returnHeaderValue.isEmpty()) {
+							for (String value : returnHeaderValue) {
+								res.addHeader(returnHeaderKey, value);	
+							}
+						}
 					}
 	            }
 				 
@@ -1130,8 +1162,12 @@ public class ServletTestService extends HttpServlet {
 		            	Iterator<String> itHdr = headers.keySet().iterator();
 		            	while (itHdr.hasNext()) {
 							String returnHeaderKey = (String) itHdr.next();
-							String returnHeaderValue = headers.get(returnHeaderKey);
-							res.setHeader(returnHeaderKey,returnHeaderValue);
+							List<String> returnHeaderValue = headers.get(returnHeaderKey);
+							if(returnHeaderValue!=null && !returnHeaderValue.isEmpty()) {
+								for (String value : returnHeaderValue) {
+									res.addHeader(returnHeaderKey, value);	
+								}
+							}
 						}
 		            }
 					
@@ -1257,8 +1293,12 @@ public class ServletTestService extends HttpServlet {
 	            	Iterator<String> itHdr = headers.keySet().iterator();
 	            	while (itHdr.hasNext()) {
 						String returnHeaderKey = (String) itHdr.next();
-						String returnHeaderValue = headers.get(returnHeaderKey);
-						res.setHeader(returnHeaderKey,returnHeaderValue);
+						List<String> returnHeaderValue = headers.get(returnHeaderKey);
+						if(returnHeaderValue!=null && !returnHeaderValue.isEmpty()) {
+							for (String value : returnHeaderValue) {
+								res.addHeader(returnHeaderKey, value);	
+							}
+						}
 					}
 	            }
 				

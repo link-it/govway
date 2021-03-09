@@ -1,3 +1,13 @@
+2021-03-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, TestsuiteProtocolloTrasparente]
+	Risolto Bug OP-1027
+	In presenza di parametri della query con lo stesso nome, veniva inoltrato all'API di backend solamente il primo.
+	Analogo problema avveniva con gli header http (es. Set-Cookie).
+	È stata introdotta la gestione della lista di valori per header e parametri della query che presentano lo stesso nome.
+	La lista dei valori è adesso accessibile anche all'interno di una trasformazione tramite template engine FreeMarker o Velocity.
+	Per le API REST (definite tramite OpenAPI 3.0) vengono adesso supportate le varie modalità di serializzazione descritte in 'https://swagger.io/docs/specification/serialization/'.
+
 2021-03-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

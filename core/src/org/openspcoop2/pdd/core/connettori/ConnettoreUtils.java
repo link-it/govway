@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -152,7 +153,7 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
-	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, String tipoConnettore, Map<String, String> propertiesURLBased, String locationParam,
+	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, String tipoConnettore, Map<String, List<String>> propertiesURLBased, String locationParam,
 			IProtocolFactory<?> protocolFactory, String idModulo) throws ConnettoreException{
 		
 		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
@@ -171,20 +172,20 @@ public class ConnettoreUtils {
 					forwardParameter = msg.getForwardUrlProperties(OpenSPCoop2Properties.getInstance().getSOAPServicesUrlParametersForwardConfig());
 				}
 				
-				Map<String, String>  p = propertiesURLBased;
+				Map<String, List<String>>  p = propertiesURLBased;
 				if(forwardParameter!=null && forwardParameter.size()>0){
 					if(p==null){
-						p = new HashMap<String, String> ();
+						p = new HashMap<String, List<String>> ();
 					}
 					Iterator<String> keys = forwardParameter.getKeys();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
-						String value = forwardParameter.getProperty(key);
-						if(value!=null){
+						List<String> values = forwardParameter.getPropertyValues(key);
+						if(values!=null && !values.isEmpty()){
 							if(p.containsKey(key)){
 								p.remove(key);
 							}
-							p.put(key, value);
+							p.put(key, values);
 						}
 					}
 				}
@@ -199,7 +200,7 @@ public class ConnettoreUtils {
 				}
 				else{
 					boolean encodeBaseLocation = true; // la base location può contenere dei parametri
-					return TransportUtils.buildLocationWithURLBasedParameter(p, location, encodeBaseLocation, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+					return TransportUtils.buildUrlWithParameters(p, location, encodeBaseLocation, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 				}
 				
 			}catch(Exception e){

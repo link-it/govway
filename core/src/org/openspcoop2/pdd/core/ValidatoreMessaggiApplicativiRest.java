@@ -76,6 +76,7 @@ import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.BinaryHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.BinaryHttpResponseEntity;
+import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.ElementHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.ElementHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
@@ -454,8 +455,19 @@ public class ValidatoreMessaggiApplicativiRest {
 					break;
 				}
 				httpRequest.setContentType(this.message.getContentType());
-				httpRequest.setParametersTrasporto(this.message.getTransportRequestContext().getParametersTrasporto());
-				httpRequest.setParametersQuery(this.message.getTransportRequestContext().getParametersFormBased());
+				httpRequest.setHeaders(this.message.getTransportRequestContext().getHeaders());
+				httpRequest.setParameters(this.message.getTransportRequestContext().getParameters());
+				Map<String,String> mapCookies = this.message.getTransportRequestContext().getCookiesValue();
+				if(mapCookies!=null && !mapCookies.isEmpty()) {
+					for (String name : mapCookies.keySet()) {
+						String value = mapCookies.get(name);
+						Cookie cookie = new Cookie(name, value);
+						if(httpRequest.getCookies()==null) {
+							httpRequest.setCookies(new ArrayList<Cookie>());
+						}
+						httpRequest.getCookies().add(cookie);
+					}
+				}
 				httpRequest.setUrl(path);
 				httpRequest.setMethod(httpMethod);
 				apiValidator.validate(httpRequest);
@@ -505,7 +517,7 @@ public class ValidatoreMessaggiApplicativiRest {
 					break;
 				}
 				httpResponse.setContentType(this.message.getContentType());
-				httpResponse.setParametersTrasporto(this.message.getTransportResponseContext().getParametersTrasporto());
+				httpResponse.setHeaders(this.message.getTransportResponseContext().getHeaders());
 				httpResponse.setUrl(path);
 				httpResponse.setMethod(httpMethod);
 				httpResponse.setStatus(Integer.parseInt(this.message.getTransportResponseContext().getCodiceTrasporto()));

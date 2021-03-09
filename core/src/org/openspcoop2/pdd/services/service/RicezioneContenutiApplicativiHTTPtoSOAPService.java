@@ -95,6 +95,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -421,22 +422,23 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			boolean imbustamentoConAttachment = false;
 			String tipoAttachment =  HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
 			// HeaderTrasporto
-			String imb = req.getHeader(openSPCoopProperties.getTunnelSOAPKeyWord_headerTrasporto());
+			String imb = TransportUtils.getFirstValue(req.getHeaderValues(openSPCoopProperties.getTunnelSOAPKeyWord_headerTrasporto()));
 			if(imb!=null && "true".equals(imb.trim())){
 				imbustamentoConAttachment = true;
-				String mime = req.getHeader(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
-				if(mime!=null)
+				String mime = TransportUtils.getFirstValue(req.getHeaderValues(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto()));
+				if(mime!=null) {
 					tipoAttachment = mime.trim();
+				}
 			}
 			if(imb==null){
 				// Proprieta FORMBased
-				if(req.getParameter(openSPCoopProperties.getTunnelSOAPKeyWord_urlBased())!=null){
-					if("true".equalsIgnoreCase(req.getParameter(openSPCoopProperties.getTunnelSOAPKeyWord_urlBased()))){
-						imbustamentoConAttachment = true;
-						// lettura eventuale tipo di attachment
-						if(req.getParameter(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_urlBased())!=null){
-							tipoAttachment = req.getParameter(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_urlBased());
-						}
+				imb = TransportUtils.getFirstValue(req.getParameterValues(openSPCoopProperties.getTunnelSOAPKeyWord_urlBased()));
+				if(imb!=null && "true".equals(imb.trim())){
+					imbustamentoConAttachment = true;
+					// lettura eventuale tipo di attachment
+					String mime = TransportUtils.getFirstValue(req.getParameterValues(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_urlBased())); 
+					if(mime!=null){
+						tipoAttachment = mime.trim();
 					}
 				}
 			}
@@ -487,11 +489,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					requestMessage = pr.getMessage_throwParseException();
 				}
 				
-				if(requestInfo.getProtocolContext().getParametersTrasporto()==null) {
-					requestInfo.getProtocolContext().setParametersTrasporto(new HashMap<String,String>());
+				if(requestInfo.getProtocolContext().getHeaders()==null) {
+					requestInfo.getProtocolContext().setHeaders(new HashMap<String,List<String>>());
 				}
-				requestInfo.getProtocolContext().removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
-				requestInfo.getProtocolContext().getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, requestMessage.getContentType());
+				requestInfo.getProtocolContext().removeHeader(HttpConstants.CONTENT_TYPE);
+				TransportUtils.setHeader(requestInfo.getProtocolContext().getHeaders(),HttpConstants.CONTENT_TYPE, requestMessage.getContentType());
 				requestInfo.setIntegrationRequestMessageType(requestMessage.getMessageType());
 				
 				Utilities.printFreeMemory("RicezioneContenutiApplicativiHTTPtoSOAP - Post costruzione richiesta");
@@ -700,21 +702,34 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
 		}
-		if(context.getHeaderIntegrazioneRisposta()==null) {
-			context.setHeaderIntegrazioneRisposta(new HashMap<String,String>());
+		if(context.getResponseHeaders()==null) {
+			context.setResponseHeaders(new HashMap<String,List<String>>());
 		}
-		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, true, context.getPddContext(), requestInfo.getProtocolContext());
-		if(context.getHeaderIntegrazioneRisposta()!=null){
-			Iterator<String> keys = context.getHeaderIntegrazioneRisposta().keySet().iterator();
+		ServicesUtils.setGovWayHeaderResponse(responseMessage, openSPCoopProperties,
+				context.getResponseHeaders(), logCore, true, context.getPddContext(), requestInfo.getProtocolContext());
+		if(context.getResponseHeaders()!=null){
+			Iterator<String> keys = context.getResponseHeaders().keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = null;
-	    		try{
-	    			value = context.getHeaderIntegrazioneRisposta().get(key);
-	    			res.setHeader(key,value);
-	    		}catch(Exception e){
-	    			logCore.error("Response.setHeader("+key+","+value+") error: "+e.getMessage(),e);
-	    		}
+				List<String> values = context.getResponseHeaders().get(key);
+				if(values!=null && !values.isEmpty()) {
+					for (int i = 0; i < values.size(); i++) {
+						String value = values.get(i);
+						String verbo = "";
+						try{
+							if(i==0) {
+								verbo = "set";
+								res.setHeader(key,value);
+							}
+							else {
+								verbo = "add";
+								res.addHeader(key,value);
+							}
+			    		}catch(Exception e){
+			    			logCore.error("Response."+verbo+"Header("+key+","+value+") error: "+e.getMessage(),e);
+			    		}	
+					}
+				}
 	    	}	
 		}
 		if(context!=null && context.getProtocol()!=null){
@@ -937,18 +952,30 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					}
 				}
 				
-				if(responseMessage.getForcedResponse().getHeaders()!=null &&
-						responseMessage.getForcedResponse().getHeaders().size()>0) {
-					Iterator<String> keys = responseMessage.getForcedResponse().getHeaders().keySet().iterator();
+				if(responseMessage.getForcedResponse().getHeadersValues()!=null &&
+						responseMessage.getForcedResponse().getHeadersValues().size()>0) {
+					Iterator<String> keys = responseMessage.getForcedResponse().getHeadersValues().keySet().iterator();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
-						String value = null;
-			    		try{
-			    			value = responseMessage.getForcedResponse().getHeaders().get(key);
-			    			res.setHeader(key,value);
-			    		}catch(Exception e){
-			    			logCore.error("Response(Forced).setHeader("+key+","+value+") error: "+e.getMessage(),e);
-			    		}
+						List<String> values = responseMessage.getForcedResponse().getHeadersValues().get(key);
+						if(values!=null && !values.isEmpty()) {
+							for (int i = 0; i < values.size(); i++) {
+								String value = values.get(i);
+								String verbo = "";
+								try{
+									if(i==0) {
+										verbo = "set";
+										res.setHeader(key,value);
+									}
+									else {
+										verbo = "add";
+										res.addHeader(key,value);
+									}
+					    		}catch(Exception e){
+					    			logCore.error("Response(Forced)."+verbo+"Header("+key+","+value+") error: "+e.getMessage(),e);
+					    		}	
+							}
+						}
 			    	}	
 				}
 				
@@ -1235,7 +1262,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					postOutResponseContext.setEsito(esito);
 				}
 				postOutResponseContext.setReturnCode(statoServletResponse);
-				postOutResponseContext.setPropertiesRispostaTrasporto(context.getHeaderIntegrazioneRisposta());
+				postOutResponseContext.setResponseHeaders(context.getResponseHeaders());
 				postOutResponseContext.setProtocollo(context.getProtocol());
 				postOutResponseContext.setIntegrazione(context.getIntegrazione());
 				if(context.getTipoPorta()!=null)

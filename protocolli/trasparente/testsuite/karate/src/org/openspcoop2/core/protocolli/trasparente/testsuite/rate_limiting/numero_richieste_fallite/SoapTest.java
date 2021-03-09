@@ -399,21 +399,21 @@ public class SoapTest extends ConfigLoader {
 	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) throws Exception {
 		
 		for (var r: responses) {
-			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeader(Headers.FailedLimit), maxRequests);			
+			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeaderFirstValue(Headers.FailedLimit), maxRequests);			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
-				Utils.checkXLimitWindows(r.getHeader(Headers.FailedLimit), maxRequests, windowMap);
+				Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.FailedLimit), maxRequests, windowMap);
 			}
-			assertTrue(Integer.valueOf(r.getHeader(Headers.FailedReset)) <= windowSize);			
+			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.FailedReset)) <= windowSize);			
 			assertEquals(429, r.getResultHTTPOperation());
 			
 			Element element = Utils.buildXmlElement(r.getContent());
 			Utils.matchLimitExceededSoap(element);
 			
-			assertEquals("0", r.getHeader(Headers.FailedRemaining));
-			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeader(Headers.GovWayTransactionErrorType));
+			assertEquals("0", r.getHeaderFirstValue(Headers.FailedRemaining));
+			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 			Utils.checkHeaderTooManyRequest(r);
-			assertNotEquals(null, r.getHeader(Headers.RetryAfter));
+			assertNotEquals(null, r.getHeaderFirstValue(Headers.RetryAfter));
 		}
 		
 	}
@@ -425,14 +425,14 @@ public class SoapTest extends ConfigLoader {
 		// sia effettivamente un fault.
 		for (var r: responses){
 			
-			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeader(Headers.FailedLimit), maxRequests);			
+			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeaderFirstValue(Headers.FailedLimit), maxRequests);			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
-				Utils.checkXLimitWindows(r.getHeader(Headers.FailedLimit), maxRequests, windowMap);
+				Utils.checkXLimitWindows(r.getHeaderFirstValue(Headers.FailedLimit), maxRequests, windowMap);
 			}
 			
-			assertTrue(Integer.valueOf(r.getHeader(Headers.FailedReset)) <= windowSize);
-			assertNotEquals(null, Integer.valueOf(r.getHeader(Headers.FailedRemaining)));
+			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.FailedReset)) <= windowSize);
+			assertNotEquals(null, Integer.valueOf(r.getHeaderFirstValue(Headers.FailedRemaining)));
 			assertEquals(500, r.getResultHTTPOperation());
 			
 			Element element = Utils.buildXmlElement(r.getContent());

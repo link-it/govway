@@ -140,7 +140,10 @@ public enum ErroriCooperazione {
 			CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO),
 	
 	TOKEN_AUTORIZZAZIONE_FALLITA("La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
-			CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA);
+			CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA),
+	
+	TOKEN_PRESENTE_PIU_VOLTE("Token presente più volte",
+			CodiceErroreCooperazione.SICUREZZA_TOKEN_PRESENTE_PIU_VOLTE);
 	
 	private final String descrizione;
 	private final CodiceErroreCooperazione codiceErrore;

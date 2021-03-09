@@ -128,7 +128,7 @@ public class RESTIntegrazionePortaDelegata {
 		HttpResponse httpResponse = restCore.invoke(tipo, 400, repository, true, true, 
 				false, contentType, false, badRequest,
 				null,null);
-		String errorType = httpResponse.getHeader(CostantiTestSuite.ERROR_TYPE);
+		String errorType = httpResponse.getHeaderFirstValue(CostantiTestSuite.ERROR_TYPE);
 		Reporter.log(CostantiTestSuite.ERROR_TYPE+"='"+errorType+"'");
 		Assert.assertEquals(errorType, CostantiTestSuite.ERROR_TYPE_BAD_REQUEST);
 		
@@ -157,7 +157,7 @@ public class RESTIntegrazionePortaDelegata {
 		HttpResponse httpResponse = restCore.invoke(tipo, 502, repository, true, true, 
 				false, contentType, false, badRequest,
 				null,null);
-		String errorType = httpResponse.getHeader(CostantiTestSuite.ERROR_TYPE);
+		String errorType = httpResponse.getHeaderFirstValue(CostantiTestSuite.ERROR_TYPE);
 		Reporter.log(CostantiTestSuite.ERROR_TYPE+"='"+errorType+"'");
 		Assert.assertEquals(errorType, CostantiTestSuite.ERROR_TYPE_INVALID_RESPONSE);
 

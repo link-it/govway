@@ -39,7 +39,7 @@ public class PreInResponseContext extends PostOutRequestContext {
 	public PreInResponseContext(PostOutRequestContext postOutRequestContext){
 		super(postOutRequestContext);
 		
-		this.setPropertiesTrasportoRisposta(postOutRequestContext.getPropertiesTrasportoRisposta());
+		this.setResponseHeaders(postOutRequestContext.getResponseHeaders());
 		this.setCodiceTrasporto(postOutRequestContext.getCodiceTrasporto());
 		
 	}

@@ -23,8 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -80,6 +81,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -803,14 +805,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 					if(this.transazioniRegistrazioneTracceProtocolPropertiesEnabled){
 						if(tracciaRichiesta.getBusta().sizeProperties()>0){
-							Hashtable<String, String> propertiesBusta = new Hashtable<String, String>();
+							Map<String, List<String>> propertiesBusta = new HashMap<String, List<String>>();
 							String [] pNames = tracciaRichiesta.getBusta().getPropertiesNames();
 							if(pNames!=null){
 								for (int i = 0; i < pNames.length; i++) {
 									String key = pNames[i];
 									String value = tracciaRichiesta.getBusta().getProperty(key);
 									if(key!=null && value!=null){
-										propertiesBusta.put(key, value);
+										TransportUtils.put(propertiesBusta, key, value, false);
 									}
 								}
 							}
@@ -848,14 +850,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 					if(this.transazioniRegistrazioneTracceProtocolPropertiesEnabled){
 						if(tracciaRisposta.getBusta().sizeProperties()>0){
-							Hashtable<String, String> propertiesBusta = new Hashtable<String, String>();
+							Map<String, List<String>> propertiesBusta = new HashMap<String, List<String>>();
 							String [] pNames = tracciaRisposta.getBusta().getPropertiesNames();
 							if(pNames!=null){
 								for (int i = 0; i < pNames.length; i++) {
 									String key = pNames[i];
 									String value = tracciaRisposta.getBusta().getProperty(key);
 									if(key!=null && value!=null){
-										propertiesBusta.put(key, value);
+										TransportUtils.put(propertiesBusta, key, value, false);
 									}
 								}
 							}

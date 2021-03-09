@@ -23,6 +23,10 @@ package org.openspcoop2.message.utils;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * Messaggio
@@ -41,7 +45,7 @@ public class DumpMessaggioMultipartInfo implements Serializable{
 	private String contentId;
 	private String contentLocation;
 	private String contentType;
-	private HashMap<String, String> headers = new HashMap<>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	
 	public String getContentType() {
 		return this.contentType;
@@ -67,11 +71,19 @@ public class DumpMessaggioMultipartInfo implements Serializable{
 		this.contentLocation = contentLocation;
 	}
 
-	public HashMap<String, String> getHeaders() {
+	@Deprecated
+	public Map<String, String> getHeaders() {
+		return TransportUtils.convertToMapSingleValue(this.headers);
+	}
+	public Map<String, List<String>> getHeadersValues() {
 		return this.headers;
 	}
 
-	public void setHeaders(HashMap<String, String> headers) {
+	@Deprecated
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = TransportUtils.convertToMapListValues(headers);
+	}
+	public void setHeadersValues(Map<String, List<String>> headers) {
 		this.headers = headers;
 	}
 	

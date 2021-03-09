@@ -295,7 +295,7 @@ public class EventiUtils {
 				.stream()
 				.anyMatch( r -> {
 					return testCredenzialiMittenteTransazione(
-							r.getHeader(Headers.TransactionId),
+							r.getHeaderFirstValue(Headers.TransactionId),
 							evento -> {						
 								log().info(evento.toString());
 								String credenziale = (String) evento.get("credenziale");
@@ -340,7 +340,7 @@ public class EventiUtils {
 				.stream()
 				.anyMatch( r -> {
 					return testCredenzialiMittenteTransazione(
-							r.getHeader(Headers.TransactionId),
+							r.getHeaderFirstValue(Headers.TransactionId),
 							evento -> {						
 								log().info(evento.toString());
 								String credenziale = (String) evento.get("credenziale");

@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.core.utils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -191,13 +192,13 @@ public class JmxUtils {
 			else if(gestore instanceof String){
 				String url = (String) gestore;
 			
-				Map<String, String> p = new HashMap<String,String>();
-				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				p.put(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, nomeMetodo);
+				Map<String, List<String>> p = new HashMap<String,List<String>>();
+				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
+				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, nomeMetodo);
 				if(parametro!=null && !"".equals(parametro)){
-					p.put(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE, parametro);
+					TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE, parametro);
 				}
-				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
+				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
 				
 				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){
@@ -240,10 +241,10 @@ public class JmxUtils {
 			else if(gestore instanceof String){
 				String url = (String) gestore;
 				
-				Map<String, String> p = new HashMap<String, String>();
-				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
-				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
+				Map<String, List<String>> p = new HashMap<String, List<String>>();
+				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
+				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
+				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
 				
 				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){
@@ -273,16 +274,16 @@ public class JmxUtils {
 			else if(gestore instanceof String){
 				String url = (String) gestore;
 				
-				Map<String, String> p = new HashMap<String, String>();
-				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
+				Map<String, List<String>> p = new HashMap<String, List<String>>();
+				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
+				TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				if(value instanceof Boolean){
-					p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_BOOLEAN_VALUE, value.toString());
+					TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_BOOLEAN_VALUE, value.toString());
 				}
 				else{
-					p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_VALUE, value.toString());
+					TransportUtils.setParameter(p,CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_VALUE, value.toString());
 				}
-				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
+				String urlWithParameters = TransportUtils.buildUrlWithParameters(p, url);
 				
 				HttpResponse response = invokeHttp(urlWithParameters, alias);
 				if(response.getResultHTTPOperation()!=200){

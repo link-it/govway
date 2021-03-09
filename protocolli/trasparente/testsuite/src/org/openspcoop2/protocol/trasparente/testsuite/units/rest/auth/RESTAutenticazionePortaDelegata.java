@@ -123,7 +123,7 @@ public class RESTAutenticazionePortaDelegata {
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_SERVICE_WITH_BASIC_AUTH_DOMAIN);
 		restCore.setCredenziali("testsuiteOp2","ERRATA");
 		HttpResponse response = restCore.invoke("json", 401, repository, true, true, false, "text/json", true);
-		String domain = response.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String domain = response.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		if(domain==null || "".equals(domain)) {
 			throw new Exception("Header '"+HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE+"' non trovato nella risposta");
 		}
@@ -141,7 +141,7 @@ public class RESTAutenticazionePortaDelegata {
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_SERVICE_WITH_BASIC_AUTH_DOMAIN);
 		restCore.setCredenziali("testsuiteOp2","ERRATA");
 		HttpResponse response = restCore.invoke("json", 401, repository, true, true, false, "text/json", true);
-		String domain = response.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String domain = response.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		if(domain==null || "".equals(domain)) {
 			throw new Exception("Header '"+HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE+"' non trovato nella risposta");
 		}
@@ -190,7 +190,7 @@ public class RESTAutenticazionePortaDelegata {
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH);
 		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
 				HttpConstants.AUTHENTICATION_BASIC, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_BASIC_REALM, 
@@ -206,7 +206,7 @@ public class RESTAutenticazionePortaDelegata {
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_BASIC_PDD_SERVICE_WITH_BASIC_AUTH);
 		restCore.setCredenziali("utenzaInventataNonEsistente","12345678");
 		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
 				HttpConstants.AUTHENTICATION_BASIC, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_BASIC_REALM, 
@@ -251,7 +251,7 @@ public class RESTAutenticazionePortaDelegata {
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APIKEY);
 		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_REALM, 
@@ -267,7 +267,7 @@ public class RESTAutenticazionePortaDelegata {
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APIKEY);
 		restCore.setCredenzialiApiKey("EsempioUtenzaInesistenzaApiKey@MinisteroFruitore.gw", "123456", PosizioneCredenziale.COOKIE);
 		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_REALM, 
@@ -313,7 +313,7 @@ public class RESTAutenticazionePortaDelegata {
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APPID);
 		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_REALM, 
@@ -329,7 +329,7 @@ public class RESTAutenticazionePortaDelegata {
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_APPID);
 		restCore.setCredenzialiMultipleApiKey("EsempioUtenzaInesistenzaApiKey@MinisteroFruitore.gw", "123456", PosizioneCredenziale.COOKIE, PosizioneCredenziale.COOKIE);
 		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_AUTHTYPE, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_APIKEY_REALM, 
@@ -348,7 +348,7 @@ public class RESTAutenticazionePortaDelegata {
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_HTTPS);
 		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_HTTPS_AUTHTYPE, 
 				CostantiTestSuite.TEST_WWWAUTHENTICATE_HTTPS_REALM, 
@@ -431,7 +431,7 @@ public class RESTAutenticazionePortaDelegata {
 		RESTCore restCore = new RESTCore(HttpRequestMethod.GET, RUOLO.PORTA_DELEGATA);
 		restCore.setPortaApplicativaDelegata(nomePorta);
 		HttpResponse httpResponse = restCore.invokeAuthenticationError("json", 401, true, true, false, "text/json", null);
-		String wwwAuthenticateGovWay = httpResponse.getHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
+		String wwwAuthenticateGovWay = httpResponse.getHeaderFirstValue(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE);
 		WWWAuthenticateUtils.verify(wwwAuthenticateGovWay, 
 				authType, 
 				realm, 

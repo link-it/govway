@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.utils.FiltroRicercaAllarmi;
@@ -106,6 +108,7 @@ import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
+import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
@@ -119,6 +122,7 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -248,13 +252,25 @@ public class ConfigurazionePdDManager {
 
 			if (!valuesForReplace.isEmpty()) {
 				try {
-					Map<String, String> pTrasporto = null;
+					Map<String, List<String>> pTrasporto = null;
 					String urlInvocazione = null;
-					Map<String, String> pForm = null;
+					Map<String, List<String>> pQuery = null;
+					Map<String, List<String>> pForm = null;
 					if (requestInfo != null && requestInfo.getProtocolContext() != null) {
-						pTrasporto = requestInfo.getProtocolContext().getParametersTrasporto();
+						pTrasporto = requestInfo.getProtocolContext().getHeaders();
 						urlInvocazione = requestInfo.getProtocolContext().getUrlInvocazione_formBased();
-						pForm = requestInfo.getProtocolContext().getParametersFormBased();
+						pQuery = requestInfo.getProtocolContext().getParameters();
+						if(requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
+							HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) requestInfo.getProtocolContext();
+							HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+							if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+								FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+								if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+										!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+									pForm = formServlet.getFormUrlEncodedParametersValues();
+								}
+							}
+						}
 					}
 
 					Element element = null;
@@ -269,7 +285,11 @@ public class ConfigurazionePdDManager {
 
 					Map<String, Object> dynamicMap = new HashMap<String, Object>();
 					ErrorHandler errorHandler = new ErrorHandler();
-					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione, message, (Element)element, elementJson, busta, pTrasporto, pForm, errorHandler);
+					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione, message, (Element)element, elementJson, busta, 
+							pTrasporto, 
+							pQuery, 
+							pForm,
+							errorHandler);
 
 					Iterator<String> it = valuesForReplace.iterator();
 					while(it.hasNext()) {

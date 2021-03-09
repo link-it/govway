@@ -67,6 +67,7 @@ import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazionePortaHandler;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -101,7 +102,6 @@ import org.openspcoop2.core.config.TrasformazioneSoap;
 import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
-import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PluginCostanti;
@@ -113,6 +113,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -141,6 +142,8 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -173,8 +176,6 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
-import org.openspcoop2.core.plugins.Plugin;
-import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
@@ -5649,10 +5650,10 @@ public class ConsoleHelper implements IConsoleHelper {
 				DataElementInfo info = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 				info.setHeaderBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_REST_VALORI);
+					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI);
 				}
 				else {
-					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_CLAIMS_SOAP_VALORI);
+					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI);
 				}
 				
 				de.setInfo(info );
@@ -6674,7 +6675,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	private String _getStatoOpzioniAvanzatePortaApplicativaDefault(String options) throws Exception {
 		String stato = null;
 		
-		Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(options);
+		Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(options);
 		if(props==null || props.size()<=0) {
 			stato = StatoFunzionalita.DISABILITATO.getValue();
 		}
@@ -7940,26 +7941,28 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
-		Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(options);
+		Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(options);
 		StringBuilder bf = new StringBuilder();
 		StringBuilder bfTooltip = new StringBuilder();
 		if(props!=null && props.size()>0) {
-			Enumeration<String> en = props.keys();
-			while (en.hasMoreElements()) {
-				String key = (String) en.nextElement();
-				String value = props.get(key);
-				if(bf.length()>0) {
-					bf.append(", ");
+			for (String key : props.keySet()) {
+				List<String> values = props.get(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						if(bf.length()>0) {
+							bf.append(", ");
+						}
+						bf.append(key);
+						
+						if(bfTooltip.length()>0) {
+							bfTooltip.append(", ");
+						}
+						bfTooltip.append(key);
+						bfTooltip.append(" '");
+						bfTooltip.append(value);
+						bfTooltip.append("'");		
+					}
 				}
-				bf.append(key);
-				
-				if(bfTooltip.length()>0) {
-					bfTooltip.append(", ");
-				}
-				bfTooltip.append(key);
-				bfTooltip.append(" '");
-				bfTooltip.append(value);
-				bfTooltip.append("'");
 			}
 		}
 		
@@ -8523,7 +8526,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String integrazione, String behaviour,
 			StatoFunzionalita stateless, PortaDelegataLocalForward localForward,
 			StatoFunzionalita ricevutaAsincronaSimmetrica, StatoFunzionalita ricevutaAsincronaAsimmetrica,
-			StatoFunzionalita gestioneManifest) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+			StatoFunzionalita gestioneManifest, ConfigurazionePortaHandler configPortaHandler) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
 		
 		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 		boolean supportoGestioneManifest = isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS);
@@ -8701,6 +8704,92 @@ public class ConsoleHelper implements IConsoleHelper {
 					bfTooltips.append("\n");
 				}
 				bfTooltips.append(CostantiControlStation.LABEL_GESTIONE_MANIFEST);
+			}
+		}
+		if(configPortaHandler!=null) {
+			StringBuilder sbRequest = new StringBuilder();
+			if(configPortaHandler.getRequest()!=null) {
+				if(configPortaHandler.getRequest().sizePreInList()>0) {
+					if(sbRequest.length()>0) {
+						sbRequest.append(", ");
+					}
+					sbRequest.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_PRE_IN_SHORT).append(" (").append(configPortaHandler.getRequest().sizePreInList()).append(")");
+				}
+				if(configPortaHandler.getRequest().sizeInList()>0) {
+					if(sbRequest.length()>0) {
+						sbRequest.append(", ");
+					}
+					sbRequest.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_IN_SHORT).append(" (").append(configPortaHandler.getRequest().sizeInList()).append(")");
+				}
+				if(configPortaHandler.getRequest().sizeInProtocolInfoList()>0) {
+					if(sbRequest.length()>0) {
+						sbRequest.append(", ");
+					}
+					sbRequest.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_IN_PROTOCOL_INFO_SHORT).append(" (").append(configPortaHandler.getRequest().sizeInProtocolInfoList()).append(")");
+				}
+				if(configPortaHandler.getRequest().sizeOutList()>0) {
+					if(sbRequest.length()>0) {
+						sbRequest.append(", ");
+					}
+					sbRequest.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_OUT_SHORT).append(" (").append(configPortaHandler.getRequest().sizeOutList()).append(")");
+				}	
+				if(configPortaHandler.getRequest().sizePostOutList()>0) {
+					if(sbRequest.length()>0) {
+						sbRequest.append(", ");
+					}
+					sbRequest.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_POST_OUT_SHORT).append(" (").append(configPortaHandler.getRequest().sizePostOutList()).append(")");
+				}	
+			}
+			StringBuilder sbResponse = new StringBuilder();
+			if(configPortaHandler.getResponse()!=null) {
+				if(configPortaHandler.getResponse().sizePreInList()>0) {
+					if(sbResponse.length()>0) {
+						sbResponse.append(", ");
+					}
+					sbResponse.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_PRE_IN_SHORT).append(" (").append(configPortaHandler.getResponse().sizePreInList()).append(")");
+				}
+				if(configPortaHandler.getResponse().sizeInList()>0) {
+					if(sbResponse.length()>0) {
+						sbResponse.append(", ");
+					}
+					sbResponse.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_IN_SHORT).append(" (").append(configPortaHandler.getResponse().sizeInList()).append(")");
+				}
+				if(configPortaHandler.getResponse().sizeInProtocolInfoList()>0) {
+					if(sbResponse.length()>0) {
+						sbResponse.append(", ");
+					}
+					sbResponse.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_IN_PROTOCOL_INFO_SHORT).append(" (").append(configPortaHandler.getResponse().sizeInProtocolInfoList()).append(")");
+				}
+				if(configPortaHandler.getResponse().sizeOutList()>0) {
+					if(sbResponse.length()>0) {
+						sbResponse.append(", ");
+					}
+					sbResponse.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_OUT_SHORT).append(" (").append(configPortaHandler.getResponse().sizeOutList()).append(")");
+				}	
+				if(configPortaHandler.getResponse().sizePostOutList()>0) {
+					if(sbResponse.length()>0) {
+						sbResponse.append(", ");
+					}
+					sbResponse.append(PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_POST_OUT_SHORT).append(" (").append(configPortaHandler.getResponse().sizePostOutList()).append(")");
+				}	
+			}
+			if(sbRequest.length()>0 || sbResponse.length()>0) {
+				if(bf.length()>0) {
+					bf.append(", ");
+				}
+				bf.append(CostantiControlStation.LABEL_MESSAGE_HANDLER);
+				if(sbRequest.length()>0) {
+					if(bfTooltips.length()>0) {
+						bfTooltips.append("\n");
+					}
+					bfTooltips.append(CostantiControlStation.LABEL_REQUEST_MESSAGE_HANDLER).append(": ").append(sbRequest.toString());
+				}
+				if(sbResponse.length()>0) {
+					if(bfTooltips.length()>0) {
+						bfTooltips.append("\n");
+					}
+					bfTooltips.append(CostantiControlStation.LABEL_RESPONSE_MESSAGE_HANDLER).append(": ").append(sbResponse.toString());
+				}
 			}
 		}
 		
@@ -17426,7 +17515,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public boolean validaIntegrazioneMetadati() throws Exception {
 		String integrazioneStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
-		
+				
 		if(integrazioneStato!=null && !"".equals(integrazioneStato)){
 			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
 				String[] integrazioneGruppi = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);

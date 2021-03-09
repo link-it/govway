@@ -538,7 +538,7 @@ public class RicezioneContenutiApplicativi {
 		outResponseContext.setProtocollo(this.msgContext.getProtocol());
 		outResponseContext.setIntegrazione(this.msgContext.getIntegrazione());
 		// Header di trasporto della risposta
-		outResponseContext.setPropertiesRispostaTrasporto(this.msgContext.getHeaderIntegrazioneRisposta());
+		outResponseContext.setResponseHeaders(this.msgContext.getResponseHeaders());
 		// Messaggio
 		OpenSPCoop2Message msgResponse = this.msgContext.getMessageResponse();
 		outResponseContext.setMessaggio(msgResponse);
@@ -592,14 +592,15 @@ public class RicezioneContenutiApplicativi {
 				if (msgRisposta!=null) {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
-					if(outResponseContext.getPropertiesRispostaTrasporto()==null) {
-						outResponseContext.setPropertiesRispostaTrasporto(new HashMap<String, String>());
+					if(outResponseContext.getResponseHeaders()==null) {
+						outResponseContext.setResponseHeaders(new HashMap<String, List<String>>());
 					}
-					Map<String, String> propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
-					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, true, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
+					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
+					ServicesUtils.setGovWayHeaderResponse(msgRisposta, OpenSPCoop2Properties.getInstance(),
+							propertiesTrasporto, logCore, true, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
-							outResponseContext.getPropertiesRispostaTrasporto());
+							outResponseContext.getResponseHeaders());
 				}
 			}catch(DumpException e){
 				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "DumpNonRiuscito");
@@ -1463,10 +1464,10 @@ public class RicezioneContenutiApplicativi {
 				try {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
 					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT, true);
-					if(this.msgContext.getHeaderIntegrazioneRisposta()==null) {
-						this.msgContext.setHeaderIntegrazioneRisposta(new HashMap<String, String>());
+					if(this.msgContext.getResponseHeaders()==null) {
+						this.msgContext.setResponseHeaders(new HashMap<String, List<String>>());
 					}
-					this.msgContext.getHeaderIntegrazioneRisposta().putAll(res.getHeader());
+					this.msgContext.getResponseHeaders().putAll(res.getHeadersValues());
 					this.msgContext.setMessageResponse(res.buildMessage());
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
 				}catch(Exception e) {
@@ -2967,7 +2968,7 @@ public class RicezioneContenutiApplicativi {
 		if (containsHeaderIntegrazioneTrasporto
 				|| this.msgContext.getIdModulo().startsWith(RicezioneContenutiApplicativi.ID_MODULO+ IntegrationManager.ID_MODULO)) {
 			try {
-				Map<String, String> propertiesIntegrazioneRisposta = new HashMap<String, String>();
+				Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<String, List<String>>();
 
 				IGestoreIntegrazionePD gestore = null;
 				try {
@@ -2988,11 +2989,11 @@ public class RicezioneContenutiApplicativi {
 
 					OutResponsePDMessage outResponsePDMessage = new OutResponsePDMessage();
 					outResponsePDMessage.setPortaDelegata(portaDelegata);
-					outResponsePDMessage.setProprietaTrasporto(propertiesIntegrazioneRisposta);
+					outResponsePDMessage.setHeaders(propertiesIntegrazioneRisposta);
 					outResponsePDMessage.setServizio(richiestaDelegata.getIdServizio());
 					outResponsePDMessage.setSoggettoMittente(soggettoFruitore);
 					gestore.setOutResponseHeader(headerIntegrazioneRisposta, outResponsePDMessage);
-					this.msgContext.setHeaderIntegrazioneRisposta(propertiesIntegrazioneRisposta);
+					this.msgContext.setResponseHeaders(propertiesIntegrazioneRisposta);
 				}
 			} catch (Exception e) {
 				msgDiag.logErroreGenerico(e,"setHeaderIntegrazioneRisposta");
@@ -5636,8 +5637,8 @@ public class RicezioneContenutiApplicativi {
 		}
 		outResponsePDMessage.setMessage(responseMessage);
 		outResponsePDMessage.setPortaDelegata(parametriGestioneRisposta.getPortaDelegata());
-		Map<String, String> propertiesIntegrazioneRisposta = new HashMap<String, String>();
-		outResponsePDMessage.setProprietaTrasporto(propertiesIntegrazioneRisposta);
+		Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<String, List<String>>();
+		outResponsePDMessage.setHeaders(propertiesIntegrazioneRisposta);
 		outResponsePDMessage.setServizio(parametriGestioneRisposta.getIdServizio());
 		outResponsePDMessage.setSoggettoMittente(parametriGestioneRisposta.getSoggettoMittente());
 
@@ -5721,7 +5722,7 @@ public class RicezioneContenutiApplicativi {
 		}
 
 		// Imposto header di trasporto per la risposta
-		this.msgContext.setHeaderIntegrazioneRisposta(propertiesIntegrazioneRisposta);
+		this.msgContext.setResponseHeaders(propertiesIntegrazioneRisposta);
 		
 		
 		

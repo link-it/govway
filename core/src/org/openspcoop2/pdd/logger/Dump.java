@@ -252,7 +252,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaIngresso();
 		}
 		try {
-			dump(onlyLogFileTrace, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+			dump(onlyLogFileTrace, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,null,msg,protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -266,7 +266,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaIngresso();
 		}
 		try {
-			dump(false, TipoMessaggio.RICHIESTA_INGRESSO,msg,null,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+			dump(false, TipoMessaggio.RICHIESTA_INGRESSO,msg,null,protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -279,7 +279,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaIngresso();
 		}
 		try {
-			dump(false, TipoMessaggio.RICHIESTA_INGRESSO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+			dump(false, TipoMessaggio.RICHIESTA_INGRESSO,null,msg,protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -294,7 +294,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaUscita();
 		}
 		try {
-			dump(onlyLogFileTrace, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getPropertiesTrasporto());
+			dump(onlyLogFileTrace, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -307,7 +307,7 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaUscita();
 		}
 		try {
-			dump(false, TipoMessaggio.RICHIESTA_USCITA,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getPropertiesTrasporto());
+			dump(false, TipoMessaggio.RICHIESTA_USCITA,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -317,7 +317,7 @@ public class Dump {
 	}
 
 	
-	public void dumpBinarioRispostaIngresso(boolean onlyLogFileTrace, byte[] msg, InfoConnettoreUscita infoConnettore, Map<String, String> transportHeaderRisposta) throws DumpException {
+	public void dumpBinarioRispostaIngresso(boolean onlyLogFileTrace, byte[] msg, InfoConnettoreUscita infoConnettore, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaIngresso();
 		}
@@ -331,7 +331,7 @@ public class Dump {
 		}
 	}
 	
-	public void dumpRispostaIngresso(OpenSPCoop2Message msg, InfoConnettoreUscita infoConnettore, Map<String, String> transportHeaderRisposta) throws DumpException {
+	public void dumpRispostaIngresso(OpenSPCoop2Message msg, InfoConnettoreUscita infoConnettore, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaIngresso();
 		}
@@ -347,12 +347,12 @@ public class Dump {
 	
 
 	
-	public void dumpBinarioRispostaUscita(boolean onlyLogFileTrace, byte[] msg, URLProtocolContext protocolContext, Map<String, String> transportHeaderRisposta) throws DumpException {
+	public void dumpBinarioRispostaUscita(boolean onlyLogFileTrace, byte[] msg, URLProtocolContext protocolContext, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaUscita();
 		}
 		try {
-			dump(onlyLogFileTrace, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,null,msg,protocolContext.getSource(),transportHeaderRisposta);
+			dump(onlyLogFileTrace, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,null,msg,protocolContext!=null ? protocolContext.getSource() : null,transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -361,12 +361,12 @@ public class Dump {
 		}
 	}
 	
-	public void dumpRispostaUscita(OpenSPCoop2Message msg, URLProtocolContext protocolContext, Map<String, String> transportHeaderRisposta) throws DumpException {
+	public void dumpRispostaUscita(OpenSPCoop2Message msg, URLProtocolContext protocolContext, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaUscita();
 		}
 		try {
-			dump(false, TipoMessaggio.RISPOSTA_USCITA,msg,null,protocolContext.getSource(),transportHeaderRisposta);
+			dump(false, TipoMessaggio.RISPOSTA_USCITA,msg,null,protocolContext!=null ? protocolContext.getSource() : null,transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -398,7 +398,7 @@ public class Dump {
 	 * 
 	 */
 	private void dump(boolean onlyLogFileTrace, TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,byte[] msgBytes, 
-			String location,Map<String, String> transportHeaderParam) throws DumpException {
+			String location,Map<String, List<String>> transportHeaderParam) throws DumpException {
 
 		boolean dumpNormale = TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio) ||
 				TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio) ||
@@ -489,7 +489,7 @@ public class Dump {
 		
 		
 		// HEADERS
-		Map<String, String> transportHeader = new HashMap<String, String>(); // uso anche sotto per content type in caso msg bytes
+		Map<String, List<String>> transportHeader = new HashMap<String, List<String>>(); // uso anche sotto per content type in caso msg bytes
 		try{
 			if(transportHeaderParam!=null && transportHeaderParam.size()>0){
 				transportHeader.putAll(transportHeaderParam);
@@ -517,19 +517,19 @@ public class Dump {
 					while (enHdr.hasNext()) {
 						String key = (String) enHdr.next();
 						if(key!=null){
-							String value = forwardHeader.getProperty(key);
-							if(value!=null){
-								transportHeader.put(key, value);
+							List<String> values = forwardHeader.getPropertyValues(key);
+							if(values!=null && !values.isEmpty()){
+								transportHeader.put(key, values);
 							}
 						}
 					}
 				}
 			}
 			if(msg!=null &&
-					!TransportUtils.hasKey(transportHeader, HttpConstants.CONTENT_TYPE)) {
+					!TransportUtils.containsKey(transportHeader, HttpConstants.CONTENT_TYPE)) {
 				String contentType = msg.getContentType();
 				if(contentType!=null) {
-					transportHeader.put(HttpConstants.CONTENT_TYPE, contentType);
+					TransportUtils.setHeader(transportHeader, HttpConstants.CONTENT_TYPE, contentType);
 				}
 			}
 		}catch(Exception e){
@@ -546,8 +546,8 @@ public class Dump {
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					if(key!=null){
-						String value = transportHeader.get(key);
-						messaggio.getHeaders().put(key, value);
+						List<String> values = transportHeader.get(key);
+						messaggio.getHeaders().put(key, values);
 					}
 				}
 			}
@@ -588,13 +588,13 @@ public class Dump {
 							bodyMultipartInfo.setContentType(dumpMessaggio.getMultipartInfoBody().getContentType());
 							
 							if(dumpMultipartHeaders) {
-								if(dumpMessaggio.getMultipartInfoBody().getHeaders()!=null &&
-										dumpMessaggio.getMultipartInfoBody().getHeaders().size()>0) {
-									Iterator<?> it = dumpMessaggio.getMultipartInfoBody().getHeaders().keySet().iterator();
+								if(dumpMessaggio.getMultipartInfoBody().getHeadersValues()!=null &&
+										dumpMessaggio.getMultipartInfoBody().getHeadersValues().size()>0) {
+									Iterator<?> it = dumpMessaggio.getMultipartInfoBody().getHeadersValues().keySet().iterator();
 									while (it.hasNext()) {
 										String key = (String) it.next();
-										String value = dumpMessaggio.getMultipartInfoBody().getHeaders().get(key);
-										bodyMultipartInfo.getHeaders().put(key, value);
+										List<String> values = dumpMessaggio.getMultipartInfoBody().getHeadersValues().get(key);
+										bodyMultipartInfo.getHeaders().put(key, values);
 									}
 								}
 							}
@@ -614,13 +614,13 @@ public class Dump {
 							attachment.setContentType(dumpAttach.getContentType());
 							
 							if(dumpMultipartHeaders) {
-								if(dumpAttach.getHeaders()!=null &&
-										dumpAttach.getHeaders().size()>0) {
-									Iterator<?> it = dumpAttach.getHeaders().keySet().iterator();
+								if(dumpAttach.getHeadersValues()!=null &&
+										dumpAttach.getHeadersValues().size()>0) {
+									Iterator<?> it = dumpAttach.getHeadersValues().keySet().iterator();
 									while (it.hasNext()) {
 										String key = (String) it.next();
-										String value = dumpAttach.getHeaders().get(key);
-										attachment.getHeaders().put(key, value);
+										List<String> values = dumpAttach.getHeadersValues().get(key);
+										attachment.getHeaders().put(key, values);
 									}
 								}
 							}
@@ -644,10 +644,11 @@ public class Dump {
 							Iterator<String> keys = transportHeader.keySet().iterator();
 							while (keys.hasNext()) {
 								String key = (String) keys.next();
-								String value = null;
 								if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)){
-									value = transportHeader.get(key);	
-									messaggio.setContentType(value);
+									List<String> values = transportHeader.get(key);	
+									if(values!=null && !values.isEmpty()) {
+										messaggio.setContentType(values.get(0));
+									}
 									break;
 								}
 							}
@@ -717,7 +718,7 @@ public class Dump {
 				if(gestioneStateful && !dumpIntegrationManager){
 					try{
 						//System.out.println("@@@@@REPOSITORY@@@@@ LOG DUMP ID TRANSAZIONE ["+idTransazione+"] ADD");
-						RepositoryGestioneStateful.addMessaggio(location, messaggio);
+						RepositoryGestioneStateful.addMessaggio(this.idTransazione, messaggio);
 					}catch(Exception e){
 						exc = e;
 					}
@@ -799,8 +800,12 @@ public class Dump {
 						while (it.hasNext()) {
 							String key = (String) it.next();
 							if(key!=null){
-								String value = messaggio.getHeaders().get(key);
-								out.append("- "+key+": "+value+"\n");
+								List<String> values = messaggio.getHeaders().get(key);
+								if(values!=null && !values.isEmpty()) {
+									for (String value : values) {
+										out.append("- "+key+": "+value+"\n");
+									}
+								}
 							}
 						}
 					}

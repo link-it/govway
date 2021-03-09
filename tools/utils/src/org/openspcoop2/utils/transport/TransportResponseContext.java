@@ -20,13 +20,14 @@
 
 package org.openspcoop2.utils.transport;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
- * RequestContext
+ * TransportResponseContext
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -43,7 +44,7 @@ public class TransportResponseContext implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 		
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
-	protected Map<String, String> parametersTrasporto;
+	protected Map<String, List<String>> headers;
 	
 	protected String codiceTrasporto = null; 
 	protected long contentLength = -1;
@@ -54,8 +55,12 @@ public class TransportResponseContext implements java.io.Serializable {
 	public TransportResponseContext() throws UtilsException{
 		
 	}
+	@Deprecated
 	public TransportResponseContext(Map<String, String> parametersTrasporto,String codiceTrasporto,long contentLength,String errore,Exception exception) throws UtilsException{
-		this.parametersTrasporto = parametersTrasporto;
+		this(codiceTrasporto, TransportUtils.convertToMapListValues(parametersTrasporto), contentLength, errore, exception);
+	}
+	public TransportResponseContext(String codiceTrasporto,Map<String, List<String>> headers,long contentLength,String errore,Exception exception) throws UtilsException{
+		this.headers = headers;
 		this.codiceTrasporto = codiceTrasporto;
 		this.contentLength = contentLength;
 		this.errore = errore;
@@ -72,24 +77,65 @@ public class TransportResponseContext implements java.io.Serializable {
 	public String getErrore() {
 		return this.errore;
 	}
+	
+	@Deprecated
 	public Map<String, String> getParametersTrasporto() {
-		return this.parametersTrasporto;
+		return TransportUtils.convertToMapSingleValue(this.headers);
 	}
+	public Map<String, List<String>> getHeaders(){
+		return this.headers;
+	}
+	
+	@Deprecated
 	public String getParameterTrasporto(String name){
-		if(this.parametersTrasporto==null){
+		if(this.headers==null){
 			return null;
 		}
-		return TransportUtils.get(this.parametersTrasporto, name);
+		return TransportUtils.getObjectAsString(this.headers, name);
 	}
+	public String getHeader_compactMultipleValues(String name){
+		if(this.headers==null){
+			return null;
+		}
+		return TransportUtils.getObjectAsString(this.headers, name);
+	}
+	public String getHeaderFirstValue(String name){
+		List<String> l = getHeaderValues(name);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
+	}
+	public List<String> getHeaderValues(String name){
+		if(this.headers==null){
+			return null;
+		}
+		return TransportUtils.getRawObject(this.headers, name);
+	}
+	
+	@Deprecated
 	public Object removeParameterTrasporto(String name){
-		if(this.parametersTrasporto==null){
+		if(this.headers==null){
 			return null;
 		}
-		return TransportUtils.remove(this.parametersTrasporto, name);
+		return TransportUtils.removeObjectAsString(this.headers, name);
 	}
+	public String removeHeader_compactMultipleValues(String name){
+		if(this.headers==null){
+			return null;
+		}
+		return TransportUtils.removeObjectAsString(this.headers, name);
+	}
+	public List<String> removeHeader(String name){
+		if(this.headers==null){
+			return null;
+		}
+		return TransportUtils.removeRawObject(this.headers, name);
+	}
+	
 	public String getContentType(){
-		if(this.parametersTrasporto!=null){
-			return this.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+		if(this.headers!=null){
+			return this.getHeaderFirstValue(HttpConstants.CONTENT_TYPE);
 		}
 		return null;
 	}
@@ -103,8 +149,13 @@ public class TransportResponseContext implements java.io.Serializable {
 	public void setErrore(String errore) {
 		this.errore = errore;
 	}
+	
+	@Deprecated
 	public void setParametersTrasporto(Map<String, String> parametersTrasporto) {
-		this.parametersTrasporto = parametersTrasporto;
+		this.headers = TransportUtils.convertToMapListValues(parametersTrasporto);
+	}
+	public void setHeaders(Map<String, List<String>> parametersFormBased) {
+		this.headers = parametersFormBased;
 	}
 
 }

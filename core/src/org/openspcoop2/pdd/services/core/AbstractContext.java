@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.services.core;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.TipoPdD;
@@ -115,7 +116,7 @@ public abstract class AbstractContext implements java.io.Serializable{
 	private MsgDiagnostico msgDiagnostico;
 
 	/** Header di trasporto per l'Integrazione */
-	private Map<String, String> headerIntegrazioneRisposta;
+	private Map<String, List<String>> responseHeaders;
 
 	/** NotifierInputStreamParameters */
 	private NotifierInputStreamParams notifierInputStreamParams;
@@ -271,18 +272,13 @@ public abstract class AbstractContext implements java.io.Serializable{
 	}
 
 
-	/**
-	 * @return the headerIntegrazione
-	 */
-	public Map<String, String> getHeaderIntegrazioneRisposta() {
-		return this.headerIntegrazioneRisposta;
+	public Map<String, List<String>> getResponseHeaders() {
+		return this.responseHeaders;
 	}
 
-	/**
-	 * @param headerIntegrazione the headerIntegrazione to set
-	 */
-	public void setHeaderIntegrazioneRisposta(Map<String, String> headerIntegrazione) {
-		this.headerIntegrazioneRisposta = headerIntegrazione;
+	public void setResponseHeaders(
+			Map<String, List<String>> propertiesRispostaTrasporto) {
+		this.responseHeaders = propertiesRispostaTrasporto;
 	}
 
 	public IDSoggetto getIdentitaPdD() {

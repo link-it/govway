@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.util.List;
+
 import javax.mail.internet.MimeUtility;
 
 import org.openspcoop2.utils.UtilsException;
@@ -130,6 +132,13 @@ public class RFC2047Utilities {
 	
 	
 	
+	public static void validHeader(String key, List<String> values) throws UtilsException{
+		if(values!=null && !values.isEmpty()) {
+    		for (String value : values) {
+    			validHeader(key, value);
+    		}
+		}
+	}
 	public static void validHeader(String key, String value) throws UtilsException{
 		
 		// jdk/openjdk/6-b14/sun/net/www/protocol/http/HttpURLConnection.java

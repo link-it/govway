@@ -312,11 +312,11 @@ public abstract class OpenSPCoop2MessageFactory {
 			String codiceTrasportoRisposta = null;
 			if(context instanceof TransportRequestContext){
 				transportRequestContext = (TransportRequestContext) context;
-				contentType = transportRequestContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+				contentType = transportRequestContext.getHeaderFirstValue(HttpConstants.CONTENT_TYPE);
 			}
 			else if(context instanceof TransportResponseContext){
 				transportResponseContext = (TransportResponseContext) context;
-				contentType = transportResponseContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+				contentType = transportResponseContext.getHeaderFirstValue(HttpConstants.CONTENT_TYPE);
 				codiceTrasportoRisposta = transportResponseContext.getCodiceTrasporto();
 			}
 			else if(context instanceof String){
@@ -348,7 +348,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
 					String soapAction = null;
 					if(MessageType.SOAP_11.equals(messageType)){
-						soapAction = transportRequestContext.getParameterTrasporto(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
+						soapAction = transportRequestContext.getHeaderFirstValue(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
 					}
 					else{
 						// The SOAP 1.1 mandatory SOAPAction HTTP header has been removed in SOAP 1.2. 
@@ -560,16 +560,16 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			else if(context instanceof TransportRequestContext){
 				TransportRequestContext trc = (TransportRequestContext) context;
-				TransportUtils.remove(trc.getParametersTrasporto(), HttpConstants.CONTENT_TYPE);
-				trc.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
+				TransportUtils.removeObject(trc.getHeaders(), HttpConstants.CONTENT_TYPE);
+				TransportUtils.addHeader(trc.getHeaders(), HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
 				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
 				
 			}
 			else if(context instanceof TransportResponseContext){
 				TransportResponseContext trc = (TransportResponseContext) context;
-				TransportUtils.remove(trc.getParametersTrasporto(), HttpConstants.CONTENT_TYPE);
-				trc.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
+				TransportUtils.removeObject(trc.getHeaders(), HttpConstants.CONTENT_TYPE);
+				TransportUtils.addHeader(trc.getHeaders(), HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
 				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
 			}

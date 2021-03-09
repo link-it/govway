@@ -1117,7 +1117,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			}
 			
 			final String oldNomePA = pa.getNome();
-			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti)) {
+			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti, false)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 

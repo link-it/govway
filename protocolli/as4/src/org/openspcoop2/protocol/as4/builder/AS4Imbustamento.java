@@ -446,7 +446,7 @@ public class AS4Imbustamento {
 				String value = null;
 				StringBuilder bfErrore = new StringBuilder();
 				if(hdr!=null) {
-					value = transport.getParameterTrasporto(hdr.getName());
+					value = transport.getHeaderFirstValue(hdr.getName());
 					if(value==null) {
 						bfErrore.append("Header http '"+hdr.getName()+"' not found");
 					}

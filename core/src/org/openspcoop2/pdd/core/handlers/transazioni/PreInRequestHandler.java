@@ -34,6 +34,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
@@ -133,7 +134,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 	private static String getIPClientAddressFromHeader(List<String> headers, ConnectorInMessage req) throws ConnectorException{
 		if(headers.size()>0){
 			for (String header : headers) {
-				String transportAddr = req.getHeader(header); // gestisce nell'implementazione il case insensitive
+				String transportAddr = TransportUtils.getFirstValue(req.getHeaderValues(header)); // gestisce nell'implementazione il case insensitive
 				if(transportAddr!=null){
 					return transportAddr;
 				}

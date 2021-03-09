@@ -26,9 +26,10 @@ import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.transazioni.DumpAllegato;
@@ -55,6 +56,7 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 
 
@@ -200,33 +202,38 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 						this.log.debug("Dump "+messaggio.getBodyMultipartInfo().getHeaders().size()+" multipart-body headers");
 					}
 					
-					Hashtable<String, String> propertiesHdr = new Hashtable<String, String>();
+					Map<String, List<String>> propertiesHdr = new HashMap<String, List<String>>();
 					List<DumpMultipartHeader> backupFailed = new ArrayList<DumpMultipartHeader>();
 					
 					Iterator<String> keys = messaggio.getBodyMultipartInfo().getHeaders().keySet().iterator();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
 						
-						String value = messaggio.getBodyMultipartInfo().getHeaders().get(key);
-						if(value==null){
-							value = ""; // puo' succedere in alcuni casi.
-						}
-						if(this.debug){
-							this.log.debug("\t\t"+key+"="+value);
+						List<String> values = messaggio.getBodyMultipartInfo().getHeaders().get(key);
+						if(values!=null && !values.isEmpty()) {
+							for (String value : values) {
+								if(value==null){
+									value = ""; // puo' succedere in alcuni casi.
+								}
+								if(this.debug){
+									this.log.debug("\t\t"+key+"="+value);
+								}
+								
+								DumpMultipartHeader headerMultipart = new DumpMultipartHeader();
+								headerMultipart.setNome(key);
+								headerMultipart.setValore(value.toString());
+								headerMultipart.setDumpTimestamp(gdo);
+								
+								if(headersCompact) {
+									TransportUtils.addHeader(propertiesHdr, key, value);
+									backupFailed.add(headerMultipart);
+								}
+								else {
+									dumpMessaggio.addMultipartHeader(headerMultipart);
+								}		
+							}
 						}
 						
-						DumpMultipartHeader headerMultipart = new DumpMultipartHeader();
-						headerMultipart.setNome(key);
-						headerMultipart.setValore(value.toString());
-						headerMultipart.setDumpTimestamp(gdo);
-						
-						if(headersCompact) {
-							propertiesHdr.put(key, value);
-							backupFailed.add(headerMultipart);
-						}
-						else {
-							dumpMessaggio.addMultipartHeader(headerMultipart);
-						}
 					}
 					
 					if(headersCompact) {
@@ -256,32 +263,36 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 					this.log.debug("Dump "+messaggio.getHeaders().size()+" headers");
 				}
 
-				Hashtable<String, String> propertiesHdr = new Hashtable<String, String>();
+				Map<String, List<String>> propertiesHdr = new HashMap<String, List<String>>();
 				List<DumpHeaderTrasporto> backupFailed = new ArrayList<DumpHeaderTrasporto>();
 				
 				Iterator<String> keys = messaggio.getHeaders().keySet().iterator();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					
-					String value = messaggio.getHeaders().get(key);
-					if(value==null){
-						value = ""; // puo' succedere in alcuni casi.
-					}
-					if(this.debug){
-						this.log.debug("\t\t"+key+"="+value);
-					}
-
-					DumpHeaderTrasporto headerTrasporto = new DumpHeaderTrasporto();
-					headerTrasporto.setNome(key);
-					headerTrasporto.setValore(value.toString());
-					headerTrasporto.setDumpTimestamp(gdo);
-					
-					if(headersCompact) {
-						propertiesHdr.put(key, value);
-						backupFailed.add(headerTrasporto);
-					}
-					else {
-						dumpMessaggio.addHeaderTrasporto(headerTrasporto);
+					List<String> values = messaggio.getHeaders().get(key);
+					if(values!=null && !values.isEmpty()) {
+						for (String value : values) {				
+							if(value==null){
+								value = ""; // puo' succedere in alcuni casi.
+							}
+							if(this.debug){
+								this.log.debug("\t\t"+key+"="+value);
+							}
+		
+							DumpHeaderTrasporto headerTrasporto = new DumpHeaderTrasporto();
+							headerTrasporto.setNome(key);
+							headerTrasporto.setValore(value.toString());
+							headerTrasporto.setDumpTimestamp(gdo);
+							
+							if(headersCompact) {
+								TransportUtils.addHeader(propertiesHdr,key, value);
+								backupFailed.add(headerTrasporto);
+							}
+							else {
+								dumpMessaggio.addHeaderTrasporto(headerTrasporto);
+							}
+						}
 					}
 				}
 				
@@ -336,32 +347,36 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 							this.log.debug("Dump "+attach.getHeaders().size()+" headers dell'allegato con id ["+attach.getContentId()+"]");
 						}
 
-						Hashtable<String, String> propertiesHdr = new Hashtable<String, String>();
+						Map<String, List<String>> propertiesHdr = new HashMap<String, List<String>>();
 						List<DumpHeaderAllegato> backupFailed = new ArrayList<DumpHeaderAllegato>();
 												
 						Iterator<String> keys = attach.getHeaders().keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
 							
-							String value = attach.getHeaders().get(key);
-							if(value==null){
-								value = ""; // puo' succedere in alcuni casi.
-							}
-							if(this.debug){
-								this.log.debug("\t\t"+key+"="+value);
-							}
-
-							DumpHeaderAllegato headerAllegato = new DumpHeaderAllegato();
-							headerAllegato.setNome(key);
-							headerAllegato.setValore(value.toString());
-							headerAllegato.setDumpTimestamp(gdo);
-							
-							if(headersCompact) {
-								propertiesHdr.put(key, value);
-								backupFailed.add(headerAllegato);
-							}
-							else {
-								dumpAllegato.addHeader(headerAllegato);
+							List<String> values = attach.getHeaders().get(key);
+							if(values!=null && !values.isEmpty()) {
+								for (String value : values) {
+									if(value==null){
+										value = ""; // puo' succedere in alcuni casi.
+									}
+									if(this.debug){
+										this.log.debug("\t\t"+key+"="+value);
+									}
+		
+									DumpHeaderAllegato headerAllegato = new DumpHeaderAllegato();
+									headerAllegato.setNome(key);
+									headerAllegato.setValore(value.toString());
+									headerAllegato.setDumpTimestamp(gdo);
+									
+									if(headersCompact) {
+										TransportUtils.addHeader(propertiesHdr,key, value);
+										backupFailed.add(headerAllegato);
+									}
+									else {
+										dumpAllegato.addHeader(headerAllegato);
+									}
+								}
 							}
 						}
 						
@@ -394,7 +409,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					
-					String value = messaggio.getHeaders().get(key);
+					String value = messaggio.getContenuti().get(key);
 					if(value==null){
 						value = ""; // puo' succedere in alcuni casi.
 					}

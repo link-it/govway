@@ -78,8 +78,8 @@ public class OutRequest implements OutRequestHandler {
 			
 			// check forward properties
 			if(test.getForwardProperties()!=null){
-				if(context.getConnettore()!=null && context.getConnettore().getPropertiesTrasporto()!=null){
-					context.getConnettore().getPropertiesTrasporto().putAll(test.getForwardProperties());
+				if(context.getConnettore()!=null && context.getConnettore().getHeaders()!=null){
+					context.getConnettore().getHeaders().putAll(test.getForwardProperties());
 				}
 			}
 			

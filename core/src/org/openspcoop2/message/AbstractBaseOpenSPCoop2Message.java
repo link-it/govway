@@ -60,6 +60,7 @@ import org.openspcoop2.utils.serialization.JavaSerializer;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.w3c.dom.Node;
 
@@ -78,8 +79,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	/* Trasporto */	
 	public TransportRequestContext transportRequestContext;
 	public TransportResponseContext transportResponseContext;	
-	public Map<String, String> forceTransportHeaders = new HashMap<>();
-	public Map<String, String> forceUrlProperties = new HashMap<>();
+	public Map<String, List<String>> forceTransportHeaders = new HashMap<>();
+	public Map<String, List<String>> forceUrlProperties = new HashMap<>();
 	public OpenSPCoop2MessageProperties forwardTransportHeader = new OpenSPCoop2MessageProperties();
 	public OpenSPCoop2MessageProperties forwardUrlProperties = new OpenSPCoop2MessageProperties();
 		
@@ -166,11 +167,13 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			if(!skipTransportInfo) {
 				base.transportRequestContext = this.transportRequestContext;
 				base.transportResponseContext = this.transportResponseContext;
+				base.forceTransportHeaders = this.forceTransportHeaders;
+				base.forceUrlProperties = this.forceUrlProperties;
+				base.forwardTransportHeader = this.forwardTransportHeader;
+				base.forwardUrlProperties = this.forwardUrlProperties;
 				base.forcedResponseCode = this.forcedResponseCode;
 				base.forcedEmptyResponse = this.forcedEmptyResponse;
 				base.forcedResponse = this.forcedResponse;
-				base.forwardTransportHeader = this.forwardTransportHeader;
-				base.forwardUrlProperties = this.forwardUrlProperties;
 			}
 			base.context = this.context;
 			base.transactionId = this.transactionId;
@@ -186,6 +189,20 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			if(!skipTransportInfo) {
 				newInstance.setTransportRequestContext(this.transportRequestContext);
 				newInstance.setTransportResponseContext(this.transportResponseContext);
+				
+				if(this.forceTransportHeaders!=null && !this.forceTransportHeaders.isEmpty()) {
+					for (String key : this.forceTransportHeaders.keySet()) {
+						List<String> values = this.forceTransportHeaders.get(key);
+						newInstance.forceTransportHeader(key, values);
+					}
+				}
+				if(this.forceUrlProperties!=null && !this.forceUrlProperties.isEmpty()) {
+					for (String key : this.forceUrlProperties.keySet()) {
+						List<String> values = this.forceUrlProperties.get(key);
+						newInstance.forceUrlProperty(key, values);
+					}
+				}
+				
 				newInstance.setForcedResponseCode(this.forcedResponseCode);
 				if(this.forcedEmptyResponse) {
 					newInstance.forceEmptyResponse();
@@ -217,16 +234,16 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			if(this.transportRequestContext!=null) {
 				org.openspcoop2.message.context.TransportRequestContext ctx = new org.openspcoop2.message.context.TransportRequestContext();
 				
-				if(this.transportRequestContext.getParametersFormBased()!=null && this.transportRequestContext.getParametersFormBased().size()>0) {
-					List<StringParameter> l = this._msgContext_convertTo(this.transportRequestContext.getParametersFormBased());
+				if(this.transportRequestContext.getParameters()!=null && !this.transportRequestContext.getParameters().isEmpty()) {
+					List<StringParameter> l = this._msgContext_convertTo(this.transportRequestContext.getParameters());
 					if(l!=null && l.size()>0) {
 						UrlParameters urlParameters = new UrlParameters();
 						urlParameters.getUrlParameterList().addAll(l);
 						ctx.setUrlParameters(urlParameters);
 					}
 				}			
-				if(this.transportRequestContext.getParametersTrasporto()!=null && this.transportRequestContext.getParametersTrasporto().size()>0) {
-					List<StringParameter> l = this._msgContext_convertTo(this.transportRequestContext.getParametersTrasporto());
+				if(this.transportRequestContext.getHeaders()!=null && !this.transportRequestContext.getHeaders().isEmpty()) {
+					List<StringParameter> l = this._msgContext_convertTo(this.transportRequestContext.getHeaders());
 					if(l!=null && l.size()>0) {
 						HeaderParameters headerParameters = new HeaderParameters();
 						headerParameters.getHeaderParameterList().addAll(l);
@@ -256,8 +273,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			if(this.transportResponseContext!=null) {
 				org.openspcoop2.message.context.TransportResponseContext ctx = new org.openspcoop2.message.context.TransportResponseContext();
 				
-				if(this.transportResponseContext.getParametersTrasporto()!=null && this.transportResponseContext.getParametersTrasporto().size()>0) {
-					List<StringParameter> l = this._msgContext_convertTo(this.transportResponseContext.getParametersTrasporto());
+				if(this.transportResponseContext.getHeaders()!=null && !this.transportResponseContext.getHeaders().isEmpty()) {
+					List<StringParameter> l = this._msgContext_convertTo(this.transportResponseContext.getHeaders());
 					if(l!=null && l.size()>0) {
 						HeaderParameters headerParameters = new HeaderParameters();
 						headerParameters.getHeaderParameterList().addAll(l);
@@ -283,8 +300,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 					forcedResponseMessage.setContent(this.forcedResponse.getContent());
 					forcedResponseMessage.setContentType(this.forcedResponse.getContentType());
 					forcedResponseMessage.setResponseCode(this.forcedResponse.getResponseCode());
-					if(this.forcedResponse.getHeaders()!=null && this.forcedResponse.getHeaders().size()>0) {
-						List<StringParameter> l = this._msgContext_convertTo(this.forcedResponse.getHeaders());
+					if(this.forcedResponse.getHeadersValues()!=null && !this.forcedResponse.getHeadersValues().isEmpty()) {
+						List<StringParameter> l = this._msgContext_convertTo(this.forcedResponse.getHeadersValues());
 						if(l!=null && l.size()>0) {
 							HeaderParameters headerParameters = new HeaderParameters();
 							headerParameters.getHeaderParameterList().addAll(l);
@@ -373,17 +390,21 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			throw new MessageException(e.getMessage(),e);
 		}		
 	}
-	protected List<StringParameter> _msgContext_convertTo(Map<String, String> p){
+	protected List<StringParameter> _msgContext_convertTo(Map<String, List<String>> p){
 		List<StringParameter> l = new ArrayList<>();
 		if(p.size()>0) {
 			Iterator<String> keys = p.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = p.get(key);
-				StringParameter sp = new StringParameter();
-				sp.setBase(value);
-				sp.setNome(key);
-				l.add(sp);
+				List<String> values = p.get(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						StringParameter sp = new StringParameter();
+						sp.setBase(value);
+						sp.setNome(key);
+						l.add(sp);		
+					}
+				}
 			}
 		}
 		return l;
@@ -410,16 +431,16 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				
 				if(messageContext.getTransportRequestContext().getUrlParameters()!=null &&
 						messageContext.getTransportRequestContext().getUrlParameters().sizeUrlParameterList()>0) {
-					Map<String, String> p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getUrlParameters().getUrlParameterList());
+					Map<String, List<String>> p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getUrlParameters().getUrlParameterList());
 					if(p!=null && p.size()>0) {
-						this.transportRequestContext.setParametersFormBased(p);
+						this.transportRequestContext.setParameters(p);
 					}	
 				}
 				if(messageContext.getTransportRequestContext().getHeaderParameters()!=null &&
 						messageContext.getTransportRequestContext().getHeaderParameters().sizeHeaderParameterList()>0) {
-					Map<String, String> p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getHeaderParameters().getHeaderParameterList());
+					Map<String, List<String>> p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getHeaderParameters().getHeaderParameterList());
 					if(p!=null && p.size()>0) {
-						this.transportRequestContext.setParametersTrasporto(p);
+						this.transportRequestContext.setHeaders(p);
 					}	
 				}
 				if(messageContext.getTransportRequestContext().getCredentials()!=null) {
@@ -462,9 +483,9 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				
 				if(messageContext.getTransportResponseContext().getHeaderParameters()!=null &&
 						messageContext.getTransportResponseContext().getHeaderParameters().sizeHeaderParameterList()>0) {
-					Map<String, String> p = this._msgContext_convertTo(messageContext.getTransportResponseContext().getHeaderParameters().getHeaderParameterList());
+					Map<String, List<String>> p = this._msgContext_convertTo(messageContext.getTransportResponseContext().getHeaderParameters().getHeaderParameterList());
 					if(p!=null && p.size()>0) {
-						this.transportResponseContext.setParametersTrasporto(p);
+						this.transportResponseContext.setHeaders(p);
 					}	
 				}
 				this.transportResponseContext.setCodiceTrasporto(messageContext.getTransportResponseContext().getTransportCode());
@@ -485,9 +506,9 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 					f.setResponseCode(messageContext.getForcedResponse().getResponseMessage().getResponseCode());
 					if(messageContext.getForcedResponse().getResponseMessage().getHeaderParameters()!=null &&
 							messageContext.getForcedResponse().getResponseMessage().getHeaderParameters().sizeHeaderParameterList()>0) {
-						Map<String, String> p = this._msgContext_convertTo(messageContext.getForcedResponse().getResponseMessage().getHeaderParameters().getHeaderParameterList());
+						Map<String, List<String>> p = this._msgContext_convertTo(messageContext.getForcedResponse().getResponseMessage().getHeaderParameters().getHeaderParameterList());
 						if(p!=null && p.size()>0) {
-							f.setHeaders(p);
+							f.setHeadersValues(p);
 						}	
 					}
 					this.forcedResponse = f;
@@ -557,11 +578,11 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			throw new MessageException(e.getMessage(),e);
 		}	
 	}
-	protected Map<String, String> _msgContext_convertTo(List<StringParameter> list){
-		Map<String, String> p = new HashMap<String, String>();
+	protected Map<String, List<String>> _msgContext_convertTo(List<StringParameter> list){
+		Map<String, List<String>> p = new HashMap<String, List<String>>();
 		if(list.size()>0) {
 			for (StringParameter stringParameter : list) {
-				p.put(stringParameter.getNome(), stringParameter.getBase());
+				TransportUtils.put(p, stringParameter.getNome(), stringParameter.getBase(), true);
 			}
 		}
 		return p;
@@ -667,11 +688,29 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	}
 	@Override
 	public void forceTransportHeader(String name, String value) {
-		this.forceTransportHeaders.put(name, value);
+		TransportUtils.setHeader(this.forceTransportHeaders, name, value); // deve sovrascrivere l'eventuale esistente
+	}
+	@Override
+	public void forceTransportHeader(String name, List<String> values) {
+		TransportUtils.removeObject(this.forceTransportHeaders, name); // deve sovrascrivere l'eventuale esistente
+		if(values!=null && !values.isEmpty()) {
+			for (String value : values) {
+				TransportUtils.addHeader(this.forceTransportHeaders, name, value);	
+			}
+		}
 	}
 	@Override
 	public void forceUrlProperty(String name, String value) {
-		this.forceUrlProperties.put(name, value);
+		TransportUtils.setParameter(this.forceUrlProperties,name, value); // deve sovrascrivere l'eventuale esistente
+	}
+	@Override
+	public void forceUrlProperty(String name, List<String> values) {
+		TransportUtils.removeObject(this.forceUrlProperties, name); // deve sovrascrivere l'eventuale esistente
+		if(values!=null && !values.isEmpty()) {
+			for (String value : values) {
+				TransportUtils.addParameter(this.forceUrlProperties, name, value);	
+			}
+		}
 	}
 	@Override
 	public OpenSPCoop2MessageProperties getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException{
@@ -679,13 +718,13 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		if(msg==null) {
 			msg = new OpenSPCoop2MessageProperties();			
 		}
-		if(this.forwardTransportHeader!=null && this.forceTransportHeaders.size()>0) {
+		if(this.forceTransportHeaders!=null && this.forceTransportHeaders.size()>0) {
 			Iterator<String> it = this.forceTransportHeaders.keySet().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
-				String value = this.forceTransportHeaders.get(key);
-				msg.removeProperty(key);
-				msg.addProperty(key, value);
+				List<String> values = this.forceTransportHeaders.get(key);
+				msg.removePropertyValues(key);
+				msg.setProperty(key, values);
 			}
 		}
 		return msg;
@@ -697,16 +736,16 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			}
 			if(this.forwardTransportHeader.isInitialize()==false){
 				
-				Map<String, String> transportHeaders = null;
+				Map<String, List<String>> transportHeaders = null;
 				if(MessageRole.REQUEST.equals(this.messageRole)){
 					if(this.transportRequestContext!=null){
-						transportHeaders = this.transportRequestContext.getParametersTrasporto();
+						transportHeaders = this.transportRequestContext.getHeaders();
 					}
 				}
 				else{
 					// vale sia per la risposta normale che fault
 					if(this.transportResponseContext!=null){ 
-						transportHeaders = this.transportResponseContext.getParametersTrasporto();
+						transportHeaders = this.transportResponseContext.getHeaders();
 					}
 				}
 				
@@ -732,9 +771,9 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			Iterator<String> it = this.forceUrlProperties.keySet().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
-				String value = this.forceUrlProperties.get(key);
-				msg.removeProperty(key);
-				msg.addProperty(key, value);
+				List<String> values = this.forceUrlProperties.get(key);
+				msg.removePropertyValues(key);
+				msg.setProperty(key, values);
 			}
 		}
 		return msg;
@@ -746,9 +785,9 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			}
 			if(this.forwardUrlProperties.isInitialize()==false){
 				
-				Map<String, String> forwardUrlParamters = null;
+				Map<String, List<String>> forwardUrlParamters = null;
 				if(this.transportRequestContext!=null){
-					forwardUrlParamters = this.transportRequestContext.getParametersFormBased();
+					forwardUrlParamters = this.transportRequestContext.getParameters();
 				}
 				
 				if(forwardUrlParamters!=null && forwardUrlParamters.size()>0){

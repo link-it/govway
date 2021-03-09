@@ -26,9 +26,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -49,7 +51,7 @@ public class DumpMessaggio implements Serializable{
 	
 	private String contentType;
 	
-	private HashMap<String, String> headers = new HashMap<>();
+	private Map<String, List<String>> headers = new HashMap<>();
 	
 	private ByteArrayOutputStream body;
 	private DumpMessaggioMultipartInfo multipartInfoBody;
@@ -128,11 +130,19 @@ public class DumpMessaggio implements Serializable{
 	}
 
 
-	public HashMap<String, String> getHeaders() {
+	@Deprecated
+	public Map<String, String> getHeaders() {
+		return TransportUtils.convertToMapSingleValue(this.headers);
+	}
+	public Map<String, List<String>> getHeadersValues() {
 		return this.headers;
 	}
 
-	public void setHeaders(HashMap<String, String> headers) {
+	@Deprecated
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = TransportUtils.convertToMapListValues(headers);
+	}
+	public void setHeadersValues(Map<String, List<String>> headers) {
 		this.headers = headers;
 	}
 	
@@ -151,13 +161,17 @@ public class DumpMessaggio implements Serializable{
 						
 			if(config.isDumpHeaders()) {
 				out.append("------ Header di trasporto ------\n");
-				if(this.getHeaders()!=null && this.getHeaders().size()>0){
-					Iterator<?> it = this.getHeaders().keySet().iterator();
+				if(this.getHeadersValues()!=null && this.getHeadersValues().size()>0){
+					Iterator<?> it = this.getHeadersValues().keySet().iterator();
 					while (it.hasNext()) {
 						String key = (String) it.next();
 						if(key!=null){
-							String value = this.getHeaders().get(key);
-							out.append("- "+key+": "+value+"\n");
+							List<String> values = this.getHeadersValues().get(key);
+							if(values!=null && !values.isEmpty()) {
+								for (String value : values) {
+									out.append("- "+key+": "+value+"\n");
+								}
+							}
 						}
 					}
 				}
@@ -197,8 +211,9 @@ public class DumpMessaggio implements Serializable{
 					if(this.getMultipartInfoBody().getContentType()!=null) {
 						out.append("- "+HttpConstants.CONTENT_TYPE+": "+this.getMultipartInfoBody().getContentType()+"\n");
 					}
-					if(config.isDumpMultipartHeaders() && this.getMultipartInfoBody().getHeaders().size()>0) {
-						Iterator<?> itM = this.getMultipartInfoBody().getHeaders().keySet().iterator();
+					if(config.isDumpMultipartHeaders() &&  this.getMultipartInfoBody().getHeadersValues()!=null &&
+							this.getMultipartInfoBody().getHeadersValues().size()>0) {
+						Iterator<?> itM = this.getMultipartInfoBody().getHeadersValues().keySet().iterator();
 				    	while(itM.hasNext()) {
 				    		Object keyO = itM.next();
 				    		if(keyO instanceof String) {
@@ -208,8 +223,12 @@ public class DumpMessaggio implements Serializable{
 				    					HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
 				    				continue;
 				    			}
-				    			String value = this.getMultipartInfoBody().getHeaders().get(key);
-				    			out.append("- "+key+": "+value+"\n");
+				    			List<String> values = this.getMultipartInfoBody().getHeadersValues().get(key);
+								if(values!=null && !values.isEmpty()) {
+									for (String value : values) {
+										out.append("- "+key+": "+value+"\n");
+									}
+								}
 				    		}
 				    	}
 					}
@@ -240,8 +259,9 @@ public class DumpMessaggio implements Serializable{
 					if(ap.getContentType()!=null) {
 						out.append("- "+HttpConstants.CONTENT_TYPE+": "+ap.getContentType()+"\n");
 					}
-					if(config.isDumpMultipartHeaders() && ap.getHeaders().size()>0) {
-						Iterator<?> itM = ap.getHeaders().keySet().iterator();
+					if(config.isDumpMultipartHeaders() && ap.getHeadersValues()!=null &&
+							ap.getHeadersValues().size()>0) {
+						Iterator<?> itM = ap.getHeadersValues().keySet().iterator();
 				    	while(itM.hasNext()) {
 				    		Object keyO = itM.next();
 				    		if(keyO instanceof String) {
@@ -251,8 +271,12 @@ public class DumpMessaggio implements Serializable{
 				    					HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
 				    				continue;
 				    			}
-				    			String value = ap.getHeaders().get(key);
-				    			out.append("- "+key+": "+value+"\n");
+				    			List<String> values = ap.getHeadersValues().get(key);
+								if(values!=null && !values.isEmpty()) {
+									for (String value : values) {
+										out.append("- "+key+": "+value+"\n");
+									}
+								}
 				    		}
 				    	}
 					}

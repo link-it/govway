@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/hsql/archiviComunicazioni/2021-03-05-patch.sql

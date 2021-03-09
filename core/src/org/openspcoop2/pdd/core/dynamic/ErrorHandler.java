@@ -20,12 +20,14 @@
 
 package org.openspcoop2.pdd.core.dynamic;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * ErrorHandler
@@ -75,12 +77,18 @@ public class ErrorHandler {
 		this._setMessage(detail, null, null, responseCode+"", null);
 	}
 	public void setMessage(String detail, int responseCode, Map<String, String> headers) {
+		this._setMessage(detail, null, null, responseCode+"", TransportUtils.convertToMapListValues(headers));
+	}
+	public void setMessageWithHeaders(String detail, int responseCode, Map<String, List<String>> headers) {
 		this._setMessage(detail, null, null, responseCode+"", headers);
 	}
 	public void setMessage(String detail, String responseCode) {
 		this._setMessage(detail, null, null, responseCode, null);
 	}
 	public void setMessage(String detail, String responseCode, Map<String, String> headers) {
+		this._setMessage(detail, null, null, responseCode, TransportUtils.convertToMapListValues(headers));
+	}
+	public void setMessageWithHeaders(String detail, String responseCode, Map<String, List<String>> headers) {
 		this._setMessage(detail, null, null, responseCode, headers);
 	}
 	
@@ -88,12 +96,18 @@ public class ErrorHandler {
 		this._setMessage(detail, content.getBytes(), contentType, responseCode+"", null);
 	}
 	public void setMessage(String detail, String content, String contentType, int responseCode, Map<String, String> headers) {
+		this._setMessage(detail, content.getBytes(), contentType, responseCode+"", TransportUtils.convertToMapListValues(headers));
+	}
+	public void setMessageWithHeaders(String detail, String content, String contentType, int responseCode, Map<String, List<String>> headers) {
 		this._setMessage(detail, content.getBytes(), contentType, responseCode+"", headers);
 	}
 	public void setMessage(String detail, String content, String contentType, String responseCode) {
 		this._setMessage(detail, content.getBytes(), contentType, responseCode, null);
 	}
 	public void setMessage(String detail, String content, String contentType, String responseCode, Map<String, String> headers) {
+		this._setMessage(detail, content.getBytes(), contentType, responseCode, TransportUtils.convertToMapListValues(headers));
+	}
+	public void setMessageWithHeaders(String detail, String content, String contentType, String responseCode, Map<String, List<String>> headers) {
 		this._setMessage(detail, content.getBytes(), contentType, responseCode, headers);
 	}
 	
@@ -101,12 +115,18 @@ public class ErrorHandler {
 		this._setMessage(detail, content, contentType, responseCode+"", null);
 	}
 	public void setMessage(String detail, byte[] content, String contentType, int responseCode, Map<String, String> headers) {
+		this._setMessage(detail, content, contentType, responseCode+"", TransportUtils.convertToMapListValues(headers));
+	}
+	public void setMessageWithHeaders(String detail, byte[] content, String contentType, int responseCode, Map<String, List<String>> headers) {
 		this._setMessage(detail, content, contentType, responseCode+"", headers);
 	}
 	public void setMessage(String detail, byte[] content, String contentType, String responseCode) {
 		this._setMessage(detail, content, contentType, responseCode, null);
 	}
 	public void setMessage(String detail, byte[] content, String contentType, String responseCode, Map<String, String> headers) {
+		this._setMessage(detail, content, contentType, responseCode, TransportUtils.convertToMapListValues(headers));
+	}
+	public void setMessageWithHeaders(String detail, byte[] content, String contentType, String responseCode, Map<String, List<String>> headers) {
 		this._setMessage(detail, content, contentType, responseCode, headers);
 	}
 	
@@ -126,12 +146,12 @@ public class ErrorHandler {
 		this.error = true;
 	}
 	
-	private void _setMessage(String detail, byte[] content, String contentType, String responseCode, Map<String, String> headers) {	
+	private void _setMessage(String detail, byte[] content, String contentType, String responseCode, Map<String, List<String>> headers) {	
 		ErrorMessage messageError = new ErrorMessage();
 		messageError.setContent(content);
 		messageError.setContentType(contentType);
 		messageError.setResponseCode(responseCode);
-		messageError.setHeaders(headers);
+		messageError.setHeadersValues(headers);
 		this.setMessage(detail, messageError);
 	}
 	public void setMessage(String detail, ErrorMessage message) {

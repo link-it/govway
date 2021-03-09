@@ -4222,7 +4222,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									paAssociata.getIntegrazione(), behaviour,
 									paAssociata.getStateless(), null, 
 									paAssociata.getRicevutaAsincronaSimmetrica(), paAssociata.getRicevutaAsincronaAsimmetrica(),
-									paAssociata.getGestioneManifest());
+									paAssociata.getGestioneManifest(), paAssociata.getConfigurazioneHandler());
 						}
 						else {
 							ServletUtils.setDataElementVisualizzaLabel(de);
@@ -5845,7 +5845,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									pdAssociata.getIntegrazione(), null, 
 									pdAssociata.getStateless(), pdAssociata.getLocalForward(), 
 									pdAssociata.getRicevutaAsincronaSimmetrica(), pdAssociata.getRicevutaAsincronaAsimmetrica(),
-									pdAssociata.getGestioneManifest());
+									pdAssociata.getGestioneManifest(), pdAssociata.getConfigurazioneHandler());
 						}
 						else {
 							ServletUtils.setDataElementVisualizzaLabel(de);

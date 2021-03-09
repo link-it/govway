@@ -48,9 +48,27 @@ public class Costanti {
     public static final String TYPE_MAP_HEADER = "java.util.Map<String, String>";
     public static final String TYPE_MAP_HEADER_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
     
+    public static final String MAP_HEADER_VALUES = "headerValues";
+    public static final String TYPE_MAP_HEADER_VALUES = "java.util.Map<String, List<String>>";
+    public static final String TYPE_MAP_HEADER_VALUES_HTML_ESCAPED = "java.util.Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt;";
+    
+    public static final String MAP_HEADER_RESPONSE_VALUES = "headerResponseValues";
+    
     public static final String MAP_QUERY_PARAMETER = "query";
     public static final String TYPE_MAP_QUERY_PARAMETER = "java.util.Map<String, String>";
     public static final String TYPE_MAP_QUERY_PARAMETER_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_QUERY_PARAMETER_VALUES = "queryValues";
+    public static final String TYPE_MAP_QUERY_PARAMETER_VALUES = "java.util.Map<String, List<String>>";
+    public static final String TYPE_MAP_QUERY_PARAMETER_VALUES_HTML_ESCAPED = "java.util.Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt;";
+    
+    public static final String MAP_FORM_PARAMETER = "form";
+    public static final String TYPE_MAP_FORM_PARAMETER = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_FORM_PARAMETER_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_FORM_PARAMETER_VALUES = "formValues";
+    public static final String TYPE_MAP_FORM_PARAMETER_VALUES = "java.util.Map<String, List<String>>";
+    public static final String TYPE_MAP_FORM_PARAMETER_VALUES_HTML_ESCAPED = "java.util.Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt;";
     
     public static final String MAP_BUSTA_PROPERTY = "property";
     public static final String TYPE_MAP_BUSTA_PROPERTY = "java.util.Map<String, String>";

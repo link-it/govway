@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.protocol.sdi.utils;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -54,7 +54,7 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 				return;
 			}
 			
-			Hashtable<String, Object> transportContext = context.getTransportContext();
+			Map<String, Object> transportContext = context.getTransportContext();
 			Object inMessageObject = transportContext.get(PreInRequestContext.SERVLET_REQUEST);
 			if(inMessageObject==null || (!(inMessageObject instanceof ConnectorInMessage))){
 				return;
@@ -121,35 +121,17 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 			
 			if(attiva) {
 				String valoreUrl = null;
-				if(inMessage.getURLProtocolContext().getParametersFormBased()!=null &&
-						inMessage.getURLProtocolContext().getParametersFormBased().size()>0){
-					valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE);
-					if(valoreUrl==null){
-						valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toLowerCase());
-					}
-					if(valoreUrl==null){
-						valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toUpperCase());
-					}
+				if(inMessage.getURLProtocolContext().getParameters()!=null &&
+						inMessage.getURLProtocolContext().getParameters().size()>0){
+					valoreUrl = inMessage.getURLProtocolContext().getParameterFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE);
 				}
 				
 				String valoreHeader = null;
-				if(inMessage.getURLProtocolContext().getParametersTrasporto()!=null &&
-						inMessage.getURLProtocolContext().getParametersTrasporto().size()>0){
-					valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1);
+				if(inMessage.getURLProtocolContext().getHeaders()!=null &&
+						inMessage.getURLProtocolContext().getHeaders().size()>0){
+					valoreHeader = inMessage.getURLProtocolContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1);
 					if(valoreHeader==null){
-						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toLowerCase());
-					}
-					if(valoreHeader==null){
-						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toUpperCase());
-					}
-					if(valoreHeader==null){
-						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2);
-					}
-					if(valoreHeader==null){
-						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toLowerCase());
-					}
-					if(valoreHeader==null){
-						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toUpperCase());
+						valoreHeader = inMessage.getURLProtocolContext().getHeaderFirstValue(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2);
 					}
 				}
 				

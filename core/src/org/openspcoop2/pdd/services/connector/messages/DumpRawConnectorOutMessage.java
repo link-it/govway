@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -35,6 +36,7 @@ import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 /**
@@ -50,7 +52,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	private ConnectorOutMessage connectorOutMessage;
 	private ByteArrayOutputStream bout = null;
 	private ParseException parseException = null;
-	private Map<String, String> trasporto = new HashMap<String, String>();
+	private Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
 	private Integer contentLenght;
 	private String contentType;
 	private Integer status;
@@ -99,7 +101,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		return null;
 	}
 	
-	public Map<String, String> getTrasporto() {
+	public Map<String, List<String>> getTrasporto() {
 		return this.trasporto;
 	}
 
@@ -127,8 +129,12 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 			Iterator<String> keys = forwardHeader.getKeys();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
-				String value = forwardHeader.getProperty(key);
-				this.setHeader(key, value);	
+				List<String> values = forwardHeader.getPropertyValues(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						this.addHeader(key, value);			
+					}
+				}
 			}
 		}
 	}
@@ -245,7 +251,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	public void setHeader(String key, String value) throws ConnectorException {
 		try{
 			// Prima lo registro e dopo serializzo
-			this.trasporto.put(key, value);
+			TransportUtils.setHeader(this.trasporto, key, value);
 		}catch(Throwable t){
 			try{
 				this.bout = new ByteArrayOutputStream();
@@ -256,6 +262,22 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		
 		// wrapped method
 		this.connectorOutMessage.setHeader(key,value);
+	}
+	@Override
+	public void addHeader(String key, String value) throws ConnectorException {
+		try{
+			// Prima lo registro e dopo serializzo
+			TransportUtils.addHeader(this.trasporto, key, value);
+		}catch(Throwable t){
+			try{
+				this.bout = new ByteArrayOutputStream();
+				this.bout.write(("addHeader ["+key+"] error: "+t.getMessage()).getBytes());
+			}catch(Throwable tWrite){}
+			this.log.error("Add Header ["+key+"]["+value+"] error: "+t.getMessage(),t);
+		}
+		
+		// wrapped method
+		this.connectorOutMessage.addHeader(key,value);
 	}
 
 	@Override

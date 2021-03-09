@@ -95,6 +95,11 @@ public class JOSEUtils {
 	public boolean json = false;
 	public Properties jwtHeaders;
 	
+	@SuppressWarnings("deprecation")
+	private String buildUrl(Map<String,String> propertiesURLBased, String urlBase) {
+		return TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, urlBase);
+	}
+	
 	public HttpResponse invoke(Repository repository, String azione) throws UtilsException {
 	
 		HttpRequest request = new HttpRequest();
@@ -112,7 +117,7 @@ public class JOSEUtils {
 				azione+ // duplico l'azione per farla passare avanti
 				"/service/echo";
 		bf.append(porta);
-		String urlDaUtilizzare = TransportUtils.buildLocationWithURLBasedParameter(this.queryParameters, bf.toString());
+		String urlDaUtilizzare = buildUrl(this.queryParameters, bf.toString());
 		Reporter.log("URL: "+urlDaUtilizzare);
 		request.setUrl(urlDaUtilizzare);
 
@@ -122,7 +127,7 @@ public class JOSEUtils {
 		Reporter.log("Atteso ["+this.returnCodeAtteso+"] ritornato ["+httpResponse.getResultHTTPOperation()+"], raccolgo id ...");
 
 		// Raccolgo identificativo per verifica traccia
-		String idMessaggio = httpResponse.getHeader(org.openspcoop2.testsuite.core.TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
+		String idMessaggio = httpResponse.getHeaderFirstValue(org.openspcoop2.testsuite.core.TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
 		Assert.assertTrue(idMessaggio!=null);
 		Reporter.log("Ricevuto id ["+idMessaggio+"]");
 		repository.add(idMessaggio);
