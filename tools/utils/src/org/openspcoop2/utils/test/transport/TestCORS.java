@@ -37,6 +37,7 @@ import javax.servlet.ServletResponse;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.AbstractCORSFilter;
 import org.openspcoop2.utils.transport.http.CORSFilterConfiguration;
 import org.openspcoop2.utils.transport.http.CORSRequestType;
@@ -1247,7 +1248,7 @@ public class TestCORS {
 	private class TestHttpServletRequest extends WrappedHttpServletRequest{
 
 		private Map<String, Object> attributes = new HashMap<String, Object>();
-		private Map<String, String> headers = new HashMap<String, String>();
+		private Map<String, List<String>> headers = new HashMap<String, List<String>>();
 		private String method;
 		private String contentType;
 
@@ -1275,17 +1276,26 @@ public class TestCORS {
 
 		@Override
 		public String getHeader(String name) {
-			return this.headers.get(name);
+			return TransportUtils.getFirstValue(this.headers,name);
 		}
 
 		public void setHeader(String name, String value) {
-			this.headers.put(name, value);
+			TransportUtils.setHeader(this.headers,name, value);
 		}
-
+		
 		@Override
 		public Enumeration<String> getHeaderNames() {
 			if(this.headers!=null && !this.headers.isEmpty() && this.headers.keySet()!=null) {
 				return Collections.enumeration(this.headers.keySet());
+			}
+			return null;
+		}
+		
+		@Override
+		public Enumeration<String> getHeaders(String name) {
+			List<String> values = TransportUtils.getRawObject(this.headers, name);
+			if(values!=null && !values.isEmpty()) {
+				return Collections.enumeration(values); 
 			}
 			return null;
 		}
