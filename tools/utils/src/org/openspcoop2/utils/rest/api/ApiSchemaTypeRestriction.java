@@ -49,6 +49,13 @@ public class ApiSchemaTypeRestriction extends BaseBean implements Serializable {
 	private String type;
 	
 	
+	// ** STYLE e EXPLODE **
+	
+	private Boolean arrayParameter;
+	private String style;
+	private String explode;
+	
+	
 	// ** NUMBER **
 	
 	// minimum ≤ value ≤ maximum
@@ -87,6 +94,8 @@ public class ApiSchemaTypeRestriction extends BaseBean implements Serializable {
 	
 	
 	private final static String TYPE = "type";
+	private final static String TYPE_OBJECT = "object";
+	private final static String TYPE_ARRAY = "array";
 	private final static String FORMAT = "format";
 	private final static String MINIMUM = "minimum";
 	private final static String EXCLUSIVE_MINIMUM = "exclusiveMinimum";
@@ -97,6 +106,19 @@ public class ApiSchemaTypeRestriction extends BaseBean implements Serializable {
 	private final static String MAX_LENGTH = "maxLength";
 	private final static String PATTERN = "pattern";
 	private final static String ENUM_VALUES = "enumValues";
+	
+	private final static String ARRAY_PARAMETER = "arrayParameter";
+	private final static String STYLE = "style";
+	private final static String STYLE_PATH_SIMPLE = "simple";
+	private final static String STYLE_PATH_LABEL = "label";
+	private final static String STYLE_PATH_MATRIX = "matrix";
+	private final static String STYLE_QUERY_FORM = "form";
+	private final static String STYLE_QUERY_SPACE_DELIMITED = "spaceDelimited";
+	private final static String STYLE_QUERY_PIPE_DELIMITED = "pipeDelimited";
+	private final static String STYLE_QUERY_DEEP_OBJECT = "deepObject";
+	private final static String STYLE_HEADER_SIMPLE = "simple";
+	private final static String STYLE_COOKIE_FORM = "form";
+	private final static String EXPLODE = "explode";
 	
 	public static ApiSchemaTypeRestriction toApiSchemaTypeRestriction(String restriction) throws UtilsException {
 		if(restriction!=null) {
@@ -187,6 +209,15 @@ public class ApiSchemaTypeRestriction extends BaseBean implements Serializable {
 							schema.setEnumValues(l);
 						}
 					}
+				}
+				else if(ARRAY_PARAMETER.equalsIgnoreCase(tipo)) {
+					schema.setArrayParameter(Boolean.parseBoolean(restrizione));
+				}
+				else if(STYLE.equalsIgnoreCase(tipo)) {
+					schema.setStyle(restrizione);
+				}
+				else if(EXPLODE.equalsIgnoreCase(tipo)) {
+					schema.setExplode(restrizione);
 				}
 				else {
 					throw new UtilsException("Trovata regola '"+regola+"' con un tipo '"+tipo+"' sconosciuto");
@@ -287,6 +318,27 @@ public class ApiSchemaTypeRestriction extends BaseBean implements Serializable {
 			sb.append(ENUM_VALUES).append("=").append(sbList.toString());
 		}
 		
+		if(this.arrayParameter!=null) {
+			if(sb.length()>0) {
+				sb.append("; ");
+			}
+			sb.append(ARRAY_PARAMETER).append("=").append(this.arrayParameter);
+		}
+		
+		if(this.style!=null) {
+			if(sb.length()>0) {
+				sb.append("; ");
+			}
+			sb.append(STYLE).append("=").append(this.style);
+		}
+		
+		if(this.explode!=null) {
+			if(sb.length()>0) {
+				sb.append("; ");
+			}
+			sb.append(EXPLODE).append("=").append(this.explode);
+		}
+		
 		return sb.toString();
 	}
 	
@@ -314,6 +366,13 @@ public class ApiSchemaTypeRestriction extends BaseBean implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public boolean isTypeObject() {
+		return TYPE_OBJECT.equals(this.type);
+	}
+	public boolean isTypeArray() {
+		return TYPE_ARRAY.equals(this.type);
 	}
 
 	public BigDecimal getMinimum() {
@@ -387,4 +446,62 @@ public class ApiSchemaTypeRestriction extends BaseBean implements Serializable {
 	public void setEnumValues(List<?> enumValues) {
 		this.enumValues = enumValues;
 	}
+	
+	public Boolean getArrayParameter() {
+		return this.arrayParameter;
+	}
+	public boolean isArrayParameter() {
+		return this.arrayParameter!=null && this.arrayParameter;
+	}
+	public void setArrayParameter(Boolean arrayParameter) {
+		this.arrayParameter = arrayParameter;
+	}
+	
+	public String getStyle() {
+		return this.style;
+	}
+	public void setStyle(String style) {
+		this.style = style;
+	}
+	public boolean isStylePathSimple() {
+		return STYLE_PATH_SIMPLE.equals(this.style);
+	}
+	public boolean isStylePathLabel() {
+		return STYLE_PATH_LABEL.equals(this.style);
+	}
+	public boolean isStylePathMatrix() {
+		return STYLE_PATH_MATRIX.equals(this.style);
+	}
+	public boolean isStyleQueryForm() {
+		return STYLE_QUERY_FORM.equals(this.style);
+	}
+	public boolean isStyleQuerySpaceDelimited() {
+		return STYLE_QUERY_SPACE_DELIMITED.equals(this.style);
+	}
+	public boolean isStyleQueryPipeDelimited() {
+		return STYLE_QUERY_PIPE_DELIMITED.equals(this.style);
+	}
+	public boolean isStyleQueryDeepObject() {
+		return STYLE_QUERY_DEEP_OBJECT.equals(this.style);
+	}
+	public boolean isStyleHeaderSimple() {
+		return STYLE_HEADER_SIMPLE.equals(this.style);
+	}
+	public boolean isStyleCookieForm() {
+		return STYLE_COOKIE_FORM.equals(this.style);
+	}
+	
+	public String getExplode() {
+		return this.explode;
+	}
+	public void setExplode(String explode) {
+		this.explode = explode;
+	}
+	public boolean isExplodeEnabled() {
+		return "true".equals(this.explode);
+	}
+	public boolean isExplodeDisabled() {
+		return "false".equals(this.explode);
+	}
+	
 }

@@ -149,7 +149,7 @@ public class Test {
 						}
 						else {
 							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-								String msgErroreAtteso = "Invalid value 'APIGatewayERRATO' in query parameter 'profiloRefInLineByStatus' (expected type 'string'): Uncorrect enum value, expected: 'APIGateway,SPCoop,FatturaPA,eDelivery'";
+								String msgErroreAtteso = "Invalid value 'APIGatewayERRATO' in query parameter 'profiloRefInLineByStatus' (expected type 'string'): Uncorrect enum value 'APIGatewayERRATO', expected: 'APIGateway,SPCoop,FatturaPA,eDelivery'";
 								if(!e.getMessage().contains(msgErroreAtteso)) {
 									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"', trovato: "+e.getMessage());
 								}

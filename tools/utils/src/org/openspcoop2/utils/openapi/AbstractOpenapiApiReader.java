@@ -471,7 +471,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			name = getRefParameterName(param.get$ref(), api);
 		}
 		String type = getParameterType(param.getSchema(), param.get$ref(), name, api);
-		ApiSchemaTypeRestriction schemaTypeRestriction = getParameterSchemaTypeRestriction(param.getSchema(), param.get$ref(), name, api);
+		ApiSchemaTypeRestriction schemaTypeRestriction = getParameterSchemaTypeRestriction(param.getSchema(), param.get$ref(), name, 
+						null,	
+						param.getStyle()!=null ? param.getStyle().toString(): null,
+						param.getExplode(),
+						api);
 		
 		if(this.debug) {
 			System.out.println("=======================================");
@@ -775,7 +779,8 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		}
 	}
 	
-	private ApiSchemaTypeRestriction getParameterSchemaTypeRestriction(Schema<?> schema, String ref, String name, OpenapiApi api) {
+	private ApiSchemaTypeRestriction getParameterSchemaTypeRestriction(Schema<?> schema, String ref, String name, 
+			Boolean arrayParameter, String style, Boolean explode, OpenapiApi api) {
 		if(ref != null) {
 			boolean external = false;
 			if(ref.contains("#")) {
@@ -828,7 +833,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 								}
 							}
 							else {
-								return getParameterSchemaTypeRestriction(hdr.getSchema(), hdr.get$ref(), name, api);
+								return getParameterSchemaTypeRestriction(hdr.getSchema(), hdr.get$ref(), name, 
+													arrayParameter,
+													hdr.getStyle()!=null ? hdr.getStyle().toString(): null,
+													hdr.getExplode(),
+													api);
 							}
 						}
 						else if(refParameters) {
@@ -862,7 +871,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 								if(name==null && param.getName()!=null) {
 									name = param.getName();
 								}
-								return getParameterSchemaTypeRestriction(param.getSchema(), param.get$ref(), name, api);
+								return getParameterSchemaTypeRestriction(param.getSchema(), param.get$ref(), name, 
+												arrayParameter,
+												param.getStyle()!=null ? param.getStyle().toString(): null,
+												param.getExplode(),
+												api);
 							}
 						}
 						else {
@@ -893,7 +906,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 								}
 							}
 							else {
-								return getParameterSchemaTypeRestriction(schemaRiferito, null, name, api);
+								return getParameterSchemaTypeRestriction(schemaRiferito, null, name, 
+										arrayParameter,
+										style, 
+										explode, 
+										api);
 							}
 						}
 					}
@@ -906,17 +923,25 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		}
 
 		if(schema.get$ref() != null) {
-			return getParameterSchemaTypeRestriction(schema, schema.get$ref(), name, api);
+			return getParameterSchemaTypeRestriction(schema, schema.get$ref(), name, 
+					arrayParameter,
+					style, 
+					explode, 
+					api);
 		}
 		
 		if(schema instanceof ArraySchema) {
-			return getParameterSchemaTypeRestriction(((ArraySchema)schema).getItems(), null, name, api); 
+			return getParameterSchemaTypeRestriction(((ArraySchema)schema).getItems(), null, name, 
+					true,
+					style, 
+					explode, 
+					api); 
 		}
 		
-		return this.convertTo(schema);
+		return this.convertTo(schema, arrayParameter, style, explode);
 	}
 
-	private ApiSchemaTypeRestriction convertTo(Schema<?> schema) {
+	private ApiSchemaTypeRestriction convertTo(Schema<?> schema, Boolean arrayParameter, String style, Boolean explode) {
 		ApiSchemaTypeRestriction schemaTypeRestriction = new ApiSchemaTypeRestriction();
 		schemaTypeRestriction.setSchema(schema);
 		schemaTypeRestriction.setType(schema.getType());
@@ -935,6 +960,12 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		schemaTypeRestriction.setPattern(schema.getPattern());
 
 		schemaTypeRestriction.setEnumValues(schema.getEnum());
+		
+		schemaTypeRestriction.setArrayParameter(arrayParameter);
+		schemaTypeRestriction.setStyle(style);
+		if(explode!=null) {
+			schemaTypeRestriction.setExplode(explode.booleanValue()+"");
+		}
 		
 		return schemaTypeRestriction;
 	}
@@ -1010,7 +1041,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				Header property = response.getHeaders().get(header);
 				
 				String type = getParameterType(property.getSchema(), property.get$ref(), header, api);
-				ApiSchemaTypeRestriction schemaTypeRestriction = getParameterSchemaTypeRestriction(property.getSchema(), property.get$ref(), header, api);
+				ApiSchemaTypeRestriction schemaTypeRestriction = getParameterSchemaTypeRestriction(property.getSchema(), property.get$ref(), header, 
+								null,
+								property.getStyle()!=null ? property.getStyle().toString(): null,
+								property.getExplode(),
+								api);
 				
 				if(this.debug) {
 					System.out.println("=======================================");

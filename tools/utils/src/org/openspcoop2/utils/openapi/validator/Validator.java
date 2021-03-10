@@ -29,14 +29,18 @@ import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
+import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
@@ -73,6 +77,7 @@ import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.AbstractApiValidator;
 import org.openspcoop2.utils.rest.ApiFormats;
+import org.openspcoop2.utils.rest.ApiParameterType;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ProcessingException;
@@ -1263,7 +1268,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	}
 
 	@Override
-	public void validateValueAsType(String value, String type, ApiSchemaTypeRestriction typeRestriction)
+	public void validateValueAsType(ApiParameterType parameterType, String value, String type, ApiSchemaTypeRestriction typeRestriction)
 			throws ProcessingException, ValidatorException {
 
 		if(type!=null){
@@ -1485,23 +1490,93 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					
 					// enum
 					if(typeRestriction.getEnumValues()!=null && !typeRestriction.getEnumValues().isEmpty()) {
-						boolean found = false;
-						StringBuilder sbList = new StringBuilder();
-						for (Object o : typeRestriction.getEnumValues()) {
-							if(o!=null) {
-								String check = o.toString();
-								if(sbList.length()>0) {
-									sbList.append(",");
+						
+						List<String> valoriPresenti = new ArrayList<String>();
+						if(typeRestriction.isArrayParameter()) {
+							if(ApiParameterType.query.equals(parameterType) || ApiParameterType.form.equals(parameterType)) {
+								if(typeRestriction.isStyleQueryForm() || typeRestriction.getStyle()==null) { // form è il default
+									if(typeRestriction.isExplodeDisabled()) {
+										List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
+										if(l!=null && !l.isEmpty()) {
+											valoriPresenti.addAll(l);
+										}
+									}
 								}
-								sbList.append(check);
-								if(stringValue.equals(check)) {
-									found = true;
-									break;
+								else if(typeRestriction.isStyleQuerySpaceDelimited()) {
+									if(typeRestriction.isExplodeDisabled()) {
+										List<String> l = StringUtil.tokenize(stringValue, Pattern.quote(" "), false, false);
+										if(l!=null && !l.isEmpty()) {
+											valoriPresenti.addAll(l);
+										}
+									}
+								}
+								else if(typeRestriction.isStyleQueryPipeDelimited()) {
+									if(typeRestriction.isExplodeDisabled()) {
+										List<String> l = StringUtil.tokenize(stringValue, Pattern.quote("|"), false, false);
+										if(l!=null && !l.isEmpty()) {
+											valoriPresenti.addAll(l);
+										}
+									}
+								}
+							}
+							else if(ApiParameterType.header.equals(parameterType)) {
+								if(typeRestriction.isStyleHeaderSimple() || typeRestriction.getStyle()==null) { // simple è il default
+									List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
+									if(l!=null && !l.isEmpty()) {
+										valoriPresenti.addAll(l);
+									}
+								}
+							}
+							else if(ApiParameterType.path.equals(parameterType)) {
+								if(typeRestriction.isStylePathSimple() || typeRestriction.getStyle()==null) { // simple è il default
+									List<String> l = StringUtil.tokenize(stringValue, ",", false, false);
+									if(l!=null && !l.isEmpty()) {
+										valoriPresenti.addAll(l);
+									}
+								}
+								else if(typeRestriction.isStylePathLabel()) {
+									if(stringValue.length()>1) {
+										String splitPattern = typeRestriction.isExplodeEnabled() ?  "\\." : ",";
+										String [] v = stringValue.substring(1).split(splitPattern);
+										if(v!=null && v.length>0) {
+											for (String valore : v) {
+												valoriPresenti.add(valore);
+											}
+										}
+									}
+								}
+								else if(typeRestriction.isStylePathMatrix()) {
+									String splitPattern = typeRestriction.isExplodeEnabled() ?  ";" : ",";
+									List<String> l = getArrayValues(typeRestriction.isExplodeEnabled(), stringValue, splitPattern);
+									if(l!=null && !l.isEmpty()) {
+										valoriPresenti.addAll(l);
+									}
 								}
 							}
 						}
-						if(!found) {
-							throw new ValidatorException("Uncorrect enum value, expected: '"+sbList.toString()+"'");
+						if(valoriPresenti.isEmpty()) {
+							valoriPresenti.add(stringValue);
+						}
+						
+						for (String valorePresente : valoriPresenti) {
+							boolean found = false;
+							StringBuilder sbList = new StringBuilder();
+							for (Object o : typeRestriction.getEnumValues()) {
+								if(o!=null) {
+									String check = o.toString();
+									if(sbList.length()>0) {
+										sbList.append(",");
+									}
+									sbList.append(check);
+									if(valorePresente.equals(check)) {
+										found = true;
+										break;
+									}
+								}
+							}
+							if(!found) {
+								throw new ValidatorException("Uncorrect enum value '"+valorePresente+"', expected: '"+sbList.toString()+"'");
+							}
 						}
 					}
 					
@@ -1555,5 +1630,26 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	}
 
+	private static final Pattern PREFIXED_SEMICOLON_NAME_REGEX = Pattern.compile("(?:;)([^;]+)(?:=)([^;]*)");
+	private List<String> getArrayValues(boolean explode, String rawValue, String splitPattern) {
+		
+		try {
+			Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
 	
+			if (explode) {
+				List<String> arrayValues = new ArrayList<>();
+				while (matcher.find()) {
+					arrayValues.add(matcher.group(2));
+				}
+				return arrayValues;
+			} else {
+				return matcher.matches()
+						? Arrays.asList(matcher.group(2).split(splitPattern))
+								: null;
+			}
+		}catch(Throwable t) {
+			this.log.error(t.getMessage(), t);
+			return null;
+		}
+	}
 }

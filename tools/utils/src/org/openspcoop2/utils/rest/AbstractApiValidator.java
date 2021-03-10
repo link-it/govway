@@ -55,7 +55,7 @@ public abstract class AbstractApiValidator   {
 	
 	public abstract void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,ApiOperation operation,Object ... args) throws ProcessingException,ValidatorException;
 	
-	public abstract void validateValueAsType(String value,String type, ApiSchemaTypeRestriction typeRestriction) throws ProcessingException,ValidatorException;
+	public abstract void validateValueAsType(ApiParameterType parameterType, String value,String type, ApiSchemaTypeRestriction typeRestriction) throws ProcessingException,ValidatorException;
 	
 	public void validate(Api api, HttpBaseEntity<?> httpEntity, Object ... args) throws ProcessingException,ValidatorException{
 		
@@ -196,7 +196,7 @@ public abstract class AbstractApiValidator   {
 							for (String value : values) {
 								if(value!=null){
 									try{
-										validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
+										validateValueAsType(ApiParameterType.header, value,paramHeader.getType(),paramHeader.getSchema());
 									}catch(ValidatorException val){
 										throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
 									}
@@ -224,7 +224,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value!=null){
 							try{
-								validateValueAsType(value,paramCookie.getType(),paramCookie.getSchema());
+								validateValueAsType(ApiParameterType.cookie, value,paramCookie.getType(),paramCookie.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("Invalid value '"+value+"' in cookie '"+name+"' (expected type '"+paramCookie.getType()+"'): "+val.getMessage(),val);
 							}
@@ -234,6 +234,17 @@ public abstract class AbstractApiValidator   {
 				
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeQueryParameters()>0){
 					for (ApiRequestQueryParameter paramQuery : operation.getRequest().getQueryParameters()) {
+						
+						if(paramQuery.getSchema()!=null && paramQuery.getSchema().isTypeObject()) {
+							if (
+									(paramQuery.getSchema().isStyleQueryForm() && paramQuery.getSchema().isExplodeEnabled())
+									||
+									(paramQuery.getSchema().isStyleQueryDeepObject())
+									) {
+								continue; // i parametri sono esplosi. La validazione viene fatta con json o openapi	
+							}
+						}
+						
 						String name = paramQuery.getName();
 						List<String> values = TransportUtils.getRawObject(request.getParameters(), name);
 						if(values==null || values.isEmpty()){
@@ -245,7 +256,7 @@ public abstract class AbstractApiValidator   {
 							for (String value : values) {
 								if(value!=null){
 									try{
-										validateValueAsType(value,paramQuery.getType(),paramQuery.getSchema());
+										validateValueAsType(ApiParameterType.query, value,paramQuery.getType(),paramQuery.getSchema());
 									}catch(ValidatorException val){
 										throw new ValidatorException("Invalid value '"+value+"' in query parameter '"+name+"' (expected type '"+paramQuery.getType()+"'): "+val.getMessage(),val);
 									}
@@ -280,7 +291,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(find){
 							try{
-								validateValueAsType(valueFound,paramDynamicPath.getType(),paramDynamicPath.getSchema());
+								validateValueAsType(ApiParameterType.path, valueFound,paramDynamicPath.getType(),paramDynamicPath.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("Invalid value '"+valueFound+"' in dynamic path '"+paramDynamicPath.getName()+"' (expected type '"+paramDynamicPath.getType()+"'): "+val.getMessage(),val);
 							}
@@ -301,7 +312,7 @@ public abstract class AbstractApiValidator   {
 							for (String value : values) {
 								if(value!=null){
 									try{
-										validateValueAsType(value,paramForm.getType(),paramForm.getSchema());
+										validateValueAsType(ApiParameterType.form, value,paramForm.getType(),paramForm.getSchema());
 									}catch(ValidatorException val){
 										throw new ValidatorException("Invalid value '"+value+"' in form parameter '"+name+"' (expected type '"+paramForm.getType()+"'): "+val.getMessage(),val);
 									}
@@ -349,7 +360,7 @@ public abstract class AbstractApiValidator   {
 							for (String value : values) {
 								if(value!=null){
 									try{
-										validateValueAsType(value,paramHeader.getType(),paramHeader.getSchema());
+										validateValueAsType(ApiParameterType.header, value,paramHeader.getType(),paramHeader.getSchema());
 									}catch(ValidatorException val){
 										throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
 									}
@@ -377,7 +388,7 @@ public abstract class AbstractApiValidator   {
 						}
 						if(value!=null){
 							try{
-								validateValueAsType(value,paramCookie.getType(),paramCookie.getSchema());
+								validateValueAsType(ApiParameterType.cookie, value,paramCookie.getType(),paramCookie.getSchema());
 							}catch(ValidatorException val){
 								throw new ValidatorException("Invalid value '"+value+"' in cookie '"+name+"' (expected type '"+paramCookie.getType()+"'): "+val.getMessage(),val);
 							}

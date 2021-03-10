@@ -34,6 +34,7 @@ import org.jvnet.ws.wadl.ast.MethodNode;
 import org.jvnet.ws.wadl.ast.RepresentationNode;
 import org.jvnet.ws.wadl.ast.ResourceNode;
 import org.openspcoop2.utils.rest.AbstractApiValidator;
+import org.openspcoop2.utils.rest.ApiParameterType;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ProcessingException;
@@ -145,7 +146,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	}
 	
 	@Override
-	public void validateValueAsType(String value,String type, ApiSchemaTypeRestriction typeRestriction) throws ProcessingException,ValidatorException{
+	public void validateValueAsType(ApiParameterType parameterType, String value,String type, ApiSchemaTypeRestriction typeRestriction) throws ProcessingException,ValidatorException{
 		
 		// Tipi XSD : {http://www.w3.org/2001/XMLSchema}string
 		if(type.startsWith("{http://www.w3.org/2001/XMLSchema}")){

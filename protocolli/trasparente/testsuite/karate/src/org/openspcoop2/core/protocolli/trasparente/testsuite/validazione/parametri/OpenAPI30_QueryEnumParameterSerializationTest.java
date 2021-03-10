@@ -42,7 +42,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
+public class OpenAPI30_QueryEnumParameterSerializationTest extends ConfigLoader {
 	
 	// https://swagger.io/docs/specification/serialization/
 	
@@ -55,12 +55,12 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		_array_form_explode_true(TipoServizio.FRUIZIONE);
 	}
 	private void _array_form_explode_true(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "array_form_explode_true", "param=a3&param=bb4&param=cc5");
+		List<String> l = testParametro(tipo, "array_form_explode_true", "param=Valore1&param=Valore2&param=Valore33");
 		//System.out.println("Header ritornato ["+l+"]");
 		assertEquals(3, l.size());
-		assertEquals(true, l.contains("a3"));
-		assertEquals(true, l.contains("bb4"));
-		assertEquals(true, l.contains("cc5"));
+		assertEquals(true, l.contains("Valore1"));
+		assertEquals(true, l.contains("Valore2"));
+		assertEquals(true, l.contains("Valore33"));
 	}
 	
 
@@ -73,42 +73,13 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		_array_form_explode_false(TipoServizio.FRUIZIONE);
 	}
 	private void _array_form_explode_false(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "array_form_explode_false", "param=a3,bb4,cc5");
+		List<String> l = testParametro(tipo, "array_form_explode_false", "param=Valore1,Valore2,Valore33");
 		//System.out.println("Header ritornato ["+l+"]");
 		assertEquals(1, l.size());
-		assertEquals(true, l.contains("a3,bb4,cc5"));
+		assertEquals(true, l.contains("Valore1,Valore2,Valore33"));
 	}
 	
 	
-	@Test
-	public void erogazione_object_form_explode_true() throws Exception {
-		_object_form_explode_true(TipoServizio.EROGAZIONE);
-	}
-	@Test
-	public void fruizione_object_form_explode_true() throws Exception {
-		_object_form_explode_true(TipoServizio.FRUIZIONE);
-	}
-	private void _object_form_explode_true(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "object_form_explode_true", "role=admin&firstName=Alex");
-		//System.out.println("Header ritornato ["+l+"]");
-		assertEquals(1, l.size());
-		assertEquals(true, l.contains("admin"));
-	}
-	
-	@Test
-	public void erogazione_object_form_explode_false() throws Exception {
-		_object_form_explode_false(TipoServizio.EROGAZIONE);
-	}
-	@Test
-	public void fruizione_object_form_explode_false() throws Exception {
-		_object_form_explode_false(TipoServizio.FRUIZIONE);
-	}
-	private void _object_form_explode_false(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "object_form_explode_false", "param=role,admin,firstName,Alex");
-		//System.out.println("Header ritornato ["+l+"]");
-		assertEquals(1, l.size());
-		assertEquals(true, l.contains("role,admin,firstName,Alex"));
-	}
 	
 	@Test
 	public void erogazione_array_spaceDelimited_explode_true() throws Exception {
@@ -119,13 +90,14 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		_array_spaceDelimited_explode_true(TipoServizio.FRUIZIONE);
 	}
 	private void _array_spaceDelimited_explode_true(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "array_spaceDelimited_explode_true", "param=a3&param=bb4&param=cc5");
+		List<String> l = testParametro(tipo, "array_spaceDelimited_explode_true", "param=Valore1&param=Valore2&param=Valore33");
 		//System.out.println("Header ritornato ["+l+"]");
 		assertEquals(3, l.size());
-		assertEquals(true, l.contains("a3"));
-		assertEquals(true, l.contains("bb4"));
-		assertEquals(true, l.contains("cc5"));
+		assertEquals(true, l.contains("Valore1"));
+		assertEquals(true, l.contains("Valore2"));
+		assertEquals(true, l.contains("Valore33"));
 	}
+	
 		
 	@Test
 	public void erogazione_array_spaceDelimited_explode_false() throws Exception {
@@ -136,10 +108,10 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		_array_spaceDelimited_explode_false(TipoServizio.FRUIZIONE);
 	}
 	private void _array_spaceDelimited_explode_false(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "array_spaceDelimited_explode_false", "param=a3%20bb4%20cc5");
+		List<String> l = testParametro(tipo, "array_spaceDelimited_explode_false", "param=Valore1%20Valore2%20Valore33");
 		//System.out.println("Header ritornato ["+l+"]");
 		assertEquals(1, l.size());
-		assertEquals(true, l.contains("a3 bb4 cc5"));
+		assertEquals(true, l.contains("Valore1 Valore2 Valore33"));
 	}
 	
 	@Test
@@ -151,12 +123,12 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		_array_pipeDelimited_explode_true(TipoServizio.FRUIZIONE);
 	}
 	private void _array_pipeDelimited_explode_true(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "array_pipeDelimited_explode_true", "param=a3&param=bb4&param=cc5");
+		List<String> l = testParametro(tipo, "array_pipeDelimited_explode_true", "param=Valore1&param=Valore2&param=Valore33");
 		//System.out.println("Header ritornato ["+l+"]");
 		assertEquals(3, l.size());
-		assertEquals(true, l.contains("a3"));
-		assertEquals(true, l.contains("bb4"));
-		assertEquals(true, l.contains("cc5"));
+		assertEquals(true, l.contains("Valore1"));
+		assertEquals(true, l.contains("Valore2"));
+		assertEquals(true, l.contains("Valore33"));
 	}
 	
 	@Test
@@ -168,26 +140,10 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		_array_pipeDelimited_explode_false(TipoServizio.FRUIZIONE);
 	}
 	private void _array_pipeDelimited_explode_false(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "array_pideDelimited_explode_false", "param="+ TransportUtils.urlEncodeParam("a3|bb4|cc5",Charset.UTF_8.getValue()));
+		List<String> l = testParametro(tipo, "array_pideDelimited_explode_false", "param="+ TransportUtils.urlEncodeParam("Valore1|Valore2|Valore33",Charset.UTF_8.getValue()));
 		//System.out.println("Header ritornato ["+l+"]");
 		assertEquals(1, l.size());
-		assertEquals(true, l.contains("a3|bb4|cc5"));
-	}
-
-
-	@Test
-	public void erogazione_object_deepObject() throws Exception {
-		_object_deepObject(TipoServizio.EROGAZIONE);
-	}
-	@Test
-	public void fruizione_object_deepObject() throws Exception {
-		_object_deepObject(TipoServizio.FRUIZIONE);
-	}
-	private void _object_deepObject(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "object_deepObject", "param[role]=admin&param[firstName]=Alex");
-		//System.out.println("Header ritornato ["+l+"]");
-		assertEquals(1, l.size());
-		assertEquals(true, l.contains("admin"));
+		assertEquals(true, l.contains("Valore1|Valore2|Valore33"));
 	}
 	
 	
@@ -196,8 +152,8 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		
 
 		final String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/ParameterSerialization/v1/query/"+path
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/ParameterSerialization/v1/query/"+path;
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/EnumParameterSerialization/v1/query/"+path
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/EnumParameterSerialization/v1/query/"+path;
 		
 		
 		HttpRequest request = new HttpRequest();
@@ -215,12 +171,6 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		
 		StringBuilder sb = new StringBuilder();
 		String returnHeader = "param";
-		if(path.equals("object_form_explode_true")) {
-			returnHeader = "role";
-		}
-		else if(path.equals("object_deepObject")) {
-			returnHeader = "param[role]";
-		}
 		sb.append(url).append("?replyQueryParameter=").append(returnHeader).append("&replyPrefixQueryParameter=X-Test-&").append(value);
 		request.setUrl(sb.toString());
 		
