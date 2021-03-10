@@ -7,6 +7,18 @@
         ...
   </servlet-container>
 
+- Su application server tomcat9 abilitare la gestione dei cookies tramite 'LegacyCookieProcessor'.
+  Il processore di default 'Rfc6265CookieProcessor' non supporta il formato richiesto dai parametri OpenAPI dei cookie 'form/explode' e 'form/unexplode' (https://swagger.io/docs/specification/serialization/)
+  Per farlo editare il file: /opt/apache-tomcat-9.xxx/conf/context.xml
+  Impostando il processore come segue:
+
+  <!-- The contents of this file will be loaded for each web application -->
+  <Context>
+     ...
+
+    <CookieProcessor className="org.apache.tomcat.util.http.LegacyCookieProcessor" />
+  </Context>
+
 - Impostare a <15> il massimo numero di richieste simultanee generali nella console di govway sotto 
 		
 		Configurazione->Controllo del Traffico->Limitazione Numero di Richieste Complessive

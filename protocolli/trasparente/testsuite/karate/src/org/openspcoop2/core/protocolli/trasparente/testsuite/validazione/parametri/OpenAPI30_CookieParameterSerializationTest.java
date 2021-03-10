@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -76,22 +77,39 @@ public class OpenAPI30_CookieParameterSerializationTest extends ConfigLoader {
 				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/ParameterSerialization/v1/cookie/"+path;
 		
 		HttpRequest request = new HttpRequest();
-		request.addHeader(HttpConstants.COOKIE, "param="+requestValue);
 		request.setMethod(HttpRequestMethod.GET);
 		StringBuilder sb = new StringBuilder();
 		sb.append(url);
 		request.setUrl(sb.toString());
-				
-		// CASO OK
 		
-		HttpResponse response = HttpUtilities.httpInvoke(request);
-		assertEquals(200, response.getResultHTTPOperation());
+		for (int i = 0; i < 3; i++) {
+			
+			TransportUtils.removeObject(request.getHeadersValues(), HttpConstants.COOKIE);
+						
+			// Test Case Insensitive degli header HTTP
+			String httpHeader = HttpConstants.COOKIE;
+			if(i==1) {
+				httpHeader = httpHeader.toLowerCase();
+			}
+			else if(i==2) {
+				httpHeader = httpHeader.toUpperCase();
+			}
+			request.addHeader(httpHeader, "param="+requestValue);
+						
+			// CASO OK
+			
+			logRateLimiting.info("Test con Cookie-"+i+" '"+httpHeader+" ...");
+			HttpResponse response = HttpUtilities.httpInvoke(request);
+			assertEquals(200, response.getResultHTTPOperation());
+			logRateLimiting.info("Test con Cookie-"+i+" '"+httpHeader+" ok");
+			
+		}
 
 		// CASO KO
 		
-		request.getHeadersValues().remove(HttpConstants.COOKIE);
+		TransportUtils.removeObject(request.getHeadersValues(), HttpConstants.COOKIE);
 		request.addHeader(HttpConstants.COOKIE, "paramError="+requestValue);
-		response = HttpUtilities.httpInvoke(request);
+		HttpResponse response = HttpUtilities.httpInvoke(request);
 		OpenAPI30_Utils.verifyKo(response);
 		
 	}

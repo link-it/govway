@@ -639,6 +639,11 @@ public class TransportUtils {
 	}
 	
 	public static void put(Map<String, List<String>> map, String name, String value, boolean add) {
+		
+		if(value==null) {
+			return;
+		}
+		
 		List<String> l = map.get(name);
 		if(add) {
 			if(l==null) {

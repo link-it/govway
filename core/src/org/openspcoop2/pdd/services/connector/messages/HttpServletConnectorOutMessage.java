@@ -154,7 +154,11 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 		_putHeader(key,value,true);
 	}
 	private void _putHeader(String key,String value, boolean add) throws ConnectorException{
-		try{		
+		try{
+			if(value==null) {
+				return;
+			}
+			
 			boolean encodingRFC2047 = false;
 			Charset charsetRFC2047 = null;
 			RFC2047Encoding encodingAlgorithmRFC2047 = null;

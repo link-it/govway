@@ -140,7 +140,7 @@ public class SPIDProviderTest extends ConfigLoader {
 	
 	
 	
-    // "name": "46. Assertion - Attributo Format di NameID mancante",
+    // "name": "46. Assertion - Attributo Format di NameID mancante",
     // "description": "Attributo Format dell'elemento NameID dell'Assertion mancante. Risultato atteso: KO",
 	@Test
 	public void erogazione_test46() throws Exception {
@@ -176,7 +176,7 @@ public class SPIDProviderTest extends ConfigLoader {
 
 
     // "name": "48. Assertion - Attributo NameQualifier di NameID non specificato",
-    // "description": "Attributo NameQualifier di NameID dell'Assertion non specificato. Risultato atteso: KO",
+    // "description": "Attributo NameQualifier di NameID dell'Assertion non specificato. Risultato atteso: KO",
 	@Test
 	public void erogazione_test48() throws Exception {
 		_test48(TipoServizio.EROGAZIONE);
@@ -187,7 +187,7 @@ public class SPIDProviderTest extends ConfigLoader {
 	}
 	private void _test48(TipoServizio tipo) throws Exception {
 		byte[]saml = Utilities.getAsByteArray(SPIDProviderTest.class.getResourceAsStream(PATH+"case-48.xml"));
-		String error = "Attributo NameQualifier di NameID dell'Assertion mancante.";
+		String error = "Attributo NameQualifier di NameID dell'Assertion mancante.";
 		_test(tipo, saml, error);
 	}
 	
@@ -195,7 +195,7 @@ public class SPIDProviderTest extends ConfigLoader {
 	
 
     // "name": "49. Assertion - Attributo NameQualifier di NameID mancante",
-    // "description": "Attributo NameQualifier di NameID dell'Assertion mancante. Risultato atteso: KO"
+    // "description": "Attributo NameQualifier di NameID dell'Assertion mancante. Risultato atteso: KO"
 	@Test
 	public void erogazione_test49() throws Exception {
 		_test49(TipoServizio.EROGAZIONE);
@@ -206,7 +206,7 @@ public class SPIDProviderTest extends ConfigLoader {
 	}
 	private void _test49(TipoServizio tipo) throws Exception {
 		byte[]saml = Utilities.getAsByteArray(SPIDProviderTest.class.getResourceAsStream(PATH+"case-49.xml"));
-		String error = "Attributo NameQualifier di NameID dell'Assertion mancante.";
+		String error = "Attributo NameQualifier di NameID dell'Assertion mancante.";
 		_test(tipo, saml, error);
 	}
 	
@@ -267,8 +267,8 @@ public class SPIDProviderTest extends ConfigLoader {
 		
 	
 
-    // "name": "70. Assertion - Attributo Format di Issuer non specificato",
-    // "description": "Attributo Format di Issuer dell'Assertion non specificato. Risultato atteso: KO",
+    // "name": "70. Assertion - Attributo Format di Issuer non specificato",
+    // "description": "Attributo Format di Issuer dell'Assertion non specificato. Risultato atteso: KO",
 	@Test
 	public void erogazione_test70() throws Exception {
 		_test70(TipoServizio.EROGAZIONE);
@@ -279,13 +279,13 @@ public class SPIDProviderTest extends ConfigLoader {
 	}
 	private void _test70(TipoServizio tipo) throws Exception {
 		byte[]saml = Utilities.getAsByteArray(SPIDProviderTest.class.getResourceAsStream(PATH+"case-70.xml"));
-		String error = "Attributo Format di Issuer dell'Assertion mancante.";
+		String error = "Attributo Format di Issuer dell'Assertion mancante.";
 		_test(tipo, saml, error);
 	}
 
 
-    // "name": "71. Assertion - Attributo Format di Issuer mancante",
-    // "description": "Attributo Format di Issuer dell'Assertion mancante. Risultato atteso: KO",
+    // "name": "71. Assertion - Attributo Format di Issuer mancante",
+    // "description": "Attributo Format di Issuer dell'Assertion mancante. Risultato atteso: KO",
 	@Test
 	public void erogazione_test71() throws Exception {
 		_test71(TipoServizio.EROGAZIONE);
@@ -296,7 +296,7 @@ public class SPIDProviderTest extends ConfigLoader {
 	}
 	private void _test71(TipoServizio tipo) throws Exception {
 		byte[]saml = Utilities.getAsByteArray(SPIDProviderTest.class.getResourceAsStream(PATH+"case-71.xml"));
-		String error = "Attributo Format di Issuer dell'Assertion mancante.";
+		String error = "Attributo Format di Issuer dell'Assertion mancante.";
 		_test(tipo, saml, error);
 	}
 	
@@ -321,8 +321,8 @@ public class SPIDProviderTest extends ConfigLoader {
 	
 	
 
-    // "name": "76. Assertion - Attributo NotBefore di Condition mancante",
-    // "description": "Attributo NotBefore di Condition dell'Assertion mancante. Risultato atteso: KO",
+    // "name": "76. Assertion - Attributo NotBefore di Condition mancante",
+    // "description": "Attributo NotBefore di Condition dell'Assertion mancante. Risultato atteso: KO",
 	@Test
 	public void erogazione_test76() throws Exception {
 		_test76(TipoServizio.EROGAZIONE);
@@ -333,14 +333,14 @@ public class SPIDProviderTest extends ConfigLoader {
 	}
 	private void _test76(TipoServizio tipo) throws Exception {
 		byte[]saml = Utilities.getAsByteArray(SPIDProviderTest.class.getResourceAsStream(PATH+"case-76.xml"));
-		String error = "Attributo NotBefore di Condition dell'Assertion mancante.";
+		String error = "Attributo NotBefore di Condition dell'Assertion mancante.";
 		_test(tipo, saml, error);
 	}
 
 	
 
     // "name": "79. Assertion - Attributo NotOnOrAfter di Condition non specificato",
-    // "description": "Attributo NotOnOrAfter di Condition dell'Assertion non specificato. Risultato atteso: KO",
+    // "description": "Attributo NotOnOrAfter di Condition dell'Assertion non specificato. Risultato atteso: KO",
 	@Test
 	public void erogazione_test79() throws Exception {
 		_test79(TipoServizio.EROGAZIONE);
@@ -351,15 +351,15 @@ public class SPIDProviderTest extends ConfigLoader {
 	}
 	private void _test79(TipoServizio tipo) throws Exception {
 		byte[]saml = Utilities.getAsByteArray(SPIDProviderTest.class.getResourceAsStream(PATH+"case-79.xml"));
-		String error = "Attributo NotOnOrAfter di Condition dell'Assertion mancante.";
+		String error = "Attributo NotOnOrAfter di Condition dell'Assertion mancante.";
 		_test(tipo, saml, error);
 	}
 	
 	
 
 
-    // "name": "80. Assertion - Attributo NotOnOrAfter di Condition mancante",
-    // "description": "Attributo NotOnOrAfter di Condition dell'Assertion mancante. Risultato atteso: KO",
+    // "name": "80. Assertion - Attributo NotOnOrAfter di Condition mancante",
+    // "description": "Attributo NotOnOrAfter di Condition dell'Assertion mancante. Risultato atteso: KO",
 	@Test
 	public void erogazione_test80() throws Exception {
 		_test80(TipoServizio.EROGAZIONE);
@@ -370,14 +370,14 @@ public class SPIDProviderTest extends ConfigLoader {
 	}
 	private void _test80(TipoServizio tipo) throws Exception {
 		byte[]saml = Utilities.getAsByteArray(SPIDProviderTest.class.getResourceAsStream(PATH+"case-80.xml"));
-		String error = "Attributo NotOnOrAfter di Condition dell'Assertion mancante.";
+		String error = "Attributo NotOnOrAfter di Condition dell'Assertion mancante.";
 		_test(tipo, saml, error);
 	}
 	
 	
 
-    // "name": "84. Assertion - Elemento AudienceRestriction di Condition mancante",
-    // "description": "Elemento AudienceRestriction di Condition dell'Assertion mancante. Risultato atteso: KO",
+    // "name": "84. Assertion - Elemento AudienceRestriction di Condition mancante",
+    // "description": "Elemento AudienceRestriction di Condition dell'Assertion mancante. Risultato atteso: KO",
 	@Test
 	public void erogazione_test84() throws Exception {
 		_test84(TipoServizio.EROGAZIONE);
@@ -393,8 +393,8 @@ public class SPIDProviderTest extends ConfigLoader {
 	}
 	
 
-    // "name": "99. Assertion - Elemento AttributeStatement presente, con sottoelemento Attribute non specificato",
-    // "description": "Elemento AttributeStatement presente, ma sottoelemento Attribute non specificato. Risultato atteso: KO",
+    // "name": "99. Assertion - Elemento AttributeStatement presente, con sottoelemento Attribute non specificato",
+    // "description": "Elemento AttributeStatement presente, ma sottoelemento Attribute non specificato. Risultato atteso: KO",
 	@Test
 	public void erogazione_test99() throws Exception {
 		_test99(TipoServizio.EROGAZIONE);

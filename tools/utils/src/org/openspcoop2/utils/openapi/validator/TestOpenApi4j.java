@@ -2816,7 +2816,7 @@ public class TestOpenApi4j {
 		// ** Test su oggetti che contengono elementi nullable ... **
 		
 		System.out.println("Test #20 (Elementi nullable ...) ...");
-		String testUrl20 = baseUri+"/test-nullable";
+		String baseTestUrl20 = baseUri;
 		
 		String json20_object = "{"+
 				"\"identificativo\": \"IDXX\", \"stato\": \"ON\""+
@@ -2916,15 +2916,45 @@ public class TestOpenApi4j {
 		List<String> valori_test20 = new ArrayList<String>();
 		List<Boolean> esito_test20 = new ArrayList<Boolean>();
 		List<String> tipoTest_test20 = new ArrayList<String>();
-		tipoTest_test20.add("ValorizzazioneCompleta"); valori_test20.add(json20_messaggio_valorizzato); esito_test20.add(true);
-		tipoTest_test20.add("StringNull"); valori_test20.add(json20_messaggio_non_valorizzato_string); esito_test20.add(true);
-		tipoTest_test20.add("EnumNull"); valori_test20.add(json20_messaggio_non_valorizzato_enum); esito_test20.add(true);
-		tipoTest_test20.add("IntegerNull"); valori_test20.add(json20_messaggio_non_valorizzato_integer); esito_test20.add(true);
-		tipoTest_test20.add("BooleanNull"); valori_test20.add(json20_messaggio_non_valorizzato_boolean); esito_test20.add(true);
-		tipoTest_test20.add("ArrayNull"); valori_test20.add(json20_messaggio_non_valorizzato_array); esito_test20.add(true);
-		tipoTest_test20.add("ArrayValuesNull"); valori_test20.add(json20_messaggio_non_valorizzato_array_values); esito_test20.add(true);
-		tipoTest_test20.add("ArrayEmpty"); valori_test20.add(json20_messaggio_valorizzato_array_vuoto); esito_test20.add(true);
-		tipoTest_test20.add("ObjectNull"); valori_test20.add(json20_messaggio_non_valorizzato_object); esito_test20.add(true);
+		List<String> path_test20 = new ArrayList<String>();
+		
+		tipoTest_test20.add("ValorizzazioneCompleta"); valori_test20.add(json20_messaggio_valorizzato); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("ValorizzazioneCompleta"); valori_test20.add(json20_messaggio_valorizzato); esito_test20.add(true); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("ValorizzazioneCompleta"); valori_test20.add(json20_messaggio_valorizzato); esito_test20.add(true); path_test20.add("test-not-nullable-default");
+		
+		tipoTest_test20.add("StringNull"); valori_test20.add(json20_messaggio_non_valorizzato_string); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("StringNull"); valori_test20.add(json20_messaggio_non_valorizzato_string); esito_test20.add(false); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("StringNull"); valori_test20.add(json20_messaggio_non_valorizzato_string); esito_test20.add(false); path_test20.add("test-not-nullable-default");
+				
+		tipoTest_test20.add("EnumNull"); valori_test20.add(json20_messaggio_non_valorizzato_enum); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("EnumNull"); valori_test20.add(json20_messaggio_non_valorizzato_enum); esito_test20.add(false); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("EnumNull"); valori_test20.add(json20_messaggio_non_valorizzato_enum); esito_test20.add(false); path_test20.add("test-not-nullable-default");
+		
+		tipoTest_test20.add("IntegerNull"); valori_test20.add(json20_messaggio_non_valorizzato_integer); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("IntegerNull"); valori_test20.add(json20_messaggio_non_valorizzato_integer); esito_test20.add(false); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("IntegerNull"); valori_test20.add(json20_messaggio_non_valorizzato_integer); esito_test20.add(false); path_test20.add("test-not-nullable-default");
+		
+		tipoTest_test20.add("BooleanNull"); valori_test20.add(json20_messaggio_non_valorizzato_boolean); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("BooleanNull"); valori_test20.add(json20_messaggio_non_valorizzato_boolean); esito_test20.add(false); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("BooleanNull"); valori_test20.add(json20_messaggio_non_valorizzato_boolean); esito_test20.add(false); path_test20.add("test-not-nullable-default");
+		
+		tipoTest_test20.add("ArrayNull"); valori_test20.add(json20_messaggio_non_valorizzato_array); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("ArrayNull"); valori_test20.add(json20_messaggio_non_valorizzato_array); esito_test20.add(false); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("ArrayNull"); valori_test20.add(json20_messaggio_non_valorizzato_array); esito_test20.add(false); path_test20.add("test-not-nullable-default");
+		
+		tipoTest_test20.add("ArrayValuesNull"); valori_test20.add(json20_messaggio_non_valorizzato_array_values); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("ArrayValuesNull"); valori_test20.add(json20_messaggio_non_valorizzato_array_values); esito_test20.add(false); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("ArrayValuesNull"); valori_test20.add(json20_messaggio_non_valorizzato_array_values); esito_test20.add(false); path_test20.add("test-not-nullable-default");
+		
+		tipoTest_test20.add("ArrayEmpty"); valori_test20.add(json20_messaggio_valorizzato_array_vuoto); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("ArrayEmpty"); valori_test20.add(json20_messaggio_valorizzato_array_vuoto); esito_test20.add(true); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("ArrayEmpty"); valori_test20.add(json20_messaggio_valorizzato_array_vuoto); esito_test20.add(true); path_test20.add("test-not-nullable-default");
+		
+		tipoTest_test20.add("ObjectNull"); valori_test20.add(json20_messaggio_non_valorizzato_object); esito_test20.add(true); path_test20.add("test-nullable");
+		tipoTest_test20.add("ObjectNull"); valori_test20.add(json20_messaggio_non_valorizzato_object); esito_test20.add(false); path_test20.add("test-not-nullable");
+		tipoTest_test20.add("ObjectNull"); valori_test20.add(json20_messaggio_non_valorizzato_object); esito_test20.add(false); path_test20.add("test-not-nullable-default");
+		
+		
 		
 		String testYaml = "[test con elementi nullable] ";
 		
@@ -2932,7 +2962,9 @@ public class TestOpenApi4j {
 			String tipologia = tipoTest_test20.get(i);
 			String valore = valori_test20.get(i);
 			boolean esito = esito_test20.get(i);
+			String contextTestPath = path_test20.get(i);
 			
+			String testUrl20 = baseTestUrl20+"/"+contextTestPath;
 			
 			TextHttpRequestEntity httpEntity20 = new TextHttpRequestEntity();
 			httpEntity20.setMethod(HttpRequestMethod.POST);
@@ -2959,7 +2991,7 @@ public class TestOpenApi4j {
 				
 				boolean openapi4j = (j==0);
 				IApiValidator apiValidator = null;
-				String tipoTest = testYaml+ (esito ? "["+tipologia+"-MessaggioConforme: '"+valore+"']" : "["+tipologia+"-MessaggioNonConforme: '"+valore+"']");
+				String tipoTest = testYaml+ (esito ? "["+tipologia+" [/"+contextTestPath+"] MessaggioConforme: '"+valore+"']" : "["+tipologia+" [/"+contextTestPath+"] MessaggioNonConforme: '"+valore+"']");
 				if(openapi4j) {
 					apiValidator = apiValidatorOpenApi4j;
 					tipoTest = tipoTest+"[openapi4j]";
@@ -2969,6 +3001,7 @@ public class TestOpenApi4j {
 					tipoTest = tipoTest+"[json]";
 				}
 			
+				
 				try {
 					System.out.println("\t "+tipoTest+" validate ...");
 					apiValidator.validate(httpEntity20);
@@ -2980,12 +3013,7 @@ public class TestOpenApi4j {
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					}
 				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					checkErrorTest20(esito, tipoTest, e, tipologia, openapi4j);
 				}
 				
 				try {
@@ -2993,12 +3021,7 @@ public class TestOpenApi4j {
 					apiValidator.validate(httpEntityResponse_test20);	
 					System.out.println("\t "+tipoTest+" validate response ok");
 				} catch(ValidatorException e) {
-					String error = e.getMessage();
-					if(error.length()>200) {
-						error = error.substring(0, 198)+" ...";
-					}
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					checkErrorTest20(esito, tipoTest, e, tipologia, openapi4j);
 				}
 			}
 		}
@@ -3006,4 +3029,106 @@ public class TestOpenApi4j {
 		System.out.println("Test #20 (Elementi nullable) completato\n\n");
 	}
 
+	private static void checkErrorTest20(boolean esito, String tipoTest, Exception e, String tipologia, boolean openapi4j) throws Exception {
+		
+		String error = e.getMessage();
+		if(error.length()>200) {
+			error = error.substring(0, 198)+" ...";
+		}
+		
+		String element = "-";
+		String type = "-";
+		boolean arrayValuesNull = false;
+		if("StringNull".equals(tipologia)) {
+			element = "string_";
+			type = "string";
+		}
+		else if("EnumNull".equals(tipologia)) {
+			element = "enum_";
+			type = "string";
+		}
+		else if("IntegerNull".equals(tipologia)) {
+			element = "integer_";
+			type = "integer";
+		}
+		else if("BooleanNull".equals(tipologia)) {
+			element = "boolean_";
+			type = "boolean";
+		}
+		else if("ArrayNull".equals(tipologia)) {
+			element = "array_";
+			type = "array";
+		}
+		else if("ArrayValuesNull".equals(tipologia)) {
+			arrayValuesNull = true;
+		}
+		else if("ObjectNull".equals(tipologia)) {
+			element = "object_";
+			type = "object";
+		}
+		
+		if(!esito) {
+			System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
+		}
+		else {
+			System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+			throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+		}
+		if(openapi4j) {
+			if(arrayValuesNull) {
+				String msgErroreAtteso = "body.array_nullable_values_optional.0: Null value is not allowed. (code: 1021)";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				msgErroreAtteso = "body.array_nullable_values_optional.1: Null value is not allowed. (code: 1021)";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				msgErroreAtteso = "body.array_nullable_values_required.0: Null value is not allowed. (code: 1021)";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+			}
+			else {
+				for (int k = 0; k < 2; k++) {
+					String msgErroreAtteso = "body."+element+(k==0 ? "required" : "optional")+": Null value is not allowed. (code: 1021)";
+					if(!e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}
+				}
+			}						
+		}
+		else {
+			if(arrayValuesNull) {
+				String msgErroreAtteso = "1029 $.array_nullable_values_optional[0]: null found, string expected";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				msgErroreAtteso = "1029 $.array_nullable_values_optional[1]: null found, string expected";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+				msgErroreAtteso = "1029 $.array_nullable_values_required[0]: null found, string expected";
+				if(!e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("\t "+tipoTest+" ERRORE!");
+					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+				}
+			}
+			else {
+				for (int k = 0; k < 2; k++) {
+					String msgErroreAtteso = "1029 $."+element+(k==0 ? "required" : "optional")+": null found, "+type+" expected";
+					if(!e.getMessage().contains(msgErroreAtteso)) {
+						System.out.println("\t "+tipoTest+" ERRORE!");
+						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+					}	
+				}	
+			}
+		}
+	}
 }

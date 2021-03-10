@@ -32,6 +32,8 @@ tags:
     description: Test su date
   - name: enum
     description: test su enumeration
+  - name: nullable
+    description: test su nullable serialization   
     
 paths:
           
@@ -876,7 +878,7 @@ paths:
   /test-nullable:
     post:
       tags:
-        - enum
+        - nullable
       description: Esempio di scambio di messaggi che contengono nullable object
       operationId: testNullable
       requestBody:
@@ -892,6 +894,74 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MessaggioClaimNullable'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-not-nullable:
+    post:
+      tags:
+        - nullable
+      description: Esempio di scambio di messaggi che contengono nullable object
+      operationId: testNotNullable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessaggioClaimNotNullable'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessaggioClaimNotNullable'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-not-nullable-default:
+    post:
+      tags:
+        - nullable
+      description: Esempio di scambio di messaggi che contengono nullable object
+      operationId: testNotNullableDefault
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessaggioClaimNotNullableDefault'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessaggioClaimNotNullableDefault'
         "400":
           $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -1474,6 +1544,177 @@ components:
     ObjectNullable:
       type: object
       nullable: true
+      required:
+        - identificativo
+        - stato
+        - valoreintero
+      properties:
+        identificativo:
+          type: string
+        stato:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+        valoreintero:
+          type: integer
+          format: int32 
+        descrizione:
+          type: string
+
+    MessaggioClaimNotNullable:
+      type: object
+      required:
+        - string_required
+        - enum_required
+        - integer_required
+        - boolean_required
+        - array_required
+        - array_nullable_values_required
+        - object_required
+      properties:
+        string_required:
+          type: string
+          nullable: false
+        string_optional:
+          type: string
+          nullable: false
+        enum_required:
+          type: string
+          nullable: false
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        enum_optional:
+          type: string
+          nullable: false
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        integer_required:
+          type: integer
+          format: int32
+          nullable: false
+        integer_optional:
+          type: integer
+          format: int32
+          nullable: false
+        boolean_required:
+          type: boolean
+          nullable: false
+        boolean_optional:
+          type: boolean
+          nullable: false
+        array_required:
+          type: array
+          nullable: false
+          items:
+            type: string
+        array_optional:
+          type: array
+          nullable: false
+          items:
+            type: string
+        array_nullable_values_required:
+          type: array
+          nullable: false
+          items:
+            type: string
+            nullable: false
+        array_nullable_values_optional:
+          type: array
+          nullable: false
+          items:
+            type: string
+            nullable: false     
+        object_required:
+          $ref: '#/components/schemas/ObjectNotNullable'
+        object_optional:
+          $ref: '#/components/schemas/ObjectNotNullable'
+
+    ObjectNotNullable:
+      type: object
+      nullable: false
+      required:
+        - identificativo
+        - stato
+        - valoreintero
+      properties:
+        identificativo:
+          type: string
+        stato:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+        valoreintero:
+          type: integer
+          format: int32 
+        descrizione:
+          type: string
+
+    MessaggioClaimNotNullableDefault:
+      type: object
+      required:
+        - string_required
+        - enum_required
+        - integer_required
+        - boolean_required
+        - array_required
+        - array_nullable_values_required
+        - object_required
+      properties:
+        string_required:
+          type: string
+        string_optional:
+          type: string
+        enum_required:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        enum_optional:
+          type: string
+          enum:
+            - 'ON'
+            - 'OFF'
+            - null
+        integer_required:
+          type: integer
+          format: int32
+        integer_optional:
+          type: integer
+          format: int32
+        boolean_required:
+          type: boolean
+        boolean_optional:
+          type: boolean
+        array_required:
+          type: array
+          items:
+            type: string
+        array_optional:
+          type: array
+          items:
+            type: string
+        array_nullable_values_required:
+          type: array
+          items:
+            type: string
+        array_nullable_values_optional:
+          type: array
+          items:
+            type: string     
+        object_required:
+          $ref: '#/components/schemas/ObjectNotNullableDefault'
+        object_optional:
+          $ref: '#/components/schemas/ObjectNotNullableDefault'
+
+    ObjectNotNullableDefault:
+      type: object
       required:
         - identificativo
         - stato
