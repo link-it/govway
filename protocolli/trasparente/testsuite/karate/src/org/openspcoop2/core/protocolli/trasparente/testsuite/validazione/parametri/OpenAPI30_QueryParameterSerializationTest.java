@@ -184,7 +184,9 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		_object_deepObject(TipoServizio.FRUIZIONE);
 	}
 	private void _object_deepObject(TipoServizio tipo) throws Exception {
-		List<String> l = testParametro(tipo, "object_deepObject", "param[role]=admin&param[firstName]=Alex");
+		List<String> l = testParametro(tipo, "object_deepObject", 
+				"param"+TransportUtils.urlEncodeParam("[role]",Charset.UTF_8.getValue())+"=admin&"+
+			    "param"+TransportUtils.urlEncodeParam("[firstName]",Charset.UTF_8.getValue())+"=Alex");
 		//System.out.println("Header ritornato ["+l+"]");
 		assertEquals(1, l.size());
 		assertEquals(true, l.contains("admin"));
@@ -219,7 +221,7 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 			returnHeader = "role";
 		}
 		else if(path.equals("object_deepObject")) {
-			returnHeader = "param[role]";
+			returnHeader = TransportUtils.urlEncodeParam("param[role]",Charset.UTF_8.getValue());
 		}
 		sb.append(url).append("?replyQueryParameter=").append(returnHeader).append("&replyPrefixQueryParameter=X-Test-&").append(value);
 		request.setUrl(sb.toString());
@@ -228,6 +230,9 @@ public class OpenAPI30_QueryParameterSerializationTest extends ConfigLoader {
 		assertEquals(200, response.getResultHTTPOperation());
 			
 		String paramRisposta = "X-Test-"+returnHeader;
+		if(path.equals("object_deepObject")) {
+			paramRisposta = "X-Test-"+"param[role]";
+		}
 		List<String> list = response.getHeaderValues(paramRisposta);
 		assertEquals(true, (list!=null && !list.isEmpty()));
 		return list;
