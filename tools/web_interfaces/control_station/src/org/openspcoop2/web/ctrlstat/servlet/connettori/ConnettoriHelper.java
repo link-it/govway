@@ -92,6 +92,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -99,7 +100,6 @@ import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -854,7 +854,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		if(showOpzioniAvanzate){
 			DataElement de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_OPZIONI_AVANZATE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreOpzioniAvanzate" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_OPZIONI_AVANZATE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -871,7 +871,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		// DataTransferMode
 		DataElement de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreOpzioniAvanzateTransferMode" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE
 		if(showOpzioniAvanzate){
 			if(transfer_mode==null || "".equals(transfer_mode)){
 				transfer_mode = ConnettoriCostanti.DEFAULT_TIPO_DATA_TRANSFER;
@@ -890,7 +890,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreOpzioniAvanzateTransferChunkSize" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE
 		if(showOpzioniAvanzate && TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(this.getSize());
@@ -905,7 +905,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		// Redirect
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreOpzioniAvanzateRedirectMode" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE
 		if(showOpzioniAvanzate){
 			if(redirect_mode==null || "".equals(redirect_mode)){
 				redirect_mode = ConnettoriCostanti.DEFAULT_GESTIONE_REDIRECT;
@@ -924,7 +924,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreOpzioniAvanzateRedirectMaxHop" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP
 		if(showOpzioniAvanzate && CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(this.getSize());
@@ -986,7 +986,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	
 	public Vector<DataElement> addTokenPolicyToDatiAsHidden(Vector<DataElement> dati, boolean autenticazioneToken, String tokenPolicy){
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreBearer" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_BEARER
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(autenticazioneToken? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
@@ -995,7 +995,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		// Token Autenticazione
 		if (autenticazioneToken) {
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTokenPolicy" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 			de.setValue(tokenPolicy);
@@ -1009,12 +1009,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword){
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreProxy" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_PROXY
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreProxyHostname" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME
 		de.setValue(proxyHostname);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -1023,7 +1023,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreProxyPort" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT
 		de.setValue(proxyPort);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
@@ -1032,7 +1032,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreProxyUsername" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME
 		de.setValue(StringEscapeUtils.escapeHtml(proxyUsername));
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
@@ -1041,7 +1041,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreProxyPassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD
 		de.setValue(StringEscapeUtils.escapeHtml(proxyPassword));
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
@@ -1104,12 +1104,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreBearer" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_BEARER
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTokenPolicy" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY
 		de.setType(DataElementType.SELECT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
 		de.setValues(policyValues);
@@ -1141,12 +1141,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta){
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreTempiRisposta" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTempiRispostaConnectionTimeout" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT
 		de.setValue(tempiRisposta_connectionTimeout);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
@@ -1155,7 +1155,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTempiRispostaReadTimeout" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT
 		de.setValue(tempiRisposta_readTimeout);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
@@ -1164,7 +1164,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTempiRispostaTempoMedioRisposta" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA
 		de.setValue(tempiRisposta_tempoMedioRisposta);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
@@ -1326,13 +1326,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				if(connettore){
 					if(TipiConnettore.HTTPS.toString().equals(endpointtype) ||  TipiConnettore.HTTP.toString().equals(endpointtype) ){
-						de.setLabel(prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO_HTTP);
+						de.setLabel(prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO_HTTP);	//prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO_HTTP
 					}
 					else{
-						de.setLabel(prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO);
+						de.setLabel(prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO);	//prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO
 					}
 				}else{
-					de.setLabel(prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_PORTA);
+					de.setLabel(prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_PORTA);	//prefix+ServiziApplicativiCostanti.LABEL_CREDENZIALI_ACCESSO_PORTA
 				}
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
@@ -1340,9 +1340,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			de = new DataElement();
 			if(showLabelCredenzialiAccesso){
-				de.setLabel(ServiziApplicativiCostanti.LABEL_TIPO_CREDENZIALE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.TipoCredenziale" ) );	//ServiziApplicativiCostanti.LABEL_TIPO_CREDENZIALE
 			}else{
-				de.setLabel(ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.CredenzialeAccesso" ) );	//ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO
 			}
 			if(connettore){
 				de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
@@ -1366,7 +1366,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoauth)) {
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneUsername" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME
 				de.setValue(StringEscapeUtils.escapeHtml(utente));
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
@@ -1382,7 +1382,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazionePassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD
 				de.setValue(StringEscapeUtils.escapeHtml(password));
 				// de.setType("crypt");
 				de.setType(DataElementType.TEXT_EDIT);
@@ -1415,7 +1415,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 										
 					if(change && passwordCifrata ){
 						DataElement deModifica = new DataElement();
-						deModifica.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_PASSWORD);
+						deModifica.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneModificaPassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_PASSWORD
 						deModifica.setType(DataElementType.CHECKBOX);
 						deModifica.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
 						deModifica.setPostBack(true);
@@ -1431,7 +1431,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 						if(change && passwordCifrata && ServletUtils.isCheckBoxEnabled(changepwd) ){
 							de.setValue(null); // non faccio vedere una password cifrata
-							de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneNuovaPassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD
 						}
 						
 						// Nuova visualizzazione Password con bottone genera password
@@ -1522,7 +1522,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// OP-816
 				// 1. Select List - Upload Certificato / Configurazione Manuale
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSsl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
 				if(visualizzaSceltaConfigurazione) {
 					de.setType(DataElementType.SELECT);
@@ -1540,7 +1540,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO)) {
 					// 1a. Select List Tipo Archivio
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslTipoArchivio" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
 					if(visualizzaFieldCert) {
 						de.setType(DataElementType.SELECT);
@@ -1570,7 +1570,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslFileCertificatoPassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD
 					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLFileCertificatoPassword));
 					if(visualizzaFieldCert && (tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.JKS) || tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.PKCS12))) { 
 						// 1a. Password per gli archivi JKS o PKCS12.
@@ -1615,7 +1615,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					// 1a. Eventuale Select per selezionare l'alias
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificato" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
 					if(listaAliasEstrattiCertificato.size() > 1) {
 						
@@ -1645,7 +1645,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslVerificaTuttiCampi" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 						de.setType(DataElementType.CHECKBOX);
 						de.setNote(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
@@ -1697,7 +1697,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //						Subject:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificatoSubject" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT
 					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -1710,7 +1710,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //							Issuer:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificatoIssuer" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER
 					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer));
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoIssuer)) {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -1723,7 +1723,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //							Type:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_TYPE);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_TYPE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificatoType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_TYPE
 					de.setValue(tipoCredenzialiSSLAliasCertificatoType);
 //					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoType)) {
 //						de.setType(DataElementType.TEXT);
@@ -1735,7 +1735,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //							Version:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_VERSION);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_VERSION);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificatoVersion" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_VERSION
 					de.setValue(tipoCredenzialiSSLAliasCertificatoVersion);
 //					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoVersion)) {
 //						de.setType(DataElementType.TEXT);
@@ -1747,7 +1747,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //							Serial Number:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificatoSerialNumber" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER
 					de.setValue(tipoCredenzialiSSLAliasCertificatoSerialNumber);
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSerialNumber)) {
 						de.setType(DataElementType.TEXT);
@@ -1759,7 +1759,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //							SelfSigned:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SELF_SIGNED);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SELF_SIGNED);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificatoSelfSigned" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SELF_SIGNED
 					de.setValue(tipoCredenzialiSSLAliasCertificatoSelfSigned);
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSelfSigned)) {
 						de.setType(DataElementType.TEXT);
@@ -1771,7 +1771,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //							NotBefore:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificatoNotBefore" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE
 					de.setValue(tipoCredenzialiSSLAliasCertificatoNotBefore);
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotBefore)) {
 						de.setType(DataElementType.TEXT);
@@ -1783,7 +1783,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //							NotAfter:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslAliasCertificatoNotAfter" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER
 					de.setValue(tipoCredenzialiSSLAliasCertificatoNotAfter);
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotAfter)) {
 						de.setType(DataElementType.TEXT);
@@ -1807,7 +1807,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					// 1b  Checkbox selfSigned
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslManualeSelfSigned" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned));
 					de.setSize(this.getSize());
@@ -1817,7 +1817,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					// 1b. TextArea Subject
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneSubject" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT
 					de.setValue(StringEscapeUtils.escapeHtml(subject));
 					de.setType(DataElementType.TEXT_AREA);
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
@@ -1828,7 +1828,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					// 1b. TextArea Issuer
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneIssuer" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 					if(!ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
 						de.setType(DataElementType.TEXT_AREA);
@@ -1879,13 +1879,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS+suffixOld);
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneMultipleApiKeys" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS
 				if(change) {
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(multipleApiKey);
 					if(!modificaApiKey) {
 						DataElement deLabel = new DataElement();
-						deLabel.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+						deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneMultipleApiKeys" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS
 						deLabel.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS+"__LABEL");
 						if(!multipleApiKeysEnabled) {
 							deLabel.setType(DataElementType.TEXT);
@@ -1906,9 +1906,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+suffixOld);
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneAppIdEmptyLabel" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL
 				if(change) {
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneAppId" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID
 				}
 				de.setValue(StringEscapeUtils.escapeHtml(appId));
 				if(multipleApiKeysEnabled) {
@@ -1931,7 +1931,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if(change && !modificaApiKey && !encryptPassword && !passwordCifrata) {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+"__LABEL");
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneApiKey" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setRows(3);
 					if(multipleApiKeysEnabled) {
@@ -1945,7 +1945,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				if(change) {
 					DataElement deModifica = new DataElement();
-					deModifica.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_API_KEY);
+					deModifica.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneModificaApiKey" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_API_KEY
 					deModifica.setType(DataElementType.CHECKBOX);
 					deModifica.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
 					deModifica.setPostBack(true);
@@ -1957,13 +1957,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if(modificaApiKey) {
 					
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_API_KEY);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneNuovaApiKey" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_API_KEY
 					de.setType(DataElementType.SUBTITLE);
 					dati.addElement(de);
 					
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneMultipleApiKeys" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(multipleApiKeysEnabled);
 					de.setPostBack(true);
@@ -1971,7 +1971,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneAppIdEmptyLabel" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL
 					de.setValue(StringEscapeUtils.escapeHtml(appId));
 					if(multipleApiKeysEnabled) {
 						if(appIdModificabile) {
@@ -1999,7 +1999,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL.equals(tipoauth)  && !connettore) {
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazionePrincipal" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL
 				de.setValue(StringEscapeUtils.escapeHtml(principal));
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
@@ -2071,7 +2071,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		if(showSectionTitle){
 			DataElement de = new DataElement();
-			de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE);
+			de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE);	//prefix+ConnettoriCostanti.LABEL_CONNETTORE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -2095,7 +2095,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// serve sempre poter sceglire un applicativo server: this.isModalitaAvanzata() && 
 				visualizzaSezioneSAServer && (listaSAServer != null && listaSAServer.length > 0)) {
 			DataElement de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreAbilitaUsoApplicativoServer" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(servizioApplicativoServerEnabled);
@@ -2103,7 +2103,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreIdApplicativoServer" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
 			if(servizioApplicativoServerEnabled) {
 				de.setSelected(servizioApplicativoServer);
@@ -2141,7 +2141,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				boolean configurazioneNonVisualizzabile = false;
 				
 				DataElement de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_ABILITATO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreAbilitato" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_ABILITATO
 	
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
 				if(!TipiConnettore.HTTP.toString().equals(endpointtype) &&
@@ -2156,7 +2156,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setType(DataElementType.TEXT);
 					configurazioneNonVisualizzabile = true;
 					this.pd.disableEditMode();
-					this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ConfigurazioneImpostataModalitaAvanzataLongMessage" ) , Costanti.MESSAGE_TYPE_INFO);	//CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE
 					
 					for (int i = 0; i < dati.size(); i++) {
 						DataElement deCheck = dati.get(i);
@@ -2213,7 +2213,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	
 				
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreDebug" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 	//			if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
 	//				de.setType(DataElementType.CHECKBOX);
@@ -2234,7 +2234,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreUrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL
 				String tmpUrl = url;
 				if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
 					if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
@@ -2281,7 +2281,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	//				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
 	//						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreHttp" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_HTTP
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 					if(showAutenticazioneHttpBasic) {
 						de.setType(DataElementType.CHECKBOX);
@@ -2299,7 +2299,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					//}
 					
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreBearer" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_BEARER
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(autenticazioneToken);
@@ -2307,7 +2307,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					dati.addElement(de);	
 					
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTPS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreHttps" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_HTTPS
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS);
 					de.setType(DataElementType.CHECKBOX);
 					if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
@@ -2318,7 +2318,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					// Proxy
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreProxy" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_PROXY
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 					de.setType(DataElementType.CHECKBOX);
 					if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
@@ -2329,7 +2329,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					// TempiRisposta
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTempiRispostaRedefine" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 					de.setType(DataElementType.CHECKBOX);
 					if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
@@ -2350,7 +2350,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// opzioni avanzate
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreOpzioniAvanzate" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
 					if (this.isModalitaAvanzata()) {
 						de.setType(DataElementType.CHECKBOX);
@@ -2449,7 +2449,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				//String[] tipoEP = { TipiConnettore.DISABILITATO.toString(), TipiConnettore.HTTP.toString(), TipiConnettore.JMS.toString(), TipiConnettore.NULL.toString(), TipiConnettore.NULL_ECHO.toString() };
 	
 				DataElement de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreEndpointType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE
 				de.setType(DataElementType.SELECT);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 				if(soloConnettoriHttp) {
@@ -2499,7 +2499,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreDebug" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 				if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
 					de.setType(DataElementType.CHECKBOX);
@@ -2520,7 +2520,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreUrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL
 				String tmpUrl = url;
 				if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
 					if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
@@ -2568,7 +2568,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}
 					
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreHttp" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_HTTP
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 					if(showAutenticazioneHttpBasic) {
 						de.setType(DataElementType.CHECKBOX);
@@ -2586,7 +2586,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					//}
 					
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreBearer" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_BEARER
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(autenticazioneToken);
@@ -2594,7 +2594,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					dati.addElement(de);
 					
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreProxy" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_PROXY
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 					de.setType(DataElementType.CHECKBOX);
 					if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
@@ -2605,7 +2605,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					// TempiRisposta
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTempiRispostaRedefine" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 					de.setType(DataElementType.CHECKBOX);
 					if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
@@ -2623,7 +2623,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// opzioni avanzate
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 					de = new DataElement();
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreOpzioniAvanzate" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE
 					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
 					if (this.isModalitaAvanzata()) {
 						de.setType(DataElementType.CHECKBOX);
@@ -2868,8 +2868,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (endpointtype.equals(TipiConnettore.FILE.toString())) {
 					ConnettoreFileUtils.addFileDati(dati, this.getSize(),
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
-							);
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+							session);
 				}
 				
 				// Proxy
@@ -2965,7 +2965,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreDebug" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 		de.setType(DataElementType.HIDDEN);
 		if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
@@ -2982,7 +2982,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if (TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP.equals(tipologiaConnettori)) {
 			
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_ABILITATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreAbilitato" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_ABILITATO
 
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
 			if(!TipiConnettore.HTTP.toString().equals(endpointtype) &&
@@ -3032,7 +3032,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreUrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL
 			String defaultPrefixValue = "http://";
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 				defaultPrefixValue = "https://";
@@ -3066,7 +3066,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			//String[] tipoEP = { TipiConnettore.DISABILITATO.toString(), TipiConnettore.HTTP.toString(), TipiConnettore.JMS.toString(), TipiConnettore.NULL.toString(), TipiConnettore.NULL_ECHO.toString() };
 
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreEndpointType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 //			de.setValues(tipoEP);
@@ -3076,7 +3076,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreUrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL
 			de.setValue(url);
 //			if (endpointtype.equals(TipiConnettore.HTTP.toString())){
 //				if (!this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
@@ -3094,7 +3094,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTipoPersonalizzato" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO
 //			if (endpointtype == null || !endpointtype.equals(TipiConnettore.CUSTOM.toString()))
 				de.setType(DataElementType.HIDDEN);
 //			else{
@@ -3117,20 +3117,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 					httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
 					httpsKeyAlias, httpsTrustStoreCRLs,
 					stato,
-					this.core,this.getSize());
+					this.core,this.getSize(), session);
 			
 		}
 
 		if (endpointtype.equals(TipiConnettore.JMS.getNome())) {
 			ConnettoreJMSUtils.addJMSDatiAsHidden(dati, nome, tipoconn, user, password, initcont, urlpgk, 
 					provurl, connfact, sendas, objectName, tipoOperazione, stato,
-					this.core,this.getSize());
+					this.core,this.getSize(), session);
 		}
 
 		if (endpointtype.equals(TipiConnettore.FILE.toString())) {
 			ConnettoreFileUtils.addFileDatiAsHidden(dati, 
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					session);
 			
 			
 		}
@@ -4769,13 +4770,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 	
 	public Vector<DataElement> addConnettoreDefaultRidefinitoToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String modalita, String[] modalitaValues, String[] modalitaLabels, boolean servletRidefinito, String servletConnettore, Parameter[] parametriServletConnettore) {
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.Connettore" ) );	//ConnettoriCostanti.LABEL_CONNETTORE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA);
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_MODALITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreModalita" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_MODALITA
 		de.setType(DataElementType.SELECT);
 		de.setValues(modalitaValues);
 		de.setLabels(modalitaLabels);

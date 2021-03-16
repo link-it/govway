@@ -40,6 +40,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -47,7 +48,6 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /***
@@ -168,7 +168,7 @@ public class PorteDelegateVerificaConnettore extends Action {
 
 			DataElement deTestConnettivita = new DataElement();
 			deTestConnettivita.setType(DataElementType.TITLE);
-			deTestConnettivita.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VERIFICA_CONNETTORE_TITLE);
+			deTestConnettivita.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateVerificaConnettoreTitle" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VERIFICA_CONNETTORE_TITLE
 			dati.add(deTestConnettivita);
 			
 			if(aliases.size()==1 || alias!=null) {

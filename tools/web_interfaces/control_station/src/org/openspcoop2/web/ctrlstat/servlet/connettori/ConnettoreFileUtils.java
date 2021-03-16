@@ -21,13 +21,15 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.Vector;
 
+import javax.servlet.http.HttpSession;
+
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * ConnettoreFileUtils
@@ -196,19 +198,20 @@ public class ConnettoreFileUtils {
 	
 	public static void addFileDati(Vector<DataElement> dati,int pageSize,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
-			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
+			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			HttpSession session){
 
 		DataElementInfo dInfoPattern = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 		dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 		dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreRequestOutput" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileRequestOutputFileName" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME
 		de.setValue(requestOutputFileName);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_SIZE);
@@ -219,7 +222,7 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileRequestOutputFileNameHeaders" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS
 		de.setValue(requestOutputFileNameHeaders);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS_SIZE);
@@ -230,7 +233,7 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileRequestOutputAutoCreateDir" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR
 		de.setSelected(ServletUtils.isCheckBoxEnabled(requestOutputParentDirCreateIfNotExists));
 		de.setValue(requestOutputParentDirCreateIfNotExists);
 		de.setType(DataElementType.CHECKBOX);
@@ -239,7 +242,7 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 			
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileRequestOutputOverwriteFileName" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME
 		de.setSelected(ServletUtils.isCheckBoxEnabled(requestOutputOverwriteIfExists));
 		de.setValue(requestOutputOverwriteIfExists);
 		de.setType(DataElementType.CHECKBOX);
@@ -250,12 +253,12 @@ public class ConnettoreFileUtils {
 		
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreResponseInput" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputMode" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE
 		de.setType(DataElementType.SELECT);
 		de.setValues(ConnettoriCostanti.TIPI_GESTIONE_RESPONSE_FILE);
 		de.setValue(responseInputMode);
@@ -266,7 +269,7 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputFileName" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME
 		de.setValue(responseInputFileName);
 		if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
 			de.setType(DataElementType.TEXT_AREA);
@@ -282,7 +285,7 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputFileNameHeaders" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS
 		de.setValue(responseInputFileNameHeaders);
 		if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
 			de.setType(DataElementType.TEXT_AREA);
@@ -297,7 +300,7 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputFileNameDeleteAfterRead" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ
 		de.setValue(responseInputDeleteAfterRead);
 		if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
 			de.setSelected(ServletUtils.isCheckBoxEnabled(responseInputDeleteAfterRead));
@@ -311,7 +314,7 @@ public class ConnettoreFileUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputWaitTime" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME
 		de.setValue(responseInputWaitTime);
 		if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -327,31 +330,32 @@ public class ConnettoreFileUtils {
 	
 	public static void addFileDatiAsHidden(Vector<DataElement> dati,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
-			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
+			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			HttpSession session){
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileRequestOutputFileName" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME
 		de.setValue(requestOutputFileName);
 		de.setType(DataElementType.HIDDEN);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileRequestOutputFileNameHeaders" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS
 		de.setValue(requestOutputFileNameHeaders);
 		de.setType(DataElementType.HIDDEN);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileRequestOutputAutoCreateDir" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR
 		de.setValue(requestOutputParentDirCreateIfNotExists);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
 		dati.addElement(de);
 			
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileRequestOutputOverwriteFileName" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME
 		de.setValue(requestOutputOverwriteIfExists);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
@@ -359,35 +363,35 @@ public class ConnettoreFileUtils {
 		
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputMode" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(responseInputMode);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputFileName" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME
 		de.setValue(responseInputFileName);
 		de.setType(DataElementType.HIDDEN);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputFileNameHeaders" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS
 		de.setValue(responseInputFileNameHeaders);
 		de.setType(DataElementType.HIDDEN);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputFileNameDeleteAfterRead" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ
 		de.setValue(responseInputDeleteAfterRead);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreFileResponseInputWaitTime" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME
 		de.setValue(responseInputWaitTime);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);

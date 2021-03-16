@@ -51,12 +51,12 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * ConfigurazioneHandlersRispostaList
@@ -232,11 +232,11 @@ public final class ConfigurazioneHandlersRispostaList extends Action {
 
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), oggettiDaAggiornare.toArray(new Object[oggettiDaAggiornare.size()]));
 				if(ConfigurazioneCostanti.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_HANDLER) {
-					pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CONFERMA_HANDLER_SPOSTATO_CORRETTAMENTE, MessageType.INFO);
+					pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ConfermaHandlerSpostatoCorrettamente" ) , MessageType.INFO);	//ConfigurazioneCostanti.MESSAGGIO_CONFERMA_HANDLER_SPOSTATO_CORRETTAMENTE
 				}
 				else {
 					if(ruoloPorta == null) {
-						pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGE_HANDLERS_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+						pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ConfigurazioneMessageHandlersModificataConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGE_HANDLERS_MODIFICATA_CON_SUCCESSO
 					}
 				}
 			}

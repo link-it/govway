@@ -21,11 +21,14 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.Vector;
 
+import javax.servlet.http.HttpSession;
+
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -150,14 +153,15 @@ public class ConnettoreJMSUtils {
 			String stato,
 			ControlStationCore core,ConsoleHelper consoleHelper,int pageSize){
 		
-		
+
+		HttpSession session = consoleHelper.getSession();
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CODA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreJmsConfigurazioniCoda" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CODA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsNomeCoda" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA
 		de.setValue(nome);
 		if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -170,7 +174,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsTipoCoda" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA
 		de.setType(DataElementType.SELECT);
 		de.setValues(ConnettoriCostanti.TIPI_CODE_JMS);
 		de.setSelected(tipo);
@@ -179,7 +183,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsTipoOggettoJms" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS
 		de.setType(DataElementType.SELECT);
 		de.setValues(ConnettoriCostanti.TIPO_SEND_AS);
 		de.setSelected(sendas);
@@ -189,12 +193,12 @@ public class ConnettoreJMSUtils {
 		//if ( !objectName.equals(ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI) ) {
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONNESIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreJmsConfigurazioniConnesione" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONNESIONE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsConnectionFactory" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY
 		de.setValue(connfact);
 		if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -207,7 +211,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsUsername" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME
 		de.setValue(user);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
@@ -215,7 +219,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsPassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD
 		de.setValue(password);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
@@ -224,12 +228,12 @@ public class ConnettoreJMSUtils {
 		//}
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONTESTO_JNDI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreJmsConfigurazioniContestoJndi" ) );	//ConnettoriCostanti.LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONTESTO_JNDI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsInitCtx" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX
 		de.setValue(initcont);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
@@ -237,7 +241,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsUrlPkg" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG
 		de.setValue(urlpgk);
 		de.setType(DataElementType.TEXT_EDIT);
 		//de.setType(DataElementType.HIDDEN);
@@ -246,7 +250,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsProviderUrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL
 		de.setValue(provurl);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
@@ -261,10 +265,10 @@ public class ConnettoreJMSUtils {
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
 			String stato,
-			ControlStationCore core,int pageSize){
+			ControlStationCore core,int pageSize, HttpSession session){
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsNomeCoda" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA
 		de.setValue(nome);
 		de.setType(DataElementType.HIDDEN);
 //		if(!this.core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
@@ -279,7 +283,7 @@ public class ConnettoreJMSUtils {
 
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsTipoCoda" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(tipo);
 //		de.setType(DataElementType.SELECT);
@@ -292,7 +296,7 @@ public class ConnettoreJMSUtils {
 		if ( !objectName.equals(ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI) ) {
 
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsUsername" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME
 			de.setValue(user);
 			de.setType(DataElementType.HIDDEN);
 //			de.setType(DataElementType.TEXT_EDIT);
@@ -301,7 +305,7 @@ public class ConnettoreJMSUtils {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsPassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD
 			de.setValue(password);
 			de.setType(DataElementType.HIDDEN);
 //			de.setType(DataElementType.TEXT_EDIT);
@@ -311,7 +315,7 @@ public class ConnettoreJMSUtils {
 		}
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsInitCtx" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX
 		de.setValue(initcont);
 		de.setType(DataElementType.HIDDEN);
 //		de.setType(DataElementType.TEXT_EDIT);
@@ -320,7 +324,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsUrlPkg" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG
 		de.setValue(urlpgk);
 		de.setType(DataElementType.TEXT_EDIT);
 		//de.setType(DataElementType.HIDDEN);
@@ -329,7 +333,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsProviderUrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL
 		de.setValue(provurl);
 		de.setType(DataElementType.HIDDEN);
 //		de.setType(DataElementType.TEXT_EDIT);
@@ -338,7 +342,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsConnectionFactory" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY
 		de.setValue(connfact);
 		de.setType(DataElementType.HIDDEN);
 //		if(!this.core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
@@ -352,7 +356,7 @@ public class ConnettoreJMSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreJmsTipoOggettoJms" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(sendas);
 //		de.setType(DataElementType.SELECT);

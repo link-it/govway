@@ -33,11 +33,11 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * login
@@ -129,7 +129,7 @@ public final class Login extends Action {
 						Costanti.MESSAGE_TYPE_INFO);
 			}
 			else{
-				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO);
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Login.LoginEffettuatoConSuccesso" ) ,Costanti.MESSAGE_TYPE_INFO_SINTETICO);	//LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO
 			}
 	
 			// Inizializzo di nuovo GeneralData, dopo aver messo

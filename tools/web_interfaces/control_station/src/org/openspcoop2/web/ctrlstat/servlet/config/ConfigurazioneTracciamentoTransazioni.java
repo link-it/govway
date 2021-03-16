@@ -44,13 +44,13 @@ import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -359,7 +359,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
 
 			// Preparo la lista
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_ESITI_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+			pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ConfigurazioneTracciamentoEsitiConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_ESITI_CON_SUCCESSO
 			
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			

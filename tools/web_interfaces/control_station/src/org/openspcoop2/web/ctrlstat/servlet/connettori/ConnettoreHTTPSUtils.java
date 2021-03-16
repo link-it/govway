@@ -24,12 +24,14 @@ import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
+import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -349,9 +351,10 @@ public class ConnettoreHTTPSUtils {
 			httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 		}
 		
+		HttpSession session = consoleHelper.getSession();
 		if(addUrlParameter){
 			DataElement de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsUrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL
 			de.setValue(httpsurl);
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.TEXT_EDIT);
@@ -369,12 +372,12 @@ public class ConnettoreHTTPSUtils {
 		}
 		
 		DataElement de = new DataElement();
-		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE);
+		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE);	//prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsSslType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE
 		de.setType(DataElementType.SELECT);
 		List<String> tipologie = null;
 		try{
@@ -393,7 +396,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsHostVerify" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY
 		de.setValue(httpshostverify ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setSelected(httpshostverify);
 		de.setType(DataElementType.CHECKBOX);
@@ -401,12 +404,12 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_SERVER);
+		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_SERVER);	//prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_SERVER
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustVerifyCerts" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
 		de.setValue(httpsTrustVerifyCert ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setSelected(httpsTrustVerifyCert);
@@ -415,7 +418,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStoreLocation" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION
 		de.setValue(httpspath);
 		if(httpsTrustVerifyCert) {
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
@@ -434,7 +437,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStoreType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE
 		if(httpsTrustVerifyCert) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(ConnettoriCostanti.TIPOLOGIE_KEYSTORE);
@@ -447,7 +450,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStorePassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD
 		de.setValue(httpspwd);
 		if(httpsTrustVerifyCert) {
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
@@ -465,7 +468,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStoreCrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL
 		de.setValue(httpsTrustStoreCRLs);
 		if(httpsTrustVerifyCert) {
 			de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_NOTE);
@@ -484,7 +487,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustManagementAlgoritm" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM
 		de.setValue(httpsalgoritmo);
 		if(httpsTrustVerifyCert) {
 			if(!consoleHelper.isModalitaStandard()) {
@@ -507,12 +510,12 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT);
+		de.setLabel(prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT);	//prefix+ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsStato" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_STATO
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 		if(forceHttpsClient) {
 			httpsstato = true;
@@ -529,7 +532,7 @@ public class ConnettoreHTTPSUtils {
 
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeystoreClientAuthMode" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
 		if (httpsstato) {
 			if(httpsTrustVerifyCert) {
@@ -552,7 +555,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsPasswordPrivateKeyStore" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE
 		de.setValue(httpspwdprivatekeytrust);
 		if (httpsstato &&
 				(httpskeystore == null || "".equals(httpskeystore) || httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT))){
@@ -569,7 +572,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeyStoreLocation" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION
 		de.setValue(httpspathkey);
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))){
@@ -587,7 +590,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeyStoreType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))) {
 			de.setType(DataElementType.SELECT);
@@ -601,7 +604,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeyStorePassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD
 		de.setValue(httpspwdkey);
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))){
@@ -618,7 +621,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsPasswordPrivateKeyKeystore" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE
 		de.setValue(httpspwdprivatekey);
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))){
@@ -635,7 +638,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsAliasPrivateKeyKeystore" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE
 		de.setValue(httpsKeyAlias);
 		if (httpsstato){
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
@@ -650,7 +653,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeyManagementAlgoritm" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM
 		de.setValue(httpsalgoritmokey);
 		if (httpsstato && !consoleHelper.isModalitaStandard()){
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
@@ -675,10 +678,10 @@ public class ConnettoreHTTPSUtils {
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String stato,
-			ControlStationCore core,int pageSize){
+			ControlStationCore core,int pageSize, HttpSession session){
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsUrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL
 		de.setValue(httpsurl);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -687,21 +690,21 @@ public class ConnettoreHTTPSUtils {
 
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsSslType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(httpstipologia);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsHostVerify" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY
 		de.setValue(httpshostverify ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustVerifyCerts" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS
 		de.setValue(httpsTrustVerifyCert ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS);
@@ -709,7 +712,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStoreLocation" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION
 		de.setValue(httpspath);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
@@ -717,14 +720,14 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStoreType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(httpstipo);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStorePassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD
 		de.setValue(httpspwd);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
@@ -732,7 +735,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStoreCrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL
 		de.setValue(httpsTrustStoreCRLs);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
@@ -740,7 +743,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustManagementAlgoritm" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM
 		de.setValue(httpsalgoritmo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
@@ -748,7 +751,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsStato" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_STATO
 		de.setValue(httpsstato ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
@@ -756,7 +759,7 @@ public class ConnettoreHTTPSUtils {
 
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeystoreClientAuthMode" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
 		de.setType(DataElementType.HIDDEN);	
 		if (httpsstato) {
@@ -767,7 +770,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsPasswordPrivateKeyStore" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE
 		de.setValue(httpspwdprivatekeytrust);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
@@ -775,7 +778,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeyStoreLocation" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION
 		de.setValue(httpspathkey);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
@@ -783,7 +786,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeyStoreType" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))) {
 			de.setType(DataElementType.HIDDEN);
@@ -796,7 +799,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeyStorePassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD
 		de.setValue(httpspwdkey);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
@@ -804,7 +807,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsPasswordPrivateKeyKeystore" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE
 		de.setValue(httpspwdprivatekey);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
@@ -812,7 +815,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsAliasPrivateKeyKeystore" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE
 		de.setValue(httpsKeyAlias);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_ALIAS_PRIVATE_KEY_KEYSTORE);
@@ -820,7 +823,7 @@ public class ConnettoreHTTPSUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsKeyManagementAlgoritm" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM
 		de.setValue(httpsalgoritmokey);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);

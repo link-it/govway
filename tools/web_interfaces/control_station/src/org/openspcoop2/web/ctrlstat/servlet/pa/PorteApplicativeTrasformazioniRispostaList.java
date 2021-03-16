@@ -39,11 +39,11 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * PorteApplicativeTrasformazioniRispostaList
@@ -126,7 +126,7 @@ public class PorteApplicativeTrasformazioniRispostaList extends Action {
 					
 					porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), portaApplicativa);
 					if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_RISPOSTA_REGOLA_TRASFORMAZIONE)
-						pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE, MessageType.INFO);
+						pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ConfermaRegolaTrasformazioneRispostaSpostataCorrettamente" ) , MessageType.INFO);	//CostantiControlStation.MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_RISPOSTA_SPOSTATA_CORRETTAMENTE
 					
 					// ricaricare id trasformazione
 					portaApplicativa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));

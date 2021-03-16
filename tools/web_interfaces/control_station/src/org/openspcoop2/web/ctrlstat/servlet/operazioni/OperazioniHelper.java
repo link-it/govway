@@ -33,12 +33,12 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.queue.costanti.OperationStatus;
 import org.openspcoop2.web.lib.queue.dao.Operation;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
@@ -250,7 +250,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			String[] tipoOperazioneLabel = OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE_LIST;
 
 			DataElement de = new DataElement();
-			de.setLabel(OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.ParametroOperazioniOperazione" ) );	//OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_OPERAZIONE
 			de.setValues(tipoOperazioneValori);
 			de.setLabels(tipoOperazioneLabel);
 			de.setSelected(formBean.getTipo());
@@ -268,7 +268,7 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			if(hasPermessiUtenti){
 				// Titolo Filter
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_FILTRO_RICERCA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorFiltroRicerca" ) );	//MonitorCostanti.LABEL_MONITOR_FILTRO_RICERCA
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 
@@ -295,7 +295,7 @@ public class OperazioniHelper extends ConsoleHelper{
 				de.setValue(formBean.getUtente());
 				de.setType(DataElementType.HIDDEN);
 			}
-			de.setLabel(OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_UTENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.ParametroOperazioniUtente" ) );	//OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_UTENTE
 			de.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_UTENTE);
 			//			de.setSize(this.getSize());
 			dati.addElement(de);
@@ -430,11 +430,11 @@ public class OperazioniHelper extends ConsoleHelper{
 			DataElement de = new DataElement();
 
 			de.setType(DataElementType.TITLE);
-			de.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_DETTAGLI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.OperazioniDettagli" ) );	//OperazioniCostanti.LABEL_OPERAZIONI_DETTAGLI
 			dati.addElement(de);
 
 			DataElement timereq = new DataElement();
-			timereq.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_RICHIESTA_IL);
+			timereq.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.OperazioniRichiestaIl" ) );	//OperazioniCostanti.LABEL_OPERAZIONI_RICHIESTA_IL
 			timereq.setValue("" + op.getTimeReq());
 			dati.addElement(timereq);
 			if (OperationStatus.NOT_SET.equals(op.getStatus())) {
@@ -444,7 +444,7 @@ public class OperazioniHelper extends ConsoleHelper{
 					// superutente non sono abilitati ad effettuare
 					// operazioni
 					DataElement errore = new DataElement();
-					errore.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_PARAMETRO_ERRORE);
+					errore.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.OperazioniParametroErrore" ) );	//OperazioniCostanti.LABEL_OPERAZIONI_PARAMETRO_ERRORE
 					errore.setValue(formatDetail(op.getDetails()));
 					errore.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_ERRORE);
 					dati.addElement(errore);
@@ -452,9 +452,9 @@ public class OperazioniHelper extends ConsoleHelper{
 			} else {
 				DataElement timexecute = new DataElement();
 				if (op.isDeleted()) {
-					timexecute.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_ELIMINATA_IL);
+					timexecute.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.OperazioniEliminataIl" ) );	//OperazioniCostanti.LABEL_OPERAZIONI_ELIMINATA_IL
 				} else {
-					timexecute.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_ESEGUITA_IL);
+					timexecute.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.OperazioniEseguitaIl" ) );	//OperazioniCostanti.LABEL_OPERAZIONI_ESEGUITA_IL
 				}
 				timexecute.setValue("" + op.getTimeExecute());
 				timexecute.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_TEMPO_ESECUZIONE);
@@ -464,14 +464,14 @@ public class OperazioniHelper extends ConsoleHelper{
 					OperationStatus.INVALID.equals(op.getStatus()) ||
 					OperationStatus.WAIT.equals(op.getStatus()) ) {
 				DataElement errore = new DataElement();
-				errore.setLabel(OperazioniCostanti.LABEL_OPERAZIONI_PARAMETRO_ERRORE);
+				errore.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.OperazioniParametroErrore" ) );	//OperazioniCostanti.LABEL_OPERAZIONI_PARAMETRO_ERRORE
 				errore.setValue(formatDetail(op.getDetails()));
 				errore.setName(OperazioniCostanti.PARAMETRO_OPERAZIONI_ERRORE);
 				dati.addElement(errore);
 			}
 			if (OperationStatus.WAIT.equals(op.getStatus())) {
 				DataElement timeWait = new DataElement();
-				timeWait.setLabel(OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_WAITING_TIME);
+				timeWait.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.ParametroOperazioniWaitingTime" ) );	//OperazioniCostanti.LABEL_PARAMETRO_OPERAZIONI_WAITING_TIME
 				String tw = "";
 				String val = op.getStatus().toString();
 				if (val.equals(OperazioniCostanti.DEFAULT_VALUE_PARAMETRO_OPERAZIONI_WAIT_TIME_WAIT)) {
@@ -484,7 +484,7 @@ public class OperazioniHelper extends ConsoleHelper{
 
 			DataElement partitle = new DataElement();
 			partitle.setType(DataElementType.TITLE);
-			partitle.setLabel(OperazioniCostanti.LABEL_PARAMETRI);
+			partitle.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Operazioni.Parametri" ) );	//OperazioniCostanti.LABEL_PARAMETRI
 			dati.addElement(partitle);
 
 			org.openspcoop2.web.lib.queue.dao.Parameter[] parList = op.getParameters();

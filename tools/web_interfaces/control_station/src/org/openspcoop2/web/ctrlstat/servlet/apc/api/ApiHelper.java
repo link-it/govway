@@ -61,6 +61,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilit
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -69,7 +70,6 @@ import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TargetType;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -458,14 +458,14 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// Titolo API
 		DataElement de = new DataElement();
 		de.setType(DataElementType.CHECKBOX);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME
 		de.setValue(getLabelIdAccordoSenzaReferente(tipoProtocollo, idAccordo));
 		de.setStatusValue(getLabelIdAccordoSenzaReferente(tipoProtocollo, idAccordo));
 		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI);
 		DataElementImage image = new DataElementImage();
 		
 		image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_APS_INFO_GENERALI));
+		image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Api.ApcApiIconaModificaApiTooltipConParametro", ApiCostanti.APC_API_LABEL_APS_INFO_GENERALI));	//ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO
 		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 		de.setImage(image);
 		
@@ -531,13 +531,13 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		boolean supportatoSoggettoReferente = protocolFactory.createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
 		if(supportatoSoggettoReferente) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcReferente" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE
 			de.setValue(this.getLabelNomeSoggetto(tipoProtocollo,as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())); 
 			de.setType(DataElementType.TEXT);
 			image = new DataElementImage();
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_SOGGETTO_REFERENTE);
 			image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE));
+			image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Api.ApcApiIconaModificaApiTooltipConParametro", AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE));	//ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO
 			image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 			de.setImage(image);
 			dati.addElement(de);
@@ -559,7 +559,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		if(showProtocolli || modificaDatiProfilo) {
 			de = new DataElement();
 			String labelProtocollo =this.getLabelProtocollo(tipoProtocollo);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO
 			de.setValue(labelProtocollo);
 			de.setType(DataElementType.TEXT);
 			
@@ -567,7 +567,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				image = new DataElementImage();
 				listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_PROFILO);
 				image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-				image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO));
+				image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Api.ApcApiIconaModificaApiTooltipConParametro", AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO));	//ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO
 				image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 				de.setImage(image);
 			}
@@ -577,7 +577,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		
 		// interfaccia
 		de = new DataElement();
-		de.setLabel(ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Api.ApcApiParametroInterfaccia" ) );	//ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA
 		de.setType(DataElementType.TEXT);
 		
 		String labelServiceBinding = null;
@@ -623,7 +623,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE);
 			image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
 		}
-		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));
+		image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Api.ApcApiIconaModificaApiTooltipConParametro", ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));	//ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO
 		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 		image.setTarget(TargetType.SELF);
 		
@@ -640,7 +640,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			
 			image = new DataElementImage();
 			image.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, listParametersApiWsdlDownload.toArray(new Parameter[1]));
-			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));
+			image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Api.ApcApiIconaDownloadDocumentoInterfacciaTooltipConParametro", ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));	//ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP_CON_PARAMETRO
 			image.setImage(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA);
 			image.setTarget(TargetType.SELF);
 			image.setDisabilitaAjaxStatus();
@@ -679,7 +679,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// Descrizione
 		de = new DataElement();
 		de.setType(DataElementType.TEXT);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE
 		int length = 150;
 		String descrizione = null;
 		if(as.getDescrizione()!=null && as.getDescrizione().length()>length) {
@@ -696,7 +696,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		image = new DataElementImage();
 		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
 		image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE));
+		image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Api.ApcApiIconaModificaApiTooltipConParametro", AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE));	//ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO
 		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 		de.setImage(image);
 		
@@ -705,7 +705,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// Gruppi 
 		de = new DataElement();
 		de.setType(DataElementType.BUTTON);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcGruppi" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI
 
 		List<String> labelsGruppi = new ArrayList<String>();
 		List<String> valuesGruppi = new ArrayList<String>();
@@ -737,7 +737,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		image = new DataElementImage();
 		listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI);
 		image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-		image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI));
+		image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Api.ApcApiIconaModificaApiTooltipConParametro", AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI));	//ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO
 		image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 		de.setImage(image);
 		
@@ -750,7 +750,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCanale" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE
 			this.setStatoCanale(de, as.getCanale(), canaleList);
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_CANALE);
 			de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
@@ -758,7 +758,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			image = new DataElementImage();
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_CANALE);
 			image.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
-			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE));
+			image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Api.ApcApiIconaModificaApiTooltipConParametro", AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE));	//ApiCostanti.APC_API_ICONA_MODIFICA_API_TOOLTIP_CON_PARAMETRO
 			image.setImage(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 			de.setImage(image);
 			

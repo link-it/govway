@@ -42,13 +42,13 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.User;
 
@@ -151,7 +151,7 @@ public class UtentiSoggettiAdd extends Action {
 				
 				if(listaSoggettiNonUtilizzati.size()<=0){
 					if(protocolli.size() == 1) {
-						pd.setMessage(UtentiCostanti.LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI, MessageType.INFO);
+						pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.UtentiSoggettiDisponibiliEsauriti" ) , MessageType.INFO);	//UtentiCostanti.LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI
 						pd.disableEditMode();
 						pd.setDati(dati);
 						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

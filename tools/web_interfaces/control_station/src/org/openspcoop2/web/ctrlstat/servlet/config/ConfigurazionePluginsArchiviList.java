@@ -39,11 +39,11 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * ConfigurazionePluginsArchiviList
@@ -99,7 +99,7 @@ public final class ConfigurazionePluginsArchiviList extends Action {
 				
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), pluginsDaSpostare.toArray(new Object[pluginsDaSpostare.size()]));
 				if(CostantiControlStation.VISUALIZZA_MESSAGGIO_CONFERMA_SPOSTAMENTO_PLUGINS_ARCHIVI)
-					pd.setMessage(CostantiControlStation.MESSAGGIO_CONFERMA_PLUGINS_ARCHIVIO_SPOSTATO_CORRETTAMENTE, MessageType.INFO);
+					pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ConfermaPluginsArchivioSpostatoCorrettamente" ) , MessageType.INFO);	//CostantiControlStation.MESSAGGIO_CONFERMA_PLUGINS_ARCHIVIO_SPOSTATO_CORRETTAMENTE
 			}
 
 			// Preparo la lista

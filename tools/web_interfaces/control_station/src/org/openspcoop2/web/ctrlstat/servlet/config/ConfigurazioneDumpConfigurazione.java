@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -47,7 +48,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -340,7 +340,7 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
 	
 				// Preparo la lista
-				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ConfigurazioneDumpConfigurazioneConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_CON_SUCCESSO
 	
 				// ricarico la configurazione
 				newConfigurazione = confCore.getConfigurazioneGenerale();

@@ -43,13 +43,13 @@ import org.openspcoop2.web.lib.audit.log.constants.Stato;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * filtriChange
@@ -232,7 +232,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 			lista = confCore.filtriList(ricerca);
 
 			ah.prepareFiltriList(ricerca, lista, Liste.FILTRI);
-			pd.setMessage(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA, Costanti.MESSAGE_TYPE_INFO);
+			pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Audit.AuditConfigurazioneModificata" ) , Costanti.MESSAGE_TYPE_INFO);	//AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

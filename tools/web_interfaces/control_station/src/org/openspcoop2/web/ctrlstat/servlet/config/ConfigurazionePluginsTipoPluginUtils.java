@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -33,6 +35,7 @@ import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.PluginProprietaCompatibilita;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -513,14 +516,14 @@ public class ConfigurazionePluginsTipoPluginUtils {
 	} 
 	
 	public static Vector<DataElement> getSezioneDinamicaClassePlugin(Vector<DataElement> dati, TipoPlugin tipoPlugin, String ruolo, String shTipo, String mhTipo, String mhRuolo, String applicabilita,
-			boolean integrationManagerEnabled) {
+			boolean integrationManagerEnabled, HttpSession session) {
 			switch (tipoPlugin) {
 			case AUTENTICAZIONE:
 			case AUTORIZZAZIONE:
 			case AUTORIZZAZIONE_CONTENUTI:
 			case INTEGRAZIONE:
 				DataElement deRuolo = new DataElement();
-				deRuolo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO);
+				deRuolo.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiFiltroRuolo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO
 				deRuolo.setLabels(PluginCostanti.FILTRO_RUOLO_LABELS);
 				deRuolo.setValues(PluginCostanti.FILTRO_RUOLO_VALORI);
 				deRuolo.setType(DataElementType.SELECT);
@@ -532,7 +535,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				break;
 			case SERVICE_HANDLER:{
 				DataElement deShTipo = new DataElement();
-				deShTipo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_SERVICE_HANDLER);
+				deShTipo.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiFiltroServiceHandler" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_SERVICE_HANDLER
 				List<String> values = integrationManagerEnabled ? PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_CON_INTEGRATION_MANAGER : PluginCostanti.FILTRO_SERVICE_HANDLER_VALORI_SENZA_INTEGRATION_MANAGER;
 				List<String> labels = integrationManagerEnabled ? PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_CON_INTEGRATION_MANAGER : PluginCostanti.FILTRO_SERVICE_HANDLER_LABEL_SENZA_INTEGRATION_MANAGER;
 				deShTipo.setLabels(labels);
@@ -548,7 +551,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				
 				DataElement deMhRuolo = new DataElement();
 				
-				deMhRuolo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER);
+				deMhRuolo.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiFiltroRuoloMessageHandler" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_RUOLO_MESSAGE_HANDLER
 				deMhRuolo.setLabels(PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_LABELS);
 				deMhRuolo.setValues(PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORI);
 				deMhRuolo.setType(DataElementType.SELECT);
@@ -558,7 +561,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 				dati.addElement(deMhRuolo);
 				
 				DataElement deMhTipo = new DataElement();
-				deMhTipo.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER);
+				deMhTipo.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiFiltroFaseMessageHandler" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_FASE_MESSAGE_HANDLER
 				boolean isRisposta = PluginCostanti.FILTRO_RUOLO_MESSAGE_HANDLER_VALORE_RISPOSTA.equals(mhRuolo);
 				List<String> values = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RICHIESTA;
 				List<String> labels = isRisposta ? PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RISPOSTA : PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_LABEL_RICHIESTA;
@@ -575,7 +578,7 @@ public class ConfigurazionePluginsTipoPluginUtils {
 			case ALLARME:
 				
 				DataElement deApplicabilita = new DataElement();
-				deApplicabilita.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_APPLICABILITA);
+				deApplicabilita.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiFiltroApplicabilita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_FILTRO_APPLICABILITA
 				deApplicabilita.setLabels(PluginCostanti.FILTRO_APPLICABILITA_LABELS);
 				deApplicabilita.setValues(PluginCostanti.FILTRO_APPLICABILITA_VALORI);
 				deApplicabilita.setType(DataElementType.SELECT);

@@ -43,12 +43,12 @@ import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.User;
 
@@ -98,14 +98,14 @@ public class PddHelper extends ConsoleHelper {
 			String ipGestione, int portaGestione, String implementazione, String clientAuth, boolean singlePdd) throws DriverRegistroServiziException {
 		
 		DataElement de = new DataElement();
-		de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PortaDiDominio" ) );	//PddCostanti.LABEL_PORTA_DI_DOMINIO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		/** Id della Porta di Dominio */
 		if (tipoOp.equals(TipoOperazione.CHANGE)) {
 			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddId" ) );	//PddCostanti.LABEL_PDD_ID
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(PddCostanti.PARAMETRO_PDD_ID);
@@ -114,7 +114,7 @@ public class PddHelper extends ConsoleHelper {
 		
 		/** Nome della Porta di Dominio */
 		de = new DataElement();
-		de.setLabel(PddCostanti.LABEL_PDD_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddNome" ) );	//PddCostanti.LABEL_PDD_NOME
 		if (tipoOp.equals(TipoOperazione.ADD) || this.core.isSinglePdD()) {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true);
@@ -128,7 +128,7 @@ public class PddHelper extends ConsoleHelper {
 
 		/** Descrizione della Porta di Dominio */
 		de = new DataElement();
-		de.setLabel(PddCostanti.LABEL_PDD_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddDescrizione" ) );	//PddCostanti.LABEL_PDD_DESCRIZIONE
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PddCostanti.PARAMETRO_PDD_DESCRIZIONE);
 		de.setValue(descrizione);
@@ -139,7 +139,7 @@ public class PddHelper extends ConsoleHelper {
 			
 			/** Protocollo (solo in caso di pdd control station) */
 			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddProtocollo" ) );	//PddCostanti.LABEL_PDD_PROTOCOLLO
 			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.SELECT);
 			}else
@@ -151,7 +151,7 @@ public class PddHelper extends ConsoleHelper {
 
 			/** Indirizzo Pubblico (solo in caso di pdd control station) */
 			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_INDIRIZZO_PUBBLICO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddIndirizzoPubblico" ) );	//PddCostanti.LABEL_PDD_INDIRIZZO_PUBBLICO
 			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);
@@ -164,7 +164,7 @@ public class PddHelper extends ConsoleHelper {
 
 			/** Porta Pubblica (solo in caso di pdd control station) */
 			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_PORTA_PUBBLICA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddPortaPubblica" ) );	//PddCostanti.LABEL_PDD_PORTA_PUBBLICA
 			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);
@@ -177,7 +177,7 @@ public class PddHelper extends ConsoleHelper {
 
 			/** Protocollo Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_PROTOCOLLO_GESTIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddProtocolloGestione" ) );	//PddCostanti.LABEL_PDD_PROTOCOLLO_GESTIONE
 			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.SELECT);
 			}else
@@ -189,7 +189,7 @@ public class PddHelper extends ConsoleHelper {
 			
 			/** Indirizzo Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_INDIRIZZO_GESTIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddIndirizzoGestione" ) );	//PddCostanti.LABEL_PDD_INDIRIZZO_GESTIONE
 			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);
@@ -202,7 +202,7 @@ public class PddHelper extends ConsoleHelper {
 
 			/** Porta Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_PORTA_GESTIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddPortaGestione" ) );	//PddCostanti.LABEL_PDD_PORTA_GESTIONE
 			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);
@@ -217,7 +217,7 @@ public class PddHelper extends ConsoleHelper {
 			// In caso di creazione posso scegliere il tipo che voglio
 			// Se tipo=='esterno' non posso cambiare il tipo
 			de = new DataElement();
-			de.setLabel(PddCostanti.LABEL_PDD_TIPOLOGIA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddTipologia" ) );	//PddCostanti.LABEL_PDD_TIPOLOGIA
 			de.setType(DataElementType.SELECT);
 			de.setName(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
 			if (tipoOp.equals(TipoOperazione.ADD)) {
@@ -246,7 +246,7 @@ public class PddHelper extends ConsoleHelper {
 			if(TipoOperazione.ADD.equals(tipoOp)==false){
 				// SinglePdD
 				de = new DataElement();
-				de.setLabel(PddCostanti.LABEL_PDD_TIPOLOGIA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddTipologia" ) );	//PddCostanti.LABEL_PDD_TIPOLOGIA
 				de.setType(DataElementType.TEXT);
 				de.setName(PddCostanti.PARAMETRO_PDD_TIPOLOGIA);
 				de.setValue(tipo.toString());
@@ -256,7 +256,7 @@ public class PddHelper extends ConsoleHelper {
 
 		/** Implementazione della Pdd */
 		de = new DataElement();
-		de.setLabel(PddCostanti.LABEL_PDD_IMPLEMENTAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddImplementazione" ) );	//PddCostanti.LABEL_PDD_IMPLEMENTAZIONE
 		if (this.isModalitaAvanzata()) {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true);
@@ -272,7 +272,7 @@ public class PddHelper extends ConsoleHelper {
 		/** ClientAuth della Pdd */
 		String[] tipiAuth = { CostantiConfigurazione.DISABILITATO.toString(), CostantiConfigurazione.ABILITATO.toString() };
 		de = new DataElement();
-		de.setLabel(PddCostanti.LABEL_PDD_CLIENT_AUTH);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddClientAuth" ) );	//PddCostanti.LABEL_PDD_CLIENT_AUTH
 		de.setType(DataElementType.SELECT);
 		de.setName(PddCostanti.PARAMETRO_PDD_CLIENT_AUTH);
 		de.setSelected(clientAuth);
@@ -284,7 +284,7 @@ public class PddHelper extends ConsoleHelper {
 		
 		/** Subject della Pdd */
 		de = new DataElement();
-		de.setLabel(PddCostanti.LABEL_PDD_SUBJECT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PddSubject" ) );	//PddCostanti.LABEL_PDD_SUBJECT
 		//if (clientAuth != null && clientAuth.equals("abilitato")) {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setValue(StringEscapeUtils.escapeHtml(subject));

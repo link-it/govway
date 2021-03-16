@@ -194,6 +194,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
@@ -205,7 +206,6 @@ import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.dynamic.components.BaseComponent;
 import org.openspcoop2.web.lib.mvc.dynamic.components.Hidden;
@@ -232,7 +232,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public Vector<DataElement>   addIdProprietaToDati(TipoOperazione tipoOp, String idprop, Vector<DataElement> dati) {
 		DataElement de = new DataElement();
 
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneIdProprieta" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA
 		de.setValue(idprop);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA);
@@ -246,11 +246,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAppender" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO
 		de.setValue(tipo);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -299,7 +299,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		boolean view = this.isModalitaAvanzata() && !allHidden;
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCrlLifeCache" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CRL_LIFE_CACHE
 		int value = -1;
 		try {
 			value = Integer.valueOf(crllifecache);
@@ -342,7 +342,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 		};
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStatoCache" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE
 		de.setName(nomeParametroStatoCache);
 		if(view && 
 				!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione) &&
@@ -360,7 +360,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneDimensioneCache" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE
 			de.setValue(dimensionecache);
 			if(view){
 				de.setType(DataElementType.TEXT_EDIT);
@@ -382,7 +382,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAlgoritmoCache" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE
 			de.setName(nomeParametroAlgoritmoCache);
 			if(view){
 				de.setType(DataElementType.SELECT);
@@ -397,7 +397,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLifeCache" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE
 			int value = -1;
 			try {
 				value = Integer.valueOf(lifecache);
@@ -419,7 +419,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneIdleCache" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE
 			de.setValue(idlecache);
 			if(view &&
 					!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI.equals(intestazioneSezione)){
@@ -445,7 +445,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneRegistroRotta" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -478,11 +478,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAppender" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO
 		de.setValue(tipo);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -512,11 +512,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSorgentiDati" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
@@ -525,7 +525,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNomeJndi" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_JNDI
 		de.setValue(nomeJndi);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
@@ -534,7 +534,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipoDatabase" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE);
 		de.setValues(tipoDbList);
@@ -566,11 +566,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSorgentiDati" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
@@ -579,7 +579,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNomeJndi" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_JNDI
 		de.setValue(nomeJndi);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_JNDI);
@@ -588,7 +588,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipoDatabase" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_DATABASE);
 		de.setValues(tipoDbList);
@@ -1224,11 +1224,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAppender" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO
 		de.setValue(tipo);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
@@ -1544,7 +1544,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		if(!resetOk) {
-			this.pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ConfigurazioneProprietaSistemaModificataConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO
 		}
 	}
 	
@@ -2421,7 +2421,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				} else {
 					if(StringUtils.isEmpty(canaliDefault)){
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 						return false;
 					}
 					
@@ -2434,7 +2434,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					
 					if(found ==false) {
-						this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_DEFAULT_SELEZIONATO_NON_ESISTE);
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.CanaleDefaultSelezionatoNonEsiste" ) );	//ConfigurazioneCostanti.MESSAGGIO_CANALE_DEFAULT_SELEZIONATO_NON_ESISTE
 						return false;
 					}
 				}
@@ -2449,7 +2449,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(canaleList != null) {
 						for (CanaleConfigurazione canale : canaleList) {
 							if(ConfigurazioneCanaliUtilities.isCanaleInUsoRegistro(canale, this.confCore, this, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE)) {
-								this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_FUNZIONALITA_CANALI_NON_DISATTIVABILE, inUsoMessage.toString()));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.FunzionalitaCanaliNonDisattivabile", inUsoMessage.toString()));	//ConfigurazioneCostanti.MESSAGGIO_FUNZIONALITA_CANALI_NON_DISATTIVABILE
 								return false;
 							}
 						}
@@ -2466,7 +2466,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	private boolean canaleDatiCheckData(String canaliNome, String canaliDescrizione) throws Exception {
 		// nome obbligatorio
 		if(StringUtils.isEmpty(canaliNome)){
-			this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME));
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 			return false;
 		}
 		
@@ -3154,7 +3154,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipiSoggettiLabel, String[] tipiSoggettiLabelPerProtocollo )
 					throws DriverRegistroServiziException {
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DESTINATARIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneDestinatario" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DESTINATARIO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -3168,7 +3168,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			dati.addElement(de);
 //		} else {
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO
 //		if (tipo == null) {
 //			de.setValue("");
 //		} else {
@@ -3186,7 +3186,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //		}
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
@@ -3195,7 +3195,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRotta" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -3203,7 +3203,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_REGISTRO 
 		};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA);
 		de.setValues(tipoR);
@@ -3234,7 +3234,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //		} else {
 		if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_SOGGETTO_ROTTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipoSoggettoRotta" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_SOGGETTO_ROTTA
 			//de.setValue(tiposoggrotta);
 			de.setSelected(tiposoggrotta);
 			de.setValues(tipiSoggettiLabelPerProtocollo);
@@ -3246,7 +3246,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNomeSoggettoRotta" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA
 			de.setValue(nomesoggrotta);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
@@ -3258,7 +3258,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_REGISTRO)) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneRegistroRotta" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA);
 			de.setValues(registriList);
@@ -3280,7 +3280,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			Vector<DataElement> dati) throws DriverRegistroServiziException {
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRoutingDelleBuste" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
@@ -3290,7 +3290,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 		};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRoutingDelleBusteStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE_STATO
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ROTTA_ENABLED);
 		de.setValues(tipoRouting);
@@ -3301,7 +3301,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		if (rottaenabled.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTA_DI_DEFAULT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRottaDiDefault" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTA_DI_DEFAULT
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
@@ -3310,7 +3310,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_REGISTRO
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA);
 			de.setValues(tipoR);
@@ -3341,7 +3341,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			} else {
 			if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_GATEWAY)) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_SOGGETTO_ROTTA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipoSoggettoRotta" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_SOGGETTO_ROTTA
 				//de.setValue(tiposoggrotta);
 				//de.setType(DataElementType.TEXT_EDIT);
 				de.setType(DataElementType.SELECT);
@@ -3353,7 +3353,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNomeSoggettoRotta" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA
 				de.setValue(nomesoggrotta);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_SOGGETTO_ROTTA);
@@ -3365,7 +3365,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if (tiporotta.equals(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_REGISTRO)) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneRegistroRotta" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA
 				de.setType(DataElementType.SELECT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRO_ROTTA);
 				de.setValues(registriList);
@@ -3375,7 +3375,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTE_STATICHE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRotteStatiche" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROTTE_STATICHE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
@@ -3396,13 +3396,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			Vector<DataElement> dati) {
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistro" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
 		DataElement de = new DataElement();
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME
 		de.setValue(nome);
 		if(TipoOperazione.ADD.equals(tipoOP)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -3416,7 +3416,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOCATION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLocation" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOCATION
 		de.setValue(location);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOCATION);
@@ -3432,7 +3432,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_WS
 		};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
 		de.setValues(tipoReg);
@@ -3443,7 +3443,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		if (tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI)) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneUtente" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTENTE
 			de.setValue(utente);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTENTE);
@@ -3451,7 +3451,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePassword" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PASSWORD
 			de.setValue(password);
 			de.setType(DataElementType.CRYPT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PASSWORD);
@@ -3459,7 +3459,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneConfermaPassword" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD
 			de.setValue(confpw);
 			de.setType(DataElementType.CRYPT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONFERMA_PASSWORD);
@@ -3501,7 +3501,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if (!this.isModalitaCompleta() || allHidden) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneInoltroMin" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN
 			de.setValue(inoltromin);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
@@ -3509,14 +3509,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO);
 			de.setValue(stato);
 
 			dati.addElement(de);
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControllo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO);
 			de.setValue(controllo);
@@ -3524,26 +3524,26 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneProfiloCollaborazione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
 			de.setValue(profcoll);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALIDMAN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneValidman" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALIDMAN
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			de.setValue(validman);
 			dati.addElement(de);
 		} else {
 
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneInoltroBusteNonRiscontrate" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
  
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneInoltroMin" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN
 			de.setValue(inoltromin);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
@@ -3552,7 +3552,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALIDAZIONE_BUSTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneValidazioneBuste" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALIDAZIONE_BUSTE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
@@ -3562,7 +3562,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO);
 			de.setValues(tipoStato);
@@ -3574,7 +3574,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_NORMALE
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControllo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO);
 			de.setValues(tipoControllo);
@@ -3586,7 +3586,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneProfiloCollaborazione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE);
 			de.setValues(tipoPF);
@@ -3598,7 +3598,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALIDMAN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneValidman" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALIDMAN
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			de.setValues(tipoVM);
@@ -3623,14 +3623,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if (!this.isModalitaCompleta() || allHidden) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneConnessione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONNESSIONE
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
 			de.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_REPLY);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTILIZZO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneUtilizzo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTILIZZO
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTILIZZO);
 			de.setValue(CostantiConfigurazione.DISABILITATO.toString());
@@ -3638,7 +3638,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 		} else {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALIDAZIONE_CONTENUTI_APPLICATIVI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneValidazioneContenutiApplicativi" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALIDAZIONE_CONTENUTI_APPLICATIVI
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
@@ -3648,7 +3648,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY 
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_XSD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneXsd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_XSD
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_XSD);
 			de.setValues(tipoXsd);
@@ -3671,7 +3671,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_WSDL
 				};
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTipoValidazione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE
 				de.setType(DataElementType.SELECT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE);
 				de.setValues(tipi_validazione);
@@ -3685,7 +3685,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				// Applica MTOM 
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateAccettaMtom" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ACCETTA_MTOM
 
 				
 				if(this.isModalitaAvanzata()){
@@ -3704,7 +3704,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RISPOSTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRisposte" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RISPOSTE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
@@ -3713,7 +3713,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_REPLY
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneConnessione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONNESSIONE
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONNESSIONE);
 			de.setValues(tipoConn);
@@ -3721,7 +3721,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INDIRIZZO_TELEMATICO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneIndirizzoTelematico" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INDIRIZZO_TELEMATICO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
@@ -3730,7 +3730,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 			};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTILIZZO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneUtilizzo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTILIZZO
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_UTILIZZO);
 			de.setValues(tipoU);
@@ -3743,7 +3743,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if (this.isModalitaCompleta() && !allHidden) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneManifestAttachments" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -3754,7 +3754,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		};
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTMAN);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTMAN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneGestman" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTMAN
 		if (!this.isModalitaCompleta() || allHidden) {
 			de.setType(DataElementType.HIDDEN);
 		}
@@ -3772,7 +3772,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(!allHidden) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneMultitenant" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -3797,7 +3797,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneMultitenantStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
 		if(allHidden) {
 			de.setType(DataElementType.HIDDEN);
@@ -3830,13 +3830,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(!allHidden) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT_FRUIZIONI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneMultitenantFruizioni" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT_FRUIZIONI
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 			}
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneMultitenantFruizioniSoggettoErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
 			if(!allHidden && editModeEnabled) {
 				de.setType(DataElementType.SELECT);
@@ -3854,7 +3854,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(!editModeEnabled) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneMultitenantFruizioniSoggettoErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE+"__LABEL");
 				String multi = MultitenantSoggettiFruizioni.SOLO_SOGGETTI_ESTERNI.getValue();
 				try {
@@ -3869,13 +3869,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(!allHidden) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT_EROGAZIONI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneMultitenantErogazioni" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT_EROGAZIONI
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 			}
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneMultitenantErogazioniSoggettiFruitori" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
 			if(!allHidden && editModeEnabled) {
 				de.setType(DataElementType.SELECT);
@@ -3893,7 +3893,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(!editModeEnabled) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneMultitenantErogazioniSoggettiFruitori" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI+"__LABEL");
 				String multi = MultitenantSoggettiErogazioni.SOLO_SOGGETTI_ESTERNI.getValue();
 				try {
@@ -3913,13 +3913,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(!allHidden) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PREFIX_URL_INVOCAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazionePrefixUrlInvocazione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PREFIX_URL_INVOCAZIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneProtocolloPrefixUrlInvocazionePa" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
 		if(allHidden) {
 			de.setType(DataElementType.HIDDEN);
@@ -3932,7 +3932,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneProtocolloPrefixUrlInvocazionePd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD);
 		if(allHidden) {
 			de.setType(DataElementType.HIDDEN);
@@ -4011,7 +4011,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if (integrationManagerSupported && !this.isModalitaStandard() && !allHidden) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneIntegrationManager" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -4027,7 +4027,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			tipoIM[(totEl-1)] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM;
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INTEGMAN);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INTEGMAN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneIntegman" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INTEGMAN
 		if (!integrationManagerSupported || this.isModalitaStandard() || allHidden) {
 			de.setType(DataElementType.HIDDEN);
 		}
@@ -4041,7 +4041,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneNomeIntegman" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN
 		if (!integrationManagerSupported || this.isModalitaStandard() || allHidden) {
 			de.setType(DataElementType.HIDDEN);
 		}
@@ -4066,7 +4066,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazionePlugins" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -4102,7 +4102,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(!allHidden && !multitenantEnabled) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROFILO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneProfilo" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROFILO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -4133,7 +4133,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneProtocolloPrefixName" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(protocollo);
@@ -4144,7 +4144,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				long idSoggettoLong = this.soggettiCore.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo());
 						
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneProtocolloPrefixSoggetto" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_SOGGETTO+protocollo);
 				de.setValue(this.getLabelNomeSoggetto(protocollo, idSoggetto.getTipo(), idSoggetto.getNome()));
 				if(allHidden) {
@@ -4174,7 +4174,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if (!allHidden && this.isModalitaCompleta()) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistroServizi" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 	
@@ -4185,7 +4185,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 	
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneTabellaDiRouting" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 	
@@ -4202,7 +4202,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if (!allHidden) {
 	
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneProprietaSistema" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -4241,7 +4241,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(!allHidden && addTitle) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCanali" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -4282,13 +4282,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(numeroCanali == 0) {
 					// subtitle
 					de = new DataElement();
-					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE_DEFAULT);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCanaleDefault" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE_DEFAULT
 					de.setType(DataElementType.SUBTITLE);
 					dati.addElement(de);
 					
 					// nome canale 
 					de = new DataElement();
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
 					de.setValue(canaliNome);
@@ -4298,7 +4298,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					// descrizione canale
 					de = new DataElement();
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
 					de.setValue(canaliDescrizione);
@@ -4306,7 +4306,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				} else {
 					// scelta canale default
 					de = new DataElement();
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliDefault" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DEFAULT);
 					de.setType(DataElementType.SELECT);
 					
@@ -4345,14 +4345,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneDumpConnettorePd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpPD);
 		dati.addElement(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneDumpConnettorePa" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(dumpPA);
 		dati.addElement(de);
@@ -4364,7 +4364,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// DUMP
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneMessaggi" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -4374,7 +4374,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		};
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO
 		de.setType(DataElementType.SELECT);
 		de.setValues(tipoDump);
 		de.setSelected(dumpApplicativo);
@@ -4414,7 +4414,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(this.isModalitaAvanzata()){
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneDumpConnettore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 		}
@@ -4425,7 +4425,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		};
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneDumpConnettorePd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD
 		if(this.isModalitaAvanzata()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoDumpConnettorePD);
@@ -4443,7 +4443,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		};
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneDumpConnettorePa" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA
 		if(this.isModalitaAvanzata()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoDumpConnettorePA);
@@ -4461,7 +4461,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addTracciamentoToDatiAsHidden(String registrazioneTracce, Configurazione configurazione, Vector<DataElement> dati) {
 		DataElement de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(registrazioneTracce);
 		dati.addElement(de);
@@ -4478,7 +4478,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(showTitleSection) {
 			if(this.isModalitaAvanzata()){
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneTracce" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCE
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
@@ -4490,7 +4490,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		};
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO
 		if(this.isModalitaCompleta()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoBuste);
@@ -4538,7 +4538,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	public void addMessaggiDiagnosticiToDatiAsHidden(String severita, String severita_log4j, Vector<DataElement> dati) {
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLivelloSeverita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 		de.setValue(severita);
@@ -4546,7 +4546,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLivelloSeveritaLog4j" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(severita_log4j);
 		dati.addElement(de);
@@ -4600,7 +4600,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de.setLabels(labels);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODI_CLUSTER);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaNodoCluster" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER
 		de.setSize(this.getSize());
 		de.setPostBack(true);
 		if(labels.size()>10) {
@@ -4747,18 +4747,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		DataElement de = newDataElementStyleRuntime();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaRuntime" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME
 		dati.addElement(de);
 				
 		de = newDataElementStyleRuntime();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
-		de.setLabel(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaNodoCluster" ) );	//ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(alias);
 		dati.addElement(de);
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaExport" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER,
 				new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER,alias));
 		de.setType(DataElementType.LINK);
@@ -4800,7 +4800,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(resetAllCaches){
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaCacheReset" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES+
@@ -4815,7 +4815,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 				
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoGenerali" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -4836,7 +4836,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versionePdD = StringEscapeUtils.escapeHtml(versionePdD);
 		}
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaVersionePdd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD
 		de.setValue(versionePdD);
 		de.setType(DataElementType.TEXT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD);
@@ -4861,7 +4861,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versioneBaseDati = StringEscapeUtils.escapeHtml(versioneBaseDati);
 		}
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaVersioneBaseDati" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI
 		de.setValue(versioneBaseDati);
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
@@ -4888,7 +4888,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			confDir = StringEscapeUtils.escapeHtml(confDir);
 		}
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaDirectoryConfigurazione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE
 		de.setValue(confDir);
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
@@ -4915,7 +4915,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			vendorJava = StringEscapeUtils.escapeHtml(vendorJava);
 		}
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaVendorJava" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA
 		de.setValue(vendorJava);
 		de.setType(DataElementType.TEXT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA);
@@ -4940,7 +4940,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versioneJava = StringEscapeUtils.escapeHtml(versioneJava);
 		}
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaVersioneJava" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA
 		de.setValue(versioneJava);
 		de.setType(DataElementType.TEXT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
@@ -4967,7 +4967,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //			messageFactory = StringEscapeUtils.escapeHtml(messageFactory);
 //		}
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaMessageFactory" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY
 		de.setValue(messageFactory.trim().contains(" ") ? messageFactory.trim().replaceAll(" ", "\n") : messageFactory);
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setRows(2);
@@ -4981,7 +4981,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = newDataElementStyleRuntime();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaStatoServizi" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI
 		dati.addElement(de);
 		
 		try{
@@ -4993,7 +4993,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStatoServizioPd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5015,7 +5015,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStatoServizioPa" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5037,7 +5037,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneStatoServizioIm" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5055,7 +5055,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoDiagnostica" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -5069,7 +5069,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
 					LogLevels.LIVELLO_ALL};
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLivelloSeverita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 			de.setValues(tipoMsg);
@@ -5093,7 +5093,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					LogLevels.LIVELLO_ALL};
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLivelloSeveritaLog4j" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J
 			if(this.core.isVisualizzazioneConfigurazioneDiagnosticaLog4J()){
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoMsg);
@@ -5119,7 +5119,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDiagnosticaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
@@ -5139,7 +5139,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jOpenspcoopLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
@@ -5159,7 +5159,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jIntegrationManagerLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
@@ -5177,7 +5177,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoTracciamento" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -5190,7 +5190,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneRegistrazioneTracce" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			if(this.isModalitaAvanzata()) {
 				if(this.isModalitaCompleta()){
@@ -5224,7 +5224,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpConnettorePdLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
@@ -5247,7 +5247,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpConnettorePaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
@@ -5269,7 +5269,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jTracciamentoLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
@@ -5289,7 +5289,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
@@ -5309,7 +5309,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			if(state.isEnabled()) {
 				de = newDataElementStyleRuntime();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneFileTraceLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 			}
@@ -5317,10 +5317,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE);
 			if(state.isEnabled()) {
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_STATO_LABEL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneFileTraceStatoLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_STATO_LABEL
 			}
 			else {
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneFileTraceLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL
 			}
 			String v = state.isEnabled() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
@@ -5331,7 +5331,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = newDataElementStyleRuntime();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIG);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_LABEL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneFileTraceConfigurazioneLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_LABEL
 				de.setType(DataElementType.TEXT);
 				de.setValue(state.getPath());
 				dati.addElement(de);
@@ -5341,7 +5341,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = newDataElementStyleRuntime();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FILE_TRACE_UPDATE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LAST_UPDATE_LABEL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneFileTraceLastUpdateLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LAST_UPDATE_LABEL
 				de.setType(DataElementType.SELECT);
 				de.setValues(valori);
 				de.setLabels(label);
@@ -5361,12 +5361,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionError" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorType" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_TYPE
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -5379,7 +5379,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorSpecificErrorTypeProcessRequest" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_REQUEST
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5409,7 +5409,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorSpecificErrorTypeProcessResponse" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_PROCESS_RESPONSE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5436,7 +5436,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorSpecificErrorTypeInternalError" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_TYPE_INTERNAL_ERROR
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5455,7 +5455,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorStatus" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -5468,7 +5468,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorStatusCode" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_STATUS_CODE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5492,7 +5492,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorSoapUseStatusCodeAsSoapFault" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_USE_STATUS_CODE_AS_SOAP_FAULT
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5508,7 +5508,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorDetails" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_DETAILS
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -5521,7 +5521,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorSpecificErrorDetails" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SPECIFIC_ERROR_DETAILS
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5537,7 +5537,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorInstance" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -5550,7 +5550,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorInstanceId" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_INSTANCE_ID
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5566,7 +5566,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorSoapGenerateHttp" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -5579,7 +5579,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneTransactionErrorSoapGenerateHttpCode" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR_SOAP_GENERATE_HTTP_CODE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5598,7 +5598,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoDatabase" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -5795,7 +5795,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_SSL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoSsl" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_SSL
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -5847,7 +5847,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(this.core.isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength()){
 		
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoCryptographyKeyLength" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -5906,7 +5906,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CHARSET);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoCharset" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CHARSET
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -5968,7 +5968,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoInternazionalizzazione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -6028,7 +6028,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoTimezone" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -6085,7 +6085,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoJavaNet" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -6155,7 +6155,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaInfoProtocolli" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -6240,7 +6240,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(caches!=null && caches.size()>0){
 			
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaCache" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -6273,7 +6273,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if("abilitata".equals(stato)){
 					
 					de = newDataElementStyleRuntime();
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaCacheReset" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 							"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+cache+
@@ -6286,7 +6286,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					if(this.confCore.getJmxPdD_caches_prefill(alias).contains(cache)){
 						de = newDataElementStyleRuntime();
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaCachePrefill" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL
 						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 								"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+cache+
@@ -6301,7 +6301,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				de = newDataElementStyleRuntime();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaCacheStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO
 				de.setValue(stato);
 				de.setType(DataElementType.TEXT);
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
@@ -6377,12 +6377,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaConnessioni" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaConnessioneDatabase" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -6401,7 +6401,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaConnessioniStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
 		}
@@ -6429,7 +6429,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				dati.addElement(de);
 				
 				de = newDataElementStyleRuntime();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaConnessioniStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO
 				if(statoConnessioniAltroDB!=null){
 					statoConnessioniAltroDB = StringEscapeUtils.escapeHtml(statoConnessioniAltroDB);
 				}
@@ -6446,7 +6446,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaConnessioneJms" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -6465,7 +6465,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaConnessioniStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
 		}
@@ -6483,12 +6483,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaTransazioni" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaTransazioniId" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -6507,7 +6507,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaTransazioniStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
 		}
@@ -6521,7 +6521,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaTransazioniIdProtocollo" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -6540,7 +6540,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaTransazioniStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
 		}
@@ -6559,7 +6559,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaConnessioniHttp" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 				
@@ -6568,7 +6568,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE);
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaConnessionePd" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -6587,7 +6587,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaConnessioniStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
 		}
@@ -6603,7 +6603,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaConnessionePa" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -6622,7 +6622,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaConnessioniStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
 		}
@@ -6646,13 +6646,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(code.size()<=1) {
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaThreads" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaNotifiche" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE
 		if(code.size()<=1) {
 			de.setType(DataElementType.SUBTITLE);
 		}
@@ -6693,7 +6693,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaThreadPoolStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_STATO
 			if(stato!=null){
 				stato = StringEscapeUtils.escapeHtml(stato);
 			}
@@ -6722,7 +6722,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONFIG);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaPoolConfig" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONFIG
 			if(configurazioneCoda!=null){
 				configurazioneCoda = StringEscapeUtils.escapeHtml(configurazioneCoda);
 			}
@@ -6751,7 +6751,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONNNETTORI_PRIORITARI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaPoolConnnettoriPrioritari" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONNNETTORI_PRIORITARI
 			if(connettoriPrioritari!=null){
 				connettoriPrioritari = StringEscapeUtils.escapeHtml(connettoriPrioritari);
 			}
@@ -6772,7 +6772,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(!"".equals(connettoriPrioritari)) {
 				de = newDataElementStyleRuntime();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaThreadPoolEliminaConnettoriPrioritari" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_ELIMINA_CONNETTORI_PRIORITARI
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
 						"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+coda+
@@ -6788,14 +6788,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(code.size()>1) {
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaThreads" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
 		
 			
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_STATISTICHE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaTimersStatistiche" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_STATISTICHE
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
@@ -6817,7 +6817,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaTimersRuntime" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
@@ -6848,7 +6848,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaTimersMonitoraggio" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
@@ -6862,7 +6862,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = newDataElementStyleRuntime();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneSistemaTimersSistema" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
@@ -6889,7 +6889,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(this.confCore.isConfigurazioneAllarmiEnabled()) {
 			
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiAttivi" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			
@@ -6907,7 +6907,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 				de = newDataElementStyleRuntime();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_STOP);
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiAttiviStop" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STOP);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
@@ -6917,7 +6917,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = newDataElementStyleRuntime();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_RESTART);
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiAttiviRestart" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_RESTART);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
@@ -6932,7 +6932,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(existsAllarmi) {
 					de = newDataElementStyleRuntime();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_START);
-					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiAttiviStart" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START
 					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_START);
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
@@ -6945,7 +6945,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			
 			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiAttiviStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_ATTIVI_STATO
 			if("".equals(stato)) {
 				stato = "Nessun allarme attivo";
 			}
@@ -7064,7 +7064,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// Tempi di Risposta
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneTempiRisposta" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -7085,14 +7085,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// **** Limitazione Numero di Richieste Complessive Gestite dalla PdD ****
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LIMITAZIONE_NUMERO_RICHIESTE_COMPLESSIVE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneLimitazioneNumeroRichiesteComplessive" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LIMITAZIONE_NUMERO_RICHIESTE_COMPLESSIVE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// stato
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoNumMassimoRichiesteSimultaneeStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_STATO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_STATO);
 		de.setType(DataElementType.SELECT);
 		de.setValues(ConfigurazioneCostanti.STATI_CON_WARNING);
@@ -7114,7 +7114,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// soglia
 		Long numeroThreadComplessivi = null;
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoNumMassimoRichiesteSimultaneeSoglia" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA);
 		if(controlloTraffico.isControlloMaxThreadsEnabled()) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7133,7 +7133,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 		// messaggio di errore
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoNumMassimoRichiesteSimultaneeTipologiaErroreDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE_DESCRIZIONE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE_DESCRIZIONE);
 		if(!this.isModalitaStandard() && controlloTraffico.isControlloMaxThreadsEnabled() && (controlloTraffico.isControlloMaxThreadsWarningOnly() == false)) {
 			de.setType(DataElementType.CHECKBOX);
@@ -7148,7 +7148,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// tipo errore
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoNumMassimoRichiesteSimultaneeTipologiaErrore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE);
 		if(controlloTraffico.isControlloMaxThreadsEnabled() && (controlloTraffico.isControlloMaxThreadsWarningOnly() == false)) {
 			if(this.isModalitaStandard()) {
@@ -7182,7 +7182,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Link visualizza stato 
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoVisualizzaStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RUNTIME);
 			de.setType(DataElementType.LINK);
@@ -7197,7 +7197,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(controlloTraffico.isControlloMaxThreadsEnabled()) {
 		
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_CONTROLLO_CONGESTIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneControlloTrafficoStatoControlloCongestione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_CONTROLLO_CONGESTIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -7205,7 +7205,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// stato
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_CONTROLLO_CONGESTIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoStatoControlloCongestione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_CONTROLLO_CONGESTIONE
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_CONTROLLO_CONGESTIONE);
 			de.setType(DataElementType.SELECT);
 			de.setValues(ConfigurazioneCostanti.STATI);
@@ -7217,7 +7217,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// threshold
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_THRESHOLD_CONTROLLO_CONGESTIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoThresholdControlloCongestione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_THRESHOLD_CONTROLLO_CONGESTIONE
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_THRESHOLD_CONTROLLO_CONGESTIONE);
 			if(controlloTraffico.isControlloCongestioneEnabled()){
 				de.setType(DataElementType.SELECT);
@@ -7265,13 +7265,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //		if( first || finished ){
 
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRateLimiting" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 				
 		// messaggio di errore
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoRateLimitingTipologiaErroreDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE_DESCRIZIONE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE_DESCRIZIONE);
 		if(this.isModalitaStandard()) {
 			de.setType(DataElementType.HIDDEN);
@@ -7286,7 +7286,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// tipo errore
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoRateLimitingTipologiaErrore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE);
 		TipoErrore tipoErroEnum = null;
 		if(controlloTraffico.getRateLimiting().getTipoErrore()!=null) {
@@ -7310,7 +7310,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoRateLimitingPolicyLink" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK
 		de.setType(DataElementType.LINK);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST);
 		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY+" (" +sizePolicy+ ")");
@@ -7318,7 +7318,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoRateLimitingPolicyGlobaliLink" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK
 		de.setType(DataElementType.LINK);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST);
 		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK+" (" + sizeGlobalPolicy+ ")");
@@ -7336,14 +7336,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_RUNTIME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoStatoRuntime" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_RUNTIME
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Link visualizza stato 
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_REFRESH);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoVisualizzaStatoRefresh" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_REFRESH
 		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_REFRESH);
 		de.setUrl(org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RUNTIME);
 		de.setType(DataElementType.LINK);
@@ -7372,7 +7372,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_THREADS_ATTIVI);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_THREADS_ATTIVI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoVisualizzaStatoThreadsAttivi" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_THREADS_ATTIVI
 			de.setType(DataElementType.TEXT);
 			de.setValue(threadsAttivi);
 			dati.addElement(de);
@@ -7389,7 +7389,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_CONGESTIONE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_CONGESTIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoVisualizzaStatoCongestione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_CONGESTIONE
 			de.setType(DataElementType.TEXT);
 			de.setValue(pddCongestionata);
 			dati.addElement(de);
@@ -7402,12 +7402,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addToDatiTempiRispostaFruizione(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean editEnabled, TempiRispostaFruizione tempiRispostaFruizione) throws Exception {
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FRUIZIONI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneFruizioni" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FRUIZIONI
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoConnectionTimeoutLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL
 		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_FRUIZIONE);
 		if(editEnabled){
@@ -7422,7 +7422,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoReadTimeoutLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL
 		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_FRUIZIONE);
 		if(editEnabled){
@@ -7437,7 +7437,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoTempoMedioRispostaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL
 		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_FRUIZIONE);
 		if(editEnabled){
@@ -7457,12 +7457,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addToDatiTempiRispostaErogazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean editEnabled, TempiRispostaErogazione tempiRispostaErogazione) throws Exception {
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_EROGAZIONI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneErogazioni" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_EROGAZIONI
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoConnectionTimeoutLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL
 		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_EROGAZIONE);
 		if(editEnabled){
@@ -7477,7 +7477,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoReadTimeoutLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL
 		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_EROGAZIONE);
 		if(editEnabled){
@@ -7492,7 +7492,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoTempoMedioRispostaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL
 		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_EROGAZIONE);
 		if(editEnabled){
@@ -7515,13 +7515,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 		if(enabled){
 			DataElement de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONFIGURAZIONE_CACHE_DATI_STATISTICI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneConfigurazioneCacheDatiStatistici" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONFIGURAZIONE_CACHE_DATI_STATISTICI
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoCacheStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_STATO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_STATO);
 		if(enabled){
 			//de.setType(DataElementType.CHECKBOX);
@@ -7537,7 +7537,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 				
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoCacheDimensione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE);
 		if(enabled && cache.isCache()){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7556,7 +7556,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				CacheAlgorithm.MRU.name()
 		};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_ALGORITMO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoCacheAlgoritmo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_ALGORITMO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_ALGORITMO);
 		if(enabled && cache.isCache()){
 			de.setType(DataElementType.SELECT);
@@ -7574,7 +7574,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoCacheLifeTime" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
 		if(enabled && cache.isCache()){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7588,7 +7588,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoCacheIdleTime" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
 		if(enabled && cache.isCache()){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -8525,7 +8525,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								
 						if(i > 0) {
 							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
-							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							imageUp.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaSu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU
 							List<Parameter> listP = new ArrayList<>();
 							listP.add(pPolicyId);
 							listP.add(pPolicyRisorsa);
@@ -8545,7 +8545,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(i < numeroElementi -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
-							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							imageDown.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaGiu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU
 							List<Parameter> listP = new ArrayList<>();
 							listP.add(pPolicyId);
 							listP.add(pPolicyRisorsa);
@@ -8568,18 +8568,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setType(DataElementType.CHECKBOX);
 					if(policy.isEnabled()){
 						if(policy.isWarningOnly()){
-							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_WARNING_ONLY);
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoWarningOnly" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_WARNING_ONLY
 							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_WARNING_ONLY);
 							de.setSelected(CheckboxStatusType.CONFIG_WARNING);
 						}
 						else{
-							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoAbilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO
 							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 							de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 						}
 					}
 					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoDisabilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
@@ -8700,11 +8700,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					DataElementImage imageUp = new DataElementImage();
 					if(policy.isContinuaValutazione()) {
 						imageUp.setImage(CostantiControlStation.ICONA_CONTINUE);
-						imageUp.setToolTip(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE_PROSEGUI_TOOLTIP);
+						imageUp.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveContinueProseguiTooltip" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE_PROSEGUI_TOOLTIP
 					}
 					else {
 						imageUp.setImage(CostantiControlStation.ICONA_BREAK);
-						imageUp.setToolTip(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE_INTERROMPI_TOOLTIP);
+						imageUp.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveContinueInterrompiTooltip" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE_INTERROMPI_TOOLTIP
 					}
 					if(ruoloPorta!=null) {
 						imageUp.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta, parServiceBinding);
@@ -10027,7 +10027,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String oldNomeSuggeritoPolicy,  String oldDDescrizioneSuggeritaPolicy, String oldPolicyId) throws Exception {
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazionePolicy" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -10072,7 +10072,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// name
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME
 		de.setValue(policy.getIdPolicy());
 		if(editMode) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -10088,7 +10088,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// descrizione
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE
 		de.setValue(StringEscapeUtils.escapeHtml(policy.getDescrizione()));
 		if(editMode) {
 			de.setType(DataElementType.TEXT_AREA);
@@ -10112,7 +10112,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// Descrizione sul numero di policy attive
 		if(!editMode && numeroPolicyIstanziate>0) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyIstanziata" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA
 			String name = ( numeroPolicyIstanziate+" istanza");
 			if(numeroPolicyIstanziate>1) {
 				name = ( numeroPolicyIstanziate+" istanze");
@@ -10127,7 +10127,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addConfigurazionePolicyValoriSoglia(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazionePolicy policy, boolean editMode, boolean editOnlyValueMode) throws Exception {
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALORI_SOGLIA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneValoriSoglia" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_VALORI_SOGLIA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -10177,7 +10177,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Modalità di Controllo
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_CONTROLLO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_CONTROLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaTipoControllo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_CONTROLLO
 			if(TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA.equals(policy.getRisorsa())){
 				de.setType(DataElementType.TEXT);
 				policy.setModalitaControllo(TipoControlloPeriodo.REALTIME); // obbligatorio il realtime
@@ -10203,7 +10203,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_CONTROLLO+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_CONTROLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaTipoControllo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_CONTROLLO
 				if(TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA.equals(policy.getRisorsa())){
 					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MODALITA_CONTROLLO_REALTIME);
 				}
@@ -10231,13 +10231,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Intervallo Osservazione
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneControlloTrafficoPolicyIntervalloOsservazione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaTipoPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO
 			if(editMode) {
 				de.setType(DataElementType.SELECT);
 			}
@@ -10269,7 +10269,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaTipoPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_TIPO_PERIODO
 				if(TipoControlloPeriodo.REALTIME.equals(policy.getModalitaControllo())){
 					switch (policy.getTipoIntervalloOsservazioneRealtime()) {
 					case GIORNALIERO:
@@ -10341,13 +10341,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				deNoEditMode = new DataElement();
 				deNoEditMode.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_FINESTRA_PERIODO+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-				deNoEditMode.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_FINESTRA_PERIODO);
+				deNoEditMode.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaFinestraPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_FINESTRA_PERIODO
 				deNoEditMode.setType(DataElementType.TEXT);
 			}
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_FINESTRA_PERIODO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_FINESTRA_PERIODO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaFinestraPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_FINESTRA_PERIODO
 			if(editMode) {
 				de.setType(DataElementType.SELECT);
 			}
@@ -10445,7 +10445,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			DataElement de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_BANDA);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_BANDA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTipoBanda" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_BANDA
 			if(editMode) {
 				de.setType(DataElementType.SELECT);
 			}
@@ -10467,7 +10467,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_BANDA+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_BANDA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTipoBanda" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_BANDA
 				switch (policy.getValoreTipoBanda()) {
 				case COMPLESSIVA:
 					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_BANDA_COMPLESSIVA);
@@ -10490,10 +10490,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			DataElement de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_LATENZA);
 			if(TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(tipoRisorsa)){
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_TIPO_LATENZA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoMedioTipoLatenza" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_TIPO_LATENZA
 			}
 			else{
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_TIPO_LATENZA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoComplessivoTipoLatenza" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_TIPO_LATENZA
 			}
 			if(editMode) {
 				de.setType(DataElementType.SELECT);
@@ -10517,10 +10517,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TIPO_LATENZA+
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
 				if(TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(tipoRisorsa)){
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_TIPO_LATENZA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoMedioTipoLatenza" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_TIPO_LATENZA
 				}
 				else{
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_TIPO_LATENZA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoComplessivoTipoLatenza" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_TIPO_LATENZA
 				}
 				switch (policy.getValoreTipoLatenza()) {
 				case TOTALE:
@@ -10544,30 +10544,30 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE);
 		switch (tipoRisorsa) {
 		case NUMERO_RICHIESTE:
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 			break;
 		case OCCUPAZIONE_BANDA:
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreOccupazioneDiBandaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_NOTE);
 			break;
 		case TEMPO_MEDIO_RISPOSTA:
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoMedioLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_NOTE);
 			break;
 		case TEMPO_COMPLESSIVO_RISPOSTA:
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoComplessivoLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_NOTE);
 			break;
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_NOTE);
 			break;
 		case NUMERO_RICHIESTE_FALLITE:
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_NOTE);
 			break;
 		case NUMERO_FAULT_APPLICATIVI:
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_FAULT_APPLICATIVI_NOTE);
 			break;
 		}
@@ -10600,7 +10600,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Link modifica
 				de = new DataElement(); 
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_RICHIESTA_MODIFICA);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_RICHIESTA_MODIFICA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreModificatoConIstanzeAttiveRichiestaModifica" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_RICHIESTA_MODIFICA
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_RICHIESTA_MODIFICA);
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_CHANGE, 
 						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
@@ -10615,7 +10615,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addConfigurazionePolicyApplicabilitaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione,  ConfigurazionePolicy policy, ConfigurazioneControlloTraffico controlloTraffico, boolean editMode) throws Exception {
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPLICABILITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneApplicabilita" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPLICABILITA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -10623,7 +10623,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// condizionale
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_TIPO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_TIPO
 		boolean condizionata = TipoApplicabilita.CONDIZIONALE.equals(policy.getTipoApplicabilita());
 		if(editMode) {
 			de.setType(DataElementType.CHECKBOX);
@@ -10642,7 +10642,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_TIPO+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_TIPO
 			if(condizionata) {
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 			}
@@ -10793,7 +10793,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(policy.isApplicabilitaConCongestione()){
 			DataElement de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONGESTIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCongestione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONGESTIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -10842,7 +10842,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(policy.isApplicabilitaDegradoPrestazionale()){
 			DataElement de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DEGRADO_PRESTAZIONALE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneDegradoPrestazionale" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DEGRADO_PRESTAZIONALE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -10860,7 +10860,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// Modalità di Controllo
 		DataElement de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_CONTROLLO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_CONTROLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleTipoControllo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_CONTROLLO
 		if(policy.isApplicabilitaDegradoPrestazionale()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(ConfigurazioneCostanti.TIPI_CONTROLLO);
@@ -10892,7 +10892,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_CONTROLLO+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_CONTROLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleTipoControllo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_CONTROLLO
 			switch (policy.getDegradoAvgTimeModalitaControllo()) {
 			case REALTIME:
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MODALITA_CONTROLLO_REALTIME);
@@ -10909,7 +10909,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// Tipo Latenza
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_LATENZA);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_LATENZA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleTipoLatenza" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_LATENZA
 		if(policy.isApplicabilitaDegradoPrestazionale()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(ConfigurazioneCostanti.TIPI_LATENZA);
@@ -10941,7 +10941,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_LATENZA+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_LATENZA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleTipoLatenza" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_LATENZA
 			switch (policy.getDegradoAvgTimeTipoLatenza()) {
 			case TOTALE:
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LATENZA_TOTALE);
@@ -10963,14 +10963,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(policy.isApplicabilitaDegradoPrestazionale()){
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneControlloTrafficoPolicyIntervalloOsservazione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 		}
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_PERIODO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_PERIODO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleTipoPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_PERIODO
 		if(policy.isApplicabilitaDegradoPrestazionale()){
 			de.setType(DataElementType.SELECT);
 			if(TipoControlloPeriodo.REALTIME.equals(policy.getDegradoAvgTimeModalitaControllo())){
@@ -11028,7 +11028,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_PERIODO+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_PERIODO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleTipoPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_TIPO_PERIODO
 			if(TipoControlloPeriodo.REALTIME.equals(policy.getDegradoAvgTimeModalitaControllo())){
 				switch (policy.getDegradoAvgTimeTipoIntervalloOsservazioneRealtime()) {
 				case GIORNALIERO:
@@ -11105,13 +11105,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			deNoEditMode = new DataElement();
 			deNoEditMode.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_FINESTRA_PERIODO+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-			deNoEditMode.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_FINESTRA_PERIODO);
+			deNoEditMode.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleFinestraPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_FINESTRA_PERIODO
 			deNoEditMode.setType(DataElementType.TEXT);
 		}
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_FINESTRA_PERIODO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_FINESTRA_PERIODO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleFinestraPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_FINESTRA_PERIODO
 		if(editMode) {
 			de.setType(DataElementType.SELECT);
 		}
@@ -11148,7 +11148,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(policy.isApplicabilitaStatoAllarme()){
 			DataElement de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ALLARME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneStatoAllarme" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ALLARME
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -11195,7 +11195,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// Nome
 		DataElement de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaStatoAllarmeNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME
 		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			String [] values = null;
 			String [] labels = null;
@@ -11243,7 +11243,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaStatoAllarmeNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOME
 			de.setValue(policy.getAllarmeNome());
 			de.setType(DataElementType.TEXT);
 			dati.addElement(de);
@@ -11253,7 +11253,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// NotStato
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaStatoAllarmeNotStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO
 		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			if(editMode) {
 				de.setType(DataElementType.CHECKBOX);
@@ -11276,7 +11276,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaStatoAllarmeNotStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO
 			if(policy.isAllarmeNotStato()) {
 				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 			}
@@ -11291,7 +11291,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// Stato
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaStatoAllarmeStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO
 		if(policy.isApplicabilitaStatoAllarme() && allarmi_id.size()>0){
 			de.setType(DataElementType.SELECT);
 			de.setValues(ConfigurazioneCostanti.CONFIGURAZIONE_STATI_ALLARMI);
@@ -11322,7 +11322,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NO_EDIT_SUFFIX);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaStatoAllarmeStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO
 			if(policy.getAllarmeStato()!=null) {
 				if(policy.getAllarmeStato().intValue() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
 					de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);		
@@ -12104,7 +12104,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			DataElement de = new DataElement();
 			de.setName(parametroRisorsaNome);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyRisorsa" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA
 			if(editMode) {
 				de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA);
 				de.setSelected(valoreRisorsa);
@@ -12121,7 +12121,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = new DataElement();
 				de.setName(parametroEsitiNome);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ESITI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyEsiti" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ESITI
 				if(editMode) {
 					de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_ESITI);
 					de.setSelected(valoreEsiti);
@@ -12142,7 +12142,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		else {
 			DataElement de = new DataElement();
 			de.setName(parametroRisorsaNome);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneControlloTrafficoPolicyRisorsaTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO
 			if(editMode) {
 				de.setValues(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI);
 				de.setLabels(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_LABELS);
@@ -12158,7 +12158,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = new DataElement();
 				de.setName(parametroRisorsaNome+"__LABEL");
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneControlloTrafficoPolicyRisorsaTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO
 				de.setType(DataElementType.TEXT);
 				String labelRisorsaPolicyAttiva = this.getLabelTipoRisorsaPolicyAttiva(valoreRisorsa);
 				de.setValue(labelRisorsaPolicyAttiva);
@@ -12520,10 +12520,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(idPoliciesTmp.size()<=0) {
 				
 				if(policies==null || policies.size()<=0 ) {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_POLICY_BUILT_IN_NON_ESISTENTI, MessageType.ERROR);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.PolicyBuiltInNonEsistenti" ) , MessageType.ERROR);	//ConfigurazioneCostanti.MESSAGGIO_POLICY_BUILT_IN_NON_ESISTENTI
 				}
 				else {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_POLICY_BUILT_IN_CRITERI_NON_ESISTENTI, MessageType.ERROR);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.PolicyBuiltInCriteriNonEsistenti" ) , MessageType.ERROR);	//ConfigurazioneCostanti.MESSAGGIO_POLICY_BUILT_IN_CRITERI_NON_ESISTENTI
 				}
 				
 			}
@@ -12550,7 +12550,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(policies==null || policies.size()<=0) {
 				
-				this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_POLICY_UTENTE_NON_ESISTENTI, MessageType.ERROR);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.PolicyUtenteNonEsistenti" ) , MessageType.ERROR);	//ConfigurazioneCostanti.MESSAGGIO_POLICY_UTENTE_NON_ESISTENTI
 				
 			}
 			else {
@@ -12569,7 +12569,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// alias
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyAlias" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS
 			//if(infoPolicy!=null){
 			de.setType(DataElementType.TEXT_EDIT);
 //			}
@@ -12583,7 +12583,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// descrizione
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_DESCRIZIONE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_DESCRIZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_DESCRIZIONE
 			if(infoPolicy!=null){
 				if(!addInfoDescrizionePolicy) {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -12627,7 +12627,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// continue
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveContinue" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE
 			if(hidden) {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -12653,7 +12653,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(infoPolicy.isBuiltIn()) {
 					
 					de = new DataElement();
-					de.setLabel(ConfigurazioneCostanti.LABEL_POLICY_CRITERI);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.PolicyCriteri" ) );	//ConfigurazioneCostanti.LABEL_POLICY_CRITERI
 					de.setType(DataElementType.SUBTITLE);
 					dati.addElement(de);
 					
@@ -12667,7 +12667,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(!infoPolicy.isCheckRichiesteSimultanee()) {
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO+"__label");
-						de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneControlloTrafficoPolicyIntervalloOsservazione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE
 						de.setType(DataElementType.TEXT);
 						if(infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo()!=null) {
 							String labelValue = infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo().getValue();
@@ -12703,7 +12703,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID+"__label");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyId" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID
 					de.setType(DataElementType.TEXT);
 					de.setValue(infoPolicy.getIdPolicy());
 					dati.addElement(de);
@@ -12719,7 +12719,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 				if(policy!=null && policy.isEnabled()){
 					de = new DataElement();
-					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRuntime" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME
 					de.setType(DataElementType.SUBTITLE);
 					dati.addElement(de);	
 				}
@@ -12732,7 +12732,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// id-active-policy
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_ID_UNICO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_ID_UNICO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveIdUnico" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_ID_UNICO
 			if(!jmx){
 				//de.setType(DataElementType.TEXT);
 				de.setType(DataElementType.HIDDEN);
@@ -12751,7 +12751,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					// Link visualizza stato 
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyVisualizzaStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
 					if(ruoloPorta!=null) {
 						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
@@ -12774,7 +12774,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyModalita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA
 				de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_VALORI);
 				de.setSelected(modalita);
 				de.setValue(modalita);
@@ -12789,7 +12789,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// policy
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyId" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID
 		boolean configurazionePerCriteri = false;
 		if(TipoOperazione.ADD.equals(tipoOperazione)){
 			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_BUILT_IN.equals(modalita) &&
@@ -12838,7 +12838,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = this.confCore.getConfigurazioneControlloTraffico();
 				
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_POLICY_CRITERI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.PolicyCriteri" ) );	//ConfigurazioneCostanti.LABEL_POLICY_CRITERI
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 				
@@ -12850,7 +12850,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(!modalitaSimultaneeEnabled) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO);
-					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneControlloTrafficoPolicyIntervalloOsservazione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE
 					de.setType(DataElementType.SELECT);
 					de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE);
 					de.setLabels(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE);
@@ -12908,7 +12908,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(idPolicies!=null && idPolicies.size()>0 && infoPolicy!=null) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.PolicyInformazioniSoglia" ) );	//ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
@@ -12916,7 +12916,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// ridefinisci
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_RIDEFINISCI);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_RIDEFINISCI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyRidefinisci" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_RIDEFINISCI
 			if(infoPolicy!=null){
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(policy.isRidefinisci());
@@ -12935,34 +12935,34 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(infoPolicy!=null){
 				switch (infoPolicy.getTipoRisorsa()) {
 				case NUMERO_RICHIESTE:
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 					break;
 				case OCCUPAZIONE_BANDA:
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreOccupazioneDiBandaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL
 					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_NOTE);
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreTempoMedioLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL
 					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_NOTE);
 					break;
 				case TEMPO_COMPLESSIVO_RISPOSTA:
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreTempoComplessivoLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL
 					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_NOTE);
 					break;
 				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_NOTE);
 					break;
 				case NUMERO_RICHIESTE_FALLITE:
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_NOTE);
 					break;
 				case NUMERO_FAULT_APPLICATIVI:
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_FAULT_APPLICATIVI_NOTE);
 					break;
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
 					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_O_FAULT_NOTE);
 					break;
 				}
@@ -13125,14 +13125,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					(infoPolicy.isIntervalloUtilizzaRisorseRealtime() || infoPolicy.isDegradoPrestazionaleUtilizzaRisorseRealtime());
 
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneInformazioniRuntime" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
 			// Link refresh
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_REFRESH);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyVisualizzaStatoRefresh" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_REFRESH
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_REFRESH);
 			if(ruoloPorta!=null) {
 				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
@@ -13152,7 +13152,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Link resetCounters
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_RESET);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET_ALL_NODES);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyVisualizzaStatoResetAllNodes" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET_ALL_NODES
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET_ALL_NODES);
 				if(ruoloPorta!=null) {
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
@@ -13211,7 +13211,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(showResetCounters){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_RESET+"_"+i);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyVisualizzaStatoReset" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET);
 					if(ruoloPorta!=null) {
 						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
@@ -13245,7 +13245,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicyJmxState" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE
 				de.setLabelAffiancata(false);
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 				de.setRows(20);
@@ -14131,7 +14131,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneFiltro" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -14185,7 +14185,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Protocollo
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
 			de.setType(DataElementType.HIDDEN);
 			dati.addElement(de);
@@ -14196,7 +14196,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Ruolo PdD
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroRuoloPdd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD
 			if(policy.getFiltro().getRuoloPorta()!=null){
 				de.setValue(policy.getFiltro().getRuoloPorta().getValue());
 			}
@@ -14207,7 +14207,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(configurazione) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD+"___LABEL");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroRuoloPdd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD
 					if(policy.getFiltro().getRuoloPorta()!=null){
 						de.setValue(policy.getFiltro().getRuoloPorta().getValue());
 					}
@@ -14232,7 +14232,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Protocollo
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
 			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
@@ -14241,7 +14241,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(configurazione) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO+"___LABEL");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO
 					de.setValue(protocolloSelezionatoLabel); // un protocollo e' sempre selezionato 
 					de.setType(DataElementType.TEXT);
 				}
@@ -14261,7 +14261,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					// Si è deciso cmq di farlo vedere
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO+"___LABEL");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO
 					de.setValue(this.getLabelProtocollo(protocolliValue.get(0))); // un protocollo e' sempre selezionato 
 					de.setType(DataElementType.TEXT);
 				}
@@ -14271,7 +14271,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Ruolo Erogatore
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroRuoloErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE
 			if(datiIdentificativiErogatoreSelezionatoValue!=null) {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -14284,7 +14284,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(configurazione) {
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE+"___LABEL");
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroRuoloErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE
 						de.setValue(ruoloErogatoreSelezionatoLabel);
 						de.setType(DataElementType.TEXT);
 					}
@@ -14302,7 +14302,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Erogatore
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE
 			if(ruoloErogatoreSelezionatoValue!=null) {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -14315,7 +14315,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(configurazione) {
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE+"___LABEL");
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE
 						de.setValue(datiIdentificativiErogatoreSelezionatoLabel);
 						de.setType(DataElementType.TEXT);
 					}
@@ -14333,7 +14333,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Tag
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TAG);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TAG);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroTag" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TAG
 			de.setValue(datiIdentificativiTagSelezionatoValue);
 			if(!configurazione) {
 				de.setType(DataElementType.HIDDEN);
@@ -14357,7 +14357,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Servizio
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroServizio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO
 			de.setValue(datiIdentificativiServizioSelezionatoValue);
 			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
@@ -14366,7 +14366,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(configurazione) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO+"___LABEL");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroServizio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO
 					de.setValue(datiIdentificativiServizioSelezionatoLabel);
 					if(this.core.isControlloTrafficoPolicyGlobaleFiltroApi()) {
 						de.setType(DataElementType.TEXT);
@@ -14435,7 +14435,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setLabel(this.getLabelAzioni(serviceBinding));
 					}
 					else {
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroAzione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE
 					}
 					de.setType(DataElementType.SELECT);
 					dati.addElement(de);
@@ -14448,7 +14448,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setLabel(this.getLabelAzioni(serviceBinding));
 					}
 					else {
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroAzione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE
 					}
 				}
 				else {
@@ -14465,7 +14465,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setLabel(this.getLabelAzioni(serviceBinding));
 					}
 					else {
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroAzione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE
 					}
 					if(azioniSelezionataLabel!=null && !azioniSelezionataLabel.isEmpty()) {
 						if(azioniSelezionataLabel.size()==1) {
@@ -14507,7 +14507,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(serviziApplicativiErogatoreValue!=null){
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroSaErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE
 				de.setValue(servizioApplicativoErogatoreSelezionatoValue);
 				if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 					de.setType(DataElementType.HIDDEN);
@@ -14516,7 +14516,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(configurazione) {
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE+"___LABEL");
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroSaErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE
 						de.setValue(servizioApplicativoErogatoreSelezionatoLabel);
 						//de.setType(DataElementType.TEXT);
 						de.setType(DataElementType.HIDDEN);
@@ -14553,7 +14553,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE);
 //			}
 //			else {
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_RICHIEDENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroRuoloRichiedente" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_RICHIEDENTE
 			//}
 			if((datiIdentificativiFruitoreSelezionatoValue!=null && !delegata) || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
 				de.setType(DataElementType.HIDDEN);
@@ -14571,7 +14571,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //							de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE);
 //						}
 //						else {
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_RICHIEDENTE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroRuoloRichiedente" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_RICHIEDENTE
 						//}
 						de.setValue(ruoloFruitoreSelezionatoLabel);
 						de.setType(DataElementType.TEXT);
@@ -14591,7 +14591,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(fruitoriValue!=null && fruitoriValue.size()>1){
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE
 				if(ruoloFruitoreSelezionatoValue!=null) {
 					de.setType(DataElementType.HIDDEN);
 				}
@@ -14604,7 +14604,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(configurazione) {
 							de = new DataElement();
 							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE+"___LABEL");
-							de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE
 							de.setValue(datiIdentificativiFruitoreSelezionatoLabel);
 							de.setType(DataElementType.TEXT);
 						}
@@ -14624,7 +14624,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(serviziApplicativiFruitoreValue!=null && serviziApplicativiFruitoreValue.size()>1){
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroSaFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE
 				if(ruoloFruitoreSelezionatoValue!=null) {
 					de.setType(DataElementType.HIDDEN);
 				}
@@ -14637,7 +14637,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(configurazione) {
 							de = new DataElement();
 							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE+"___LABEL");
-							de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroSaFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE
 							de.setValue(servizioApplicativoFruitoreSelezionatoLabel);
 							de.setType(DataElementType.TEXT);
 						}
@@ -14667,10 +14667,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED);
 				if(policy.getFiltro().isInformazioneApplicativaEnabled()){
-					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO
 				}
 				else{
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED_COMPACT);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroPerChiaveEnabledCompact" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED_COMPACT
 				}
 				de.setValue(policy.getFiltro().isInformazioneApplicativaEnabled()+"");
 				if(protocolloAssociatoFiltroNonSelezionatoUtente) {
@@ -14680,10 +14680,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED+"___LABEL");
 					if(policy.getFiltro().isInformazioneApplicativaEnabled()){
-						de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO
 					}
 					else{
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroPerChiaveEnabled" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED
 					}
 					if(policy.getFiltro().isInformazioneApplicativaEnabled()){
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
@@ -14712,7 +14712,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroPerChiaveTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO
 					de.setValue(policy.getFiltro().getInformazioneApplicativaTipo());
 					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 						de.setType(DataElementType.HIDDEN);
@@ -14720,7 +14720,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO+"___LABEL");
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroPerChiaveTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO
 						de.setValue(policy.getFiltro().getInformazioneApplicativaTipo());
 						de.setType(DataElementType.TEXT);
 					}
@@ -14774,7 +14774,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroPerChiaveValore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE
 					de.setValue(StringEscapeUtils.escapeHtml(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
 					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 						de.setType(DataElementType.HIDDEN);
@@ -14782,7 +14782,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE+"___LABEL");
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveFiltroPerChiaveValore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE
 						de.setValue(StringEscapeUtils.escapeHtml(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
 						de.setType(DataElementType.TEXT);
 					}
@@ -14844,7 +14844,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 //
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRaggruppamento" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -14860,7 +14860,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		/*
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyEnabled" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED
 		de.setType(DataElementType.SELECT);
 		de.setValues(ConfigurazioneCostanti.CONFIGURAZIONE_STATI_COLLEZIONAMENTO);
 		if(policy.getGroupBy().isEnabled()){
@@ -14907,7 +14907,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showRuoloPdD ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_LABEL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyRuoloPddLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_LABEL
 					//de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_NOTE);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isRuoloPorta());
@@ -14918,7 +14918,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Protocollo
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PROTOCOLLO);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PROTOCOLLO
 				if(showProtocollo){
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isProtocollo());
@@ -14936,7 +14936,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showErogatore ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_EROGATORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_EROGATORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_EROGATORE
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isErogatore());
 					de.setValue(policy.getGroupBy().isErogatore()+"");
@@ -14995,7 +14995,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showServizio ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyServizio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isServizio());
 					de.setValue(policy.getGroupBy().isServizio()+"");
@@ -15011,7 +15011,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabel(getLabelAzione(serviceBinding));
 			}
 			else {
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyAzione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE
 			}
 			if( showAzione ){
 				de.setType(DataElementType.CHECKBOX);
@@ -15029,7 +15029,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showSAErogatore	){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbySaErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE
 					//de.setType(DataElementType.CHECKBOX);
 					de.setType(DataElementType.HIDDEN);
 					de.setSelected(policy.getGroupBy().isServizioApplicativoErogatore());
@@ -15062,7 +15062,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showFruitore ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isFruitore());
 					de.setValue(policy.getGroupBy().isFruitore()+"");
@@ -15079,7 +15079,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showRichiedenteApplicativo ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbySaFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(policy.getGroupBy().isServizioApplicativoFruitore());
 					de.setValue(policy.getGroupBy().isServizioApplicativoFruitore()+"");
@@ -15092,7 +15092,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Richiedente API (Significa SoggettoMittente per le erogazioni, Applicativo e Identificativo Autenticato sia per le erogazioni che per le fruizioni)
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RICHIEDENTE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RICHIEDENTE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyRichiedente" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RICHIEDENTE
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(policy.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
 				de.setValue(policy.getGroupBy().isIdentificativoAutenticato()+"");
@@ -15135,7 +15135,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyToken" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
 				de.setValue(groupByToken+"");
@@ -15145,7 +15145,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(groupByToken) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyTokenClaims" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS
 					de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
 					de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
 					de.setSelezionati(tokenSelezionatiSenzaIssuer);
@@ -15171,11 +15171,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED);
 				if(policy.getGroupBy().isInformazioneApplicativaEnabled()){
-					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO
 				}
 				else{
 					//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_LABEL);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_LABEL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyPerChiaveEnabledLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_LABEL
 					//de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE);
 				}
 				de.setType(DataElementType.CHECKBOX);
@@ -15196,7 +15196,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActiveGroupbyPerChiaveTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO
 					de.setValues(TipoFiltroApplicativo.toStringArray());
 					de.setLabels(ConfigurazioneCostanti.LABEL_RATE_LIMITING_FILTRO_APPLICATIVO);
 					de.setSelected(policy.getGroupBy().getInformazioneApplicativaTipo());
@@ -15907,13 +15907,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public Vector<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList) throws Exception {
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazionePolicyGestioneToken" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// id
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneGestorePolicyTokenId" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(id);
@@ -15922,7 +15922,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// tipo
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneGestorePolicyTokenTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
 		if(!this.core.isTokenPolicyForceIdEnabled()) {
 			if(tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -15938,7 +15938,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneGestorePolicyTokenTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO+"__LABEL");
 				de.setType(DataElementType.TEXT);
 				if(propConfigPolicyGestioneTokenList!=null && propConfigPolicyGestioneTokenList.length>0) {
@@ -15967,7 +15967,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// nome
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneGestorePolicyTokenNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
 		if(tipoOperazione.equals(TipoOperazione.ADD)) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -15980,7 +15980,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// descrizione
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneGestorePolicyTokenDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setValue(descrizione);
@@ -16119,7 +16119,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								
 						if(i > 0) {
 							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
-							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							imageUp.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaSu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU
 							imageUp.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST, pIdRegola, pDirezioneSu); 
 						}
 						else {
@@ -16130,7 +16130,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(i < numeroElementi -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
-							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							imageDown.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaGiu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU
 							imageDown.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST, pIdRegola, pDirezioneGiu);
 							de.addImage(imageDown);
 						}
@@ -16145,12 +16145,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(regola.getStato()==null // backward compatibility 
 							||
 							StatoFunzionalita.ABILITATO.equals(regola.getStato())){
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoAbilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 					}
 					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoDisabilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
@@ -16224,7 +16224,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String nome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME);
 			
 			if(StringUtils.isEmpty(nome)){
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			
@@ -16235,11 +16235,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String stato = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO);
 			
 			if(StringUtils.isEmpty(stato)){
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			} else {
 				if(!stato.equals(StatoFunzionalita.ABILITATO.getValue()) && !stato.equals(StatoFunzionalita.DISABILITATO.getValue())) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxNonValido",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO
 					return false;
 				}
 			}
@@ -16247,7 +16247,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String regolaText = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT);
 			
 			if(StringUtils.isEmpty(regolaText)){
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			
@@ -16266,7 +16266,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(!StringUtils.isEmpty(contestoEsterno)){
 				if(contestoEsterno.contains(" ")) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO));   
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 					return false;
 				}
 				
@@ -16279,7 +16279,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(!StringUtils.isEmpty(baseUrl)){
 				if(baseUrl.contains(" ")) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL));   
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 					return false;
 				}
 				
@@ -16311,7 +16311,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String ruolo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO);
 			if(!StringUtils.isEmpty(ruolo)){
 				if(!ruolo.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_EROGAZIONE) && !ruolo.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROXY_PASS_REGOLA_RUOLO_FRUIZIONE)){
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxNonValido",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO
 					return false;
 				}
 			}
@@ -16319,7 +16319,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(!StringUtils.isEmpty(serviceBinding)){
 				if(!serviceBinding.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_SOAP) && !serviceBinding.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST)) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxNonValido",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO
 					return false;
 				}
 			}
@@ -16502,7 +16502,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String nome, String descrizione) {
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCanale" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
@@ -16518,7 +16518,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// nome
 		DataElement de = new DataElement();
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setRequired(true);
@@ -16528,7 +16528,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// descrizione
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE
 		de.setValue(descrizione);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_DESCRIZIONE);
@@ -16551,13 +16551,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(tipoOp.equals(TipoOperazione.ADD)) {
 				if(existsCanale) { // nome gia' occupato
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_GIA_PRESENTE);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.CanaleGiaPresente" ) );	//ConfigurazioneCostanti.MESSAGGIO_CANALE_GIA_PRESENTE
 					return false;
 				}
 			} else {
 				// se ho cambiato il nome ed e' gia' scelto allora devo segnalare l'errore.
 				if(!oldNome.equals(canaliNome) && existsCanale) {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_NUOVO_NOME_GIA_PRESENTE);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.CanaleNuovoNomeGiaPresente" ) );	//ConfigurazioneCostanti.MESSAGGIO_CANALE_NUOVO_NOME_GIA_PRESENTE
 					return false;
 				}
 			}
@@ -16673,7 +16673,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean selectListNode, List<String> aliasesNodi) {
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI_NODO);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCanaliNodo" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI_NODO
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 					
@@ -16688,7 +16688,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(selectListNode && aliasesNodi.contains(oldNome) && aliasesNodi.size()>1 && !oldNome.equals(nome)) {
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_OLD_NOME);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_OLD_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliNodiOldNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_OLD_NOME
 				de.setType(DataElementType.TEXT);
 				de.setValue(oldNome);
 				dati.add(de);
@@ -16698,7 +16698,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// nome
 		if(selectListNode) {
 			DataElement de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliNodiNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME
 			de.setValues(aliasesNodi);
 			de.setLabels(aliasesNodi);
 			de.setSelected(nome);
@@ -16713,7 +16713,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		else {
 			DataElement de = new DataElement();
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliNodiNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME
 			de.setValue(nome);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true);
@@ -16724,7 +16724,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// descrizione
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliNodiDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE
 		de.setValue(descrizione);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CANALI_NODI_DESCRIZIONE);
@@ -16733,7 +16733,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// canali
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneCanaliNodiCanali" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI
 		List<String> canaliListValues = canaleList.stream().map(CanaleConfigurazione::getNome).collect(Collectors.toList());
 		de.setValues(canaliListValues);
 		de.setLabels(canaliListValues);
@@ -16754,8 +16754,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// nome obbligatorio
 			if(StringUtils.isEmpty(canaliNome)){
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
-						ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_NOME));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			
@@ -16772,8 +16771,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			if(canali == null || canali.length == 0) {
-				this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_CAMPO_CANALE_OBBLIGATORIO,
-						ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.CanaleNodoCampoCanaleObbligatorio", ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_NODI_CANALI));	//ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_CAMPO_CANALE_OBBLIGATORIO
 				return false;
 			}
 			
@@ -16781,13 +16779,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(tipoOp.equals(TipoOperazione.ADD)) {
 				if(existsCanale) { // nome gia' occupato
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_GIA_PRESENTE);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.CanaleNodoGiaPresente" ) );	//ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_GIA_PRESENTE
 					return false;
 				}
 			} else {
 				// se ho cambiato il nome ed e' gia' scelto allora devo segnalare l'errore.
 				if(!oldNome.equals(canaliNome) && existsCanale) {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_NUOVO_NOME_GIA_PRESENTE);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.CanaleNodoNuovoNomeGiaPresente" ) );	//ConfigurazioneCostanti.MESSAGGIO_CANALE_NODO_NUOVO_NOME_GIA_PRESENTE
 					return false;
 				}
 			}
@@ -16873,7 +16871,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								
 						if(i > 0) {
 							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
-							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							imageUp.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaSu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU
 							imageUp.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_LIST, pNomeRegola, pDirezioneSu); 
 						}
 						else {
@@ -16884,7 +16882,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(i < numeroElementi -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
-							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							imageDown.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaGiu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU
 							imageDown.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_LIST, pNomeRegola, pDirezioneGiu);
 							de.addImage(imageDown);
 						}
@@ -16899,12 +16897,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(registro.getStato()==null // backward compatibility 
 							||
 							StatoFunzionalita.ABILITATO.equals(registro.getStato())){
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoAbilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 					}
 					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoDisabilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
@@ -17007,12 +17005,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String dirArchivio, String urlArchivio, String classiPlugin, String[] tipoPlugin, int numeroArchivi) {
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_ARCHIVIO);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazionePluginsArchivio" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_ARCHIVIO
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
@@ -17024,7 +17022,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} else {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ID_ARCHIVIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviIdArchivio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ID_ARCHIVIO
 			de.setValue(idArchivioS);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_ID_ARCHIVIO);
@@ -17032,7 +17030,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME
 			de.setValue(oldNome);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_OLD_NOME);
@@ -17042,7 +17040,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// stato
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_STATO
 		String [] labelsStato = {StatoFunzionalita.ABILITATO.toString(), StatoFunzionalita.DISABILITATO.toString()};
 		String [] valuesStato = {StatoFunzionalita.ABILITATO.toString(), StatoFunzionalita.DISABILITATO.toString()};
 		de.setLabels(labelsStato);
@@ -17054,7 +17052,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// descrizione
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DESCRIZIONE
 		de.setValue(descrizione);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setRows(3);
@@ -17082,13 +17080,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// applicabilita
 		dataElement = new DataElement();
-		dataElement.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_APPLICABILITA);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviApplicabilita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_APPLICABILITA
 		dataElement.setType(DataElementType.SUBTITLE);
 		dati.add(dataElement);
 		
 		// classi plugin
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviClassiPlugin" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN);
 		de.setType(DataElementType.SELECT);
 		de.setLabels(ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_CLASSI_PLUGIN);
@@ -17118,12 +17116,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(addTitle) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_ARCHIVIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazionePluginsArchivio" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_ARCHIVIO
 			de.setType(DataElementType.TITLE);
 			dati.add(de);
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME
 			de.setValue(nomePlugin);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME);
@@ -17133,7 +17131,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// sorgente
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviSorgente" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE);
 		de.setType(DataElementType.SELECT);
 		de.setLabels(ConfigurazioneCostanti.LABELS_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE);
@@ -17152,7 +17150,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		} else if(sorgente.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_SORGENTE_DIR)) {
 			// dir
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DIR_ARCHIVIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviDirArchivio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DIR_ARCHIVIO
 			de.setValue(dirArchivio);
 			de.setType(DataElementType.TEXT_AREA);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_DIR_ARCHIVIO);
@@ -17162,7 +17160,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		} else {
 			// url
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_URL_ARCHIVIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsArchiviUrlArchivio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_URL_ARCHIVIO
 			de.setValue(urlArchivio);
 			de.setType(DataElementType.TEXT_AREA);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_URL_ARCHIVIO);
@@ -17196,14 +17194,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				if (existsArchivio) {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_ARCHIVIO_DUPLICATO);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErrorePluginsArchivioDuplicato" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_ARCHIVIO_DUPLICATO
 					return false;
 				}
 			} else {
 				// controllo che le modifiche ai parametri non coincidano con altre regole gia' presenti
 //				TrasformazioneRegola trasformazione = this.porteApplicativeCore.getTrasformazione(idPorta, azioniDBCheck, patternDBCheck, contentTypeDBCheck);
 				if(!nome.equals(oldNome) && existsArchivio) {
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_ARCHIVIO_NUOVO_NOME_DUPLICATO); 
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErrorePluginsArchivioNuovoNomeDuplicato" ) ); 	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_ARCHIVIO_NUOVO_NOME_DUPLICATO
 					return false;
 				}
 			}
@@ -17540,12 +17538,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setWidthPx(10);
 					de.setType(DataElementType.CHECKBOX);
 					if(registro.getStato()){
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoAbilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 					}
 					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoDisabilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
@@ -17640,13 +17638,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String applicabilita) {
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_CLASSI_PLUGIN);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazionePluginsClassiPlugin" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_CLASSI_PLUGIN
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
 		// tipoPlugin
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiTipoPlugin" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO_PLUGIN
 		List<String> labels = new ArrayList<String>();
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			labels.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
@@ -17674,7 +17672,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		} else {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_ID_PLUGIN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiIdPlugin" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_ID_PLUGIN
 			de.setValue(idPluginS);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_ID_PLUGIN);
@@ -17685,12 +17683,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// sezione dinamica
 		if(tipoPlugin!=null) {
 			dati = ConfigurazionePluginsTipoPluginUtils.getSezioneDinamicaClassePlugin(dati, tipoPlugin, ruolo, shTipo, mhTipo, mhRuolo, applicabilita,
-					this.confCore.isIntegrationManagerEnabled());
+					this.confCore.isIntegrationManagerEnabled(), session);
 		}
 		
 		// tipo
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiTipo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO
 		de.setValue(tipo);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_TIPO);
@@ -17700,7 +17698,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// class name
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiClassName" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME
 		de.setValue(className);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_CLASS_NAME);
@@ -17714,7 +17712,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// label
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_LABEL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_LABEL
 		de.setValue(label);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_LABEL);
@@ -17724,7 +17722,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// stato
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_STATO
 		String [] labelsStato = {StatoFunzionalita.ABILITATO.toString(), StatoFunzionalita.DISABILITATO.toString()};
 		String [] valuesStato = {StatoFunzionalita.ABILITATO.toString(), StatoFunzionalita.DISABILITATO.toString()};
 		de.setLabels(labelsStato);
@@ -17736,7 +17734,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// descrizione
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazionePluginsClassiDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PLUGINS_CLASSI_DESCRIZIONE
 		de.setValue(descrizione);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setRows(3);
@@ -17821,10 +17819,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					if (pluginInUso) {
 						if((oldStatoEnabled != oldPlugin.getStato())) {
-							this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_INUSO_MODIFICA_STATO);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErrorePluginsPluginInusoModificaStato" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_INUSO_MODIFICA_STATO
 						}
 						else {
-							this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_INUSO_MODIFICA_TIPO);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErrorePluginsPluginInusoModificaTipo" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_INUSO_MODIFICA_TIPO
 						}
 						return false;
 					}
@@ -17865,15 +17863,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String descrizioneTipoPlugin = ConfigurazionePluginsTipoPluginUtils.tipoPluginToLabel(tipoPlugin);
 				
 				if (existsPluginConTipo) {
-					this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_TIPO, descrizioneTipoPlugin, tipo));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErrorePluginsPluginDuplicatoTipo", descrizioneTipoPlugin, tipo));	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_TIPO
 					return false;
 				}
 				if (existsPluginConLabel) {
-					this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_LABEL, descrizioneTipoPlugin, label));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErrorePluginsPluginDuplicatoLabel", descrizioneTipoPlugin, label));	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_LABEL
 					return false;
 				}
 				if (existsPluginConClassName) {
-					this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_CLASSNAME, descrizioneTipoPlugin, className));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErrorePluginsPluginDuplicatoClassname", descrizioneTipoPlugin, className));	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_PLUGINS_PLUGIN_DUPLICATO_CLASSNAME
 					return false;
 				}
 			}
@@ -18057,27 +18055,27 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(allarme.getEnabled() == 1){
 						if(this.confCore.isShowAllarmiElenchiStatiAllarmi()) {
 							if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+								de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmeStatoOk" ) );	//ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK
 								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 								de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+								de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmeStatoError" ) );	//ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR
 								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
 								de.setSelected(CheckboxStatusType.CONFIG_ERROR);
 							} else if(allarme.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
-								de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+								de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmeStatoWarning" ) );	//ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING
 								de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 								de.setSelected(CheckboxStatusType.CONFIG_WARNING);
 							}
 						}
 						else {
-							de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoAbilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO
 							de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 							de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 						}
 					}
 					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoDisabilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
@@ -18292,7 +18290,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(allarme.getPlugin()==null){
 				if(numeroPluginRegistrati<=0){
 					this.log.debug("Non risultano registrati plugins di allarmi");
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_FILTRO_PLUGIN_NON_TROVATI);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeFiltroPluginNonTrovati" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_FILTRO_PLUGIN_NON_TROVATI
 				}
 				else{
 					this.log.debug("Non è stato selezionato un plugin");
@@ -18306,7 +18304,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(allarme.getTipoAllarme()==null){
 				this.log.debug("Non è stato indicato il tipo di allarme (è stato selezionato un plugin?)");
-				this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_TIPO_NON_INDICATO);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeTipoNonIndicato" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_TIPO_NON_INDICATO
 				return false;
 			}
 			
@@ -18331,12 +18329,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO)){
 				if(allarme.getPeriodo()==null){
 					this.log.debug("Non è stata indicata la frequenza di attivazione per il controllo dello stato dell'allarme");
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_FREQUENZA_NON_INDICATA);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeFrequenzaNonIndicata" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_FREQUENZA_NON_INDICATA
 					return false;
 				}
 				if(allarme.getPeriodo()<=0){
 					this.log.debug("Indicare una frequenza di attivazione (maggiore di 0) per il controllo dello stato dell'allarme");
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_FREQUENZA_NON_VALIDA);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeFrequenzaNonValida" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_FREQUENZA_NON_VALIDA
 					return false;
 				}
 			}
@@ -18428,7 +18426,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(allarme.getMail()!=null && allarme.getMail().getInvia()!=null && allarme.getMail().getInvia()==1){
 				if(allarme.getMail().getDestinatari()==null || "".equals(allarme.getMail().getDestinatari())){
 					this.log.debug("Almeno un indirizzo e-mail è obbligatorio");
-					this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_EMAIL_VUOTA);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeEmailVuota" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_EMAIL_VUOTA
 					return false;
 				}
 				String [] tmp = allarme.getMail().getDestinatari().split(",");
@@ -18463,7 +18461,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			if(existsAlias) {
-				this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_ALIAS_DUPLICATO);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeAliasDuplicato" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_ALIAS_DUPLICATO
 				return false;
 			}
 			
@@ -18498,7 +18496,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								descrPorta = existsAllarmeBean.getFiltro().getNomePorta();
 							}
 							
-							this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_EROGAZIONE, descrPorta));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeDuplicatoExistsInErogazione", descrPorta));	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_EROGAZIONE
 						}
 						else if(org.openspcoop2.core.allarmi.constants.RuoloPorta.DELEGATA.equals(existsAllarmeBean.getFiltro().getRuoloPorta())) {
 							String descrPorta = null;
@@ -18523,14 +18521,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								descrPorta = existsAllarmeBean.getFiltro().getNomePorta();
 							}
 						
-							this.pd.setMessage(MessageFormat.format(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_FRUIZIONE, descrPorta));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeDuplicatoExistsInFruizione", descrPorta));	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_FRUIZIONE
 						}
 						else {
-							this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeDuplicatoExistsInConfigurazioneGenerale" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE
 						}
 					}
 					else {
-						this.pd.setMessage(ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE);
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ErroreAllarmeDuplicatoExistsInConfigurazioneGenerale" ) );	//ConfigurazioneCostanti.MESSAGGIO_ERRORE_ALLARME_DUPLICATO_EXISTS_IN_CONFIGURAZIONE_GENERALE
 					}
 					return false;
 				}
@@ -19154,7 +19152,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		Parameter pIdAllarme = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME, allarme.getId()+""); 
 		// id
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiIdAllarme" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ID_ALLARME);
 		de.setType(DataElementType.HIDDEN);
 		if(tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -19264,7 +19262,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneInformazioniRuntime" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -19272,14 +19270,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiVisualizzaStatoRefresh" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_VISUALIZZA_STATO_REFRESH);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_CHANGE, lstParamEntry.toArray(new Parameter[lstParamEntry.size()]));
 			de.setType(DataElementType.LINK);
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiState" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATE
 			de.setLabelAffiancata(false);
 			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 			de.setRows(20);
@@ -19303,7 +19301,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GESTIONE_THREAD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGestioneThread" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GESTIONE_THREAD
 			dati.add(de);
 			
 			// Link ricalcola stato
@@ -19311,7 +19309,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(existsActiveThread) {
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiAggiornaStatoRefresh" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_AGGIORNA_STATO_REFRESH);
 				List<Parameter> lstParamEntryRecheck = new ArrayList<Parameter>();
 				lstParamEntryRecheck.addAll(lstParamEntry);
@@ -19327,7 +19325,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(existsActiveThread) {
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiRestartAllarme" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_RESTART_ALLARME);
 				List<Parameter> lstParamEntryRestart = new ArrayList<Parameter>();
 				lstParamEntryRestart.addAll(lstParamEntry);
@@ -19343,7 +19341,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(existsActiveThread) {
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiStopAllarme" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STOP_ALLARME);
 				List<Parameter> lstParamEntryStop = new ArrayList<Parameter>();
 				lstParamEntryStop.addAll(lstParamEntry);
@@ -19359,7 +19357,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(!existsActiveThread) {
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiStartAllarme" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_START_ALLARME);
 				List<Parameter> lstParamEntryStart = new ArrayList<Parameter>();
 				lstParamEntryStart.addAll(lstParamEntry);
@@ -19381,12 +19379,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// Informazioni Generali
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiInformazioniGenerali" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI
 		dati.add(de);
 		
 		// plugin select
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiPlugin" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN);
 		if(tipoOperazione.equals(TipoOperazione.ADD)){
 			de.setType(DataElementType.SELECT);
@@ -19423,7 +19421,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 		// tipo
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiModalita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO);
 		de.setValue(allarme.getTipo() != null ? allarme.getTipo() : "");
 		de.setType(DataElementType.HIDDEN);
@@ -19431,7 +19429,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 		// nome
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiNome" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOME);
 		if(tipoOperazione.equals(TipoOperazione.ADD)){
 			if(first || allarme.getPlugin() == null) {
@@ -19456,7 +19454,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// alias
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiAlias" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ALIAS);
 		if(tipoOperazione.equals(TipoOperazione.ADD)){
 			if(first || allarme.getPlugin() == null) {
@@ -19476,7 +19474,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 		// abilitato
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO); 
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiAbilitato" ) ); 	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ABILITATO);
 		
 		de.setType(DataElementType.SELECT);
@@ -19500,7 +19498,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// descrizione
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiDescrizione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESCRIZIONE);
 		if(tipoOperazione.equals(TipoOperazione.ADD)){
 			if(first || allarme.getPlugin() == null) {
@@ -19522,20 +19520,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(allarmeAttivo) {
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI_FREQUENZA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiInformazioniGeneraliFrequenza" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_INFORMAZIONI_GENERALI_FREQUENZA
 			dati.add(de);
 		}
 		
 		// modalita
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiModalita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
 		de.setValue(allarme.getTipoAllarme() != null ? allarme.getTipoAllarme().getValue() : "");
 		de.setType(DataElementType.HIDDEN);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiModalita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_MODALITA_LABEL);
 		if(allarme.getTipoAllarme() != null && 
 				(allarme.getTipoAllarme().equals(TipoAllarme.ATTIVO) || allarme.getTipoAllarme().equals(TipoAllarme.PASSIVO))) {
@@ -19552,7 +19550,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// number periodo
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_PERIODO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiPeriodo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_PERIODO
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PERIODO);
 			de.setType(DataElementType.NUMBER);
 			de.setRequired(true);
@@ -19569,7 +19567,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// select tipo periodo
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO); 
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiTipoPeriodo" ) ); 	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO);
 			de.setType(DataElementType.SELECT);
 			String [] tipoPeriodoValues = ConfigurazioneCostanti.VALUES_PARAMETRO_CONFIGURAZIONE_ALLARMI_TIPO_PERIODO;
@@ -19596,12 +19594,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_STATO_ALLARME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiStatoAllarme" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_STATO_ALLARME
 			dati.add(de);		
 			
 			// stato
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiStato" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_STATO);
 			de.setType(DataElementType.TEXT);
 			if(allarme.getEnabled() == 1) { // allarme abilitato
@@ -19619,7 +19617,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					( allarme.getScript().getInvoca() == 1 && this.confCore.getAllarmiConfig().isScriptCheckAcknowledgedStatus()) ) {
 				
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiAcknowledged" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGED);
 				if(allarme.getEnabled() == 1 && 
 						(
@@ -19658,7 +19656,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRuntime" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME
 			dati.add(de);		
 			
 			List<Parameter> lstParamEntry = new ArrayList<Parameter>();
@@ -19829,13 +19827,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_EMAIL); 
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiNotificaEmail" ) ); 	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_EMAIL
 			dati.add(de);
 		}
 		
 		// abilitato inviaEmailAlert
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT_ABILITATO); 
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiInviaEmailAlertAbilitato" ) ); 	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT_ABILITATO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_ALERT);
 		if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 			de.setType(DataElementType.SELECT);
@@ -19855,7 +19853,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(allarme.getMail().getInvia() == 1) {
 			// destinatari
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiDestinatariEmail" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
 			if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 				de.setType(DataElementType.TEXT_EDIT);
@@ -19869,7 +19867,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// notifica warning
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING); 
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiNotificaWarning" ) ); 	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING);
 			if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 				de.setType(DataElementType.SELECT);
@@ -19888,7 +19886,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(this.confCore.getAllarmiConfig().isMailShowAllOptions()) {			
 				// Subject
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiInviaEmailSubject" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_SUBJECT);
 				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 					de.setType(DataElementType.TEXT_EDIT);
@@ -19901,7 +19899,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				// Body
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiInviaEmailBody" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVIA_EMAIL_BODY);
 				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 					de.setType(DataElementType.TEXT_AREA);
@@ -19919,13 +19917,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_MONITORAGGIO_ESTERNO); 
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmiNotificaMonitoraggioEsterno" ) ); 	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI_NOTIFICA_MONITORAGGIO_ESTERNO
 			dati.add(de);
 		}
 		
 		// abilitato invocaScriptAlert
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT_ABILITATO); 
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiInvocaScriptAlertAbilitato" ) ); 	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT_ABILITATO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_INVOCA_SCRIPT_ALERT);
 		if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 			de.setType(DataElementType.SELECT);
@@ -19945,7 +19943,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(allarme.getScript().getInvoca() == 1) {
 			// notifica warning
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT); 
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiNotificaWarningScript" ) ); 	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_WARNING_SCRIPT);
 			if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 				de.setType(DataElementType.SELECT);
@@ -19965,7 +19963,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 				// Subject
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiNotificaScriptPath" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_PATH);
 				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 					de.setType(DataElementType.TEXT_EDIT);
@@ -19978,7 +19976,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				// Body
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiNotificaScriptArguments" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_NOTIFICA_SCRIPT_ARGUMENTS);
 				if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 					de.setType(DataElementType.TEXT_EDIT);
@@ -20794,7 +20792,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneFiltro" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -20848,7 +20846,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Protocollo
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
 			de.setType(DataElementType.HIDDEN);
 			dati.addElement(de);
@@ -20859,7 +20857,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Ruolo PdD
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroRuoloPdd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD
 			if(allarme.getFiltro().getRuoloPorta()!=null){
 				de.setValue(allarme.getFiltro().getRuoloPorta().getValue());
 			}
@@ -20870,7 +20868,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(configurazione) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD+"___LABEL");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroRuoloPdd" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_PDD
 					if(allarme.getFiltro().getRuoloPorta()!=null){
 						de.setValue(allarme.getFiltro().getRuoloPorta().getValue());
 					}
@@ -20895,7 +20893,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Protocollo
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO
 			de.setValue(protocolloSelezionatoValue); // un protocollo e' sempre selezionato 
 			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
@@ -20904,7 +20902,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(configurazione) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO+"___LABEL");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO
 					de.setValue(protocolloSelezionatoLabel); // un protocollo e' sempre selezionato 
 					de.setType(DataElementType.TEXT);
 				}
@@ -20924,7 +20922,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					// Si è deciso cmq di farlo vedere
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO+"___LABEL");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PROTOCOLLO
 					de.setValue(this.getLabelProtocollo(protocolliValue.get(0))); // un protocollo e' sempre selezionato 
 					de.setType(DataElementType.TEXT);
 				}
@@ -20934,7 +20932,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Ruolo Erogatore
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroRuoloErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE
 			if(datiIdentificativiErogatoreSelezionatoValue!=null) {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -20947,7 +20945,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(configurazione) {
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE+"___LABEL");
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroRuoloErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_EROGATORE
 						de.setValue(ruoloErogatoreSelezionatoLabel);
 						de.setType(DataElementType.TEXT);
 					}
@@ -20965,7 +20963,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Erogatore
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE
 			if(ruoloErogatoreSelezionatoValue!=null) {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -20978,7 +20976,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(configurazione) {
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE+"___LABEL");
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_EROGATORE
 						de.setValue(datiIdentificativiErogatoreSelezionatoLabel);
 						de.setType(DataElementType.TEXT);
 					}
@@ -20996,7 +20994,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Tag
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroTag" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_TAG
 			de.setValue(datiIdentificativiTagSelezionatoValue);
 			boolean allarmiFiltroApi = this.core.getAllarmiConfig().isOptionsFilterApi();
 			if(!configurazione) {
@@ -21021,7 +21019,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// Servizio
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroServizio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO
 			de.setValue(datiIdentificativiServizioSelezionatoValue);
 			if(protocolloAssociatoFiltroNonSelezionatoUtente || !configurazione) {
 				de.setType(DataElementType.HIDDEN);
@@ -21030,7 +21028,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(configurazione) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO+"___LABEL");
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroServizio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SERVIZIO
 					de.setValue(datiIdentificativiServizioSelezionatoLabel);
 					if(allarmiFiltroApi) {
 						de.setType(DataElementType.TEXT);
@@ -21099,7 +21097,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setLabel(this.getLabelAzioni(serviceBinding)); 
 					}
 					else {
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroAzione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE
 					}
 					de.setType(DataElementType.SELECT);
 					dati.addElement(de);
@@ -21112,7 +21110,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setLabel(this.getLabelAzioni(serviceBinding));
 					}
 					else {
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroAzione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE
 					}
 				}
 				else {
@@ -21129,7 +21127,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setLabel(this.getLabelAzioni(serviceBinding));
 					}
 					else {
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroAzione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_AZIONE
 					}
 					if(azioniSelezionataLabel!=null && !azioniSelezionataLabel.isEmpty()) {
 						if(azioniSelezionataLabel.size()==1) {
@@ -21217,7 +21215,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_FRUITORE);
 //			}
 //			else {
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_RICHIEDENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroRuoloRichiedente" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_RICHIEDENTE
 			//}
 			if((datiIdentificativiFruitoreSelezionatoValue!=null && !delegata) || servizioApplicativoFruitoreSelezionatoValue!=null || !showRuoloRichiedente) {
 				de.setType(DataElementType.HIDDEN);
@@ -21235,7 +21233,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //							de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_FRUITORE);
 //						}
 //						else {
-						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_RICHIEDENTE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroRuoloRichiedente" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_RUOLO_RICHIEDENTE
 						//}
 						de.setValue(ruoloFruitoreSelezionatoLabel);
 						de.setType(DataElementType.TEXT);
@@ -21255,7 +21253,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(fruitoriValue!=null && fruitoriValue.size()>1){
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE
 				if(ruoloFruitoreSelezionatoValue!=null) {
 					de.setType(DataElementType.HIDDEN);
 				}
@@ -21268,7 +21266,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(configurazione) {
 							de = new DataElement();
 							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE+"___LABEL");
-							de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_FRUITORE
 							de.setValue(datiIdentificativiFruitoreSelezionatoLabel);
 							de.setType(DataElementType.TEXT);
 						}
@@ -21288,7 +21286,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(serviziApplicativiFruitoreValue!=null && serviziApplicativiFruitoreValue.size()>1){
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroSaFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE
 				if(ruoloFruitoreSelezionatoValue!=null) {
 					de.setType(DataElementType.HIDDEN);
 				}
@@ -21301,7 +21299,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(configurazione) {
 							de = new DataElement();
 							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE+"___LABEL");
-							de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiFiltroSaFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_SA_FRUITORE
 							de.setValue(servizioApplicativoFruitoreSelezionatoLabel);
 							de.setType(DataElementType.TEXT);
 						}
@@ -21355,7 +21353,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 //
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRaggruppamento" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -21371,7 +21369,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		/*
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_ENABLED);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_ENABLED);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyEnabled" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_ENABLED
 		de.setType(DataElementType.SELECT);
 		de.setValues(ConfigurazioneCostanti.CONFIGURAZIONE_STATI_COLLEZIONAMENTO);
 		if(policy.getGroupBy().isEnabled()){
@@ -21418,7 +21416,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showRuoloPdD ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RUOLO_PDD);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RUOLO_PDD_LABEL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyRuoloPddLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RUOLO_PDD_LABEL
 					//de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RUOLO_PDD_NOTE);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isRuoloPorta());
@@ -21429,7 +21427,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Protocollo
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_PROTOCOLLO);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyProtocollo" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_PROTOCOLLO
 				if(showProtocollo){
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isProtocollo());
@@ -21447,7 +21445,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showErogatore ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_EROGATORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_EROGATORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyErogatore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_EROGATORE
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isErogatore());
 					de.setValue(allarme.getGroupBy().isErogatore()+"");
@@ -21506,7 +21504,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showServizio ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_SERVIZIO);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_SERVIZIO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyServizio" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_SERVIZIO
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isServizio());
 					de.setValue(allarme.getGroupBy().isServizio()+"");
@@ -21522,7 +21520,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabel(getLabelAzione(serviceBinding));
 			}
 			else {
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_AZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyAzione" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_AZIONE
 			}
 			if( showAzione ){
 				de.setType(DataElementType.CHECKBOX);
@@ -21573,7 +21571,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showFruitore ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_FRUITORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_FRUITORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_FRUITORE
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isFruitore());
 					de.setValue(allarme.getGroupBy().isFruitore()+"");
@@ -21590,7 +21588,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if( showRichiedenteApplicativo ){
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_SA_FRUITORE);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_SA_FRUITORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbySaFruitore" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_SA_FRUITORE
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(allarme.getGroupBy().isServizioApplicativoFruitore());
 					de.setValue(allarme.getGroupBy().isServizioApplicativoFruitore()+"");
@@ -21603,7 +21601,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Richiedente API (Significa SoggettoMittente per le erogazioni, Applicativo e Identificativo Autenticato sia per le erogazioni che per le fruizioni)
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyRichiedente" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_RICHIEDENTE
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(allarme.getGroupBy().isIdentificativoAutenticato()); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
 				de.setValue(allarme.getGroupBy().isIdentificativoAutenticato()+"");
@@ -21646,7 +21644,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
-				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyToken" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(groupByToken); // uso isIdentificativoAutenticato come informazione equivalente a isServizioApplicativoFruitore e isSoggettoFruitore
 				de.setValue(groupByToken+"");
@@ -21656,7 +21654,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(groupByToken) {
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiGroupbyTokenClaims" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_TOKEN_CLAIMS
 					de.setValues(CostantiControlStation.TOKEN_VALUES_WITHOUT_ISSUER);
 					de.setLabels(CostantiControlStation.LABEL_TOKEN_VALUES_WITHOUT_ISSUER);
 					de.setSelezionati(tokenSelezionatiSenzaIssuer);
@@ -22039,17 +22037,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 					if(entry.getEnabled() == 1) {
 						if(entry.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_OK) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmeStatoOk" ) );	//ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_OK);
 						} else if(entry.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_ERROR) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmeStatoError" ) );	//ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_ERROR);
 						} else if(entry.getStato() == ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_STATO_WARNING) {
-							de.setToolTip(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneAllarmeStatoWarning" ) );	//ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING
 							de.setValue(ConfigurazioneCostanti.CONFIGURAZIONE_ALLARME_LABEL_STATO_WARNING);
 						}
 					} else {
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoDisabilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 					}
 					
@@ -22059,11 +22057,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 //					de.setWidthPx(10);
 					if(entry.getAcknowledged() == 1){
-						de.setToolTip(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_SI);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ValueParametroConfigurazioneAllarmiAcknowledgeSi" ) );	//ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_SI
 						de.setValue(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_SI);
 					}
 					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_NO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ValueParametroConfigurazioneAllarmiAcknowledgeNo" ) );	//ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_NO
 						de.setValue(ConfigurazioneCostanti.LABEL_VALUE_PARAMETRO_CONFIGURAZIONE_ALLARMI_ACKNOWLEDGE_NO);
 					}
 					e.addElement(de);
@@ -22263,7 +22261,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						if(i > 0) {
 							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
-							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							imageUp.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaSu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU
 							imageUp.setUrl(servletListURL, lstParamDirezioneSu.toArray(new Parameter[lstParamDirezioneSu.size()])); 
 						}
 						else {
@@ -22274,7 +22272,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(i < numeroElementi -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
-							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							imageDown.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaGiu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU
 							imageDown.setUrl(servletListURL, lstParamDirezioneGiu.toArray(new Parameter[lstParamDirezioneGiu.size()]));
 							de.addImage(imageDown);
 						}
@@ -22289,12 +22287,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(handler.getStato()==null // backward compatibility 
 							||
 							StatoFunzionalita.ABILITATO.equals(handler.getStato())){
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoAbilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 					}
 					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoDisabilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
@@ -22511,7 +22509,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// id
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneHandlersIdHandler" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_ID_HANDLER);
 		de.setType(DataElementType.HIDDEN);
 		if(tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -22550,7 +22548,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		// Informazioni Generali
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_INFORMAZIONI_GENERALI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneHandlersInformazioniGenerali" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_INFORMAZIONI_GENERALI
 		dati.add(de);
 		
 		if(tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -22574,7 +22572,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		// stato
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO); 
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneHandlersStato" ) ); 	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_HANDLERS_STATO);
 		de.setType(DataElementType.SELECT);
 		String [] statoValues = CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA;

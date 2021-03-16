@@ -68,13 +68,13 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -173,7 +173,7 @@ public final class AccordiCooperazioneChange extends Action {
 			// Prendo il nome dell'accordo
 			String nome = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
 			if ((nome == null) || nome.equals("")) {
-				pd.setMessage(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_NOME_ACCORDO_NECESSARIO);
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "AccordiCooperazione.AccordiCooperazioneNomeAccordoNecessario" ) );	//AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_NOME_ACCORDO_NECESSARIO
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 				return ServletUtils.getStrutsForwardGeneralError(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE, 

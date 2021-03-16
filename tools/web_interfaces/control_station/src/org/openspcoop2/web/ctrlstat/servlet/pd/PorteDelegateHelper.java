@@ -99,6 +99,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -107,7 +108,6 @@ import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -219,14 +219,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		DataElement de = null;
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateIdSoggetto" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO
 		de.setValue(idsogg2);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ID);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateId" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ID
 		de.setValue(idPorta);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -240,17 +240,17 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		if(datiInvocazione || (!datiAltroPorta && !datiAltroApi)) {
 			de = new DataElement();
 			if(datiInvocazione) {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroTitoloPorteDelegateDatiInvocazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE
 			}
 			else {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroTitoloPorteDelegateDatiGenerali" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI
 			}
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
 
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 		de.setValue(nomePorta);
 		
 		if(isConfigurazione) {
@@ -279,10 +279,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			de = new DataElement();
 			if(ServiceBinding.SOAP.equals(serviceBinding)) {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_URL_INVOCAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateUrlInvocazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_URL_INVOCAZIONE
 			}
 			else {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateBaseUrlInvocazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_BASE_URL_INVOCAZIONE
 			}
 			de.setValue(urlInvocazione.getUrl());
 			de.setType(DataElementType.TEXT);
@@ -291,7 +291,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateDescrizione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE
 		de.setValue(descr);
 		if(isConfigurazione) {
 			de.setType(DataElementType.HIDDEN);
@@ -303,7 +303,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateStatoPorta" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATO_PORTA
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATO_PORTA);
 		if(!isConfigurazione) {
 			List<String> statoValues = new ArrayList<>();
@@ -327,7 +327,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		if(!isConfigurazione) {
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroTitoloPorteDelegateDatiServizio" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -338,13 +338,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		if(!isConfigurazione) {
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateSoggettoErogatore" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 		}
 
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID);
 		if(!usataInConfigurazioni) {
 			de.setPostBack(true);
@@ -359,7 +359,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			if(this.isModalitaCompleta()) {
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO);
 				de.setType(DataElementType.TEXT);
 				String tipoSoggetto = soggid.split("/")[0];
@@ -374,13 +374,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		if(!isConfigurazione) {
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateServizio" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 		}
 
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID);
 		if(!usataInConfigurazioni) {
 			de.setPostBack(true);
@@ -395,7 +395,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			if(this.isModalitaCompleta()) {
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 				de.setType(DataElementType.TEXT);
 				for (int i = 0; i < serviziList.length; i++) {
 					if(serviziList[i]!=null && serviziList[i].equals(servid)){
@@ -460,18 +460,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			de = new DataElement();
 			if(datiInvocazione) {
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTA_RISORSA_MODALITA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPortaRisorsaModalita" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTA_RISORSA_MODALITA
 				}
 				else {
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTA_AZIONE_MODALITA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPortaAzioneModalita" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTA_AZIONE_MODALITA
 				}
 			}
 			else {
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISORSA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRisorsa" ) );	//CostantiControlStation.LABEL_PARAMETRO_RISORSA
 				}
 				else {
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AZIONE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroAzione" ) );	//CostantiControlStation.LABEL_PARAMETRO_AZIONE
 				}
 			}
 			de.setType(DataElementType.SUBTITLE);
@@ -494,7 +494,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateModalitaIdentificazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
 		if(!usataInConfigurazioni || datiInvocazione) {
 			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1) || visualizzazioneSpecialeSoapPerEssereUgualeARest) {
@@ -503,7 +503,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateModalitaIdentificazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE+"__LABEL");
 				de.setType(DataElementType.TEXT);
 				if(visualizzazioneSpecialeSoapPerEssereUgualeARest) {
@@ -537,7 +537,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				
 				// azione non modificabile, metto la lista delle azioni
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 				de.setValue(azione);
 				dati.addElement(de);
@@ -551,7 +551,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						(modeaz != null) && 
 						modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 					de.setType(DataElementType.SELECT);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
 					de.setValues(azioniList);
@@ -565,22 +565,22 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 					de = new DataElement();
 					if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED))) {
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateEspressioneRegolare" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE
 						de.setValue(patternAzione);
 						de.setRequired(true);
 					}
 					else if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateContentPattern" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN
 						de.setValue(patternAzione);
 						de.setRequired(true);
 					}
 					else if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED))) {
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 						de.setValue(patternAzione);
 						de.setRequired(true);
 					} 
 					else {
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 						de.setValue(azione);
 					}
 		
@@ -611,7 +611,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 				// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateForceInterfaceBasedLeft" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT
 				if( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
 						modeaz!= null && 
 						(
@@ -685,7 +685,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		if(addHiddenAzione) {
 			
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 			de.setType(DataElementType.HIDDEN);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
 			de.setValue(azid);
@@ -693,7 +693,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			if(this.isModalitaCompleta()) {
 				DataElement deLabel = new DataElement();
-				deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
+				deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateModalitaIdentificazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE
 				deLabel.setType(DataElementType.TEXT);
 				deLabel.setValue(modeaz);
 				dati.addElement(deLabel);
@@ -720,21 +720,21 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				deLabel.setType(DataElementType.TEXT);
 				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED))) {
 					deLabel.setType(DataElementType.TEXT_AREA_NO_EDIT);
-					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE);
+					deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateEspressioneRegolare" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE
 					deLabel.setValue(patternAzione);
 				} 
 				else if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
 					deLabel.setType(DataElementType.TEXT_AREA_NO_EDIT);
-					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
+					deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateContentPattern" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN
 					deLabel.setValue(patternAzione);
 				} 
 				else if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED)
 						) {
-					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 					deLabel.setValue(patternAzione);
 				} 
 				else {
-					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+					deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 					deLabel.setValue(azione);
 				}
 				dati.addElement(deLabel);
@@ -743,14 +743,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(this.isModalitaCompleta()) {
 				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_DELEGATED_BY))){
 					de = new DataElement();
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateRicercaPortaAzioneDelegata" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA
 					de.setType(DataElementType.TEXT);
 					de.setValue(nomePortaDelegante);
 					dati.addElement(de);
 				}
 				else {
 					DataElement deLabel = new DataElement();
-					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA);
+					deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateRicercaPortaAzioneDelegata" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA
 					deLabel.setType(DataElementType.TEXT);
 					deLabel.setValue(ricercaPortaAzioneDelegata ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
 					dati.addElement(deLabel);
@@ -758,7 +758,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateForceInterfaceBasedLeft" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(forceWsdlBased);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
@@ -770,7 +770,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))
 				){
 					DataElement deLabel = new DataElement();
-					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT);
+					deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateForceInterfaceBasedLeft" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT
 					deLabel.setType(DataElementType.TEXT);
 					deLabel.setValue(ServletUtils.isCheckBoxEnabled(forceWsdlBased) ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
 					dati.addElement(deLabel);
@@ -888,7 +888,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_ABILITATO, 
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DISABILITATO };
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateStateless" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATELESS);
 		if(!this.core.isShowJ2eeOptions() || (isConfigurazione && !datiAltroPorta)){
 			de.setType(DataElementType.HIDDEN);
@@ -945,7 +945,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(!isConfigurazione || datiAltroPorta) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateIntegrazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE
 				dati.addElement(de);
 				
 				for (int i = 0; i < deIntegrazione.size(); i++) {
@@ -967,12 +967,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		if(!localForwardDisable) {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateLocalForward" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD
 			dati.addElement(de);
 		}
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateLocalForwardStato" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_STATO
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
 		de.setSize(alternativeSize);
 		if (localForwardDisable) {
@@ -989,7 +989,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateLocalForwardPa" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA);
 		de.setValue(paLocalForward);
 		if (localForwardDisable || !PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_ABILITATO.equals(localForward)) {
@@ -1011,14 +1011,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateCorrelazioneApplicativa" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA
 			dati.addElement(de);
 			
 			if (tipoOp == TipoOperazione.CHANGE) {
 
 				if (riusoId && numCorrApp != 0) {
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaLabel" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL
 					de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
 					de.setValue(scadcorr);
 					de.setType(DataElementType.TEXT_EDIT);
@@ -1124,13 +1124,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}else{
 				de.setType(DataElementType.TITLE);
 			}
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_ASINCRONA );
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateGestioneAsincrona" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_ASINCRONA
 			dati.addElement(de);
 	
 			String[] tipoRicsim = {PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA_ABILITATO
 					, PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA_DISABILITATO};
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateRicevutaAsincronaSimmetrica" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA
 			if (nascondiSezioneOpzioniAvanzate) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(ricsim);
@@ -1145,7 +1145,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String[] tipoRicasim = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO
 					, PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_DISABILITATO};
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateRicevutaAsincronaAsimmetrica" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA
 			if (nascondiSezioneOpzioniAvanzate) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(ricasim);
@@ -1170,7 +1170,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOAP_WITH_ATTACHMENTS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateSoapWithAttachments" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOAP_WITH_ATTACHMENTS
 			dati.addElement(de);
 			
 		}
@@ -1179,7 +1179,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_ALLEGA, 
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_SCARTA };
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateGestioneBody" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY);
 		if (viewSoapWithAttachments) {
 			de.setType(DataElementType.SELECT);
@@ -1197,7 +1197,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_ABILITATO,
 				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DISABILITATO };
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateGestioneManifest" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
 		if(isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
 			if(viewSoapWithAttachments) {
@@ -1233,13 +1233,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		if(!this.isModalitaStandard() && datiAltroApi) {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_ENGINE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateMessageEngine" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_ENGINE
 			dati.addElement(de);
 		}
 		
 		de = new DataElement();
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE);
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateGestioneMessageEngine" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE
 		if(!this.isModalitaStandard() && datiAltroApi) {
 			de.setType(DataElementType.SELECT);
 			List<String> lS = new ArrayList<String>();
@@ -1312,7 +1312,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String protocollo, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) throws ProtocolException {
 
 		DataElement de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateCorrelazioneApplicativa" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -1324,7 +1324,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateElementoXml" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML
 		de.setNote(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
@@ -1361,7 +1361,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				
 		//String[] tipoMode = { "contentBased", "disabilitato" };
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateModalitaIdentificazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE
 		de.setType(DataElementType.SELECT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE);
 		de.setValues(tipoMode);
@@ -1376,15 +1376,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
 			de = new DataElement();
 			if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else {
 				if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED)) {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateEspressioneRegolare" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE
 				}
 				else {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateContentPattern" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN
 				}
 				de.setType(DataElementType.TEXT_AREA);
 				
@@ -1413,7 +1413,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		if(!PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_DISABILITATO.equals(mode)){
 			String[] tipiGIF = { CostantiConfigurazione.BLOCCA.toString(), CostantiConfigurazione.ACCETTA.toString()};
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateGestioneIdentificazioneFallita" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA
 			de.setType(DataElementType.SELECT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA);
 			de.setValues(tipiGIF);
@@ -1422,7 +1422,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			String[] tipiRiusoIdMessaggio = { CostantiConfigurazione.DISABILITATO.toString(), CostantiConfigurazione.ABILITATO.toString()};
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateRiusoIdMessaggio" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO);
 			if(this.reuseIdProtocol(protocollo)) {
 				de.setType(DataElementType.SELECT);
@@ -1456,7 +1456,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Vector<DataElement> dati, String idcorr, org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 
 		DataElement de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateCorrelazioneApplicativa" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -1468,7 +1468,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateElementoXml" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML
 		de.setNote(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
@@ -1503,7 +1503,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		//String[] tipoMode = { "contentBased", "disabilitato" };
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateModalitaIdentificazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE
 		de.setType(DataElementType.SELECT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE);
 		de.setValues(tipoMode);
@@ -1518,15 +1518,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
 			de = new DataElement();
 			if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else {
 				if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED)) {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateEspressioneRegolare" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE
 				}
 				else {
-					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateContentPattern" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN
 				}
 				de.setType(DataElementType.TEXT_AREA);
 				
@@ -1555,7 +1555,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		if(!PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_DISABILITATO.equals(mode)){
 			String[] tipiGIF = { CostantiConfigurazione.BLOCCA.toString(), CostantiConfigurazione.ACCETTA.toString()};
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateGestioneIdentificazioneFallita" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA
 			de.setType(DataElementType.SELECT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA);
 			de.setValues(tipiGIF);
@@ -1608,18 +1608,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", Valore";
 					}
 				}
-				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiENecessarioIndicareXx", tmpElenco));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreNonInserireSpaziNeiNomi" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI
 				return false;
 			}
 			if(valore.startsWith(" ") || valore.endsWith(" ")){
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreNonInserireSpaziAllInizioOAllaFineDeiValori" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI
 				return false;
 			}
 			if(this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)==false) {
@@ -1647,7 +1647,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPRIETA_DI_MESSAGE_SECURITY_XX_E_GIA_STATO_ASSOCIATA_ALLA_PORTA_DELEGATA_YY,	nome, nomeporta));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreLaProprietaDiMessageSecurityXxEGiaStatoAssociataAllaPortaDelegataYy",	nome, nomeporta));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPRIETA_DI_MESSAGE_SECURITY_XX_E_GIA_STATO_ASSOCIATA_ALLA_PORTA_DELEGATA_YY
 					return false;
 				}
 			}
@@ -1700,39 +1700,39 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			// Campi obbligatori
 			if (nomePD==null || nomePD.equals("")) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_EGRAVE_NECESSARIO_INDICARE_IL_NOME);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiEgraveNecessarioIndicareIlNome" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_EGRAVE_NECESSARIO_INDICARE_IL_NOME
 				return false;
 			}
 
 			if (soggid == null) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATO_TROVATO_NESSUN_SOGGETTO_EROGATORE_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiNonEStatoTrovatoNessunSoggettoErogatoreScegliereUnaDelleAltreModalita" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATO_TROVATO_NESSUN_SOGGETTO_EROGATORE_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA
 				return false;
 			}
 
 			if (servid == null) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATO_TROVATO_NESSUN_SERVIZIO_ASSOCIATO_AL_SOGGETTO_EROGATORE_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiNonEStatoTrovatoNessunServizioAssociatoAlSoggettoErogatoreScegliereUnaDelleAltreModalita" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATO_TROVATO_NESSUN_SERVIZIO_ASSOCIATO_AL_SOGGETTO_EROGATORE_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA
 				return false;
 			}
 			
 			if (modeaz == null) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_MODALITA_AZIONE);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiNonEStataTrovataNessunaModalitaAzione" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_MODALITA_AZIONE
 				return false;
 			}
 
 			if (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && (azid == null)) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_AZIONE_ASSOCIATA_AL_SERVIZIO_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiNonEStataTrovataNessunaAzioneAssociataAlServizioScegliereUnaDelleAltreModalita" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_AZIONE_ASSOCIATA_AL_SERVIZIO_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA
 				return false;
 			}
 			if ((modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) || 
 					modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED) ||
 					modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED)) && (azione==null || azione.equals(""))) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiENecessarioIndicarePatternAzione" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nomePD.indexOf(" ") != -1) ) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreNonInserireSpaziNeiCampiDiTesto" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO
 				return false;
 			}
 			if(this.checkIntegrationEntityName(nomePD,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false){
@@ -1744,7 +1744,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED) &&
 					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_DELEGATED_BY) &&
 					(azione != null && azione.indexOf(" ") != -1)) {
-				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreNonInserireSpaziNeiCampiDiTesto" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO
 				return false;
 			}
 
@@ -1770,7 +1770,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				if (!statoValidazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_ABILITATO) &&
 						!statoValidazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO) &&
 						!statoValidazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_WARNING_ONLY)) {
-					this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreValidazioneXsdDevEssereAbilitatoDisabilitatoOWarningOnly" ) );	//PorteDelegateCostanti.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY
 					return false;
 				}
 			}
@@ -1778,14 +1778,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			// Se autenticazione = custom, nomeauth dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && 
 					(autenticazioneCustom == null || autenticazioneCustom.equals(""))) {
-				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreIndicareUnNomePerLAutenticazioneXx", CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX
 				return false;
 			}
 
 			// Se autorizzazione = custom, nomeautor dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione) && 
 					(autorizzazioneCustom == null || autorizzazioneCustom.equals(""))) {
-				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreIndicareUnNomePerLAutorizzazioneXx", CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX
 				return false;
 			}
 			
@@ -1871,9 +1871,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				if (giaRegistrato) {
 					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPDGiaRegistrata);
 					String soggettoProprietarioMessaggio = pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario();
-					this.pd.setMessage(MessageFormat.format(
-							PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY, nomePD,
-							soggettoProprietarioMessaggio));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreEsisteGiaUnaPortaDelegataConNomeXxAssociataAlSoggettoYy", nomePD, soggettoProprietarioMessaggio));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY
 					return false;
 				}
 			} else if (TipoOperazione.CHANGE.equals(tipoOp)) {
@@ -1886,9 +1884,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						if (curID > 0) {
 							PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(curID);
 							String soggettoProprietarioMessaggio = pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario();
-							this.pd.setMessage(MessageFormat.format(
-									PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY,
-									nomePD, soggettoProprietarioMessaggio));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreEsisteGiaUnaPortaDelegataConNomeXxAssociataAlSoggettoYy", nomePD, soggettoProprietarioMessaggio));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY
 							return false;
 						}
 					}
@@ -1911,9 +1907,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					if (oldIDpd != portaDelegata.getId()) {
 						PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(oldIDpd);
 						String soggettoProprietarioMessaggio = pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario();
-						this.pd.setMessage(MessageFormat.format(
-								PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY,
-								portaDelegata.getNome(), soggettoProprietarioMessaggio));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreEsisteGiaUnaPortaDelegataConNomeXxAssociataAlSoggettoYy", portaDelegata.getNome(), soggettoProprietarioMessaggio));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY
 						return false;
 					}
 				}
@@ -1960,9 +1954,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 							}
 							
 							if(saCompatibili==false){
-								this.pd.setMessage(MessageFormat.format(
-										PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_ALLA_PORTA_DELEGATA_DEI_SERVIZI_APPLICATIVI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE,
-										portaDelegata.getAutenticazione(), autenticazione));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreNonEPossibileModificareIlTipoDiAutenticazioneDaXxAYyPoichèRisultanoAssociatiAllaPortaDelegataDeiServiziApplicativiNonCompatibiliNellaModalitaDiAccessoConIlNuovoTipoDiAutenticazione", portaDelegata.getAutenticazione(), autenticazione));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_ALLA_PORTA_DELEGATA_DEI_SERVIZI_APPLICATIVI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE
 								return false;
 							}
 						}
@@ -3817,12 +3809,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public Vector<DataElement> addProprietaProtocolloToDati(TipoOperazione tipoOp, int size, String nome, String valore,
 			Vector<DataElement> dati) {
 		DataElement de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateProtocolProperties" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateNome" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME
 		de.setValue(nome);
 		if(TipoOperazione.ADD.equals(tipoOp)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -3836,7 +3828,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroValore" ) );	//CostantiControlStation.LABEL_PARAMETRO_VALORE
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setRequired(true);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VALORE);
@@ -3868,13 +3860,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", " + PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE;
 					}
 				}
-				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiENecessarioIndicareXx", tmpElenco));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNeiCampiDiTesto" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO
 				return false;
 			}
 			
@@ -3903,9 +3895,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage(MessageFormat.format(
-							PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY, nome,
-							nomeporta));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreLaPropertyXxEGiaStataAssociataAllaPortaDelegataYy", nome, nomeporta));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY
 					return false;
 				}
 			}
@@ -4233,7 +4223,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 								
 						if(i > 0) {
 							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
-							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							imageUp.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaSu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU
 							imageUp.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST,pId, pIdSoggetto, pIdAsps, pIdFruizione, pNomePorta,pIdTrasformazione, pDirezioneSu); 
 						}
 						else {
@@ -4244,7 +4234,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						if(i < numeroElementi -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
-							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							imageDown.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaGiu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU
 							imageDown.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, pId, pIdSoggetto, pIdAsps, pIdFruizione, pNomePorta,pIdTrasformazione, pDirezioneGiu);
 							de.addImage(imageDown);
 						}
@@ -4260,12 +4250,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					if(regola.getStato()==null // backward compatibility 
 							||
 							StatoFunzionalita.ABILITATO.equals(regola.getStato())){
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoAbilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_ABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_ENABLE);
 					}
 					else{
-						de.setToolTip(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Configurazione.ConfigurazioneStatoDisabilitato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.CONFIG_DISABLE);
 					}
@@ -4518,7 +4508,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 								
 						if(i > 0) {
 							imageUp.setImage(CostantiControlStation.ICONA_FRECCIA_SU);
-							imageUp.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU);
+							imageUp.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaSu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_SU
 							imageUp.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_LIST, pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione, pIdTrasformazioneRisposta, pDirezioneSu); 
 						}
 						else {
@@ -4529,7 +4519,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						if(i < numeroElementi -1) {
 							DataElementImage imageDown = new DataElementImage();
 							imageDown.setImage(CostantiControlStation.ICONA_FRECCIA_GIU);
-							imageDown.setToolTip(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU);
+							imageDown.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.ParametroConfigurazionePosizioneSpostaGiu" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SPOSTA_GIU
 							imageDown.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_LIST, pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione, pIdTrasformazioneRisposta, pDirezioneGiu);
 							de.addImage(imageDown);
 						}
@@ -5440,13 +5430,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", " + PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE;
 					}
 				}
-				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiENecessarioIndicareXx", tmpElenco));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNeiCampiDiTesto" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO
 				return false;
 			}
 			
@@ -5479,14 +5469,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 						nomeporta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null , null,	portaDelegata);
-						this.pd.setMessage(MessageFormat.format(
-								PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY, nome,
-								nomeporta));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreLaPropertyXxEGiaStataAssociataAllaConfigurazioneYy", nome, nomeporta));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY
 					}
 					else {
-						this.pd.setMessage(MessageFormat.format(
-								PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY, nome,
-								nomeporta));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreLaPropertyXxEGiaStataAssociataAllaPortaDelegataYy", nome, nomeporta));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY
 					}
 					
 					
@@ -5632,13 +5618,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", " + PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE;
 					}
 				}
-				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiENecessarioIndicareXx", tmpElenco));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNeiCampiDiTesto" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO
 				return false;
 			}
 			
@@ -5671,14 +5657,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 						nomeporta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null , null,	portaDelegata);
-						this.pd.setMessage(MessageFormat.format(
-								PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY, nome,
-								nomeporta));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreLaPropertyXxEGiaStataAssociataAllaConfigurazioneYy", nome, nomeporta));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY
 					}
 					else {
-						this.pd.setMessage(MessageFormat.format(
-								PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY, nome,
-								nomeporta));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreLaPropertyXxEGiaStataAssociataAllaPortaDelegataYy", nome, nomeporta));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY
 					}
 					
 					
@@ -5824,13 +5806,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						tmpElenco = tmpElenco + ", " + PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE;
 					}
 				}
-				this.pd.setMessage(MessageFormat.format(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreDatiIncompletiENecessarioIndicareXx", tmpElenco));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNeiCampiDiTesto" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO
 				return false;
 			}
 			
@@ -5863,14 +5845,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 						nomeporta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null , null,	portaDelegata);
-						this.pd.setMessage(MessageFormat.format(
-								PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY, nome,
-								nomeporta));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreLaPropertyXxEGiaStataAssociataAllaConfigurazioneYy", nome, nomeporta));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY
 					}
 					else {
-						this.pd.setMessage(MessageFormat.format(
-								PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY, nome,
-								nomeporta));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.ErroreLaPropertyXxEGiaStataAssociataAllaPortaDelegataYy", nome, nomeporta));	//PorteDelegateCostanti.MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_DELEGATA_YY
 					}
 					
 					

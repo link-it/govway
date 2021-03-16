@@ -92,6 +92,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -99,7 +100,6 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -374,7 +374,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			DataElement de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServiziApplicativiId" ) );	//ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
@@ -383,10 +383,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		DataElement de = new DataElement();
 		if(this.isModalitaCompleta()) {
-			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServizioApplicativo" ) );	//ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO
 		}
 		else {
-			de.setLabel(ServiziApplicativiCostanti.LABEL_APPLICATIVO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.Applicativo" ) );	//ServiziApplicativiCostanti.LABEL_APPLICATIVO
 		}
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -394,7 +394,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		if(!useIdSogg) {
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiProtocollo" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO
 	
 			boolean showProtocolli = TipoOperazione.CHANGE.equals(tipoOperazione) && (this.core.countProtocolli(this.session)>1);
 			
@@ -402,7 +402,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 					
 					DataElement deLABEL = new DataElement();
-					deLABEL.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+					deLABEL.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiProtocollo" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO
 					deLABEL.setType(DataElementType.TEXT);
 					deLABEL.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO+"__label");
 					deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
@@ -412,7 +412,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 				}else {
-					de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiProtocollo" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO
 					de.setValues(listaTipiProtocollo);
 					de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 					de.setSelected(tipoProtocollo);
@@ -432,7 +432,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		boolean dominioEsternoProfiloModIPA = false;
 		if(this.isProfiloModIPA(nomeProtocollo)) {
 			de = new DataElement();
-			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoDominio" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 				de.setType(DataElementType.HIDDEN);
@@ -441,7 +441,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoDominio" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+"__LABEL");
 				String valueDom = dominio;
 				for (int i = 0; i < SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length; i++) {
@@ -513,7 +513,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			else {
 				de.setType(DataElementType.HIDDEN);
 			}
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiProvider" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER
 			de.setValue(tipoENomeSoggetto);
 			dati.addElement(de);
 			
@@ -537,7 +537,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 		}else{
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiProvider" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
 			// Aggiunta di un servizio applicativo passando dal menu' 
 			if(!useIdSogg){
@@ -573,7 +573,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiProvider" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER
 
 				// Aggiunta di un servizio applicativo passando dalla schermata soggetti
 				org.openspcoop2.core.config.Soggetto sog = this.soggettiCore.getSoggetto(Integer.parseInt(provider));
@@ -591,7 +591,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 				
 		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiNome" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME
 		de.setValue(nome);
 		de.setSize(this.getSize());
 		//if (tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -607,7 +607,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		// Tipo SA
 		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiTipo" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
 		de.setSize(this.getSize());
 		
@@ -632,7 +632,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiTipo" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA+"__LABEL");
 				de.setType(DataElementType.TEXT);
 				de.setValue(this.getTipo(tipoSA));
@@ -667,7 +667,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_TIPOLOGIA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.Tipologia" ) );	//ServiziApplicativiCostanti.LABEL_TIPOLOGIA
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_SA);
 			//de.setPostBack(true);
 			//de.setType(DataElementType.SELECT);
@@ -849,7 +849,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if (TipoOperazione.CHANGE.equals(tipoOperazione)) {
 			
 				de = new DataElement();
-				de.setLabel(RuoliCostanti.LABEL_RUOLI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.Ruoli" ) );	//RuoliCostanti.LABEL_RUOLI
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 				
@@ -916,14 +916,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		boolean faultChoice = avanzatoFruitore && config.isSupportoSceltaFault();
 		if (faultChoice) {
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_ERRORE_APPLICATIVO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ErroreApplicativo" ) );	//ServiziApplicativiCostanti.LABEL_ERRORE_APPLICATIVO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
 
 		if (TipoOperazione.ADD.equals(tipoOperazione)) {
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiFault" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
@@ -938,7 +938,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 		else{
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiFault" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
@@ -955,7 +955,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			if (fault.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP)) {
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_ACTOR);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiFaultActor" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_ACTOR
 				de.setValue(faultactor);
 				if (faultChoice) {
 					de.setType(DataElementType.TEXT_EDIT);
@@ -970,7 +970,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiFaultGenericCode" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE);
 			if (faultChoice) {
 				de.setType(DataElementType.SELECT);
@@ -984,7 +984,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_PREFIX);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiFaultPrefix" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_PREFIX
 			de.setValue(prefixfault);
 			if (faultChoice) {
 				de.setType(DataElementType.TEXT_EDIT);
@@ -1001,7 +1001,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		if( (this.isModalitaCompleta() && !TipoOperazione.ADD.equals(tipoOperazione))  || 
 				(avanzatoFruitore && config.isSupportoSbustamentoProtocollo()) ) {
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.TrattamentoMessaggio" ) );	//ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -1009,7 +1009,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		de = new DataElement();
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
-		de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));
+		de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));	//ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo
 		if(avanzatoFruitore && config.isSupportoSbustamentoProtocollo()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_SBUSTAMENTO_PROTOCOLLO);
@@ -1025,7 +1025,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		if (this.isModalitaCompleta()==false) {
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiInvioPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RISPOSTA);
 			de.setValue(invrif == null || "".equals(invrif) ? CostantiConfigurazione.DISABILITATO.toString() : invrif);
@@ -1033,7 +1033,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		} else {
 			if (!TipoOperazione.ADD.equals(tipoOperazione)) {
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiInvioPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO
 				de.setType(DataElementType.SELECT);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RISPOSTA);
 				de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
@@ -1041,7 +1041,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}else{
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiInvioPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RISPOSTA);
 				de.setValue(invrif == null || "".equals(invrif) ? ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_DISABILITATO : invrif);
@@ -1057,7 +1057,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		if (TipoOperazione.CHANGE.equals(tipoOperazione) && this.isModalitaCompleta() && !this.pddCore.isPddEsterna(nomePdd)) {
 
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_INFO_INTEGRAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.InfoIntegrazione" ) );	//ServiziApplicativiCostanti.LABEL_INFO_INTEGRAZIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -1067,7 +1067,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			StatoFunzionalita getMSGInv = invServ != null ? invServ.getGetMessage() : null;
 
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.InvocazioneServizio" ) );	//ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO
 			de.setType(DataElementType.LINK);
 			if(this.pddCore.isPddEsterna(nomePdd)){
 				de.setType(DataElementType.TEXT);
@@ -1093,7 +1093,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setLabel(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.RispostaAsincrona" ) );	//ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA
 			if(this.pddCore.isPddEsterna(nomePdd)){
 				de.setType(DataElementType.TEXT);
 				de.setValue("(non presente)");
@@ -1212,7 +1212,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		
 		if(configurazioneStandardNonApplicabile){
-			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE,Costanti.MESSAGE_TYPE_INFO);
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ConfigurazioneImpostataModalitaAvanzataLongMessage" ) ,Costanti.MESSAGE_TYPE_INFO);	//CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE
 			this.pd.disableEditMode();
 			
 			for (int i = 0; i < dati.size(); i++) {
@@ -2440,7 +2440,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
 						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, sa.getId()+""));
 				
-				de.setToolTip(RuoliCostanti.LABEL_RUOLI); 
+				de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Ruoli.Ruoli" ) ); 	//RuoliCostanti.LABEL_RUOLI
 				
 				e.addElement(de);
 			}
@@ -2605,7 +2605,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
 		
 		DataElement de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServiziApplicativiIdServizioApplicativo" ) );	//ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO
 		de.setValue(idsil);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
@@ -2627,12 +2627,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		if(showName && !showFromConfigurazione){
 			
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServizioApplicativo" ) );	//ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiNome" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME
 			de.setValue(nomeservizioApplicativo);
 			de.setType(DataElementType.TEXT);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
@@ -2653,14 +2653,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(showTitleTrattamentoMessaggio){
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.TrattamentoMessaggio" ) );	//ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
 			
 			String[] tipoSbustamentoSOAP = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiSbustamentoSoap" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
 			if(sbustamentoSoapEnabled) {
 				de.setType(DataElementType.SELECT);
@@ -2684,9 +2684,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String[] tipoSbustamentoInformazioniProtocollo = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
 			if(nomeProtocollo!=null && !"".equals(nomeProtocollo)){
-				de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));
+				de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));	//ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo
 			}else{
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiSbustamentoInfoProtocolloInfoProtocollo" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO
 			}
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
 			if(sbustamentoProtocolloEnabled) {
@@ -2710,14 +2710,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	
 			if (!this.isModalitaCompleta()) {
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiInvioPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
 				de.setValue(invrif);
 				dati.addElement(de);
 	
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiRispostaPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 				de.setValue(risprif);
@@ -2725,7 +2725,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			} else {
 				String[] tipoInvRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiInvioPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO
 				de.setType(DataElementType.SELECT);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
 				de.setValues(tipoInvRif);
@@ -2738,7 +2738,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	
 				String[] tipoRispRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiRispostaPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO
 				de.setType(DataElementType.SELECT);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 				de.setValues(tipoRispRif);
@@ -2753,14 +2753,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(integrationManagerEnabled) {
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServizioMessageBox" ) );	//ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
 			
 			String[] tipoGM = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiMessageBox" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
 			
 			if(integrationManagerEnabled) {
@@ -2784,7 +2784,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneUsername" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME
 				de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
 				if(integrationManagerEnabled) {
 					de.setType(DataElementType.TEXT_EDIT);
@@ -2803,7 +2803,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				if(change && passwordCifrata ){
 					DataElement deModifica = new DataElement();
-					deModifica.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_PASSWORD);
+					deModifica.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneModificaPassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MODIFICA_PASSWORD
 					deModifica.setType(DataElementType.CHECKBOX);
 					deModifica.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD);
 					deModifica.setPostBack(true);
@@ -2823,10 +2823,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 					de = new DataElement();
 					if(ServletUtils.isCheckBoxEnabled(changepwd)) {
-						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneNuovaPassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_NUOVA_PASSWORD
 					}
 					else {
-						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazionePassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD
 					}
 					if(change && passwordCifrata && ServletUtils.isCheckBoxEnabled(changepwd) ){
 						de.setValue(null); // non faccio vedere una password cifrata
@@ -2875,7 +2875,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
 					de = new DataElement();
-					de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiUtilizzabileComeClient" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT
 					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(useAsClient);
@@ -2897,7 +2897,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
 		
 		DataElement de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServiziApplicativiIdServizioApplicativo" ) );	//ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO
 		de.setValue(idsil);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
@@ -2924,7 +2924,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 //			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiNome" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME
 			de.setValue(nomeservizioApplicativo);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
@@ -2951,7 +2951,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 //			String[] tipoSbustamentoSOAP = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiSbustamentoSoap" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
 //			if(sbustamentoSoapEnabled) {
 //				de.setType(DataElementType.SELECT);
@@ -3001,7 +3001,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	
 //			if (!this.isModalitaCompleta()) {
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiInvioPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
 				if(invrif==null){
@@ -3012,7 +3012,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				dati.addElement(de);
 	
 				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiRispostaPerRiferimento" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 				if(risprif==null){
@@ -3061,7 +3061,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 //			String[] tipoGM = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ParametroServiziApplicativiMessageBox" ) );	//ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
 			
 //			if(integrationManagerEnabled) {
@@ -3085,7 +3085,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneUsername" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME
 				de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
 //				if(!this.isModalitaStandard()) {
 //					de.setType(DataElementType.TEXT_EDIT);
@@ -3099,7 +3099,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				dati.addElement(de);
 	
 				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazionePassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD
 				de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
 //				if(!this.isModalitaStandard()) {
 //					de.setType(DataElementType.TEXT_EDIT);
@@ -3120,21 +3120,21 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String idAsps, String idPorta){
 
 		DataElement de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServiziApplicativiProvider" ) );	//ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER
 		de.setValue(provider);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServiziApplicativiIdAsps" ) );	//ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS
 		de.setValue(idAsps);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ServiziApplicativi.ServiziApplicativiIdPorta" ) );	//ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA
 		de.setValue(idPorta);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA);

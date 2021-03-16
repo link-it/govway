@@ -281,6 +281,7 @@ import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -292,7 +293,6 @@ import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.MenuEntry;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TargetType;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
@@ -2238,7 +2238,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	public Vector<DataElement> addNomeValoreToDati( TipoOperazione tipoOp,Vector<DataElement> dati, String nome, String valore, boolean enableUpdate) {
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 		de.setValue(nome);
 		if (tipoOp.equals(TipoOperazione.ADD) || enableUpdate) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -2251,7 +2251,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroValore" ) );	//CostantiControlStation.LABEL_PARAMETRO_VALORE
 		de.setValue(valore);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
@@ -2278,7 +2278,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		DataElement de = new DataElement();
 		if(id!= null){
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroId" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID);
@@ -2286,7 +2286,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		if(idsogg != null){
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_SOGGETTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdSoggetto" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_SOGGETTO
 			de.setValue(idsogg);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_SOGGETTO);
@@ -2294,7 +2294,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		if(idPorta != null){
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_PORTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdPorta" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_PORTA
 			de.setValue(idPorta);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_PORTA);
@@ -2303,7 +2303,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(idAsps != null){
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_ASPS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdAsps" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_ASPS
 			de.setValue(idAsps);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_ASPS);
@@ -2312,7 +2312,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(idFruizione != null){
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_FRUIZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdFruizione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_FRUIZIONE
 			de.setValue(idFruizione);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_ID_FRUIZIONE);
@@ -2469,7 +2469,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			DataElement de = new DataElement();
-			de.setLabel( CostantiControlStation.LABEL_PARAMETRO_NOME );
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
 			de.setValues(servizioApplicativoList);
@@ -2500,12 +2500,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(addTitle) {
 					DataElement de = new DataElement();
 					de.setType(DataElementType.TITLE);
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroSoggetto" ) );	//CostantiControlStation.LABEL_PARAMETRO_SOGGETTO
 					dati.addElement(de);
 				}
 				
 				DataElement de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 				de.setType(DataElementType.SELECT);
 				de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
 				de.setLabels(soggettiLabelList);
@@ -2546,12 +2546,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(showTitle) {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroApplicativo" ) );	//CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO
 				dati.addElement(de);
 			}
 			
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroSoggetto" ) );	//CostantiControlStation.LABEL_PARAMETRO_SOGGETTO
 			de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
 			de.setValue(soggetto);
 			if(this.core.isMultitenant() || modipa) {
@@ -2584,10 +2584,10 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				if(showTitle) {
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 				}
 				else {
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroApplicativo" ) );	//CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO
 				}
 				de.setType(DataElementType.SELECT);
 				de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO_AUTORIZZATO);
@@ -2657,7 +2657,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_SECURITY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroMessageSecurity" ) );	//CostantiControlStation.LABEL_PARAMETRO_MESSAGE_SECURITY
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -2668,7 +2668,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_DISABILITATO
 		};
 
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_STATO
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_MESSAGE_SECURITY);
 		de.setValues(tipoWS);
@@ -2684,13 +2684,13 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			// Sezione Richiesta
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RICHIESTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRichiesta" ) );	//CostantiControlStation.LABEL_PARAMETRO_RICHIESTA
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
 			// Applica MTOM Richiesta
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroApplicaMtom" ) );	//CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM
 			if(showApplicaMTOMReq){
 				de.setType(DataElementType.CHECKBOX);
 				if( ServletUtils.isCheckBoxEnabled(applicaMTOMReq) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOMReq) ){
@@ -2704,7 +2704,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRequestFlowPropertiesConfigName" ) );	//CostantiControlStation.LABEL_PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME
 			de.setName(CostantiControlStation.PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
 			if(propConfigReqList.length > 1){
 				de.setType(DataElementType.SELECT);
@@ -2740,7 +2740,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							
 							DataElement note = new DataElement();
 							note.setBold(true);
-							note.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL);
+							note.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneIncompletaLabel" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL
 							note.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA);
 							note.setType(DataElementType.NOTE);
 							dati.addElement(note);
@@ -2780,13 +2780,13 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			// Sezione Risposta
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISPOSTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRisposta" ) );	//CostantiControlStation.LABEL_PARAMETRO_RISPOSTA
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
 			// Applica MTOM Risposta
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroApplicaMtom" ) );	//CostantiControlStation.LABEL_PARAMETRO_APPLICA_MTOM
 			if(showApplicaMTOMRes){
 				de.setType(DataElementType.CHECKBOX);
 				if( ServletUtils.isCheckBoxEnabled(applicaMTOMRes) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOMRes) ){
@@ -2800,7 +2800,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroResponseFlowPropertiesConfigName" ) );	//CostantiControlStation.LABEL_PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME
 			de.setName(CostantiControlStation.PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
 			if(propConfigResList.length > 1){
 				de.setType(DataElementType.SELECT);
@@ -2836,7 +2836,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							
 							DataElement note = new DataElement();
 							note.setBold(true);
-							note.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL);
+							note.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneIncompletaLabel" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL
 							note.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA);
 							note.setType(DataElementType.NOTE);
 							dati.addElement(note);
@@ -2887,13 +2887,13 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		// Sezione Richiesta
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RICHIESTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRichiesta" ) );	//CostantiControlStation.LABEL_PARAMETRO_RICHIESTA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		// Stato
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_STATO
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_MTOM_RICHIESTA);
 		de.setValues(modeMtomListReq);
@@ -2916,13 +2916,13 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		// Sezione Richiesta
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISPOSTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRisposta" ) );	//CostantiControlStation.LABEL_PARAMETRO_RISPOSTA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		// Stato
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_STATO
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_MTOM_RISPOSTA);
 		de.setValues(modeMtomListRes);
@@ -2954,19 +2954,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroCorrelazioneApplicativa" ) );	//CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA
 		dati.addElement(de);
 		
 		de = new DataElement();
 		de.setType(DataElementType.SUBTITLE);
 		//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RICHIESTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRichiesta" ) );	//CostantiControlStation.LABEL_PARAMETRO_RICHIESTA
 		dati.addElement(de);
 		
 		if(portaDelegata){		
 			if (riusoID && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaLabel" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL
 				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
@@ -2977,7 +2977,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean riuso = false; // riuso non abilitato nella porta applicativa
 			if (riuso && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaLabel" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL
 				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
@@ -3001,7 +3001,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		de.setType(DataElementType.SUBTITLE);
 		//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RISPOSTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRisposta" ) );	//CostantiControlStation.LABEL_PARAMETRO_RISPOSTA
 		dati.addElement(de);
 		
 		de = new DataElement();
@@ -3039,12 +3039,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				try{
 					scadCorrInt = Integer.parseInt(scadcorr);
 				}catch(Exception e){
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SCADENZA_CORRELAZIONE_APPLICATIVA_NON_VALIDA_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO); 
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreScadenzaCorrelazioneApplicativaNonValidaInserireUnNumeroInteroMaggioreDiZero" ) ); 	//CostantiControlStation.MESSAGGIO_ERRORE_SCADENZA_CORRELAZIONE_APPLICATIVA_NON_VALIDA_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO
 					return false;
 				}
 				
 				if(scadCorrInt <= 0){
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SCADENZA_CORRELAZIONE_APPLICATIVA_NON_VALIDA_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreScadenzaCorrelazioneApplicativaNonValidaInserireUnNumeroInteroMaggioreDiZero" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_SCADENZA_CORRELAZIONE_APPLICATIVA_NON_VALIDA_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO
 					return false;
 				}
 			}
@@ -3096,7 +3096,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					label = CostantiControlStation.LABEL_PATTERN;
 				}
 				
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, label));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", label));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 
@@ -3106,7 +3106,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreModalitaIdentificazioneConTipiPossibili" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI
 				return false;
 			}
 
@@ -3176,7 +3176,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					label = CostantiControlStation.LABEL_PATTERN;
 				}
 				
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, label));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", label));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 
@@ -3186,7 +3186,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreModalitaIdentificazioneConTipiPossibili" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI
 				return false;
 			}
 
@@ -3228,7 +3228,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					!mtomRichiesta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_PACKAGING) && 
 					!mtomRichiesta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_VERIFY) && 
 					!mtomRichiesta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_UNPACKAGING)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_STATO_DELLA_RICHIESTA_DEVE_ESSERE_DISABLED_PACKAGING_UNPACKAGING_O_VERIFY);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreStatoDellaRichiestaDeveEssereDisabledPackagingUnpackagingOVerify" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_STATO_DELLA_RICHIESTA_DEVE_ESSERE_DISABLED_PACKAGING_UNPACKAGING_O_VERIFY
 				return false;
 			}
 
@@ -3236,7 +3236,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					!mtomRisposta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_PACKAGING) && 
 					!mtomRisposta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_VERIFY) && 
 					!mtomRisposta.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MTOM_UNPACKAGING)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_STATO_DELLA_RISPOSTA_DEVE_ESSERE_DISABLED_PACKAGING_UNPACKAGING_O_VERIFY);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreStatoDellaRispostaDeveEssereDisabledPackagingUnpackagingOVerify" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_STATO_DELLA_RISPOSTA_DEVE_ESSERE_DISABLED_PACKAGING_UNPACKAGING_O_VERIFY
 				return false;
 			}
 
@@ -3271,25 +3271,25 @@ public class ConsoleHelper implements IConsoleHelper {
 						tmpElenco = tmpElenco + ", " + CostantiControlStation.LABEL_PATTERN;
 					}
 				}
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", tmpElenco));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			//if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNelCampoNome" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME
 				return false;
 			}
 			if(pattern.indexOf(" ") != -1){
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRROE_NON_INSERIRE_SPAZI_NEL_CAMPO_PATTERN);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroeNonInserireSpaziNelCampoPattern" ) );	//CostantiControlStation.MESSAGGIO_ERRROE_NON_INSERIRE_SPAZI_NEL_CAMPO_PATTERN
 				return false;
 			}
 
 
 
 			if(contentType.indexOf(" ") != -1){
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_CONTENT_TYPE);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNelCampoContentType" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_CONTENT_TYPE
 				return false;
 			}
 
@@ -3346,11 +3346,9 @@ public class ConsoleHelper implements IConsoleHelper {
 
 				if (giaRegistrato) {
 					if(isPortaDelegata)
-						this.pd.setMessage(MessageFormat.format(
-								CostantiControlStation.MESSAGGIO_ERRORE_PROPRIETA_DI_MTOM_GIA_ASSOCIATA_ALLA_PORTA_DELEGATA_XX, nome, nomeporta));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreProprietaDiMtomGiaAssociataAllaPortaDelegataXx", nome, nomeporta));	//CostantiControlStation.MESSAGGIO_ERRORE_PROPRIETA_DI_MTOM_GIA_ASSOCIATA_ALLA_PORTA_DELEGATA_XX
 					else 
-						this.pd.setMessage(MessageFormat.format(
-								CostantiControlStation.MESSAGGIO_ERRORE_PROPRIETA_DI_MTOM_GIA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_XX, nome, nomeporta));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreProprietaDiMtomGiaAssociataAllaPortaApplicativaXx", nome, nomeporta));	//CostantiControlStation.MESSAGGIO_ERRORE_PROPRIETA_DI_MTOM_GIA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_XX
 					return false;
 				}
 			}
@@ -3368,7 +3366,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		// Nome
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 		de.setValue(nome);
 		if (tipoOp.equals(TipoOperazione.ADD) || enableUpdate) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -3394,7 +3392,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		// Pattern
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PATTERN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPattern" ) );	//CostantiControlStation.LABEL_PARAMETRO_PATTERN
 		de.setValue(pattern);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setName(CostantiControlStation.PARAMETRO_PATTERN);
@@ -3417,7 +3415,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		// Content-type
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONTENT_TYPE); 
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroContentType" ) ); 	//CostantiControlStation.LABEL_PARAMETRO_CONTENT_TYPE
 		de.setValue(contentType);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONTENT_TYPE);
@@ -3439,7 +3437,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		// Obbligatorio
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_OBBLIGATORIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroObbligatorio" ) );	//CostantiControlStation.LABEL_PARAMETRO_OBBLIGATORIO
 		de.setType(DataElementType.CHECKBOX);
 		if( ServletUtils.isCheckBoxEnabled(obbligatorio) || CostantiRegistroServizi.ABILITATO.equals(obbligatorio) ){
 			de.setSelected(true);
@@ -3706,7 +3704,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(addTitoloSezione){
 				de = new DataElement();
-				de.setLabel(RuoliCostanti.LABEL_RUOLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.Ruolo" ) );	//RuoliCostanti.LABEL_RUOLO
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
@@ -3734,10 +3732,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		else{
 			if(addMsgServiziApplicativoNonDisponibili){
 				if(allRuoli.size()>0){
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_RUOLI_ASSOCIABILI);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonEsistonoUlterioriRuoliAssociabili" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_RUOLI_ASSOCIABILI
 				}
 				else{
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_RUOLI_ASSOCIABILI);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonEsistonoRuoliAssociabili" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_RUOLI_ASSOCIABILI
 				}
 				this.pd.disableEditMode();
 			}
@@ -3774,7 +3772,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(addTitoloSezione){
 				DataElement de = new DataElement();
-				de.setLabel(ScopeCostanti.LABEL_SCOPE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Scope.Scope" ) );	//ScopeCostanti.LABEL_SCOPE
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
@@ -3802,10 +3800,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		else{
 			if(addMsgServiziApplicativoNonDisponibili){
 				if(allRuoli.size()>0){
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_SCOPE_ASSOCIABILI);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonEsistonoUlterioriScopeAssociabili" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_SCOPE_ASSOCIABILI
 				}
 				else{
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_SCOPE_ASSOCIABILI);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonEsistonoScopeAssociabili" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_SCOPE_ASSOCIABILI
 				}
 				this.pd.disableEditMode();
 			}
@@ -3818,7 +3816,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		try {
 			
 			if(ruoli!=null && ruoli.contains(nome)){
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_IL_RUOLO_XX_E_GIA_STATO_ASSOCIATA_AL_SOGGETTO, nome));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreIlRuoloXxEGiaStatoAssociataAlSoggetto", nome));	//CostantiControlStation.MESSAGGIO_ERRORE_IL_RUOLO_XX_E_GIA_STATO_ASSOCIATA_AL_SOGGETTO
 				return false;
 			}
 
@@ -3834,7 +3832,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		try {
 			
 			if(scopes!=null && scopes.contains(nome)){
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_LO_SCOPE_XX_E_GIA_STATO_ASSOCIATA_AL_SOGGETTO, nome));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreLoScopeXxEGiaStatoAssociataAlSoggetto", nome));	//CostantiControlStation.MESSAGGIO_ERRORE_LO_SCOPE_XX_E_GIA_STATO_ASSOCIATA_AL_SOGGETTO
 				return false;
 			}
 
@@ -3849,7 +3847,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void controlloAccessi(Vector<DataElement> dati) throws Exception{
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessi" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI
 		dati.addElement(de);
 	}
 	
@@ -4029,13 +4027,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!forceAutenticato) {
 				DataElement de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI );
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessi" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
 			
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO);
 			if(forceAutenticato) {
 				de.setType(DataElementType.HIDDEN);
@@ -4111,12 +4109,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(!allHidden) {
 					DataElement de = new DataElement();
 					de.setType(DataElementType.SUBTITLE); //SUBTITLE);
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TOKEN);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutenticazioneToken" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TOKEN
 					dati.addElement(de);
 				}
 				
 				DataElement de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneTokenIssuer" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -4129,7 +4127,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneTokenClientId" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -4142,7 +4140,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneTokenSubject" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -4155,7 +4153,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneTokenUsername" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -4168,7 +4166,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneTokenMail" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -4219,7 +4217,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					labelTipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 				}
 				DataElement de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -4232,7 +4230,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						dati.addElement(de);
 						
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
 						de.setType(DataElementType.TEXT);
 						de.setValue(TipoAutenticazione.SSL.getLabel());
@@ -4310,7 +4308,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 					
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneBasicForward" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 					if(allHidden) {
 						de.setType(DataElementType.HIDDEN);
@@ -4330,7 +4328,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					List<String> autenticazionePrincipalValues = TipoAutenticazionePrincipal.getValues(tokenAbilitato);
 					List<String> autenticazionePrincipalLabels = TipoAutenticazionePrincipal.getLabels(tokenAbilitato);
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazionePrincipalTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
 					if(autenticazionePrincipal==null) {
 						autenticazionePrincipal = TipoAutenticazionePrincipal.CONTAINER;	
@@ -4363,10 +4361,10 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						de = new DataElement();
 						if(TipoAutenticazionePrincipal.HEADER.equals(autenticazionePrincipal)) {
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazionePrincipalHeader" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER
 						}
 						else {
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazionePrincipalForm" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM
 						}
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 						de.setValue(autenticazioneParametro);
@@ -4387,9 +4385,9 @@ public class ConsoleHelper implements IConsoleHelper {
 						de = new DataElement();
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
 						if(TipoAutenticazionePrincipal.HEADER.equals(autenticazionePrincipal)) {
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_HEADER);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazionePrincipalForwardHeader" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_HEADER
 						}else {
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_FORM);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazionePrincipalForwardForm" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_FORM
 						}
 						if(autenticazioneParametro==null || "".equals(autenticazioneParametro)) {
 							autenticazioneParametro = Costanti.CHECK_BOX_DISABLED;
@@ -4414,7 +4412,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							autenticazioneParametro = autenticazioneParametroList.get(0);
 						}
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazionePrincipalEspressione" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 						de.setValue(autenticazioneParametro);
 						if(allHidden) {
@@ -4436,7 +4434,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							autenticazioneParametro = autenticazioneParametroList.get(0);
 						}
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazionePrincipalTokenClaim" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 						de.setValue(autenticazioneParametro);
 						if(allHidden) {
@@ -4476,7 +4474,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							}
 							de = new DataElement();
 							de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_NOME);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazionePrincipalTokenClaimPersonalizzatoNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_NOME
 							de.setValue(autenticazioneParametro);
 							if(allHidden) {
 								de.setType(DataElementType.HIDDEN);
@@ -4515,7 +4513,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 					}
 					else {
-						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneAppId" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID
 						de.setType(DataElementType.CHECKBOX);
 						de.setSelected(apiKeyState.appIdSelected);
 						de.setPostBack(true);
@@ -4534,7 +4532,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setSelezionati(apiKeyState.posizioneSelected);
 					}
 					else {
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneApikeyPosizione" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE
 						de.setType(DataElementType.MULTI_SELECT);
 						de.setSelezionati(apiKeyState.posizioneSelected);
 						de.setValues(apiKeyState.posizioneValues);
@@ -4552,7 +4550,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 					}
 					else {
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_NOMI_STANDARD_OAS3);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneApikeyNomiStandardOas3" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_NOMI_STANDARD_OAS3
 						de.setType(DataElementType.CHECKBOX);
 						de.setSelected(apiKeyState.useOAS3NamesSelected);
 						de.setPostBack(true);
@@ -4562,7 +4560,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					// ** sezione apiKey **
 					if(!apiKeyState.useOAS3NamesSelected) {
 						de = new DataElement();
-						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneApiKey" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY
 						de.setType(DataElementType.SUBTITLE);
 						dati.addElement(de);
 					}
@@ -4580,7 +4578,7 @@ public class ConsoleHelper implements IConsoleHelper {
 									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 						}
 						else {
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneApikeyForward" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD
 						}
 						de.setType(DataElementType.CHECKBOX);
 						de.setSelected(apiKeyState.forwardApiKeySelected);
@@ -4637,7 +4635,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					// ** sezione appId **
 					if(!apiKeyState.useOAS3NamesSelected && apiKeyState.appIdSelected) {
 						de = new DataElement();
-						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneAppId" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID
 						de.setType(DataElementType.SUBTITLE);
 						dati.addElement(de);
 					}
@@ -4655,7 +4653,7 @@ public class ConsoleHelper implements IConsoleHelper {
 									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 						}
 						else {
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneApikeyForward" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_FORWARD
 						}
 						de.setType(DataElementType.CHECKBOX);
 						de.setSelected(apiKeyState.forwardAppIdSelected);
@@ -4718,7 +4716,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 		} else {
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			de.setValue(TipoAutenticazione.DISABILITATO.getValue());
@@ -4728,7 +4726,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	private void addOpzionale(Vector<DataElement> dati, boolean allHidden, boolean forceDisableOptional, String autenticazioneOpzionale, String autenticazione) {
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutenticazioneOpzionale" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE
 		de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
 		if(forceDisableOptional) {
 			de.setType(DataElementType.HIDDEN);
@@ -4755,14 +4753,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE); //SUBTITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiGestioneToken" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN
 			dati.addElement(de);
 			
 			String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
 			
 			// stato abilitazione
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteGestioneToken" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			de.setValues(valoriAbilitazione);
@@ -4773,7 +4771,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)){
 				// nome della policy da utilizzare
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteGestioneTokenPolicy" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY
 				de.setType(DataElementType.SELECT);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
 				de.setValues(gestioneTokenPolicyValues);
@@ -4789,7 +4787,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
 					
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteGestioneTokenOpzionale" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale));
@@ -4797,7 +4795,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					// validazione input
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteGestioneTokenValidazioneInput" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 					if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
 						de.setType(DataElementType.SELECT);
@@ -4812,7 +4810,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					// introspection
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteGestioneTokenIntrospection" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 					if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
 						de.setType(DataElementType.SELECT);
@@ -4827,7 +4825,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					// userInfo
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteGestioneTokenUserinfo" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 					if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
 						de.setType(DataElementType.SELECT);
@@ -4842,7 +4840,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					// token forward
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteGestioneTokenTokenForward" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 					if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
 						de.setType(DataElementType.SELECT);
@@ -4859,7 +4857,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		} else {
 			// stato abilitazione
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteGestioneToken" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			de.setValue(gestioneToken);
@@ -4934,10 +4932,10 @@ public class ConsoleHelper implements IConsoleHelper {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE); //SUBTITLE);
 				if(profiloModi && !isPortaDelegata) {
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutorizzazioneCanale" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE
 				}
 				else {
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutorizzazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE
 				}
 				dati.addElement(de);
 			}
@@ -4957,7 +4955,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				tipoAutorizzazione_label[totEl-1] = CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
 			}
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -5082,7 +5080,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
 							if(isPortaDelegata){
-								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneAutenticazioneServiziApplicativi" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI
 							}
 							else{
 								String labelSoggetti = (isSupportatoAutenticazione && 
@@ -5101,7 +5099,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					autorizzazione_autenticazione = ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati);
 					
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.Abilitato" ) );	//CostantiControlStation.LABEL_ABILITATO
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
 					if( !isSupportatoAutenticazione 
 							|| 
@@ -5217,14 +5215,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(!allHidden) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneRuoli" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI
 						dati.addElement(de);
 					}
 				
 					autorizzazione_ruoli = ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli);
 					
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.Abilitato" ) );	//CostantiControlStation.LABEL_ABILITATO
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
 					if(allHidden) {
 						de.setType(DataElementType.HIDDEN);
@@ -5243,10 +5241,10 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					de = new DataElement();
 					if(autorizzazione_ruoli){
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRuoloTipologia" ) );	//CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA
 					}
 					else{
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRuoloTipologiaXacmlPolicy" ) );	//CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY
 					}
 					de.setName(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 					de.setValue(autorizzazioneRuoliTipologia);		
@@ -5290,7 +5288,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(CostantiControlStation.LABEL_AGGIORNAMENTO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.AggiornamentoDocumentoSicurezzaXacmlPolicy" ) );	//CostantiControlStation.LABEL_AGGIORNAMENTO_DOCUMENTO_SICUREZZA_XACML_POLICY
 						de.setLabelStyleClass("noBold");
 						dati.add(de);
 					}
@@ -5304,7 +5302,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							RuoloTipoMatch.ANY.getValue() };
 					String[] labelRole = { CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ALL, CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ANY };
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroRuoloMatch" ) );	//CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH
 					de.setName(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 					de.setValue(autorizzazioneRuoliMatch);			
 					if(allHidden) {
@@ -5367,14 +5365,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(!allHidden) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneScope" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE
 						dati.addElement(de);
 					}
 				
 					autorizzazione_scope = ServletUtils.isCheckBoxEnabled(autorizzazioneScope);
 					
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.Abilitato" ) );	//CostantiControlStation.LABEL_ABILITATO
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 					if(allHidden) {
 						de.setType(DataElementType.HIDDEN);
@@ -5391,7 +5389,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						String[] tipoScope = { ScopeTipoMatch.ALL.getValue(),	ScopeTipoMatch.ANY.getValue() };
 						String[] labelScope = { CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH_ALL, CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH_ANY };
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroScopeMatch" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH
 						de.setName(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 						if(allHidden) {
 							de.setType(DataElementType.HIDDEN);
@@ -5453,14 +5451,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(!allHidden) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneTokenSubtitle" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE
 						dati.addElement(de);
 					}
 
 					boolean autorizzazioneTokenEnabled = ServletUtils.isCheckBoxEnabled(autorizzazione_token);
 					
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.Abilitato" ) );	//CostantiControlStation.LABEL_ABILITATO
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
 					if(allHidden) {
 						de.setType(DataElementType.HIDDEN);
@@ -5475,7 +5473,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					if(autorizzazioneTokenEnabled) {
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneToken" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN
 						de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE);
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 						de.setValue(autorizzazione_tokenOptions);
@@ -5511,7 +5509,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		} else {
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
 			de.setValue(AutorizzazioneUtilities.STATO_DISABILITATO);
@@ -5525,7 +5523,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE+" "+this.getProfiloModIPASectionTitle());
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutorizzazioneMessaggio" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO
 			dati.addElement(de);
 			
 //			de = new DataElement();
@@ -5542,7 +5540,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// stato abilitazione
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneModipaStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO);
 			de.setValues(valoriAbilitazione);
@@ -5606,7 +5604,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutorizzazioneContenuti" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI
 		dati.addElement(de);
 		
 		List<String> authContenutiLabels = new ArrayList<>();
@@ -5626,7 +5624,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(authContenutiValues);
 		de.setLabels(authContenutiLabels);
 		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroAutorizzazioneContenutiStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO
 		de.setPostBack(true);
 		dati.addElement(de);
 		
@@ -5634,7 +5632,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// abilitato 
 			if(autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_ABILITATO)) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroAutorizzazioneContenuti" ) );	//CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI
 				de.setType(DataElementType.HIDDEN);
 				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 				de.setValue(autorizzazioneContenuti);
@@ -5642,7 +5640,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroAutorizzazioneContenuti" ) );	//CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI
 				de.setType(DataElementType.TEXT_AREA);
 				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 				de.setValue(autorizzazioneContenutiProperties);
@@ -5721,32 +5719,31 @@ public class ConsoleHelper implements IConsoleHelper {
 					break;
 				case HEADER:
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 						return false;
 					}
 					break;
 				case FORM:
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 						return false;
 					}
 					break;
 				case URL:
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 						return false;
 					}
 					break;
 				case TOKEN:
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 						return false;
 					}
 					String tipo = autenticazioneParametroList.get(0);
 					if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CUSTOM.equals(tipo)) {
 						if(autenticazioneParametroList.size()<=1 || StringUtils.isEmpty(autenticazioneParametroList.get(1))){
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-									CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_ESTESO));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_ESTESO));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 							return false;
 						}
 					}
@@ -5756,37 +5753,32 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(TipoAutenticazione.APIKEY.equals(autenticazione)) {
 				if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty()){
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 					return false;
 				}
 				
 				ApiKeyState apiKeyState = new ApiKeyState(autenticazioneParametroList);
 				if(!apiKeyState.queryParameterEnabled && !apiKeyState.headerEnabled && !apiKeyState.cookieEnabled) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_APIKEY_POSIZIONE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 					return false;
 				}
 				
 				if(!apiKeyState.useOAS3NamesSelected) {
 					if(apiKeyState.queryParameterEnabled) {
 						if(apiKeyState.queryParameterApiKey==null || "".equals(apiKeyState.queryParameterApiKey)) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.FORM_BASED.getLabel()));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.FORM_BASED.getLabel()));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 							return false;
 						}
 					}
 					if(apiKeyState.headerEnabled) {
 						if(apiKeyState.headerApiKey==null || "".equals(apiKeyState.headerApiKey)) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.HEADER_BASED.getLabel()));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.HEADER_BASED.getLabel()));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 							return false;
 						}
 					}
 					if(apiKeyState.cookieEnabled) {
 						if(apiKeyState.cookieApiKey==null || "".equals(apiKeyState.cookieApiKey)) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-									ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.COOKIE_BASED.getLabel()));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY+" - "+ModalitaIdentificazione.COOKIE_BASED.getLabel()));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 							return false;
 						}
 					}
@@ -5794,8 +5786,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(apiKeyState.appIdSelected) {
 						if(apiKeyState.queryParameterEnabled) {
 							if(apiKeyState.queryParameterAppId==null || "".equals(apiKeyState.queryParameterAppId)) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.FORM_BASED.getLabel()));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.FORM_BASED.getLabel()));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 								return false;
 							}
 							if(apiKeyState.queryParameterAppId.equalsIgnoreCase(apiKeyState.queryParameterApiKey)) {
@@ -5807,8 +5798,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						if(apiKeyState.headerEnabled) {
 							if(apiKeyState.headerAppId==null || "".equals(apiKeyState.headerAppId)) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.HEADER_BASED.getLabel()));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.HEADER_BASED.getLabel()));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 								return false;
 							}
 							if(apiKeyState.headerAppId.equalsIgnoreCase(apiKeyState.headerApiKey)) {
@@ -5820,8 +5810,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 						if(apiKeyState.cookieEnabled) {
 							if(apiKeyState.cookieAppId==null || "".equals(apiKeyState.cookieAppId)) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
-										ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.COOKIE_BASED.getLabel()));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID+" - "+ModalitaIdentificazione.COOKIE_BASED.getLabel()));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 								return false;
 							}
 							if(apiKeyState.cookieAppId.equalsIgnoreCase(apiKeyState.cookieApiKey)) {
@@ -5841,7 +5830,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(StringUtils.isEmpty(autenticazioneCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autenticazioneCustom)){
 					if(this.confCore.isConfigurazionePluginsEnabled()) {
-						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTENTICAZIONE_CUSTOM_NON_INDICATA);
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAutenticazioneCustomNonIndicata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AUTENTICAZIONE_CUSTOM_NON_INDICATA
 					}
 					else {
 						this.pd.setMessage(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM+" obbligatorio per il tipo di autenticazione selezionato");
@@ -5858,7 +5847,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(gestioneToken)){
 				
 				if(StringUtils.isEmpty(policy) || policy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)){
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",	CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 					return false;
 				}
 				
@@ -5873,7 +5862,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION).append(", ");
 					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO).append(" o ");
 					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_POLICY_TOKEN_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UNA_MODALITA, sb.toString()));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazionePolicyTokenDatiIncompletiENecessarioIndicareUnaModalita", sb.toString()));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_POLICY_TOKEN_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UNA_MODALITA
 					return false;
 				}
 				
@@ -5895,8 +5884,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false && 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneScope)==false &&
 						(autorizzazione_tokenOptions==null || "".equals(autorizzazione_tokenOptions))){
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_SELEZIONARE_ALMENO_UNA_MODALITÀ_DI_AUTORIZZAZIONE,
-							labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreSelezionareAlmenoUnaModalitàDiAutorizzazione", labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));	//CostantiControlStation.MESSAGGIO_ERRORE_SELEZIONARE_ALMENO_UNA_MODALITÀ_DI_AUTORIZZAZIONE
 					return false;
 				}
 				
@@ -5906,15 +5894,11 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(isSupportatoAutenticazione){
 						if(isPortaDelegata || !this.soggettiCore.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione(protocollo)) {
 							if(TipoAutenticazione.DISABILITATO.equals(autenticazione)){
-								this.pd.setMessage(MessageFormat.format(
-										CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_DEVE_ESSERE_INDICATA_ANCHE_UNA_MODALITA_DI_AUTENTICAZIONE_YY,
-										labelAutenticati));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConLaSolaModalitaDiAutorizzazioneXxDeveEssereIndicataAncheUnaModalitaDiAutenticazioneYy", labelAutenticati));	//CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_DEVE_ESSERE_INDICATA_ANCHE_UNA_MODALITA_DI_AUTENTICAZIONE_YY
 								return false;
 							}
 							if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)){
-								this.pd.setMessage(MessageFormat.format(
-										CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_NON_E_POSSIBILE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE_OPZIONALE,
-										labelAutenticati));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConLaSolaModalitaDiAutorizzazioneXxNonEPossibileAssociataUnaModalitàDiAutenticazioneOpzionale", labelAutenticati));	//CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_NON_E_POSSIBILE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE_OPZIONALE
 								return false;
 							}
 						}
@@ -5926,9 +5910,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(isSupportatoAutenticazione && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)==false){
 						// Rilasso questo vincolo alla solta autenticazione di tipo http-basic, poiche' nelle altre l'identificazione di un applicativo o soggetto non e' obbligatoria
 						if(TipoAutenticazione.BASIC.equals(autenticazione)){
-							this.pd.setMessage(MessageFormat.format(
-									CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_MODALITA_DI_AUTENTICAZIONE_BASIC_OBBLIGATORIA_NON_E_POSSIBILE_SELEZIONARE_ENTRAMBE_LE_MODALITA_DI_AUTORIZZAZIONE,
-									labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConUnaModalitaDiAutenticazioneBasicObbligatoriaNonEPossibileSelezionareEntrambeLeModalitaDiAutorizzazione", labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));	//CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_MODALITA_DI_AUTENTICAZIONE_BASIC_OBBLIGATORIA_NON_E_POSSIBILE_SELEZIONARE_ENTRAMBE_LE_MODALITA_DI_AUTORIZZAZIONE
 							return false;
 						}
 					}
@@ -5936,7 +5918,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(ServletUtils.isCheckBoxEnabled(autorizzazione_token)) {
 					if(autorizzazione_tokenOptions==null || "".equals(autorizzazione_tokenOptions)) {
-						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_TOKEN_OPTIONS_NON_INDICATI);
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreTokenOptionsNonIndicati" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_TOKEN_OPTIONS_NON_INDICATI
 						return false;
 					}
 				}
@@ -5949,7 +5931,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								continue;
 							}
 							if(line.contains("=")==false) {
-								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_TOKEN);
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAutorizzazioneToken" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_TOKEN
 								return false;
 							}
 						}
@@ -5968,9 +5950,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)){
 					if(ruoli!=null && ruoli.size()>0){
-						this.pd.setMessage(MessageFormat.format(
-								CostantiControlStation.MESSAGGIO_ERRORE_LA_PORTA_CONTIENE_GIA_DEI_RUOLI_CHE_NON_SONO_COMPATIBILI_CON_LA_NUOVA_AUTORIZZAZIONE,
-								AutorizzazioneUtilities.STATO_XACML_POLICY));
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreLaPortaContieneGiaDeiRuoliCheNonSonoCompatibiliConLaNuovaAutorizzazione", AutorizzazioneUtilities.STATO_XACML_POLICY));	//CostantiControlStation.MESSAGGIO_ERRORE_LA_PORTA_CONTIENE_GIA_DEI_RUOLI_CHE_NON_SONO_COMPATIBILI_CON_LA_NUOVA_AUTORIZZAZIONE
 						return false;
 					}
 					
@@ -5992,13 +5972,13 @@ public class ConsoleHelper implements IConsoleHelper {
 							if(isPortaDelegata){
 								PortaDelegata pd = (PortaDelegata) oggetto;
 								if(StringUtils.isEmpty(pd.getXacmlPolicy())) {
-									this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_POLICY_OBBLIGATORIA_CON_LA_NUOVA_AUTORIZZAZIONE, AutorizzazioneUtilities.STATO_XACML_POLICY));
+									this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrorePolicyObbligatoriaConLaNuovaAutorizzazione", AutorizzazioneUtilities.STATO_XACML_POLICY));	//CostantiControlStation.MESSAGGIO_ERRORE_POLICY_OBBLIGATORIA_CON_LA_NUOVA_AUTORIZZAZIONE
 									return false;
 								}
 							}else {
 								PortaApplicativa pa = (PortaApplicativa) oggetto;
 								if(StringUtils.isEmpty(pa.getXacmlPolicy())) {
-									this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_POLICY_OBBLIGATORIA_CON_LA_NUOVA_AUTORIZZAZIONE, AutorizzazioneUtilities.STATO_XACML_POLICY));
+									this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrorePolicyObbligatoriaConLaNuovaAutorizzazione", AutorizzazioneUtilities.STATO_XACML_POLICY));	//CostantiControlStation.MESSAGGIO_ERRORE_POLICY_OBBLIGATORIA_CON_LA_NUOVA_AUTORIZZAZIONE
 									return false;
 								}
 							}
@@ -6010,15 +5990,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(RuoloTipologia.INTERNO.equals(ruoloTipologia)){
 					if(isSupportatoAutenticazione){
 						if(TipoAutenticazione.DISABILITATO.equals(autenticazione)){
-							this.pd.setMessage(MessageFormat.format(
-									CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_FONTE_PER_I_RUOLI_DI_TIPO_XX_DEVE_ESSERE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE,
-									RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConUnaFontePerIRuoliDiTipoXxDeveEssereAssociataUnaModalitàDiAutenticazione", RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO));	//CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_FONTE_PER_I_RUOLI_DI_TIPO_XX_DEVE_ESSERE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE
 							return false;
 						}
 						if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)){
-							this.pd.setMessage(MessageFormat.format(
-									CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_FONTE_PER_I_RUOLI_DI_TIPO_XX_NON_E_POSSIBILE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE_OPZIONALE,
-									RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConUnaFontePerIRuoliDiTipoXxNonEPossibileAssociataUnaModalitàDiAutenticazioneOpzionale", RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO));	//CostantiControlStation.MESSAGGIO_ERRORE_CON_UNA_FONTE_PER_I_RUOLI_DI_TIPO_XX_NON_E_POSSIBILE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE_OPZIONALE
 							return false;
 						}
 					}
@@ -6049,9 +6025,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					else{
 						label = RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
 					}
-					this.pd.setMessage(MessageFormat.format(
-							CostantiControlStation.MESSAGGIO_ERRORE_LA_PORTA_CONTIENE_DEI_RUOLI_XX_CHE_NON_SONO_COMPATIBILI_CON_LA_NUOVA_FONTE_SCELTA,
-							ruoliNonCompatibili.toString(), RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), label));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreLaPortaContieneDeiRuoliXxCheNonSonoCompatibiliConLaNuovaFonteScelta", ruoliNonCompatibili.toString(), RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase(), label));	//CostantiControlStation.MESSAGGIO_ERRORE_LA_PORTA_CONTIENE_DEI_RUOLI_XX_CHE_NON_SONO_COMPATIBILI_CON_LA_NUOVA_FONTE_SCELTA
 					return false;
 				}
 			}
@@ -6062,14 +6036,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
 							(ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false) ){
 						if(pd.getRuoli()!=null && pd.getRuoli().sizeRuoloList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreRuoliPresentiAutorizzazioneDisabilitata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTORIZZAZIONE_DISABILITATA
 							return false;
 						}
 					}
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
 							(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false) ){
 						if(pd.sizeServizioApplicativoList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreApplicativiPresentiAutorizzazioneDisabilitata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA
 							return false;
 						}
 						
@@ -6115,7 +6089,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						// modiifcata autenticazione
 						if(modificataAutenticazione) {
 							if(pd.sizeServizioApplicativoList()>0) {
-								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
+								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA
 								return false;
 							}
 							
@@ -6180,7 +6154,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					if((ServletUtils.isCheckBoxEnabled(autorizzazioneScope)==false) ){
 						if(pd.getScope()!=null && pd.getScope().sizeScopeList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTORIZZAZIONE_DISABILITATA); 
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreScopePresentiAutorizzazioneDisabilitata" ) ); 	//CostantiControlStation.MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTORIZZAZIONE_DISABILITATA
 							return false;
 						}
 					}
@@ -6190,19 +6164,19 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
 							(ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false) ){
 						if(pa.getRuoli()!=null && pa.getRuoli().sizeRuoloList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreRuoliPresentiAutorizzazioneDisabilitata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTORIZZAZIONE_DISABILITATA
 							return false;
 						}
 					}
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) ||
 							(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false) ){
 						if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreSoggettiPresentiAutorizzazioneDisabilitata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTORIZZAZIONE_DISABILITATA
 							return false;
 						}
 						if(!this.isProfiloModIPA(protocollo)) {
 							if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreApplicativiPresentiAutorizzazioneDisabilitata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA
 								return false;
 							}
 						}
@@ -6262,11 +6236,11 @@ public class ConsoleHelper implements IConsoleHelper {
 						// modiifcata autenticazione
 						if(modificataAutenticazione) {
 							if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
-								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
+								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA);	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA
 								return false;
 							}
 							if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);
+								this.pd.setMessage(prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA);	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA	//prefix+CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA
 								return false;
 							}
 							
@@ -6345,7 +6319,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 					if((ServletUtils.isCheckBoxEnabled(autorizzazioneScope)==false) ){
 						if(pa.getScope()!=null && pa.getScope().sizeScopeList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreScopePresentiAutorizzazioneDisabilitata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTORIZZAZIONE_DISABILITATA
 							return false;
 						}
 					}
@@ -6358,7 +6332,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(StringUtils.isEmpty(autorizzazioneCustom) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autorizzazioneCustom)){
 					if(this.confCore.isConfigurazionePluginsEnabled()) {
-						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA);
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAutorizzazioneCustomNonIndicata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CUSTOM_NON_INDICATA
 					}
 					else {
 						this.pd.setMessage(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+" obbligatorio per il tipo di autorizzazione selezionato");
@@ -6374,7 +6348,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(autorizzazioneContenutiStato!= null && !autorizzazioneContenutiStato.equals(StatoFunzionalita.DISABILITATO.getValue())) {
 				if(autorizzazioneContenutiStato.equals(StatoFunzionalita.ABILITATO.getValue())) {
 					if(autorizzazioneContenutiProperties==null || "".equals(autorizzazioneContenutiProperties)) {
-						this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_NON_INDICATA);
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAutorizzazioneContenutoNonIndicata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_NON_INDICATA
 						return false;
 					}
 					if(autorizzazioneContenutiProperties!=null) {
@@ -6386,12 +6360,12 @@ public class ConsoleHelper implements IConsoleHelper {
 									continue;
 								}
 								if(line.contains("=")==false) {
-									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI);
+									this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAutorizzazioneContenutoTokenNonValidi" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI
 									return false;
 								}
 								String key = line.split("=")[0];
 								if(key==null || !key.contains("$")) {
-									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX+line);
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX+line);	//CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX+line	//CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX+line	//CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_TOKEN_NON_VALIDI_RISORSA_NON_DEFINITA_PREFIX+line
 									return false;
 								}
 							}
@@ -6408,7 +6382,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM)) {
 					if(StringUtils.isEmpty(autorizzazioneContenuto) || CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED.equals(autorizzazioneContenuto)){
 						if(this.confCore.isConfigurazionePluginsEnabled()) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA);
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAutorizzazioneContenutoCustomNonIndicata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_CONTENUTO_CUSTOM_NON_INDICATA
 						}
 						else {
 							this.pd.setMessage(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM+" obbligatorio per il tipo di autorizzazione selezionato");
@@ -8881,7 +8855,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_SERVICE_BINDING);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroServiceBinding" ) );	//CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING
 				
 				if(serviceBindingList != null && serviceBindingList.size() > 1){
 					if(used){
@@ -8924,7 +8898,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		} else {
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_SERVICE_BINDING);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroServiceBinding" ) );	//CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING
 			de.setValue(serviceBinding !=null ? serviceBinding.toString() : null);
 			de.setType(DataElementType.HIDDEN);
 		}
@@ -8941,7 +8915,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			de = new DataElement();
 			de.setName(parametroMessageType);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroMessageType" ) );	//CostantiControlStation.LABEL_PARAMETRO_MESSAGE_TYPE
 			
 			if(!hidden && messageTypeList != null && messageTypeList.size() > 1){
 					de.setSelected(value != null ? value.toString() : null);
@@ -9004,7 +8978,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_INTERFACE_TYPE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroInterfaceType" ) );	//CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE
 			
 			switch (tipoOperazione) {
 			case ADD:
@@ -9069,13 +9043,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		String[] azionis = this.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
 		
 		if(azionis == null || azionis.length == 0) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzionePortaNonPuoEssereVuota" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA
 			return false;
 		}
 		
 		for (String azione : azionis) {
 			if(azioniOccupate.contains(azione)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzionePortaGiaPresente" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE
 				return false;			
 			}
 		}
@@ -9091,13 +9065,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		String[] azionis = this.getParameterValues(CostantiControlStation.PARAMETRO_AZIONI);
 		
 		if(azionis == null || azionis.length == 0) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzionePortaNonPuoEssereVuota" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA
 			return false;
 		}
 		
 		for (String azione : azionis) {
 			if(azioniOccupate.contains(azione)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzionePortaGiaPresente" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE
 				return false;			
 			}
 		}
@@ -10478,7 +10452,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(addSezione) {
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteValidazioneContenuti" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI
 			dati.addElement(de);
 		}
 		
@@ -10487,7 +10461,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_VALIDAZIONE_WARNING_ONLY };
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO
 		de.setType(DataElementType.SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_PORTE_XSD);
 		de.setValues(tipoXsd);
@@ -10528,7 +10502,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			//String[] tipi_validazione = { "xsd", "wsdl" };
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE);
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP.equals(tipoValidazione) && this.isModalitaStandard()) {
 				de.setType(DataElementType.HIDDEN);
@@ -10544,7 +10518,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP.equals(tipoValidazione) && this.isModalitaStandard()) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_TIPO_VALIDAZIONE+"__LABEL");
 				de.setType(DataElementType.TEXT);
 				de.setValue(CostantiControlStation.LABEL_PARAMETRO_REGISTRO_OPENSPCOOP);
@@ -10554,7 +10528,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// Applica MTOM 
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAccettaMtom" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_ACCETTA_MTOM
 			if(ServiceBinding.SOAP.equals(serviceBinding)) {
 				de.setType(DataElementType.CHECKBOX);
 				if( ServletUtils.isCheckBoxEnabled(applicaMTOM) || CostantiRegistroServizi.ABILITATO.equals(applicaMTOM) ){
@@ -10575,7 +10549,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Controllo che i campi "select" abbiano uno dei valori ammessi
 		if (!xsd.equals(CostantiControlStation.DEFAULT_VALUE_ABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_DISABILITATO) && !xsd.equals(CostantiControlStation.DEFAULT_VALUE_WARNING_ONLY)) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY);
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreValidazioneXsdDevEssereAbilitatoDisabilitatoOWarningOnly" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY
 			return false;
 		}
 		
@@ -10635,7 +10609,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(showStato || showRealtime) {
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_GENERALE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneGenerale" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_GENERALE
 			dati.addElement(de);
 		}
 			
@@ -10645,7 +10619,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		// stato generale dump
 		DataElement de = new DataElement();
 		de.setName(CostantiControlStation.PARAMETRO_DUMP_STATO); 
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO
 		if(showStato) {
 			
 			de.setType(DataElementType.SELECT);
@@ -10666,7 +10640,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Realtime
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_DUMP_REALTIME); 
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRealtime" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME
 			if(showRealtime) {
 				de.setType(DataElementType.SELECT);
 				de.setSelected(realtime);
@@ -10681,13 +10655,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Sezione Richiesta
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRichiesta" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA
 			dati.addElement(de);
 
 			// Stato Dump Richiesta
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO); 
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_STATO
 			de.setType(DataElementType.SELECT);
 			de.setSelected(statoDumpRichiesta);
 			de.setLabels(labelsProp);
@@ -10699,13 +10673,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				// sotto sezione ingresso
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneIngresso" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO
 				dati.addElement(de);
 				
 				// header ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaIngressoHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRichiestaIngressoHeader);
 				de.setLabels(labelsProp);
@@ -10715,7 +10689,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// body ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaIngressoBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRichiestaIngressoBody);
 				de.setLabels(labelsProp);
@@ -10725,7 +10699,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// attachments ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaIngressoAttachments" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRichiestaIngressoAttachments);
 				de.setLabels(labelsProp);
@@ -10735,13 +10709,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				// sotto sezione uscita
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneUscita" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA
 				dati.addElement(de);
 				
 				// header ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaUscitaHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRichiestaUscitaHeader);
 				de.setLabels(labelsProp);
@@ -10751,7 +10725,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// body ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaUscitaBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRichiestaUscitaBody); 
 				de.setLabels(labelsProp);
@@ -10761,7 +10735,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// attachments ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaUscitaAttachments" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRichiestaUscitaAttachments);
 				de.setLabels(labelsProp);
@@ -10774,13 +10748,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Sezione Risposta
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRisposta" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA
 			dati.addElement(de);
 
 			// Stato Dump Richiesta
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO); 
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_STATO
 			de.setType(DataElementType.SELECT);
 			de.setSelected(statoDumpRisposta);
 			de.setLabels(labelsProp);
@@ -10792,13 +10766,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				// sotto sezione ingresso
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneIngresso" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO
 				dati.addElement(de);
 				
 				// header ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaIngressoHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRispostaIngressoHeader);
 				de.setLabels(labelsProp);
@@ -10808,7 +10782,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// body ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaIngressoBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRispostaIngressoBody);
 				de.setLabels(labelsProp);
@@ -10818,7 +10792,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// attachments ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaIngressoAttachments" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRispostaIngressoAttachments);
 				de.setLabels(labelsProp);
@@ -10828,13 +10802,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				// sotto sezione uscita
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneUscita" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA
 				dati.addElement(de);
 				
 				// header ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaUscitaHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRispostaUscitaHeader);
 				de.setLabels(labelsProp);
@@ -10844,7 +10818,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// body ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaUscitaBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRispostaUscitaBody); 
 				de.setLabels(labelsProp);
@@ -10854,7 +10828,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// attachments ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaUscitaAttachments" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS
 				de.setType(DataElementType.SELECT);
 				de.setSelected(dumpRispostaUscitaAttachments); 
 				de.setLabels(labelsProp);
@@ -11029,7 +11003,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		// stato generale dump
 		DataElement de = new DataElement();
 		de.setName(CostantiControlStation.PARAMETRO_DUMP_STATO); 
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(statoDump);
 		dati.addElement(de);
@@ -11039,7 +11013,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Realtime
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_DUMP_REALTIME); 
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRealtime" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(realtime);
 			dati.addElement(de);
@@ -11047,7 +11021,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Stato Dump Richiesta
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO); 
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_STATO
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoDumpRichiesta);
 			dati.addElement(de);
@@ -11056,7 +11030,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// header ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaIngressoHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRichiestaIngressoHeader);
 				dati.addElement(de);
@@ -11064,7 +11038,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// body ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaIngressoBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRichiestaIngressoBody);
 				dati.addElement(de);
@@ -11072,7 +11046,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// attachments ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaIngressoAttachments" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRichiestaIngressoAttachments);
 				dati.addElement(de);
@@ -11080,7 +11054,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// header ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaUscitaHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRichiestaUscitaHeader);
 				dati.addElement(de);
@@ -11088,7 +11062,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// body ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaUscitaBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRichiestaUscitaBody);
 				dati.addElement(de);
@@ -11096,7 +11070,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// attachments ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRichiestaUscitaAttachments" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRichiestaUscitaAttachments);
 				dati.addElement(de);
@@ -11107,7 +11081,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Stato Dump Richiesta
 			de = new DataElement();
 			de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO); 
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_STATO
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(statoDumpRisposta);
 			dati.addElement(de);
@@ -11116,7 +11090,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// header ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaIngressoHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRispostaIngressoHeader);
 				dati.addElement(de);
@@ -11124,7 +11098,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// body ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaIngressoBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRispostaIngressoBody);
 				dati.addElement(de);
@@ -11132,7 +11106,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// attachments ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaIngressoAttachments" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRispostaIngressoAttachments);
 				dati.addElement(de);
@@ -11141,7 +11115,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// header ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaUscitaHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRispostaUscitaHeader);
 				dati.addElement(de);
@@ -11149,7 +11123,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// body ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaUscitaBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRispostaUscitaBody);
 				dati.addElement(de);
@@ -11157,7 +11131,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				// attachments ingresso
 				de = new DataElement();
 				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpRispostaUscitaAttachments" ) );	//CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(dumpRispostaUscitaAttachments);
 				dati.addElement(de);
@@ -11174,7 +11148,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(showStato) {
 			if(StringUtils.isEmpty(statoDump) || !(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT) || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO))) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO, CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO
 				return false;
 			}
 		}
@@ -11182,57 +11156,50 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(!showStato || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
 			// realtime
 			if(StringUtils.isEmpty(realtime) || !(realtime.equals(StatoFunzionalita.ABILITATO.getValue()) || realtime.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO, CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO
 				return false;
 			}
 			
 			// statoDumpRichiesta
 			if(StringUtils.isEmpty(statoDumpRichiesta) || !(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue()) || statoDumpRichiesta.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO, 
-						CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxDellaYyNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO
 				return false;
 			}
 			
 			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())){
 				// dumpRichiestaIngressoHeader
 				if(StringUtils.isEmpty(dumpRichiestaIngressoHeader) || !(dumpRichiestaIngressoHeader.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaIngressoHeader.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRichiestaIngressoBody
 				if(StringUtils.isEmpty(dumpRichiestaIngressoBody) || !(dumpRichiestaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaIngressoBody.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRichiestaIngressoAttachments
 				if(StringUtils.isEmpty(dumpRichiestaIngressoAttachments) || !(dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRichiestaUscitaHeader
 				if(StringUtils.isEmpty(dumpRichiestaUscitaHeader) || !(dumpRichiestaUscitaHeader.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaUscitaHeader.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRichiestaUscitaBody
 				if(StringUtils.isEmpty(dumpRichiestaUscitaBody) || !(dumpRichiestaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaUscitaBody.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRichiestaUscitaAttachments
 				if(StringUtils.isEmpty(dumpRichiestaUscitaAttachments) || !(dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
@@ -11241,58 +11208,51 @@ public class ConsoleHelper implements IConsoleHelper {
 						&& dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.DISABILITATO.getValue())
 						&& dumpRichiestaUscitaHeader.equals(StatoFunzionalita.DISABILITATO.getValue()) && dumpRichiestaUscitaBody.equals(StatoFunzionalita.DISABILITATO.getValue()) 
 						&& dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue())) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpDatiIncompletiENecessarioAbilitareUnaVoce", CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE
 					return false;
 				}
 			}
 			
 			// statoDumpRisposta
 			if(StringUtils.isEmpty(statoDumpRisposta) || !(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue()) || statoDumpRisposta.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO, 
-						CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxDellaYyNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO
 				return false;
 			}
 			
 			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				// dumpRispostaIngressoHeader
 				if(StringUtils.isEmpty(dumpRispostaIngressoHeader) || !(dumpRispostaIngressoHeader.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaIngressoHeader.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRispostaIngressoBody
 				if(StringUtils.isEmpty(dumpRispostaIngressoBody) || !(dumpRispostaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaIngressoBody.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRispostaIngressoAttachments
 				if(StringUtils.isEmpty(dumpRispostaIngressoAttachments) || !(dumpRispostaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaIngressoAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRispostaUscitaHeader
 				if(StringUtils.isEmpty(dumpRispostaUscitaHeader) || !(dumpRispostaUscitaHeader.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaUscitaHeader.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRispostaUscitaBody
 				if(StringUtils.isEmpty(dumpRispostaUscitaBody) || !(dumpRispostaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaUscitaBody.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
 				// dumpRispostaUscitaAttachments
 				if(StringUtils.isEmpty(dumpRispostaUscitaAttachments) || !(dumpRispostaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
-							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxYyDellaZzNonValido", CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO
 					return false;
 				}
 				
@@ -11301,7 +11261,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						&& dumpRispostaIngressoAttachments.equals(StatoFunzionalita.DISABILITATO.getValue())
 						&& dumpRispostaUscitaHeader.equals(StatoFunzionalita.DISABILITATO.getValue()) && dumpRispostaUscitaBody.equals(StatoFunzionalita.DISABILITATO.getValue()) 
 						&& dumpRispostaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue())) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpDatiIncompletiENecessarioAbilitareUnaVoce", CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE
 					return false;
 				}
 			}
@@ -11457,7 +11417,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public Vector<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String configName, ConfigBean configurazioneBean, boolean addHiddenConfigName) throws Exception {
 		if(addHiddenConfigName) {
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPropertiesConfigName" ) );	//CostantiControlStation.LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME
 			de.setValue(configName);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PROPERTIES_CONFIG_NAME);
@@ -11699,13 +11659,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 		DataElement de = new DataElement();
 		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsiti" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 				
 		if(tracciamentoEsitiStato!=null) {
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_TRACCIAMENTO_ESITO);
 			de.setType(DataElementType.SELECT);
 			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
@@ -11765,14 +11725,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!selectAll) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiOk" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 			}
 					
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
 			if(!selectAll) {
@@ -11838,14 +11798,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!selectAll) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiFault" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 			}
 					
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
 			if(!selectAll) {
@@ -11896,14 +11856,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!selectAll) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiFallite" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 			}
 					
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
 			if(!selectAll) {
@@ -11964,14 +11924,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!selectAll) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiScartate" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 			}
 					
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
 			if(!selectAll) {
@@ -12031,7 +11991,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!selectAll) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiMaxRequests" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
@@ -12040,7 +12000,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
 			if(!selectAll) {
@@ -12072,14 +12032,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!selectAll) {
 				de = new DataElement();
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiCors" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS
 				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 			}
 			
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
 			if(!selectAll) {
@@ -12139,7 +12099,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(!this.isModalitaStandard()) {
 			
 			DataElement de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneInformazioniTransazione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -12150,7 +12110,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
 			
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TEMPI_ELABORAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneInformazioniTransazioneTempiElaborazione" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TEMPI_ELABORAZIONE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TEMPI);
 		if(!this.isModalitaStandard()) {
 			de.setType(DataElementType.SELECT);
@@ -12165,7 +12125,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);	
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TOKEN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneInformazioniTransazioneToken" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TOKEN
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TOKEN);
 		if(!this.isModalitaStandard()) {
 			de.setType(DataElementType.SELECT);
@@ -12185,7 +12145,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		DataElement de;
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneMessaggiDiagnostici" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -12196,7 +12156,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
 				LogLevels.LIVELLO_ALL};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLivelloSeverita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA
 		//		de.setLabel("Livello Severita");
 		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
@@ -12207,7 +12167,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de = new DataElement();
 		//		de.setLabel("Livello Severita Log4J");
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLivelloSeveritaLog4j" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J
 		if(this.core.isVisualizzazioneConfigurazioneDiagnosticaLog4J()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -12225,12 +12185,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		DataElement de;
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneMessaggiDiagnostici" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiStato" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_RIDEFINITO);
 		de.setType(DataElementType.SELECT);
 		String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
@@ -12249,7 +12209,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
 					LogLevels.LIVELLO_ALL};
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLivelloSeverita" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA
 			//		de.setLabel("Livello Severita");
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
@@ -12263,13 +12223,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	public Vector<DataElement> configurazioneCambiaNome(Vector<DataElement> dati, TipoOperazione other, String nomeGruppo,boolean isPortaDelegata) throws Exception{
 		 
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteNomeGruppo" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Azione
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_NOME_GRUPPO);
 		de.setValue(nomeGruppo);  
@@ -12281,13 +12241,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public boolean configurazioneCambiaNomeCheck(TipoOperazione other, String nomeGruppo, List<String> listaNomiGruppiOccupati,boolean isPortaDelegata) throws Exception{
 		if(StringUtils.isEmpty(nomeGruppo)) {
-			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA);
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNomeGruppoNonPuoEssereVuota" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA
 			return false;
 		}
 		
 		for (String nomeOccupato : listaNomiGruppiOccupati) {
 			if(nomeOccupato.equalsIgnoreCase(nomeGruppo)) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_PRESENTE);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNomeGruppoGiaPresente" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_PRESENTE
 				return false;			
 			}
 		}
@@ -12297,7 +12257,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	public DataElement getDataElementNotCorrelazioneApplicativa() {
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_ATTENZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.PorteCorrelazioneApplicativaAttenzione" ) );	//CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_ATTENZIONE
 		de.setBold(true);
 		de.setValue(CostantiControlStation.getLABEL_PORTE_CORRELAZIONE_APPLICATIVA_ATTENZIONE_MESSAGGIO(this.core.getPortaCorrelazioneApplicativaMaxLength()));
 		de.setType(DataElementType.NOTE);
@@ -12319,7 +12279,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(showStato) {
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneCors" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_CORS
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -12327,7 +12287,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		// stato generale cors
 		DataElement de = new DataElement();
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO_PORTA); 
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroCorsStatoPorta" ) );	//CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA
 		if(showStato) {
 			
 			de.setType(DataElementType.SELECT);
@@ -12365,7 +12325,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de;
 		if(!allHidden && addTitle) {
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneCors" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_CORS
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -12388,7 +12348,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(corsStato) {
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
 			de.setValue(corsTipo.getValue());
 			if(allHidden) {
@@ -12421,13 +12381,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(!allHidden) {
 					de = new DataElement();
 					de.setType(DataElementType.SUBTITLE);
-					de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneCorsAccessControl" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL
 					dati.addElement(de);
 				}
 				
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsAllAllowOrigins" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -12442,7 +12402,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(!corsAllAllowOrigins) {
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsAllowOrigins" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
 					if(allHidden) {
 						de.setType(DataElementType.HIDDEN);
@@ -12460,7 +12420,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 										
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsAllAllowMethods" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
 				if(allHidden || corsAllAllowOrigins) {
 					de.setType(DataElementType.HIDDEN);
@@ -12475,7 +12435,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(!corsAllAllowMethods || corsAllAllowOrigins) {
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsAllowMethods" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
 					if(allHidden) {
 						de.setType(DataElementType.HIDDEN);
@@ -12489,7 +12449,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 							
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsAllAllowHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
 				if(allHidden || corsAllAllowOrigins) {
 					de.setType(DataElementType.HIDDEN);
@@ -12504,7 +12464,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(!corsAllAllowHeaders || corsAllAllowOrigins) {
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsAllowHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
 					if(allHidden) {
 						de.setType(DataElementType.HIDDEN);
@@ -12518,7 +12478,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsAllowCredentials" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -12530,7 +12490,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsExposeHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -12543,7 +12503,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsMaxAge" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
 				//if(allHidden || this.isModalitaStandard()) {
 				if(allHidden) {
@@ -12558,7 +12518,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(corsMaxAge) {
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsMaxAgeSeconds" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
 					de.setValue(corsMaxAgeSeconds+"");
 					//if(allHidden || this.isModalitaStandard()) {
@@ -12623,7 +12583,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(showStato) {
 			if(StringUtils.isEmpty(statoCorsPorta) || !(statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_DEFAULT) || statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO))) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO, CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxNonValido", CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO
 				return false;
 			}
 		}
@@ -12640,12 +12600,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		String urlInvocazionePA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA);
 		
 		if(StringUtils.isEmpty(urlInvocazionePA)){
-			this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA));
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx",ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 			return false;
 		}
 		
 		if(urlInvocazionePA.contains(" ")) {
-			this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA));   
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 			return false;
 		}
 		
@@ -12670,7 +12630,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		*/
 		if(!StringUtils.isEmpty(urlInvocazionePD)){
 			if(urlInvocazionePD.contains(" ")) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD));   
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 				return false;
 			}
 			
@@ -12704,12 +12664,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						List<String> asList = Arrays.asList(corsAllowOrigins.split(","));
 						for (String string : asList) {
 							if(string.contains(" ")) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS));   
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 								return false;
 							}
 						}
 					} else {
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS));   
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsCampoObbligatorio", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO
 						return false;
 					}
 				}
@@ -12717,9 +12677,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String corsAllAllowHeadersTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS);
 				boolean corsAllAllowHeaders = ServletUtils.isCheckBoxEnabled(corsAllAllowHeadersTmp);
 				if(corsAllAllowHeaders && corsAllAllowOrigins) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_DIPENDENZA, 
-							CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, 
-							CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS));   
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsDipendenza", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_HEADERS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_DIPENDENZA
 					return false;
 				}
 				if(!corsAllAllowHeaders) {
@@ -12728,12 +12686,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						List<String> asList = Arrays.asList(corsAllowHeaders.split(","));
 						for (String string : asList) {
 							if(string.contains(" ")) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 								return false;
 							}
 						}
 					} else {
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsCampoObbligatorio", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO
 						return false;
 					}
 				}
@@ -12741,9 +12699,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String corsAllAllowMethodsTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS);
 				boolean corsAllAllowMethods = ServletUtils.isCheckBoxEnabled(corsAllAllowMethodsTmp);
 				if(corsAllAllowMethods && corsAllAllowOrigins) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_DIPENDENZA, 
-							CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, 
-							CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS));   
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsDipendenza", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_METHODS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_DIPENDENZA
 					return false;
 				}
 				if(!corsAllAllowMethods) {
@@ -12752,7 +12708,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						List<String> asList = Arrays.asList(corsAllowMethods.split(","));
 						for (String string : asList) {
 							if(string.contains(" ")) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 								return false;
 							}
 							
@@ -12760,12 +12716,12 @@ public class ConsoleHelper implements IConsoleHelper {
 								// check che HTTP-Method sia supportato
 								Enum.valueOf(HttpRequestMethod.class, string.toUpperCase());
 							} catch(Exception e) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_ALLOW_METHOD_NON_VALIDO, string, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsAllowMethodNonValido", string, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_ALLOW_METHOD_NON_VALIDO
 								return false;
 							}
 						}
 					}else {
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsCampoObbligatorio", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO
 						return false;
 					}
 				}
@@ -12778,7 +12734,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					List<String> asList = Arrays.asList(corsExposeHeaders.split(","));
 					for (String string : asList) {
 						if(string.contains(" ")) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS));   
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 							return false;
 						}
 					}
@@ -12807,14 +12763,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(server!=null && !"".equals(server)) {
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.Server" ) );	//ConnettoriCostanti.LABEL_SERVER
 			de.setValue(server);
 			dati.add(de);
 		}
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TEXT);
-		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.Connettore" ) );	//ConnettoriCostanti.LABEL_CONNETTORE
 		de.setValue(labelConnettore);
 		dati.add(de);
 		
@@ -12860,7 +12816,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsConnectionTimeout" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_CONNECTION_TIMEOUT
 			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
 			dati.add(de);
 			
@@ -12870,13 +12826,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttp" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP
 			de.setValue(labelConnettore);
 			dati.add(de);
 		
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttpUsername" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_USERNAME
 			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_USERNAME));
 			dati.add(de);
 			
@@ -12884,7 +12840,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttpPassword" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_PASSWORD));
 				dati.add(de);
 				
@@ -12896,13 +12852,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsToken" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_TOKEN
 			de.setValue(labelConnettore);
 			dati.add(de);
 		
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreTokenPolicy" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY
 			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
 			dati.add(de);
 			
@@ -12921,7 +12877,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttps" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS
 			de.setValue(labelConnettore);
 			dati.add(de);
 		
@@ -12929,7 +12885,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttpsSslType" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_SSL_TYPE
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE));
 				dati.add(de);
 				
@@ -12938,7 +12894,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttpsHostnameVerifier" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_HOSTNAME_VERIFIER
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER));
 				dati.add(de);
 				
@@ -12946,7 +12902,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttpsTruststore" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE
 			if(trustAllCerts) {
 				de.setValue(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUST_ALL_CERTS);
 			}
@@ -12959,7 +12915,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttpsTruststoreCrls" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_TRUSTSTORE_CRLs
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs));
 				dati.add(de);
 				
@@ -12969,7 +12925,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttpsKeystore" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION));
 				dati.add(de);
 				
@@ -12977,7 +12933,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					de = new DataElement();
 					de.setType(DataElementType.TEXT);
-					de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsHttpsKeyAlias" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEY_ALIAS
 					de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTPS_KEY_ALIAS));
 					dati.add(de);
 					
@@ -12990,13 +12946,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsProxy" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY
 			de.setValue(labelConnettore);
 			dati.add(de);
 		
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
-			de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_HOSTNAME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsProxyHostname" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_HOSTNAME
 			de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME));
 			dati.add(de);
 			
@@ -13004,7 +12960,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PORT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsProxyPort" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PORT
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT));
 				dati.add(de);
 				
@@ -13014,7 +12970,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_USERNAME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsProxyUsername" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_USERNAME
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME));
 				dati.add(de);
 				
@@ -13024,7 +12980,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PASSWORD);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.VerificaConnettoreDetailsProxyPassword" ) );	//ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_PROXY_PASSWORD
 				de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD));
 				dati.add(de);
 				
@@ -13049,7 +13005,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(values);
 		de.setLabels(labels);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneSistemaNodoCluster" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER
 		de.setSize(this.getSize());
 		//de.setPostBack(true);
 		dati.addElement(de);
@@ -13113,7 +13069,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(showStato) {
 			DataElement de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneResponseCaching" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -13121,7 +13077,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		// stato generale cors
 		DataElement de = new DataElement();
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO_PORTA); 
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroResponseCachingStatoPorta" ) );	//CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA
 		if(showStato) {
 			
 			de.setType(DataElementType.SELECT);
@@ -13156,7 +13112,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de;
 		if(!allHidden && addTitle) {
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneResponseCaching" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -13178,7 +13134,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(responseCachingEnabled) {
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_TIMEOUT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingTimeout" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_TIMEOUT
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_TIMEOUT);
 			de.setValue(responseCachingSeconds+"");
 			if(allHidden) {
@@ -13193,7 +13149,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingMaxResponseSize" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -13208,7 +13164,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(responseCachingMaxResponseSize) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE_BYTES);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingMaxResponseSizeBytes" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE_BYTES
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE_BYTES);
 				de.setValue(responseCachingMaxResponseSizeBytes+"");
 				if(allHidden) {
@@ -13225,12 +13181,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!allHidden) {
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_GENERAZIONE_HASH);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneResponseCachingGenerazioneHash" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_GENERAZIONE_HASH
 				dati.addElement(de);
 			}
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingResponseDigestUriInvocazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -13244,7 +13200,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingResponseDigestQueryParameters" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -13280,7 +13236,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingResponseDigestPayload" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -13294,7 +13250,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingResponseDigestHeaders" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -13328,12 +13284,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!allHidden) {
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneResponseCachingCacheControl" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL
 				dati.addElement(de);
 			}
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingCacheControlNoCache" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -13346,7 +13302,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingCacheControlMaxAge" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -13359,7 +13315,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingCacheControlNoStore" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE);
 			if(allHidden) {
 				de.setType(DataElementType.HIDDEN);
@@ -13377,7 +13333,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIOME_AVANZATA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneResponseCachingConfiguraziomeAvanzata" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIOME_AVANZATA
 				dati.addElement(de);
 				
 				de = new DataElement();
@@ -13518,7 +13474,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(showStato) {
 			if(StringUtils.isEmpty(statoResponseCachingPorta) || 
 					!(statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_DEFAULT) || statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO))) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO, CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreConfigurazioneDumpoValoreDelCampoXxNonValido", CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA));	//CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO
 				return false;
 			}
 		}
@@ -13544,12 +13500,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				List<String> asList = Arrays.asList(responseCachingDigestNomiQueryParameters.split(","));
 				for (String string : asList) {
 					if(string.contains(" ")) {
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI));   
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 						return false;
 					}
 				}
 			} else {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI));   
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsCampoObbligatorio", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO
 				return false;
 			}
 		}
@@ -13563,12 +13519,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				List<String> asList = Arrays.asList(responseCachingDigestHeadersNomiHeaders.split(","));
 				for (String string : asList) {
 					if(string.contains(" ")) {
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS));   
+						this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsSpaziBianchiNonAmmessi", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI
 						return false;
 					}
 				}
 			} else {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS));   
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreCorsCampoObbligatorio", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS));   	//CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO
 				return false;
 			}
 		}
@@ -13686,12 +13642,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	public Vector<DataElement> addResponseCachingConfigurazioneRegola(TipoOperazione tipoOP, String returnCode, String statusMin, String statusMax, String fault, String cacheSeconds, Vector<DataElement> dati) {
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingConfigurazioneRegola" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingConfigurazioneRegolaReturnCode" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE
 		de.setLabels(CostantiControlStation.SELECT_LABELS_CONFIGURAZIONE_RETURN_CODE);
 		de.setValues(CostantiControlStation.SELECT_VALUES_CONFIGURAZIONE_RETURN_CODE);
 		de.setType(DataElementType.SELECT);
@@ -13720,7 +13676,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		} 
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingConfigurazioneRegolaCacheTimeoutSeconds" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS
 		de.setValue(cacheSeconds+ "");
 		de.setType(DataElementType.NUMBER);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
@@ -13730,7 +13686,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingConfigurazioneRegolaFault" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
 		de.setType(DataElementType.CHECKBOX);
 		de.setSelected(fault);
@@ -13778,13 +13734,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneTrasformazioniTrasformazione" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Nome
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_NOME);
@@ -13792,13 +13748,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneTrasformazioniApplicabilita" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		// Id trasformazione hidden
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
@@ -13812,14 +13768,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRisposta);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaApplicabilitaStatus" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS
 		de.setLabels(CostantiControlStation.SELECT_LABELS_CONFIGURAZIONE_RETURN_CODE);
 		de.setValues(CostantiControlStation.SELECT_VALUES_CONFIGURAZIONE_RETURN_CODE);
 		de.setType(DataElementType.SELECT);
@@ -13849,7 +13805,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 		// Content-type
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaApplicabilitaCt" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setValue(contentType);
@@ -13863,7 +13819,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Pattern
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaApplicabilitaPattern" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -13892,13 +13848,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean old_trasformazioneRispostaSoapEnvelopeTemplate = false;
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneTrasformazioniRegoleTrasformazione" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
 			// sezione trasporto
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_TRASPORTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaTrasporto" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_TRASPORTO
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			
@@ -13921,13 +13877,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// sezione contenuto
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENUTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaContenuto" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENUTO
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			
 			// abilitato
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaConversioneEnabled" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED);
 			//if(!trasformazioneContenutoRichiestaAbilitato) {
 			de.setType(DataElementType.CHECKBOX);
@@ -13942,7 +13898,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(trasformazioneContenutoRispostaAbilitato) {
 				// tipo
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaConversioneTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO
 				de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(serviceBindingMessage, false));
 				de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(serviceBindingMessage, false));
 				de.setType(DataElementType.SELECT);
@@ -14024,7 +13980,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(!contentTypePerAttachmentSOAP && trasformazioneContenutoRispostaTipo.isContentTypeEnabled()) {
 					// Content-type
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaContentType" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setValue(trasformazioneContenutoRispostaContentType);
@@ -14042,13 +13998,13 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					// sezione trasformazione SOAP
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaSoap" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP
 					de.setType(DataElementType.SUBTITLE);
 					dati.addElement(de);
 					
 					// abilitato
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaSoapTransformation" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION);
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(trasformazioneRispostaSoapAbilitato+"");
@@ -14057,7 +14013,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					//if(trasformazioneRispostaSoapAbilitato) {
 					// Envelope
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaSoapEnvelope" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE);
 					de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
 					de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
@@ -14070,7 +14026,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						// Content-type
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaContentTypeAttachment" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setValue(trasformazioneContenutoRispostaContentType);
@@ -14078,13 +14034,13 @@ public class ConsoleHelper implements IConsoleHelper {
 						dati.addElement(de);
 						
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniSoapEnvelopeTitleBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY
 						de.setType(DataElementType.SUBTITLE);
 						dati.addElement(de);	
 						
 						// tipo envelope attachement
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaSoapEnvelopeTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO
 						de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(ServiceBinding.SOAP, true));
 						de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(ServiceBinding.SOAP, true));
 						de.setType(DataElementType.SELECT);
@@ -14183,22 +14139,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Se tipoOp = add, controllo che la trasformazione non sia gia' stato registrata
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				if (regolaDBCheck_criteri != null) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreRegolaTrasformazioneApplicabilitaDuplicata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA
 					return false;
 				}
 				else if (trasformazioneDBCheck_nome != null) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreRegolaTrasformazioneApplicabilitaNome" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME
 					return false;
 				}
 			} else {
 				// controllo che le modifiche ai parametri non coincidano con altre regole gia' presenti
 //				TrasformazioneRegola trasformazione = this.porteApplicativeCore.getTrasformazione(idPorta, azioniDBCheck, patternDBCheck, contentTypeDBCheck);
 				if(regolaDBCheck_criteri != null && regolaDBCheck_criteri.getId().longValue() != oldRegola.getId().longValue()) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreRegolaTrasformazioneApplicabilitaDuplicata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA
 					return false;
 				}
 				else if (trasformazioneDBCheck_nome != null && trasformazioneDBCheck_nome.getId().longValue() != oldRegola.getId().longValue()) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreRegolaTrasformazioneApplicabilitaNome" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME
 					return false;
 				}
 			}
@@ -14229,14 +14185,12 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					if(StringUtils.isNotEmpty(trasformazioneContenutoTipoCheck)) { // ho cambiato il tipo conversione
 						if((trasformazioneContenutoTemplate.getValue() == null || trasformazioneContenutoTemplate.getValue().length == 0)) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-									CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 							return false;
 						}
 					} else { // non ho cambiato il template
 						if((oldRegola.getRichiesta() == null || oldRegola.getRichiesta().getConversioneTemplate() == null)) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-									CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TEMPLATE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 							return false;
 						}
 					}
@@ -14271,8 +14225,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							
 							// content-type obbligatorio
 							if (StringUtils.isEmpty(trasformazioneRichiestaContentType)) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-										CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 								return false;
 							}
 							if(!this.checkLength255(trasformazioneRichiestaContentType, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT)) {
@@ -14291,14 +14244,12 @@ public class ConsoleHelper implements IConsoleHelper {
 								
 								if(StringUtils.isNotEmpty(trasformazioneSoapEnvelopeTipoCheck)) { // ho cambiato il tipo conversione
 									if((trasformazioneSoapEnvelopeTemplate.getValue() == null || trasformazioneSoapEnvelopeTemplate.getValue().length == 0)) {
-										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-												CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE));
+										this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 										return false;
 									}
 								} else { // non ho cambiato il template
 									if((oldRegola.getRichiesta() == null || oldRegola.getRichiesta().getTrasformazioneSoap() == null || oldRegola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate() == null)) {
-										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-												CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE));
+										this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 										return false;
 									}
 								}
@@ -14319,8 +14270,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						// content-type obbligatorio
 						if(trasformazioneContenutoTipo.isContentTypeEnabled()) {
 							if (StringUtils.isEmpty(trasformazioneRichiestaContentType)) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-										CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 								return false;
 							}
 						}
@@ -14333,16 +14283,14 @@ public class ConsoleHelper implements IConsoleHelper {
 						String trasformazioneRestMethod = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
 						
 						if (StringUtils.isEmpty(trasformazioneRestMethod)) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-									CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 							return false;
 						}
 						
 						String trasformazioneRestPath = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
 						
 						if (StringUtils.isEmpty(trasformazioneRestPath)) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-									CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 							return false;
 						}
 						if (!this.checkLength4000(trasformazioneRestPath, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH)) {
@@ -14427,14 +14375,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						if(StringUtils.isNotEmpty(trasformazioneContenutoRispostaTipoCheck)) { // ho cambiato il tipo conversione
 							if((trasformazioneContenutoTemplate.getValue() == null || trasformazioneContenutoTemplate.getValue().length == 0)) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-										CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 								return false;
 							}
 						} else { // non ho cambiato il template
 							if(oldRegolaRisposta.getConversioneTemplate() == null) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-										CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 								return false;
 							}
 						}
@@ -14474,8 +14420,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								
 								// content-type obbligatorio
 								if (StringUtils.isEmpty(trasformazioneRispostaContentType)) {
-									this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-											CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT));
+									this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 									return false;
 								}
 								if(!this.checkLength255(trasformazioneRispostaContentType, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE_ATTACHMENT)) {
@@ -14494,14 +14439,12 @@ public class ConsoleHelper implements IConsoleHelper {
 									
 									if(StringUtils.isNotEmpty(trasformazioneSoapEnvelopeTipoCheck)) { // ho cambiato il tipo conversione
 										if((trasformazioneSoapEnvelopeTemplate.getValue() == null || trasformazioneSoapEnvelopeTemplate.getValue().length == 0)) {
-											this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-													CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE));
+											this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 											return false;
 										}
 									} else { // non ho cambiato il template
 										if(oldRegolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate() == null) {
-											this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, 
-													CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE));
+											this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TEMPLATE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 											return false;
 										}
 									}
@@ -14543,7 +14486,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Id hidden
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
@@ -14557,13 +14500,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneTrasformazioniTrasformazione" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Nome
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_NOME);
@@ -14572,7 +14515,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Stato
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_STATO
 		if(stato==null || "".equals(stato)) {
 			stato = StatoFunzionalita.ABILITATO.getValue();
 		}
@@ -14584,7 +14527,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneTrasformazioniApplicabilita" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 				
@@ -14607,10 +14550,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSelected(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI_ALL_VALUE_FALSE);
 		}
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_RISORSE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniApplicabilitaRisorse" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_RISORSE
 		}
 		else {
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniApplicabilitaAzioni" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_AZIONI
 		}
 		de.setType(DataElementType.SELECT);
 		dati.addElement(de);
@@ -14630,7 +14573,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Content-type
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniApplicabilitaCt" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setValue(contentType);
@@ -14644,7 +14587,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Pattern
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniApplicabilitaPattern" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -14735,7 +14678,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneTrasformazioniRegoleTrasformazione" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_REGOLE_TRASFORMAZIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -14766,13 +14709,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaHeader" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Id trasformazione hidden
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
@@ -14780,7 +14723,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// id trasformazione richiesta header
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RICHIESTA_HEADER);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRichiestaHeader);
@@ -14788,7 +14731,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Tipo
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaHeaderTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
 		de.setLabels(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
@@ -14805,7 +14748,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Nome
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaHeaderNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
 		de.setType(DataElementType.TEXT_EDIT);
@@ -14818,7 +14761,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Valore
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaHeaderValore" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setType(DataElementType.TEXT_AREA);
@@ -14844,7 +14787,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Identificazione Risorsa Fallita
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaHeaderIdentificazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_IDENTIFICAZIONE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA_HEADER);
@@ -14870,13 +14813,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaParametro" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Id trasformazione hidden
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
@@ -14884,7 +14827,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// id trasformazione richiesta header
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RICHIESTA_PARAMETRO);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRichiestaUrlParameter);
@@ -14892,7 +14835,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Tipo
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaParametroTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
 		de.setLabels(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
@@ -14909,7 +14852,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Nome
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
 		de.setType(DataElementType.TEXT_EDIT);
@@ -14922,7 +14865,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Valore
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaParametroValore" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setType(DataElementType.TEXT_AREA);
@@ -14948,7 +14891,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Identificazione Risorsa Fallita
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaParametroIdentificazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_IDENTIFICAZIONE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA_PARAMETRO);
@@ -14974,13 +14917,13 @@ public class ConsoleHelper implements IConsoleHelper {
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaHeader" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// Id trasformazione hidden
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
@@ -14988,7 +14931,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// id trasformazione risposta
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRisposta);
@@ -14996,7 +14939,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// id trasformazione risposta header
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE_RISPOSTA_HEADER);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazioneRispostaHeader);
@@ -15004,7 +14947,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Tipo
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaHeaderTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
 		de.setLabels(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO);
@@ -15020,7 +14963,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Nome
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaHeaderNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME);
 		//if(tipoOP.equals(TipoOperazione.ADD)) {
 		de.setType(DataElementType.TEXT_EDIT);
@@ -15034,7 +14977,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Valore
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaHeaderValore" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setType(DataElementType.TEXT_AREA);
@@ -15059,7 +15002,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Identificazione Risorsa Fallita
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRispostaHeaderIdentificazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_IDENTIFICAZIONE);
 		if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 			de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA_HEADER);
@@ -15107,20 +15050,20 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// Id trasformazione hidden
 		DataElement  de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneTrasformazioniTrasformazione" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_TRASFORMAZIONE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// sezione trasporto
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_TRASPORTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaTrasporto" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_TRASPORTO
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -15128,7 +15071,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// method
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRestMethod" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD
 			de.setValue(trasformazioneRestMethod);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
@@ -15138,7 +15081,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			//  path
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRestPath" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH
 			de.setValue(trasformazioneRestPath);
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(1);
@@ -15177,13 +15120,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// sezione contenuto
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_CONTENUTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaContenuto" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_CONTENUTO
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		// abilitato
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniReqConversioneEnabled" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_ENABLED);
 		de.setType(DataElementType.CHECKBOX);
 		de.setSelected(trasformazioneContenutoAbilitato);
@@ -15199,7 +15142,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(trasformazioneContenutoAbilitato) {
 			// tipo
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniReqConversioneTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO
 			List<String> labels = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(serviceBindingMessage, false);
 			if(trasformazioneRestAbilitato) {
 				List<String> newLabels = new ArrayList<>();
@@ -15310,7 +15253,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!contentTypePerAttachmentSOAP && trasformazioneContenutoTipo.isContentTypeEnabled()) {
 				// Content-type
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniReqContentType" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setValue(StringEscapeUtils.escapeHtml(trasformazioneRichiestaContentType));
@@ -15337,13 +15280,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				case REST:
 					// sezione trasformazione SOAP
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaSoap" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP
 					de.setType(DataElementType.SUBTITLE);
 					dati.addElement(de);
 					
 					// abilitato
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_TRANSFORMATION);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniSoapTransformation" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_TRANSFORMATION
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_TRANSFORMATION);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(trasformazioneSoapAbilitato);
@@ -15354,7 +15297,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(trasformazioneSoapAbilitato) {
 						// soap versione
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_VERSION);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniSoapVersion" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_VERSION
 						String soapVersionLabels[] = {CostantiControlStation.LABEL_SOAP_11, CostantiControlStation.LABEL_SOAP_12};
 						String soapVersionValues[] = {CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP_VERSION_11, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP_VERSION_12};
 						de.setLabels(soapVersionLabels);
@@ -15366,7 +15309,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						// soap action
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniSoapAction" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION);
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setValue(trasformazioneSoapAction);
@@ -15376,7 +15319,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						if(!TipoTrasformazione.EMPTY.equals(trasformazioneContenutoTipo)) {
 							// Envelope
 							de = new DataElement();
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniSoapEnvelope" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE
 							de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
 							de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
 							de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE);
@@ -15389,7 +15332,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								
 								// Content-type
 								de = new DataElement();
-								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniReqContentTypeAttachment" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE_ATTACHMENT
 								de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 								de.setType(DataElementType.TEXT_EDIT);
 								de.setValue(trasformazioneRichiestaContentType);
@@ -15397,13 +15340,13 @@ public class ConsoleHelper implements IConsoleHelper {
 								dati.addElement(de);
 								
 								de = new DataElement();
-								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniSoapEnvelopeTitleBody" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TITLE_BODY
 								de.setType(DataElementType.SUBTITLE);
 								dati.addElement(de);							
 								
 								// tipo envelope attachement
 								de = new DataElement();
-								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniSoapEnvelopeTipo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO
 								de.setLabels(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toLabelList(ServiceBinding.SOAP, true));
 								de.setValues(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toStringList(ServiceBinding.SOAP, true));
 								de.setType(DataElementType.SELECT);
@@ -15481,13 +15424,13 @@ public class ConsoleHelper implements IConsoleHelper {
 				default:
 					// sezione trasformazione REST
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_REST);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRichiestaRest" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_REST
 					de.setType(DataElementType.SUBTITLE);
 					dati.addElement(de);
 	
 					// abilitato
 					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_TRANSFORMATION);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRestTransformation" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_TRANSFORMATION
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_TRANSFORMATION);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(trasformazioneRestAbilitato);
@@ -15498,7 +15441,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(trasformazioneRestAbilitato) {
 						//  path
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRestPath" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH
 						de.setValue(trasformazioneRestPath);
 						de.setType(DataElementType.TEXT_AREA);
 						de.setRows(3);
@@ -15641,11 +15584,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// Campi obbligatori
 			if (StringUtils.isEmpty(nome)) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNelCampoNome" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME
 				return false;
 			}
 			if(!this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME)) {
@@ -15653,7 +15596,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			if (StringUtils.isEmpty(tipo)) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			if(!this.checkLength255(tipo, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO)) {
@@ -15662,7 +15605,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 				if (StringUtils.isEmpty(valore)) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 					return false;
 				}
 				try{
@@ -15688,11 +15631,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// Campi obbligatori
 			if (StringUtils.isEmpty(nome)) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNelCampoNome" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME
 				return false;
 			}
 			if(!this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME)) {
@@ -15700,7 +15643,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			if (StringUtils.isEmpty(tipo)) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			if(!this.checkLength255(tipo, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO)) {
@@ -15709,7 +15652,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 				if (StringUtils.isEmpty(valore)) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 					return false;
 				}
 				try{
@@ -15735,11 +15678,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// Campi obbligatori
 			if (StringUtils.isEmpty(nome)) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			if ((nome.indexOf(" ") != -1) ) {
-				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME);
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreNonInserireSpaziNelCampoNome" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEL_CAMPO_NOME
 				return false;
 			}
 			if(!this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME)) {
@@ -15747,7 +15690,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			if (StringUtils.isEmpty(tipo)) {
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO));
+				this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 				return false;
 			}
 			if(!this.checkLength255(tipo, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO)) {
@@ -15756,7 +15699,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(!CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_DELETE.equals(tipo)) {
 				if (StringUtils.isEmpty(valore)) {
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrroreDatiIncompletiENecessarioIndicareXx", CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE));	//CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX
 					return false;
 				}
 				try{
@@ -15787,7 +15730,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		DataElement  de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
@@ -15808,7 +15751,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			de = new DataElement();
-			de.setLabel( CostantiControlStation.LABEL_PARAMETRO_NOME );
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
 			de.setValues(servizioApplicativoList);
@@ -15843,7 +15786,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		DataElement  de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 		de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(idTrasformazione);
@@ -15854,12 +15797,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(addTitle) {
 				  de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroSoggetto" ) );	//CostantiControlStation.LABEL_PARAMETRO_SOGGETTO
 				dati.addElement(de);
 			}
 			
 			  de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
 			de.setLabels(soggettiLabelList);
@@ -15899,18 +15842,18 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroApplicativo" ) );	//CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroIdConfigurazioneTrasformazione" ) );	//CostantiControlStation.LABEL_PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE
 			de.setName(CostantiControlStation.PARAMETRO_ID_CONFIGURAZIONE_TRASFORMAZIONE);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(idTrasformazione);
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroSoggetto" ) );	//CostantiControlStation.LABEL_PARAMETRO_SOGGETTO
 			de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
 			de.setValue(soggetto);
 			if(this.core.isMultitenant()) {
@@ -15942,7 +15885,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 				de.setType(DataElementType.SELECT);
 				de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO_AUTORIZZATO);
 				de.setLabels(saLabels);
@@ -16075,12 +16018,10 @@ public class ConsoleHelper implements IConsoleHelper {
 										nomePolicy = policy.getIdActivePolicy();
 									}
 									if(sizeGruppi>1) {
-										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING_GRUPPO, 
-												azioneTmp, nomePolicy, descrizioneGruppo));
+										this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzioneNonAssegnabileRateLimitingGruppo", azioneTmp, nomePolicy, descrizioneGruppo));	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING_GRUPPO
 									}
 									else {
-										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING, 
-												azioneTmp, nomePolicy, descrizioneGruppo));
+										this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzioneNonAssegnabileRateLimiting", azioneTmp, nomePolicy, descrizioneGruppo));	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_RATE_LIMITING
 									}
 									return false;	
 								}
@@ -16107,12 +16048,10 @@ public class ConsoleHelper implements IConsoleHelper {
 										nomeAllarme = allarme.getNome();
 									}
 									if(sizeGruppi>1) {
-										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME_GRUPPO, 
-												azioneTmp, nomeAllarme, descrizioneGruppo));
+										this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzioneNonAssegnabileAllarmeGruppo", azioneTmp, nomeAllarme, descrizioneGruppo));	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME_GRUPPO
 									}
 									else {
-										this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME, 
-												azioneTmp, nomeAllarme, descrizioneGruppo));
+										this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzioneNonAssegnabileAllarme", azioneTmp, nomeAllarme, descrizioneGruppo));	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_ALLARME
 									}
 									return false;	
 								}
@@ -16137,12 +16076,10 @@ public class ConsoleHelper implements IConsoleHelper {
 						if(azioniTrasf.contains(azioneTmp)) {
 							String nomeRegola = regola.getNome();
 							if(sizeGruppi>1) {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE_GRUPPO, 
-										azioneTmp, nomeRegola, descrizioneGruppo));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzioneNonAssegnabileTrasformazioneGruppo", azioneTmp, nomeRegola, descrizioneGruppo));	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE_GRUPPO
 							}
 							else {
-								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE, 
-										azioneTmp, nomeRegola, descrizioneGruppo));
+								this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreAzioneNonAssegnabileTrasformazione", azioneTmp, nomeRegola, descrizioneGruppo));	//CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_NON_ASSEGNABILE_TRASFORMAZIONE
 							}
 							return false;	
 						}
@@ -16223,12 +16160,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	public Vector<DataElement>  addProprietaAutorizzazioneCustomToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String nome, String valore) {
 
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroAutorizzazioneCustomProperties" ) );	//CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 		de.setValue(nome);
 		if(TipoOperazione.ADD.equals(tipoOp)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -16242,7 +16179,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroValore" ) );	//CostantiControlStation.LABEL_PARAMETRO_VALORE
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setRequired(true);
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
@@ -16256,12 +16193,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	public Vector<DataElement>  addProprietaAutenticazioneCustomToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String nome, String valore) {
 
 		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTENTICAZIONE_CUSTOM_PROPERTIES);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroAutenticazioneCustomProperties" ) );	//CostantiControlStation.LABEL_PARAMETRO_AUTENTICAZIONE_CUSTOM_PROPERTIES
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 		de.setValue(nome);
 		if(TipoOperazione.ADD.equals(tipoOp)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -16275,7 +16212,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroValore" ) );	//CostantiControlStation.LABEL_PARAMETRO_VALORE
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setRequired(true);
 		de.setName(CostantiControlStation.PARAMETRO_VALORE);
@@ -16414,7 +16351,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			List<IDSoggetto> soggetti, String ruolo, String serviceBinding, boolean multiTenant) throws Exception {
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegola" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
@@ -16426,7 +16363,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// nome
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_NOME
 		de.setValue(nome);
 //		if(TipoOperazione.ADD.equals(tipoOp)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -16441,7 +16378,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// stato
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_STATO
 		String [] labelsStato = {StatoFunzionalita.ABILITATO.toString(), StatoFunzionalita.DISABILITATO.toString()};
 		String [] valuesStato = {StatoFunzionalita.ABILITATO.toString(), StatoFunzionalita.DISABILITATO.toString()};
 		de.setLabels(labelsStato);
@@ -16453,7 +16390,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// descrizione
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaDescrizione" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_DESCRIZIONE
 		de.setValue(descrizione);
 		de.setType(DataElementType.TEXT_AREA);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_DESCRIZIONE);
@@ -16462,13 +16399,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		
 		dataElement = new DataElement();
-		dataElement.setLabel(CostantiControlStation.LABEL_PROXY_PASS_REGOLA_CRITERI_APPLICABILITA);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ProxyPassRegolaCriteriApplicabilita" ) );	//CostantiControlStation.LABEL_PROXY_PASS_REGOLA_CRITERI_APPLICABILITA
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
 		// regExpr
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REG_EXPR);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaRegExpr" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REG_EXPR
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REG_EXPR);
 		de.setType(DataElementType.CHECKBOX);
 		de.setSelected(regExpr);
@@ -16478,7 +16415,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// regola
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaRegolaText" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT
 		de.setValue(regolaText);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_REGOLA_TEXT);
@@ -16497,7 +16434,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 		// profilo
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaProfilo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_PROFILO
 		
 		String [] labelsProfili = new String[protocolli.size() + 1];
 		String [] valuesProfili = new String[protocolli.size() + 1];
@@ -16522,7 +16459,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// soggetto
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaSoggetto" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SOGGETTO);
 		if(!"".equals(protocollo) && multiTenant) {
 			String [] labelsSoggetti = new String[soggetti.size() + 1];
@@ -16550,7 +16487,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// ruolo
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaRuolo" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_RUOLO
 		de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_PROXY_PASS_REGOLA_RUOLO);
 		de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_PROXY_PASS_REGOLA_RUOLO);
 		de.setType(DataElementType.SELECT);
@@ -16560,7 +16497,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// serviceBinding
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaServiceBinding" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_SERVICE_BINDING
 		de.setLabels(CostantiControlStation.SELECT_LABELS_PARAMETRO_PROXY_PASS_REGOLA_SERVICE_BINDING);
 		de.setValues(CostantiControlStation.SELECT_VALUES_PARAMETRO_PROXY_PASS_REGOLA_SERVICE_BINDING);
 		de.setType(DataElementType.SELECT);
@@ -16569,7 +16506,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 
 		dataElement = new DataElement();
-		dataElement.setLabel(CostantiControlStation.LABEL_PROXY_PASS_REGOLA_NUOVA_URL);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ProxyPassRegolaNuovaUrl" ) );	//CostantiControlStation.LABEL_PROXY_PASS_REGOLA_NUOVA_URL
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
@@ -16585,7 +16522,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// baseUrl
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaBaseUrl" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL
 		de.setValue(baseUrl);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_BASE_URL);
@@ -16598,7 +16535,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// contesto
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneProxyPassRegolaContestoEsterno" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO
 		de.setValue(contestoEsterno);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_PROXY_PASS_REGOLA_CONTESTO_ESTERNO);
@@ -16870,9 +16807,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setUrl(url);
 		de.setTarget(TargetType.BLANK);
 		if(tooltip != null)
-			de.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, tooltip));
+			de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.IconaVisualizzaTooltipConParametro", tooltip));	//CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO
 		else  
-			de.setToolTip(CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP);
+			de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.IconaVisualizzaTooltip" ) );	//CostantiControlStation.ICONA_VISUALIZZA_TOOLTIP
 		
 		de.setIcon(CostantiControlStation.ICONA_VISUALIZZA);
 		de.setDisabilitaAjaxStatus();
@@ -16911,12 +16848,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		password.setVisualizzaCopyAction(true);
 		
 		if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoAuth)) {
-			utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			utente.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneUsername" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME
 			utente.setType(DataElementType.TEXT_EDIT);
 			utente.setValue(secret_user);
 			utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME));
 			
-			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			password.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazionePassword" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD
 			password.setType(DataElementType.TEXT_EDIT);
 			password.setValue(secret_password);
 			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD));
@@ -16925,7 +16862,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		else if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY.equals(tipoAuth)) {
 			if(appId) {
-				utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
+				utente.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneAppId" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID
 				utente.setType(DataElementType.TEXT_EDIT);
 				utente.setValue(secret_user);
 				utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
@@ -16933,7 +16870,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				utente = null;
 			}
 			
-			password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+			password.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneApiKey" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY
 			password.setType(DataElementType.TEXT_AREA);
 			password.setValue(secret_password);
 			password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY));
@@ -16991,7 +16928,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	private void addInUsoButton(Vector<DataElement> e, DataElementType deType, String titolo, String id, InUsoType inUsoType) {
 		DataElement de = new DataElement();
 		de.setType(deType);
-		de.setToolTip(CostantiControlStation.LABEL_IN_USO_TOOLTIP);
+		de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "ControlStation.InUsoTooltip" ) );	//CostantiControlStation.LABEL_IN_USO_TOOLTIP
 		de.setWidthPx(15);	
 		Dialog deDialog = new Dialog();
 		deDialog.setIcona(Costanti.ICON_USO);
@@ -17032,13 +16969,13 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(gestioneCanaliEnabled) {
 			if(addTitle) {
 				DataElement dataElement = new DataElement();
-				dataElement.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE);
+				dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ConfigurazioneCanale" ) );	//CostantiControlStation.LABEL_CONFIGURAZIONE_CANALE
 				dataElement.setType(DataElementType.TITLE);
 				dati.add(dataElement);
 			}
 			
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCanaliCanaleStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO
 			de.setValues(CostantiControlStation.VALUES_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
 			
 			List<String> labelsCanaleStato = new ArrayList<>();
@@ -17078,7 +17015,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		// canale
 		if(gestioneCanaliEnabled) {
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCanaliCanaleStato" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(canaleStato);
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CANALI_CANALE_STATO);
@@ -17344,7 +17281,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de;
 		// stato metadati
 		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteMetadati" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI
 		de.setValue(integrazioneStato);
 		de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE_STATO);
 		if(nascondiSezioneOpzioniAvanzate ){
@@ -17364,7 +17301,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(nascondiSezioneOpzioniAvanzate ){
 			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteMetadati" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI
 			de.setValue(integrazione);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
 			de.setType(DataElementType.HIDDEN);
@@ -17373,21 +17310,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			// valore del campo integrazione 
 			if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_DISABILITATO)) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteMetadati" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI
 				de.setValue(integrazione);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
 				de.setType(DataElementType.HIDDEN);
 				deIntegrazione.addElement(de);
 			} else if(integrazioneStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_INTEGRAZIONE_STATO_RIDEFINITO)) {
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteMetadati" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI
 				de.setValue(integrazione);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_INTEGRAZIONE);
 				de.setType(DataElementType.HIDDEN);
 				deIntegrazione.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI_GRUPPO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteMetadatiGruppo" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_METADATI_GRUPPO
 				de.setSelezionati(integrazioneGruppi);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
 				de.setType(DataElementType.MULTI_SELECT);
@@ -17434,7 +17371,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							if(!subtitleOp2) {
 								
 								DataElement deSub = new DataElement();
-								deSub.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_2);
+								deSub.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.MetadatiBackwardCompatibilityOpenspcoop2" ) );	//CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_2
 								deSub.setType(DataElementType.SUBTITLE);
 								deIntegrazione.addElement(deSub);
 								
@@ -17447,7 +17384,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								de.setLabel(GruppoIntegrazione.URL.getCompactLabel());	
 							}
 							else {
-								de.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_HEADER_SOAP);	
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.MetadatiBackwardCompatibilityHeaderSoap" ) );		//CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_HEADER_SOAP
 							}
 						}
 						else if(group.getValue().equals(GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP1_HTTP.getValue()) 
@@ -17458,7 +17395,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							if(!subtitleOp1) {
 								
 								DataElement deSub = new DataElement();
-								deSub.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_1);
+								deSub.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.MetadatiBackwardCompatibilityOpenspcoop1" ) );	//CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_OPENSPCOOP_1
 								deSub.setType(DataElementType.SUBTITLE);
 								deIntegrazione.addElement(deSub);
 								
@@ -17471,7 +17408,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								de.setLabel(GruppoIntegrazione.URL.getCompactLabel());	
 							}
 							else {
-								de.setLabel(CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_HEADER_SOAP);	
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.MetadatiBackwardCompatibilityHeaderSoap" ) );		//CostantiControlStation.LABEL_METADATI_BACKWARD_COMPATIBILITY_HEADER_SOAP
 							}
 						}
 						else {
@@ -17521,7 +17458,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String[] integrazioneGruppi = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO);
 				
 				if(integrazioneGruppi == null || integrazioneGruppi.length == 0) {
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrorePorteIntegrazioneGruppiVuoti" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPI_VUOTI
 					return false;
 				}
 				
@@ -17538,7 +17475,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(group.isMulti()) {
 						String[] valoriGruppo = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
 						if(valoriGruppo == null || valoriGruppo.length == 0) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO, group.getCompactLabel()));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrorePorteIntegrazioneGruppoVuoto", group.getCompactLabel()));	//CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO
 							return false;
 						}
 						
@@ -17546,7 +17483,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					} else {
 						String valoreGruppo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_METADATI_GRUPPO_SINGOLO+group.getValue());
 						if(valoreGruppo == null) {
-							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO, group.getCompactLabel()));
+							this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErrorePorteIntegrazioneGruppoVuoto", group.getCompactLabel()));	//CostantiControlStation.MESSAGGIO_ERRORE_PORTE_INTEGRAZIONE_GRUPPO_VUOTO
 							return false;
 						}
 						valoriGruppoList.add(valoreGruppo);
@@ -17577,7 +17514,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
 		
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneHandlers" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -17602,7 +17539,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// handler richiesta
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RICHIESTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneHandlersRichiesta" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RICHIESTA
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -17630,7 +17567,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// handler risposta
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RISPOSTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneHandlersRisposta" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_RISPOSTA
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
@@ -17659,7 +17596,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(isConfigurazione) {
 			// service handler
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneHandlersServizio" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_HANDLERS_SERVIZIO
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			

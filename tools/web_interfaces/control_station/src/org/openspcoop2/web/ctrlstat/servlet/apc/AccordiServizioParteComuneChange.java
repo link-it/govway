@@ -96,6 +96,7 @@ import org.openspcoop2.web.ctrlstat.servlet.gruppi.GruppiCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -104,7 +105,6 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -813,7 +813,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				if(this.backToStato!= null) {
 					// backtostato per chiudere la modifica dopo la conferma
 					DataElement de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 					de.setValue(this.backToStato);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);

@@ -39,13 +39,13 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -123,7 +123,7 @@ public final class ConfigurazioneTracciamentoDatasourcePropertiesAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				DataElement dataElement = new DataElement();
-				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneProprieta" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA
 				dataElement.setType(DataElementType.TITLE);
 				dati.add(dataElement);
 				
@@ -164,7 +164,7 @@ public final class ConfigurazioneTracciamentoDatasourcePropertiesAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				DataElement dataElement = new DataElement();
-				dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA);
+				dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneProprieta" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA
 				dataElement.setType(DataElementType.TITLE);
 				dati.add(dataElement);
 				

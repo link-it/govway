@@ -53,12 +53,12 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -494,7 +494,7 @@ public final class SoggettiEndPoint extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				DataElement de = new DataElement();
-				de.setLabel(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreId" ) );	//ConnettoriCostanti.PARAMETRO_CONNETTORE_ID
 				de.setValue(id);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
@@ -546,7 +546,7 @@ public final class SoggettiEndPoint extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				DataElement de = new DataElement();
-				de.setLabel(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ConnettoreId" ) );	//ConnettoriCostanti.PARAMETRO_CONNETTORE_ID
 				de.setValue(id);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);

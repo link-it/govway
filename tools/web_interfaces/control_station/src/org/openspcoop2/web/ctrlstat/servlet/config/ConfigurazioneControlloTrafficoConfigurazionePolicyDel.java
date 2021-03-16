@@ -41,12 +41,12 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 
 /**     
@@ -173,7 +173,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 			if(inUsoMessage.length() > 0) {
 				pd.setMessage(inUsoMessage.toString()); 
 			} else {
-				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_SENZA_RIAVVIO_RICHIESTO,MessageType.INFO); 
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ConfigurazioneControlloTrafficoModificataConSuccessoSenzaRiavvioRichiesto" ) ,MessageType.INFO); 	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_SENZA_RIAVVIO_RICHIESTO
 			}
 
 			// Preparo la lista

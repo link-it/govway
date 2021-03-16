@@ -39,11 +39,11 @@ import org.openspcoop2.web.lib.audit.dao.AppenderProperty;
 import org.openspcoop2.web.lib.audit.dao.Configurazione;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * auditing
@@ -172,7 +172,7 @@ public final class ConfigurazioneAuditing extends Action {
 				
 				pd.setDati(dati);
 
-				pd.setMessage(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA, Costanti.MESSAGE_TYPE_INFO);
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Audit.AuditConfigurazioneModificata" ) , Costanti.MESSAGE_TYPE_INFO);	//AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

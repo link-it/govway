@@ -47,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -54,7 +55,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.GeneralLink;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -156,7 +156,7 @@ public class GeneralHelper {
 			if (displayLogin) {
 				// in questo ramo non si dovrebbe mai passare, l'authorizationfilter blocca le chiamate quando l'utente nn e' loggato
 				GeneralLink gl1 = new GeneralLink();
-				gl1.setLabel(LoginCostanti.LABEL_LOGIN);
+				gl1.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Login.Login" ) );	//LoginCostanti.LABEL_LOGIN
 				gl1.setUrl(LoginCostanti.SERVLET_NAME_LOGIN);
 				link.addElement(gl1);
 			}else{
@@ -175,7 +175,7 @@ public class GeneralHelper {
 				InterfaceType tipoInterfaccia = u.getInterfaceType();
 				if(!tipoInterfaccia.equals(InterfaceType.COMPLETA)){
 					if(tipoInterfaccia.equals(InterfaceType.STANDARD)){
-						glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
+						glUtente.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Login.MenuUtenteModalitaAvanzata" ) );	//LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA
 						glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
 						glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
@@ -184,7 +184,7 @@ public class GeneralHelper {
 								);
 	
 					} else {
-						glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
+						glUtente.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Login.MenuUtenteModalitaAvanzata" ) );	//LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA
 						glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_CHECKED);
 						glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.STANDARD.toString()),
@@ -196,14 +196,14 @@ public class GeneralHelper {
 
 				// 3. informazioni/about
 				GeneralLink glO = new GeneralLink();
-				glO.setLabel(LoginCostanti.LABEL_MENU_UTENTE_INFORMAZIONI);
+				glO.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Login.MenuUtenteInformazioni" ) );	//LoginCostanti.LABEL_MENU_UTENTE_INFORMAZIONI
 				glO.setUrl(AboutCostanti.SERVLET_NAME_ABOUT);
 				link.addElement(glO);
 
 				// 4. profilo utente
 				if (displayUtente){
 					GeneralLink glProfiloUtente = new GeneralLink();
-					glProfiloUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_PROFILO_UTENTE);
+					glProfiloUtente.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Login.MenuUtenteProfiloUtente" ) );	//LoginCostanti.LABEL_MENU_UTENTE_PROFILO_UTENTE
 					glProfiloUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE);
 					link.addElement(glProfiloUtente);
 				}
@@ -212,7 +212,7 @@ public class GeneralHelper {
 			// 5. logoutsetModalitaLinks
 			if (displayLogout) {
 				GeneralLink gl2 = new GeneralLink();
-				gl2.setLabel(LoginCostanti.LABEL_MENU_UTENTE_LOGOUT);
+				gl2.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Login.MenuUtenteLogout" ) );	//LoginCostanti.LABEL_MENU_UTENTE_LOGOUT
 				gl2.setUrl(LoginCostanti.SERVLET_NAME_LOGOUT);
 				link.addElement(gl2);
 			}
@@ -245,17 +245,17 @@ public class GeneralHelper {
 		Vector<DataElement> dati = new Vector<DataElement>();
 		// titolo sezione login 
 		DataElement titoloSezione = new DataElement();
-		titoloSezione.setLabel(LoginCostanti.LABEL_LOGIN);
+		titoloSezione.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Login.Login" ) );	//LoginCostanti.LABEL_LOGIN
 		titoloSezione.setType(DataElementType.TITLE);
 		titoloSezione.setName("");
 
 		DataElement login = new DataElement();
-		login.setLabel(LoginCostanti.LABEL_USERNAME);
+		login.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Login.Username" ) );	//LoginCostanti.LABEL_USERNAME
 		login.setType(DataElementType.TEXT_EDIT);
 		login.setName(UtentiCostanti.PARAMETRO_UTENTE_LOGIN);
 		login.setStyleClass(Costanti.INPUT_CSS_CLASS);
 		DataElement pwd = new DataElement();
-		pwd.setLabel(UtentiCostanti.LABEL_PASSWORD);
+		pwd.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Password" ) );	//UtentiCostanti.LABEL_PASSWORD
 		pwd.setType(DataElementType.CRYPT);
 		pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PASSWORD);
 		pwd.setStyleClass(Costanti.INPUT_CSS_CLASS);
@@ -320,7 +320,7 @@ public class GeneralHelper {
 				
 					// seleziona tutti 
 					GeneralLink glAll = new GeneralLink();
-					glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+					glAll.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroModalitaAll" ) );	//UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL
 	//				glAll.setIcon((protocolloSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
 					if((protocolloSelezionato == null)) {
 						glAll.setUrl("");
@@ -439,7 +439,7 @@ public class GeneralHelper {
 				
 					// seleziona tutti 
 					GeneralLink glAll = new GeneralLink();
-					glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+					glAll.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroModalitaAll" ) );	//UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL
 //					glAll.setIcon((labelSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
 					if((soggettoOperativoSelezionato == null)) {
 						glAll.setUrl("");

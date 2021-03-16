@@ -94,6 +94,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -102,7 +103,6 @@ import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TargetType;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -607,7 +607,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				else {
 					labelServizio = this.getLabelServizioErogazione(protocollo, idServizio);
 				}
-				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_NOME_SERVIZIO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteSpecifica.ApsNomeServizio" ) );	//AccordiServizioParteSpecificaCostanti.LABEL_APS_NOME_SERVIZIO
 				List<Parameter> listParameters = new ArrayList<>();
 				listParameters.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
 				listParameters.add(pNomeServizio);
@@ -1243,7 +1243,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(asps.getPortType()!=null && !"".equals(asps.getPortType()) && !asps.getNome().equals(asps.getPortType())) {
 			labelServizioConPortType = labelServizioConPortType +" ("+asps.getPortType()+")";
 		}
-		de.setLabel(ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Erogazioni.AspsModificaServizioNome" ) );	//ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO_NOME
 		de.setValue(labelServizioConPortType);
 		de.setStatusValue(labelServizioConPortType);
 		de.setType(DataElementType.TEXT);
@@ -1329,7 +1329,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// soggetto erogatore
 		if(gestioneFruitori || showSoggettoErogatoreInErogazioni) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteSpecifica.ApsSoggettoErogatore" ) );	//AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE
 			de.setValue(this.getLabelNomeSoggetto(protocollo,asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore()));
 			de.setType(DataElementType.TEXT);
 			dati.addElement(de);
@@ -1360,7 +1360,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			labelServiceBinding= CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
 			break;
 		}
-		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO); 
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteSpecifica.ParametroApsAccordo" ) ); 	//AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO
 		de.setValue(MessageFormat.format(ErogazioniCostanti.MESSAGE_METADATI_SERVIZIO_EROGAZIONI_EDIT, labelServiceBinding, labelAPI));
 		de.setType(DataElementType.BUTTON);
 		
@@ -1478,7 +1478,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		DataElementImage image = new DataElementImage();
 		image.setUrl(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getIdAccordo() + ""),
 				new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME, as.getNome()), pTipoAccordo);
-		image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
+		image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaVisualizzaTooltipConParametro", AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO
 		image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA);
 		image.setTarget(TargetType.BLANK); 
 		image.setDisabilitaAjaxStatus();
@@ -1516,7 +1516,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			de = new DataElement();
 			String labelProtocollo =this.getLabelProtocollo(protocollo);
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteSpecifica.ParametroApsProtocollo" ) );	//AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO
 			de.setValue(labelProtocollo);
 			de.setType(DataElementType.TEXT);
 			
@@ -1554,7 +1554,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// Fruitore
 		if(showSoggettoFruitoreInFruizioni) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_FRUITORE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteSpecifica.ApsSoggettoFruitore" ) );	//AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_FRUITORE
 			de.setValue(this.getLabelNomeSoggetto(protocollo,fruitore.getTipo(),fruitore.getNome()));
 			de.setType(DataElementType.TEXT);
 			dati.addElement(de);
@@ -1581,7 +1581,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 			
 			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroTitoloPorteApplicativeDatiInvocazione" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE
 			de.setType(DataElementType.TEXT);
 			String urlInvocazione = "";
 
@@ -1616,7 +1616,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			listParametersUrlInvocazione.add(paConfigurazioneDati);
 			
 			image = new DataElementImage();
-			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE));
+			image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE, listParametersUrlInvocazione.toArray(new Parameter[1]));
 			de.setImage(image);
@@ -1663,12 +1663,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				String urlConnettore = this.getLabelConnettore(sa,is);
 				
 				if(!connettoreMultiploEnabled) {	
-					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettore" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE
 					de.setValue(urlConnettore);
 					String tooltipConnettore = this.getTooltipConnettore(sa,is);
 					de.setToolTip(tooltipConnettore);
 				} else {
-					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettori" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI
 					de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paDefault));
 					de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paDefault));
 				}
@@ -1684,7 +1684,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersConnettore.add(paConnettoreDaListaAPS);
 					
 					image = new DataElementImage();
-					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+					image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 					image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, 
 							listParametersConnettore.toArray(new Parameter[1]));
@@ -1704,7 +1704,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
 					
 					image = new DataElementImage();
-					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
+					image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaVerificaConfigurazioneTooltipConParametro", CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
 					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, 
 							listParametersVerificaConnettore.toArray(new Parameter[1]));
@@ -1725,7 +1725,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, "0"));
 					
 					image = new DataElementImage();
-					image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP);
+					image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaConfigurazioneConnettoriMultipliTooltip" ) );	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP
 					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI);
 					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, 
 							listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1]));
@@ -1733,7 +1733,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					
 					if(connettoreMultiploEnabled) {
 						image = new DataElementImage();
-						image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP);
+						image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaElencoConnettoriMultipliTooltip" ) );	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP
 						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI);
 						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, 
 								listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1]));
@@ -1746,7 +1746,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// CORS
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCors" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS
 			de.setType(DataElementType.TEXT);
 			de.setValue(this.getStatoGestioneCorsPortaApplicativa(paDefault, false));
 			if(!this.isModalitaCompleta()) {
@@ -1755,7 +1755,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
 			
 			image = new DataElementImage();
-			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));
+			image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS, paIdSogg, paIdPorta, pIdAsps);
 			
@@ -1770,11 +1770,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCanale" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE
 				this.setStatoCanalePorta(de, canalePorta, as.getCanale(), canaleList, true);
 				
 				image = new DataElementImage();
-				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE));
+				image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CANALE, paIdSogg, paIdPorta, pIdAsps);
 				de.setImage(image);
@@ -1787,7 +1787,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			if(!this.isModalitaStandard() && this.apsCore.getMessageEngines()!=null && !this.apsCore.getMessageEngines().isEmpty()) {
 				de = new DataElement();
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeOpzioniAvanzate" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE
 				de.setType(DataElementType.TEXT);
 				de.setValue(this.getStatoOpzioniAvanzatePortaApplicativaDefault(paDefault));
 				if(!this.isModalitaCompleta()) {
@@ -1796,7 +1796,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
 				
 				image = new DataElementImage();
-				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE));
+				image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,paIdSogg, paNomePorta, paIdPorta,pIdAsps,paConfigurazioneAltroApi);
 				
@@ -1824,7 +1824,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// url invocazione
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroTitoloPorteDelegateDatiInvocazione" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE
 			de.setType(DataElementType.TEXT);
 			UrlInvocazioneAPI urlInvocazione = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_DELEGATA, serviceBinding, pdDefault.getNome(), idFruitore,
 					as, pdDefault.getCanale());
@@ -1841,7 +1841,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			image = new DataElementImage();
 			image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE, listParametersUrlInvocazione.toArray(new Parameter[1]));
-			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE));
+			image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			
 			de.setImage(image);
@@ -1892,7 +1892,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// Connettore
 			if(visualizzaConnettore) {
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateConnettore" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE
 				de.setType(DataElementType.TEXT);
 				org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
 				String urlConnettore = this.getLabelConnettore(connettore);
@@ -1917,7 +1917,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersConnettore.add(pTipoSoggettoFruitore);
 					listParametersConnettore.add(pNomeSoggettoFruitore);
 					image = new DataElementImage();
-					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
+					image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 					image.setUrl(
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
@@ -1941,7 +1941,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						listParametersVerificaConnettore.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "true"));
 						image = new DataElementImage();
 						
-						image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));
+						image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaVerificaConfigurazioneTooltipConParametro", CostantiControlStation.LABEL_CONFIGURAZIONE_CONNETTIVITA));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VERIFICA_CONFIGURAZIONE);
 						image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VERIFICA_CONNETTORE, 
 								listParametersVerificaConnettore.toArray(new Parameter[1]));
@@ -1958,14 +1958,14 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// CORS
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCors" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS
 			de.setType(DataElementType.TEXT);
 			de.setValue(this.getStatoGestioneCorsPortaDelegata(pdDefault, false)); 
 			if(!this.isModalitaCompleta()) {
 				this.setStatoGestioneCORS(de, pdDefault.getGestioneCors(), this.confCore.getConfigurazioneGenerale());
 			}
 			image = new DataElementImage();
-			image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));
+			image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 			de.setImage(image);
@@ -1978,11 +1978,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneCanale" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE
 				this.setStatoCanalePorta(de, canalePorta, as.getCanale(), canaleList, false);
 				
 				image = new DataElementImage();
-				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE));
+				image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 				image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CANALE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 				de.setImage(image);
@@ -1995,14 +1995,14 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			if(!this.isModalitaStandard() && this.apsCore.getMessageEngines()!=null && !this.apsCore.getMessageEngines().isEmpty()) {
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateOpzioniAvanzate" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE
 				de.setType(DataElementType.TEXT);
 				de.setValue(this.getStatoOpzioniAvanzatePortaDelegataDefault(pdDefault));
 				if(!this.isModalitaCompleta()) {
 					this.setStatoOpzioniAvanzatePortaDelegataDefault(de, pdDefault.getOptions());
 				}
 				image = new DataElementImage();
-				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE));
+				image.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltipConParametro", PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE));	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO
 				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 				image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pdConfigurazioneAltroApi);
 				de.setImage(image);
@@ -2264,25 +2264,25 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					if(statoControlloAccessi.equals(CostantiControlStation.DEFAULT_VALUE_ABILITATO)) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeControlloAccessi" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI
 						de.setValue("white_controlloaccessi.png");
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiGestioneToken" ) );					//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN
 						de.setValue((gestioneToken!=null && StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO );
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutenticazione" ) );					//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE
 						de.setValue((autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO );
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutorizzazione" ) );					//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE
 						de.setValue((!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO );
 						gruppoVector.addElement(de);
 
@@ -2319,20 +2319,20 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					if(!statoValidazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO)) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeValidazioneContenuti" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI
 						de.setValue("white_validazioneContenuti.png");
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );					//CostantiControlStation.LABEL_PARAMETRO_STATO
 						de.setValue(statoValidazione);
 						gruppoVector.addElement(de);
 
 						if(tipoValidazione != null) {
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);				
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteTipo" ) );					//CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO
 							de.setValue(tipoValidazione);
 							gruppoVector.addElement(de);
 						}
@@ -2369,13 +2369,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						if(statoMessageSecurity.equals(CostantiConfigurazione.ABILITATO.toString())) {
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
-							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeMessageSecurity" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY
 							de.setValue("white_messageSecurity.png");
 							gruppoVector.addElement(de);
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);				
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );					//CostantiControlStation.LABEL_PARAMETRO_STATO
 							de.setValue(statoMessageSecurity);
 							gruppoVector.addElement(de);
 
@@ -2449,19 +2449,19 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						if(isMTOMAbilitatoReq || isMTOMAbilitatoRes) {
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
-							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeMtom" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM
 							de.setValue("white_mtom.png");
 							gruppoVector.addElement(de);
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);				
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );					//CostantiControlStation.LABEL_PARAMETRO_STATO
 							de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO);
 							gruppoVector.addElement(de);
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA);	
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRichiesta" ) );		//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA
 							if(modeReq != null) {
 								de.setValue(modeReq.getValue());
 							} else {
@@ -2471,7 +2471,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA);		
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRisposta" ) );			//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA
 							if(modeRes != null) {
 								de.setValue(modeRes.getValue());
 							} else {
@@ -2510,7 +2510,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						if(isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes) {
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
-							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeCorrelazioneApplicativa" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA
 							de.setValue("white_tracciamento.png");
 							gruppoVector.addElement(de);
 
@@ -2552,13 +2552,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					if(!statoDump.equals(CostantiControlStation.DEFAULT_VALUE_DISABILITATO)) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeDumpConfigurazione" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE
 						de.setValue("white_dump.png"); 
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );					//CostantiControlStation.LABEL_PARAMETRO_STATO
 						de.setValue(statoDump);
 						gruppoVector.addElement(de);
 
@@ -2726,24 +2726,24 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					if(controlloAccessiAbilitato) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeControlloAccessi" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiGestioneToken" ) );					//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN
 						de.setValue(this.getStatoGestioneTokenPortaApplicativa(paAssociata));
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutenticazione" ) );					//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE
 						de.setValue(this.getStatoAutenticazionePortaApplicativa(paAssociata));
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteControlloAccessiAutorizzazione" ) );					//CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE
 						de.setValue(this.getStatoAutorizzazionePortaApplicativa(paAssociata));
 						gruppoVector.addElement(de);
 
@@ -2751,7 +2751,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						de.setType(DataElementType.BUTTON);
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSoggPA, pIdPorta, pIdAsps);
 						de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-						de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP); 
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltip" ) ); 	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP
 						gruppoVector.addElement(de);
 					}
 
@@ -2772,12 +2772,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					if(validazioneContenutiAbilitato) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeValidazioneContenuti" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );					//CostantiControlStation.LABEL_PARAMETRO_STATO
 						de.setValue(statoValidazione);
 						gruppoVector.addElement(de);
 
@@ -2785,7 +2785,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						if(tipoValidazione != null) {
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO);				
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteTipo" ) );					//CostantiControlStation.LABEL_PARAMETRO_PORTE_TIPO
 							de.setValue(tipoValidazione);
 							gruppoVector.addElement(de);
 						}
@@ -2794,7 +2794,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						de.setType(DataElementType.BUTTON);
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSoggPA, pIdPorta, pIdAsps);
 						de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-						de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP); 
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltip" ) ); 	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP
 						gruppoVector.addElement(de);
 					}
 
@@ -2817,12 +2817,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						if(controlloMessageSecurityAbilitato) {
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
-							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeMessageSecurity" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY
 							gruppoVector.addElement(de);
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);				
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );					//CostantiControlStation.LABEL_PARAMETRO_STATO
 							de.setValue(statoMessageSecurity);
 							gruppoVector.addElement(de);
 
@@ -2841,7 +2841,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA);				
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRichiesta" ) );					//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA
 
 
 							if(StringUtils.isNotEmpty(requestMode)) {
@@ -2858,7 +2858,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA);				
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRisposta" ) );					//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA
 							if(StringUtils.isNotEmpty(responseMode)) {
 								if(responseMode.equals(CostantiControlStation.VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT)) {
 									de.setValue(CostantiControlStation.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_CONFIGURAZIONE_MANUALE);
@@ -2875,7 +2875,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							de.setType(DataElementType.BUTTON);
 							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY,pIdSoggPA, pIdPorta, pIdAsps);
 							de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-							de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP); 
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltip" ) ); 	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP
 							gruppoVector.addElement(de);
 						}
 					}
@@ -2898,18 +2898,18 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						if(controlloMTOMAbilitato) {
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
-							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeMtom" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM
 							gruppoVector.addElement(de);
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_STATO);				
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroStato" ) );					//CostantiControlStation.LABEL_PARAMETRO_STATO
 							de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO);
 							gruppoVector.addElement(de);
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA);	
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRichiesta" ) );		//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA
 							MTOMProcessorType modeReq = this.getProcessorTypeRequestMTOMPortaApplicativa(paAssociata);
 							if(modeReq != null) {
 								de.setValue(modeReq.getValue());
@@ -2920,7 +2920,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 							de = new DataElement();
 							de.setType(DataElementType.TEXT);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA);		
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRisposta" ) );			//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA
 							MTOMProcessorType modeRes = this.getProcessorTypeResponseMTOMPortaApplicativa(paAssociata);
 							if(modeRes != null) {
 								de.setValue(modeRes.getValue());
@@ -2933,7 +2933,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							de.setType(DataElementType.BUTTON);
 							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM,pIdPorta, pIdSoggPA, pIdAsps);
 							de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-							de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP); 
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltip" ) ); 	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP
 							gruppoVector.addElement(de);
 						}
 					}
@@ -2956,13 +2956,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						if(tracciamentoAbilitato) {
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
-							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeTracciamento" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO
 							gruppoVector.addElement(de);
 
 							if(this.isRidefinitoTransazioniRegistratePortaApplicativa(paAssociata)) {
 								de = new DataElement();
 								de.setType(DataElementType.TEXT);
-								de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI);				
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsiti" ) );					//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI
 								de.setValue(this.getStatoTransazioniRegistratePortaApplicativa(paAssociata));
 								gruppoVector.addElement(de);
 							}
@@ -2970,7 +2970,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							if(this.isRidefinitoMessaggiDiagnosticiPortaApplicativa(paAssociata)) {
 								de = new DataElement();
 								de.setType(DataElementType.TEXT);
-								de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI);				
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneMessaggiDiagnostici" ) );					//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI
 								de.setValue(this.getStatoMessaggiDiagnosticiPortaApplicativa(paAssociata));
 								gruppoVector.addElement(de);
 							}
@@ -2978,7 +2978,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							if(this.isEnabledCorrelazioneApplicativaPortaApplicativa(paAssociata)) {
 								de = new DataElement();
 								de.setType(DataElementType.TEXT);
-								de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);				
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeCorrelazioneApplicativa" ) );					//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA
 								de.setValue(this.getStatoCorrelazioneApplicativaPortaApplicativa(paAssociata)); 
 								gruppoVector.addElement(de);
 							}
@@ -2987,7 +2987,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							de.setType(DataElementType.BUTTON);
 							de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSoggPA, pIdPorta, pIdNome,pIdAsps);
 							de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-							de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP); 
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltip" ) ); 	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP
 							gruppoVector.addElement(de);
 						}
 					}
@@ -3008,18 +3008,18 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					if(controlloDumpAbilitato) {
 						de = new DataElement();
 						de.setType(DataElementType.SUBTITLE);
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeDumpConfigurazione" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRichiesta" ) );					//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA
 						de.setValue(this.getStatoDumpRichiestaPortaApplicativa(paAssociata, true));
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA);				
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroDumpSezioneRisposta" ) );					//CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA
 						de.setValue(this.getStatoDumpRispostaPortaApplicativa(paAssociata, true));
 						gruppoVector.addElement(de);
 
@@ -3027,7 +3027,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						de.setType(DataElementType.BUTTON);
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE, pIdSoggPA, pIdPorta, pIdAsps);
 						de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-						de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP); 
+						de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltip" ) ); 	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP
 						gruppoVector.addElement(de);
 					}
 
@@ -3043,7 +3043,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							numeroConfigurazioniAttive ++ ;
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
-							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettore" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE
 							gruppoVector.addElement(de);
 
 							ServizioApplicativo sa = this.saCore.getServizioApplicativo(portaApplicativaAssociataServizioApplicativo.getIdServizioApplicativo());
@@ -3061,7 +3061,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							if(StringUtils.isNotEmpty(endpointtype)) {
 								de = new DataElement();
 								de.setType(DataElementType.TEXT);
-								de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE);				
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreEndpointType" ) );					//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE
 								de.setValue(endpointtype);
 								gruppoVector.addElement(de);
 							}
@@ -3079,7 +3079,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							if(StringUtils.isNotEmpty(urlConnettore)) {
 								de = new DataElement();
 								de.setType(DataElementType.TEXT);
-								de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);				
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreUrl" ) );					//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL
 								de.setValue(urlConnettore.length() > 20 ? (urlConnettore.substring(0, 17) + "...") : urlConnettore);
 								de.setToolTip(urlConnettore);
 								gruppoVector.addElement(de);
@@ -3089,7 +3089,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							de.setType(DataElementType.BUTTON);
 							de.setUrl(servletConnettore, pIdSoggPA, pIdPorta, pIdAsps);
 							de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-							de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP); 
+							de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Erogazioni.AspsErogazioniIconaModificaConfigurazioneTooltip" ) ); 	//ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP
 							gruppoVector.addElement(de);
 						} else {
 							labelDisponibili.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
@@ -3140,7 +3140,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					// select per modale con configurazioni disponibili
 					de = new DataElement();
 					de.setName(ErogazioniCostanti.ASPS_EROGAZIONI_PARAMETRO_NUOVA_CONFIGURAZIONE+"_"+ d);
-					de.setLabel(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI_PARAMETRO_NUOVA_CONFIGURAZIONE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Erogazioni.AspsErogazioniParametroNuovaConfigurazione" ) );	//ErogazioniCostanti.LABEL_ASPS_EROGAZIONI_PARAMETRO_NUOVA_CONFIGURAZIONE
 					if(labelDisponibili.size() > 0) {
 						de.setType(DataElementType.SELECT);
 						de.setValues(urlDisponibili);

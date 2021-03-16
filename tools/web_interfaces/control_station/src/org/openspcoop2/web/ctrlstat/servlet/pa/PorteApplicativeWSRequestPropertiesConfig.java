@@ -42,13 +42,13 @@ import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
@@ -240,7 +240,7 @@ public class PorteApplicativeWSRequestPropertiesConfig  extends Action {
 			
 			pd.setDati(dati);
 			
-			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_CONFIGURAZIONE_PROPERTIES_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+			pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.AggiornamentoConfigurazionePropertiesEffettuatoConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//CostantiControlStation.LABEL_AGGIORNAMENTO_CONFIGURAZIONE_PROPERTIES_EFFETTUATO_CON_SUCCESSO
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

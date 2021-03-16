@@ -48,13 +48,13 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -521,18 +521,18 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		DataElement de = new DataElement();
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
-			de.setLabel(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.AccordiCooperazioneId" ) );	//AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneProtocollo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO
 
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
 			if(!used && modificheAbilitate){
-				de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneProtocollo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO
 				de.setValues(listaTipiProtocollo);
 				de.setSelected(tipoProtocollo);
 				de.setType(DataElementType.SELECT);
@@ -554,9 +554,9 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		// Gestione del tipo protocollo per la maschera add
 		if(TipoOperazione.ADD.equals(tipoOp)){
-			de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneProtocollo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1 && modificheAbilitate){
-				de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneProtocollo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO
 				de.setValues(listaTipiProtocollo);
 				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(tipoProtocollo);
@@ -566,7 +566,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			}else {
 				
 				DataElement deLABEL = new DataElement();
-				deLABEL.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
+				deLABEL.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneProtocollo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO
 				deLABEL.setType(DataElementType.TEXT);
 				deLABEL.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO+"__label");
 				deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
@@ -581,7 +581,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneNome" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME
 		de.setValue(nome);
 		if( modificheAbilitate ){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -597,7 +597,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneDescrizione" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE
 		de.setValue(descr);
 		de.setType(DataElementType.TEXT_EDIT);
 		if( !modificheAbilitate && StringUtils.isBlank(descr))
@@ -607,7 +607,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneSoggettoReferente" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE);
 		if (tipoOp.equals(TipoOperazione.ADD)) {
 
@@ -638,7 +638,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneSoggettoReferente" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE
 			de.setName(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE_12);
 			de.setType(DataElementType.TEXT);
 			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
@@ -663,7 +663,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazionePrivato" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO
 		de.setValue(privato ? Costanti.CHECK_BOX_ENABLED : "");
 		de.setSelected(privato ? Costanti.CHECK_BOX_ENABLED : "");
 		if (this.core.isShowFlagPrivato() && modificheAbilitate && this.isModalitaAvanzata()) {
@@ -677,7 +677,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		if(this.core.isShowFlagPrivato() && !modificheAbilitate && this.isModalitaAvanzata()){
 			de = new DataElement();
-			de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneVisibilitaAccordo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO
 			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO_LABEL);
 			if(privato){
 				de.setValue(AccordiCooperazioneCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO_PRIVATA);
@@ -689,13 +689,13 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneStato" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO
 		if(this.isShowGestioneWorkflowStatoDocumenti()){
 			if( tipoOp.equals(TipoOperazione.ADD)){
 				
 				DataElement deLabel = new DataElement();
 				deLabel.setType(DataElementType.TEXT);
-				deLabel.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
+				deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneStato" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO
 				deLabel.setValue(StatiAccordo.upper(StatiAccordo.bozza.toString()));
 				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"__label");
 				dati.addElement(deLabel);
@@ -711,7 +711,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				
 				DataElement deLabel = new DataElement();
 				deLabel.setType(DataElementType.TEXT);
-				deLabel.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
+				deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneStato" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO
 				deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
 				deLabel.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"__label");
 				dati.addElement(deLabel);
@@ -795,7 +795,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 			de = new DataElement();
-			de.setLabel(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.AccordiCooperazioneId" ) );	//AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
@@ -803,7 +803,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneNome" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
@@ -811,7 +811,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneDescrizione" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE
 		de.setValue(descr);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(descr);
@@ -820,7 +820,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneSoggettoReferente" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE);
 		if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
 			Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
@@ -832,7 +832,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneVersione" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE
 		de.setValue(versione);
 		de.setType(DataElementType.HIDDEN);
 		//		if( modificheAbilitate ){
@@ -860,7 +860,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazionePrivato" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO
 		de.setValue(privato ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		de.setType(DataElementType.HIDDEN);
 		//		de.setSelected(privato ? Costanti.CHECK_BOX_ENABLED : "");
@@ -875,7 +875,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		//		if(this.core.isShowFlagPrivato() && !modificheAbilitate && !InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneVisibilitaAccordo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VISIBILITA_ACCORDO
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO_LABEL);
 		de.setType(DataElementType.HIDDEN);
 		if(privato){
@@ -888,7 +888,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneStato" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO
 
 		//		if(this.isShowGestioneWorkflowStatoDocumenti()){
 //			String[] stati = StatiAccordo.toArray();
@@ -1141,7 +1141,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.AccordiCooperazioneAllegato" ) );	//AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATO
 		dati.addElement(de);
 		
 		de = new DataElement();
@@ -1173,7 +1173,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				if(errore!=null){
 					de = new DataElement();
 					de.setValue(errore);
-					de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneDocumento" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO
 					de.setType(DataElementType.TEXT);
 					de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO  );
 					de.setSize( getSize());
@@ -1210,7 +1210,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				else{	
 					de = new DataElement();
 					de.setType(DataElementType.FILE);
-					de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneDocumento" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO
 					de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE);
 					de.setSize(getSize());
 					dati.addElement(de);
@@ -1218,7 +1218,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			}else{
 				de = new DataElement();
 				de.setType(DataElementType.FILE);
-				de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneDocumento" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO
 				de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE);
 				de.setSize(getSize());
 				dati.addElement(de);
@@ -1240,11 +1240,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.AccordiCooperazioneAllegato" ) );	//AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ALLEGATO
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneRuolo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO
 		de.setType(DataElementType.SELECT);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_RUOLO);
 		de.setValues(ruoli);
@@ -1256,7 +1256,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		if(tipiAmmessi!=null){
 			de = new DataElement();
-			de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneTipo" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_TIPO
 			de.setType(DataElementType.SELECT);
 			de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_FILE);
 			de.setValues(tipiAmmessi);
@@ -1267,7 +1267,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		de = new DataElement();
 		de.setValue(idAccordo);
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazioneDocumento" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO
 		de.setType(DataElementType.FILE);
 		de.setName(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_THE_FILE);
 		de.setSize( getSize());
@@ -1280,7 +1280,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			String[] partecipantiNonInseriti,String[] partecipantiNonInseritiLabels, Vector<DataElement> dati) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.AccordiCooperazionePartecipante" ) );	//AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -1291,7 +1291,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiCooperazione.ParametroAccordiCooperazionePartecipante" ) );	//AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE
 		de.setValues(partecipantiNonInseriti );
 		de.setLabels(partecipantiNonInseritiLabels );
 		de.setType(DataElementType.SELECT);

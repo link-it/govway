@@ -21,7 +21,11 @@
 package org.openspcoop2.web.lib.mvc;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.servlet.http.Cookie;
@@ -539,5 +543,40 @@ public class ServletUtils {
 			return null;
 
 		return (ConfigBean) obj;
+	}
+
+	private static ClassLoader getCurrentLoader( Object defaultObject ) {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		if ( loader == null && defaultObject != null )
+			loader = defaultObject.getClass().getClassLoader();
+		return loader;
+	}
+
+	public static String getValueFromResourceBundle( String bundleName, HttpSession session, String key, Object ... params ) {
+		String text = null;
+		Locale locale = Locale.getDefault();
+		try {
+			ResourceBundle bundle = ResourceBundle.getBundle( bundleName, locale, getCurrentLoader( params ) );
+			text = bundle.getString( key );
+		} catch( MissingResourceException e ) {
+			text = "?? key " + key + " not found ??";
+		}
+		if ( params != null ) {
+			MessageFormat mf = new MessageFormat( text, locale );
+			text = mf.format( params, new StringBuffer(), null ).toString();
+		}
+		return text;
+	}
+
+	public static String getLabelFromResourceBundle( HttpSession session, String key, Object ... params ) {
+		return getValueFromResourceBundle( "labels", session, key, params );
+	}
+
+	public static String getToolTipFromResourceBundle( HttpSession session, String key, Object ... params ) {
+		return getValueFromResourceBundle( "toolTips", session, key, params );
+	}
+
+	public static String getMessageFromResourceBundle( HttpSession session, String key, Object ... params ) {
+		return getValueFromResourceBundle( "messages", session, key, params );
 	}
 }

@@ -146,7 +146,7 @@ public final class ConnettorePropAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
-						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta);
+						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta, session);
 				
 				pd.setDati(dati);
 
@@ -169,7 +169,7 @@ public final class ConnettorePropAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
-						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta);
+						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta, session);
 				
 				pd.setDati(dati);
 

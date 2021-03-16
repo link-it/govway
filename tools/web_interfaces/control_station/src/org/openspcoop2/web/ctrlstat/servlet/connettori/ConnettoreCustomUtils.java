@@ -21,8 +21,11 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.Vector;
 
+import javax.servlet.http.HttpSession;
+
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 
@@ -39,15 +42,15 @@ public class ConnettoreCustomUtils {
 			String nome, String valore,
 			String servlet, String id, String nomeprov, String tipoprov,String nomeservizio,String tiposervizio, String versioneservizio,
 			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo,
-			String provider, String accessoDaAPSParametro, String idPorta, String azioneConnettoreIdPorta)  {
+			String provider, String accessoDaAPSParametro, String idPorta, String azioneConnettoreIdPorta, HttpSession session)  {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(ConnettoriCostanti.LABEL_SEZIONE_CONNETTORE_CUSTOM_PROPRIETA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.SezioneConnettoreCustomProprieta" ) );	//ConnettoriCostanti.LABEL_SEZIONE_CONNETTORE_CUSTOM_PROPRIETA
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreCustomNome" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME);
 		de.setSize(50);
@@ -59,7 +62,7 @@ public class ConnettoreCustomUtils {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreCustomValore" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VALORE);
 		de.setSize(50);

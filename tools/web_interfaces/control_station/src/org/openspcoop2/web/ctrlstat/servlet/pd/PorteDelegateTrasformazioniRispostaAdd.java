@@ -47,12 +47,12 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -224,13 +224,13 @@ public class PorteDelegateTrasformazioniRispostaAdd extends Action {
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 				boolean giaRegistrato = porteDelegateCore.existsTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, statusMinDBCheck, statusMaxDBCheck, patternDBCheck, contentTypeDBCheck);
 				if (giaRegistrato) {
-					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA);
+					pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreRegolaTrasformazioneApplicabilitaDuplicata" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA
 					isOk = false;
 				}
 				if (isOk) {
 					giaRegistrato = porteDelegateCore.existsTrasformazioneRisposta(Long.parseLong(id), idTrasformazione, nomeRisposta);
 					if (giaRegistrato) {
-						pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME);
+						pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "ControlStation.ErroreRegolaTrasformazioneApplicabilitaNome" ) );	//CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_NOME
 						isOk = false;
 					}
 				}

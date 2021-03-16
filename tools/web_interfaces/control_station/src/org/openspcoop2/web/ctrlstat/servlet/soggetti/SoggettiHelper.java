@@ -65,6 +65,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -72,7 +73,6 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -142,7 +142,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 			DataElement de = new DataElement();
-			de.setLabel(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.SoggettoId" ) );	//SoggettiCostanti.PARAMETRO_SOGGETTO_ID
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
@@ -151,7 +151,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 		
 		DataElement de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_SOGGETTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.Soggetto" ) );	//SoggettiCostanti.LABEL_SOGGETTO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -176,7 +176,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				
 				if(this.core.isRegistroServiziLocale()){
 					de = new DataElement();
-					de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PortaDiDominio" ) );	//PddCostanti.LABEL_PORTA_DI_DOMINIO
 					de.setType(DataElementType.SELECT);
 					de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
 					if(this.soggettiCore.isMultitenant()) {
@@ -203,7 +203,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if(this.core.isSinglePdD()){
 					if(this.core.isRegistroServiziLocale()){
 						de = new DataElement();
-						de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PortaDiDominio" ) );	//PddCostanti.LABEL_PORTA_DI_DOMINIO
 						de.setType(DataElementType.SELECT);
 						de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
 						if(this.soggettiCore.isMultitenant()) {
@@ -218,7 +218,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					}
 				}else{
 					de = new DataElement();
-					de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Pdd.PortaDiDominio" ) );	//PddCostanti.LABEL_PORTA_DI_DOMINIO
 					de.setType(DataElementType.TEXT);
 					de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
 					de.setValue(pdd);
@@ -233,7 +233,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			
 			de = new DataElement();
-			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoDominio" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
 			if(!multiTenant) {
 				de.setType(DataElementType.HIDDEN);
@@ -246,7 +246,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
-				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoDominio" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO+"__LABEL");
 				String valueDom = dominio;
 				for (int i = 0; i < SoggettiCostanti.SOGGETTI_DOMINI_VALUE.length; i++) {
@@ -269,10 +269,10 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoProtocollo" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO
 		if(TipoOperazione.ADD.equals(tipoOp)){
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
-				de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoProtocollo" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO
 				de.setValues(listaTipiProtocollo);
 				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(protocollo);
@@ -288,7 +288,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
 				
 				DataElement deLABEL = new DataElement();
-				deLABEL.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO);
+				deLABEL.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoProtocollo" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO
 				deLABEL.setType(DataElementType.TEXT);
 				deLABEL.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO+"__label");
 				deLABEL.setValue(this.getLabelProtocollo(protocollo));
@@ -319,7 +319,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoTipo" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPO
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 		if(tipiLabel!=null && tipiLabel.length>1) {
 			de.setType(DataElementType.SELECT);
@@ -344,7 +344,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		//}
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoNome" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME
 		de.setValue(nomeprov);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
@@ -354,7 +354,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		
 		if(TipoOperazione.ADD.equals(tipoOp)){
 			de = new DataElement();
-			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPOLOGIA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoTipologia" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPOLOGIA
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA);
 			if(isPddEsterna && isSupportatoAutenticazioneSoggetti){
 				de.setValue(tipologia);
@@ -373,7 +373,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_CODICE_PORTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoCodicePorta" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_CODICE_PORTA
 		de.setValue(portadom);
 		if (!isSupportatoIdentificativoPorta) {
 			de.setType(DataElementType.HIDDEN);
@@ -389,7 +389,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_CODICE_IPA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoCodiceIpa" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_CODICE_IPA
 		de.setValue(codiceIpa);
 		if (!isSupportatoCodiceIPA) {
 			de.setType(DataElementType.HIDDEN);
@@ -405,7 +405,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoDescrizione" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE
 		de.setValue(descr);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
@@ -414,7 +414,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoVersioneProtocollo" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
 		boolean showVersioneProtocollo = this.core.isRegistroServiziLocale() && (this.apsCore.getVersioniProtocollo(protocollo).size()>1);
 		if(showVersioneProtocollo){
@@ -431,7 +431,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		//}
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_IS_PRIVATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoIsPrivato" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_IS_PRIVATO
 		if (this.core.isShowFlagPrivato() && this.isModalitaAvanzata() && this.core.isRegistroServiziLocale() ) {
 			de.setType(DataElementType.CHECKBOX);
 		} else {
@@ -443,7 +443,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_IS_ROUTER);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoIsRouter" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_IS_ROUTER
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
 		//if (!this.core.isSinglePdD() && !InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 		// Un router lo si puo' voler creare anche in singlePdD.
@@ -567,7 +567,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 
 			de = new DataElement();
-			de.setLabel(RuoliCostanti.LABEL_RUOLI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.Ruoli" ) );	//RuoliCostanti.LABEL_RUOLI
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -603,13 +603,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
-				de.setLabel(SoggettiCostanti.LABEL_CLIENT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.Client" ) );	//SoggettiCostanti.LABEL_CLIENT
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
 
 			de = new DataElement();
-			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoPdUrlPrefixRewriter" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER
 			if (this.isModalitaCompleta()) {	
 				de.setType(DataElementType.TEXT_EDIT);
 			}else{
@@ -636,13 +636,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 			if (this.isModalitaCompleta()) {	
 				de = new DataElement();
-				de.setLabel(SoggettiCostanti.LABEL_SERVER);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.Server" ) );	//SoggettiCostanti.LABEL_SERVER
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
 
 			de = new DataElement();
-			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.ParametroSoggettoPaUrlPrefixRewriter" ) );	//SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER
 			if (this.isModalitaCompleta()) {	
 				de.setType(DataElementType.TEXT_EDIT);
 			}else{
@@ -1487,7 +1487,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
 					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
 			
-			de.setToolTip(RuoliCostanti.LABEL_RUOLI); 
+			de.setToolTip( ServletUtils.getToolTipFromResourceBundle( session, "Ruoli.Ruoli" ) ); 	//RuoliCostanti.LABEL_RUOLI
 			
 			e.addElement(de);
 		}

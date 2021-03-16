@@ -24,9 +24,9 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -102,12 +102,12 @@ public class LoginHelper extends ConsoleHelper {
 				}
 				
 				if(this.hasOnlyPermessiDiagnosticaReportistica(this.utentiCore.getUser(login))) {
-					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE,MessageType.ERROR_SINTETICO);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Login.ErroreUtenteNonAbilitatoUtilizzoConsole" ) ,MessageType.ERROR_SINTETICO);	//LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE
 					return false;
 				}
 				
 				if(!uCheck.isConfigurazioneValidaAbilitazioni()) {
-					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO,MessageType.ERROR_SINTETICO);
+					this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Login.ErroreUtenteNonAbilitatoUtilizzoConsoleConfigurazioneNonCorretto" ) ,MessageType.ERROR_SINTETICO);	//LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO
 					return false;
 				}
 			}

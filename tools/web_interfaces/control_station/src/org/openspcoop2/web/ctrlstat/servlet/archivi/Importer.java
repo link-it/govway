@@ -51,12 +51,12 @@ import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * Importer
@@ -155,7 +155,7 @@ public final class Importer extends Action {
 				parametroModalitaFunzionamento = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 			}
 			DataElement modalitaDataElement = new DataElement();
-			modalitaDataElement.setLabel(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA);
+			modalitaDataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ArchiviImporterModalita" ) );	//ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA
 			modalitaDataElement.setValue(parametroModalitaFunzionamento);
 			modalitaDataElement.setType(DataElementType.HIDDEN);
 			modalitaDataElement.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA);

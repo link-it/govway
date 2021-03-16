@@ -77,13 +77,13 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -313,7 +313,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* ID */
 		DataElement de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_ID);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpId" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_ID
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_ID);
@@ -321,7 +321,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* CHANGE_BINARY */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpChangeBinary" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY
 		de.setValue(ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CHANGE_BINARY);
@@ -329,7 +329,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		
 		/* NOME */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpNome" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME);
@@ -337,7 +337,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* ID_PROPRIETARIO */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpIdProprietario" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO
 		de.setValue(idProprietario);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO);
@@ -345,7 +345,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* PROTOCOLLO */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpProtocollo" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO
 		de.setValue(protocollo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO);
@@ -353,7 +353,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* TIPO_PROPRIETARIO */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpTipoProprietario" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO
 		de.setValue(tipoProprietario.toString());
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO);
@@ -361,7 +361,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* TIPO_ACCORDO */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpTipoAccordo" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO
 		de.setValue(tipoAccordo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO);
@@ -369,7 +369,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* NOME_PROPRIETARIO */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpNomeProprietario" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO
 		de.setValue(nomeProprietario);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO);
@@ -377,7 +377,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* NOME_PARENT_PROPRIETARIO */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpNomeParentProprietario" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO
 		de.setValue(nomeParentProprietario);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO);
@@ -385,7 +385,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 		/* URL_CHANGE */
 		de = new DataElement();
-		de.setLabel(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.PpUrlOriginaleChange" ) );	//ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE
 		de.setValue(urlChange);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
@@ -409,7 +409,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			
 			if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0){
 				de = new DataElement();
-				de.setLabel(ProtocolPropertiesCostanti.LABEL_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.Nome" ) );	//ProtocolPropertiesCostanti.LABEL_NOME
 				de.setType(DataElementType.TEXT);
 				de.setValue(contenutoDocumento.getFilename());
 				dati.addElement(de);
@@ -425,7 +425,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					}
 					else{
 						de = new DataElement();
-						de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.DocumentoAttuale" ) );	//ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setValue(contenutoDocumentoStringBuilder.toString());
 						de.setRows(30);
@@ -471,7 +471,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			/* Contenuto Documento */
 			if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0){
 				de = new DataElement();
-				de.setLabel(ProtocolPropertiesCostanti.LABEL_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.Nome" ) );	//ProtocolPropertiesCostanti.LABEL_NOME
 				de.setType(DataElementType.TEXT);
 				de.setValue(contenutoDocumento.getFilename());
 				dati.addElement(de);
@@ -487,7 +487,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					}
 					else{
 						de = new DataElement();
-						de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.DocumentoAttuale" ) );	//ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setValue(contenutoDocumentoStringBuilder.toString());
 						de.setRows(30);
@@ -519,7 +519,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 	
 			}else {
 				de = new DataElement();
-				de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.DocumentoAttuale" ) );	//ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE
 				de.setType(DataElementType.TEXT);
 				de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_NOT_FOUND);
 				dati.addElement(de);
@@ -527,7 +527,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 	
 			if(!readOnly) {
 				de = new DataElement();
-				de.setLabel(ProtocolPropertiesCostanti.LABEL_CONTENUTO_NUOVO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.ContenutoNuovo" ) );	//ProtocolPropertiesCostanti.LABEL_CONTENUTO_NUOVO
 				de.setValue("");
 				de.setType(DataElementType.FILE);
 				de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
@@ -552,7 +552,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0 && !binaryConsoleItem.isRequired()){
 					de = new DataElement();
 					de.setBold(true);
-					de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ProtocolProperties.DocumentoChangeClearWarning" ) );	//ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING
 					de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR);
 					de.setType(DataElementType.NOTE);
 					de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN);

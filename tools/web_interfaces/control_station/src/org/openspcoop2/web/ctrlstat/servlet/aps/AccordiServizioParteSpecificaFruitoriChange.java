@@ -93,6 +93,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -101,7 +102,6 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
@@ -1230,7 +1230,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					if(backToStato != null) {
 						// backtostato per chiudere la modifica dopo la conferma
 						DataElement de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroNome" ) );	//CostantiControlStation.LABEL_PARAMETRO_NOME
 						de.setValue(backToStato);
 						de.setType(DataElementType.HIDDEN);
 						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);

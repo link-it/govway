@@ -47,11 +47,11 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * ConfigurazioneHandlersServizioDel
@@ -151,7 +151,7 @@ public final class ConfigurazioneHandlersServizioDel extends Action {
 			confHelper.prepareHandlersServizioList(ricerca, lista, ruoloPorta, idPortaS, serviceBinding, fase);
 						
 			if(ruoloPorta == null) {
-				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SERVICE_HANDLERS_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ConfigurazioneServiceHandlersModificataConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SERVICE_HANDLERS_MODIFICATA_CON_SUCCESSO
 			}
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

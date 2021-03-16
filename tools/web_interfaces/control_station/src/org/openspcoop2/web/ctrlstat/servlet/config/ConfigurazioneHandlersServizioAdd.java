@@ -48,13 +48,13 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**     
@@ -261,7 +261,7 @@ public class ConfigurazioneHandlersServizioAdd extends Action {
 			confHelper.prepareHandlersServizioList(ricerca, lista, ruoloPorta, idPortaS, serviceBinding, fase);
 			
 			if(ruoloPorta == null) {
-				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SERVICE_HANDLERS_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Configurazione.ConfigurazioneServiceHandlersModificataConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SERVICE_HANDLERS_MODIFICATA_CON_SUCCESSO
 			}
 			
 			// salvo l'oggetto ricerca nella sessione

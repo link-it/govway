@@ -46,13 +46,13 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -217,7 +217,7 @@ public class PorteDelegateGestioneCanale extends Action {
 			ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
 			
 			// Preparo la lista
-			pd.setMessage(PorteDelegateCostanti.LABEL_PORTE_DELEGATE_CANALE_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+			pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteDelegate.PorteDelegateCanaleConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//PorteDelegateCostanti.LABEL_PORTE_DELEGATE_CANALE_CON_SUCCESSO
 
 			portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			idporta = portaDelegata.getNome();

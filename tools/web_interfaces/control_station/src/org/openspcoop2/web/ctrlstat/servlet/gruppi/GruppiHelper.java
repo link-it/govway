@@ -40,13 +40,13 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -71,14 +71,14 @@ public class GruppiHelper extends ConsoleHelper{
 	public Vector<DataElement> addGruppoToDati(TipoOperazione tipoOP, Long gruppoId, String nome, String descrizione, String serviceBinding, Vector<DataElement> dati) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(GruppiCostanti.LABEL_GRUPPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Gruppi.Gruppo" ) );	//GruppiCostanti.LABEL_GRUPPO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
 		if(gruppoId!=null){
 			de = new DataElement();
-			de.setLabel(GruppiCostanti.PARAMETRO_GRUPPO_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Gruppi.GruppoId" ) );	//GruppiCostanti.PARAMETRO_GRUPPO_ID
 			de.setValue(gruppoId.longValue()+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(GruppiCostanti.PARAMETRO_GRUPPO_ID);
@@ -87,7 +87,7 @@ public class GruppiHelper extends ConsoleHelper{
 		}
 		
 		de = new DataElement();
-		de.setLabel(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Gruppi.ParametroGruppoNome" ) );	//GruppiCostanti.LABEL_PARAMETRO_GRUPPO_NOME
 		de.setValue(nome);
 		//if(TipoOperazione.ADD.equals(tipoOP)){
 		de.setType(DataElementType.TEXT_EDIT);
@@ -101,7 +101,7 @@ public class GruppiHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Gruppi.ParametroGruppoDescrizione" ) );	//GruppiCostanti.LABEL_PARAMETRO_GRUPPO_DESCRIZIONE
 		de.setValue(descrizione);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(GruppiCostanti.PARAMETRO_GRUPPO_DESCRIZIONE);
@@ -109,7 +109,7 @@ public class GruppiHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Gruppi.ParametroGruppoServiceBinding" ) );	//GruppiCostanti.LABEL_PARAMETRO_GRUPPO_SERVICE_BINDING
 		de.setType(DataElementType.SELECT);
 		de.setName(GruppiCostanti.PARAMETRO_GRUPPO_SERVICE_BINDING);
 		de.setLabels(GruppiCostanti.LABELS_SELECT_PARAMETRO_GRUPPO_SERVICE_BINDING);

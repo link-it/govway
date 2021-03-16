@@ -39,13 +39,13 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
@@ -290,10 +290,10 @@ public final class UtentiAdd extends Action {
 			utentiHelper.prepareUtentiList(ricerca, lista, singlePdD);
 	
 			if(newU.isConfigurazioneValidaSoggettiAbilitati()==false) {
-				pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_CREATE_NOTE, MessageType.INFO);
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.AbilitazioniPuntualiSoggettiDefinizioneCreateNote" ) , MessageType.INFO);	//UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_CREATE_NOTE
 			}
 			else if(newU.isConfigurazioneValidaServiziAbilitati()==false) {
-				pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_CREATE_NOTE, MessageType.INFO);
+				pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.AbilitazioniPuntualiServiziDefinizioneCreateNote" ) , MessageType.INFO);	//UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_CREATE_NOTE
 			}
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

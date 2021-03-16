@@ -40,13 +40,13 @@ import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 //import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -74,14 +74,14 @@ public class ScopeHelper extends ConsoleHelper{
 			String nomeEsterno, String contesto, Vector<DataElement> dati) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(ScopeCostanti.LABEL_SCOPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Scope.Scope" ) );	//ScopeCostanti.LABEL_SCOPE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
 		if(scopeId!=null){
 			de = new DataElement();
-			de.setLabel(ScopeCostanti.PARAMETRO_SCOPE_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Scope.ScopeId" ) );	//ScopeCostanti.PARAMETRO_SCOPE_ID
 			de.setValue(scopeId.longValue()+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(ScopeCostanti.PARAMETRO_SCOPE_ID);
@@ -90,7 +90,7 @@ public class ScopeHelper extends ConsoleHelper{
 		}
 		
 		de = new DataElement();
-		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Scope.ParametroScopeNome" ) );	//ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME
 		de.setValue(nome);
 		//if(TipoOperazione.ADD.equals(tipoOP)){
 		de.setType(DataElementType.TEXT_EDIT);
@@ -104,7 +104,7 @@ public class ScopeHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Scope.ParametroScopeDescrizione" ) );	//ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE
 		de.setValue(descrizione);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
@@ -112,7 +112,7 @@ public class ScopeHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_TIPOLOGIA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Scope.ParametroScopeTipologia" ) );	//ScopeCostanti.LABEL_PARAMETRO_SCOPE_TIPOLOGIA
 		de.setType(DataElementType.SELECT);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_TIPOLOGIA);
 		
@@ -124,7 +124,7 @@ public class ScopeHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Scope.ParametroScopeNomeEsterno" ) );	//ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO
 		de.setValue(nomeEsterno);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
@@ -132,7 +132,7 @@ public class ScopeHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ScopeCostanti.LABEL_PARAMETRO_SCOPE_CONTESTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Scope.ParametroScopeContesto" ) );	//ScopeCostanti.LABEL_PARAMETRO_SCOPE_CONTESTO
 		de.setType(DataElementType.SELECT);
 		de.setName(ScopeCostanti.PARAMETRO_SCOPE_CONTESTO);
 		de.setLabels(ScopeCostanti.SCOPE_CONTESTO_UTILIZZO_LABEL);

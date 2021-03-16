@@ -39,13 +39,13 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -70,14 +70,14 @@ public class RuoliHelper extends ConsoleHelper{
 			String nomeEsterno, String contesto, Vector<DataElement> dati) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(RuoliCostanti.LABEL_RUOLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.Ruolo" ) );	//RuoliCostanti.LABEL_RUOLO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
 		if(ruoloId!=null){
 			de = new DataElement();
-			de.setLabel(RuoliCostanti.PARAMETRO_RUOLO_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.RuoloId" ) );	//RuoliCostanti.PARAMETRO_RUOLO_ID
 			de.setValue(ruoloId.longValue()+"");
 			de.setType(DataElementType.HIDDEN);
 			de.setName(RuoliCostanti.PARAMETRO_RUOLO_ID);
@@ -86,7 +86,7 @@ public class RuoliHelper extends ConsoleHelper{
 		}
 		
 		de = new DataElement();
-		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.ParametroRuoloNome" ) );	//RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME
 		de.setValue(nome);
 		//if(TipoOperazione.ADD.equals(tipoOP)){
 		de.setType(DataElementType.TEXT_EDIT);
@@ -100,7 +100,7 @@ public class RuoliHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.ParametroRuoloDescrizione" ) );	//RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE
 		de.setValue(descrizione);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
@@ -108,7 +108,7 @@ public class RuoliHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.ParametroRuoloTipologia" ) );	//RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA
 		de.setType(DataElementType.SELECT);
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
 		de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
@@ -124,7 +124,7 @@ public class RuoliHelper extends ConsoleHelper{
 			}catch(Exception e) {}
 		}
 		de = new DataElement();
-		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.ParametroRuoloNomeEsterno" ) );	//RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO
 		de.setValue(nomeEsterno);
 		if(ruoloTipologia!=null && (RuoloTipologia.QUALSIASI.equals(ruoloTipologia) || RuoloTipologia.ESTERNO.equals(ruoloTipologia))) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -137,7 +137,7 @@ public class RuoliHelper extends ConsoleHelper{
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(RuoliCostanti.LABEL_PARAMETRO_RUOLO_CONTESTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Ruoli.ParametroRuoloContesto" ) );	//RuoliCostanti.LABEL_PARAMETRO_RUOLO_CONTESTO
 		de.setType(DataElementType.SELECT);
 		de.setName(RuoliCostanti.PARAMETRO_RUOLO_CONTESTO);
 		de.setLabels(RuoliCostanti.RUOLI_CONTESTO_UTILIZZO_LABEL);

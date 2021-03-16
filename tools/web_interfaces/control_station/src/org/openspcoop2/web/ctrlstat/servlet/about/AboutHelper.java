@@ -30,6 +30,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -76,13 +77,13 @@ public class AboutHelper extends ConsoleHelper {
 
 		// titolo sezione
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_PRODOTTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "About.Prodotto" ) );	//AboutCostanti.LABEL_PRODOTTO
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		// versione
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_VERSIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "About.Versione" ) );	//AboutCostanti.LABEL_VERSIONE
 		de.setType(DataElementType.TEXT);
 		de.setValue(this.core.getProductVersion());
 		dati.addElement(de);
@@ -104,7 +105,7 @@ public class AboutHelper extends ConsoleHelper {
 		
 		// copyright
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_COPYRIGHT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "About.Copyright" ) );	//AboutCostanti.LABEL_COPYRIGHT
 		de.setType(DataElementType.TEXT);
 		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getCopyright())) {
 			de.setValue(versionInfo.getCopyright());
@@ -116,7 +117,7 @@ public class AboutHelper extends ConsoleHelper {
 		
 		// sito openspcoop
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_LICENZA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "About.Licenza" ) );	//AboutCostanti.LABEL_LICENZA
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setCols(70);
 		if(versionInfo!=null) {
@@ -139,7 +140,7 @@ public class AboutHelper extends ConsoleHelper {
 		if(versionInfo!=null) {
 			
 			de = new DataElement();
-			de.setLabel(AboutCostanti.LABEL_PARAMETRO_ABOUT_INFO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "About.ParametroAboutInfo" ) );	//AboutCostanti.LABEL_PARAMETRO_ABOUT_INFO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			

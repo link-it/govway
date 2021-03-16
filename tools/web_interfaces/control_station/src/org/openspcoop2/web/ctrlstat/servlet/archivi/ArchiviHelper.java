@@ -92,12 +92,12 @@ import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -131,12 +131,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String cascadeAc, String cascadeAspc, String cascadeAsc, String cascadeAsps, String cascadeFruizioni) throws Exception{
 		
 		DataElement dataElement = new DataElement();
-		dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_EXPORT);
+		dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ArchiviExport" ) );	//ArchiviCostanti.LABEL_ARCHIVI_EXPORT
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
 		DataElement de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviProtocollo" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO
 		// Non sembra necessario far vedere la lista dei protocolli anche se sono maggiore di uno.
 		// Tanto poi gli export modes sono sempre tutti quelli SOLO compatibilit con TUTTI i protocolli degli oggetti selezionati.
 //		if(protocolliSelectList.size()>=2){
@@ -169,7 +169,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		if(!tutti_protocolli && this.archiviCore.isMultitenant()) {
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
-			de.setLabel(SoggettiCostanti.LABEL_SOGGETTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Soggetti.Soggetto" ) );	//SoggettiCostanti.LABEL_SOGGETTO
 			if(this.isSoggettoMultitenantSelezionato()){
 				IDSoggetto idSoggettoSelezionato = this.soggettiCore.convertSoggettoSelezionatoToID(this.getSoggettoMultitenantSelezionato());
 				de.setValue(this.getLabelNomeSoggetto(idSoggettoSelezionato));
@@ -186,7 +186,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviTipologiaArchivio" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO
 		if(exportModes.size()>1){
 			List<String> exportMode_tmp = new ArrayList<String>();
 			for (ExportMode exp : exportModes) {
@@ -207,7 +207,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					
 		if(ArchiveType.CONFIGURAZIONE.equals(servletSourceExport)){
 			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportTipoDump" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP);
 			if(this.archiviCore.isExportArchive_configurazione_soloDumpCompleto() || 
 					!org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE_TYPE.getType().equals(exportMode)){
@@ -258,7 +258,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		if(cascadeEnabled && showPolicyConfigOption){
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePolicyConfigLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT
 			if(this.archiviCore.isConfigurazioneAllarmiEnabled()) {
 				de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_CON_ALLARMI_RIGHT);
 			}
@@ -296,7 +296,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		if(cascadeEnabled && showPluginConfigOption){
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_LEFT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePluginConfigLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_LEFT
 			de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_RIGHT);
 			de.setSelected(ServletUtils.isCheckBoxEnabled(cascadePluginConfig));
 		}
@@ -329,7 +329,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		if(cascadeEnabled && showIncludiElementiRiferitiOption){
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT
 			de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT);
 			de.setSelected(ServletUtils.isCheckBoxEnabled(cascade));
 		}
@@ -350,12 +350,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SEZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeSezione" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SEZIONE
 			dati.addElement(de);
 			
 			if(cascadeConfig.isCascadePdd()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePdd" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -365,7 +365,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if(cascadeConfig.isCascadeRuoli()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeRuoli" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -375,7 +375,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if(cascadeConfig.isCascadeScope()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeScope" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -385,7 +385,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if(cascadeConfig.isCascadeSoggetti()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeSoggetti" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -395,7 +395,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if(cascadeConfig.isCascadeServiziApplicativi()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeServiziApplicativi" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -404,7 +404,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			if(cascadeConfig.isCascadePorteDelegate()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePorteDelegate" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -413,7 +413,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			if(cascadeConfig.isCascadePorteApplicative()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_APPLICATIVE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePorteApplicative" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_APPLICATIVE
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_APPLICATIVE);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -423,7 +423,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if(cascadeConfig.isCascadeAccordoCooperazione()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeAccordiCooperazione" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -432,7 +432,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			if(cascadeConfig.isCascadeAccordoServizioParteComune()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeAccordiServizioParteComune" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -441,7 +441,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			if(cascadeConfig.isCascadeAccordoServizioComposto()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeAccordiServizioComposto" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -450,7 +450,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			if(cascadeConfig.isCascadeAccordoServizioParteSpecifica()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeAccordiServizioParteSpecifica" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -459,7 +459,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			if(cascadeConfig.isCascadeFruizioni()){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_FRUIZIONI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeFruizioni" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_FRUIZIONI
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_FRUIZIONI);
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
@@ -804,16 +804,16 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 		DataElement dataElement = new DataElement();
 		if(deleter){
-			dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_ELIMINA);
+			dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ArchiviElimina" ) );	//ArchiviCostanti.LABEL_ARCHIVI_ELIMINA
 		}
 		else{
-			dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_IMPORT);
+			dataElement.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ArchiviImport" ) );	//ArchiviCostanti.LABEL_ARCHIVI_IMPORT
 		}
 		dataElement.setType(DataElementType.TITLE);
 		dati.add(dataElement);
 		
 		DataElement de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviProtocollo" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO
 		if(showProtocols && protocolliSelectList.size()>2){
 			de.setType(DataElementType.SELECT);
 			de.setValues(protocolliSelectList.toArray(new String[1]));
@@ -838,7 +838,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviTipologiaArchivio" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO
 		if(importModes.size()>1){
 			// Lo vediamo sempre anche se solo con un valore, poiche' vogliamo vedere govlet e fuori dalla select list non e' bello graficamente.
 			List<String> tmpArchivi = new ArrayList<String>();
@@ -862,7 +862,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviTipo" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPO
 		if(importTypes.size()>1){
 			List<String> tmp = new ArrayList<String>();
 			for (ArchiveModeType type : importTypes) {
@@ -881,7 +881,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_LEFT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviValidazioneDocumentiLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_LEFT
 		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_RIGHT);
 		de.setValue(""+validazioneDocumenti);
 		if (this.isModalitaAvanzata()) {
@@ -896,7 +896,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_LEFT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviUpdateEnabledLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_LEFT
 		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_RIGHT);
 		de.setValue(""+updateEnabled);
 		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
@@ -958,7 +958,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_LEFT);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportConfigLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_LEFT
 		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_RIGHT);
 		de.setValue(""+importConfig);
 		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
@@ -980,7 +980,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setValue("");
 		de.setType(DataElementType.FILE);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE);
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviPackageFile" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE
 		de.setSize(this.getSize());
 		dati.addElement(de);
 
@@ -1600,7 +1600,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			showSection = false;
 			
 		}else{
-			this.pd.setMessage(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_MANCANTI+oldMessage);
+			this.pd.setMessage(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_MANCANTI+oldMessage);	//ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_MANCANTI+oldMessage	//ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_MANCANTI+oldMessage	//ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_MANCANTI+oldMessage
 		}
 		
 
@@ -1731,7 +1731,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		if(showIntestazioneArchivio){
 			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_ARCHIVIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.Archivio" ) );	//ArchiviCostanti.LABEL_ARCHIVIO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -1745,7 +1745,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME);
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviPackageFileSimpleName" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -1757,7 +1757,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingObjectIdDescription" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION
 		dati.addElement(de);
 
 		
@@ -1977,7 +1977,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_VERSIONE_INPUT);
 				de.setType(DataElementType.TEXT_EDIT);
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_VERSIONE_INPUT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingVersioneInput" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_VERSIONE_INPUT
 				Integer version = null;
 				if(importInformationMissingException.getMissingInfoDefault()!=null && importInformationMissingException.getMissingInfoDefault().getValore()!=null) {
 					try {
@@ -2001,7 +2001,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT);
 				de.setType(DataElementType.SELECT);
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingAccordoServizioParteComuneInput" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT
 				de.setValues(accordiServizioParteComuneLabel.toArray(new String[1]));
 				
 				List<String> labelAccordiByProtocol = new ArrayList<>();
@@ -2035,7 +2035,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT);
 				de.setType(DataElementType.SELECT);
-				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingAccordoCooperazioneInput" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT
 				de.setValues(accordiCooperazioneLabel.toArray(new String[1]));
 				
 				List<String> labelAccordiByProtocol = new ArrayList<>();
@@ -2131,7 +2131,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if(showSection){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PROTOCOLLO_MANCANTI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ImportErrorInformazioniProtocolloMancanti" ) );	//ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PROTOCOLLO_MANCANTI
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
@@ -2145,7 +2145,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 			de = new DataElement();
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT);
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingModalitaAcquisizioneInput" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT
 			de.setType(DataElementType.SELECT);
 			de.setValues(modalitaAcquisizione);
 			de.setSelected(modalitaAcquisizioneInformazioniProtocollo);
@@ -2206,7 +2206,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 							de.setValue(ptOpenSPCoop.getNome());
 						else
 							de.setValue(ptWSDL.getNome());
-						de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingModalitaAcquisizioneInputPortType" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE
 						de.setSize(this.getSize());
 						dati.addElement(de);						
 						contatoreServizio++;
@@ -2244,7 +2244,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 								de.setValue(opOpenSPCoop.getNome());
 							else
 								de.setValue(opWSDL.getNome());
-							de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingModalitaAcquisizioneInputPortTypeOperation" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION
 							de.setSize(this.getSize());
 							dati.addElement(de);
 	
@@ -2262,7 +2262,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 							de = new DataElement();
 							de.setName(nomeFieldServizio+
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_PROFILO+contatoreAzione);
-							de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_PROFILO);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingModalitaAcquisizioneInputPortTypeOperationProfilo" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_PROFILO
 							de.setType(DataElementType.SELECT);
 							de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(protocolloAccordo,serviceBinding));
 							de.setSelected(profiloCollaborazione);
@@ -2282,7 +2282,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 									de.setValue(opOpenSPCoop.getCorrelataServizio());
 								else
 									de.setValue("");
-								de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_SERVIZIO_CORRELATO);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingModalitaAcquisizioneInputPortTypeOperationServizioCorrelato" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_SERVIZIO_CORRELATO
 								de.setSize(this.getSize());
 								dati.addElement(de);
 
@@ -2294,7 +2294,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 									de.setValue(opOpenSPCoop.getCorrelata());
 								else
 									de.setValue("");
-								de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_CORRELATA);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingModalitaAcquisizioneInputPortTypeOperationCorrelata" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_OPERATION_CORRELATA
 								de.setSize(this.getSize());
 								dati.addElement(de);
 
@@ -2314,7 +2314,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		else{
 			de = new DataElement();
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT);
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingModalitaAcquisizioneInput" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT
 			de.setType(DataElementType.HIDDEN);
 			de.setValue("");
 			dati.addElement(de);
@@ -2330,7 +2330,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if(showSection){
 				de = new DataElement();
-				de.setLabel(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ImportErrorInformazioniPortTypeRiferito" ) );	//ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
@@ -2347,7 +2347,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportInfoMissingPortTypeImplementedInput" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT
 			de.setType(DataElementType.SELECT);
 			List<String> listServizi = new ArrayList<String>();
 			listServizi.add(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT_UNDEFINDED);

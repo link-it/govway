@@ -45,13 +45,13 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /***
@@ -469,7 +469,7 @@ public class PorteApplicativeResponseCaching extends Action {
 			pa.setResponseCaching(newConfigurazione);
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			// Preparo la lista
-			pd.setMessage(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+			pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "PorteApplicative.PorteApplicativeResponseCachingConSuccesso" ) , Costanti.MESSAGE_TYPE_INFO);	//PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CON_SUCCESSO
 
 			pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			idporta = pa.getNome();

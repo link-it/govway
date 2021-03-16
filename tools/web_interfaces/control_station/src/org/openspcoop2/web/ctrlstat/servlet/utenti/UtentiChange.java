@@ -53,6 +53,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -60,7 +61,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
@@ -227,10 +227,10 @@ public final class UtentiChange extends Action {
 				if(first) {
 					if(!user.isConfigurazioneValidaAbilitazioni()) {
 						if(!user.isConfigurazioneValidaSoggettiAbilitati()) {
-							pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE,MessageType.INFO);
+							pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.AbilitazioniPuntualiSoggettiDefinizioneUpdateNote" ) ,MessageType.INFO);	//UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE
 						}
 						else if(!user.isConfigurazioneValidaServiziAbilitati()) {
-							pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE,MessageType.INFO);
+							pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.AbilitazioniPuntualiServiziDefinizioneUpdateNote" ) ,MessageType.INFO);	//UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE
 						}
 					}
 				}
@@ -671,10 +671,10 @@ public final class UtentiChange extends Action {
 				} else {
 
 					if(user.isConfigurazioneValidaSoggettiAbilitati()==false) {
-						pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE, MessageType.INFO);
+						pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.AbilitazioniPuntualiSoggettiDefinizioneUpdateNote" ) , MessageType.INFO);	//UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE
 					}
 					else if(user.isConfigurazioneValidaServiziAbilitati()==false) {
-						pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE, MessageType.INFO);
+						pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.AbilitazioniPuntualiServiziDefinizioneUpdateNote" ) , MessageType.INFO);	//UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE
 					}
 					
 					// Preparo la lista

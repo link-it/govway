@@ -84,6 +84,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.audit.appender.AuditDisabilitatoException;
 import org.openspcoop2.web.lib.audit.appender.IDOperazione;
 import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -92,7 +93,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.GeneralLink;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * 
@@ -1082,7 +1082,7 @@ public final class Monitor extends Action {
 			// setto la barra del titolo
 			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
 			GeneralLink tl1 = new GeneralLink();
-			tl1.setLabel(MonitorCostanti.LABEL_MONITOR);
+			tl1.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.Monitor" ) );	//MonitorCostanti.LABEL_MONITOR
 			titlelist.addElement(tl1);
 			pd.setTitleList(titlelist);
 
@@ -1092,12 +1092,12 @@ public final class Monitor extends Action {
 
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(MonitorCostanti.LABEL_MONITOR);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.Monitor" ) );	//MonitorCostanti.LABEL_MONITOR
 			dati.addElement(de);
 			
 			// select method
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_METHOD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorMethod" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_METHOD
 			de.setType(DataElementType.SELECT);
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_METHOD);
 			de.setSelected(mb != null ? mb.getMethod() : "");
@@ -1106,7 +1106,7 @@ public final class Monitor extends Action {
 			
 			if(singlePdD){
 				de = new DataElement();
-                de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SORGENTE);
+                de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorSorgente" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_SORGENTE
                 de.setName(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE);
                 String sorgenteSelezionata = mb != null ? mb.getSorgenteDati() : sorgentiDriverMonitoraggioLocale.get(0);
                 if(sorgentiDriverMonitoraggioLocale.size()>1) {
@@ -1133,7 +1133,7 @@ public final class Monitor extends Action {
                         }
                 }
                 de = new DataElement();
-                de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PORTA_DOMINIO);
+                de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorPortaDominio" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_PORTA_DOMINIO
                 de.setType(DataElementType.SELECT);
                 de.setName(MonitorCostanti.PARAMETRO_MONITOR_PDD);
                 de.setValues(nomiPdD.toArray(new String[nomiPdD.size()]));
@@ -1144,13 +1144,13 @@ public final class Monitor extends Action {
 
 			// Titolo Filter
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_FILTRO_RICERCA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorFiltroRicerca" ) );	//MonitorCostanti.LABEL_MONITOR_FILTRO_RICERCA
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
 			// CorrelazioneApplicativa
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorCorrelazioneApplicativa" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(mb != null ? mb.getCorrelazioneApplicativa() : "");
@@ -1168,7 +1168,7 @@ public final class Monitor extends Action {
 
 			// Soglia
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorSogliaLabel" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL
 			de.setNote(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_NOTE);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(monitorHelper.getSize());
@@ -1180,7 +1180,7 @@ public final class Monitor extends Action {
 			if(monitorCore.isShowJ2eeOptions()) {
 				String stati[] = MonitorCostanti.DEFAULT_VALUES_PARAMETRO_STATO;
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorStato" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO
 				de.setType(DataElementType.SELECT);
 				de.setValues(stati);
 				de.setSelected(mb != null ? mb.getStato() : MonitorCostanti.DEFAULT_VALUE_PARAMETRO_STATO_NONE);
@@ -1189,13 +1189,13 @@ public final class Monitor extends Action {
 			}
 				
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorInformazioniProtocollo" ) );	//MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
 			// ID Messaggio
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorIdMessaggio" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setValue(mb != null ? mb.getIdMessaggio() : "");
@@ -1204,7 +1204,7 @@ public final class Monitor extends Action {
 
 			// Profilo Collaborazione
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorTipoProfiloCollaborazione" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE
 			de.setType(DataElementType.SELECT);
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_PROFILO_COLLABORAZIONE);
 			de.setValues(profiliCollaborazione);
@@ -1225,7 +1225,7 @@ public final class Monitor extends Action {
 
 			// riscontro
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RISCONTRO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorRiscontro" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_RISCONTRO
 			de.setType(DataElementType.CHECKBOX);
 			de.setValue(mb != null ? "" + mb.isRiscontro() : "");
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_RISCONTRO);
@@ -1233,7 +1233,7 @@ public final class Monitor extends Action {
 
 			// Mittente
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_SOGGETTO_MITTENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorSoggettoMittente" ) );	//MonitorCostanti.LABEL_MONITOR_SOGGETTO_MITTENTE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 
@@ -1257,7 +1257,7 @@ public final class Monitor extends Action {
 			tipiSoggetti_label.addAll(soggettiCore.getTipiSoggettiGestiti());
 			
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorTipoMittente" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_MITTENTE
 			de.setType(DataElementType.SELECT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_MITTENTE);
@@ -1276,7 +1276,7 @@ public final class Monitor extends Action {
 			//}
 
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_MITTENTE );
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorNomeMittente" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_MITTENTE
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_MITTENTE);
@@ -1285,7 +1285,7 @@ public final class Monitor extends Action {
 
 			// Destinatario
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_SOGGETTO_DESTINATARIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorSoggettoDestinatario" ) );	//MonitorCostanti.LABEL_MONITOR_SOGGETTO_DESTINATARIO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -1309,7 +1309,7 @@ public final class Monitor extends Action {
 			//}
 
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorTipoDestinatario" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_DESTINATARIO
 			de.setType(DataElementType.SELECT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_DESTINATARIO);
@@ -1319,7 +1319,7 @@ public final class Monitor extends Action {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_DESTINATARIO );
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorNomeDestinatario" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_DESTINATARIO
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_DESTINATARIO);
@@ -1328,7 +1328,7 @@ public final class Monitor extends Action {
 
 			// Servizio
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorServizio" ) );	//MonitorCostanti.LABEL_MONITOR_SERVIZIO
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -1371,7 +1371,7 @@ public final class Monitor extends Action {
 			}
 			
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorTipoServizio" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO
 			de.setType(DataElementType.SELECT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_SERVIZIO);
@@ -1382,7 +1382,7 @@ public final class Monitor extends Action {
 			//}
 
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_SERVIZIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorNomeServizio" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_SERVIZIO
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_SERVIZIO);
@@ -1403,12 +1403,12 @@ public final class Monitor extends Action {
 			// Azione
 			
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_AZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorAzione" ) );	//MonitorCostanti.LABEL_MONITOR_AZIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_AZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorAzione" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_AZIONE
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_AZIONE);
@@ -1447,10 +1447,12 @@ public final class Monitor extends Action {
 			DataElement de = new DataElement();
 			Vector<DataElement> dati = new Vector<DataElement>();
 
+			HttpSession session = monitorHelper.getSession();
+
 			// Se statoNal e' null allora nessuna informazione presente
 			if (statoPdD == null) {
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_NESSUNA_INFORMAZIONE_PRESENTE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorNessunaInformazionePresente" ) );	//MonitorCostanti.LABEL_MONITOR_NESSUNA_INFORMAZIONE_PRESENTE
 				de.setType(DataElementType.TEXT);
 				de.setSize(monitorHelper.getSize());
 				dati.addElement(de);
@@ -1459,14 +1461,14 @@ public final class Monitor extends Action {
 				// Stampo informazioni relative al numero di messaggi
 
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_STATO_PORTA_DOMINIO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorStatoPortaDominio" ) );	//MonitorCostanti.LABEL_MONITOR_STATO_PORTA_DOMINIO
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
 				dati.addElement(de);
 
 				/* Totali */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTotaleMessaggi" ) );	//MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI
 				de.setType(DataElementType.TEXT);
 				long totMsg = statoPdD.getTotMessaggi();
 				de.setValue(totMsg > 0 ? "" + totMsg : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO);
@@ -1476,14 +1478,14 @@ public final class Monitor extends Action {
 				if (totMsg > 0) {
 					// Max
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTempoMassimoAttesa" ) );	//MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesa() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.addElement(de);
 					// Medio
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTempoMedioAttesa" ) );	//MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesa() * 1000, false));
 					de.setSize(monitorHelper.getSize());
@@ -1493,13 +1495,13 @@ public final class Monitor extends Action {
 
 				/* Consegna */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_MESSAGGI_CONSEGNA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorMessaggiConsegna" ) );	//MonitorCostanti.LABEL_MONITOR_MESSAGGI_CONSEGNA
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTotaleMessaggi" ) );	//MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI
 				de.setType(DataElementType.TEXT);
 				long inConsegna = statoPdD.getNumMsgInConsegna();
 				de.setValue(inConsegna > 0 ? "" + inConsegna : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_CONSEGNA);
@@ -1508,14 +1510,14 @@ public final class Monitor extends Action {
 				if (inConsegna > 0) {
 					// Max
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTempoMassimoAttesa" ) );	//MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInConsegna() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.addElement(de);
 					// Medio
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTempoMedioAttesa" ) );	//MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInConsegna() * 1000, false));
 					de.setSize(monitorHelper.getSize());
@@ -1524,13 +1526,13 @@ public final class Monitor extends Action {
 
 				/* Spedizione */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_MESSAGGI_SPEDIZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorMessaggiSpedizione" ) );	//MonitorCostanti.LABEL_MONITOR_MESSAGGI_SPEDIZIONE
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTotaleMessaggi" ) );	//MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI
 				de.setType(DataElementType.TEXT);
 				long inSpedizione = statoPdD.getNumMsgInSpedizione();
 				de.setValue(inSpedizione > 0 ? "" + inSpedizione : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_SPEDIZIONE_);
@@ -1539,14 +1541,14 @@ public final class Monitor extends Action {
 				if (inSpedizione > 0) {
 					// Max
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTempoMassimoAttesa" ) );	//MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInSpedizione() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.addElement(de);
 					// Medio
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTempoMedioAttesa" ) );	//MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInSpedizione() * 1000, false));
 					de.setSize(monitorHelper.getSize());
@@ -1555,13 +1557,13 @@ public final class Monitor extends Action {
 
 				/* Processamento */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_MESSAGGI_PROCESSAMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorMessaggiProcessamento" ) );	//MonitorCostanti.LABEL_MONITOR_MESSAGGI_PROCESSAMENTO
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI_PROCESSAMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTotaleMessaggiProcessamento" ) );	//MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI_PROCESSAMENTO
 				de.setType(DataElementType.TEXT);
 				long inProcess = statoPdD.getNumMsgInProcessamento();
 				de.setValue(inProcess > 0 ? "" + inProcess : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_PROCESSAMENTO);
@@ -1570,14 +1572,14 @@ public final class Monitor extends Action {
 				if (inProcess > 0) {
 					// Max
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTempoMassimoAttesa" ) );	//MonitorCostanti.LABEL_MONITOR_TEMPO_MASSIMO_ATTESA
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMaxAttesaInProcessamento() * 1000, false));
 					de.setSize(monitorHelper.getSize());
 					dati.addElement(de);
 					// Medio
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTempoMedioAttesa" ) );	//MonitorCostanti.LABEL_MONITOR_TEMPO_MEDIO_ATTESA
 					de.setType(DataElementType.TEXT);
 					de.setValue(Utilities.convertSystemTimeIntoString_millisecondi(statoPdD.getTempoMedioAttesaInProcessamento() * 1000, false));
 					de.setSize(monitorHelper.getSize());
@@ -1586,12 +1588,12 @@ public final class Monitor extends Action {
 
 				/* Messaggi Duplicati */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_MESSAGGI_DUPLICATI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorMessaggiDuplicati" ) );	//MonitorCostanti.LABEL_MONITOR_MESSAGGI_DUPLICATI
 				de.setType(DataElementType.TITLE);
 				de.setSize(monitorHelper.getSize());
 				dati.addElement(de);
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorTotaleMessaggi" ) );	//MonitorCostanti.LABEL_MONITOR_TOTALE_MESSAGGI
 				de.setType(DataElementType.TEXT);
 				long duplicati = statoPdD.getTotMessaggiDuplicati();
 				de.setValue(duplicati > 0 ? "" + duplicati : MonitorCostanti.LABEL_MONITOR_NESSUN_MESSAGGIO_DUPLICATO);
@@ -1634,13 +1636,15 @@ public final class Monitor extends Action {
 			
 			Vector<DataElement> dati = new Vector<DataElement>();
 			
+			HttpSession session = monitorHelper.getSession();
+
 			DataElement de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorInformazioniProtocollo" ) );	//MonitorCostanti.LABEL_MONITOR_INFORMAZIONI_PROTOCOLLO
 			de.setType(DataElementType.TITLE);
 			dati.add(de);
 			
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorIdMessaggio" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_ID_MESSAGGIO
 			de.setValue(messaggio.getIdMessaggio());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_ID_MESSAGGIO);
 			dati.add(de);
@@ -1658,7 +1662,7 @@ public final class Monitor extends Action {
 			if (mittente != null && mittente.getTipo()!=null && mittente.getNome()!=null) {
 				/* Mittente */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_MITTENTE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorMittente" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_MITTENTE
 				de.setType(DataElementType.TEXT);
 				de.setValue(mittente.getTipo() + "/" + mittente.getNome());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_MITTENTE);
@@ -1668,7 +1672,7 @@ public final class Monitor extends Action {
 			if (destinatario != null) {
 				/* Destinatario */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_DESTINATARIO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorDestinatario" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_DESTINATARIO
 				de.setType(DataElementType.TEXT);
 				de.setValue(destinatario.getTipo() + "/" + destinatario.getNome());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_DESTINATARIO);
@@ -1678,7 +1682,7 @@ public final class Monitor extends Action {
 			if (servizio != null) {
 				/* Servizio */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SERVIZIO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorServizio" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_SERVIZIO
 				de.setType(DataElementType.TEXT);
 				de.setValue(servizio.getTipo() + "/" + servizio.getNome()+
 						(servizio.getVersione()!=null ? (" v"+servizio.getVersione().intValue()) : "")
@@ -1689,7 +1693,7 @@ public final class Monitor extends Action {
 			if (azione != null) {
 				/* Azione */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_AZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorAzione" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_AZIONE
 				de.setType(DataElementType.TEXT);
 				de.setValue(busta.getAzione());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_AZIONE);
@@ -1698,7 +1702,7 @@ public final class Monitor extends Action {
 			if (riferimento != null) {
 				/* Riferimento */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RIFERIMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorRiferimento" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_RIFERIMENTO
 				de.setType(DataElementType.TEXT);
 				de.setValue(riferimento);
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_RIFERIMENTO);
@@ -1707,7 +1711,7 @@ public final class Monitor extends Action {
 			if (profilo != null) {
 				/* Profilo Collaborazione */
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PROFILO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorProfilo" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_PROFILO
 				de.setType(DataElementType.TEXT);
 				de.setValue(profilo);
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_PROFILO);
@@ -1716,7 +1720,7 @@ public final class Monitor extends Action {
 
 			/* Riscontro */
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_RISCONTRO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorRiscontro" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_RISCONTRO
 			de.setType(DataElementType.TEXT);
 			de.setValue("" + riscontro);
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_RISCONTRO);
@@ -1724,14 +1728,14 @@ public final class Monitor extends Action {
 
 			/* Dettaglio */
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_MONITOR_DETTAGLIO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorDettaglio" ) );	//MonitorCostanti.LABEL_MONITOR_DETTAGLIO
 			de.setType(DataElementType.TITLE);
 			dati.add(de);
 
 			Dettaglio dettaglio = messaggio.getDettaglio();
 			// tipo
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorTipo" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO
 			de.setType(DataElementType.TEXT);
 			de.setValue(dettaglio.getTipo());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO);
@@ -1739,14 +1743,14 @@ public final class Monitor extends Action {
 
 			// idmodulo
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_MODULO );
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorModulo" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_MODULO
 			de.setType(DataElementType.TEXT);
 			de.setValue(dettaglio.getIdModulo());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_MODULO);
 			dati.add(de);
 			// stato
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorStato" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_STATO
 			de.setType(DataElementType.TEXT);
 			if(messaggio.getStato()!=null)
 				de.setValue(messaggio.getStato().getValue());	
@@ -1765,7 +1769,7 @@ public final class Monitor extends Action {
 			if(dettaglio.getIdCorrelazioneApplicativa()!=null){
 				// CorrelazioneApplicativa
 				de = new DataElement();
-				de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorCorrelazioneApplicativa" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA
 				de.setType(DataElementType.TEXT);
 				de.setValue(dettaglio.getIdCorrelazioneApplicativa());
 				de.setName(MonitorCostanti.PARAMETRO_MONITOR_CORRELAZIONE_APPLICATIVA);
@@ -1775,7 +1779,7 @@ public final class Monitor extends Action {
 			SimpleDateFormat formatter = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
 			// ora registrazione
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorOraRegistrazione" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE
 			de.setType(DataElementType.TEXT);
 			de.setValue(formatter.format(messaggio.getOraRegistrazione().getTime()));
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_ORA_REGISTRAZIONE);
@@ -1783,7 +1787,7 @@ public final class Monitor extends Action {
 
 			// ora attuale
 			de = new DataElement();
-			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ORA_ATTUALE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorOraAttuale" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_ORA_ATTUALE
 			de.setType(DataElementType.TEXT);
 			de.setValue(formatter.format(messaggio.getOraAttuale().getTime()));
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_ORA_ATTUALE);
@@ -1859,7 +1863,7 @@ public final class Monitor extends Action {
 						de.setLabel(MonitorCostanti.LABEL_MONITOR_DETTAGLI_CONSEGNA+" [" + labelSA + "]");
 					}
 					else {
-						de.setLabel(MonitorCostanti.LABEL_MONITOR_DETTAGLI_CONSEGNA);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.MonitorDettagliConsegna" ) );	//MonitorCostanti.LABEL_MONITOR_DETTAGLI_CONSEGNA
 					}
 					de.setType(DataElementType.TITLE);
 					dati.add(de);
@@ -1867,7 +1871,7 @@ public final class Monitor extends Action {
 					// erogazione
 					if(labelErogazione!=null || sac1.getNomePorta()!=null) {
 						de = new DataElement();
-						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_PORTA);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorNomeConsegnaPorta" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_PORTA
 						de.setType(DataElementType.TEXT);
 						if(labelErogazione!=null) {
 							de.setValue(labelErogazione);
@@ -1880,7 +1884,7 @@ public final class Monitor extends Action {
 					}
 					if(nomeConnettore!=null) {
 						de = new DataElement();
-						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_CONNETTORE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorNomeConsegnaConnettore" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_CONNETTORE
 						de.setType(DataElementType.TEXT);
 						de.setValue(nomeConnettore);
 						de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_CONSEGNA_CONNETTORE);
@@ -1889,7 +1893,7 @@ public final class Monitor extends Action {
 										
 					// nome
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_APPLICATIVO_INTERNO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorNomeConsegnaApplicativoInterno" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_NOME_CONSEGNA_APPLICATIVO_INTERNO
 					de.setType(DataElementType.TEXT);
 					de.setValue(sac1.getNome());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_NOME_CONSEGNA_APPLICATIVO_INTERNO);
@@ -1897,7 +1901,7 @@ public final class Monitor extends Action {
 					
 					// tipo consegna
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_CONSEGNA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorTipoConsegna" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_CONSEGNA
 					de.setType(DataElementType.TEXT);
 					de.setValue(sac1.getTipoConsegna());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_TIPO_CONSEGNA);
@@ -1906,7 +1910,7 @@ public final class Monitor extends Action {
 					// errore processamento
 					if (erroreProcessamento != null) {
 						de = new DataElement();
-						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ERRORE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorErrore" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_ERRORE
 						de.setValue(erroreProcessamento);
 						de.setName(MonitorCostanti.PARAMETRO_MONITOR_ERRORE);
 						if(erroreProcessamento!=null && !"".equals(erroreProcessamento)){
@@ -1923,7 +1927,7 @@ public final class Monitor extends Action {
 					if(GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE.equals(sac1.getTipoConsegna())){
 						if(sac1.getDataRispedizione()!=null) {
 							de = new DataElement();
-							de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CONSEGNA_DA);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorInConsegnaDa" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_IN_CONSEGNA_DA
 							de.setType(DataElementType.TEXT);
 							de.setValue(formatterRispedizione.format(sac1.getDataRispedizione()));
 							de.setName(MonitorCostanti.PARAMETRO_MONITOR_IN_CONSEGNA_DA);
@@ -1932,7 +1936,7 @@ public final class Monitor extends Action {
 						
 						// Priorita
 						de = new DataElement();
-						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_PRIORITA);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorPriorita" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_PRIORITA
 						de.setType(DataElementType.TEXT);
 						de.setValue(sac1.getPriorita());
 						de.setName(MonitorCostanti.PARAMETRO_MONITOR_PRIORITA);
@@ -1940,7 +1944,7 @@ public final class Monitor extends Action {
 						
 						// Coda
 						de = new DataElement();
-						de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_CODA);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorCoda" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_CODA
 						de.setType(DataElementType.TEXT);
 						de.setValue(sac1.getCoda());
 						de.setName(MonitorCostanti.PARAMETRO_MONITOR_CODA);
@@ -1949,7 +1953,7 @@ public final class Monitor extends Action {
 						// In attesa esito sincrono
 						if(sac1.isAttesaEsito()) { // lo visualizzo solo se true
 							de = new DataElement();
-							de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ATTESA_ESITO);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorAttesaEsito" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_ATTESA_ESITO
 							de.setType(DataElementType.TEXT);
 							de.setValue(sac1.isAttesaEsito()+"");
 							de.setName(MonitorCostanti.PARAMETRO_MONITOR_ATTESA_ESITO);
@@ -1959,7 +1963,7 @@ public final class Monitor extends Action {
 					
 					// integration manager
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_AUTORIZZAZIONE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorAutorizzazione" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_AUTORIZZAZIONE
 					de.setType(DataElementType.TEXT);
 					de.setValue("" + sac1.isAutorizzazioneIntegrationManager());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_AUTORIZZAZIONE);
@@ -1967,7 +1971,7 @@ public final class Monitor extends Action {
 					
 					// sbustamento soap
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SBUSTAMENTO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorSbustamento" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_SBUSTAMENTO
 					de.setType(DataElementType.TEXT);
 					de.setValue("" + sac1.isSbustamentoSoap());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_SBUSTAMENTO);
@@ -1975,7 +1979,7 @@ public final class Monitor extends Action {
 					
 					// sbustamento informazioni protocollo
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorSbustamentoInformazioniProtocollo" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO
 					de.setType(DataElementType.TEXT);
 					de.setValue("" + sac1.isSbustamentoInformazioniProtocollo());
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO);
@@ -1987,7 +1991,7 @@ public final class Monitor extends Action {
 				// Errore processamento
 				if(erroreProcessamento!=null && !"".equals(erroreProcessamento)){
 					de = new DataElement();
-					de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ERRORE );
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorErrore" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_ERRORE
 					de.setValue(erroreProcessamento);
 					de.setName(MonitorCostanti.PARAMETRO_MONITOR_ERRORE);			
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);

@@ -102,6 +102,7 @@ import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -110,7 +111,6 @@ import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Dialog;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
@@ -610,7 +610,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_ALLEGATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Allegato" ) );	//AccordiServizioParteComuneCostanti.LABEL_ALLEGATO
 			dati.addElement(de);
 			
 			de = new DataElement();
@@ -623,7 +623,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setValue(doc.getRuolo());
 				de.setType(DataElementType.TEXT);
 			}
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_RUOLO);			
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAllegatiRuolo" ) );				//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_RUOLO
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO);
 			de.setPostBack(true);
 			//			de.setOnChange("CambiaTipoDocumento('accordiAllegati')");
@@ -633,7 +633,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			if(tipiAmmessi!=null){
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAllegatiTipoFile" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
 				de.setValues(tipiAmmessi);
@@ -645,7 +645,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(TipoOperazione.ADD.equals(tipoOperazione)==false){
 				de = new DataElement();
 				de.setValue(doc.getFile());
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME
 				de.setType(DataElementType.TEXT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_NOME_DOCUMENTO);
 				de.setSize(this.getSize());
@@ -655,7 +655,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(TipoOperazione.ADD.equals(tipoOperazione)){
 				de = new DataElement();
 				de.setValue(idAccordo);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAllegatiDocumento" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO
 				de.setType(DataElementType.FILE);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO);
 				de.setSize(this.getSize());
@@ -665,7 +665,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(TipoOperazione.ADD.equals(tipoOperazione)==false){
 				de = new DataElement();
 				de.setValue(doc.getTipo());
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAllegatiTipoFile" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE
 				de.setType(DataElementType.TEXT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
 				de.setSize(this.getSize());
@@ -686,7 +686,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				else{
 					de = new DataElement();
 					de.setType(DataElementType.FILE);
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAllegatiDocumento" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO);
 					de.setSize(this.getSize());
 					dati.addElement(de);
@@ -699,7 +699,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					if(errore!=null){
 						de = new DataElement();
 						de.setValue(errore);
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAllegatiDocumento" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO
 						de.setType(DataElementType.TEXT);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO_VIEW);
 						de.setSize(this.getSize());
@@ -1082,11 +1082,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_AZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Azione" ) );	//AccordiServizioParteComuneCostanti.LABEL_AZIONE
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME
 			de.setValue(nomeop);
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
 				de.setType(DataElementType.TEXT_EDIT);
@@ -1101,7 +1101,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Vector<DataElement> dataElements = new Vector<DataElement>();
 			if (this.core.isShowCorrelazioneAsincronaInAccordi()) {
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_CORRELATA_AL_SERVIZIO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.CorrelataAlServizio" ) );	//AccordiServizioParteComuneCostanti.LABEL_CORRELATA_AL_SERVIZIO
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_SERVIZIO_CORRELATO);
 				if ((servCorrList != null) && ((profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT) && (defProfiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO) || defProfiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO))) || (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO) && (profiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO) || profiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO))))) {
 					de.setType(DataElementType.SELECT);
@@ -1117,7 +1117,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_CORRELATA_A_AZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.CorrelataAAzione" ) );	//AccordiServizioParteComuneCostanti.LABEL_CORRELATA_A_AZIONE
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_AZIONE_CORRELATA);
 				if ((aziCorrList != null) && ((profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT) && (defProfiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO) || defProfiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO))) || (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO) && (profiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO) || profiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO))))) {
 					de.setType(DataElementType.SELECT);
@@ -1136,7 +1136,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			} else {
 				// boolean isOpCorr = false;
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_AZIONE_CORRELATA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.AzioneCorrelata" ) );	//AccordiServizioParteComuneCostanti.LABEL_AZIONE_CORRELATA
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_CORRELATA);
 				if ((opList != null) && ((profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT) && defProfiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO)) || (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO) && profiloCollaborazioneOp.equals(AccordiServizioParteComuneCostanti.TIPO_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO)))) {
 					// isOpCorr = true;
@@ -1160,11 +1160,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Informazioni" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ProfiloProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO
 			de.setType(DataElementType.SELECT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_PROFILO_BUSTA);
 			if(modificheAbilitate){
@@ -1184,7 +1184,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProfiloCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_PROFILO_COLLABORAZIONE);
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
@@ -1200,7 +1200,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcFiltroDuplicati" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(deffiltrodupop);
@@ -1234,7 +1234,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConfermaRicezione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defconfricop);
@@ -1267,7 +1267,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defidcollop);
@@ -1300,7 +1300,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIdRiferimentoRichiesta" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defIdRifRichiestaOp);
@@ -1333,7 +1333,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConsegnaOrdine" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defconsordop);
@@ -1366,7 +1366,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcScadenza" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA
 			de.setValue(scadenzaop);
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
@@ -1388,7 +1388,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(dataElements.size()>0){
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_CORRELAZIONE_ASINCRONA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.CorrelazioneAsincrona" ) );	//AccordiServizioParteComuneCostanti.LABEL_CORRELAZIONE_ASINCRONA
 				dati.addElement(de);
 
 				while(dataElements.size()>0){
@@ -1400,12 +1400,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(this.isModalitaAvanzata()){
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.InformazioniWsdl" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL
 				dati.addElement(de);
 
 				// SOAP Action
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_SOAP_ACTION);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPortTypeOperationSoapAction" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_SOAP_ACTION
 				de.setValue(soapActionOp);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_SOAP_ACTION);
@@ -1414,7 +1414,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 				// Style
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_STYLE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Style" ) );	//AccordiServizioParteComuneCostanti.LABEL_STYLE
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_STYLE);
 				de.setValues(AccordiServizioParteComuneCostanti.PORT_TYPES_OPERATION_STYLE);
@@ -1424,7 +1424,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 				// Use
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_USE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Use" ) );	//AccordiServizioParteComuneCostanti.LABEL_USE
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_USE);
 				de.setValues(AccordiServizioParteComuneCostanti.PORT_TYPES_OPERATION_USE);
@@ -1434,7 +1434,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 				// Namesapce WSDL
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_NS_WSDL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPortTypeOperationNsWsdl" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_NS_WSDL
 				de.setValue(nsWSDLOp);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NS_WSDL);
@@ -1443,7 +1443,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 				// Operation Type
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPortTypeOperationOperationType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE
 				if(!profiloCollaborazioneOp.equalsIgnoreCase(CostantiRegistroServizi.ONEWAY.getValue()) && !profiloCollaborazioneOp.equalsIgnoreCase(CostantiRegistroServizi.SINCRONO.getValue())){
 					de.setType(DataElementType.SELECT);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE);
@@ -1460,7 +1460,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					// operation type label
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPortTypeOperationOperationType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE
 					de.setType(DataElementType.TEXT);
 					de.setValue(operationTypeOp);
 				}
@@ -1763,11 +1763,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.PortType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PORT_TYPE
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME
 			de.setValue(nomept);
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
 				de.setType(DataElementType.TEXT_EDIT);
@@ -1780,7 +1780,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE
 			de.setValue(descr);
 			de.setType(DataElementType.TEXT_EDIT);
 			if( !modificheAbilitate && (descr==null || "".equals(descr)) )
@@ -1809,7 +1809,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Informazioni" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI
 				dati.addElement(de);
 
 
@@ -1821,7 +1821,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProfiloCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE
 				de.setType(DataElementType.SELECT);
 				de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(protocollo,serviceBinding));
 				// de.setLabels(tipoProfcollLabel);
@@ -1830,7 +1830,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcFiltroDuplicati" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI
 				de.setType(DataElementType.HIDDEN);
 				if(ServletUtils.isCheckBoxEnabled(filtroduppt) || CostantiRegistroServizi.ABILITATO.equals(filtroduppt)){
 					de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -1841,7 +1841,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConfermaRicezione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE
 				de.setType(DataElementType.HIDDEN);
 				if(ServletUtils.isCheckBoxEnabled(confricpt) || CostantiRegistroServizi.ABILITATO.equals(confricpt)){
 					de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -1852,7 +1852,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE
 				de.setType(DataElementType.HIDDEN);
 				if(ServletUtils.isCheckBoxEnabled(idcollpt) || CostantiRegistroServizi.ABILITATO.equals(idcollpt)){
 					de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -1863,7 +1863,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIdRiferimentoRichiesta" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA
 				de.setType(DataElementType.HIDDEN);
 				if(ServletUtils.isCheckBoxEnabled(idRifRichiestaPt) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiestaPt)){
 					de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -1874,7 +1874,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConsegnaOrdine" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE
 				de.setType(DataElementType.HIDDEN);
 				if(ServletUtils.isCheckBoxEnabled(consordpt) || CostantiRegistroServizi.ABILITATO.equals(consordpt)){
 					de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -1885,7 +1885,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcScadenza" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(scadenzapt);
 				if( !modificheAbilitate && (scadenzapt==null || "".equals(scadenzapt)) )
@@ -1898,7 +1898,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Informazioni" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI
 			dati.addElement(de);
 
 			if (this.isModalitaStandard()) {
@@ -1911,7 +1911,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			else {
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ProfiloProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
 				if(modificheAbilitate){
@@ -1939,7 +1939,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 //				dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProfiloCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defProfiloCollaborazionePT);
@@ -1953,7 +1953,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcFiltroDuplicati" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(deffiltroduppt);
@@ -1987,7 +1987,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConfermaRicezione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defconfricpt);
@@ -2021,7 +2021,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defidcollpt);
@@ -2055,7 +2055,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIdRiferimentoRichiesta" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defIdRifRichiestaPt);
@@ -2089,7 +2089,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConsegnaOrdine" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defconsordpt);
@@ -2124,7 +2124,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcScadenza" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA
 			de.setValue(scadenzapt);
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
@@ -2150,12 +2150,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				// Informazione WSDL
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.InformazioniWsdl" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL
 				dati.addElement(de);
 
 				// Style
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_STYLE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Style" ) );	//AccordiServizioParteComuneCostanti.LABEL_STYLE
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_STYLE);
 				de.setValues(AccordiServizioParteComuneCostanti.PORT_TYPES_STYLE);
@@ -2405,11 +2405,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_AZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Azione" ) );	//AccordiServizioParteComuneCostanti.LABEL_AZIONE
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME
 		de.setValue(nomeaz);
 		if (tipoOperazione.equals(TipoOperazione.ADD)) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -2431,12 +2431,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Informazioni" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI
 		dati.addElement(de);
 
 		//boolean isAziCorr = false;
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_AZIONE_CORRELATA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.AzioneCorrelata" ) );	//AccordiServizioParteComuneCostanti.LABEL_AZIONE_CORRELATA
 		if ((azioniList != null) && 
 				((profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT) && defprofcoll.equals(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.toString())) 
 						|| 
@@ -2455,7 +2455,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ProfiloProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO
 		if(modificheAbilitate){
 			de.setType(DataElementType.SELECT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
@@ -2477,7 +2477,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		// Gli elementi qui sotto devono essere visualizzati solo in modalita' avanzata  && profilobusta = 'ridefinito' && se la corrispondente proprieta e' abilitata nel protocollo
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProfiloCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_COLLABORAZIONE);
 		if (profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT)) {
 			de.setType(DataElementType.HIDDEN);
@@ -2494,7 +2494,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcFiltroDuplicati" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI
 		if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 				) {
 			de.setType(DataElementType.HIDDEN);
@@ -2532,7 +2532,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConfermaRicezione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE
 		if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 				) {
 			de.setType(DataElementType.HIDDEN);
@@ -2569,7 +2569,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE
 		if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 				) {
 			de.setType(DataElementType.HIDDEN);
@@ -2606,7 +2606,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIdRiferimentoRichiesta" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA
 		if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 				) {
 			de.setType(DataElementType.HIDDEN);
@@ -2643,7 +2643,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConsegnaOrdine" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE
 		if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 				) {
 			de.setType(DataElementType.HIDDEN);
@@ -2679,7 +2679,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcScadenza" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA
 		de.setValue(scadenzaaz);
 		if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 				) {
@@ -2729,7 +2729,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcId" ) );	//AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -2743,14 +2743,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcTipoWsdl" ) );	//AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL
 		de.setValue(tipo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Api.ApcApiGestioneParziale" ) );	//ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
 		de.setValue(gestioneParziale);
@@ -2859,14 +2859,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 				
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE );
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.WsdlAttuale" ) );	//AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE
 				de.setType(DataElementType.TEXT);
 				de.setValue(AccordiServizioParteComuneCostanti.LABEL_WSDL_NOT_FOUND);
 				dati.addElement(de);
 			}
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcValidazioneSpecifica" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA
 			de.setValue(""+validazioneDocumenti);
 			if (this.isModalitaAvanzata()) {
 				de.setType(DataElementType.CHECKBOX);
@@ -2880,7 +2880,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			//			de.setLabel(label.replace(" di ", " di <BR/>")+"<BR/>Nuovo:");
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_NUOVO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.WsdlNuovo" ) );	//AccordiServizioParteComuneCostanti.LABEL_WSDL_NUOVO
 			de.setValue("");
 			de.setType(DataElementType.FILE);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
@@ -2890,7 +2890,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(oldwsdl != null && !oldwsdl.isEmpty()){
 				de = new DataElement();
 				de.setBold(true);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_CHANGE_CLEAR_WARNING);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.WsdlChangeClearWarning" ) );	//AccordiServizioParteComuneCostanti.LABEL_WSDL_CHANGE_CLEAR_WARNING
 				de.setValue(AccordiServizioParteComuneCostanti.LABEL_WSDL_CHANGE_CLEAR);
 				de.setType(DataElementType.NOTE);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_WARN);
@@ -2899,7 +2899,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_LEFT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUpdateWsdlAggiornaLeft" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_LEFT
 			switch (serviceBinding) {
 			case REST:
 				de.setLabelRight(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_REST);
@@ -2916,7 +2916,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_LEFT);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUpdateWsdlEliminaLeft" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_LEFT
 			switch (serviceBinding) {
 			case REST:
 				de.setLabelRight(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_REST);
@@ -2939,7 +2939,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String oldwsdl,String statoPackage,boolean validazioneDocumenti){
 
 		DataElement de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcId" ) );	//AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID
 		de.setValue(id);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -2953,7 +2953,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcTipoWsdl" ) );	//AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL
 		de.setValue(tipo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
@@ -2964,7 +2964,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		else{
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcValidazioneSpecifica" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA
 			de.setValue(""+validazioneDocumenti);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
@@ -3178,19 +3178,19 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneSoggettoReferente) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcReferente" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
 		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneDescrizione) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
 		if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom && gestioneGruppi) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcGruppi" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 		}
@@ -3199,14 +3199,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcId" ) );	//AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO
 
 			if( gestioneInformazioniGenerali && (listaTipiProtocollo != null && listaTipiProtocollo.size() > 1) ){
 				boolean usedCheckForProtocollo = used;
@@ -3214,7 +3214,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				if(usedCheckForProtocollo){
 					
 					DataElement deLABEL = new DataElement();
-					deLABEL.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
+					deLABEL.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO
 					deLABEL.setType(DataElementType.TEXT);
 					deLABEL.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO+"__label");
 					deLABEL.setValue(this.getLabelProtocollo(tipoProtocollo));
@@ -3224,7 +3224,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 				}else {
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO
 					de.setValues(listaTipiProtocollo);
 					de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 					de.setSelected(tipoProtocollo);
@@ -3245,7 +3245,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		if(TipoOperazione.ADD.equals(tipoOperazione)){
 			de = new DataElement();
 			if(!gestioneNuovaVersione && listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO
 				de.setValues(listaTipiProtocollo);
 				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(tipoProtocollo);
@@ -3295,10 +3295,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 		de = new DataElement();
 		if(TipoOperazione.ADD.equals(tipoOperazione) || isModalitaVistaApiCustom==null || !isModalitaVistaApiCustom) {
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcReferente" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE
 		}
 		else {
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME
 		}
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
 		if(showReferente) {
@@ -3328,7 +3328,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 	
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcReferente" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE_1_2);
 				de.setType(DataElementType.TEXT);
 				if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
@@ -3349,7 +3349,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		if(showAccordiCooperazione && isServizioComposto){
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAccordoCooperazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
 			if( gestioneInformazioniGenerali && modificheAbilitate && modificaAbilitataServizioComposto && !gestioneNuovaVersione){
 				de.setType(DataElementType.SELECT);
@@ -3360,7 +3360,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setPostBack(true);
 			}else{
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAccordoCooperazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(accordoCooperazione);
@@ -3368,7 +3368,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					dati.addElement(de);
 	
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAccordoCooperazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE
 					de.setType(DataElementType.TEXT);
 					for(int i=0;i<accordiCooperazioneEsistenti.length;i++){
 						if(accordiCooperazioneEsistenti[i].equals(accordoCooperazione)){
@@ -3383,7 +3383,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME
 		de.setValue(nome);
 		//if (tipoOp.equals("add")) {
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneInformazioniGenerali && modificheAbilitate) ){
@@ -3407,7 +3407,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE
 		de.setValue(StringEscapeUtils.escapeHtml(descr));
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneDescrizione && modificheAbilitate)){
 			de.setType(DataElementType.TEXT_AREA);
@@ -3427,7 +3427,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 		// gruppi
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcGruppi" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI
 		de.setValue(gruppi);
 		de.setLabels(elencoGruppi);	
 		de.setValues(elencoGruppi);
@@ -3486,7 +3486,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		}else{
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcVersione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE
 			de.setValue(versione);
 			if(gestioneInformazioniGenerali) {
 				de.setType(DataElementType.TEXT);
@@ -3498,7 +3498,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PRIVATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPrivato" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PRIVATO
 		if(privato){
 			de.setValue(privato ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED );
 			de.setSelected(privato ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED );
@@ -3513,7 +3513,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		if(this.core.isShowFlagPrivato() && !modificheAbilitate && isInterfacciaAvanzata && gestioneInformazioniGenerali){
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPrivatoInformativaVisibilita" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA);
 			if(privato){
 				de.setValue(AccordiServizioParteComuneCostanti.INFORMATIVA_VISIBILITA_PRIVATA);
@@ -3525,7 +3525,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		if(showAccordiCooperazione){
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_IS_SERVIZIO_COMPOSTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIsServizioComposto" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_IS_SERVIZIO_COMPOSTO
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_IS_SERVIZIO_COMPOSTO);
 			de.setValue(isServizioComposto ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 			if( modificheAbilitate && showServizioCompostoCheck && gestioneInformazioniGenerali){
@@ -3542,7 +3542,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcStatoPackage" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE
 		if(this.isShowGestioneWorkflowStatoDocumenti()){
 			if( tipoOperazione.equals(TipoOperazione.ADD)){
 				//				if(isInterfacciaAvanzata)
@@ -3565,7 +3565,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				if(gestioneInformazioniGenerali) {
 					DataElement deLabel = new DataElement();
 					deLabel.setType(DataElementType.TEXT);
-					deLabel.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE);
+					deLabel.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcStatoPackage" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE
 					deLabel.setValue(StatiAccordo.upper(StatiAccordo.finale.toString()));
 					deLabel.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE+"__label");
 					dati.addElement(deLabel);
@@ -3617,7 +3617,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		
 		DataElement deValidazione = new DataElement();
-		deValidazione.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
+		deValidazione.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcValidazioneSpecifica" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA
 		deValidazione.setValue(""+validazioneDocumenti);
 		//if ( tipoOperazione.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) ) {
 		if ( tipoOperazione.equals(TipoOperazione.ADD) && this.isModalitaAvanzata() ) {
@@ -3625,7 +3625,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			deValidazione.setSelected(validazioneDocumenti);
 			
 			if(showConversazioni || showWsdlDefinitorio || showWsdlAsincroni) {
-				deValidazione.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICHE);
+				deValidazione.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcValidazioneSpecifiche" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICHE
 			}
 			
 		}else{
@@ -3769,12 +3769,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		if(gestioneNuovaVersione && !gestioneNuovaVersione_ridefinisciInterfaccia) {
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.SpecificaInterfacce" ) );	//AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcApiNuovaVersioneRidefinisciInterfaccia" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(gestioneNuovaVersione_ridefinisciInterfaccia);
@@ -3794,14 +3794,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				
 				if(tipoOperazione.equals(TipoOperazione.ADD) || gestioneSpecificaInterfacce) {
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.SpecificaInterfacce" ) );	//AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE
 					de.setType(DataElementType.TITLE);
 					dati.addElement(de);
 				}
 				
 				if(gestioneNuovaVersione) {
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcApiNuovaVersioneRidefinisciInterfaccia" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(gestioneNuovaVersione_ridefinisciInterfaccia);
@@ -3827,7 +3827,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								dati.add(wsdldef.getFileIdDataElement());
 							} else {
 								de = new DataElement();
-								de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlDefinitorio" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO
 								String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
 								de.setValue(wsdldefS);
 								de.setType(DataElementType.HIDDEN);
@@ -3853,7 +3853,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								
 							} else {
 								de = new DataElement();
-								de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlConcettuale" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE
 								String wsdlconcS = wsdlconc.getValue() != null ?  new String(wsdlconc.getValue()) : "";
 								de.setValue(wsdlconcS);
 								de.setType(DataElementType.HIDDEN);
@@ -3865,7 +3865,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 								dati.add(wsdlserv.getFileIdDataElement());
 			
 								de = new DataElement();
-								de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+								de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlFruitore" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE
 								String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
 								de.setValue(wsdlservcorrS);
 								de.setType(DataElementType.HIDDEN);
@@ -3882,7 +3882,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							dati.add(wsdlconc.getFileIdDataElement());
 							
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlErogatore" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE
 							String wsdlservS = wsdlserv.getValue() != null ?  new String(wsdlserv.getValue()) : "";
 							de.setValue(wsdlservS);
 							de.setType(DataElementType.HIDDEN);
@@ -3890,7 +3890,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							dati.addElement(de);
 							
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlFruitore" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE
 							String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
 							de.setValue(wsdlservcorrS);
 							de.setType(DataElementType.HIDDEN);
@@ -4003,7 +4003,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					if(serviceBinding.equals(ServiceBinding.SOAP)) {
 						if (tipoOperazione.equals(TipoOperazione.ADD)) {
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlDefinitorio" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO
 							String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
 							de.setValue(wsdldefS);
 							de.setType(DataElementType.HIDDEN);
@@ -4011,7 +4011,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							dati.addElement(de);
 			
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlConcettuale" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE
 							String wsdlconcS = wsdlconc.getValue() != null ?  new String(wsdlconc.getValue()) : "";
 							de.setValue(wsdlconcS);
 							de.setType(DataElementType.HIDDEN);
@@ -4023,7 +4023,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							dati.add(wsdlserv.getFileIdDataElement());
 							
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlFruitore" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE
 							String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
 							de.setValue(wsdlservcorrS);
 							de.setType(DataElementType.HIDDEN);
@@ -4048,7 +4048,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						if (tipoOperazione.equals(TipoOperazione.ADD)) {
 							
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlDefinitorio" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO
 							String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
 							de.setValue(wsdldefS);
 							de.setType(DataElementType.HIDDEN);
@@ -4062,7 +4062,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							dati.add(wsdlconc.getFileIdDataElement());
 							
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlErogatore" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE
 							String wsdlservS = wsdlserv.getValue() != null ?  new String(wsdlserv.getValue()) : "";
 							de.setValue(wsdlservS);
 							de.setType(DataElementType.HIDDEN);
@@ -4070,7 +4070,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							dati.addElement(de);
 							
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+							de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcWsdlFruitore" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE
 							String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
 							de.setValue(wsdlservcorrS);
 							de.setType(DataElementType.HIDDEN);
@@ -4098,7 +4098,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	
 				if(tipoOperazione.equals(TipoOperazione.ADD) || gestioneSpecificaInterfacce) {
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_CONVERSAZIONI);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.SpecificaConversazioni" ) );	//AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_CONVERSAZIONI
 					de.setType(DataElementType.TITLE);
 					dati.addElement(de);
 				}
@@ -4206,10 +4206,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		//if(TipoOperazione.CHANGE.equals(tipoOperazione) && isModalitaVistaApiCustom) {
 		if(isModalitaVistaApiCustom) {
-			de.setLabel(ApiCostanti.APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Api.ApcApiGestioneOpzioniAvanzate" ) );	//ApiCostanti.APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE
 		}
 		else {
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Informazioni" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI
 		}
 		if ( gestioneInfoProtocollo && (almostOneSupported || isSoap) ) { // se soap sicuramente c'è il protocollo di collaborazione
 			de.setType(DataElementType.TITLE);
@@ -4220,7 +4220,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProfiloCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE
 		if (gestioneInfoProtocollo && isSoap) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(tipoProtocollo,serviceBinding));
@@ -4236,7 +4236,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		// solo se showUtilizzoSenzaAzione e' true
 		if (showUtilizzoSenzaAzione && gestioneInfoProtocollo) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UTILIZZO_SENZA_AZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUtilizzoSenzaAzione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UTILIZZO_SENZA_AZIONE
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 			}else{
@@ -4255,7 +4255,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcFiltroDuplicati" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI);
 		if (gestioneInfoProtocollo && filtroDuplicatiSupportato) {
 			if(modificheAbilitate){
@@ -4288,7 +4288,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConfermaRicezione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE);
 		if (gestioneInfoProtocollo&& confermaRicezioneSupportato) {
 			if(modificheAbilitate){
@@ -4317,7 +4317,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COLLABORAZIONE);
 		if (gestioneInfoProtocollo && collaborazioneSupportato) {
 			if(modificheAbilitate){
@@ -4346,7 +4346,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIdRiferimentoRichiesta" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
 		if (gestioneInfoProtocollo && idRiferimentoRichiestaSupportato) {
 			if(modificheAbilitate){
@@ -4375,7 +4375,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConsegnaOrdine" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONSEGNA_ORDINE);
 		if (gestioneInfoProtocollo && consegnaInOrdineSupportato) {
 			if(modificheAbilitate){
@@ -4404,7 +4404,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcScadenza" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA
 		de.setValue(scadenza);
 		if (gestioneInfoProtocollo && scadenzaSupportato) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -4435,7 +4435,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		// canale
 		if(gestioneCanaliEnabled) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE_STATO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCanaleStato" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE_STATO
 			de.setValue(canaleStato);
 			de.setValues(AccordiServizioParteComuneCostanti.VALUES_PARAMETRO_APC_CANALE_STATO);
 			
@@ -4544,7 +4544,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcId" ) );	//AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID
 			de.setValue(id);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -4552,7 +4552,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO
 		de.setValue(tipoProtocollo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
@@ -4560,7 +4560,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME
 		de.setValue(nome);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
@@ -4568,7 +4568,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE
 		de.setValue(descr);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
@@ -4576,7 +4576,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcGruppi" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_GRUPPI
 		de.setValue(gruppi);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPI);
@@ -4584,7 +4584,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE_STATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCanaleStato" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE_STATO
 		de.setValue(canaleStato);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE_STATO);
@@ -4593,7 +4593,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 		if(AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO.equals(canaleStato)) {
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCanale" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CANALE
 			de.setValue(canale);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CANALE);
@@ -4602,7 +4602,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcReferente" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
 
 		Soggetto sogg = null;
@@ -4625,7 +4625,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcReferente" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_REFERENTE
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE_1_2);
 			de.setType(DataElementType.HIDDEN);
 			if (referente != null && !"".equals(referente) && !"-".equals(referente)) {
@@ -4637,14 +4637,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcVersione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE
 		de.setValue(versione);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PRIVATO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPrivato" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PRIVATO
 		if(privato){
 			de.setValue(privato ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED );
 			//			de.setSelected(privato ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED );
@@ -4658,7 +4658,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		if(showAccordiCooperazione){
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_IS_SERVIZIO_COMPOSTO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIsServizioComposto" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_IS_SERVIZIO_COMPOSTO
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_IS_SERVIZIO_COMPOSTO);
 			de.setValue(isServizioComposto ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 			de.setType(DataElementType.HIDDEN);
@@ -4668,14 +4668,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcStatoPackage" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(stato);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE);
 		dati.addElement(de);		
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcValidazioneSpecifica" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VALIDAZIONE_SPECIFICA
 		de.setValue(""+validazioneDocumenti);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
@@ -4685,7 +4685,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		if(showAccordiCooperazione && isServizioComposto){
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcAccordoCooperazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(accordoCooperazione);
@@ -4694,14 +4694,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcProfiloCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(profcoll);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROFILO_COLLABORAZIONE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UTILIZZO_SENZA_AZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUtilizzoSenzaAzione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UTILIZZO_SENZA_AZIONE
 		de.setType(DataElementType.HIDDEN);
 		if(utilizzoSenzaAzione){
 			de.setValue(CostantiRegistroServizi.ABILITATO.toString());
@@ -4712,7 +4712,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcFiltroDuplicati" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI);
 		if ( ServletUtils.isCheckBoxEnabled(filtrodup) || CostantiRegistroServizi.ABILITATO.equals(filtrodup) )
 			de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -4723,7 +4723,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConfermaRicezione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE);
 		if (ServletUtils.isCheckBoxEnabled(confric) || CostantiRegistroServizi.ABILITATO.equals(confric)) 
 			de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -4735,7 +4735,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COLLABORAZIONE);
 		if (ServletUtils.isCheckBoxEnabled(idcoll) || CostantiRegistroServizi.ABILITATO.equals(idcoll)) {
 			de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -4746,7 +4746,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIdRiferimentoRichiesta" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
 		if (ServletUtils.isCheckBoxEnabled(idRifRichiesta) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiesta)) {
 			de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -4757,7 +4757,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConsegnaOrdine" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONSEGNA_ORDINE);
 		if (ServletUtils.isCheckBoxEnabled(consord) || CostantiRegistroServizi.ABILITATO.equals(consord)) {
 			de.setValue(Costanti.CHECK_BOX_ENABLED);
@@ -4768,7 +4768,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcScadenza" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA
 		de.setValue(scadenza);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SCADENZA);
@@ -4776,7 +4776,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SERVICE_BINDING);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcServiceBinding" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SERVICE_BINDING
 		de.setValue(serviceBinding!= null ? serviceBinding.toString() : null);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVICE_BINDING);
@@ -4784,7 +4784,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_MESSAGE_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcMessageType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_MESSAGE_TYPE
 		de.setValue(messageType != null ? messageType.toString() : null);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE);
@@ -4792,7 +4792,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcInterfaceType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_INTERFACE_TYPE
 		de.setValue(formatoSpecifica != null ? formatoSpecifica.toString() : null);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_INTERFACE_TYPE);
@@ -5803,7 +5803,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Vector<DataElement> dati) {
 		
 		DataElement de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_COMPONENTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Componente" ) );	//AccordiServizioParteComuneCostanti.LABEL_COMPONENTE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
@@ -5820,7 +5820,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteSpecifica.ApsServizio" ) );	//AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO
 		de.setType(DataElementType.SELECT);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COMPONENTI_COMPONENTE);
 		de.setValues(serviziList);
@@ -5961,12 +5961,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		DataElement de = new DataElement();
 
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL_PART);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.InformazioniWsdlPart" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_WSDL_PART
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcId" ) );	//AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID
 		de.setValue(idAccordo);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -6000,7 +6000,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setValue(messagePartName);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPortTypeOperationMessagePartName" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME
 		if(tipoOp.equals(TipoOperazione.ADD)){
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true); 
@@ -6012,7 +6012,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPortTypeOperationMessagePartType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE
 		de.setType(DataElementType.SELECT);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_TYPE);
 		de.setValues(AccordiServizioParteComuneCostanti.PORT_TYPE_OPERATION_MESSAGE_PART_TYPE);
@@ -6023,7 +6023,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setValue(messagePartLocalName);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPortTypeOperationMessagePartLocalName" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setRequired(true); 
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME);
@@ -6032,7 +6032,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setValue(messagePartNS);
-		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcPortTypeOperationMessagePartNs" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setRequired(true); 
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS);
@@ -6500,7 +6500,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_RISORSA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Risorsa" ) );	//AccordiServizioParteComuneCostanti.LABEL_RISORSA
 			dati.addElement(de);
 			
 			DataElement deHttpMethod = this.getHttpMethodDataElement(tipoOperazione, httpMethod); 
@@ -6513,7 +6513,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			boolean nameRequired = (AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod) || httpMethod==null);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesPath" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH
 			de.setValue(path);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PATH);
 			if(inUse) {
@@ -6545,7 +6545,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);	
 	
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME
 			de.setValue(nomeRisorsa);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME);
 			if(inUse) {
@@ -6562,7 +6562,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE
 			de.setValue(descrizione);
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(3);
@@ -6594,7 +6594,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(almostOneSupported) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Informazioni" ) );	//AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI
 				dati.addElement(de);
 			}
 			
@@ -6609,7 +6609,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			else {
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ProfiloProtocollo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
 				if(modificheAbilitate && almostOneSupported){
@@ -6638,7 +6638,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Gli elementi qui sotto devono essere visualizzati solo in modalita' avanzata  && profilobusta = 'ridefinito' && se la corrispondente proprieta e' abilitata nel protocollo
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcFiltroDuplicati" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 					) {
 				de.setType(DataElementType.HIDDEN);
@@ -6676,7 +6676,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConfermaRicezione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 					) {
 				de.setType(DataElementType.HIDDEN);
@@ -6713,7 +6713,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcCollaborazione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 					) {
 				de.setType(DataElementType.HIDDEN);
@@ -6750,7 +6750,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcIdRiferimentoRichiesta" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 					) {
 				de.setType(DataElementType.HIDDEN);
@@ -6787,7 +6787,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcConsegnaOrdine" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 					) {
 				de.setType(DataElementType.HIDDEN);
@@ -6823,7 +6823,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcScadenza" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA
 			de.setValue(scadenzaaz);
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
 					) {
@@ -6851,7 +6851,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if( (TipoOperazione.CHANGE.equals(tipoOperazione) && !this.isModalitaStandard()) || !hiddenMessageType) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RICHIESTA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcResourcesRichiesta" ) );	//AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RICHIESTA
 				dati.addElement(de);
 			}
 			
@@ -6929,7 +6929,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if( (TipoOperazione.CHANGE.equals(tipoOperazione) && !this.isModalitaStandard()) || !hiddenMessageType) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RISPOSTA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ApcResourcesRisposta" ) );	//AccordiServizioParteComuneCostanti.LABEL_APC_RESOURCES_RISPOSTA
 				dati.addElement(de);
 			}
 			
@@ -7780,12 +7780,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_RISPOSTA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Risposta" ) );	//AccordiServizioParteComuneCostanti.LABEL_RISPOSTA
 			dati.addElement(de);
 			
 			de = new DataElement();
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesResponseStatus" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS
 			int statoInt = -1;
 			try {
 				statoInt = Integer.parseInt(status);
@@ -7814,7 +7814,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesResponseDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_DESCRIZIONE
 			de.setValue(descrizione);
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(3);
@@ -7965,11 +7965,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Representation" ) );	//AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationMediaType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE
 			de.setValue(mediaType);
 			de.setRequired(true); 
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -7982,7 +7982,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME
 			de.setValue(nome);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_NOME);
@@ -7990,7 +7990,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_DESCRIZIONE
 			de.setValue(descrizione);
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(3);
@@ -8006,11 +8006,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION_DEFINIZIONE);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.RepresentationDefinizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_REPRESENTATION_DEFINIZIONE
 				dati.addElement(de);
 			
 				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationTipo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO
 				de.setSelected(tipo != null ? tipo.getValue() : AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO_NON_DEFINITO);
 				de.setType(DataElementType.SELECT);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_TIPO);
@@ -8047,7 +8047,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					switch (tipo) {
 					case JSON:
 						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationJsonType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE
 						de.setValue(tipoJson);
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
@@ -8055,7 +8055,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						dati.addElement(de);
 						
 						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlName" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME
 						de.setValue(nomeXml);
 						de.setType(DataElementType.HIDDEN);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
@@ -8063,7 +8063,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						dati.addElement(de);	
 						
 						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlNamespace" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE
 						de.setValue(namespaceXml);
 						de.setType(DataElementType.HIDDEN);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
@@ -8071,7 +8071,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						dati.addElement(de);
 						
 						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlTipo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO
 						if(xmlType!=null) {
 							de.setValue(xmlType.getValue());
 						}
@@ -8083,7 +8083,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					case XML:
 					default:
 						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationJsonType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE
 						de.setValue(tipoJson);
 						de.setType(DataElementType.HIDDEN);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
@@ -8091,7 +8091,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						dati.addElement(de);
 						
 						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlTipo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO
 						if(xmlType!=null) {
 							de.setSelected(xmlType.getValue());
 						}
@@ -8122,7 +8122,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						dati.addElement(de);
 						
 						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlName" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME
 						de.setValue(nomeXml);
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
@@ -8130,7 +8130,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						dati.addElement(de);
 						
 						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlNamespace" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE
 						de.setValue(namespaceXml);
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
@@ -8141,7 +8141,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					}
 				}else {
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationJsonType" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE
 					de.setValue(tipoJson);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_JSON_TYPE);
@@ -8149,7 +8149,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					dati.addElement(de);
 					
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlName" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME
 					de.setValue(nomeXml);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAME);
@@ -8157,7 +8157,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					dati.addElement(de);	
 					
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlNamespace" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE
 					de.setValue(namespaceXml);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_NAMESPACE);
@@ -8165,7 +8165,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					dati.addElement(de);
 					
 					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
+					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesRepresentationXmlTipo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO
 					de.setValue("");
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_XML_TIPO);
@@ -8308,11 +8308,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETER);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.Parameter" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETER
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesParameterTipoParametro" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO
 			de.setSize(this.getSize());
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO_PARAMETRO);
 			de.setSelected(tipoParametro.getValue());
@@ -8353,7 +8353,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesParameterNome" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME
 			de.setValue(nome);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_NOME);
@@ -8362,7 +8362,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesParameterDescrizione" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE
 			de.setValue(descrizione);
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(3);
@@ -8373,7 +8373,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesParameterTipo" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO
 			de.setValue(tipo);
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
@@ -8382,7 +8382,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesParameterRestrizioni" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI
 			de.setValue(restrizioni);
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(3);
@@ -8392,7 +8392,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesParameterRequired" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED
 			de.setType(DataElementType.CHECKBOX);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED);
 			de.setSize(this.getSize());

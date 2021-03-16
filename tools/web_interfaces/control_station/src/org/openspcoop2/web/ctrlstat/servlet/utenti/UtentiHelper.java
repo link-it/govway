@@ -41,13 +41,13 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
@@ -131,12 +131,12 @@ public class UtentiHelper extends ConsoleHelper {
 				!ServletUtils.isCheckBoxEnabled(isAuditing);
 		
 		DataElement de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_INFORMAZIONI_UTENTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.InformazioniUtente" ) );	//UtentiCostanti.LABEL_INFORMAZIONI_UTENTE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiUsername" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME
 		de.setValue(nomesu);
 		if(TipoOperazione.ADD.equals(tipoOperazione)){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -151,17 +151,17 @@ public class UtentiHelper extends ConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PERMESSI_GESTIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.PermessiGestione" ) );	//UtentiCostanti.LABEL_PERMESSI_GESTIONE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_REGISTRO_SUBSECTION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiRegistroSubsection" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_REGISTRO_SUBSECTION
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SERVIZI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsServizi" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SERVIZI
 		de.setType(DataElementType.CHECKBOX);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 		ServletUtils.setCheckBox(de, isServizi);
@@ -169,7 +169,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsAccordiCooperazione" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
 		if(this.utentiCore.isAccordiCooperazioneEnabled()) {
 			de.setType(DataElementType.CHECKBOX);
@@ -184,13 +184,13 @@ public class UtentiHelper extends ConsoleHelper {
 			
 		if(singlePdD) {
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_GOVWAY_MONITOR_SUBSECTION);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiGovwayMonitorSubsection" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_GOVWAY_MONITOR_SUBSECTION
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 		}
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsDiagnostica" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA
 		if (singlePdD) {
 			de.setType(DataElementType.CHECKBOX);
 			ServletUtils.setCheckBox(de, isDiagnostica);
@@ -203,7 +203,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsReportistica" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA
 		if (singlePdD) {
 			de.setType(DataElementType.CHECKBOX);
 			ServletUtils.setCheckBox(de, isReportistica);
@@ -216,12 +216,12 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_STRUMENTI_SUBSECTION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiStrumentiSubsection" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_STRUMENTI_SUBSECTION
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_MESSAGGI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsMessaggi" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_MESSAGGI
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 		if(this.utentiCore.showCodaMessage()) {
 			de.setType(DataElementType.CHECKBOX);
@@ -235,7 +235,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_AUDITING);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsAuditing" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_AUDITING
 		de.setType(DataElementType.CHECKBOX);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
 		ServletUtils.setCheckBox(de, isAuditing);
@@ -243,12 +243,12 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFIGURAZIONE_SUBSECTION);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiConfigurazioneSubsection" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFIGURAZIONE_SUBSECTION
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsSistema" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA
 		de.setType(DataElementType.CHECKBOX);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 		ServletUtils.setCheckBox(de, isSistema);
@@ -256,7 +256,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsUtenti" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI
 		de.setType(DataElementType.CHECKBOX);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
 		ServletUtils.setCheckBox(de, isUtenti);
@@ -294,7 +294,7 @@ public class UtentiHelper extends ConsoleHelper {
 		if(isDiagnosticaEnabled || isReportisticaEnabled) {
 		
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_VISIBILITA_DATI_GOVWAY_MONITOR);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.VisibilitaDatiGovwayMonitor" ) );	//UtentiCostanti.LABEL_VISIBILITA_DATI_GOVWAY_MONITOR
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);	
 			
@@ -302,7 +302,7 @@ public class UtentiHelper extends ConsoleHelper {
 			if(this.utentiCore.isMultitenant()) {
 				
 				de = new DataElement();
-				de.setLabel(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.UtentiSoggetti" ) );	//UtentiCostanti.LABEL_UTENTI_SOGGETTI
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 				
@@ -317,7 +317,7 @@ public class UtentiHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setType(DataElementType.CHECKBOX);
-				de.setLabel(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_TUTTI);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.AbilitazioniPuntualiSoggettiTutti" ) );	//UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_TUTTI
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
 				de.setSelected(ServletUtils.isCheckBoxEnabled(isSoggettiAll));
 				de.setPostBack(true);
@@ -353,7 +353,7 @@ public class UtentiHelper extends ConsoleHelper {
 			
 				
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_UTENTI_SERVIZI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.UtentiServizi" ) );	//UtentiCostanti.LABEL_UTENTI_SERVIZI
 			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			
@@ -368,7 +368,7 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.CHECKBOX);
-			de.setLabel(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_TUTTI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.AbilitazioniPuntualiServiziTutti" ) );	//UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_TUTTI
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);
 			de.setSelected(ServletUtils.isCheckBoxEnabled(isServiziAll));
 			de.setPostBack(true);
@@ -397,12 +397,12 @@ public class UtentiHelper extends ConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ModalitaInterfaccia" ) );	//UtentiCostanti.LABEL_MODALITA_INTERFACCIA
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiTipoGui" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 		boolean permitInterfaceComplete = false;
 		boolean showSelectTipoInterfaccia = true;
@@ -441,7 +441,7 @@ public class UtentiHelper extends ConsoleHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiTipoGui" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI+ "_text");
 			de.setType(DataElementType.TEXT);
 			de.setValue(interfaceType.toString().toLowerCase());
@@ -451,13 +451,13 @@ public class UtentiHelper extends ConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Password" ) );	//UtentiCostanti.LABEL_PASSWORD
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_MODIFICA);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Modifica" ) );	//UtentiCostanti.LABEL_MODIFICA
 			de.setType(DataElementType.CHECKBOX);
 			//			de.setOnClick("cambiaPassword(\"suChange\");");
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
@@ -472,7 +472,7 @@ public class UtentiHelper extends ConsoleHelper {
 			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 			
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiPassword" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD
 			de.setValue(pwsu);
 			de.setType(DataElementType.CRYPT);
 			de.getPassword().setVisualizzaPasswordChiaro(true);
@@ -515,7 +515,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String [] uws, boolean scegliSuAccordi,String [] uwp, String [] modalitaGateway) throws Exception{ 
 
 		DataElement de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiUsername" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME
 		de.setValue(nomesu);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
@@ -524,21 +524,21 @@ public class UtentiHelper extends ConsoleHelper {
 		if(ServletUtils.isCheckBoxEnabled(changepwd)){
 
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiPassword" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD
 			de.setValue(pwsu);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiConfermaPassword" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD
 			de.setValue(confpwsu);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CHANGE_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiChangePassword" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_CHANGE_PASSWORD
 			de.setValue(changepwd);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
@@ -547,63 +547,63 @@ public class UtentiHelper extends ConsoleHelper {
 
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiTipoGui" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI
 		de.setValue(interfaceType.toString());
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SERVIZI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsServizi" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SERVIZI
 		de.setValue(isServizi);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsSistema" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA
 		de.setValue(isSistema);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_MESSAGGI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsMessaggi" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_MESSAGGI
 		de.setValue(isMessaggi);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsDiagnostica" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA
 		de.setValue(isDiagnostica);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsReportistica" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA
 		de.setValue(isReportistica);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsUtenti" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI
 		de.setValue(isUtenti);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_AUDITING);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsAuditing" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_AUDITING
 		de.setValue(isAuditing);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiIsAccordiCooperazione" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
 		de.setValue(isAccordiCooperazione);
@@ -612,7 +612,7 @@ public class UtentiHelper extends ConsoleHelper {
 		if(scegliSuServizi){
 			de = new DataElement();
 			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI_NOTE);
-			de.setLabel(UtentiCostanti.LABEL_UTENTE_PERMESSI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.UtentePermessi" ) );	//UtentiCostanti.LABEL_UTENTE_PERMESSI
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			de.setValues(uws);
@@ -622,7 +622,7 @@ public class UtentiHelper extends ConsoleHelper {
 		if(scegliSuAccordi){
 			de = new DataElement();
 			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE);
-			de.setLabel(UtentiCostanti.LABEL_UTENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Utente" ) );	//UtentiCostanti.LABEL_UTENTE
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
 			de.setValues(uwp);
@@ -646,7 +646,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String [] uws, boolean scegliSuAccordi,String [] uwp){
 
 		DataElement de = new DataElement();
-		de.setLabel(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Govway.NameObjectsForRemove" ) );	//Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE
 		de.setValue(objToRemove);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
@@ -655,7 +655,7 @@ public class UtentiHelper extends ConsoleHelper {
 		if(scegliSuServizi){
 			de = new DataElement();
 			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI_NOTE);
-			de.setLabel(UtentiCostanti.LABEL_UTENTE_PERMESSI);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.UtentePermessi" ) );	//UtentiCostanti.LABEL_UTENTE_PERMESSI
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
 			de.setValues(uws);
@@ -665,7 +665,7 @@ public class UtentiHelper extends ConsoleHelper {
 		if(scegliSuAccordi){
 			de = new DataElement();
 			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE);
-			de.setLabel(UtentiCostanti.LABEL_UTENTE);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Utente" ) );	//UtentiCostanti.LABEL_UTENTE
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
 			de.setValues(uwp);
@@ -686,12 +686,12 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_INFO_UTENTE);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.InfoUtente" ) );	//UtentiCostanti.LABEL_INFO_UTENTE
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiUsername" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_LOGIN);
 		de.setType(DataElementType.TEXT);
 		de.setValue(nomeUtente);
@@ -712,7 +712,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTI_OPERATIVI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroSoggettiOperativi" ) );	//UtentiCostanti.LABEL_PARAMETRO_SOGGETTI_OPERATIVI
 		// Il sottoinsieme sui soggetti vale solo per la govwayMonitor
 		//if(utente.hasOnlyPermessiUtenti() || !this.utentiCore.isMultitenant()) {
 		de.setType(DataElementType.HIDDEN);
@@ -725,7 +725,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ModalitaInterfaccia" ) );	//UtentiCostanti.LABEL_MODALITA_INTERFACCIA
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 		if(utente.hasOnlyPermessiUtenti()) {
 			de.setType(DataElementType.HIDDEN);
@@ -733,14 +733,14 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		else {
 			if(interfaceType.equals(InterfaceType.COMPLETA)) {
-				de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ModalitaInterfaccia" ) );	//UtentiCostanti.LABEL_MODALITA_INTERFACCIA
 				de.setType(DataElementType.TEXT);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI+"_text");
 				de.setValue(interfaceType.toString().toLowerCase());
 				dati.addElement(de);
 				
 				de = new DataElement();
-				de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ModalitaInterfaccia" ) );	//UtentiCostanti.LABEL_MODALITA_INTERFACCIA
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 				de.setType(DataElementType.HIDDEN);	
 				de.setValue(interfaceType.toString());
@@ -773,12 +773,12 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Password" ) );	//UtentiCostanti.LABEL_PASSWORD
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODIFICA);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Modifica" ) );	//UtentiCostanti.LABEL_MODIFICA
 		de.setType(DataElementType.CHECKBOX);
 		//		de.setOnClick("cambiaPassword(\"changePwd\");");
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
@@ -796,7 +796,7 @@ public class UtentiHelper extends ConsoleHelper {
 //			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
 			
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtenteVecchiaPassword" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD
 			de.setType(DataElementType.CRYPT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
 			de.setValue("");
@@ -807,7 +807,7 @@ public class UtentiHelper extends ConsoleHelper {
 //			}
 
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtenteNuovaPassword" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD
 			de.setType(DataElementType.CRYPT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
 			de.setSize(this.getSize());
@@ -816,7 +816,7 @@ public class UtentiHelper extends ConsoleHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtenteConfermaNuovaPassword" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD
 			de.setType(DataElementType.CRYPT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
 			de.setSize(this.getSize());
@@ -1724,22 +1724,22 @@ public class UtentiHelper extends ConsoleHelper {
 	public void addUtentiSoggettiToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String nomesu, String soggetto, String[] soggettiValues, String[] soggettiLabels, List<String> listaTipiProtocollo, String tipoProtocollo) throws Exception {
 
 		DataElement de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.UtentiSoggetti" ) );	//UtentiCostanti.LABEL_UTENTI_SOGGETTI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiUsername" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME
 		de.setValue(nomesu);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiProtocollo" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_PROTOCOLLO);
 		if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
-				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiProtocollo" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO
 				de.setValues(listaTipiProtocollo);
 				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(tipoProtocollo);
@@ -1754,7 +1754,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SOGGETTO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiSoggetto" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_SOGGETTO
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_SOGGETTO);
 		if(soggettiValues != null && soggettiValues.length > 1){
 			de.setType(DataElementType.SELECT);		
@@ -1773,22 +1773,22 @@ public class UtentiHelper extends ConsoleHelper {
 	public void addUtentiServiziToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String nomesu, String servizio, String[] serviziValues, String[] serviziLabels, List<String> listaTipiProtocollo, String tipoProtocollo) throws Exception {
 
 		DataElement de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_UTENTI_SERVIZI);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.UtentiServizi" ) );	//UtentiCostanti.LABEL_UTENTI_SERVIZI
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiUsername" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME
 		de.setValue(nomesu);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiProtocollo" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_PROTOCOLLO);
 		if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
-				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
+				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiProtocollo" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO
 				de.setValues(listaTipiProtocollo);
 				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
 				de.setSelected(tipoProtocollo);
@@ -1802,7 +1802,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SERVIZIO);
+		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.ParametroUtentiServizio" ) );	//UtentiCostanti.LABEL_PARAMETRO_UTENTI_SERVIZIO
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_SERVIZIO);
 		if(serviziValues != null && serviziValues.length > 1){
 			de.setType(DataElementType.SELECT);		
@@ -1821,7 +1821,7 @@ public class UtentiHelper extends ConsoleHelper {
 	public boolean utentiSoggettiCheckData(TipoOperazione tipoOperazione, String nomesu, String soggetto) throws Exception{
 		// controllo selezione soggetto
 		if (StringUtils.isEmpty(soggetto) || soggetto.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-			this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO);
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.ErroreNomeSoggettoObbligatorio" ) );	//UtentiCostanti.MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO
 			return false;
 		}
 		
@@ -1831,7 +1831,7 @@ public class UtentiHelper extends ConsoleHelper {
 	public boolean utentiServiziCheckData(TipoOperazione tipoOperazione, String nomesu, String servizio) throws Exception{
 		// controllo selezione soggetto
 		if (StringUtils.isEmpty(servizio) || servizio.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-			this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NOME_SERVIZIO_OBBLIGATORIO);
+			this.pd.setMessage( ServletUtils.getMessageFromResourceBundle( session, "Utenti.ErroreNomeServizioObbligatorio" ) );	//UtentiCostanti.MESSAGGIO_ERRORE_NOME_SERVIZIO_OBBLIGATORIO
 			return false;
 		}
 		
