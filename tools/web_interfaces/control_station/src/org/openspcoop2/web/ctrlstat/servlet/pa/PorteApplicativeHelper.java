@@ -1481,7 +1481,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					else {
 						de.setType(DataElementType.CHECKBOX);
-						de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_RIGHT);
+						de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeForceInterfaceBasedRight" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_RIGHT
 						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
 							de.setSelected(true);
 						}
@@ -1851,7 +1851,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			if (numCorrApp > 0 && riuso) {
 				de = new DataElement();
 				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaLabel" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL
-				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
+				de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaNote" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA);
@@ -3542,7 +3542,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeElementoXml" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
-		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeElementoXmlNote" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE
 		de.setSize(80);
 		if (elemxml == null || CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI.equals(elemxml)) {
 			de.setValue("");
@@ -3667,7 +3667,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeElementoXml" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML
 		de.setType(DataElementType.TEXT_EDIT);
-		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeElementoXmlNote" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 		de.setSize(80);
 		if (elemxml == null || CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI.equals(elemxml)) {
@@ -6632,7 +6632,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				if(lbt!=null && lbt.isSticky()) {
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaLoadBalanceSticky" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY
 					de.setType(DataElementType.CHECKBOX);
-					de.setLabelRight(PorteApplicativeCostanti.LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY);
+					de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.RightParametroPorteApplicativeConnettoriMultipliModalitaConsegnaLoadBalanceSticky" ) );	//PorteApplicativeCostanti.LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY
 					de.setSelected(sticky);
 					de.setPostBack(true);
 					DataElementInfo dInfoSticky = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY);
@@ -6652,7 +6652,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
 				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaLoadBalancePassiveHealthCheck" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK
 				de.setType(DataElementType.CHECKBOX);
-				de.setLabelRight(PorteApplicativeCostanti.LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.RightParametroPorteApplicativeConnettoriMultipliModalitaConsegnaLoadBalancePassiveHealthCheck" ) );	//PorteApplicativeCostanti.LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK
 				de.setSelected(passiveHealthCheck);
 				de.setPostBack(true);
 				DataElementInfo dInfoPassiveHealthCheck = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
@@ -6695,11 +6695,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setPostBack(true);
 				if(TipoBehaviour.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) ) {
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaCondizionaleLeft" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LEFT
-					de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LOAD_BALANCER_RIGHT);
+					de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaCondizionaleLoadBalancerRight" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LOAD_BALANCER_RIGHT
 				}
 				else if(TipoBehaviour.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) ) {
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaCondizionaleLeft" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LEFT
-					de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_PIU_CONNETTORI_RIGHT);
+					de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaCondizionalePiuConnettoriRight" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_PIU_CONNETTORI_RIGHT
 				}
 				else if(TipoBehaviour.CONSEGNA_CONDIZIONALE.getValue().equals(modalitaConsegna)) {
 					de.setType(DataElementType.HIDDEN);
@@ -6716,7 +6716,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				else if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaCondizionaleNotificaLeft" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICA_LEFT
-					de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICHE_CONNETTORI_RIGHT);
+					de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaCondizionaleNotificheConnettoriRight" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICHE_CONNETTORI_RIGHT
 				}
 				
 				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
@@ -6860,7 +6860,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE );
 				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaLoadBalanceStickyMaxAge" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE
-				de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE_NOTE);
+				de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaLoadBalanceStickyMaxAgeNote" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE_NOTE
 				de.setType(DataElementType.NUMBER);
 				de.setValue(stickyMaxAge);
 				de.setMinValue(0);
@@ -6880,7 +6880,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS );
 				if(passiveHealthCheck) {
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaLoadBalancePassiveHealthCheckExcludeForSeconds" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS
-					de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliModalitaConsegnaLoadBalancePassiveHealthCheckExcludeForSecondsNote" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS_NOTE
 					de.setType(DataElementType.NUMBER);
 					de.setMinValue(1);
 					de.reloadMinValue(false);
@@ -6910,7 +6910,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO);
 				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliNotificheCondizionaliEsito" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO
-				de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO_RIGHT);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliNotificheCondizionaliEsitoRight" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO_RIGHT
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(notificheCondizionaliEsito);
 				de.setPostBack(true);
@@ -7129,7 +7129,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION);
-				de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliCondizioneNonIdentificataAbortTransaction" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(condizioneNonIdentificataAbortTransaction);
 				de.setPostBack(true);
@@ -7228,7 +7228,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION);
-				de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliConnettoreNonTrovatoAbortTransaction" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(connettoreNonTrovatoAbortTransaction);
 				de.setPostBack(true);
@@ -9850,8 +9850,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
 			de.setSelected(ServletUtils.isCheckBoxEnabled(prioritaMax));
-			de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_RIGHT);
-			de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_NOTE);
+			de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliNotifichePrioritaMaxRight" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_RIGHT
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliNotifichePrioritaMaxNote" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_NOTE
 			DataElementInfo deInfo = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_LEFT);
 			deInfo.setBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PRIORITA_MAX_INFO);
 			de.setInfo(deInfo);
@@ -10139,7 +10139,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			} else { // REST: Claims
 				de.setType(DataElementType.TEXT_AREA);
 				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliNotificheClaims" ) ); 	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS
-				de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_NOTE);
+				de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliNotificheClaimsNote" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_NOTE
 				dInfo = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS);
 				dInfo.setHeaderBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_HEADER);
 				dInfo.setListBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_LIST);
@@ -10168,7 +10168,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.HIDDEN);
 		}
 		else {
-			de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteApplicative.ParametroPorteApplicativeConnettoriMultipliNotificheCadenzaRispedizioneNote" ) );	//PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE_NOTE
 			de.setType(DataElementType.NUMBER);
 			de.setMinValue(0);
 			de.reloadMinValue(false);

@@ -572,6 +572,10 @@ public class ServletUtils {
 		return getValueFromResourceBundle( "labels", session, key, params );
 	}
 
+	public static String getNoteFromResourceBundle( HttpSession session, String key, Object ... params ) {
+		return getValueFromResourceBundle( "notes", session, key, params );
+	}
+
 	public static String getToolTipFromResourceBundle( HttpSession session, String key, Object ... params ) {
 		return getValueFromResourceBundle( "toolTips", session, key, params );
 	}

@@ -260,10 +260,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setPostBack(true);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePolicyConfigLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT
 			if(this.archiviCore.isConfigurazioneAllarmiEnabled()) {
-				de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_CON_ALLARMI_RIGHT);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePolicyConfigConAllarmiRight" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_CON_ALLARMI_RIGHT
 			}
 			else {
-				de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePolicyConfigRight" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT
 			}
 			de.setSelected(ServletUtils.isCheckBoxEnabled(cascadePolicyConfig));
 		}
@@ -297,7 +297,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePluginConfigLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_LEFT
-			de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_RIGHT);
+			de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadePluginConfigRight" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PLUGIN_CONFIG_RIGHT
 			de.setSelected(ServletUtils.isCheckBoxEnabled(cascadePluginConfig));
 		}
 		else {
@@ -330,7 +330,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setType(DataElementType.CHECKBOX);
 			de.setPostBack(true);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT
-			de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT);
+			de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviExportCascadeRight" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT
 			de.setSelected(ServletUtils.isCheckBoxEnabled(cascade));
 		}
 		else {
@@ -882,7 +882,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviValidazioneDocumentiLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_LEFT
-		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_RIGHT);
+		de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviValidazioneDocumentiRight" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_RIGHT
 		de.setValue(""+validazioneDocumenti);
 		if (this.isModalitaAvanzata()) {
 			de.setType(DataElementType.CHECKBOX);
@@ -897,7 +897,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviUpdateEnabledLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_LEFT
-		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_RIGHT);
+		de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviUpdateEnabledRight" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_RIGHT
 		de.setValue(""+updateEnabled);
 		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 		if(deleter){
@@ -959,7 +959,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportConfigLeft" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_LEFT
-		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_RIGHT);
+		de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Archivi.ParametroArchiviImportConfigRight" ) );	//ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_RIGHT
 		de.setValue(""+importConfig);
 		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 		if(deleter){

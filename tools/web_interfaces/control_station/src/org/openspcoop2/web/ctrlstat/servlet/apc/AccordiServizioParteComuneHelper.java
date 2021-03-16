@@ -2902,10 +2902,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUpdateWsdlAggiornaLeft" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_LEFT
 			switch (serviceBinding) {
 			case REST:
-				de.setLabelRight(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_REST);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUpdateWsdlAggiornaRest" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_REST
 				break;
 			case SOAP:
-				de.setLabelRight(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_SOAP);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUpdateWsdlAggiornaSoap" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_AGGIORNA_SOAP
 				break;
 			}
 			de.setValue(""+aggiornaEsistenti);
@@ -2919,10 +2919,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUpdateWsdlEliminaLeft" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_LEFT
 			switch (serviceBinding) {
 			case REST:
-				de.setLabelRight(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_REST);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUpdateWsdlEliminaRest" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_REST
 				break;
 			case SOAP:
-				de.setLabelRight(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_SOAP);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcUpdateWsdlEliminaSoap" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_UPDATE_WSDL_ELIMINA_SOAP
 				break;
 			}
 			de.setValue(""+eliminaNonPresentiNuovaInterfaccia);
@@ -6554,7 +6554,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			else {
 				de.setType(DataElementType.TEXT_EDIT);
 				if(!nameRequired) {
-					de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesNomeNote" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE
 				}
 				de.setRequired(nameRequired);
 			}
@@ -7797,7 +7797,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setValue(status);
 			}
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
-				de.setNote(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_NOTE);
+				de.setNote( ServletUtils.getNoteFromResourceBundle( session, "AccordiServizioParteComune.ParametroApcResourcesResponseStatusNote" ) );	//AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_RESPONSE_STATUS_NOTE
 				de.setType(DataElementType.TEXT_EDIT);
 			} else {
 				de.setType(DataElementType.TEXT);

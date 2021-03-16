@@ -471,7 +471,7 @@ public class ConnettoreHTTPSUtils {
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStoreCrl" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL
 		de.setValue(httpsTrustStoreCRLs);
 		if(httpsTrustVerifyCert) {
-			de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Connettori.ParametroConnettoreHttpsTrustStoreCrlNote" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL_NOTE
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.TEXT_AREA);	
 			}else{

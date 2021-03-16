@@ -611,7 +611,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if(scegliSuServizi){
 			de = new DataElement();
-			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Utenti.UtentePermessiServiziNote" ) );	//UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI_NOTE
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.UtentePermessi" ) );	//UtentiCostanti.LABEL_UTENTE_PERMESSI
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
@@ -621,7 +621,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if(scegliSuAccordi){
 			de = new DataElement();
-			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Utenti.UtentePermessiAccordiCooperazioneNote" ) );	//UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Utente" ) );	//UtentiCostanti.LABEL_UTENTE
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
@@ -654,7 +654,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if(scegliSuServizi){
 			de = new DataElement();
-			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Utenti.UtentePermessiServiziNote" ) );	//UtentiCostanti.LABEL_UTENTE_PERMESSI_SERVIZI_NOTE
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.UtentePermessi" ) );	//UtentiCostanti.LABEL_UTENTE_PERMESSI
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_SERVIZI);
@@ -664,7 +664,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 		if(scegliSuAccordi){
 			de = new DataElement();
-			de.setNote(UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Utenti.UtentePermessiAccordiCooperazioneNote" ) );	//UtentiCostanti.LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Utenti.Utente" ) );	//UtentiCostanti.LABEL_UTENTE
 			de.setType(DataElementType.SELECT);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);

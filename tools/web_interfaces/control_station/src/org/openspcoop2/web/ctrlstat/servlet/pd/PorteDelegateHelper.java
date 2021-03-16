@@ -631,7 +631,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					}
 					else {
 						de.setType(DataElementType.CHECKBOX);
-						de.setLabelRight(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_RIGHT);
+						de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateForceInterfaceBasedRight" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_RIGHT
 						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
 							de.setSelected(true);
 						}
@@ -1019,7 +1019,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				if (riusoId && numCorrApp != 0) {
 					de = new DataElement();
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaLabel" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL
-					de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaNote" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE
 					de.setValue(scadcorr);
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA);
@@ -1325,7 +1325,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateElementoXml" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML
-		de.setNote(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateElementoXmlNote" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 		de.setSize(80);
@@ -1469,7 +1469,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateElementoXml" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML
-		de.setNote(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "PorteDelegate.ParametroPorteDelegateElementoXmlNote" ) );	//PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 		de.setSize(80);

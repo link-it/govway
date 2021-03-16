@@ -2967,7 +2967,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if (riusoID && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
 				de = new DataElement();
 				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaLabel" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL
-				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
+				de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaNote" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
@@ -2978,7 +2978,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if (riuso && numCorrelazioneReq > 0 && this.isModalitaAvanzata()) {
 				de = new DataElement();
 				de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaLabel" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_LABEL
-				de.setNote(CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE);
+				de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroScadenzaCorrelazioneApplicativaNote" ) );	//CostantiControlStation.LABEL_PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA_NOTE
 				de.setValue(scadcorr);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(CostantiControlStation.PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA);
@@ -5474,7 +5474,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(autorizzazioneTokenEnabled) {
 						de = new DataElement();
 						de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneToken" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN
-						de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE);
+						de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneTokenNote" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 						de.setValue(autorizzazione_tokenOptions);
 						if(allHidden) {
@@ -5644,7 +5644,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.TEXT_AREA);
 				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 				de.setValue(autorizzazioneContenutiProperties);
-				de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CONTENUTI_NOTE);
+				de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroPorteAutorizzazioneContenutiNote" ) );	//CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CONTENUTI_NOTE
 				DataElementInfo info = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 				info.setHeaderBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
@@ -11711,7 +11711,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// select all
 			
 			de = new DataElement();
-			de.setLabelRight(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+			de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ConfigurazioneRegistrazioneEsitiAll" ) );	//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(selectAll);
@@ -12528,7 +12528,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setType(DataElementType.NUMBER);
 						de.setMinValue(-1);
 						de.setMaxValue(Integer.MAX_VALUE);
-						de.setNote(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS_NOTE);
+						de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroConfigurazioneCorsMaxAgeSecondsNote" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS_NOTE
 					}
 					dati.addElement(de);
 				}
@@ -13228,7 +13228,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				else {
 					de.setType(DataElementType.TEXT_EDIT);
 					de.enableTags();
-					de.setNote(CostantiControlStation.NOTE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingResponseDigestQueryParametersNomi" ) );	//CostantiControlStation.NOTE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_QUERY_PARAMETERS_NOMI
 //					de.setRequired(true);
 				}
 				de.setValue(responseCachingDigestNomiParametriQuery);
@@ -13274,7 +13274,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				else {
 					de.setType(DataElementType.TEXT_EDIT);
 					de.enableTags();
-					de.setNote(CostantiControlStation.NOTE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroConfigurazioneResponseCachingResponseDigestHeadersNomiHeaders" ) );	//CostantiControlStation.NOTE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS
 //					de.setRequired(true);
 				}
 				de.setValue(responseCachingDigestHeadersNomiHeaders);
@@ -15088,7 +15088,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
 			de.setSize(this.getSize());
 			de.setInfo(dInfoPatternTrasporto);
-			de.setNote(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "ControlStation.ParametroConfigurazioneTrasformazioniRestPathNote" ) );	//CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH_NOTE
 			dati.addElement(de);
 						
 		}

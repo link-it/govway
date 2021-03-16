@@ -1648,7 +1648,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslVerificaTuttiCampi" ) );	//ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 						de.setType(DataElementType.CHECKBOX);
-						de.setNote(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+						de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Connettori.ParametroCredenzialiAutenticazioneConfigurazioneSslVerificaTuttiCampi" ) );	//ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI
 						de.setSelected(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi));
 						de.setSize(this.getSize());
 					}else { 

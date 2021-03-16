@@ -1169,7 +1169,7 @@ public final class Monitor extends Action {
 			// Soglia
 			de = new DataElement();
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Monitor.ParametroMonitorSogliaLabel" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_LABEL
-			de.setNote(MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Monitor.ParametroMonitorSogliaNote" ) );	//MonitorCostanti.LABEL_PARAMETRO_MONITOR_SOGLIA_NOTE
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(monitorHelper.getSize());
 			de.setName(MonitorCostanti.PARAMETRO_MONITOR_SOGLIA);

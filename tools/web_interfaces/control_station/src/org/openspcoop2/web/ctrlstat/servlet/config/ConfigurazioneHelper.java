@@ -309,7 +309,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		if(view){
 			de.setType(DataElementType.TEXT_EDIT);
-			de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.CacheSecondsNote" ) );	//ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -425,7 +425,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI.equals(intestazioneSezione)){
 				de.setType(DataElementType.TEXT_EDIT);
 				if(!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_KEYSTORE.equals(intestazioneSezione)){
-					de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.CacheSecondsNote" ) );	//ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE
 				}
 			}
 			else{
@@ -5120,7 +5120,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDiagnosticaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDiagnosticaNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -5140,7 +5140,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jOpenspcoopLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jOpenspcoopNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_NOTE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -5160,7 +5160,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jIntegrationManagerLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jIntegrationManagerNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_NOTE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -5225,7 +5225,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpConnettorePdLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpConnettorePdNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5248,7 +5248,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpConnettorePaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpConnettorePaNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
@@ -5270,7 +5270,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jTracciamentoLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jTracciamentoNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -5290,7 +5290,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP);
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneLog4jDumpNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			de.setType(DataElementType.TEXT);
 			de.setValue(v);
@@ -7408,7 +7408,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoConnectionTimeoutLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL
-		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoMillisecondiNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_FRUIZIONE);
 		if(editEnabled){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7423,7 +7423,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoReadTimeoutLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL
-		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoMillisecondiNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_FRUIZIONE);
 		if(editEnabled){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7438,7 +7438,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoTempoMedioRispostaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL
-		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoMillisecondiNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_FRUIZIONE);
 		if(editEnabled){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7463,7 +7463,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoConnectionTimeoutLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL
-		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoMillisecondiNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_EROGAZIONE);
 		if(editEnabled){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7478,7 +7478,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoReadTimeoutLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL
-		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoMillisecondiNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_EROGAZIONE);
 		if(editEnabled){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7493,7 +7493,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		de = new DataElement();
 		de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoTempoMedioRispostaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL
-		de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE);
+		de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoMillisecondiNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_EROGAZIONE);
 		if(editEnabled){
 			de.setType(DataElementType.TEXT_EDIT);
@@ -7592,7 +7592,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
 		if(enabled && cache.isCache()){
 			de.setType(DataElementType.TEXT_EDIT);
-			de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.CacheSecondsNote" ) );	//ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -10548,27 +10548,27 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			break;
 		case OCCUPAZIONE_BANDA:
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreOccupazioneDiBandaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreOccupazioneDiBandaNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_NOTE
 			break;
 		case TEMPO_MEDIO_RISPOSTA:
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoMedioLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoMedioNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_NOTE
 			break;
 		case TEMPO_COMPLESSIVO_RISPOSTA:
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoComplessivoLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreTempoComplessivoNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_NOTE
 			break;
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichiesteCompletateConSuccessoNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_NOTE
 			break;
 		case NUMERO_RICHIESTE_FALLITE:
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichiesteFalliteNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_NOTE
 			break;
 		case NUMERO_FAULT_APPLICATIVI:
 			de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_FAULT_APPLICATIVI_NOTE);
+			de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicySogliaValoreNumeroFaultApplicativiNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_FAULT_APPLICATIVI_NOTE
 			break;
 		}
 		if(editMode || editOnlyValueMode) {
@@ -10658,7 +10658,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE);
 		//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_LABEL);
 		//de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
-		de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
+		de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConCongestioneNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE
 		if(condizionata){
 			if(editMode) {
 				de.setType(DataElementType.CHECKBOX);
@@ -10698,7 +10698,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE);
 		//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_LABEL);
 		//de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
-		de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
+		de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE
 		if(condizionata && 
 				!TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(policy.getRisorsa()) && 
 				!TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA.equals(policy.getRisorsa()) 
@@ -10742,7 +10742,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME);
 		//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_LABEL);
 		//de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
-		de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE);
+		de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaStatoAllarmeNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOTE
 		if(condizionata && this.confCore.isConfigurazioneAllarmiEnabled()){
 			if(editMode) {
 				de.setType(DataElementType.CHECKBOX);
@@ -12863,7 +12863,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE);
 				//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_LABEL);
-				de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConCongestioneNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(modalitaCongestioneEnabled);
 				de.setValue(modalitaCongestioneEnabled+"");
@@ -12876,7 +12876,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO);
 				//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_LABEL);
-				de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
+				de.setLabelRight( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyApplicabilitaConDegradoPrestazionaleNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE
 				if(!TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(modalitaRisorsa) && 
 					!TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA.equals(modalitaRisorsa) 
 					){
@@ -12939,31 +12939,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					break;
 				case OCCUPAZIONE_BANDA:
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreOccupazioneDiBandaLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreOccupazioneDiBandaNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_NOTE
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreTempoMedioLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreTempoMedioNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_NOTE
 					break;
 				case TEMPO_COMPLESSIVO_RISPOSTA:
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreTempoComplessivoLabel" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreTempoComplessivoNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_NOTE
 					break;
 				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichiesteCompletateConSuccessoNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_NOTE
 					break;
 				case NUMERO_RICHIESTE_FALLITE:
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichiesteFalliteNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_NOTE
 					break;
 				case NUMERO_FAULT_APPLICATIVI:
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_FAULT_APPLICATIVI_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroFaultApplicativiNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_FAULT_APPLICATIVI_NOTE
 					break;
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					de.setLabel( ServletUtils.getLabelFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichieste" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE
-					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_O_FAULT_NOTE);
+					de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneControlloTrafficoPolicyActivePolicySogliaValoreNumeroRichiesteFalliteOFaultNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_O_FAULT_NOTE
 					break;
 				}
 			}
@@ -19857,7 +19857,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL);
 			if(tipoOperazione.equals(TipoOperazione.CHANGE) || (!first && allarme.getPlugin() != null) ){
 				de.setType(DataElementType.TEXT_EDIT);
-				de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL_NOTE);
+				de.setNote( ServletUtils.getNoteFromResourceBundle( session, "Configurazione.ParametroConfigurazioneAllarmiDestinatariEmailNote" ) );	//ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_DESTINATARI_EMAIL_NOTE
 			}
 			else {
 				de.setType(DataElementType.HIDDEN);
