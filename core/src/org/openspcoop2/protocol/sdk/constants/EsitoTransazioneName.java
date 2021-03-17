@@ -81,6 +81,7 @@ public enum EsitoTransazioneName implements Serializable{
 	OPERAZIONE_NON_INDIVIDUATA,
 	RICHIESTA_DUPLICATA,
 	RISPOSTA_DUPLICATA,
+	MESSAGE_BOX,
 	
 	CUSTOM;
 
@@ -133,6 +134,13 @@ public enum EsitoTransazioneName implements Serializable{
 				EsitoTransazioneName.ERRORE_VALIDAZIONE_RISPOSTA.equals(esitoTransactionName) ||
 				EsitoTransazioneName.RISPOSTA_DUPLICATA.equals(esitoTransactionName)
 				){
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isSavedInMessageBox(EsitoTransazioneName esitoTransactionName){
+		if(EsitoTransazioneName.MESSAGE_BOX.equals(esitoTransactionName)){
 			return true;
 		}
 		return false;

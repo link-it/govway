@@ -367,9 +367,9 @@ public class RegistroOpenSPCoopUtilities {
 				wsdlTrasformato = wsdlTrasformato.replaceFirst(definitionLine, definitionLine+key+"=\""+prefixForWSDL.get(key)+"\" ");
 			}
 			
-//			File f = File.createTempFile("aaaaaaaaaaa", ".tmp");
+//			File f = File.createTempFile("testErrore", ".tmp");
 //			org.openspcoop2.utils.resources.FileSystemUtilities.writeFile(f, wsdlTrasformato.getBytes());
-//			System.out.println("TEST PERCHE SCHIANTAAAAAAAA ["+f.getAbsolutePath()+"] ["+wsdlTrasformato+"]");
+//			System.out.println("TEST PERCHE SCHIANTA ["+f.getAbsolutePath()+"] ["+wsdlTrasformato+"]");
 			
 			// Costruisco wsdl logico contenente gli schemi
 			documentLogico = this.xmlUtils.newDocument(wsdlTrasformato.getBytes());

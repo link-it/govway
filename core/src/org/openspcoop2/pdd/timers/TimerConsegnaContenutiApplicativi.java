@@ -88,6 +88,8 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 	private Semaphore semaphore = null;
 	private InfoStatistics semaphore_statistics;
 
+	private Date lastCheckMessaggiDaRispedire = null;
+	
 	public TimerConsegnaContenutiApplicativi(ConfigurazioneCoda configurazioneCoda, MsgDiagnostico msgDiag,
 			RunnableLogger log, RunnableLogger logSql,
 			OpenSPCoop2Properties p,
@@ -246,6 +248,26 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, "nextRunnable");
 			Connection connectionDB = ((StateMessage)openspcoopstateGestore.getStatoRichiesta()).getConnectionDB();
 
+			boolean verificaPresenzaMessaggiDaRispedire = false;
+			boolean calcolaDataMinimaMessaggiRispedire = false;
+			if(this.lastCheckMessaggiDaRispedire==null) {
+				this.lastCheckMessaggiDaRispedire=DateManager.getDate();
+				verificaPresenzaMessaggiDaRispedire = true;
+				//System.out.println("VERIFICO PRIMA VOLTA!!!!");
+			}
+			else {
+				Date expired = new Date(DateManager.getTimeMillis()-(1000*this.configurazioneCoda.getNextMessages_consegnaFallita_intervalloControllo()));
+				if(this.lastCheckMessaggiDaRispedire.before(expired)) {
+					verificaPresenzaMessaggiDaRispedire = true;
+					this.lastCheckMessaggiDaRispedire=DateManager.getDate();
+					//System.out.println("VERIFICO POICHE SCADUTO!!!!");
+				}
+			}
+			if(verificaPresenzaMessaggiDaRispedire) {
+				calcolaDataMinimaMessaggiRispedire = this.configurazioneCoda.isNextMessages_consegnaFallita_calcolaDataMinimaRiconsegna();
+			}
+
+			
 			// GestoreMessaggi da Ricercare
 			GestoreMessaggi gestoreMsgSearch = new GestoreMessaggi(openspcoopstateGestore, true,this.logSql.getLog(),this.msgDiag, null);
 			
@@ -264,7 +286,9 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 					
 					this.logDebug(prefix+"Lock acquisito, ricerca nuovi threads da attivare (limit: "+limit+") ...");
 					List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX_priorita = 
-							gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByServiziApplicativPrioritari(limit,now,
+							gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByServiziApplicativPrioritari(limit,
+									verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire,
+									now,
 									this.propertiesReader.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife(),
 									this.debug,this.logSql,
 									this.configurazioneCoda.getName(),
@@ -323,7 +347,9 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 						
 						this.logDebug(prefix+"Lock acquisito, ricerca nuovi threads da attivare (limit: "+limitPriorita+") ...");
 						List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX_priorita = 
-								gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByPriorita(limitPriorita,now,
+								gestoreMsgSearch.readMessaggiDaRiconsegnareIntoBoxByPriorita(limitPriorita,
+										verificaPresenzaMessaggiDaRispedire, calcolaDataMinimaMessaggiRispedire,
+										now,
 										this.propertiesReader.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife(),
 										this.debug,this.logSql,
 										this.configurazioneCoda.getName(),

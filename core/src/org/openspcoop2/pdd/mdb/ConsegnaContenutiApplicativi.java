@@ -283,12 +283,19 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		// Costruisco eventuale oggetto TransazioneServerApplicativo
 		TransazioneApplicativoServer transazioneApplicativoServer = null;
 		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
+		Date oraRegistrazione = null;
 		if(behaviourConsegna!=null && behaviourConsegna.getIdTransazioneApplicativoServer()!=null) {
 			transazioneApplicativoServer = new TransazioneApplicativoServer();
 			transazioneApplicativoServer.setIdTransazione(behaviourConsegna.getIdTransazioneApplicativoServer().getIdTransazione());
 			transazioneApplicativoServer.setServizioApplicativoErogatore(behaviourConsegna.getIdTransazioneApplicativoServer().getServizioApplicativoErogatore());
 			transazioneApplicativoServer.setConnettoreNome(behaviourConsegna.getIdTransazioneApplicativoServer().getConnettoreNome());
-			transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
+			if(behaviourConsegna.getOraRegistrazioneTransazioneApplicativoServer()!=null) {
+				transazioneApplicativoServer.setDataRegistrazione(behaviourConsegna.getOraRegistrazioneTransazioneApplicativoServer());
+				oraRegistrazione = behaviourConsegna.getOraRegistrazioneTransazioneApplicativoServer();
+			}
+			else {
+				transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
+			}
 			String protocol = (String) consegnaContenutiApplicativiMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
 			transazioneApplicativoServer.setProtocollo(protocol);
 			transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
@@ -314,7 +321,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
 				}
 			}
-			esitoLib = this.engine_onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, msgDiag, transazioneApplicativoServer);
+			esitoLib = this.engine_onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, msgDiag, transazioneApplicativoServer, oraRegistrazione);
 		}finally {
 			if(loadBalancer!=null) {
 				try {
@@ -380,7 +387,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 	private EsitoLib engine_onMessage(IOpenSPCoopState openspcoopstate,
 			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
 			MsgDiagnostico msgDiag,
-			TransazioneApplicativoServer transazioneApplicativoServer) throws OpenSPCoopStateException {
+			TransazioneApplicativoServer transazioneApplicativoServer,
+			Date oraRegistrazione) throws OpenSPCoopStateException {
 
 		Date dataConsegna = DateManager.getDate();
 		
@@ -999,7 +1007,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(requestInfo==null || idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
-				consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+				consegnaMessagePrimaTrasformazione = msgRequest.getMessage(oraRegistrazione);
 				correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
 				if(requestInfo==null) {
 					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
@@ -3806,7 +3814,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				else{
 					gestoreEliminazioneDestinatario.setOneWayVersione11(oneWayVersione11);		
 				}
-				gestoreEliminazioneDestinatario.eliminaDestinatarioMessaggio(servizioApplicativo, null);
+				gestoreEliminazioneDestinatario.eliminaDestinatarioMessaggio(servizioApplicativo, null, oraRegistrazione);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"gestoreEliminazioneDestinatario.eliminaDestinatarioMessaggio("+servizioApplicativo+",null)");
 			}

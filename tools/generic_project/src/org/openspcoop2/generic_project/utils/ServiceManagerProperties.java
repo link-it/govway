@@ -36,6 +36,7 @@ public class ServiceManagerProperties {
 	private boolean generateDdl;
 	private boolean showSql;
 	private boolean automaticTransactionManagement = true;
+	private int secondsToRefreshConnection = -1;
 	
 	public String getDatabaseType() {
 		return this.databaseType;
@@ -68,5 +69,11 @@ public class ServiceManagerProperties {
 	public void setAutomaticTransactionManagement(
 			boolean automaticTransactionManagement) {
 		this.automaticTransactionManagement = automaticTransactionManagement;
+	}
+	public int getSecondsToRefreshConnection() {
+		return this.secondsToRefreshConnection;
+	}
+	public void setSecondsToRefreshConnection(int secondsToRefreshConnection) {
+		this.secondsToRefreshConnection = secondsToRefreshConnection;
 	}
 }

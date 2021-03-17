@@ -192,6 +192,13 @@ public class PddMonitorProperties {
 	public boolean isAttivoTransazioniIntegrationManager() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni_im_enabled", true, true));
 	}
+	public boolean isAttivoTransazioniEsitoMessageBoxIntegrationManager() throws Exception{
+		String v = this.appProperties.getProperty("transazioni.esitoMessageBox.enabled", false, true);
+		if(v!=null) {
+			return "true".equalsIgnoreCase(v);
+		}
+		return false;
+	}
 	public boolean isAttivoSqlFilterTransazioniIntegrationManager() throws Exception{
 		return this.isAttivoTransazioniIntegrationManager() || "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni_sql_im_enabled", true, true));
 	}

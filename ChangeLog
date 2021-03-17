@@ -1,3 +1,27 @@
+2021-03-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Rivisto il servizio di IntegrationManager per:
+	- ritornare identificativi, tramite il metodo 'getAllIdMessages', che contengano anche la data (formato: YYYYMMDDHHMMSS.sss@UUID);
+	- sono state ricondotte ad un'unica query il recupero di un messaggio tramite il metodo 'getMessage';
+	- aggiunto esito 'Disponibile in MessageBox' ricercabile tramite la console di monitoraggio;
+	- nel dettaglio di ogni transazione sono adesso disponibili le informazioni relative allo scaricamento e all'eliminazione
+	Sono inoltre state migliorate le query in generale di accesso al messaggio e di eliminazione. In ogni comando è stato aggiunta la condizione BEETWEEN per ottimizzare le query in presenza di partizioni.
+
+2021-03-16  Andrea Poli <apoli@link.it>
+
+	* [BatchStatistiche]
+	Aggiunto refresh della connessione ogni 300 secondi
+
+2021-03-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Nella funzionalità, ancora in fase di sviluppo, di presa in carico dei messaggi:
+	- i comandi che si occupavano di aggiornare lo stato della transazione sono stati ricondotti ad un unico comando di UPDATE con CASE e condizione di BEETWEEN per ottimizzare le query in presenza di partizioni
+	- i comandi che si occupano di selezionare i messaggi da consegnare sono stati rivisti al fine di smistare normalmente solamente i nuovi messaggi e 
+          ogni X secondi di provare a rispedire eventuali messaggio andati precedentemente in errore. 
+	  È stato inoltre aggiunta una query che calcola, in caso di rispedizione dei messaggi in errore, la data del più vecchio messaggio che può essere rispedito.
+
 2021-03-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

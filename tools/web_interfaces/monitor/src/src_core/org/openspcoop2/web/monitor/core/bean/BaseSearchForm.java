@@ -109,6 +109,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private Integer[] esitoDettaglioPersonalizzato;
 	private String esitoContesto;
 	private boolean escludiRichiesteScartate;
+	
+	private boolean attivoIntegrationManagerMessageBox;
 
 	private String servizioApplicativo;
 	private String idCorrelazioneApplicativa;
@@ -243,6 +245,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this._tipologiaRicercaEntrambiEnabled = govwayMonitorProperties.isVisualizzaVoceEntrambiFiltroRuolo();
 			this.isSearchFormEsitoConsegnaMultiplaEnabled = govwayMonitorProperties.isSearchFormEsitoConsegnaMultiplaEnabled();
 			this.escludiRichiesteScartate = govwayMonitorProperties.escludiRichiesteScartateDefaultValue();
+			this.attivoIntegrationManagerMessageBox = govwayMonitorProperties.isAttivoTransazioniEsitoMessageBoxIntegrationManager();
 		} catch (Exception e) {
 			BaseSearchForm.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}
@@ -270,6 +273,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);
 			this.escludiRichiesteScartate = govwayMonitorProperties.escludiRichiesteScartateDefaultValue();
+			this.attivoIntegrationManagerMessageBox = govwayMonitorProperties.isAttivoTransazioniEsitoMessageBoxIntegrationManager();
 		} catch (Exception e) {
 			BaseSearchForm.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}
@@ -1549,7 +1553,16 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoLabelFromValue(esito, statistiche));
 
 				boolean pddSpecific = EsitoTransazioneName.isPddSpecific(esitoTransactionName);
-				boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);				
+				boolean integrationManagerSavedInMessageBox = false;
+				if(pddSpecific) {
+					integrationManagerSavedInMessageBox = EsitoTransazioneName.isSavedInMessageBox(esitoTransactionName);
+					if(integrationManagerSavedInMessageBox && !this.attivoIntegrationManagerMessageBox) {
+						continue;
+					}
+				}
+				
+				boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);
+				
 				if ("spcoop".equals(this.tipoRicercaSPCoop)) {
 					if(pddSpecific || !integrationManagerSpecific){
 						list.add(si);
@@ -1594,7 +1607,16 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				SelectItem si = new SelectItem(esito.intValue(),esitiProperties.getEsitoLabel(esito));
 
 				boolean pddSpecific = EsitoTransazioneName.isPddSpecific(esitoTransactionName);
-				boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);				
+				boolean integrationManagerSavedInMessageBox = false;
+				if(pddSpecific) {
+					integrationManagerSavedInMessageBox = EsitoTransazioneName.isSavedInMessageBox(esitoTransactionName);
+					if(integrationManagerSavedInMessageBox && !this.attivoIntegrationManagerMessageBox) {
+						continue;
+					}
+				}
+				
+				boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);
+				
 				if ("spcoop".equals(this.tipoRicercaSPCoop)) {
 					if(pddSpecific || !integrationManagerSpecific){
 						list.add(si);

@@ -320,6 +320,14 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "integrationManager.enabled");
 	}
 	
+	public boolean isIntegrationManagerTraceMessageBoxOperationEnabled() throws UtilsException{
+		Boolean b = this.readBooleanProperty(false, "integrationManager.traceMessageBoxOperation.enabled");
+		if(b==null) {
+			return false;
+		}
+		return b;
+	}
+	
 	public Integer getSoggettiNomeMaxLength() throws UtilsException{
 		return this.readIntegerProperty(false, "soggetti.nome.maxLength");
 	}

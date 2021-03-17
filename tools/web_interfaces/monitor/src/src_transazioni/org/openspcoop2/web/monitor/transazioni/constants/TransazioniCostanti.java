@@ -131,8 +131,9 @@ public class TransazioniCostanti {
 	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_TERMINATA_CONSEGNA_APPLICATIVO_IM_TERMINATA_IM_LABEL_KEY = "transazioniApplicativoServer.elenco.applicativoIm.terminataConsegna.im.label";
 	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_MESSAGGIO_SCADUTO_LABEL_KEY = "transazioniApplicativoServer.elenco.messaggioScaduto.label";
 
-	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IM_TITOLO_LABEL_KEY = "transazioniApplicativoServer.elenco.im.titolo.label";
-
+	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IM_TITOLO_IN_PROGRESS_LABEL_KEY = "transazioniApplicativoServer.elenco.im.titolo.inProgress.label";
+	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IM_TITOLO_COMPLETATO_LABEL_KEY = "transazioniApplicativoServer.elenco.im.titolo.completato.label";
+	
 	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_DATA_IN_CODA_LABEL_KEY = "transazioniApplicativoServer.elenco.data.inCoda.label";
 	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_DATA_ULTIMA_CONSEGNA_LABEL_KEY = "transazioniApplicativoServer.elenco.data.ultimaConsegna.label";
 	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_DATA_ULTIMO_PRELIEVO_LABEL_KEY = "transazioniApplicativoServer.elenco.data.ultimoPrelievo.label";

@@ -120,6 +120,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	private OpenSPCoop2Properties propertiesReader;
 	private ClassNameProperties className;
 
+	private final static boolean useNewMethod = true; // compatta diverse query e usa le date
 
 	private boolean inizializzato = false;
 
@@ -668,7 +669,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
 
 			// Ricerca Messaggi
-			List<String> ids = null;
+			List<IdentificativoIM> ids = null;
 
 			GestoreMessaggi gestoreMessaggi = new GestoreMessaggi(stato, true, msgDiag,pddContext);
 
@@ -687,7 +688,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 			List<String> listResponse = new ArrayList<String>();
 			if(ids!=null && ids.size()>0){
-				listResponse.addAll(ids);
+				for (IdentificativoIM id : ids) {
+					if(this.propertiesReader.isIntegrationManagerIdWithDate()) {
+						listResponse.add(id.getIdWithDate());
+					}
+					else {
+						listResponse.add(id.getId());
+					}	
+				}
 			}
 
 			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
@@ -852,7 +860,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	 * @return un Message contenente il messaggio recuperato (e informazioni supplementari)
 	 * 
 	 */
-	private IntegrationManagerMessage getMessage_engine(Operazione tipoOperazione, String idMessaggio, boolean isRiferimentoMessaggio) throws IntegrationManagerException {
+	private IntegrationManagerMessage getMessage_engine(Operazione tipoOperazione, String idMessaggioParam, boolean isRiferimentoMessaggio) throws IntegrationManagerException {
 
 		// Timestamp
 		Date dataRichiestaOperazione = DateManager.getTimestamp();
@@ -874,6 +882,19 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		MsgDiagnostico msgDiag = getMsgDiagnostico();
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 
+		// Parse identificativo
+		String idMessaggio = null;
+		Date dataMessaggio = null;
+		if(this.propertiesReader.isIntegrationManagerIdWithDate()) {
+			IdentificativoIM idIM = IdentificativoIM.getIdentificativoIM(idMessaggioParam, logCore);
+			idMessaggio = idIM.getId();
+			dataMessaggio = idIM.getData();
+		}
+		else {
+			idMessaggio = idMessaggioParam;
+		}
+		
+		// Context
 		if(isRiferimentoMessaggio){
 			msgDiag.addKeyword(CostantiPdD.KEY_RIFERIMENTO_MESSAGGIO_RICHIESTA, idMessaggio);
 			msgDiag.addKeyword(CostantiPdD.KEY_RIFERIMENTO_MESSAGGIO_RISPOSTA, idMessaggio);
@@ -948,11 +969,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
 
-
-			// Check Esistenza Messaggio
-
+			// Gestore Messaggio
 			GestoreMessaggi gestoreMessaggi = new GestoreMessaggi(stato, true, idMessaggio, Costanti.INBOX, msgDiag, pddContext);
-			if(gestoreMessaggi.existsMessageForSIL(id_servizio_applicativo.getNome(),isRiferimentoMessaggio) == false){
+			MessaggioIM messaggioIM = null;
+			if(useNewMethod) {
+				messaggioIM = gestoreMessaggi.readMessageForSIL(id_servizio_applicativo.getNome(),isRiferimentoMessaggio, dataMessaggio);
+			}
+			
+			// Check Esistenza Messaggio
+			boolean exists = false;
+			if(useNewMethod) {
+				exists = messaggioIM!=null;
+			}
+			else { 
+				exists = gestoreMessaggi.existsMessageForSIL(id_servizio_applicativo.getNome(),isRiferimentoMessaggio); 
+			}
+			if(!exists){
 				msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 				msgDiag.logPersonalizzato("messaggioNonTrovato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.
@@ -961,7 +993,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 
 			// Check Autorizzazione all'utilizzo di IntegrationManager
-			boolean authorized = gestoreMessaggi.checkAutorizzazione(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
+			boolean authorized = false;
+			if(useNewMethod) {
+				authorized = messaggioIM.isAuthorized();
+			}
+			else { 
+				authorized = gestoreMessaggi.checkAutorizzazione(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
+			}
 			if(authorized==false){
 				msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
@@ -973,8 +1011,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			// GetIDMessaggio Richiesto
 			String idMessaggioRichiesto = idMessaggio;
 			try{
-				if(isRiferimentoMessaggio)
-					idMessaggioRichiesto = gestoreMessaggi.mapRiferimentoIntoIDBusta();
+				if(isRiferimentoMessaggio) {
+					if(useNewMethod) {
+						idMessaggioRichiesto = messaggioIM.getIdentificativoRichiesta();
+					}
+					else {
+						idMessaggioRichiesto = gestoreMessaggi.mapRiferimentoIntoIDBusta();
+					}
+				}
 			}catch(Exception e){
 				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("mappingRifMsgToId.nonRiuscito");
@@ -997,7 +1041,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				parametri.setServizio(true);
 				parametri.setAzione(true);
 				parametri.setCollaborazione(true);
-				busta = repository.getSomeValuesFromInBox(idMessaggioRichiesto,parametri);
+				busta = repository.getSomeValuesFromInBox(idMessaggioRichiesto,parametri,dataMessaggio);
 				if(busta!=null){
 					protocolHeaderInfo = new ProtocolHeaderInfo();
 					protocolHeaderInfo.setID(idMessaggioRichiesto);
@@ -1033,14 +1077,45 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 
 			// Indicazione se il messaggio deve essere sbustato
-			boolean sbustamento_soap = gestoreMessaggi.sbustamentoSOAP(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
-			boolean sbustamento_informazioni_protocollo =
-				gestoreMessaggi.sbustamentoInformazioniProtocollo(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
+			boolean sbustamento_soap = false;
+			if(useNewMethod) {
+				sbustamento_soap = messaggioIM.isSbustamentoSoap();
+			}
+			else {
+				sbustamento_soap = gestoreMessaggi.sbustamentoSOAP(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
+			}
+			boolean sbustamento_informazioni_protocollo = false;
+			if(useNewMethod) {
+				sbustamento_informazioni_protocollo = messaggioIM.isSbustamentoInformazioniProtocollo();
+			}
+			else {
+				sbustamento_informazioni_protocollo = gestoreMessaggi.sbustamentoInformazioniProtocollo(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
+			}
 
+			// TipoMessaggio
+			GestoreMessaggi gestoreMessaggiIdentificativoReale = null;
+			RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RICHIESTA;
+			try{
+				gestoreMessaggiIdentificativoReale = new GestoreMessaggi(stato, true, idMessaggioRichiesto, Costanti.INBOX, msgDiag, pddContext);
+				if(useNewMethod) {
+					ruoloMessaggio = messaggioIM.getRiferimentoMessaggio()==null ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
+				}
+				else {
+					ruoloMessaggio = gestoreMessaggiIdentificativoReale.getRiferimentoMessaggio()==null ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
+				}
+			}catch(Exception e){
+				logCore.error("Comprensione tipo messaggio non riuscita: "+e.getMessage(),e);
+			}
+			
 			// Messaggio
 			OpenSPCoop2Message consegnaMessage = null;
 			try{
-				consegnaMessage = gestoreMessaggi.getMessage(isRiferimentoMessaggio);	
+				if(useNewMethod) {
+					consegnaMessage = gestoreMessaggiIdentificativoReale.getMessage(dataMessaggio); // risoluzione riferimento messaggio gia' effettuata
+				}
+				else {
+					consegnaMessage = gestoreMessaggi.getMessage(isRiferimentoMessaggio);
+				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1048,16 +1123,6 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
 			}
 			
-			// TipoMessaggio
-			GestoreMessaggi gestoreMessaggiComprensione = null;
-			RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RICHIESTA;
-			try{
-				gestoreMessaggiComprensione = new GestoreMessaggi(stato, true, idMessaggioRichiesto, Costanti.INBOX, msgDiag, pddContext);
-				ruoloMessaggio = gestoreMessaggiComprensione.getRiferimentoMessaggio()==null ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
-			}catch(Exception e){
-				logCore.error("Comprensione tipo messaggio non riuscita: "+e.getMessage(),e);
-			}
-
 			// Eventuale sbustamento
 			if(sbustamento_informazioni_protocollo){
 				try{
@@ -1117,15 +1182,32 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			// Informazione da salvare
 			try {
-				MessaggioServizioApplicativo info = gestoreMessaggiComprensione.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
-				if(info!=null) {
-					TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
-					transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
-					transazioneApplicativoServer.setServizioApplicativoErogatore(info.getServizioApplicativo());
+				TransazioneApplicativoServer transazioneApplicativoServer = null;
+				String nomePorta = null;
+				if(useNewMethod) {
+					transazioneApplicativoServer = new TransazioneApplicativoServer();
+					transazioneApplicativoServer.setIdTransazione(messaggioIM.getIdTransazione());
+					transazioneApplicativoServer.setServizioApplicativoErogatore(messaggioIM.getServizioApplicativo());
+					transazioneApplicativoServer.setDataRegistrazione(messaggioIM.getOraRegistrazione());
 					transazioneApplicativoServer.setDataPrelievoIm(DateManager.getDate());
 					transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+					nomePorta = messaggioIM.getNomePorta();
+				}
+				else {
+					MessaggioServizioApplicativo info = gestoreMessaggiIdentificativoReale.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
+					if(info!=null) {
+						transazioneApplicativoServer = new TransazioneApplicativoServer();
+						transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
+						transazioneApplicativoServer.setServizioApplicativoErogatore(info.getServizioApplicativo());
+						transazioneApplicativoServer.setDataRegistrazione(info.getOraRegistrazione());
+						transazioneApplicativoServer.setDataPrelievoIm(DateManager.getDate());
+						transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+						nomePorta = info.getNomePorta();
+					}
+				}
+				if(transazioneApplicativoServer!=null) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(info.getNomePorta());
+					idPA.setNome(nomePorta);
 					try {
 						GestoreConsegnaMultipla.getInstance().safeUpdatePrelievoIM(transazioneApplicativoServer, idPA, stato);
 					}catch(Throwable t) {
@@ -1247,7 +1329,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	 * @param isRiferimentoMessaggio Indicazione se l'id e' un riferimento messaggio
 	 * 
 	 */
-	private void deleteMessage_engine(Operazione tipoOperazione,String idMessaggio,boolean isRiferimentoMessaggio) throws IntegrationManagerException {
+	private void deleteMessage_engine(Operazione tipoOperazione,String idMessaggioParam,boolean isRiferimentoMessaggio) throws IntegrationManagerException {
 
 		// Timestamp
 		Date dataRichiestaOperazione = DateManager.getTimestamp();
@@ -1269,6 +1351,19 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		MsgDiagnostico msgDiag = getMsgDiagnostico();
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 		
+		// Parse identificativo
+		String idMessaggio = null;
+		Date dataMessaggio = null;
+		if(this.propertiesReader.isIntegrationManagerIdWithDate()) {
+			IdentificativoIM idIM = IdentificativoIM.getIdentificativoIM(idMessaggioParam, logCore);
+			idMessaggio = idIM.getId();
+			dataMessaggio = idIM.getData();
+		}
+		else {
+			idMessaggio = idMessaggioParam;
+		}
+		
+		// Context
 		if(isRiferimentoMessaggio){
 			msgDiag.addKeyword(CostantiPdD.KEY_RIFERIMENTO_MESSAGGIO_RICHIESTA, idMessaggio);
 			msgDiag.addKeyword(CostantiPdD.KEY_RIFERIMENTO_MESSAGGIO_RISPOSTA, idMessaggio);
@@ -1347,10 +1442,22 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.addKeyword(CostantiPdD.KEY_PARAMETRI_OPERAZIONE_IM, param);
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
 
-			// Check Esistenza Messaggio
+			// Gestore Messaggio
 			gestoreMessaggi = new GestoreMessaggi(stato, true, idMessaggio, Costanti.INBOX, msgDiag, pddContext);
-
-			if(gestoreMessaggi.existsMessageForSIL(servizio_applicativo,isRiferimentoMessaggio) == false){
+			MessaggioIM messaggioIM = null;
+			if(useNewMethod) {
+				messaggioIM = gestoreMessaggi.readMessageForSIL(id_servizio_applicativo.getNome(),isRiferimentoMessaggio, dataMessaggio);
+			}
+			
+			// Check Esistenza Messaggio
+			boolean exists = false;
+			if(useNewMethod) {
+				exists = messaggioIM!=null;
+			}
+			else { 
+				exists = gestoreMessaggi.existsMessageForSIL(servizio_applicativo,isRiferimentoMessaggio); 
+			}
+			if(!exists){
 				msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 				msgDiag.logPersonalizzato("messaggioNonTrovato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_407_INTEGRATION_MANAGER_MSG_RICHIESTO_NON_TROVATO.
@@ -1359,7 +1466,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 
 			// Check Autorizzazione all'utilizzo di IntegrationManager
-			boolean authorized = gestoreMessaggi.checkAutorizzazione(servizio_applicativo,isRiferimentoMessaggio);
+			boolean authorized = false;
+			if(useNewMethod) {
+				authorized = messaggioIM.isAuthorized();
+			}
+			else { 
+				authorized = gestoreMessaggi.checkAutorizzazione(servizio_applicativo,isRiferimentoMessaggio);
+			}
 			if(authorized==false){
 				msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
@@ -1371,8 +1484,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			//	GetIDMessaggio Richiesto
 			String idMessaggioRichiesto = idMessaggio;
 			try{
-				if(isRiferimentoMessaggio)
-					idMessaggioRichiesto = gestoreMessaggi.mapRiferimentoIntoIDBusta();
+				if(isRiferimentoMessaggio) {
+					if(useNewMethod) {
+						idMessaggioRichiesto = messaggioIM.getIdentificativoRichiesta();
+					}
+					else {
+						idMessaggioRichiesto = gestoreMessaggi.mapRiferimentoIntoIDBusta();
+					}
+				}
 			}catch(Exception e){
 				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("mappingRifMsgToId.nonRiuscito");
@@ -1394,15 +1513,32 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			// Aggiorno la transazione prima di eliminare il messaggio
 			try {
-				MessaggioServizioApplicativo info = gestoreEliminazione.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
-				if(info!=null) {
-					TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
-					transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
-					transazioneApplicativoServer.setServizioApplicativoErogatore(info.getServizioApplicativo());
+				TransazioneApplicativoServer transazioneApplicativoServer = null;
+				String nomePorta = null;
+				if(useNewMethod) {
+					transazioneApplicativoServer = new TransazioneApplicativoServer();
+					transazioneApplicativoServer.setIdTransazione(messaggioIM.getIdTransazione());
+					transazioneApplicativoServer.setServizioApplicativoErogatore(messaggioIM.getServizioApplicativo());
+					transazioneApplicativoServer.setDataRegistrazione(messaggioIM.getOraRegistrazione());
 					transazioneApplicativoServer.setDataEliminazioneIm(DateManager.getDate());
 					transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+					nomePorta = messaggioIM.getNomePorta();
+				}
+				else {
+					MessaggioServizioApplicativo info = gestoreEliminazione.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
+					if(info!=null) {
+						transazioneApplicativoServer = new TransazioneApplicativoServer();
+						transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
+						transazioneApplicativoServer.setServizioApplicativoErogatore(info.getServizioApplicativo());
+						transazioneApplicativoServer.setDataRegistrazione(info.getOraRegistrazione());
+						transazioneApplicativoServer.setDataEliminazioneIm(DateManager.getDate());
+						transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+						nomePorta = info.getNomePorta();
+					}
+				}
+				if(transazioneApplicativoServer!=null) {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(info.getNomePorta());
+					idPA.setNome(nomePorta);
 					try {
 						GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato);
 					}catch(Throwable t) {
@@ -1415,7 +1551,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			
 			// Elimino Messaggio
 			try{
-				gestoreEliminazione.eliminaDestinatarioMessaggio(servizio_applicativo, gestoreEliminazione.getRiferimentoMessaggio());
+				gestoreEliminazione.eliminaDestinatarioMessaggio(servizio_applicativo, gestoreEliminazione.getRiferimentoMessaggio(), dataMessaggio);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizio_applicativo+","+idMessaggio+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1626,7 +1762,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			// Effettuo ricerca ID DEL SERVIZIO APPLICATIVO
 			GestoreMessaggi gestoreSearchID = new GestoreMessaggi(stato, true,msgDiag,pddContext);
 
-			List<String> ids =  gestoreSearchID.getIDMessaggi_ServizioApplicativo(id_servizio_applicativo.getNome());      
+			List<IdentificativoIM> ids =  gestoreSearchID.getIDMessaggi_ServizioApplicativo(id_servizio_applicativo.getNome());      
 			if(ids.size() == 0){
 				msgDiag.logPersonalizzato("messaggiNonPresenti");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.
@@ -1635,12 +1771,30 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 
 			// Creo i vari gestori di messaggi
+			List<MessaggioIM> messaggiIM = new ArrayList<MessaggioIM>();
 			for(int i=0; i<ids.size(); i++){
-				String idMessaggio = ids.get(i);
+				IdentificativoIM idIM = ids.get(i);
+				String idMessaggio = idIM.getId();
+				Date dataMessaggio = idIM.getData();
+				
 				GestoreMessaggi gestoreMessaggi = new GestoreMessaggi(stato, true,idMessaggio,Costanti.INBOX,msgDiag,pddContext);
-
+				MessaggioIM messaggioIM = null;
+				if(useNewMethod) {
+					messaggioIM = gestoreMessaggi.readMessageForSIL(id_servizio_applicativo.getNome(), dataMessaggio);
+					if(messaggioIM!=null) {
+						messaggiIM.add(messaggioIM);
+					}
+				}
+				
 				// Check Esistenza Messaggio
-				if(gestoreMessaggi.existsMessageForSIL(id_servizio_applicativo.getNome()) == false){
+				boolean exists = false;
+				if(useNewMethod) {
+					exists = messaggioIM!=null;
+				}
+				else { 
+					exists = gestoreMessaggi.existsMessageForSIL(id_servizio_applicativo.getNome()); 
+				}
+				if(!exists){
 					msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_TRANSACTION_MANAGER, idMessaggio);
 					msgDiag.logPersonalizzato("messaggioNonTrovato");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1649,7 +1803,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}
 
 				// Check Autorizzazione all'utilizzo di IntegrationManager
-				boolean authorized = gestoreMessaggi.checkAutorizzazione(id_servizio_applicativo.getNome());
+				boolean authorized = false;
+				if(useNewMethod) {
+					authorized = messaggioIM.isAuthorized();
+				}
+				else { 
+					authorized = gestoreMessaggi.checkAutorizzazione(id_servizio_applicativo.getNome());
+				}
 				if(authorized==false){
 					msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA
@@ -1662,12 +1822,68 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			// Elimino i messaggi
 			while(ids.size() > 0){
 				// Elimino Messaggio
-				String idMessaggio = ids.remove(0);
+				IdentificativoIM idIM = ids.remove(0);
+				String idMessaggio = idIM.getId();
+				Date dataMessaggio = idIM.getData();
+				MessaggioIM messaggioIM = null;
+				if(useNewMethod) {
+					messaggioIM = messaggiIM.remove(0);
+				}
+				
+				// Gestore Messaggio da eliminare
+				GestoreMessaggi gestoreEliminazione = null;
 				try{
 					//	Elimino accesso daPdD
 					//	GestoreMessaggi gestoreEliminazione = new GestoreMessaggi(stato, true,idMessaggio,Costanti.INBOX,this.msgDiag);
-					GestoreMessaggi gestoreEliminazione = new GestoreMessaggi(stato, true,idMessaggio,Costanti.INBOX,msgDiag,pddContext);
-					gestoreEliminazione.eliminaDestinatarioMessaggio(id_servizio_applicativo.getNome(), gestoreEliminazione.getRiferimentoMessaggio());
+					gestoreEliminazione = new GestoreMessaggi(stato, true,idMessaggio,Costanti.INBOX,msgDiag,pddContext);
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+id_servizio_applicativo.getNome()+","+idMessaggio+")");
+					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo,
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
+				}
+				
+				// Aggiorno la transazione prima di eliminare il messaggio
+				try {
+					TransazioneApplicativoServer transazioneApplicativoServer = null;
+					String nomePorta = null;
+					if(useNewMethod) {
+						transazioneApplicativoServer = new TransazioneApplicativoServer();
+						transazioneApplicativoServer.setIdTransazione(messaggioIM.getIdTransazione());
+						transazioneApplicativoServer.setServizioApplicativoErogatore(messaggioIM.getServizioApplicativo());
+						transazioneApplicativoServer.setDataRegistrazione(messaggioIM.getOraRegistrazione());
+						transazioneApplicativoServer.setDataEliminazioneIm(DateManager.getDate());
+						transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+						nomePorta = messaggioIM.getNomePorta();
+					}
+					else {				
+						MessaggioServizioApplicativo info = gestoreEliminazione.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
+						if(info!=null) {
+							transazioneApplicativoServer = new TransazioneApplicativoServer();
+							transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
+							transazioneApplicativoServer.setServizioApplicativoErogatore(info.getServizioApplicativo());
+							transazioneApplicativoServer.setDataRegistrazione(info.getOraRegistrazione());
+							transazioneApplicativoServer.setDataEliminazioneIm(DateManager.getDate());
+							transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+							nomePorta = info.getNomePorta();
+						}
+					}
+					if(transazioneApplicativoServer!=null) {
+						IDPortaApplicativa idPA = new IDPortaApplicativa();
+						idPA.setNome(nomePorta);
+						try {
+							GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato);
+						}catch(Throwable t) {
+							logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+						}
+					}
+				}catch(Exception e){
+					logCore.error("Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
+				}
+				
+				// Elimino Messaggio
+				try{
+					gestoreEliminazione.eliminaDestinatarioMessaggio(id_servizio_applicativo.getNome(), gestoreEliminazione.getRiferimentoMessaggio(), dataMessaggio);
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+id_servizio_applicativo.getNome()+","+idMessaggio+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

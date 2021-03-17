@@ -157,12 +157,18 @@ public class DatabaseProperties {
 		return Boolean.parseBoolean(this.getProperty(DatabaseProperties.PROP_AUTO_COMMIT, true, false));
 	}
 	
+	private static final String PROP_SECONDS_TO_REFRESH_CONNECTION = "db.secondsToRefreshConnection";
+	public int getSecondsToRefreshConnection() throws Exception {
+		return Integer.parseInt(this.getProperty(DatabaseProperties.PROP_SECONDS_TO_REFRESH_CONNECTION, true, false));
+	}
+	
 	public ServiceManagerProperties getServiceManagerProperties() throws Exception{
 		ServiceManagerProperties sm = new ServiceManagerProperties();
 		sm.setDatabaseType(this.getTipoDatabase());
 		sm.setShowSql(this.isShowSql());
 		sm.setGenerateDdl(this.isGenerateDDL());
 		sm.setAutomaticTransactionManagement(this.isAutoCommit());
+		sm.setSecondsToRefreshConnection(this.getSecondsToRefreshConnection());
 		return sm;
 	}
 	

@@ -36,6 +36,7 @@ public class MessaggioServizioApplicativo {
 	private boolean sbustamentoSoap;
 	private boolean sbustamentoInformazioniProtocollo;
 	private String nomePorta;
+	private Date oraRegistrazione;
 	
 	private boolean attesaEsitoTransazioneCapostipite;
 	private Date dataPresaInConsegna;
@@ -96,5 +97,11 @@ public class MessaggioServizioApplicativo {
 	public void setSbustamentoInformazioniProtocollo(
 			boolean sbustamentoInformazioniProtocollo) {
 		this.sbustamentoInformazioniProtocollo = sbustamentoInformazioniProtocollo;
+	}
+	public Date getOraRegistrazione() {
+		return this.oraRegistrazione;
+	}
+	public void setOraRegistrazione(Date oraRegistrazione) {
+		this.oraRegistrazione = oraRegistrazione;
 	}
 }

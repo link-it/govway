@@ -31,6 +31,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -439,7 +440,7 @@ public class SavedMessage implements java.io.Serializable {
 	 * @return il messaggio precedentemente salvato
 	 * 
 	 */
-	public OpenSPCoop2Message read(boolean isRichiesta, boolean portaDiTipoStateless) throws UtilsException {
+	public OpenSPCoop2Message read(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione) throws UtilsException {
 
 		if( !portaDiTipoStateless ) {
 
@@ -463,13 +464,29 @@ public class SavedMessage implements java.io.Serializable {
 					query.append("select CONTENT_TYPE,MSG_BYTES,MSG_CONTEXT ");
 				query.append("from ");
 				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
-				query.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
+				query.append(" WHERE ");
+				if(oraRegistrazione!=null) {
+					query.append("(ORA_REGISTRAZIONE BETWEEN ? AND ?) AND ");
+				}
+				query.append("ID_MESSAGGIO = ? AND TIPO = ?");
+				
 				pstmt =  connectionDB.prepareStatement(query.toString());
-				pstmt.setString(1,this.idMessaggio);
+				int index = 1;
+				
+				Timestamp leftValue = null;
+				Timestamp rightValue = null;
+				if(oraRegistrazione!=null) {
+					leftValue = new Timestamp(oraRegistrazione.getTime() - (1000*60*5));
+					rightValue = new Timestamp(oraRegistrazione.getTime() + (1000*60*5));
+					pstmt.setTimestamp(index++,leftValue);
+					pstmt.setTimestamp(index++,rightValue);
+				}
+				
+				pstmt.setString(index++,this.idMessaggio);
 				if(Costanti.INBOX.equals(this.box))
-					pstmt.setString(2,Costanti.INBOX);
+					pstmt.setString(index++,Costanti.INBOX);
 				else
-					pstmt.setString(2,Costanti.OUTBOX);
+					pstmt.setString(index++,Costanti.OUTBOX);
 				rs = pstmt.executeQuery();
 				if(rs==null){
 					String errorMsg = "ResultSet is null?";		

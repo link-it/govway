@@ -156,6 +156,21 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		return null;
 	}
 
+	public Long getLatenzaGestioneMessageBox() {
+		if(this.dataRegistrazione!=null && this.consegnaIntegrationManager) {
+			if(this.dataPrimoPrelievoIm!=null) {
+				return this.dataPrimoPrelievoIm.getTime() - this.dataRegistrazione.getTime();
+			}	
+			else if(this.dataPrelievoIm!=null) {
+				return this.dataPrelievoIm.getTime() - this.dataRegistrazione.getTime();
+			}
+			else {
+				return null;
+			}
+		}
+		return null;
+	}
+	
 	public boolean isConsegnaApplicativo() {
 		return this.consegnaTrasparente && !this.consegnaIntegrationManager;
 	}
@@ -318,7 +333,12 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		}
 		
 		if(this.isPrelievoIM()) {
-			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IM_TITOLO_LABEL_KEY);
+			if(this.dataEliminazioneIm==null) {
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IM_TITOLO_IN_PROGRESS_LABEL_KEY);
+			}
+			else {
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IM_TITOLO_COMPLETATO_LABEL_KEY);
+			}
 		}
 		
 		return "";

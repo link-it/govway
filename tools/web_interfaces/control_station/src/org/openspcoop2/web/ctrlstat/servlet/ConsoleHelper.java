@@ -11801,6 +11801,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 					
 					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					boolean integrationManagerSavedInMessageBox = EsitoTransazioneName.isSavedInMessageBox(esitoTransactionName);		
 										
 					de = new DataElement();
 					if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName)) {
@@ -11813,7 +11814,11 @@ public class ConsoleHelper implements IConsoleHelper {
 	//				de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
 					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
-						if(integrationManagerSpecific && this.isModalitaStandard()) {
+						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
+						}
+						else if(integrationManagerSavedInMessageBox && (!this.core.isIntegrationManagerEnabled())) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(attivi.contains((esito+""))+"");
 						}
@@ -11939,7 +11944,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	//						de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
 					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
-						if(integrationManagerSpecific && this.isModalitaStandard()) {
+						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(attivi.contains((esito+""))+"");
 						}
@@ -12007,7 +12012,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	//						de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
 					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
-						if(integrationManagerSpecific && this.isModalitaStandard()) {
+						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(attivi.contains((esito+""))+"");
 						}
@@ -12112,7 +12117,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	//				de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
 					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
-						if(integrationManagerSpecific && this.isModalitaStandard()) {
+						if(integrationManagerSpecific && (this.isModalitaStandard() || !this.core.isIntegrationManagerTraceMessageBoxOperationEnabled())) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(attivi.contains((esito+""))+"");
 						}

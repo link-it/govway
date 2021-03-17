@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.timers;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -124,6 +125,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 		String servizioApplicativo = this.messaggioServizioApplicativo.getServizioApplicativo();
 		String idMsgDaInoltrare = this.messaggioServizioApplicativo.getIdMessaggio();
 		String identificativo = "redelivery_"+idTransazione+"_"+servizioApplicativo+"_"+idMsgDaInoltrare;
+		Date oraRegistrazione = this.messaggioServizioApplicativo.getOraRegistrazione();
 		
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 		PdDContext pddContext = new PdDContext();
@@ -235,6 +237,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 					}
 				}
 				behaviourMsg.setIdTransazioneApplicativoServer(idTransazioneApplicativoServer);
+				behaviourMsg.setOraRegistrazioneTransazioneApplicativoServer(oraRegistrazione);
 				consegnaMSG.setBehaviour(behaviourMsg);
 	
 				

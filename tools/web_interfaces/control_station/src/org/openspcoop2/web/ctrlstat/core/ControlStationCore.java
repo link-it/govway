@@ -791,8 +791,12 @@ public class ControlStationCore {
 	
 	/** IntegrationManager */
 	private boolean isIntegrationManagerEnabled;
+	private boolean isIntegrationManagerTraceMessageBoxOperationEnabled;
 	public boolean isIntegrationManagerEnabled() {
 		return this.isIntegrationManagerEnabled;
+	}
+	public boolean isIntegrationManagerTraceMessageBoxOperationEnabled() {
+		return this.isIntegrationManagerTraceMessageBoxOperationEnabled;
 	}
 	
 	/** Soggetti */
@@ -2373,6 +2377,7 @@ public class ControlStationCore {
 		
 		/** IntegrationManager */
 		this.isIntegrationManagerEnabled = core.isIntegrationManagerEnabled;
+		this.isIntegrationManagerTraceMessageBoxOperationEnabled = core.isIntegrationManagerTraceMessageBoxOperationEnabled;
 		
 		/** Soggetti */
 		this.soggettiNomeMaxLength = core.soggettiNomeMaxLength;
@@ -2767,6 +2772,7 @@ public class ControlStationCore {
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
+			this.isIntegrationManagerTraceMessageBoxOperationEnabled = consoleProperties.isIntegrationManagerTraceMessageBoxOperationEnabled();
 			this.soggettiNomeMaxLength = consoleProperties.getSoggettiNomeMaxLength();
 			this.isApiResourcePathValidatorEnabled = consoleProperties.isApiResourcePathValidatorEnabled();
 			this.isApiResourceHttpMethodAndPathQualsiasiEnabled = consoleProperties.isApiResourceHttpMethodAndPathQualsiasiEnabled();

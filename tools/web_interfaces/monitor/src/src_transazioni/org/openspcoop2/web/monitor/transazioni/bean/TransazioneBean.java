@@ -1061,6 +1061,18 @@ public class TransazioneBean extends Transazione{
 			return false;
 		}
 	}
+	
+	public boolean isSavedInMessageBox() {
+		try{
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
+			String name = esitiProperties.getEsitoName(this.getEsito());
+			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
+			return EsitoTransazioneName.isSavedInMessageBox(esitoName);
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il check saved in message box: "+e.getMessage(),e);
+			return false;
+		}
+	}
 
 	public void setConsegnaMultipla(boolean consegnaMultipla) {}
 	

@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -63,6 +64,9 @@ public class EJBUtilsMessaggioInConsegna {
 	private String nomePorta;
 	
 	private OpenSPCoop2Message requestMessageNullable;
+
+	private Date oraRegistrazioneMessaggio;
+	
 
 	public List<String> getServiziApplicativi() {
 		return this.serviziApplicativi;
@@ -217,5 +221,12 @@ public class EJBUtilsMessaggioInConsegna {
 	public void setRequestMessageNullable(OpenSPCoop2Message requestMessageNullable) {
 		this.requestMessageNullable = requestMessageNullable;
 	}
-	
+
+	public Date getOraRegistrazioneMessaggio() {
+		return this.oraRegistrazioneMessaggio;
+	}
+
+	public void setOraRegistrazioneMessaggio(Date oraRegistrazioneMessaggio) {
+		this.oraRegistrazioneMessaggio = oraRegistrazioneMessaggio;
+	}
 }

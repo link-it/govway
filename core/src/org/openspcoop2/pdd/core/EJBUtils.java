@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
@@ -1585,8 +1586,13 @@ public class EJBUtils {
 						
 					}
 					else{
-												
-						repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),true);
+						
+						if(stateless){
+							repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),repositoryBuste.isRegistrazioneInCorso());
+						}
+						else{
+							repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),true);
+						}
 					
 						// Forzo oneway1.1 per farlo registrare anche se siamo in stateless puro
 						boolean originalValue = gestoreMessaggi.isOneWayVersione11();
@@ -1717,7 +1723,8 @@ public class EJBUtils {
 						null,null,stateless,this.openSPCoopState,false,
 						null,
 						EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
-						behaviour!=null ? behaviour.getLoadBalancer() : null, false);
+						behaviour!=null ? behaviour.getLoadBalancer() : null, false,
+						null);
 			}
 			else{
 				
@@ -1738,7 +1745,8 @@ public class EJBUtils {
 							null,null,stateless,this.openSPCoopState,false,
 							null,
 							EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
-							null, false);
+							null, false,
+							null);
 				}
 				
 				List<BehaviourForwardTo> forwardTo = behaviour.getForwardTo();
@@ -1798,7 +1806,7 @@ public class EJBUtils {
 						Busta bustaNewMessaggio = behaviourForwardTo.getBusta();
 						if(bustaNewMessaggio==null){
 							bustaNewMessaggio = busta.clone();
-							bustaNewMessaggio.setID("gw-"+i+"-"+busta.getID());
+							bustaNewMessaggio.setID(CostantiPdD.PREFIX_MESSAGGIO_CONNETTORE_MULTIPLO+i+CostantiPdD.SEPARATOR_MESSAGGIO_CONNETTORE_MULTIPLO+busta.getID());
 						}
 						bustaNewMessaggio.setRiferimentoMessaggio(busta.getID()); // per il timer
 						bustaNewMessaggio.addProperty(CostantiPdD.KEY_DESCRIZIONE_BEHAVIOUR, behaviourForwardTo.getDescription());
@@ -1812,7 +1820,7 @@ public class EJBUtils {
 						GestoreMessaggi gestoreNewMessaggio = new GestoreMessaggi(stateNuoviMessaggi,true, bustaNewMessaggio.getID(),
 								Costanti.INBOX,this.msgDiag,this.pddContext);
 						RepositoryBuste repositoryBusteNewMessaggio = new RepositoryBuste(stateNuoviMessaggi.getStatoRichiesta(),true, this.protocolFactory);
-						_forceSaveMessage(this.propertiesReader, gestoreNewMessaggio, null, bustaNewMessaggio, richiestaApplicativa, repositoryBusteNewMessaggio,
+						Timestamp oraRegistrazione = _forceSaveMessage(this.propertiesReader, gestoreNewMessaggio, null, bustaNewMessaggio, richiestaApplicativa, repositoryBusteNewMessaggio,
 								behaviourForwardTo.getMessage(),stateNuoviMessaggi); // per eventuale thread riconsegna in caso di errore
 	//					if(stateless){
 	//						((OpenSPCoopStateless)this.openSPCoopState).setRichiestaMsg(behaviourForwardTo.getMessage());
@@ -1824,7 +1832,8 @@ public class EJBUtils {
 								busta.getID(),behaviourForwardTo.getConfig(), stateless, stateNuoviMessaggi, (stateBehaviour_newConnection!=null),
 								behaviourForwardTo.getMessage(),
 								!EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI, attendiEsitoTransazioneSincronaPrimaDiSpedire,
-								null, true);
+								null, true,
+								oraRegistrazione);
 						
 						// Applico modifiche effettuate dal modulo Consegna
 						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
@@ -1880,7 +1889,8 @@ public class EJBUtils {
 			boolean stateless,IOpenSPCoopState state,boolean releseaResource,
 			OpenSPCoop2Message requestMessageNullable,
 			boolean spedizioneConsegnaContenuti, boolean attendiEsitoTransazioneSincronaPrimaDiSpedire,
-			BehaviourLoadBalancer loadBalancer, boolean presaInCarico) throws Exception{
+			BehaviourLoadBalancer loadBalancer, boolean presaInCarico,
+			Timestamp dataRegistrazioneMessaggio) throws Exception{
 		
 		// Eventuale indicazione per la registrazione via stateless
 		boolean registrazioneMessaggioPerStatelessEffettuata = false;
@@ -1937,7 +1947,9 @@ public class EJBUtils {
 				priorita = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRIORITA_DEFAULT;
 			}
 			
+			boolean gestioneTramiteConnettoriMultipli = false;
 			if(idBustaPreBehaviourNewMessage!=null || behaviourForwardToConfiguration!=null) {
+				gestioneTramiteConnettoriMultipli = true;
 				ConsegnaContenutiApplicativiBehaviourMessage behaviourMsg = new ConsegnaContenutiApplicativiBehaviourMessage();
 				behaviourMsg.setIdMessaggioPreBehaviour(idBustaPreBehaviourNewMessage);
 				behaviourMsg.setBehaviourForwardToConfiguration(behaviourForwardToConfiguration);
@@ -2072,7 +2084,14 @@ public class EJBUtils {
 
 			
 			// oraRegistrazione
-			Timestamp oraRegistrazioneMessaggio = gestoreMessaggi.getOraRegistrazioneMessaggio();
+						
+			Timestamp oraRegistrazioneMessaggio = null;
+			if(dataRegistrazioneMessaggio!=null) {
+				oraRegistrazioneMessaggio = dataRegistrazioneMessaggio;
+			}
+			else {
+				oraRegistrazioneMessaggio = gestoreMessaggi.getOraRegistrazioneMessaggio();
+			}
 
 			
 			// Registro Destinatario
@@ -2093,6 +2112,23 @@ public class EJBUtils {
 			mapTipoConsegna.put(servizioApplicativo, tipoConsegna);
 			mapOraRegistrazione.put(servizioApplicativo, oraRegistrazioneMessaggio);
 			mapConsegnaContenutiApplicativiMessage.put(servizioApplicativo, consegnaMSG);
+			
+			if(getMessageAbilitato && !servizioApplicativoConConnettore && !gestioneTramiteConnettoriMultipli) {
+				ConsegnaContenutiApplicativiBehaviourMessage behaviourMsg = new ConsegnaContenutiApplicativiBehaviourMessage();
+				//behaviourMsg.setIdMessaggioPreBehaviour(idBustaPreBehaviourNewMessage);
+				//behaviourMsg.setBehaviourForwardToConfiguration(behaviourForwardToConfiguration);
+				IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
+				idTransazioneApplicativoServer.setIdTransazione(PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.pddContext));
+				idTransazioneApplicativoServer.setServizioApplicativoErogatore(servizioApplicativo);
+				idTransazioneApplicativoServer.setConnettoreNome(CostantiConfigurazione.NOME_CONNETTORE_DEFAULT);
+				behaviourMsg.setIdTransazioneApplicativoServer(idTransazioneApplicativoServer);
+				consegnaMSG.setBehaviour(behaviourMsg);		
+				// aggiorno pddContext per evitare che eventuali salvataggi influenzino la transazione
+				consegnaMSG.setPddContext(this.pddContext!=null ? (PdDContext) this.pddContext.clone() : null);
+				if(this.pddContext!=null) {
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.MESSAGE_BOX, "true");
+				}
+			}
 		}
 		
 		
@@ -2136,6 +2172,8 @@ public class EJBUtils {
 		messaggiInConsegna.setNomePorta(nomePorta);
 		
 		messaggiInConsegna.setRequestMessageNullable(requestMessageNullable);
+		
+		messaggiInConsegna.setOraRegistrazioneMessaggio(dataRegistrazioneMessaggio);
 		
 		if(attendiEsitoTransazioneSincronaPrimaDiSpedire) {
 			this.pddContext.addObject(CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE, messaggiInConsegna);
@@ -2186,6 +2224,8 @@ public class EJBUtils {
 		
 		OpenSPCoop2Message requestMessageNullable = message.getRequestMessageNullable();
 		
+		Date dataRegistrazioneMessaggio = message.getOraRegistrazioneMessaggio();
+		
 		// Fase di Consegna
 		for (String servizioApplicativo : serviziApplicativi) {
 			
@@ -2223,7 +2263,12 @@ public class EJBUtils {
 				transazioneApplicativoServer.setIdTransazione(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getIdTransazione());
 				transazioneApplicativoServer.setServizioApplicativoErogatore(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getServizioApplicativoErogatore());
 				transazioneApplicativoServer.setConnettoreNome(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getConnettoreNome());
-				transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
+				if(dataRegistrazioneMessaggio!=null) {
+					transazioneApplicativoServer.setDataRegistrazione(dataRegistrazioneMessaggio);
+				}
+				else {
+					transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
+				}
 				transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
 				transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
 				if(requestMessageNullable!=null) {
@@ -2330,7 +2375,7 @@ public class EJBUtils {
 	}
 
 
-	private static void _forceSaveMessage(OpenSPCoop2Properties propertiesReader, GestoreMessaggi gestoreMessaggi, Timestamp oraRegistrazione,
+	private static java.sql.Timestamp _forceSaveMessage(OpenSPCoop2Properties propertiesReader, GestoreMessaggi gestoreMessaggi, Timestamp oraRegistrazione,
 			Busta busta,RichiestaApplicativa richiestaApplicativa,RepositoryBuste repositoryBuste,
 			OpenSPCoop2Message message,IOpenSPCoopState state) throws Exception{
 		java.sql.Timestamp oraRegistrazioneT = gestoreMessaggi.registraInformazioniMessaggio_statelessEngine(oraRegistrazione, 
@@ -2365,6 +2410,7 @@ public class EJBUtils {
 				}
 			}
 		}
+		return oraRegistrazioneT;
 	}
 
 

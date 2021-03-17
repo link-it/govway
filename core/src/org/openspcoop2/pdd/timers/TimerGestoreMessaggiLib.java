@@ -458,6 +458,7 @@ public class TimerGestoreMessaggiLib  {
 												TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
 												transazioneApplicativoServer.setIdTransazione(messaggioServizioApplicativo.getIdTransazione());
 												transazioneApplicativoServer.setServizioApplicativoErogatore(messaggioServizioApplicativo.getServizioApplicativo());
+												transazioneApplicativoServer.setDataRegistrazione(messaggioServizioApplicativo.getOraRegistrazione());
 												transazioneApplicativoServer.setDataMessaggioScaduto(DateManager.getDate());
 												transazioneApplicativoServer.setProtocollo(this.propertiesReader.getDefaultProtocolName()); // non è importante per impostare la scadenza
 												IDPortaApplicativa idPA = new IDPortaApplicativa();

@@ -215,6 +215,15 @@ public class DAOFactoryProperties {
 		}
 		return Boolean.parseBoolean(v);
 	}
+	
+	private static final String PROP_SECONDS_TO_REFRESH_CONNECTION = "db.secondsToRefreshConnection";
+	public int getSecondsToRefreshConnection(IProjectInfo tipoDAO) throws Exception {
+		String v = this.getProperty(PREFIX_FACTORY+tipoDAO.getProjectName()+"."+PROP_SECONDS_TO_REFRESH_CONNECTION, false, false);
+		if(v==null){
+			v = this.getProperty(PROP_SECONDS_TO_REFRESH_CONNECTION, true, false);
+		}
+		return Integer.parseInt(v);
+	}
 
 	public ServiceManagerProperties getServiceManagerProperties(IProjectInfo tipoDAO) throws Exception{
 		ServiceManagerProperties sm = new ServiceManagerProperties();
@@ -222,6 +231,7 @@ public class DAOFactoryProperties {
 		sm.setShowSql(this.isShowSql(tipoDAO));
 		sm.setGenerateDdl(this.isGenerateDDL(tipoDAO));
 		sm.setAutomaticTransactionManagement(this.isAutoCommit(tipoDAO));
+		sm.setSecondsToRefreshConnection(this.getSecondsToRefreshConnection(tipoDAO));
 		return sm;
 	}
 

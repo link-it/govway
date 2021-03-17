@@ -81,6 +81,7 @@ public class Costanti {
 	public static final String PROPRIETA_CONFIGURAZIONE = "PROPRIETA_CONFIGURAZIONE";
 	public final static String RICHIESTA_DUPLICATA = "RICHIESTA_DUPLICATA";
 	public final static String RISPOSTA_DUPLICATA = "RISPOSTA_DUPLICATA";
+	public final static String MESSAGE_BOX = "MESSAGE_BOX";
 		
 	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
 	public final static String REQUEST_INFO = "REQUEST_INFO";

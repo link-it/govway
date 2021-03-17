@@ -23,6 +23,7 @@ package org.openspcoop2.generic_project.dao.jdbc;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -32,6 +33,7 @@ import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
@@ -52,6 +54,13 @@ public class JDBCServiceManager {
 	protected Logger log = null;
 	/** JDBC Properties */
 	protected JDBCServiceManagerProperties jdbcProperties = null;
+	
+	/** Parametri per rinegoziare la connessione */
+	private String connectionUrl;
+	private String username;
+	private String password;
+	private int secondsToRefreshConnection = -1;
+	private Date connectionDate;
 	
 	/** Tipo di costruttore */
 	private JDBCServiceManagerTipoCostruttore tipoCostruttore = null;
@@ -147,15 +156,14 @@ public class JDBCServiceManager {
 		
 		try{
 			
+			this.connectionUrl = connectionUrl;
+			this.username = username;
+			this.password = password;
+			this.secondsToRefreshConnection = jdbcProperties.getSecondsToRefreshConnection();
+			
 			ClassLoaderUtilities.newInstance(driverJDBC);
-			if(username!=null){
-				this.connection = DriverManager.getConnection(connectionUrl,username,password);
-			}else{
-				this.connection = DriverManager.getConnection(connectionUrl);
-			}
-			if(this.connection == null){
-				throw new Exception("Connection is null");
-			}
+			
+			setConnection();
 			
 			this.jdbcProperties = jdbcProperties;
 			jdbcProperties.getDatabase(); // check tipoDatabase fornito
@@ -163,6 +171,43 @@ public class JDBCServiceManager {
 		} catch(Exception e) {
 			this.log.error("Creating failure: "+e.getMessage(),e);
 			throw new ServiceException("Creating failure: "+e.getMessage(),e);
+		}
+	}
+	private void setConnection() throws Exception {
+		if(this.username!=null){
+			this.connection = DriverManager.getConnection(this.connectionUrl,this.username,this.password);
+		}else{
+			this.connection = DriverManager.getConnection(this.connectionUrl);
+		}
+		if(this.connection == null){
+			throw new Exception("Connection is null");
+		}
+		this.connectionDate = DateManager.getDate();
+	}
+	private boolean isConnectionExpired() {
+		if(this.secondsToRefreshConnection>0) {
+			Date now = DateManager.getDate();
+			Date expireDate = new Date(this.connectionDate.getTime()+(this.secondsToRefreshConnection*1000));
+			if(expireDate.before(now)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private void refreshConnection() throws Exception {
+		if(this.isConnectionExpired()) {
+			this._refreshConnection();
+		}
+	}
+	private synchronized void _refreshConnection() throws Exception {
+		if(this.isConnectionExpired()) {
+			//System.out.println("REFRESH (user:"+this.username+" connection-url: "+this.connectionUrl+")");
+			try {
+				if(this.connection!=null) {
+					this.connection.close();
+				}
+			}catch(Throwable t) {}
+			setConnection();
 		}
 	}
 	
@@ -209,6 +254,7 @@ public class JDBCServiceManager {
 				switch (this.tipoCostruttore) {
 				case CONNECTION_CFG:
 					if(this.connection!=null){
+						//System.out.println("CLOSE (user:"+this.username+" connection-url: "+this.connectionUrl+")");
 						this.connection.close();
 					}
 					break;
@@ -233,6 +279,9 @@ public class JDBCServiceManager {
 				return this.datasource.getConnection();
 			}
 			else if(this.connection!=null){
+				if(JDBCServiceManagerTipoCostruttore.CONNECTION_CFG.equals(this.tipoCostruttore)) {
+					this.refreshConnection();
+				}
 				return this.connection;
 			}else{
 				throw new Exception("ServiceManager not initialized");

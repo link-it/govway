@@ -91,6 +91,9 @@ public class TransazioniEsitiUtils {
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.HTTP_5xx) == esito.intValue()) {
 					esitoLabel = esitoLabel.replace("Risposta ", "").replace("5xx", httpStatusCode.intValue()+"");
 				}
+				else if(esitiProperties.convertoToCode(EsitoTransazioneName.MESSAGE_BOX) == esito.intValue()) {
+					//esitoLabel = esitoLabel+" "+httpStatusCode.intValue();
+				}
 				else if(esitiProperties.convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO) == esito.intValue()) {
 					if(TipoAPI.REST.getValoreAsInt()==tipoApi) {
 						esitoLabel = "Problem Details "+httpStatusCode.intValue();

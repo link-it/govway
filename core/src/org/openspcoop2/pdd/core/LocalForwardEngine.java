@@ -549,15 +549,14 @@ public class LocalForwardEngine {
 							OpenSPCoop2SoapMessage soapMessage = requestMessage.castAsSoap();
 							
 							// Per poter applicare anche questa config devo rigenerare tutto il messaggio
-//							System.out.println("AAAAAAAAA");
 //							requestMessage.writeTo(System.out, false);
 							DOMSource s = (DOMSource) soapMessage.getSOAPPart().getContent();
 							Node n = s.getNode();
 							XMLUtils xmlUtils = XMLUtils.getInstance(requestMessage.getFactory());
 							byte[] bytes = xmlUtils.toByteArray(n);
-//							System.out.println("BABA:"+new String(bytes));
+//							System.out.println("A:"+new String(bytes));
 							soapMessage.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(bytes)));
-//							System.out.println("BBBBB");
+//							System.out.println("B");
 //							requestMessage.writeTo(System.out, false);
 						}
 	
@@ -1078,15 +1077,14 @@ public class LocalForwardEngine {
 							OpenSPCoop2SoapMessage soapMessage = responseMessage.castAsSoap();
 							
 							// Per poter applicare anche questa config devo rigenerare tutto il messaggio
-//							System.out.println("AAAAAAAAA");
 //							requestMessage.writeTo(System.out, false);
 							DOMSource s = (DOMSource) soapMessage.getSOAPPart().getContent();
 							Node n = s.getNode();
 							XMLUtils xmlUtils = XMLUtils.getInstance(responseMessage.getFactory());
 							byte[] bytes = xmlUtils.toByteArray(n);
-//							System.out.println("BABA:"+new String(bytes));
+//							System.out.println("A:"+new String(bytes));
 							soapMessage.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(bytes)));
-//							System.out.println("BBBBB");
+//							System.out.println("B");
 //							requestMessage.writeTo(System.out, false);
 						}
 	

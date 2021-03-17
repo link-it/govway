@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.monitor.engine.statistic;
 
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManager;
+
 /**
  * StatisticsLibrary
  *
@@ -50,6 +52,43 @@ public class StatisticsLibrary {
 		this.pluginsBaseSM = pluginsBaseSM;
 		this.utilsSM = utilsSM;
 		this.pluginsTransazioniSM = pluginsTransazioniSM;
+	}
+	
+	public void close() {
+		if(this.statisticheSM!=null && this.statisticheSM instanceof JDBCServiceManager) {
+			_close((JDBCServiceManager)this.statisticheSM,"Statistiche");
+		}
+		if(this.transazioniSM!=null && this.transazioniSM instanceof JDBCServiceManager) {
+			_close((JDBCServiceManager)this.transazioniSM,"Transazioni");
+		}
+		if(this.utilsSM!=null && this.utilsSM instanceof JDBCServiceManager) {
+			_close((JDBCServiceManager)this.utilsSM,"Utils");
+		}
+		if(this.pluginsBaseSM!=null && this.pluginsBaseSM instanceof JDBCServiceManager) {
+			_close((JDBCServiceManager)this.pluginsBaseSM,"PluginBase");
+		}
+		if(this.pluginsStatisticheSM!=null && this.pluginsStatisticheSM instanceof JDBCServiceManager) {
+			_close((JDBCServiceManager)this.pluginsStatisticheSM,"PluginStatistiche");
+		}
+		if(this.pluginsTransazioniSM!=null && this.pluginsTransazioniSM instanceof JDBCServiceManager) {
+			_close((JDBCServiceManager)this.pluginsTransazioniSM,"PluginTransazioni");
+		}
+	}
+	private void _close(JDBCServiceManager serviceManager, String tipo) {
+		try {
+			serviceManager.close();
+		}catch(Throwable t) {
+			String msgError = "Rilascio connessione '"+tipo+"' fallita: "+t.getMessage();
+			if(this.config.getLogSql()!=null) {
+				this.config.getLogSql().error(msgError, t);
+			}
+			else if(this.config.getLogCore()!=null) {
+				this.config.getLogCore().error(msgError, t);
+			}
+			else {
+				t.printStackTrace(System.err);
+			}
+		}
 	}
 	
 	public void generateStatisticaOraria(){

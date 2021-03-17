@@ -145,74 +145,80 @@ public class Generator {
 		
 		StatisticsLibrary sLibrary = null;
 		try {
-			DAOFactory daoFactory = DAOFactory.getInstance(logSql);
-			
-			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
-				(org.openspcoop2.core.statistiche.dao.IServiceManager) 
-					daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(), 
-						logSql);
+			try {
+				DAOFactory daoFactory = DAOFactory.getInstance(logSql);
 				
-			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = 
-				(org.openspcoop2.core.transazioni.dao.IServiceManager) 
-					daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
-						logSql);
-			
-			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
-			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
-			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
-			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
-			
-			if(generatorProperties.isGenerazioneStatisticheCustom()){
-				
-				pluginsStatisticheSM = (org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager) 
-					daoFactory.getServiceManager(
-						org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance(), 
+				org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
+					(org.openspcoop2.core.statistiche.dao.IServiceManager) 
+						daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(), 
 							logSql);
-				
-				pluginsBaseSM = (org.openspcoop2.core.plugins.dao.IServiceManager) 
-					daoFactory.getServiceManager(
-						org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
-							logSql);
-				
-				utilsSM = (org.openspcoop2.core.commons.search.dao.IServiceManager) 
-					daoFactory.getServiceManager(
-						org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), 
-							logSql);
-				
-				if(generatorProperties.isAnalisiTransazioniCustom()){
 					
-					pluginsTransazioniSM = (org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) 
+				org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = 
+					(org.openspcoop2.core.transazioni.dao.IServiceManager) 
+						daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
+							logSql);
+				
+				org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
+				org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
+				org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
+				org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
+				
+				if(generatorProperties.isGenerazioneStatisticheCustom()){
+					
+					pluginsStatisticheSM = (org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager) 
 						daoFactory.getServiceManager(
-							org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(), 
+							org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance(), 
 								logSql);
+					
+					pluginsBaseSM = (org.openspcoop2.core.plugins.dao.IServiceManager) 
+						daoFactory.getServiceManager(
+							org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(),
+								logSql);
+					
+					utilsSM = (org.openspcoop2.core.commons.search.dao.IServiceManager) 
+						daoFactory.getServiceManager(
+							org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), 
+								logSql);
+					
+					if(generatorProperties.isAnalisiTransazioniCustom()){
+						
+						pluginsTransazioniSM = (org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) 
+							daoFactory.getServiceManager(
+								org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(), 
+									logSql);
+						
+					}
 					
 				}
 				
+				sLibrary = new StatisticsLibrary(statisticsConfig, statisticheSM, transazioniSM, 
+						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM);
+			}catch(Exception e){
+				throw new Exception("Errore durante la generazione delle statistiche (InitConnessioni): "+e.getMessage(),e);
 			}
 			
-			sLibrary = new StatisticsLibrary(statisticsConfig, statisticheSM, transazioniSM, 
-					pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM);
-		}catch(Exception e){
-			throw new Exception("Errore durante la generazione delle statistiche (InitConnessioni): "+e.getMessage(),e);
-		}
-		
-		try {
-			switch (tipoStatistica) {
-			case STATISTICHE_ORARIE:
-				sLibrary.generateStatisticaOraria();
-				break;
-			case STATISTICHE_GIORNALIERE:
-				sLibrary.generateStatisticaGiornaliera();
-				break;
-			case STATISTICHE_SETTIMANALI:
-				sLibrary.generateStatisticaSettimanale();
-				break;
-			case STATISTICHE_MENSILI:
-				sLibrary.generateStatisticaMensile();
-				break;
-			}	
-		}catch(Exception e){
-			throw new Exception("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+			try {
+				switch (tipoStatistica) {
+				case STATISTICHE_ORARIE:
+					sLibrary.generateStatisticaOraria();
+					break;
+				case STATISTICHE_GIORNALIERE:
+					sLibrary.generateStatisticaGiornaliera();
+					break;
+				case STATISTICHE_SETTIMANALI:
+					sLibrary.generateStatisticaSettimanale();
+					break;
+				case STATISTICHE_MENSILI:
+					sLibrary.generateStatisticaMensile();
+					break;
+				}	
+			}catch(Exception e){
+				throw new Exception("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+			}
+		}finally {
+			if(sLibrary!=null) {
+				sLibrary.close();
+			}
 		}
 	}
 

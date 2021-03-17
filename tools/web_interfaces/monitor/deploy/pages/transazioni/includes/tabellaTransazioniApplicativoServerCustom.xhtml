@@ -232,10 +232,15 @@
 							<a4j:outputPanel layout="block" id="entryInfoLatenzaTransazioneSottotitolo" styleClass="entryInfoLatenzaTransazione #{item.cssColonnaLatenza}">
 								<a4j:outputPanel layout="block" id="sottotitoloInfoLatenzaTransazione" styleClass="metadatiEntry">
 									<h:outputText id="outLatenzaServizio2" value="#{item.latenzaConsegna}" converter="latenzaConverter" rendered="#{not empty item.latenzaConsegna}"/>
-									<h:outputText id="outLatenzaServizio2_IM" value="--" rendered="#{empty item.latenzaConsegna}"/>
+									<h:outputText id="outLatenzaServizio2_IM" value="#{item.latenzaGestioneMessageBox}" converter="latenzaConverter" rendered="#{not empty item.latenzaGestioneMessageBox}"/>
+									<h:outputText id="outLatenzaServizio2_Other" value="- N.D. -" rendered="#{empty item.latenzaConsegna and empty item.latenzaGestioneMessageBox}"/>
 									<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo" rendered="#{not empty item.latenzaConsegna}">
 										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaConsegna}"/>
 										<h:outputText value="#{item.latenzaConsegna}" converter="latenzaConverter" rendered="#{not empty item.latenzaConsegna}"/>
+									</rich:toolTip>
+									<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo" rendered="#{not empty item.latenzaGestioneMessageBox}">
+										<h:outputText value="Tempo Prelevamento Messaggio: " rendered="#{not empty item.latenzaGestioneMessageBox}"/>
+										<h:outputText value="#{item.latenzaGestioneMessageBox}" converter="latenzaConverter" rendered="#{not empty item.latenzaGestioneMessageBox}"/>
 									</rich:toolTip>
 								</a4j:outputPanel>
 							</a4j:outputPanel>

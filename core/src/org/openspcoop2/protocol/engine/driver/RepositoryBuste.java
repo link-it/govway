@@ -367,10 +367,16 @@ public class RepositoryBuste  {
 	 *
 	 */
 	public Busta getSomeValuesFromOutBox(String id,LetturaParametriBusta parametri) throws ProtocolException{
-		return getSomeValues(id, Costanti.OUTBOX, parametri, false);
+		return getSomeValues(id, Costanti.OUTBOX, parametri, false, null);
 	}
 	public Busta getSomeValuesFromOutBox(String id,LetturaParametriBusta parametri,boolean forzaLetturaDatabase) throws ProtocolException{
-		return getSomeValues(id, Costanti.OUTBOX, parametri, forzaLetturaDatabase);
+		return getSomeValues(id, Costanti.OUTBOX, parametri, forzaLetturaDatabase, null);
+	}
+	public Busta getSomeValuesFromOutBox(String id,LetturaParametriBusta parametri, Date dataRegistrazione) throws ProtocolException{
+		return getSomeValues(id, Costanti.OUTBOX, parametri, false, dataRegistrazione);
+	}
+	public Busta getSomeValuesFromOutBox(String id,LetturaParametriBusta parametri,boolean forzaLetturaDatabase, Date dataRegistrazione) throws ProtocolException{
+		return getSomeValues(id, Costanti.OUTBOX, parametri, forzaLetturaDatabase, dataRegistrazione);
 	}
 
 	/**
@@ -428,13 +434,22 @@ public class RepositoryBuste  {
 	 *
 	 */
 	public void eliminaUtilizzoPdDFromOutBox(String id) throws ProtocolException{
-		this.eliminaUtilizzoPdD(id,Costanti.OUTBOX,false);
+		this.eliminaUtilizzoPdD(id,Costanti.OUTBOX,false, null);
 	}
 	public void eliminaUtilizzoPdDFromOutBox(String id,boolean forzaUpdateDB) throws ProtocolException{
-		eliminaUtilizzoPdD(id,Costanti.OUTBOX,forzaUpdateDB);
+		eliminaUtilizzoPdD(id,Costanti.OUTBOX,forzaUpdateDB, null);
 	}
 	public void eliminaUtilizzoPdDFromOutBox(String id,boolean forzaUpdateDB,boolean savePreparedStatement) throws ProtocolException{
-		eliminaUtilizzoPdD(id,Costanti.OUTBOX,forzaUpdateDB,savePreparedStatement);
+		eliminaUtilizzoPdD(id,Costanti.OUTBOX,forzaUpdateDB,savePreparedStatement, null);
+	}
+	public void eliminaUtilizzoPdDFromOutBox(String id, Date dataRegistrazione) throws ProtocolException{
+		this.eliminaUtilizzoPdD(id,Costanti.OUTBOX,false, dataRegistrazione);
+	}
+	public void eliminaUtilizzoPdDFromOutBox(String id,boolean forzaUpdateDB, Date dataRegistrazione) throws ProtocolException{
+		eliminaUtilizzoPdD(id,Costanti.OUTBOX,forzaUpdateDB, dataRegistrazione);
+	}
+	public void eliminaUtilizzoPdDFromOutBox(String id,boolean forzaUpdateDB,boolean savePreparedStatement, Date dataRegistrazione) throws ProtocolException{
+		eliminaUtilizzoPdD(id,Costanti.OUTBOX,forzaUpdateDB,savePreparedStatement, dataRegistrazione);
 	}
 	/**
 	 * Metodo che si occupa di eliminare una busta precedentemente salvata.
@@ -449,7 +464,10 @@ public class RepositoryBuste  {
 	}
 
 	public void eliminaBustaStatelessFromOutBox(String id) throws ProtocolException{
-		eliminaBustaStateless(id,Costanti.OUTBOX);
+		eliminaBustaStateless(id,Costanti.OUTBOX, null);
+	}
+	public void eliminaBustaStatelessFromOutBox(String id, Date dataRegistrazione) throws ProtocolException{
+		eliminaBustaStateless(id,Costanti.OUTBOX, dataRegistrazione);
 	}
 
 	/**
@@ -686,10 +704,16 @@ public class RepositoryBuste  {
 	 *
 	 */
 	public Busta getSomeValuesFromInBox(String id,LetturaParametriBusta parametri) throws ProtocolException{
-		return getSomeValues(id,Costanti.INBOX,parametri,false);
+		return getSomeValues(id,Costanti.INBOX,parametri,false, null);
 	}
 	public Busta getSomeValuesFromInBox(String id,LetturaParametriBusta parametri,boolean forzaLetturaDatabase) throws ProtocolException{
-		return getSomeValues(id,Costanti.INBOX,parametri,forzaLetturaDatabase);
+		return getSomeValues(id,Costanti.INBOX,parametri,forzaLetturaDatabase, null);
+	}
+	public Busta getSomeValuesFromInBox(String id,LetturaParametriBusta parametri, Date dataRegistrazione) throws ProtocolException{
+		return getSomeValues(id,Costanti.INBOX,parametri,false,dataRegistrazione);
+	}
+	public Busta getSomeValuesFromInBox(String id,LetturaParametriBusta parametri,boolean forzaLetturaDatabase, Date dataRegistrazione) throws ProtocolException{
+		return getSomeValues(id,Costanti.INBOX,parametri,forzaLetturaDatabase,dataRegistrazione);
 	}
 	
 	/**
@@ -747,13 +771,22 @@ public class RepositoryBuste  {
 	 *
 	 */
 	public void eliminaUtilizzoPdDFromInBox(String id) throws ProtocolException{
-		this.eliminaUtilizzoPdD(id,Costanti.INBOX,false);
+		this.eliminaUtilizzoPdD(id,Costanti.INBOX,false, null);
 	}
 	public void eliminaUtilizzoPdDFromInBox(String id,boolean forzaUpdateDB) throws ProtocolException{
-		eliminaUtilizzoPdD(id,Costanti.INBOX,forzaUpdateDB);
+		eliminaUtilizzoPdD(id,Costanti.INBOX,forzaUpdateDB, null);
 	}
 	public void eliminaUtilizzoPdDFromInBox(String id,boolean forzaUpdateDB,boolean savePreparedStatement) throws ProtocolException{
-		eliminaUtilizzoPdD(id,Costanti.INBOX,forzaUpdateDB,savePreparedStatement);
+		eliminaUtilizzoPdD(id,Costanti.INBOX,forzaUpdateDB,savePreparedStatement, null);
+	}
+	public void eliminaUtilizzoPdDFromInBox(String id, Date dataRegistrazione) throws ProtocolException{
+		this.eliminaUtilizzoPdD(id,Costanti.INBOX,false, dataRegistrazione);
+	}
+	public void eliminaUtilizzoPdDFromInBox(String id,boolean forzaUpdateDB, Date dataRegistrazione) throws ProtocolException{
+		eliminaUtilizzoPdD(id,Costanti.INBOX,forzaUpdateDB, dataRegistrazione);
+	}
+	public void eliminaUtilizzoPdDFromInBox(String id,boolean forzaUpdateDB,boolean savePreparedStatement, Date dataRegistrazione) throws ProtocolException{
+		eliminaUtilizzoPdD(id,Costanti.INBOX,forzaUpdateDB,savePreparedStatement, dataRegistrazione);
 	}
 
 	/**
@@ -769,7 +802,10 @@ public class RepositoryBuste  {
 	}
 
 	public void eliminaBustaStatelessFromInBox(String id) throws ProtocolException{
-		eliminaBustaStateless(id,Costanti.INBOX);
+		eliminaBustaStateless(id,Costanti.INBOX, null);
+	}
+	public void eliminaBustaStatelessFromInBox(String id, Date dataRegistrazione) throws ProtocolException{
+		eliminaBustaStateless(id,Costanti.INBOX, dataRegistrazione);
 	}
 
 	/**
@@ -2376,7 +2412,7 @@ public class RepositoryBuste  {
 	 * @return alcuni valori della busta
 	 *
 	 */
-	private Busta getSomeValues(String id,String tipoBusta,	LetturaParametriBusta parametri,boolean forzaLetturaSuDatabase) throws ProtocolException{
+	private Busta getSomeValues(String id,String tipoBusta,	LetturaParametriBusta parametri,boolean forzaLetturaSuDatabase, Date dataRegistrazione) throws ProtocolException{
 
 		if((this.state instanceof StatefulMessage) || (forzaLetturaSuDatabase)) {
 
@@ -2491,12 +2527,27 @@ public class RepositoryBuste  {
 				}
 				bf.append(" FROM ");
 				bf.append(Costanti.REPOSITORY);
-				bf.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
+				bf.append(" WHERE ");
+				if(dataRegistrazione!=null) {
+					bf.append("(DATA_REGISTRAZIONE BETWEEN ? AND ?) AND ");
+				}
+				bf.append("ID_MESSAGGIO=? AND TIPO=?");
 
 				//log.debug("Query: "+query);
 				pstmt = connectionDB.prepareStatement(bf.toString());
-				pstmt.setString(1,id);
-				pstmt.setString(2,tipoBusta);
+				int index = 1;
+				
+				Timestamp leftValue = null;
+				Timestamp rightValue = null;
+				if(dataRegistrazione!=null) {
+					leftValue = new Timestamp(dataRegistrazione.getTime() - (1000*60*5));
+					rightValue = new Timestamp(dataRegistrazione.getTime() + (1000*60*5));
+					pstmt.setTimestamp(index++,leftValue);
+					pstmt.setTimestamp(index++,rightValue);
+				}
+				
+				pstmt.setString(index++,id);
+				pstmt.setString(index++,tipoBusta);
 				rs = pstmt.executeQuery();
 				if(rs == null) {
 					throw new ProtocolException("RS Null?");
@@ -2906,10 +2957,10 @@ public class RepositoryBuste  {
 	 * @param tipoBusta Indicazione sul tipo di busta inviata/ricevuta
 	 *
 	 */
-	private void eliminaUtilizzoPdD(String id,String tipoBusta,boolean forzaEliminazioneDB) throws ProtocolException{
-		this.eliminaUtilizzoPdD(id, tipoBusta, forzaEliminazioneDB, true);
+	private void eliminaUtilizzoPdD(String id,String tipoBusta,boolean forzaEliminazioneDB, Date dataRegistrazione) throws ProtocolException{
+		this.eliminaUtilizzoPdD(id, tipoBusta, forzaEliminazioneDB, true, dataRegistrazione);
 	}
-	private void eliminaUtilizzoPdD(String id,String tipoBusta,boolean forzaEliminazioneDB, boolean savePreparedStatement) throws ProtocolException{
+	private void eliminaUtilizzoPdD(String id,String tipoBusta,boolean forzaEliminazioneDB, boolean savePreparedStatement, Date dataRegistrazione) throws ProtocolException{
 
 		if(this.state instanceof StatefulMessage || forzaEliminazioneDB) {
 
@@ -2924,10 +2975,26 @@ public class RepositoryBuste  {
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
 				queryUpdate.append(this.gestoreRepositoryBuste.createSQLSet_PdD(false));
-				queryUpdate.append(" WHERE  ID_MESSAGGIO = ? AND TIPO=?");
+				queryUpdate.append(" WHERE ");
+				if(dataRegistrazione!=null) {
+					queryUpdate.append("(DATA_REGISTRAZIONE BETWEEN ? AND ?) AND ");
+				}
+				queryUpdate.append("ID_MESSAGGIO = ? AND TIPO=?");
+							
 				pstmtUpdate = connectionDB.prepareStatement(queryUpdate.toString());
-				pstmtUpdate.setString(1,id);
-				pstmtUpdate.setString(2,tipoBusta);
+				int index = 1;
+				
+				Timestamp leftValue = null;
+				Timestamp rightValue = null;
+				if(dataRegistrazione!=null) {
+					leftValue = new Timestamp(dataRegistrazione.getTime() - (1000*60*5));
+					rightValue = new Timestamp(dataRegistrazione.getTime() + (1000*60*5));
+					pstmtUpdate.setTimestamp(index++,leftValue);
+					pstmtUpdate.setTimestamp(index++,rightValue);
+				}
+				
+				pstmtUpdate.setString(index++,id);
+				pstmtUpdate.setString(index++,tipoBusta);
 
 				// Add PreparedStatement
 				if(savePreparedStatement)
@@ -2958,7 +3025,7 @@ public class RepositoryBuste  {
 	 * @param tipoBusta Indicazione sul tipo di busta inviata/ricevuta
 	 *
 	 */
-	private void eliminaBustaStateless(String id,String tipoBusta) throws ProtocolException{
+	private void eliminaBustaStateless(String id,String tipoBusta, Date dataRegistrazione) throws ProtocolException{
 
 		StateMessage stateMSG = (StateMessage)this.state;
 		Connection connectionDB = stateMSG.getConnectionDB();
@@ -2971,10 +3038,26 @@ public class RepositoryBuste  {
 			queryUpdate.append(Costanti.REPOSITORY);
 			queryUpdate.append(" SET ");
 			queryUpdate.append(this.gestoreRepositoryBuste.createSQLSet_PdD(false));
-			queryUpdate.append(" WHERE  ID_MESSAGGIO = ? AND TIPO=?");
+			queryUpdate.append(" WHERE ");
+			if(dataRegistrazione!=null) {
+				queryUpdate.append("(DATA_REGISTRAZIONE BETWEEN ? AND ?) AND ");
+			}
+			queryUpdate.append("ID_MESSAGGIO = ? AND TIPO=?");
+					
 			pstmtUpdate = connectionDB.prepareStatement(queryUpdate.toString());
-			pstmtUpdate.setString(1,id);
-			pstmtUpdate.setString(2,tipoBusta);
+			int index = 1;
+			
+			Timestamp leftValue = null;
+			Timestamp rightValue = null;
+			if(dataRegistrazione!=null) {
+				leftValue = new Timestamp(dataRegistrazione.getTime() - (1000*60*5));
+				rightValue = new Timestamp(dataRegistrazione.getTime() + (1000*60*5));
+				pstmtUpdate.setTimestamp(index++,leftValue);
+				pstmtUpdate.setTimestamp(index++,rightValue);
+			}
+			
+			pstmtUpdate.setString(index++,id);
+			pstmtUpdate.setString(index++,tipoBusta);
 
 			// Add PreparedStatement
 			stateMSG.getPreparedStatement().put("UPDATE AggiornamentoBusta"+tipoBusta+"_"+id,pstmtUpdate);
@@ -4075,6 +4158,25 @@ public class RepositoryBuste  {
 			throw new ProtocolException(errorMsg,e);
 		}
 
+	}
+	
+	public boolean isRegistrazioneInCorso() {
+		if(this.state!=null) {
+			StateMessage stateMSG = (StateMessage)this.state;
+			if(stateMSG.getPreparedStatement()!=null && stateMSG.getPreparedStatement().size()>0) {
+				Enumeration<String> keys = stateMSG.getPreparedStatement().keys();
+				while (keys.hasMoreElements()) {
+					String key = (String) keys.nextElement();
+					if(key!=null && key.startsWith("INSERT")) {
+						return true;
+					}
+					else if(key!=null && key.startsWith("UPDATE")) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 }
 

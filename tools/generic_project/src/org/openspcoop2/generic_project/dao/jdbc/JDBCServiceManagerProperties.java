@@ -38,6 +38,7 @@ public class JDBCServiceManagerProperties extends ServiceManagerProperties {
 		super.setDatabaseType(serviceManagerProperties.getDatabaseType());
 		super.setGenerateDdl(serviceManagerProperties.isGenerateDdl());
 		super.setShowSql(serviceManagerProperties.isShowSql());
+		super.setSecondsToRefreshConnection(serviceManagerProperties.getSecondsToRefreshConnection());
 	}
 	
 }
