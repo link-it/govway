@@ -42,6 +42,15 @@ public abstract class AbstractDatiInvocazione {
 	
 	private IState state;
 	
+	private String token;
+	
+	public String getToken() {
+		return this.token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 	public PdDContext getPddContext() {
 		return this.pddContext;
 	}
@@ -126,11 +135,15 @@ public abstract class AbstractDatiInvocazione {
 				}
 			}
 		}
-		
+				
 		if(keyCache==false){
 			if(this.state!=null){
 				bf.append(" State:defined");
 			}
+		}
+		
+		if(this.token!=null) {
+			bf.append(" Token:").append(this.token);
 		}
 		
 		return bf.toString();

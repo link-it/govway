@@ -1833,6 +1833,7 @@ public class RicezioneContenutiApplicativi {
 		
 		msgDiag.mediumDebug("GestioneToken...");
 		this.msgContext.getIntegrazione().setTipoGestioneToken(tipoGestioneToken);
+		String token = null;
 		if (tipoGestioneToken == null) {
 
 			msgDiag.logPersonalizzato("gestioneTokenDisabilitata");
@@ -1891,6 +1892,7 @@ public class RicezioneContenutiApplicativi {
 						msgDiag.addKeyword(CostantiPdD.KEY_TOKEN, esitoPresenzaToken.getToken());
 						msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.trovato"); // stampa del token info
 						
+						token = esitoPresenzaToken.getToken();
 						pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_POSIZIONE, esitoPresenzaToken);
 						
 						msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.completataSuccesso");
@@ -3038,6 +3040,7 @@ public class RicezioneContenutiApplicativi {
 		/* ------------ Autorizzazione ------------- */
 		
 		DatiInvocazionePortaDelegata datiInvocazione = new DatiInvocazionePortaDelegata();
+		datiInvocazione.setToken(token);
 		datiInvocazione.setPddContext(pddContext);
 		datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
 		datiInvocazione.setIdServizio(richiestaDelegata.getIdServizio());

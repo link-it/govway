@@ -1,3 +1,9 @@
+2021-03-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1159
+	La chiave utilizzata per l'aggiunta in cache di un'autorizzazione non teneva conto del token OAuth2.
+
 2021-03-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

@@ -2692,6 +2692,7 @@ public class RicezioneBuste {
 			}
 		}catch(Exception exception){}
 		this.msgContext.getIntegrazione().setTipoGestioneToken(tipoGestioneToken);
+		String token = null;
 		if (tipoGestioneToken == null || asincronoSimmetricoRisposta) {
 
 			if(!asincronoSimmetricoRisposta) {
@@ -2761,6 +2762,7 @@ public class RicezioneBuste {
 						msgDiag.addKeyword(CostantiPdD.KEY_TOKEN, esitoPresenzaToken.getToken());
 						msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.trovato"); // stampa del token info
 						
+						token = esitoPresenzaToken.getToken();
 						pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_POSIZIONE, esitoPresenzaToken);
 						
 						msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.completataSuccesso");
@@ -5542,6 +5544,7 @@ public class RicezioneBuste {
 				identitaServizioApplicativoFruitore.setIdSoggettoProprietario(idSoggettoMittentePerAutorizzazione);
 				
 				datiInvocazione = new DatiInvocazionePortaApplicativa();
+				datiInvocazione.setToken(token);
 				datiInvocazione.setPddContext(pddContext);
 				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
 				datiInvocazione.setIdServizio(idServizioPerAutorizzazione);
@@ -6107,6 +6110,8 @@ public class RicezioneBuste {
 						identitaServizioApplicativoFruitore.setIdSoggettoProprietario(idSoggettoMittentePerAutorizzazione);
 						
 						datiInvocazione = new DatiInvocazionePortaApplicativa();
+						datiInvocazione.setToken(token);
+						datiInvocazione.setPddContext(pddContext);
 						datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
 						datiInvocazione.setIdServizio(idServizioPerAutorizzazione);
 						datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
@@ -6119,7 +6124,6 @@ public class RicezioneBuste {
 						datiInvocazione.setPd(pd);
 						datiInvocazione.setIdSoggettoFruitore(idSoggettoMittentePerAutorizzazione);
 						datiInvocazione.setSoggettoFruitore(soggettoMittentePerAutorizzazione);
-						
 						datiInvocazione.setRuoloBusta(ruoloBustaRicevuta);
 					}
 					
