@@ -565,6 +565,70 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
           
+  /api/{nome}/{versione}/modi:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+    get:
+      tags:
+        - api
+      summary: Restituisce le informazioni ModI associate all'API
+      operationId: getApiModI
+      description: Questa operazione consente di ottenere le informazioni ModI associato all'API identificata dal nome e dalla versione
+      responses:
+        "200":
+          description: Informazioni ModI restituite con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ApiModI"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - api
+      summary: Consente di modificare le informazioni ModI associate all'API
+      operationId: updateApiModI
+      description: Questa operazione consente di aggiornare le informazioni ModI associate all'API identificata dal nome e dalla versione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiModI'
+      responses: 
+        "204":
+          description: Le informazioni ModI sono state aggiornate correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          
   /api/{nome}/{versione}/allegati:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -6812,6 +6876,8 @@ components:
               format: byte
             canale:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
+            modi:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiModI'
 
     ApiItem:
       type: object
@@ -7035,6 +7101,8 @@ components:
        riferimento_id_richiesta:
          type: boolean
          example: false
+       modi:
+         $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiModIRisorsaRest'
     ListaApiRisorse:
        type: object
        allOf:
@@ -7101,6 +7169,8 @@ components:
        riferimento_id_richiesta:
          type: boolean
          example: false
+       modi:
+         $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiModIAzioneSoap'
     ListaApiAzioni:
        type: object
        allOf:

@@ -335,7 +335,7 @@ components:
     
     ProfiloEnum:
       type: string
-      enum: ['APIGateway', 'ModIPA', 'SPCoop', 'FatturaPA', 'eDelivery']
+      enum: ['APIGateway', 'ModIPA', 'ModI', 'SPCoop', 'FatturaPA', 'eDelivery'] # Aggiunto ModI, lasciato ModIPA per backward compatibility
       default: APIGateway
 
     ProfiloCollaborazioneEnum:

@@ -17,36 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.utils.service.beans;
+package org.openspcoop2.core.config.rs.server.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * Gets or Sets ProfiloEnum
+ * Gets or Sets ModISicurezzaMessaggioApplicabilitaEnum
  */
-@XmlType(name="ProfiloEnum")
-@XmlEnum(String.class)
-public enum ProfiloEnum {
-  @XmlEnumValue("APIGateway")
-APIGATEWAY("APIGateway"),
-    @XmlEnumValue("ModIPA")
-MODIPA("ModIPA"),
-    @XmlEnumValue("ModI")
-MODI("ModI"),
-    @XmlEnumValue("SPCoop")
-SPCOOP("SPCoop"),
-    @XmlEnumValue("FatturaPA")
-FATTURAPA("FatturaPA"),
-    @XmlEnumValue("eDelivery")
-EDELIVERY("eDelivery");
+public enum ModISicurezzaMessaggioApplicabilitaEnum {
+RICHIESTA("richiesta"),
+  RISPOSTA("risposta"),
+  QUALSIASI("qualsiasi"),
+  CUSTOM("custom");
 
   private String value;
 
-  ProfiloEnum(String value) {
+  ModISicurezzaMessaggioApplicabilitaEnum(String value) {
     this.value = value;
   }
 
@@ -57,8 +44,8 @@ EDELIVERY("eDelivery");
   }
 
   @JsonCreator
-  public static ProfiloEnum fromValue(String text) {
-    for (ProfiloEnum b : ProfiloEnum.values()) {
+  public static ModISicurezzaMessaggioApplicabilitaEnum fromValue(String text) {
+    for (ModISicurezzaMessaggioApplicabilitaEnum b : ModISicurezzaMessaggioApplicabilitaEnum.values()) {
       if (String.valueOf(b.value).equals(text)) {
         return b;
       }

@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaRest;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaView;
 import org.openspcoop2.core.config.rs.server.model.ApiItem;
+import org.openspcoop2.core.config.rs.server.model.ApiModI;
 import org.openspcoop2.core.config.rs.server.model.ApiReferenteView;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
@@ -1491,6 +1492,44 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 	}
 
 	/**
+	* Restituisce le informazioni ModI associate all'API
+	*
+	* Questa operazione consente di ottenere le informazioni ModI associato all'API identificata dal nome e dalla versione
+	*
+	*/
+	@Override
+	public ApiModI getApiModI(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+		        
+			ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
+
+			if (as == null)
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			ApiModI ret = null; // TODO
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+    
+
+	/**
 	 * Restituisce il nome del soggetto referente dell'api
 	 *
 	 * Questa operazione consente di ottenere il nome del soggetto referente
@@ -2229,6 +2268,44 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
+	 * Consente di modificare le informazioni ModI associate all'API
+	 *
+	 * Questa operazione consente di aggiornare le informazioni ModI associate all'API identificata dal nome e dalla versione
+	 *
+	*/
+	@Override
+	public void updateApiModI(ApiModI body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+		        
+			if (body == null)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
+
+			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
+
+			if (as == null)
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			// TODO
+			
+			context.getLogger().info("Invocazione completata con successo");
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}

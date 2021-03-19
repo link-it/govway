@@ -312,7 +312,179 @@ components:
           $ref: '#/components/schemas/TipoApiEnum'
         formato:
           $ref: '#/components/schemas/FormatoSoapEnum'
-                      
+
+    # ModI Configurazione
+    ApiModI:
+      type: object
+      required:
+        - sicurezza_canale
+        - sicurezza_messaggio
+      properties:
+        sicurezza_canale:
+           $ref: '#/components/schemas/ApiModISicurezzaCanale'
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/ApiModISicurezzaMessaggio'
+    ApiModISicurezzaCanale:
+      type: object
+      required:
+        - pattern
+      properties:
+        pattern:
+           $ref: '#/components/schemas/ModISicurezzaCanaleEnum'
+    ApiModISicurezzaMessaggio:
+      type: object
+      required:
+        - pattern
+      properties:
+        pattern:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioEnum'
+        digest_richiesta:
+          type: boolean
+          default: false
+        informazioni_utente:
+          type: boolean
+          default: false
+        rest_header: 
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestHeaderEnum'
+        soap_firma_allegati:
+          type: boolean
+          default: false
+        applicabilita: 
+           $ref: '#/components/schemas/ModISicurezzaMessaggioApplicabilitaEnum' 
+        applicabilita_custom:
+          $ref: '#/components/schemas/ApiModISicurezzaMessaggioApplicabilitaCustom'
+    ApiModISicurezzaMessaggioApplicabilitaCustom:
+      type: object
+      required:
+        - applicabilita
+        - richiesta
+        - risposta
+      properties:
+        applicabilita: 
+           $ref: '#/components/schemas/ModISicurezzaMessaggioApplicabilitaEnum'
+        richiesta:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioApplicabilitaCustomEnum'
+        richiesta_content_type:
+          type: string
+          maxLength: 4000
+        risposta:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioApplicabilitaCustomEnum'  
+        risposta_content_type:
+          type: string
+          maxLength: 4000
+        risposta_codice:
+          type: string
+          maxLength: 4000
+    ApiModIPatternInterazione:
+      type: object
+      required:
+        - pattern
+      properties:
+        pattern:
+           $ref: '#/components/schemas/ModIPatternInterazioneEnum'
+        tipo:
+           $ref: '#/components/schemas/ModIPatternInterazioneTipoEnum'
+        funzione:
+           $ref: '#/components/schemas/ModIPatternInterazioneFunzioneEnum'
+    ApiModIPatternInterazioneRest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiModIPatternInterazione'
+        - type: object
+          properties:
+            risorsa_correlata:
+              $ref: '#/components/schemas/ApiModIPatternInterazioneCorrelazioneRest'         
+    ApiModIPatternInterazioneSoap:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiModIPatternInterazione'
+        - type: object
+          properties:
+            azione_correlata:
+              $ref: '#/components/schemas/ApiModIPatternInterazioneCorrelazioneSoap'          
+    ApiModIPatternInterazioneCorrelazioneRest:
+      type: object
+      required:
+        - api_nome
+        - api_versione        
+      properties:
+        api_nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        api_versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+        risorsa_http_method:
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/HttpMethodEnum'
+        risorsa_path:
+          type: string
+          maxLength: 255
+          example: '/libri'         
+    ApiModIPatternInterazioneCorrelazioneSoap:
+      type: object
+      required:
+        - api_nome
+        - api_versione 
+        - servizio       
+      properties:
+        api_nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        api_versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+        servizio:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        azione:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+    ApiModIRisorsaRest:
+      type: object
+      required:
+        - interazione
+        - sicurezza_messaggio
+      properties:
+        interazione:
+           $ref: '#/components/schemas/ApiModIPatternInterazioneRest'
+        sicurezza_messaggio:
+           type: object
+           oneOf:
+            - $ref: '#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito'
+           discriminator:
+             propertyName: stato
+             mapping:
+              'api': '#/components/schemas/ApiModISicurezzaMessaggioOperazione'
+              'ridefinito': '#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito'
+    ApiModIAzioneSoap:
+      type: object
+      required:
+        - interazione
+        - sicurezza_messaggio
+      properties:
+        interazione:
+           $ref: '#/components/schemas/ApiModIPatternInterazioneSoap'
+        sicurezza_messaggio:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito'
+          discriminator:
+            propertyName: stato
+            mapping:
+              'api': '#/components/schemas/ApiModISicurezzaMessaggioOperazione'
+              'ridefinito': '#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito'
+    ApiModISicurezzaMessaggioOperazione:
+      type: object
+      required:
+        - stato
+      properties:
+        stato:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioOperazioneEnum'
+    ApiModISicurezzaMessaggioOperazioneRidefinito:
+      type: object
+      required:
+        - stato
+        - configurazione
+      properties:
+        stato:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioOperazioneEnum'
+        configurazione:
+           $ref: '#/components/schemas/ApiModISicurezzaMessaggio'
+
     # Base: Credenziali
     AuthenticationHttpBasic:
       type: object
@@ -2176,3 +2348,36 @@ components:
     CanaleEnum:
       type: string
       enum: ['default', 'api', 'implementazione-api']
+    
+    # ModI: Enumeration
+    ModISicurezzaCanaleEnum:
+      type: string
+      enum: ['auth01', 'auth02']
+    ModISicurezzaMessaggioEnum:
+      type: string
+      enum: ['disabilitato', 'auth01', 'auth02', 'integrity01-auth01', 'integrity01-auth02']
+    ModISicurezzaMessaggioRestHeaderEnum:
+      type: string
+      enum: ['agid', 'bearer']
+    ModISicurezzaMessaggioApplicabilitaEnum:
+      type: string
+      enum: ['richiesta', 'risposta', 'qualsiasi', 'custom']
+      default: qualsiasi
+    ModISicurezzaMessaggioApplicabilitaCustomEnum:
+      type: string
+      enum: ['abilitato', 'disabilitato', 'custom']
+      default: abilitato
+    ModIPatternInterazioneEnum:
+      type: string
+      enum: ['crud', 'bloccante' ,'non-bloccante']
+    ModIPatternInterazioneTipoEnum:
+      type: string
+      enum: ['push', 'pull']
+    ModIPatternInterazioneFunzioneEnum:
+      type: string
+      enum: ['richiesta', 'risposta']
+    ModISicurezzaMessaggioOperazioneEnum:
+      type: string
+      enum: ['api', 'ridefinito']
+      default: api
+      

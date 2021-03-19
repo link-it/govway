@@ -25,70 +25,50 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class Api extends ApiBase {
+public class ApiModI  {
   
-  @Schema(description = "")
-  private byte[] interfaccia = null;
+  @Schema(required = true, description = "")
+  private ApiModISicurezzaCanale sicurezzaCanale = null;
   
-  @Schema(description = "")
-  private String canale = null;
-  
-  @Schema(description = "")
-  private ApiModI modi = null;
+  @Schema(required = true, description = "")
+  private ApiModISicurezzaMessaggio sicurezzaMessaggio = null;
  /**
-   * Get interfaccia
-   * @return interfaccia
+   * Get sicurezzaCanale
+   * @return sicurezzaCanale
   **/
-  @JsonProperty("interfaccia")
+  @JsonProperty("sicurezza_canale")
+  @NotNull
   @Valid
-  public byte[] getInterfaccia() {
-    return this.interfaccia;
+  public ApiModISicurezzaCanale getSicurezzaCanale() {
+    return this.sicurezzaCanale;
   }
 
-  public void setInterfaccia(byte[] interfaccia) {
-    this.interfaccia = interfaccia;
+  public void setSicurezzaCanale(ApiModISicurezzaCanale sicurezzaCanale) {
+    this.sicurezzaCanale = sicurezzaCanale;
   }
 
-  public Api interfaccia(byte[] interfaccia) {
-    this.interfaccia = interfaccia;
+  public ApiModI sicurezzaCanale(ApiModISicurezzaCanale sicurezzaCanale) {
+    this.sicurezzaCanale = sicurezzaCanale;
     return this;
   }
 
  /**
-   * Get canale
-   * @return canale
+   * Get sicurezzaMessaggio
+   * @return sicurezzaMessaggio
   **/
-  @JsonProperty("canale")
+  @JsonProperty("sicurezza_messaggio")
+  @NotNull
   @Valid
- @Pattern(regexp="^[^\\s]+$") @Size(max=255)  public String getCanale() {
-    return this.canale;
+  public ApiModISicurezzaMessaggio getSicurezzaMessaggio() {
+    return this.sicurezzaMessaggio;
   }
 
-  public void setCanale(String canale) {
-    this.canale = canale;
+  public void setSicurezzaMessaggio(ApiModISicurezzaMessaggio sicurezzaMessaggio) {
+    this.sicurezzaMessaggio = sicurezzaMessaggio;
   }
 
-  public Api canale(String canale) {
-    this.canale = canale;
-    return this;
-  }
-
- /**
-   * Get modi
-   * @return modi
-  **/
-  @JsonProperty("modi")
-  @Valid
-  public ApiModI getModi() {
-    return this.modi;
-  }
-
-  public void setModi(ApiModI modi) {
-    this.modi = modi;
-  }
-
-  public Api modi(ApiModI modi) {
-    this.modi = modi;
+  public ApiModI sicurezzaMessaggio(ApiModISicurezzaMessaggio sicurezzaMessaggio) {
+    this.sicurezzaMessaggio = sicurezzaMessaggio;
     return this;
   }
 
@@ -96,11 +76,10 @@ public class Api extends ApiBase {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Api {\n");
-    sb.append("    ").append(Api.toIndentedString(super.toString())).append("\n");
-    sb.append("    interfaccia: ").append(Api.toIndentedString(this.interfaccia)).append("\n");
-    sb.append("    canale: ").append(Api.toIndentedString(this.canale)).append("\n");
-    sb.append("    modi: ").append(Api.toIndentedString(this.modi)).append("\n");
+    sb.append("class ApiModI {\n");
+    
+    sb.append("    sicurezzaCanale: ").append(ApiModI.toIndentedString(this.sicurezzaCanale)).append("\n");
+    sb.append("    sicurezzaMessaggio: ").append(ApiModI.toIndentedString(this.sicurezzaMessaggio)).append("\n");
     sb.append("}");
     return sb.toString();
   }

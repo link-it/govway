@@ -39,6 +39,7 @@ public class ProfiloUtils {
 	static {
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.APIGATEWAY, "trasparente");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.MODIPA, "modipa");
+		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.MODI, "modipa");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.SPCOOP, "spcoop");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.FATTURAPA, "sdi");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.EDELIVERY, "as4");
@@ -60,6 +61,9 @@ public class ProfiloUtils {
 			Iterator<ProfiloEnum> it = MAP_PROFILO_TO_PROTOCOLLO.keySet().iterator();
 			while (it.hasNext()) {
 				ProfiloEnum profiloEnum = (ProfiloEnum) it.next();
+				if(ProfiloEnum.MODIPA.equals(profiloEnum)) {
+					continue; // utilizzo MODI
+				}
 				String protocollo = MAP_PROFILO_TO_PROTOCOLLO.get(profiloEnum);
 				MAP_PROTOCOLLO_TO_PROFILO.put(protocollo, profiloEnum);
 			}

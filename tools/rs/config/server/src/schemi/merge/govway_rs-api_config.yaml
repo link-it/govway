@@ -573,6 +573,71 @@ paths:
     - $ref: "#/components/parameters/soggetto"
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
+  /api/{nome}/{versione}/modi:
+    get:
+      tags:
+      - "api"
+      summary: "Restituisce le informazioni ModI associate all'API"
+      description: "Questa operazione consente di ottenere le informazioni ModI associato\
+        \ all'API identificata dal nome e dalla versione"
+      operationId: "getApiModI"
+      responses:
+        "200":
+          description: "Informazioni ModI restituite con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiModI"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "api"
+      summary: "Consente di modificare le informazioni ModI associate all'API"
+      description: "Questa operazione consente di aggiornare le informazioni ModI\
+        \ associate all'API identificata dal nome e dalla versione"
+      operationId: "updateApiModI"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApiModI"
+        required: true
+      responses:
+        "204":
+          description: "Le informazioni ModI sono state aggiornate correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
   /api/{nome}/{versione}/allegati:
     get:
       tags:
@@ -6957,6 +7022,8 @@ components:
             format: "byte"
           canale:
             $ref: "#/components/schemas/IdCanale"
+          modi:
+            $ref: "#/components/schemas/ApiModI"
     ApiItem:
       type: "object"
       allOf:
@@ -7176,6 +7243,8 @@ components:
         riferimento_id_richiesta:
           type: "boolean"
           example: false
+        modi:
+          $ref: "#/components/schemas/ApiModIRisorsaRest"
     ListaApiRisorse:
       type: "object"
       allOf:
@@ -7240,6 +7309,8 @@ components:
         riferimento_id_richiesta:
           type: "boolean"
           example: false
+        modi:
+          $ref: "#/components/schemas/ApiModIAzioneSoap"
     ListaApiAzioni:
       type: "object"
       allOf:
@@ -7608,6 +7679,7 @@ components:
       enum:
       - "APIGateway"
       - "ModIPA"
+      - "ModI"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
@@ -7740,6 +7812,176 @@ components:
           $ref: "#/components/schemas/TipoApiEnum"
         formato:
           $ref: "#/components/schemas/FormatoSoapEnum"
+    ApiModI:
+      required:
+      - "sicurezza_canale"
+      - "sicurezza_messaggio"
+      type: "object"
+      properties:
+        sicurezza_canale:
+          $ref: "#/components/schemas/ApiModISicurezzaCanale"
+        sicurezza_messaggio:
+          $ref: "#/components/schemas/ApiModISicurezzaMessaggio"
+    ApiModISicurezzaCanale:
+      required:
+      - "pattern"
+      type: "object"
+      properties:
+        pattern:
+          $ref: "#/components/schemas/ModISicurezzaCanaleEnum"
+    ApiModISicurezzaMessaggio:
+      required:
+      - "pattern"
+      type: "object"
+      properties:
+        pattern:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioEnum"
+        digest_richiesta:
+          type: "boolean"
+          default: false
+        informazioni_utente:
+          type: "boolean"
+          default: false
+        rest_header:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestHeaderEnum"
+        soap_firma_allegati:
+          type: "boolean"
+          default: false
+        applicabilita:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioApplicabilitaEnum"
+        applicabilita_custom:
+          $ref: "#/components/schemas/ApiModISicurezzaMessaggioApplicabilitaCustom"
+    ApiModISicurezzaMessaggioApplicabilitaCustom:
+      required:
+      - "applicabilita"
+      - "richiesta"
+      - "risposta"
+      type: "object"
+      properties:
+        applicabilita:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioApplicabilitaEnum"
+        richiesta:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioApplicabilitaCustomEnum"
+        richiesta_content_type:
+          maxLength: 4000
+          type: "string"
+        risposta:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioApplicabilitaCustomEnum"
+        risposta_content_type:
+          maxLength: 4000
+          type: "string"
+        risposta_codice:
+          maxLength: 4000
+          type: "string"
+    ApiModIPatternInterazione:
+      required:
+      - "pattern"
+      type: "object"
+      properties:
+        pattern:
+          $ref: "#/components/schemas/ModIPatternInterazioneEnum"
+        tipo:
+          $ref: "#/components/schemas/ModIPatternInterazioneTipoEnum"
+        funzione:
+          $ref: "#/components/schemas/ModIPatternInterazioneFunzioneEnum"
+    ApiModIPatternInterazioneRest:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiModIPatternInterazione"
+      - type: "object"
+        properties:
+          risorsa_correlata:
+            $ref: "#/components/schemas/ApiModIPatternInterazioneCorrelazioneRest"
+    ApiModIPatternInterazioneSoap:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiModIPatternInterazione"
+      - type: "object"
+        properties:
+          azione_correlata:
+            $ref: "#/components/schemas/ApiModIPatternInterazioneCorrelazioneSoap"
+    ApiModIPatternInterazioneCorrelazioneRest:
+      required:
+      - "api_nome"
+      - "api_versione"
+      type: "object"
+      properties:
+        api_nome:
+          $ref: "#/components/schemas/NCName"
+        api_versione:
+          $ref: "#/components/schemas/Versione"
+        risorsa_http_method:
+          $ref: "#/components/schemas/HttpMethodEnum"
+        risorsa_path:
+          maxLength: 255
+          type: "string"
+          example: "/libri"
+    ApiModIPatternInterazioneCorrelazioneSoap:
+      required:
+      - "api_nome"
+      - "api_versione"
+      - "servizio"
+      type: "object"
+      properties:
+        api_nome:
+          $ref: "#/components/schemas/NCName"
+        api_versione:
+          $ref: "#/components/schemas/Versione"
+        servizio:
+          $ref: "#/components/schemas/NCName"
+        azione:
+          $ref: "#/components/schemas/NCName"
+    ApiModIRisorsaRest:
+      required:
+      - "interazione"
+      - "sicurezza_messaggio"
+      type: "object"
+      properties:
+        interazione:
+          $ref: "#/components/schemas/ApiModIPatternInterazioneRest"
+        sicurezza_messaggio:
+          type: "object"
+          discriminator:
+            propertyName: "stato"
+            mapping:
+              api: "#/components/schemas/ApiModISicurezzaMessaggioOperazione"
+              ridefinito: "#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito"
+          oneOf:
+          - $ref: "#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito"
+    ApiModIAzioneSoap:
+      required:
+      - "interazione"
+      - "sicurezza_messaggio"
+      type: "object"
+      properties:
+        interazione:
+          $ref: "#/components/schemas/ApiModIPatternInterazioneSoap"
+        sicurezza_messaggio:
+          type: "object"
+          discriminator:
+            propertyName: "stato"
+            mapping:
+              api: "#/components/schemas/ApiModISicurezzaMessaggioOperazione"
+              ridefinito: "#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito"
+          oneOf:
+          - $ref: "#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito"
+    ApiModISicurezzaMessaggioOperazione:
+      required:
+      - "stato"
+      type: "object"
+      properties:
+        stato:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioOperazioneEnum"
+    ApiModISicurezzaMessaggioOperazioneRidefinito:
+      required:
+      - "configurazione"
+      - "stato"
+      type: "object"
+      properties:
+        stato:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioOperazioneEnum"
+        configurazione:
+          $ref: "#/components/schemas/ApiModISicurezzaMessaggio"
     AuthenticationHttpBasic:
       required:
       - "modalita_accesso"
@@ -9703,6 +9945,61 @@ components:
       - "default"
       - "api"
       - "implementazione-api"
+    ModISicurezzaCanaleEnum:
+      type: "string"
+      enum:
+      - "auth01"
+      - "auth02"
+    ModISicurezzaMessaggioEnum:
+      type: "string"
+      enum:
+      - "disabilitato"
+      - "auth01"
+      - "auth02"
+      - "integrity01-auth01"
+      - "integrity01-auth02"
+    ModISicurezzaMessaggioRestHeaderEnum:
+      type: "string"
+      enum:
+      - "agid"
+      - "bearer"
+    ModISicurezzaMessaggioApplicabilitaEnum:
+      type: "string"
+      default: "qualsiasi"
+      enum:
+      - "richiesta"
+      - "risposta"
+      - "qualsiasi"
+      - "custom"
+    ModISicurezzaMessaggioApplicabilitaCustomEnum:
+      type: "string"
+      default: "abilitato"
+      enum:
+      - "abilitato"
+      - "disabilitato"
+      - "custom"
+    ModIPatternInterazioneEnum:
+      type: "string"
+      enum:
+      - "crud"
+      - "bloccante"
+      - "non-bloccante"
+    ModIPatternInterazioneTipoEnum:
+      type: "string"
+      enum:
+      - "push"
+      - "pull"
+    ModIPatternInterazioneFunzioneEnum:
+      type: "string"
+      enum:
+      - "richiesta"
+      - "risposta"
+    ModISicurezzaMessaggioOperazioneEnum:
+      type: "string"
+      default: "api"
+      enum:
+      - "api"
+      - "ridefinito"
     ProblemTeamDigitale:
       type: "object"
       properties:
