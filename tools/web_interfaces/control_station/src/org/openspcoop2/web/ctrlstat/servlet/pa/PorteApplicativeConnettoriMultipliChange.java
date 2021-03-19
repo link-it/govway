@@ -518,6 +518,30 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					}
 				}
 				
+				// Tempi di risposta
+				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE)) {
+					if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+							|| 
+							tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+							|| 
+							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+						
+						ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
+						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
+												
+						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+						}
+						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+							tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+						}
+						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+							tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+						}
+					}
+				}
+				
+				
 				// Change Password basic/api
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD)) {
 					if(!ServletUtils.isCheckBoxEnabled(changepwd)) {

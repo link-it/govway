@@ -4089,6 +4089,27 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
+		boolean existsAutorizzazioniPuntuali = false;
+		if(oggetto!=null) {
+			if(isPortaDelegata){
+				PortaDelegata pd = (PortaDelegata) oggetto;
+				if(pd!=null && pd.sizeServizioApplicativoList()>0) {
+					existsAutorizzazioniPuntuali = true;
+				}
+			}
+			else {
+				PortaApplicativa pa = (PortaApplicativa) oggetto;
+				if(pa!=null) {
+					if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
+						existsAutorizzazioniPuntuali = true;
+					}
+					else if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+						existsAutorizzazioniPuntuali = true;
+					}
+				}
+			}
+		}
+		
 		boolean modipa = this.isProfiloModIPA(protocollo);
 		
 		if(forceHttps) {
@@ -4236,6 +4257,24 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
 						de.setType(DataElementType.TEXT);
 						de.setValue(TipoAutenticazione.SSL.getLabel());
+					}
+					else if(existsAutorizzazioniPuntuali) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(autenticazione);
+						dati.addElement(de);
+						
+						de = new DataElement();
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
+						de.setType(DataElementType.TEXT);
+						String labelAutenticazione = null;
+						for (int i = 0; i < autenticazioneValues.size(); i++) {
+							if(autenticazione!=null && autenticazione.equals(tipoAutenticazione[i])) {
+								labelAutenticazione = labelTipoAutenticazione[i];
+								break;
+							}
+						}
+						de.setValue(labelAutenticazione!=null ? labelAutenticazione : autenticazione);
 					}
 					else {
 						de.setType(DataElementType.SELECT);
@@ -4919,6 +4958,23 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
+		String oldAutenticazione = null;
+		if(oggetto!=null) {
+			if(isPortaDelegata){
+				PortaDelegata pd = (PortaDelegata) oggetto;
+				if(pd!=null) {
+					oldAutenticazione = pd.getAutenticazione();
+				}
+			}
+			else {
+				PortaApplicativa pa = (PortaApplicativa) oggetto;
+				if(pa!=null) {
+					oldAutenticazione = pa.getAutenticazione();
+				}
+			}
+		}
+				
+		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : 
 					this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative(protocollo==null ? true : this.soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo)));
@@ -5136,7 +5192,10 @@ public class ConsoleHelper implements IConsoleHelper {
 							isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione
 							){   
 					
-						if(urlAutorizzazioneAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
+						if(urlAutorizzazioneAutenticati!=null && autorizzazione_autenticazione && 
+								(old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) &&
+								(oldAutenticazione!=null && oldAutenticazione.equals(autenticazione))
+								){
 							de = new DataElement();
 							de.setType(DataElementType.LINK);
 							de.setUrl(urlAutorizzazioneAutenticati);
@@ -5162,6 +5221,8 @@ public class ConsoleHelper implements IConsoleHelper {
 						if(!isPortaDelegata && this.saCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo) 
 								&& isSupportatoAutenticazione // il link degli applicativi sulla pa deve essere visualizzato SOLO se è abilitata l'autenticazione
 								&& !profiloModi // e non siamo nel profilo ModI
+								&&
+								(oldAutenticazione!=null && oldAutenticazione.equals(autenticazione))
 								){
 							if(urlAutorizzazioneErogazioneApplicativiAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
 								de = new DataElement();

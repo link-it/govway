@@ -1,5 +1,15 @@
 2021-03-19  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]	
+	Risolto Bug OP-1162
+	Nellla sezione 'Controllo degli Accessi' l'autenticazione è adesso modificabile solamente se non sono stati indicati puntualmente degli applicativi o dei soggetti nel criterio di autorizzazione "per richiedente".
+	Quando inoltre viene selezionata una autenticazione differente da quella precedentemente impostata, 
+	gli eventuali link 'Applicativi' e 'Soggetti' presenti nella sezione "autorizzazione per richiedente" non vengono adesso più visualizzati fino a che non viene effettuato il salvataggio del nuovo tipo di autenticazione.
+	Nelle maschere di configurazione dei connettori, è stata invece aggiunta la nota "Indicazione in millisecondi (ms)" nei campo relativi alla sezione "ridefinisci tempi di risposta".
+	Inoltre nella maschera di configurazione di un connettore multiplo vengono adesso proposti i valori di default nella sezione "ridefinisci tempi di risposta", se abilitata.
+
+2021-03-19  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto problema che appariva al primo avvio del gateway, dopo l'installazione, se nell'avvio venivano fatti partire simultaneamente più nodi (installazione in cluster).
 	L'errore era simile al seguente:

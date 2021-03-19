@@ -1147,6 +1147,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+		de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_MILLISECONDI_NOTE);
 		de.setValue(tempiRisposta_connectionTimeout);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
@@ -1156,6 +1157,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+		de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_MILLISECONDI_NOTE);
 		de.setValue(tempiRisposta_readTimeout);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
@@ -1165,6 +1167,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+		de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_MILLISECONDI_NOTE);
 		de.setValue(tempiRisposta_tempoMedioRisposta);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
