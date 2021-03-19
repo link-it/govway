@@ -158,9 +158,10 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 	
 	public DynamicUtilsServiceEngine(){
-		this(null, null);
+		this(null, null, null, null);
 	}
-	public DynamicUtilsServiceEngine(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
+	public DynamicUtilsServiceEngine(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB){
 		try{
 			if(serviceManager==null) {
 				this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
@@ -199,13 +200,27 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			
 			this.pluginsServiceSearchDAO = this.pluginsServiceManager.getPluginServiceSearch();
 			
-			
-			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String datasourceJNDIName = null;
+			Properties datasourceJNDIContext = null;
+			String tipoDatabase = null;
+			if(driverRegistroServiziDB==null || driverConfigurazioneDB==null) {
+				datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+				datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+				tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			}
 						
-			this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
-			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			if(driverRegistroServiziDB==null) {
+				this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			}
+			else {
+				this.driverRegistroDB = driverRegistroServiziDB;
+			}
+			if(driverConfigurazioneDB==null) {
+				this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			}
+			else {
+				this.driverConfigDB = driverConfigurazioneDB;
+			}
 			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
 			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
@@ -248,7 +263,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 
 			
 			this.pluginsServiceManager = (org.openspcoop2.core.plugins.dao.IServiceManager) DAOFactory
-					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
+					.getInstance( log).getServiceManager(org.openspcoop2.core.plugins.utils.ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,log);
 			
 			this.pluginsServiceSearchDAO = this.pluginsServiceManager.getPluginServiceSearch();
 			

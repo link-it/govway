@@ -361,7 +361,8 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm.setTipoStatistica(TipoStatistica.ANDAMENTO_TEMPORALE);
 				statSearchForm.setAndamentoTemporalePerEsiti(false);
 				service.setAndamentoTemporaleSearch(statSearchForm);
-				bean = new AndamentoTemporaleBean(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new AndamentoTemporaleBean(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((AndamentoTemporaleBean) bean).setStatisticheGiornaliereService(service);
 				((AndamentoTemporaleBean) bean).setSearch(statSearchForm);
 				((AndamentoTemporaleBean) bean).initSearchListenerAndamentoTemporale(null); 
@@ -370,7 +371,8 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm.setTipoStatistica(TipoStatistica.ANDAMENTO_TEMPORALE);
 				statSearchForm.setAndamentoTemporalePerEsiti(true);
 				service.setAndamentoTemporaleSearch(statSearchForm);
-				bean = new AndamentoTemporaleBean(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new AndamentoTemporaleBean(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((AndamentoTemporaleBean) bean).setStatisticheGiornaliereService(service);
 				((AndamentoTemporaleBean) bean).setSearch(statSearchForm);
 				((AndamentoTemporaleBean) bean).initSearchListenerDistribuzionePerEsiti(null); 
@@ -379,7 +381,8 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SOGGETTO);
 				statSearchForm.setDistribuzionePerSoggettoRemota(true);
 				service.setDistribSoggettoSearch(statSearchForm);
-				bean = new DistribuzionePerSoggettoBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new DistribuzionePerSoggettoBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((DistribuzionePerSoggettoBean<?>) bean).setStatisticheGiornaliereService(service);
 				((DistribuzionePerSoggettoBean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerSoggettoBean<?>) bean).initSearchListenerRemoto(null);
@@ -388,7 +391,8 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SOGGETTO);
 				statSearchForm.setDistribuzionePerSoggettoRemota(false);
 				service.setDistribSoggettoSearch(statSearchForm);
-				bean = new DistribuzionePerSoggettoBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new DistribuzionePerSoggettoBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((DistribuzionePerSoggettoBean<?>) bean).setStatisticheGiornaliereService(service);
 				((DistribuzionePerSoggettoBean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerSoggettoBean<?>) bean).initSearchListenerLocale(null);
@@ -396,7 +400,8 @@ public class ReportExporter extends HttpServlet{
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_SERVIZIO.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO);
 				service.setDistribServizioSearch(statSearchForm);
-				bean = new DistribuzionePerServizioBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new DistribuzionePerServizioBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((DistribuzionePerServizioBean<?>) bean).setStatisticheGiornaliereService(service);
 				((DistribuzionePerServizioBean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerServizioBean<?>) bean).getSearch().initSearchListener(null); 
@@ -404,7 +409,8 @@ public class ReportExporter extends HttpServlet{
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_AZIONE.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_AZIONE);
 				service.setDistribAzioneSearch(statSearchForm);
-				bean = new DistribuzionePerAzioneBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new DistribuzionePerAzioneBean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((DistribuzionePerAzioneBean<?>) bean).setStatisticheGiornaliereService(service);
 				((DistribuzionePerAzioneBean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerAzioneBean<?>) bean).getSearch().initSearchListener(null);
@@ -413,7 +419,8 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
 				service.setDistribSaSearch(statSearchForm);
-				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((DistribuzionePerSABean<?>) bean).setStatisticheGiornaliereService(service);
 				((DistribuzionePerSABean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
@@ -424,7 +431,8 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
 				service.setDistribSaSearch(statSearchForm);
-				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((DistribuzionePerSABean<?>) bean).setStatisticheGiornaliereService(service);
 				((DistribuzionePerSABean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
@@ -435,7 +443,8 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP);
 				service.setDistribSaSearch(statSearchForm);
-				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((DistribuzionePerSABean<?>) bean).setStatisticheGiornaliereService(service);
 				((DistribuzionePerSABean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
@@ -447,7 +456,8 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
 				statSearchForm.setTokenClaim(tokenClaim.name());
 				service.setDistribSaSearch(statSearchForm);
-				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((DistribuzionePerSABean<?>) bean).setStatisticheGiornaliereService(service);
 				((DistribuzionePerSABean<?>) bean).setSearch(statSearchForm);
 				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
@@ -458,7 +468,8 @@ public class ReportExporter extends HttpServlet{
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_PERSONALIZZATA.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.STATISTICA_PERSONALIZZATA);
 				service.setStatistichePersonalizzateSearch((StatistichePersonalizzateSearchForm)statSearchForm);
-				bean = new StatsPersonalizzateBean(service.getUtilsServiceManager(), service.getPluginsServiceManager());
+				bean = new StatsPersonalizzateBean(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
+						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
 				((StatsPersonalizzateBean) bean).setStatisticheGiornaliereService(service);
 				((StatsPersonalizzateBean) bean).setSearch(statSearchForm);
 				((StatsPersonalizzateBean) bean).getSearch().initSearchListener(null);

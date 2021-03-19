@@ -199,7 +199,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				this.configurazioneUrlInvocazione = config.getUrlInvocazione();
 			}
 			
-			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, this.pluginsBaseServiceManager,log);
+			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, this.pluginsBaseServiceManager,
+					this.driverRegistroDB, this.driverConfigDB,
+					log);
 
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante la creazione del Service: " + e.getMessage(),e);

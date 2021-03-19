@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.security.Security;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -121,6 +122,7 @@ import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
 import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
+import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -136,6 +138,7 @@ import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventiThread;
+import org.openspcoop2.pdd.timers.TimerException;
 import org.openspcoop2.pdd.timers.TimerFileSystemRecoveryThread;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateLib;
@@ -148,6 +151,7 @@ import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliThread;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteLib;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteThread;
+import org.openspcoop2.pdd.timers.TimerLock;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerRepositoryStatefulThread;
 import org.openspcoop2.pdd.timers.TimerState;
@@ -155,6 +159,7 @@ import org.openspcoop2.pdd.timers.TimerStatisticheLib;
 import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TimerUtils;
+import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
@@ -162,6 +167,7 @@ import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
@@ -175,12 +181,16 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
+import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.semaphore.Semaphore;
+import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
+import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.slf4j.Logger;
 
 
@@ -1716,7 +1726,54 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if( (oConfig instanceof DriverConfigurazioneDB) && (oRegistry instanceof DriverRegistroServiziDB) ) {
 						PreLoadingConfig preLoading = new PreLoadingConfig(logCore, logCore, propertiesReader.getDefaultProtocolName(),
 								propertiesReader.getIdentitaPortaDefault(propertiesReader.getDefaultProtocolName()));
-						preLoading.loadConfig(propertiesReader.getConfigPreLoadingLocale());
+						
+						TimerLock timerLock = new TimerLock(TipoLock.STARTUP);
+						InfoStatistics semaphore_statistics = null;
+						Semaphore semaphore = null;
+						Logger logTimer = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
+						if(propertiesReader.isTimerLockByDatabase()) {
+							semaphore_statistics = new InfoStatistics();
+
+							SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(propertiesReader.getStartup_lockMaxLife(), 
+									propertiesReader.getStartup_lockIdleTime());
+
+							TipiDatabase databaseType = TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType());
+							try {
+								semaphore = new Semaphore(semaphore_statistics, SemaphoreMapping.newInstance(timerLock.getIdLock()), 
+										config, databaseType, logTimer);
+							}catch(Exception e) {
+								throw new TimerException(e.getMessage(),e);
+							}
+						}
+						
+						OpenSPCoopStateful openspcoopstate = new OpenSPCoopStateful();
+						try {
+							openspcoopstate.initResource(propertiesReader.getIdentitaPortaDefault(null),ID_MODULO, null);
+							Connection connectionDB = ((StateMessage)openspcoopstate.getStatoRichiesta()).getConnectionDB();
+						
+							String causa = "Preloading Configuration";
+							try {
+								GestoreMessaggi.acquireLock(
+										semaphore, connectionDB, timerLock,
+										msgDiag, causa, 
+										propertiesReader.getStartup_getLockAttesaAttiva(), 
+										propertiesReader.getStartup_getLockCheckInterval());
+								
+								preLoading.loadConfig(propertiesReader.getConfigPreLoadingLocale());
+								
+							}finally{
+								try{
+									GestoreMessaggi.releaseLock(
+											semaphore, connectionDB, timerLock,
+											msgDiag, causa);
+								}catch(Exception e){}
+							}
+							
+						}finally{
+							if(openspcoopstate!=null)
+								openspcoopstate.releaseResource();
+						}
+							
 					}
 										
 				}catch(Exception e){

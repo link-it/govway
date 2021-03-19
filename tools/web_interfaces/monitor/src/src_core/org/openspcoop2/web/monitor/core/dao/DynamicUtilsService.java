@@ -33,6 +33,7 @@ import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -43,6 +44,7 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
@@ -68,10 +70,12 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	private static Logger log = LoggerManager.getPddMonitorSqlLogger(); 
 
 	public DynamicUtilsService(){
-		this(null, null);
+		this(null, null, null, null);
 	}
-	public DynamicUtilsService(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
-		this.driver = new DynamicUtilsServiceEngine(serviceManager, pluginsServiceManager);
+	public DynamicUtilsService(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB){
+		this.driver = new DynamicUtilsServiceEngine(serviceManager, pluginsServiceManager,
+				driverRegistroServiziDB, driverConfigurazioneDB);
 	}
 	public DynamicUtilsService(Connection con, boolean autoCommit){
 		this(con, autoCommit, null, DynamicUtilsService.log);

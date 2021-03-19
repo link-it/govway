@@ -30,10 +30,12 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
@@ -124,10 +126,14 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 					e);
 		}
 	}
-	public DynamicPdDBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
-		super(serviceManager, pluginsServiceManager);
+	public DynamicPdDBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB){
+		super(serviceManager, pluginsServiceManager,
+				driverRegistroServiziDB, driverConfigurazioneDB);
 		try {
-			this.dynamicUtils = new DynamicPdDBeanUtils(serviceManager, pluginsServiceManager,log);
+			this.dynamicUtils = new DynamicPdDBeanUtils(serviceManager, pluginsServiceManager,
+					driverRegistroServiziDB, driverConfigurazioneDB,
+					log);
 		} catch (Exception e) {
 			DynamicPdDBean.log.error("lettura delle properties fallita.....",
 					e);

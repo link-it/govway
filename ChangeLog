@@ -1,3 +1,12 @@
+2021-03-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto problema che appariva al primo avvio del gateway, dopo l'installazione, se nell'avvio venivano fatti partire simultaneamente più nodi (installazione in cluster).
+	L'errore era simile al seguente:
+	govway_run2_1     | 11:44:29,841 ERROR [stderr] (Thread-112) 
+		org.openspcoop2.core.registry.driver.DriverRegistroServiziException: [DriverRegistroServiziDB::createAccordoServizioParteComune] SQLException [ERROR: duplicate key value violates unique constraint "unique_accordi_1"
+	govway_run2_1     | 11:44:29,841 ERROR [stderr] (Thread-112)   Dettaglio: Key (nome, id_referente, versione)=(api-config, 1, 1) already exists.].
+
 2021-03-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

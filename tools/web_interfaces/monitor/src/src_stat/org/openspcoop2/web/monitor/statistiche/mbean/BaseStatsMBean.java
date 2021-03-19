@@ -27,6 +27,8 @@ import java.util.Locale;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -86,8 +88,10 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	public BaseStatsMBean() {
 		init();
 	}
-	public BaseStatsMBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager) {
-		super(serviceManager, pluginsServiceManager);
+	public BaseStatsMBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
+		super(serviceManager, pluginsServiceManager,
+				driverRegistroServiziDB, driverConfigurazioneDB);
 		init();
 	}
 	private void init() {

@@ -41,6 +41,7 @@ import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -54,6 +55,7 @@ import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -109,14 +111,19 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 	public DynamicPdDBeanUtils(Logger log) throws Exception{
-		this(null, null, log);
+		this(null, null, 
+				null, null,
+				log);
 	}
-	public DynamicPdDBeanUtils(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager, Logger log) throws Exception{
+	public DynamicPdDBeanUtils(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager, 
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB,
+			Logger log) throws Exception{
 		this.log = log;
 		try{
 			this.log.debug("Init Dynamic Utils in corso...");
 			if(serviceManager!=null) {
-				this.dynamicUtilsService = new DynamicUtilsService(serviceManager, pluginsServiceManager);
+				this.dynamicUtilsService = new DynamicUtilsService(serviceManager, pluginsServiceManager,
+						driverRegistroServiziDB, driverConfigurazioneDB);
 			}
 			else {
 				this.dynamicUtilsService = new DynamicUtilsService();

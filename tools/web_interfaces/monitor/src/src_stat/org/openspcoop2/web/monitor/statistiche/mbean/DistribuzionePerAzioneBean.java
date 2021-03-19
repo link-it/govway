@@ -31,16 +31,17 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoReport;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-
-import org.openspcoop2.core.statistiche.constants.TipoBanda;
-import org.openspcoop2.core.statistiche.constants.TipoLatenza;
-import org.openspcoop2.core.statistiche.constants.TipoReport;
-import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
@@ -56,6 +57,7 @@ import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
+
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.json.JSONObject;
 
@@ -79,8 +81,10 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		super();
 		this.init();
 	}
-	public DistribuzionePerAzioneBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager) {
-		super(serviceManager, pluginsServiceManager);
+	public DistribuzionePerAzioneBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
+		super(serviceManager, pluginsServiceManager,
+				driverRegistroServiziDB, driverConfigurazioneDB);
 		this.init();
 	}
 	private void init() {

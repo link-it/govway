@@ -67,6 +67,7 @@ import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
@@ -124,6 +125,7 @@ public class AllarmiService implements IAllarmiService {
 	private static String TIPOLOGIA_SOLO_ASSOCIATE = CostantiConfigurazione.ALLARMI_TIPOLOGIA_SOLO_ASSOCIATE;
 	
 	private transient IServiceManager pluginsServiceManager;
+	private transient DriverRegistroServiziDB driverRegistroDB = null;
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 	private IAllarmeService allarmeDAO;
 	private IAllarmeServiceSearch allarmeSearchDAO;
@@ -167,13 +169,16 @@ public class AllarmiService implements IAllarmiService {
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 			
-			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, this.pluginsBaseServiceManager, log);
-			
 			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 
+			this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
 			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			
+			this.dynamicUtils = new DynamicPdDBeanUtils(this.utilsServiceManager, this.pluginsBaseServiceManager, 
+					this.driverRegistroDB, this.driverConfigDB,
+					log);
 			
 		} catch (Exception e) {
 			AllarmiService.log.error(e.getMessage(), e);

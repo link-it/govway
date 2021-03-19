@@ -41,6 +41,8 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
@@ -82,8 +84,10 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 		super();
 		this.init();
 	}
-	public StatsPersonalizzateBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager) {
-		super(serviceManager, pluginsServiceManager);
+	public StatsPersonalizzateBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB) {
+		super(serviceManager, pluginsServiceManager,
+				driverRegistroServiziDB, driverConfigurazioneDB);
 		this.init();
 	}
 	private void init() {

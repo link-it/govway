@@ -1,3 +1,8 @@
+2021-03-19  Andrea Poli <apoli@link.it>
+
+	Aggiunto semaforo per lo startup del Gateway
+	INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('StartupGateway');
+
 2021-03-05  Andrea Poli <apoli@link.it>
 
 	Aggiunta possibilità di registrare header multipli con lo stesso nome

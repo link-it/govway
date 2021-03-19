@@ -21,6 +21,8 @@ package org.openspcoop2.web.monitor.core.mbean;
 
 import javax.faces.event.ActionEvent;
 
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IService;
@@ -51,8 +53,10 @@ public class PdDBaseBean<T,K,ServiceType extends IService> extends BaseBean<T, K
 	public PdDBaseBean (){
 		this.dynamicUtilsService = new DynamicUtilsService();
 	}
-	public PdDBaseBean (org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager){
-		this.dynamicUtilsService = new DynamicUtilsService(serviceManager, pluginsServiceManager);
+	public PdDBaseBean (org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB){
+		this.dynamicUtilsService = new DynamicUtilsService(serviceManager, pluginsServiceManager,
+				driverRegistroServiziDB, driverConfigurazioneDB);
 	}	
 	
 //	public List<Soggetto> soggettiAutoComplete(Object val){

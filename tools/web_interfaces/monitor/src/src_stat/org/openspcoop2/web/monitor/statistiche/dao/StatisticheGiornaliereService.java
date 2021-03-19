@@ -27,13 +27,17 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
 import org.openspcoop2.core.statistiche.StatisticaMensile;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
@@ -138,6 +142,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager;
 	
 	private org.openspcoop2.core.statistiche.dao.IServiceManager transazioniStatisticheServiceManager;
+	
+	private DriverRegistroServiziDB driverRegistroServiziDB;
+
+	private DriverConfigurazioneDB driverConfigurazioneDB;
 
 	private IStatisticaGiornalieraServiceSearch statGiornaliereSearchDAO;
 
@@ -185,6 +193,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.useStatisticheGiornaliereCalcoloDistribuzioneMensile = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneMensile();
 			this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere = this.govwayMonitorProperties.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere();
 			
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			this.driverRegistroServiziDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			this.driverConfigurazioneDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -227,7 +241,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneSettimanale();
 			this.useStatisticheGiornaliereCalcoloDistribuzioneMensile = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneMensile();
 			this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere = this.govwayMonitorProperties.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere();
-						
+			
+			String tipoDatabase = (serviceManagerProperties!=null && serviceManagerProperties.getDatabaseType()!=null) ? serviceManagerProperties.getDatabaseType() : DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			this.driverRegistroServiziDB = new DriverRegistroServiziDB(con, log, tipoDatabase);
+			this.driverConfigurazioneDB = new DriverConfigurazioneDB(con, log, tipoDatabase);
+			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -270,7 +288,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneSettimanale();
 			this.useStatisticheGiornaliereCalcoloDistribuzioneMensile = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneMensile();
 			this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere = this.govwayMonitorProperties.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere();
-									
+			
+			String tipoDatabase = (serviceManagerProperties!=null && serviceManagerProperties.getDatabaseType()!=null) ? serviceManagerProperties.getDatabaseType() : DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			this.driverRegistroServiziDB = new DriverRegistroServiziDB(conConfig, log, tipoDatabase);
+			this.driverConfigurazioneDB = new DriverConfigurazioneDB(conConfig, log, tipoDatabase);
+			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -282,6 +304,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	
 	public org.openspcoop2.core.plugins.dao.IServiceManager getPluginsServiceManager() {
 		return this.pluginsServiceManager;
+	}
+	
+	public DriverRegistroServiziDB getDriverRegistroServiziDB() {
+		return this.driverRegistroServiziDB;
+	}
+
+	public DriverConfigurazioneDB getDriverConfigurazioneDB() {
+		return this.driverConfigurazioneDB;
 	}
 	
 	public void setAndamentoTemporaleSearch(
