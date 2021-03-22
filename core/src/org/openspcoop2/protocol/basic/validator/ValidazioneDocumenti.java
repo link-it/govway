@@ -55,6 +55,7 @@ import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
+import org.openspcoop2.utils.rest.ParseWarningException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
@@ -251,12 +252,19 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 						IApiReader apiReader = ApiFactory.newApiReader(format);
 						apiReader.init(this.log, wsdlConcettuale, config);
 						Api api = apiReader.read();
-						api.validate();
+						try {
+							api.validate();
+						}catch(ParseWarningException warning) {
+							result.setEsito(true);
+							result.setMessaggioWarning(objectInEsame+" Documento contenente anomalie: "+warning.getMessage());
+							return result;
+						}
 					}
 					
 
 				}
-			}catch(Exception e){
+			}
+			catch(Exception e){
 				result.setMessaggioErrore(objectInEsame+" Documento non valido: "+e.getMessage());
 				result.setException(e);
 				return result;

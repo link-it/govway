@@ -8033,7 +8033,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(sbParsingError.length() == 0)
 			sbParsingError.append(parsingError);
 		else
-			sbParsingError.append("<br/>").append(parsingError);
+			sbParsingError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).append(parsingError);
 	}
 	
 	
@@ -15578,7 +15578,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			bf.append(" abilitato con le seguenti impostazioni:");
 			
 			if(configurazione) {
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if( (filtro.getRuoloPorta()==null || RuoloPolicy.ENTRAMBI.equals(filtro.getRuoloPorta())) ){
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD+": Qualsiasi");
 				}
@@ -15588,7 +15588,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			if(configurazione) {
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if( (filtro.getProtocollo()==null || "".equals(filtro.getProtocollo())) ){
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO+": Qualsiasi");
 				}
@@ -15598,7 +15598,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			if(configurazione) {
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if(filtro.getRuoloErogatore()!=null) {
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE+": "+filtro.getRuoloErogatore());
 				}
@@ -15613,7 +15613,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			if(configurazione) {
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if( filtro.getTag()==null || "".equals(filtro.getTag()) ){
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TAG+": Qualsiasi");
 				}
@@ -15623,7 +15623,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			if(configurazione) {
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if( (filtro.getTipoServizio()==null || "".equals(filtro.getTipoServizio())) 
 						||
 						(filtro.getNomeServizio()==null || "".equals(filtro.getNomeServizio()))){
@@ -15634,7 +15634,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			
-			bf.append("<br/>");
+			bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 			if( (filtro.getAzione()==null || "".equals(filtro.getAzione())) ){
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE+": Qualsiasi");
 			}
@@ -15643,7 +15643,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			if(configurazione) {
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if( (filtro.getServizioApplicativoErogatore()==null || "".equals(filtro.getServizioApplicativoErogatore())) ){
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE+": Qualsiasi");
 				}
@@ -15653,7 +15653,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			if(configurazione || applicativa) {
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if(filtro.getRuoloFruitore()!=null) {
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE+": "+filtro.getRuoloFruitore());
 				}
@@ -15667,7 +15667,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				if(configurazione) {
-					bf.append("<br/>");
+					bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					if( (filtro.getServizioApplicativoFruitore()==null || "".equals(filtro.getServizioApplicativoFruitore())) ){
 						bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE+": Qualsiasi");
 					}
@@ -15677,7 +15677,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			else if(delegata) {
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if(filtro.getRuoloFruitore()!=null) {
 					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE+": "+filtro.getRuoloFruitore());
 				}
@@ -15691,21 +15691,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(filtro.isInformazioneApplicativaEnabled()){
 				
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED+": Abilitato");
 				
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO+": "+filtro.getInformazioneApplicativaTipo());
 				
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				bf.append(getLabelTipoInformazioneApplicativaFiltro(filtro.getInformazioneApplicativaTipo())).append(": ").append(filtro.getInformazioneApplicativaNome());
 				
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE+": "+filtro.getInformazioneApplicativaValore());
 			}
 			else{
 				
-				bf.append("<br/>");
+				bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED+": Disabilitato");
 				
 			}
@@ -16037,7 +16037,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	public String replaceToHtmlSeparator(String value) {
-		return this.replaceSeparator(value, "\n", "<BR/>");
+		return this.replaceSeparator(value, "\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 	}
 	public String replaceSeparator(String value, String originale,String destinazione) {
 		if(value!=null) {

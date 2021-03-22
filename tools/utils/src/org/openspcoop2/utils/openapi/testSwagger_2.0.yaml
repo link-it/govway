@@ -280,7 +280,7 @@ paths:
         - pet
       summary: Deletes a pet
       description: ''
-      operationId: deletePet
+      operationId: deletePetId
       produces:
         - application/xml
         - application/json

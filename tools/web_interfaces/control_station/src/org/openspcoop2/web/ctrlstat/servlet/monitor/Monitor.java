@@ -2396,7 +2396,7 @@ public final class Monitor extends Action {
 								if(consegnaMultipla!=null && consegnaMultipla) {
 									
 									if(j>0) {
-										sbDestinatari.append("<BR/>");
+										sbDestinatari.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 									}
 									
 									sbDestinatari.append("<b>");

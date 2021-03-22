@@ -3020,7 +3020,18 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(validazioneParteComune){
 				ValidazioneResult result = this.apcCore.validaInterfacciaWsdlParteComune(as, this.soggettiCore, protocollo);
 				if(result.isEsito()==false){
-					pd.setMessage(result.getMessaggioErrore());
+					String msgErroreHTML = result.getMessaggioErrore();
+					if(msgErroreHTML!=null) {
+						msgErroreHTML = msgErroreHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					}
+					pd.setMessage(msgErroreHTML);
+				}
+				else if(result.getMessaggioWarning()!=null && StringUtils.isNotEmpty(result.getMessaggioWarning())) {
+					String msgWarningHTML = result.getMessaggioWarning();
+					if(msgWarningHTML!=null) {
+						msgWarningHTML = msgWarningHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					}
+					this.pd.setMessage(msgWarningHTML, org.openspcoop2.web.lib.mvc.MessageType.WARN);
 				}
 				return result.isEsito();
 			}
@@ -5146,17 +5157,36 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 				v = this.apcCore.validaInterfacciaWsdlParteComune(accordoServizioParteComune, this.soggettiCore, tipoProtocollo);
 				if(v.isEsito()==false){
-					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
+					String msgErroreHTML = v.getMessaggioErrore();
+					if(msgErroreHTML!=null) {
+						msgErroreHTML = msgErroreHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					}
+					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+msgErroreHTML);
 					if(v.getException()!=null)
 						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
 					else
 						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
 					return false;
 				}
+				else if(v.getMessaggioWarning()!=null && StringUtils.isNotEmpty(v.getMessaggioWarning())) {
+					String msgWarningHTML = v.getMessaggioWarning();
+					if(msgWarningHTML!=null) {
+						msgWarningHTML = msgWarningHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					}
+					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+msgWarningHTML, org.openspcoop2.web.lib.mvc.MessageType.WARN);
+					if(v.getException()!=null)
+						this.log.warn("[validazione-"+tipoProtocollo+"] "+v.getMessaggioWarning(),v.getException());
+					else
+						this.log.warn("[validazione-"+tipoProtocollo+"] "+v.getMessaggioWarning());
+				}
 
 				v = this.apcCore.validaSpecificaConversazione(accordoServizioParteComune, this.soggettiCore, tipoProtocollo);
 				if(v.isEsito()==false){
-					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore());
+					String msgErroreHTML = v.getMessaggioErrore();
+					if(msgErroreHTML!=null) {
+						msgErroreHTML = msgErroreHTML.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					}
+					this.pd.setMessage("[validazione-"+tipoProtocollo+"] "+msgErroreHTML);
 					if(v.getException()!=null)
 						this.log.error("[validazione-"+tipoProtocollo+"] "+v.getMessaggioErrore(),v.getException());
 					else

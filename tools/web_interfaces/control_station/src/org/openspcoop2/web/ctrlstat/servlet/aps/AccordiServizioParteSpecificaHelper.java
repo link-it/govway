@@ -487,7 +487,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					if(!azioniNonTrovate.isEmpty()) {
 						if(sbError.length()>0) {
-							sbError.append("<BR/>");
+							sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 						}
 						sbError.append("Gruppo '"+gruppo+"' (Erogazione): "+azioniNonTrovate);
 					}
@@ -503,7 +503,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				if(!azioniNonTrovate.isEmpty()) {
 					if(sbError.length()>0) {
-						sbError.append("<BR/>");
+						sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
 					sbError.append("Criteri di Applicabilità nelle Trasformazioni del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Erogazione): "+azioniNonTrovate);
 				}
@@ -518,7 +518,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				if(!azioniNonTrovate.isEmpty()) {
 					if(sbError.length()>0) {
-						sbError.append("<BR/>");
+						sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
 					sbError.append("Policy di RateLimiting del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Erogazione): "+azioniNonTrovate);
 				}
@@ -533,7 +533,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				if(!azioniNonTrovate.isEmpty()) {
 					if(sbError.length()>0) {
-						sbError.append("<BR/>");
+						sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
 					sbError.append("Allarme del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Erogazione): "+azioniNonTrovate);
 				}
@@ -541,7 +541,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			if(azioniInFruizione) {
 				if(sbError.length()>0) {
-					sbError.append("<BR/>");
+					sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				}
 			}
 			
@@ -560,7 +560,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						if(!azioniNonTrovate.isEmpty()) {
 							if(sbError.length()>0) {
-								sbError.append("<BR/>");
+								sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 							}
 							sbError.append("Gruppo '"+gruppo+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
 						}
@@ -579,7 +579,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					if(!azioniNonTrovate.isEmpty()) {
 						if(sbError.length()>0) {
-							sbError.append("<BR/>");
+							sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 						}
 						sbError.append("Criteri di Applicabilità nelle Trasformazioni del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
 					}
@@ -597,7 +597,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					if(!azioniNonTrovate.isEmpty()) {
 						if(sbError.length()>0) {
-							sbError.append("<BR/>");
+							sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 						}
 						sbError.append("Policy di RateLimiting del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
 					}
@@ -615,7 +615,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					if(!azioniNonTrovate.isEmpty()) {
 						if(sbError.length()>0) {
-							sbError.append("<BR/>");
+							sbError.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 						}
 						sbError.append("Allarme del gruppo '"+org.openspcoop2.core.constants.Costanti.MAPPING_DESCRIZIONE_DEFAULT+"' (Fruizione '"+labelFruitore+"'): "+azioniNonTrovate);
 					}

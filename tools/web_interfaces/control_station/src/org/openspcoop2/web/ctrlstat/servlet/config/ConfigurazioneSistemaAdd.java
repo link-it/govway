@@ -198,9 +198,9 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							StringBuilder bfExternal = new StringBuilder();
 							String descrizione = confCore.getJmxPdD_descrizione(aliasForResetCache);
 							if(index>0) {
-								bfExternal.append("<BR/>");
+								bfExternal.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 							}
-							bfExternal.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER).append(" ").append(descrizione).append("<BR/>");
+							bfExternal.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER).append(" ").append(descrizione).append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 							List<String> caches = confCore.getJmxPdD_caches(aliasForResetCache);
 							if(caches!=null && caches.size()>0){
 								
@@ -226,14 +226,14 @@ public final class ConfigurazioneSistemaAdd extends Action {
 										stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 										rilevatoErrore = true;
 										if(bfCaches.length()>0){
-											bfCaches.append("<BR/>");
+											bfCaches.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 										}
 										bfCaches.append("- Cache ["+cache+"]: "+stato);
 									}
 									
 									if("abilitata".equals(stato)){
 										if(bfCaches.length()>0){
-											bfCaches.append("<BR/>");
+											bfCaches.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 										}
 										String result = null;
 										try{
@@ -254,7 +254,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 								bfExternal.append(bfCaches.toString());
 								
 								if(messagePerOperazioneEffettuata.length()>0){
-									messagePerOperazioneEffettuata+= "<BR/>";
+									messagePerOperazioneEffettuata+= org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 								}
 								messagePerOperazioneEffettuata+= bfExternal.toString();
 							
@@ -356,7 +356,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							
 							if("abilitata".equals(stato)){
 								if(bf.length()>0){
-									bf.append("<BR/>");
+									bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 								}
 								String result = null;
 								try{

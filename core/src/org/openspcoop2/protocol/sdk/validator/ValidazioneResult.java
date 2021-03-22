@@ -33,6 +33,7 @@ public class ValidazioneResult {
 
 	private boolean esito;
 	private String messaggioErrore;
+	private String messaggioWarning;	
 	private Exception exception;
 	
 	public boolean isEsito() {
@@ -46,6 +47,12 @@ public class ValidazioneResult {
 	}
 	public void setMessaggioErrore(String messaggioErrore) {
 		this.messaggioErrore = messaggioErrore;
+	}
+	public String getMessaggioWarning() {
+		return this.messaggioWarning;
+	}
+	public void setMessaggioWarning(String messaggioWarning) {
+		this.messaggioWarning = messaggioWarning;
 	}
 	public Exception getException() {
 		return this.exception;

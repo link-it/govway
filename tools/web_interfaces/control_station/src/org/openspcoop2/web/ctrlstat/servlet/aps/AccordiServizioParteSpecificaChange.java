@@ -1708,36 +1708,36 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}
 					else if(backToConfermaModificaDatiServizio != null) {
 						msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_MULTI_API_INFLUENZATE_MODIFICA;
-						msg+="<BR/>Di seguito vengono elencate tutte le configurazioni coinvolte dalla modifica. Vuoi procedere?";
-						msg+="<BR/>";
+						msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+"Di seguito vengono elencate tutte le configurazioni coinvolte dalla modifica. Vuoi procedere?";
+						msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 						if(listMappingPD.size()>0) {
-							msg+="<BR/>";
+							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							if(listMappingPD.size()==1) {
 								msg+="La fruizione:";
 							}
 							else if(listMappingPD.size()>1) {
 								msg+="Le "+listMappingPD.size()+" fruizioni:";
 							}
-							msg+="<BR/>";
+							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							for (IDPortaDelegata idPortaDelegata : listMappingPD) {
 								msg+="- ";
 								msg+=apsHelper.getLabelServizioFruizione(tipoProtocollo, idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore(), idPortaDelegata.getIdentificativiFruizione().getIdServizio());
-								msg+="<BR/>";
+								msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							}
 						}
 						if(listMappingPA.size()>0) {
-							msg+="<BR/>";
+							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							if(listMappingPA.size()==1) {
 								msg+="L&#39;erogazione:";
 							}
 							else if(listMappingPA.size()>1) {
 								msg+=listMappingPA.size()+" erogazioni:";
 							}
-							msg+="<BR/>";
+							msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							for (IDPortaApplicativa idPortaApplicativa : listMappingPA) {
 								msg+="- ";
 								msg+=apsHelper.getLabelServizioErogazione(tipoProtocollo, idPortaApplicativa.getIdentificativiErogazione().getIdServizio());
-								msg+="<BR/>";
+								msg+=org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 							}
 						}
 					}

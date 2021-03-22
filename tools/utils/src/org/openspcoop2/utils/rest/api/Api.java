@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.beans.BaseBean;
+import org.openspcoop2.utils.rest.ParseWarningException;
 import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -150,10 +151,14 @@ public abstract class Api extends BaseBean implements Serializable {
 		this.baseURL = baseURL;
 	}
 	
-	public void validate() throws ProcessingException {
+	public void validate() throws ProcessingException,ParseWarningException {
 		this.validate(false);
 	}
-	public void validate(boolean validateBodyParameterElement) throws ProcessingException {
+	public void validate(boolean validateBodyParameterElement) throws ProcessingException, ParseWarningException {
+		
+		if(this.operations.size()<=0) {
+			throw new ProcessingException("Paths and Operations undefined");
+		}
 		
 		for (int i = 0; i < this.operations.size(); i++) {
 			

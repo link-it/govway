@@ -89,6 +89,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 	private ParseOptions parseOptions;
 	private List<ApiSchema> schemas;
 	private boolean resolveExternalRef = true;
+	private String parseWarningResult;
 	
 	private boolean debug;
 	public void setDebug(boolean debug) {
@@ -101,7 +102,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		this.schemas = new ArrayList<>();
 	}
 
-	protected static OpenAPI parseResult(Logger log, SwaggerParseResult pr) throws ProcessingException {
+	protected static OpenAPI parseResult(Logger log, SwaggerParseResult pr, StringBuilder sbParseWarningResult) throws ProcessingException {
 		if(pr==null) {
 			throw new ProcessingException("Parse result undefined");
 		}
@@ -111,7 +112,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				if(bfMessage.length()>0) {
 					bfMessage.append("\n");
 				}
-				bfMessage.append(msg);
+				bfMessage.append("- ").append(msg);
 			}
 		}
 		OpenAPI openApi = null;
@@ -119,6 +120,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			openApi = pr.getOpenAPI();
 			if(bfMessage.length()>0) {
 				log.debug(bfMessage.toString());
+				sbParseWarningResult.append(bfMessage.toString());
 			}
 		}
 		else {
@@ -150,7 +152,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			else {
 				pr = new OpenAPIV3Parser().readContents(content, null, this.parseOptions);
 			}
-			this.openApi = parseResult(log, pr);
+			StringBuilder sbParseWarningResult = new StringBuilder();
+			this.openApi = parseResult(log, pr, sbParseWarningResult);
+			if(sbParseWarningResult.length()>0) {
+				this.parseWarningResult = sbParseWarningResult.toString();
+			}
 			
 			this.openApiRaw = content;
 					
@@ -263,7 +269,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		if(this.openApi == null)
 			throw new ProcessingException("Api non correttamente inizializzata");
 		try {
-			OpenapiApi api = new OpenapiApi(this.openApi, this.openApiRaw);
+			OpenapiApi api = new OpenapiApi(this.format, this.openApi, this.openApiRaw, this.parseWarningResult);
 			if(!this.schemas.isEmpty()) {
 				for (ApiSchema apiSchema : this.schemas) {
 					api.addSchema(apiSchema);

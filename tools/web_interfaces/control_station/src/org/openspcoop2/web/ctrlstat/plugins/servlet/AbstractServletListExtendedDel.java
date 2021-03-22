@@ -104,7 +104,7 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 					if(inUse){
 						
 						if(bfInUseTotal.length()>0){
-							bfInUseTotal.append("<br/>");
+							bfInUseTotal.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 						}
 						bfInUseTotal.append("- "+bfInUse.toString());
 						

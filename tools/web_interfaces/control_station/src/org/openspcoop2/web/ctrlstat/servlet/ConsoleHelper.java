@@ -17016,7 +17016,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		String verbo = unaCredenziale ? "viene" : "vengono";
 		String oggetto = unaCredenziale ? "la chiave" : "le credenziali";
 		String intestazione = StringEscapeUtils.escapeHtml("Di seguito "+verbo+" riportat"+singolare+" "+oggetto+" associat"+singolare+" "+tipoOggetto+".")
-				+"<BR/>"+
+				+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 				StringEscapeUtils.escapeHtml("L'informazione viene visualizzata in questo avviso e successivamente non sarà più consultabile.");
 		String attenzione = StringEscapeUtils.escapeHtml("Si prega di copiarl"+singolare+" e custodirl"+singolare+" attentamente.");
 		

@@ -517,7 +517,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			return null;
 		}
 		else{
-			return detail.replaceAll("\n", "<BR/>");
+			return detail.replaceAll("\n", org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 		}
 	}
 }

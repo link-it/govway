@@ -1,3 +1,11 @@
+2021-03-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1165
+	La creazione o l'aggiornamento di una API tramite il caricamento dell'interfaccia OpenAPI 3.x non rilevava alcuni tipi di errore presenti nell'interfaccia (es. negli schemas) e 
+	terminava con la creazione dell'API correttamente senza segnalarli.
+	Il problema è stato risolto, e adesso vengono segnalati anche eventuali anomalie non bloccanti (es. url scorrette definite nella sezione info).
+
 2021-03-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]	

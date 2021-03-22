@@ -314,12 +314,12 @@ public class CostantiControlStation {
 			"- <b>"+GruppoIntegrazione.SOAP.getCompactLabel()+"</b>: le informazioni sono incluse in uno specifico header SOAP proprietario di GovWay;<BR/>"+
 			"- <b>"+GruppoIntegrazione.WSA.getCompactLabel()+"</b>: le informazioni sono incluse in un header SOAP secondo il formato standard WS-Addressing;<BR/>";
 	public final static String LABEL_METADATI_RIDEFINITI_INFO_TEMPLATE_PLUGIN_BACKWARD =
-			"<BR/>"+
+			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"- <b>"+GruppoIntegrazione.TEMPLATE.getCompactLabel()+"</b>: modalità che consente di definire tramite un template freemaker o velocity (definito a livello globale) come le informazioni siano inserite nel messaggio.<BR/>"+
 			"Il tipo di template (freemarker/velocity) e il path del file template possono essere specifici per API indicandoli nelle proprietà 'integrazione.template.richiesta/risposta.tipo' e 'integrazione.template.richiesta/risposta.file'.<BR/>"+
-			"<BR/>"+
+			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"- <b>"+GruppoIntegrazione.PLUGIN.getCompactLabel()+"</b>: consente di selezionare un plugin personalizzato;<BR/>"+
-			"<BR/>"+
+			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"Sono infine disponibili modalità che generano gli header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:<BR/>"+
 			"Le informazioni sono veicolate all'interno di header HTTP tramite le seguenti modalità:<BR/>"+
 			"- <b>"+GruppoIntegrazione.BACKWARD_COMPATIBILITY_OPENSPCOOP2_HTTP.getCompactLabel()+"</b><BR/>"+
@@ -349,20 +349,20 @@ public class CostantiControlStation {
 	@Deprecated
 	public final static String LABEL_METADATI_INFO_OLD = "Per consentire lo scambio di informazioni, funzionali all’integrazione tra applicativi e gateway, sono previste differenti strutture dati, indicate con il termine Header di Integrazione, che possono essere attivate tramite i tipi descritti di seguito<BR/>"+
 			"Il Gateway dispone di una sua configurazione di default per la generazione degli header. Tramite il campo '"+CostantiControlStation.LABEL_METADATI+"' è possibile ridefinire tale comportamento.<BR/>"+
-			"<BR/>"+
+			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"<b>trasporto</b>: le informazioni sono veicolate all'interno di header HTTP<BR/>"+
 			"<b>urlBased</b>: le informazioni sono veicolate come parametri della url<BR/>"+
 			"<b>soap</b>: le informazioni sono incluse in uno specifico header SOAP proprietario di GovWay<BR/>"+
 			"<b>wsa</b>: le informazioni sono incluse in un header SOAP secondo il formato standard WS-Addressing<BR/>"+
 			"<b>none</b>: non viene utilizzata alcuna modalità; questo tipo serve a sovrascrivere le impostazioni di default del Gateway<BR/>"+
 			"<b>trasportoExt, urlBasedExt, soapExt, wsaExt</b>: rispetto alla descrizione fornita precedentemente, le informazioni vengono veicolate anche fuori dal dominio di gestione<BR/>"+
-			"<BR/>"+
+			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"Sono anche disponibili modalità che consentono di definire tramite un template freemaker o velocity (definito a livello globale) come le informazioni siano inserite nel messaggio.<BR/>"+
 			"Il tipo di template (freemarker/velocity) e il path del file template possono essere specifici per API indicandoli nelle proprietà 'integrazione.template.richiesta/risposta.tipo' e 'integrazione.template.richiesta/risposta.file'<BR/>"+
 			"<b>template</b>: il template viene applicato sia alla richiesta che alla risposta<BR/>"+
 			"<b>template-request</b>: il template viene applicato solamente alla richiesta<BR/>"+
 			"<b>template-response</b>: il template viene applicato solamente alla risposta<BR/>"+
-			"<BR/>"+
+			org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 			"Sono infine disponibili modalità che generano gli header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:<BR/>"+
 			"<b>openspcoop2-trasporto</b> o <b>openspcoop1-trasporto</b>: le informazioni sono veicolate all'interno di header HTTP senza prefisso 'X-'<BR/>"+
 			"<b>openspcoop2-x-trasporto</b> o <b>openspcoop1-x-trasporto</b>: le informazioni sono veicolate all'interno di header HTTP con prefisso 'X-'<BR/>"+
@@ -1792,7 +1792,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS = "Il file fornito deve contenere proprietà indicate come nome=valore in ogni linea.<BR/>"+
 		"Il nome della proprietà corrisponde all'entry name all'interno dell'archivio (es. dir/subDir/entryName1).<BR/>"+
 		"Il valore della proprietà corrisponde al contenuto dell'entry.<BR/>"+
-		"<BR/>"+
+		org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
 		"È possibile selezionare parti del messaggio, per associarle come contenuto dell'entry, utilizzando le seguenti espressioni dinamiche risolte a runtime dal Gateway:";
 		
 	

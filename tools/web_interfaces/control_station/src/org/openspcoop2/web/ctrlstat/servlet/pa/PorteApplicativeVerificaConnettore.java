@@ -311,9 +311,9 @@ public class PorteApplicativeVerificaConnettore extends Action {
 						String descrizione = confCore.getJmxPdD_descrizione(aliasForVerificaConnettore);
 						if(aliases.size()>1) {
 							if(index>0) {
-								bfExternal.append("<BR/>");
+								bfExternal.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 							}
-							bfExternal.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER).append(" ").append(descrizione).append("<BR/>");
+							bfExternal.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER).append(" ").append(descrizione).append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 						}						
 						try{
 							String stato = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(aliasForVerificaConnettore), aliasForVerificaConnettore, confCore.getJmxPdD_configurazioneSistema_type(aliasForVerificaConnettore),
@@ -347,7 +347,7 @@ public class PorteApplicativeVerificaConnettore extends Action {
 						}
 	
 						if(messagePerOperazioneEffettuata.length()>0){
-							messagePerOperazioneEffettuata+= "<BR/>";
+							messagePerOperazioneEffettuata+= org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 						}
 						messagePerOperazioneEffettuata+= bfExternal.toString();
 						

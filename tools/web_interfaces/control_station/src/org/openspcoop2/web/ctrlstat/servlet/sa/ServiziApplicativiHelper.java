@@ -2850,7 +2850,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						if(passwordVerifier != null) {
 							PasswordGenerator passwordGenerator = new PasswordGenerator(passwordVerifier);
 							de.getPassword().setPasswordGenerator(passwordGenerator);
-							de.setNote(passwordVerifier.help("<BR/>"));
+							de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 						}
 						de.getPassword().getPasswordGenerator().setDefaultLength(lunghezzaPasswordGenerate);						
 					}

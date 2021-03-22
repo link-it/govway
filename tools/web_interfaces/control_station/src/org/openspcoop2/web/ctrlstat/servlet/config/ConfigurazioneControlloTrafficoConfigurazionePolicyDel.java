@@ -127,7 +127,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyDel extends Acti
 //					
 //					if(configurazioneUtilizzata >0){
 //						if(delMsg.length()>0){
-//							delMsg.append("<br/>");
+//							delMsg.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 //						}
 //						delMsg.append("- ");
 //						delMsg.append(policy.getIdPolicy());

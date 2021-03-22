@@ -481,7 +481,7 @@ public class UtentiHelper extends ConsoleHelper {
 				PasswordGenerator passwordGenerator = new PasswordGenerator(passwordVerifier);
 				passwordGenerator.setDefaultLength(this.utentiCore.getUtenzeLunghezzaPasswordGenerate());
 				de.getPassword().setPasswordGenerator(passwordGenerator);
-				de.setNote(passwordVerifier.help("<BR/>"));
+				de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 			}
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
 			de.setSize(this.getSize());
@@ -496,7 +496,7 @@ public class UtentiHelper extends ConsoleHelper {
 //			de.setSize(this.getSize());
 //			de.setRequired(true);
 //			if(passwordVerifier!=null){
-//				de.setNote(passwordVerifier.help("<BR/>"));
+//				de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 //			}
 //			dati.addElement(de);
 			
@@ -823,7 +823,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setValue("");
 			de.setRequired(true);
 			if(passwordVerifier!=null){
-				de.setNote(passwordVerifier.help("<BR/>"));
+				de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 			}
 			dati.addElement(de);
 		}

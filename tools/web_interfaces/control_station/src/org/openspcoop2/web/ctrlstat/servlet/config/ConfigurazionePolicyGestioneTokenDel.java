@@ -152,7 +152,7 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				
 				
 //				if(listaPA != null && listaPA.size() > 0) {
-//					bf.append("<br/>").append(listaPA.size());
+//					bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).append(listaPA.size());
 //					if(listaPA.size()<2){
 //						bf.append(" Erogazione ");
 //					}else{
@@ -170,7 +170,7 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 //				}
 //				
 //				if(listaPD != null && listaPD.size() > 0) {
-//					bf.append("<br/>").append(listaPD.size());
+//					bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).append(listaPD.size());
 //					if(listaPD.size()<2){
 //						bf.append(" Porta Delegata: ");
 //					}else{
@@ -189,7 +189,7 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				
 				if(addMsg) {
 					if(delMsg.length()>0){
-						delMsg.append("<br/>");
+						delMsg.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					}
 					delMsg.append("- "+bf.toString());
 				}

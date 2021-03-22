@@ -75,6 +75,7 @@ import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
+import org.openspcoop2.utils.rest.ParseWarningException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
@@ -373,7 +374,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			apiReader.init(log, bytes, config);
 			
 	         Api api = apiReader.read();
-	         api.validate();
+	         try {
+	        	 api.validate();
+	         }catch(ParseWarningException warning) {}
 	         
 	         if(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) {
 	        	 if(api.getDescription()!=null) {

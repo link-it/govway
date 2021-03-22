@@ -174,7 +174,8 @@ public class UniqueInterfaceGenerator {
 		else {
 			pr = new OpenAPIV3Parser().readContents(config.master, null, parseOptions);
 		}
-		OpenAPI api = AbstractOpenapiApiReader.parseResult(LoggerWrapperFactory.getLogger(UniqueInterfaceGenerator.class), pr);
+		StringBuilder sbParseWarningResult = new StringBuilder();
+		OpenAPI api = AbstractOpenapiApiReader.parseResult(LoggerWrapperFactory.getLogger(UniqueInterfaceGenerator.class), pr, sbParseWarningResult);
 		if(api.getComponents()==null) {
 			api.setComponents(new Components());
 		}
@@ -192,7 +193,7 @@ public class UniqueInterfaceGenerator {
 			else {
 				pr = new OpenAPIV3Parser().readContents(attach, null, parseOptions);
 			}
-			OpenAPI apiInternal = AbstractOpenapiApiReader.parseResult(LoggerWrapperFactory.getLogger(UniqueInterfaceGenerator.class), pr);
+			OpenAPI apiInternal = AbstractOpenapiApiReader.parseResult(LoggerWrapperFactory.getLogger(UniqueInterfaceGenerator.class), pr, sbParseWarningResult);
 			if(apiInternal.getComponents()!=null) {
 				if(apiInternal.getComponents().getCallbacks()!=null) {
 					Map<String, Callback> maps = apiInternal.getComponents().getCallbacks();
