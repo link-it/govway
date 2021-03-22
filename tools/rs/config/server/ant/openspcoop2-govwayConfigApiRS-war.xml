@@ -91,6 +91,9 @@
 			<lib dir="${openspcoop2.lib}/swagger">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${openspcoop2.lib}/openapi4j">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${openspcoop2.lib}/shared">
 				<include name="reactive-streams-1.0.3.jar"/>
 				<include name="reflections-0.9.12.jar"/>
