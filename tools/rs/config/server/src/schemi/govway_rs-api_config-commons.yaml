@@ -349,17 +349,18 @@ components:
             propertyName: tipo
             mapping:
               'certificato': '#/components/schemas/AuthenticationHttpsCertificato'
-              'configurazione-manuale': '#/components/schemas/AuthenticationHttpsConfigurazioneManuale' 
+              'configurazione-manuale': '#/components/schemas/AuthenticationHttpsConfigurazioneManuale'
+        certificati:
+          type: array
+          items:
+              $ref: '#/components/schemas/AuthenticationHttpsBaseCertificato'
       additionalProperties: false
-    AuthenticationHttpsCertificato:
+    AuthenticationHttpsBaseCertificato:
       type: object
       required:
-        - tipo
         - archivio
         - tipo_certificato
-      properties:
-        tipo: 
-          $ref: '#/components/schemas/TipoAutenticazioneHttps'   
+      properties: 
         archivio:
           type: string
           format: byte
@@ -378,6 +379,16 @@ components:
           example: false
           default: false
       additionalProperties: false
+    AuthenticationHttpsCertificato:
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationHttpsBaseCertificato'
+        - type: object
+          required:
+            - tipo
+          properties:
+            tipo: 
+              $ref: '#/components/schemas/TipoAutenticazioneHttps'
+          additionalProperties: false
     AuthenticationHttpsConfigurazioneManuale:
       type: object
       required:
