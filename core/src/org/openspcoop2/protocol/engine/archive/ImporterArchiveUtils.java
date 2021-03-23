@@ -1160,41 +1160,43 @@ public class ImporterArchiveUtils {
 				}
 				
 				// univocita' credenziali
-				if(archiveSoggetto.getSoggettoRegistro().getCredenziali()!=null) {
-					CredenzialiSoggetto credenziali = archiveSoggetto.getSoggettoRegistro().getCredenziali();
-					org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = credenziali.getTipo();
-					if(tipo!=null) {
-						Soggetto soggettoFound = null;
-						String c = null;
-						switch (tipo) {
-						case BASIC:
-							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiBasic(credenziali.getUser());
-							c = credenziali.getUser();
-							break;
-						case APIKEY:
-							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiApiKey(credenziali.getUser(), credenziali.isAppId());
-							c = credenziali.getUser();
-							break;
-						case SSL:
-							if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
-								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
-								c = "X.509";
+				if(	archiveSoggetto.getSoggettoRegistro().getCredenzialiList()!=null &&
+						!archiveSoggetto.getSoggettoRegistro().getCredenzialiList().isEmpty()) {
+					for (CredenzialiSoggetto credenziali : archiveSoggetto.getSoggettoRegistro().getCredenzialiList()) {
+						org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = credenziali.getTipo();
+						if(tipo!=null) {
+							Soggetto soggettoFound = null;
+							String c = null;
+							switch (tipo) {
+							case BASIC:
+								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiBasic(credenziali.getUser());
+								c = credenziali.getUser();
+								break;
+							case APIKEY:
+								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiApiKey(credenziali.getUser(), credenziali.isAppId());
+								c = credenziali.getUser();
+								break;
+							case SSL:
+								if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
+									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+									c = "X.509";
+								}
+								else {
+									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+									c = credenziali.getSubject();
+								}
+								break;
+							case PRINCIPAL:
+								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiPrincipal(credenziali.getUser());
+								c = credenziali.getUser();
+								break;
 							}
-							else {
-								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
-								c = credenziali.getSubject();
-							}
-							break;
-						case PRINCIPAL:
-							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiPrincipal(credenziali.getUser());
-							c = credenziali.getUser();
-							break;
-						}
-						if(soggettoFound!=null) {
-							IDSoggetto idSoggettoFound =  new IDSoggetto(soggettoFound.getTipo(), soggettoFound.getNome());
-							boolean equalsForUpdate = idSoggettoFound.equals(idSoggetto);
-							if(!equalsForUpdate) {
-								throw new Exception("Le credenziali '"+tipo+"' ("+c+") risultano già associate al soggetto '"+idSoggettoFound+"'");
+							if(soggettoFound!=null) {
+								IDSoggetto idSoggettoFound =  new IDSoggetto(soggettoFound.getTipo(), soggettoFound.getNome());
+								boolean equalsForUpdate = idSoggettoFound.equals(idSoggetto);
+								if(!equalsForUpdate) {
+									throw new Exception("Le credenziali '"+tipo+"' ("+c+") risultano già associate al soggetto '"+idSoggettoFound+"'");
+								}
 							}
 						}
 					}

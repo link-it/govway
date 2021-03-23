@@ -542,8 +542,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 					// prendo il primo
 					org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = null;
-					if(soggetto.getCredenziali()!=null) {
-						tipo = soggetto.getCredenziali().getTipo();
+					if(soggetto.sizeCredenzialiList()>0) {
+						tipo = soggetto.getCredenziali(0).getTipo();
 					}
 					if(tipo!=null) {
 						oldtipoauth = tipo.getValue();
@@ -819,8 +819,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 						soggettoOld!=null) {
 					// prendo il primo
 					org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = null;
-					if(soggettoOld.getCredenziali()!=null) {
-						tipo = soggettoOld.getCredenziali().getTipo();
+					if(soggettoOld.sizeCredenzialiList()>0) {
+						tipo = soggettoOld.getCredenziali(0).getTipo();
 					}
 					if(tipo!=null) {
 						oldTipoAuth = tipo.getValue();
@@ -849,7 +849,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 
 			boolean oldPasswordCifrata = false;
-			if(soggettoOld!=null && soggettoOld.getCredenziali()!=null && soggettoOld.getCredenziali().isCertificateStrictVerification()) {
+			if(soggettoOld!=null && soggettoOld.sizeCredenzialiList()>0 && soggettoOld.getCredenziali(0).isCertificateStrictVerification()) {
 				oldPasswordCifrata = true;
 			}
 			boolean encryptEnabled = this.saCore.isSoggettiPasswordEncryptEnabled();
@@ -959,7 +959,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					Certificate cSelezionato = null;
 					byte [] archivio = tipoCredenzialiSSLFileCertificato.getValue();
 					if(TipoOperazione.CHANGE.equals(tipoOp) && archivio==null) {
-						archivio = soggettoOld.getCredenziali().getCertificate();
+						archivio = soggettoOld.getCredenziali(0).getCertificate();
 					}
 					if(tipoCredenzialiSSLTipoArchivio.equals(org.openspcoop2.utils.certificate.ArchiveType.CER)) {
 						cSelezionato = ArchiveLoader.load(archivio);

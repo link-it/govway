@@ -860,10 +860,10 @@ public final class SoggettiAdd extends Action {
 							}
 						}
 
-						soggettoRegistro.setCredenziali(credenziali);
+						soggettoRegistro.addCredenziali(credenziali);
 					}
 					else{
-						soggettoRegistro.setCredenziali(null);
+						soggettoRegistro.getCredenzialiList().clear();
 					}
 				}
 			}

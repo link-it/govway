@@ -49,6 +49,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -1062,49 +1063,53 @@ public class RegistroServizi  {
 					catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					if(soggetto!=null){
-						if(soggetto.getCredenziali()!=null && soggetto.getCredenziali().getTipo()!=null){
-							if(CredenzialeTipo.BASIC.equals(soggetto.getCredenziali().getTipo())){
-								try{
-									this.cache.remove(_getKey_getSoggettoByCredenzialiBasic(soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword()));
-									this.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword(), cryptConfigSoggetti);
-								}
-								catch(DriverRegistroServiziNotFound notFound){}
-								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-							}
-							else if(CredenzialeTipo.APIKEY.equals(soggetto.getCredenziali().getTipo())){
-								try{
-									this.cache.remove(_getKey_getSoggettoByCredenzialiApiKey(soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword(), soggetto.getCredenziali().isCertificateStrictVerification()));
-									this.getSoggettoByCredenzialiApiKey(connectionPdD, nomeRegistro, soggetto.getCredenziali().getUser(), soggetto.getCredenziali().getPassword(), soggetto.getCredenziali().isCertificateStrictVerification(), cryptConfigSoggetti);
-								}
-								catch(DriverRegistroServiziNotFound notFound){}
-								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-							}
-							else if(CredenzialeTipo.SSL.equals(soggetto.getCredenziali().getTipo())){
-								if(soggetto.getCredenziali().getSubject()!=null) {
-									try{
-										this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(soggetto.getCredenziali().getSubject(),soggetto.getCredenziali().getIssuer()));
-										this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, soggetto.getCredenziali().getSubject(),soggetto.getCredenziali().getIssuer());
+						if(soggetto.sizeCredenzialiList()>0){
+							for (CredenzialiSoggetto credenziale : soggetto.getCredenzialiList()) {
+								if(credenziale!=null && credenziale.getTipo()!=null){
+									if(CredenzialeTipo.BASIC.equals(credenziale.getTipo())){
+										try{
+											this.cache.remove(_getKey_getSoggettoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
+											this.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, credenziale.getUser(), credenziale.getPassword(), cryptConfigSoggetti);
+										}
+										catch(DriverRegistroServiziNotFound notFound){}
+										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									}
-									catch(DriverRegistroServiziNotFound notFound){}
-									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-								}
-								if(soggetto.getCredenziali().getCertificate()!=null) {
-									try{
-										CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, soggetto.getCredenziali().getCertificate(), 0, null).getCertificate();
-										this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(certificato, soggetto.getCredenziali().isCertificateStrictVerification()));
-										this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, certificato, soggetto.getCredenziali().isCertificateStrictVerification());
+									else if(CredenzialeTipo.APIKEY.equals(credenziale.getTipo())){
+										try{
+											this.cache.remove(_getKey_getSoggettoByCredenzialiApiKey(credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification()));
+											this.getSoggettoByCredenzialiApiKey(connectionPdD, nomeRegistro, credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification(), cryptConfigSoggetti);
+										}
+										catch(DriverRegistroServiziNotFound notFound){}
+										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									}
-									catch(DriverRegistroServiziNotFound notFound){}
-									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+									else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
+										if(credenziale.getSubject()!=null) {
+											try{
+												this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(credenziale.getSubject(),credenziale.getIssuer()));
+												this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, credenziale.getSubject(),credenziale.getIssuer());
+											}
+											catch(DriverRegistroServiziNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										}
+										if(credenziale.getCertificate()!=null) {
+											try{
+												CertificateInfo certificato = ArchiveLoader.load(ArchiveType.CER, credenziale.getCertificate(), 0, null).getCertificate();
+												this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification()));
+												this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, certificato, credenziale.isCertificateStrictVerification());
+											}
+											catch(DriverRegistroServiziNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+										}
+									}
+									else if(CredenzialeTipo.PRINCIPAL.equals(credenziale.getTipo())){
+										try{
+											this.cache.remove(_getKey_getSoggettoByCredenzialiPrincipal(credenziale.getUser()));
+											this.getSoggettoByCredenzialiPrincipal(connectionPdD, nomeRegistro, credenziale.getUser());
+										}
+										catch(DriverRegistroServiziNotFound notFound){}
+										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+									}
 								}
-							}
-							else if(CredenzialeTipo.PRINCIPAL.equals(soggetto.getCredenziali().getTipo())){
-								try{
-									this.cache.remove(_getKey_getSoggettoByCredenzialiPrincipal(soggetto.getCredenziali().getUser()));
-									this.getSoggettoByCredenzialiPrincipal(connectionPdD, nomeRegistro, soggetto.getCredenziali().getUser());
-								}
-								catch(DriverRegistroServiziNotFound notFound){}
-								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 							}
 						}
 					}

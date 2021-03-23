@@ -1783,7 +1783,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 					}
 					// Filtro By Credenziali
 					if(filtroRicerca.getCredenzialiSoggetto()!=null){
-						CredenzialiSoggetto credenziali = ssList[i].getCredenziali();
+						CredenzialiSoggetto credenziali = (ssList[i].sizeCredenzialiList() > 0 ? ssList[i].getCredenziali(0) : null);
 						if(credenziali==null){
 							continue;
 						}

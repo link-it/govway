@@ -3984,6 +3984,75 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
 				
 				
+				// Credenziali
+				n=0;
+				if(invPorta!=null && invPorta.sizeCredenzialiList()>0){
+					for (int i = 0; i < invPorta.sizeCredenzialiList(); i++) {
+						Credenziali credenziale = invPorta.getCredenziali(i);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+						sqlQueryObject.addInsertField("subject", "?");
+						sqlQueryObject.addInsertField("cn_subject", "?");
+						sqlQueryObject.addInsertField("issuer", "?");
+						sqlQueryObject.addInsertField("cn_issuer", "?");
+						sqlQueryObject.addInsertField("certificate", "?");
+						sqlQueryObject.addInsertField("cert_strict_verification", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						
+						index = 1;
+						stm.setLong(index++, aSA.getId());
+						
+						String subjectCredenziale = null;
+						if(credenziale!=null && credenziale.getSubject()!=null && !"".equals(credenziale.getSubject()))
+							subjectCredenziale = credenziale.getSubject();
+						stm.setString(index++, (subjectCredenziale != null ? CertificateUtils.formatPrincipal(subjectCredenziale, PrincipalType.subject) : null));
+						String subjectCredenzialeCN = null;
+						if(credenziale!=null && credenziale.getCnSubject()!=null && !"".equals(credenziale.getCnSubject()))
+							subjectCredenzialeCN = credenziale.getCnSubject();
+						stm.setString(index++, subjectCredenzialeCN);
+						
+						String issuerCredenziale = null;
+						if(credenziale != null && org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(credenziale.getTipo())) {
+							stm.setString(index++, CostantiDB.getISSUER_APIKEY(credenziale.isAppId()));
+						}
+						else {
+							if(credenziale!=null && credenziale.getIssuer()!=null && !"".equals(credenziale.getIssuer()))
+								issuerCredenziale = credenziale.getIssuer();
+							stm.setString(index++, (issuerCredenziale != null ? CertificateUtils.formatPrincipal(issuerCredenziale, PrincipalType.issuer) : null));
+						}
+						String issuerCredenzialeCN = null;
+						if(credenziale!=null && credenziale.getCnIssuer()!=null && !"".equals(credenziale.getCnIssuer()))
+							issuerCredenzialeCN = credenziale.getCnIssuer();
+						stm.setString(index++, issuerCredenzialeCN);
+						
+						byte [] certificateCredenziale = null;
+						if(credenziale!=null && credenziale.getCertificate()!=null) {
+							certificateCredenziale = credenziale.getCertificate();
+						}
+						jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+						jdbcAdapter.setBinaryData(stm, index++, certificateCredenziale);
+						if(credenziale!=null && credenziale.isCertificateStrictVerification()) {
+							stm.setInt(index++, CostantiDB.TRUE);
+						}				
+						else {
+							stm.setInt(index++, CostantiDB.FALSE);
+						}
+						
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta credenziale al servizioApplicativo "+idServizioApplicativo);
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " credenziali al servizioApplicativo "+idServizioApplicativo);
+				
+				
+
+				
+				
 				// ProtocolProperties
 				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, aSA.getProtocolPropertyList(), 
 						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
@@ -4291,6 +4360,90 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
 				
 				
+				
+				
+				
+				
+				
+				// Credenziali
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, aSA.getId());
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" credenziali associate al servizioApplicativo "+idServizioApplicativo);
+				
+				n=0;
+				if(invPorta!=null && invPorta.sizeCredenzialiList()>0){
+					for (int i = 0; i < invPorta.sizeCredenzialiList(); i++) {
+						Credenziali credenziale = invPorta.getCredenziali(i);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+						sqlQueryObject.addInsertField("subject", "?");
+						sqlQueryObject.addInsertField("cn_subject", "?");
+						sqlQueryObject.addInsertField("issuer", "?");
+						sqlQueryObject.addInsertField("cn_issuer", "?");
+						sqlQueryObject.addInsertField("certificate", "?");
+						sqlQueryObject.addInsertField("cert_strict_verification", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						
+						index = 1;
+						stm.setLong(index++, aSA.getId());
+						
+						String subjectCredenziale = null;
+						if(credenziale!=null && credenziale.getSubject()!=null && !"".equals(credenziale.getSubject()))
+							subjectCredenziale = credenziale.getSubject();
+						stm.setString(index++, (subjectCredenziale != null ? CertificateUtils.formatPrincipal(subjectCredenziale, PrincipalType.subject) : null));
+						String subjectCredenzialeCN = null;
+						if(credenziale!=null && credenziale.getCnSubject()!=null && !"".equals(credenziale.getCnSubject()))
+							subjectCredenzialeCN = credenziale.getCnSubject();
+						stm.setString(index++, subjectCredenzialeCN);
+						
+						String issuerCredenziale = null;
+						if(credenziale != null && org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(credenziale.getTipo())) {
+							stm.setString(index++, CostantiDB.getISSUER_APIKEY(credenziale.isAppId()));
+						}
+						else {
+							if(credenziale!=null && credenziale.getIssuer()!=null && !"".equals(credenziale.getIssuer()))
+								issuerCredenziale = credenziale.getIssuer();
+							stm.setString(index++, (issuerCredenziale != null ? CertificateUtils.formatPrincipal(issuerCredenziale, PrincipalType.issuer) : null));
+						}
+						String issuerCredenzialeCN = null;
+						if(credenziale!=null && credenziale.getCnIssuer()!=null && !"".equals(credenziale.getCnIssuer()))
+							issuerCredenzialeCN = credenziale.getCnIssuer();
+						stm.setString(index++, issuerCredenzialeCN);
+						
+						byte [] certificateCredenziale = null;
+						if(credenziale!=null && credenziale.getCertificate()!=null) {
+							certificateCredenziale = credenziale.getCertificate();
+						}
+						jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+						jdbcAdapter.setBinaryData(stm, index++, certificateCredenziale);
+						if(credenziale!=null && credenziale.isCertificateStrictVerification()) {
+							stm.setInt(index++, CostantiDB.TRUE);
+						}				
+						else {
+							stm.setInt(index++, CostantiDB.FALSE);
+						}
+						
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta credenziale al servizioApplicativo "+idServizioApplicativo);
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " credenziali al servizioApplicativo "+idServizioApplicativo);
+				
+				
+				
+				
 				// ProtocolProperties
 				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, aSA.getProtocolPropertyList(), 
 						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
@@ -4310,6 +4463,18 @@ public class DriverConfigurazioneDB_LIB {
 				// ProtocolProperties
 				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
 						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
+				
+				// credenziali
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idServizioApplicativo);
+				n=stm.executeUpdate();
+				stm.close();
+				if (n > 0)
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " credenziali associate al ServizioApplicativo[" + idServizioApplicativo + "]");
 				
 				// ruoli
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);

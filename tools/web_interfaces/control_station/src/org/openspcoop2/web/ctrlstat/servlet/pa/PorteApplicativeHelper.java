@@ -81,6 +81,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
@@ -569,8 +570,12 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							if(this.pddCore.isPddEsterna(soggetto.getPortaDominio())) {
 								// Devo controllare solo i soggetti delle pddEsterne, altrimeni se registro un soggeto operativo come fruitore per fruire del servizio,
 								// poi il controllo non permette la modifica
-								if(soggetto.getCredenziali()==null || soggetto.getCredenziali().getTipo()==null ||
-										!soggetto.getCredenziali().getTipo().equals(autenticazione)){
+								CredenzialiSoggetto credenziali = null;
+								if(soggetto.sizeCredenzialiList()>0) {
+									credenziali = soggetto.getCredenziali(0);
+								}
+								if(credenziali==null || credenziali.getTipo()==null ||
+										!credenziali.getTipo().equals(autenticazione)){
 									fruitoriCompatibili = false;
 									break;
 								}

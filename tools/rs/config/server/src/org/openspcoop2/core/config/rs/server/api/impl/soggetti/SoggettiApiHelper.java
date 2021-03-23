@@ -89,8 +89,8 @@ public class SoggettiApiHelper {
 		return null;
 	}
 	public static ApiKeyInfo getApiKey(org.openspcoop2.core.registry.Soggetto soggetto, boolean setApiKey) throws Exception {
-		if(soggetto!=null && soggetto.getCredenziali()!=null) {
-			CredenzialiSoggetto c = soggetto.getCredenziali();
+		if(soggetto!=null && soggetto.sizeCredenzialiList()>0) {
+			CredenzialiSoggetto c = soggetto.getCredenziali(0);
 			if(org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(c.getTipo())){
 				ApiKeyInfo keyInfo = new ApiKeyInfo();
 				keyInfo.setMultipleApiKeys(c.isAppId());
@@ -171,7 +171,8 @@ public class SoggettiApiHelper {
 							org.openspcoop2.core.registry.constants.CredenzialeTipo.class,
 							keyInfo
 				);		
-				ret.setCredenziali(credenziali);
+				ret.getCredenzialiList().clear();
+				ret.addCredenziali(credenziali);
 			}catch(Exception e) {
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -231,7 +232,7 @@ public class SoggettiApiHelper {
 		ret.setNome(s.getNome());
 		ret.setDescrizione(s.getDescrizione());
 		
-		CredenzialiSoggetto soggCred = s.getCredenziali();
+		CredenzialiSoggetto soggCred = s.getCredenziali(0);
 		ret.setCredenziali(Helper.govwayCredenzialiToApi(
 				soggCred,
 				CredenzialiSoggetto.class,

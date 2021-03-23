@@ -41,7 +41,7 @@ import java.util.List;
  * 		&lt;sequence&gt;
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
- * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/registry}credenziali-soggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/registry}credenziali-soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/registry}ruoli-soggetto" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
@@ -135,12 +135,28 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
     return this.protocolProperty.size();
   }
 
-  public CredenzialiSoggetto getCredenziali() {
+  public void addCredenziali(CredenzialiSoggetto credenziali) {
+    this.credenziali.add(credenziali);
+  }
+
+  public CredenzialiSoggetto getCredenziali(int index) {
+    return this.credenziali.get( index );
+  }
+
+  public CredenzialiSoggetto removeCredenziali(int index) {
+    return this.credenziali.remove( index );
+  }
+
+  public List<CredenzialiSoggetto> getCredenzialiList() {
     return this.credenziali;
   }
 
-  public void setCredenziali(CredenzialiSoggetto credenziali) {
-    this.credenziali = credenziali;
+  public void setCredenzialiList(List<CredenzialiSoggetto> credenziali) {
+    this.credenziali=credenziali;
+  }
+
+  public int sizeCredenzialiList() {
+    return this.credenziali.size();
   }
 
   public RuoliSoggetto getRuoli() {
@@ -310,8 +326,35 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
   	return this.protocolProperty.size();
   }
 
-  @XmlElement(name="credenziali",required=false,nillable=false)
-  protected CredenzialiSoggetto credenziali;
+  @XmlElement(name="credenziali",required=true,nillable=false)
+  protected List<CredenzialiSoggetto> credenziali = new ArrayList<CredenzialiSoggetto>();
+
+  /**
+   * @deprecated Use method getCredenzialiList
+   * @return List&lt;CredenzialiSoggetto&gt;
+  */
+  @Deprecated
+  public List<CredenzialiSoggetto> getCredenziali() {
+  	return this.credenziali;
+  }
+
+  /**
+   * @deprecated Use method setCredenzialiList
+   * @param credenziali List&lt;CredenzialiSoggetto&gt;
+  */
+  @Deprecated
+  public void setCredenziali(List<CredenzialiSoggetto> credenziali) {
+  	this.credenziali=credenziali;
+  }
+
+  /**
+   * @deprecated Use method sizeCredenzialiList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeCredenziali() {
+  	return this.credenziali.size();
+  }
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected RuoliSoggetto ruoli;

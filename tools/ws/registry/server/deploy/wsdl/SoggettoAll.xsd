@@ -14,7 +14,6 @@
 	<xsd:complexType name="search-filter-soggetto">
 		<xsd:sequence>
  			<xsd:element name="connettore" type="tns:connettore" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="credenziali" type="tns:credenziali-soggetto" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="privato" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
@@ -37,22 +36,6 @@
  			<xsd:element name="custom" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:element name="credenziali-soggetto" type="tns:credenziali-soggetto" />
-	<xsd:complexType name="credenziali-soggetto">
-		<xsd:sequence>
- 			<xsd:element name="tipo" type="api:CredenzialeTipo" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="app-id" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="cn-subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="issuer" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="cn-issuer" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="certificate" type="xsd:base64Binary" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="certificate-strict-verification" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 

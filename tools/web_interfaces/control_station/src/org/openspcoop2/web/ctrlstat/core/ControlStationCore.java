@@ -95,6 +95,7 @@ import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.PortType;
@@ -7760,10 +7761,12 @@ public class ControlStationCore {
 	
 	private void _cryptPassword(org.openspcoop2.core.registry.Soggetto soggetto) throws UtilsException {
 		if(this.isSoggettiPasswordEncryptEnabled() && this.soggettiPasswordManager!=null) {
-			if(soggetto.getCredenziali()!=null) {
-				if(StringUtils.isNotEmpty(soggetto.getCredenziali().getPassword()) && !soggetto.getCredenziali().isCertificateStrictVerification()) {
-					soggetto.getCredenziali().setPassword(this.applicativiPasswordManager.crypt(soggetto.getCredenziali().getPassword()));
-					soggetto.getCredenziali().setCertificateStrictVerification(true); // viene salvata a true per salvare l'informazione che è cifrata
+			if(soggetto.sizeCredenzialiList()>0) {
+				for (CredenzialiSoggetto credenziali : soggetto.getCredenzialiList()) {
+					if(StringUtils.isNotEmpty(credenziali.getPassword()) && !credenziali.isCertificateStrictVerification()) {
+						credenziali.setPassword(this.applicativiPasswordManager.crypt(credenziali.getPassword()));
+						credenziali.setCertificateStrictVerification(true); // viene salvata a true per salvare l'informazione che è cifrata
+					}
 				}
 			}
 		}

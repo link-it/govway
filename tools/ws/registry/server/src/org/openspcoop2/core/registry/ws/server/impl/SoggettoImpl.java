@@ -21,8 +21,6 @@ package org.openspcoop2.core.registry.ws.server.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
@@ -55,11 +53,6 @@ import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.utils.certificate.ArchiveLoader;
-import org.openspcoop2.utils.certificate.ArchiveType;
-import org.openspcoop2.utils.certificate.Certificate;
-import org.openspcoop2.utils.certificate.CertificateUtils;
-import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectCore;
@@ -261,6 +254,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".codice_ipa=?");
 			paramTypes.add(new JDBCObject(filter.getCodiceIpa(),String.class));
 		}
+		/*
 		if(filter.getCredenziali()!=null){
 			if(filter.getCredenziali().getTipo()!=null){
 				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".tipoauth=?");
@@ -336,6 +330,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 				
 			}
 		}
+		*/
 		if(filter.getOraRegistrazioneMin()!= null) {
 			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".ora_registrazione>=?");
 			paramTypes.add(new JDBCObject(filter.getOraRegistrazioneMin(),Date.class));

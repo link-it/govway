@@ -274,9 +274,9 @@ public final class SoggettiChange extends Action {
 			}
 
 			boolean encryptOldPlainPwd = false;
-			if(soggettoRegistry!=null && soggettoRegistry.getCredenziali()!=null && 
-					org.openspcoop2.core.registry.constants.CredenzialeTipo.BASIC.equals(soggettoRegistry.getCredenziali().getTipo())) {
-				encryptOldPlainPwd = !soggettoRegistry.getCredenziali().isCertificateStrictVerification() && soggettiCore.isSoggettiPasswordEncryptEnabled(); 
+			if(soggettoRegistry!=null && soggettoRegistry.sizeCredenzialiList()>0 && 
+					org.openspcoop2.core.registry.constants.CredenzialeTipo.BASIC.equals(soggettoRegistry.getCredenziali(0).getTipo())) {
+				encryptOldPlainPwd = !soggettoRegistry.getCredenziali(0).isCertificateStrictVerification() && soggettiCore.isSoggettiPasswordEncryptEnabled(); 
 			}
 			
 			// Tipi protocollo supportati
@@ -394,7 +394,9 @@ public final class SoggettiChange extends Action {
 			try{
 				Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
 				oldProtocolPropertyList = soggetto.getProtocolPropertyList(); 
-				oldCredenziali = soggetto.getCredenziali();
+				if(soggetto.sizeCredenzialiList()>0) {
+					oldCredenziali = soggetto.getCredenziali(0);
+				}
 			}catch(RegistryNotFound r){}
 
 			Properties propertiesProprietario = new Properties();
@@ -767,7 +769,10 @@ public final class SoggettiChange extends Action {
 					}
 					if(isSupportatoAutenticazioneSoggetti){
 						if (this.tipoauthSoggetto == null){
-							CredenzialiSoggetto credenziali = soggettoRegistry.getCredenziali();
+							CredenzialiSoggetto credenziali = null;
+							if(soggettoRegistry.sizeCredenzialiList()>0) {
+								credenziali = soggettoRegistry.getCredenziali(0);
+							}
 							if (credenziali != null){
 								if(credenziali.getTipo()!=null)
 									this.tipoauthSoggetto = credenziali.getTipo().toString();
@@ -1129,10 +1134,10 @@ public final class SoggettiChange extends Action {
 							secret_appId = credenziali.isAppId();
 						}
 						
-						soggettoRegistry.setCredenziali(credenziali);
+						soggettoRegistry.addCredenziali(credenziali);
 					}
 					else{
-						soggettoRegistry.setCredenziali(null);
+						soggettoRegistry.getCredenzialiList().clear();
 					}
 				}
 				

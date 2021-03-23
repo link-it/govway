@@ -894,7 +894,9 @@ public class DocumentoExporter extends HttpServlet {
 						org.openspcoop2.core.registry.Soggetto soggetto = null;
 						try{
 							soggetto =  registryReader.getSoggetto(idSoggetto);
-							credenziali = soggetto.getCredenziali();
+							if(soggetto.sizeCredenzialiList()>0) {
+								credenziali = soggetto.getCredenziali(0);
+							}
 						}catch(RegistryNotFound r){
 							throw r;
 						}

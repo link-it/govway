@@ -21,6 +21,7 @@
                                 <linkit:sql-comment><![CDATA[**** Soggetti ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="soggetti" object-type="soggetti"/>
                                 <linkit:sql-table object-name="soggetti-ruoli" object-type="soggetti-ruoli"/>
+                                <linkit:sql-table object-name="soggetti-credenziali" object-type="soggetti-credenziali"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -347,6 +348,9 @@
                             <linkit:sql-table-unique-column name="id_soggetto" />
                             <linkit:sql-table-unique-column name="id_ruolo" />
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_SOGGETTI_RUOLI">
+                            <linkit:sql-table-index-column name="id_soggetto" />
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -375,6 +379,120 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    <xsd:element name="soggetti-credenziali">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="soggetti_credenziali"
+                        comment="Credenziali ulteriori associate ai soggetti">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="soggetti"
+                            reference-object-type="soggetti"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_soggetto"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_SOGGETTI_CRED">
+                            <linkit:sql-table-index-column name="id_soggetto" />
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_soggetto" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto che possiede la credenziale definita in questa riga [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="subject" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- 
+                                    Nella tabella 'credenziale-mittente' dove vengono tracciate le credenziali, il subject ha a disposizione 2900 caratteri,
+                                    poichè può variare la lunghezza in funzione del formato e la conversione viene effettuata durante il salvataggio, si e' scelto di permettere meno caratteri per
+                                    non incorrere in eventuali errori di conversione 
+                                -->
+                                <linkit:sql-column-mapping name="subject" varchar="2800"/>
+                                <linkit:sql-ddl-column-comment>Subject del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cn-subject" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cn_subject"/>
+                                <linkit:sql-ddl-column-comment>CommonName del Subject del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="issuer" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <!-- 
+                                    Nella tabella 'credenziale-mittente' dove vengono tracciate le credenziali, il subject ha a disposizione 2900 caratteri,
+                                    poichè può variare la lunghezza in funzione del formato e la conversione viene effettuata durante il salvataggio, si e' scelto di permettere meno caratteri per
+                                    non incorrere in eventuali errori di conversione 
+                                -->
+                                <linkit:sql-column-mapping name="issuer" varchar="2800"/>
+                                <linkit:sql-ddl-column-comment>Issuer del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>            
+                <xsd:element name="cn-issuer" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cn_issuer"/>
+                                <linkit:sql-ddl-column-comment>CommonName dell'Issuer del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="certificate" type="xsd:hexBinary" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="certificate" medium-binary="true"/>
+                                <linkit:sql-ddl-column-comment>Certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="certificate-strict-verification" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cert_strict_verification" />
+                                <linkit:sql-ddl-column-comment>Indicazione se viene effettuata un confronto 'strict' su tutti i campi del certificato o solamente su Issuer e Subject, in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth') (1=true, 0=false)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>                
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
