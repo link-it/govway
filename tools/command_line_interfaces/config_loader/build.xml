@@ -149,9 +149,11 @@
 			<fileset dir="${openspcoop2.lib}/commons" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/spring" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/swagger" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/openapi4j" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/jackson" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/javax" includes="javax.servlet-api-4.0.1.jar"/>
 			<fileset dir="${openspcoop2.lib}/jax" includes="jaxb-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/json" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/security" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.0.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="jakarta.activation-1.2.1.jar"/>
