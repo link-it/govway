@@ -1586,6 +1586,8 @@ public class OpenSPCoop2Properties {
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in OpenSPCoop");
 					return false;
 				}
+				useIDManagerWithThreadLocal();
+				getIDManagerParameters();
 				try{
 					IUniqueIdentifierGenerator uniqueIdentifier = (IUniqueIdentifierGenerator) loaderOpenSPCoop.newInstance(tipoIdManger);
 					uniqueIdentifier.toString();
@@ -16064,7 +16066,66 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.tipoIDManager;
 	}
 	
+	private static Boolean useIDManagerWithThreadLocal = null;
+	public boolean useIDManagerWithThreadLocal(){
+
+		String pName = "org.openspcoop2.pdd.idGenerator.useThreadLocal";
+		if(OpenSPCoop2Properties.useIDManagerWithThreadLocal==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.useIDManagerWithThreadLocal = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.useIDManagerWithThreadLocal = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.useIDManagerWithThreadLocal = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.useIDManagerWithThreadLocal;
+	}
 	
+	private static Boolean listIDManagerParametersRead = null;
+	private static List<String> listIDManagerParameters = null;
+	public List<String> getIDManagerParameters(){
+
+		String pName = "org.openspcoop2.pdd.idGenerator."+this.getTipoIDManager()+".parameters";
+		if(OpenSPCoop2Properties.listIDManagerParametersRead==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					
+					if(value.contains(",")) {
+						String [] tmp = value.split(",");
+						if(tmp!=null && tmp.length>0) {
+							OpenSPCoop2Properties.listIDManagerParameters = new ArrayList<String>();
+							for (String v : tmp) {
+								OpenSPCoop2Properties.listIDManagerParameters.add(v);
+							}
+						}
+					}
+					else {
+						OpenSPCoop2Properties.listIDManagerParameters = new ArrayList<String>();
+						OpenSPCoop2Properties.listIDManagerParameters.add(value);
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			OpenSPCoop2Properties.listIDManagerParametersRead = true;
+		}
+
+		return OpenSPCoop2Properties.listIDManagerParameters;
+	}
 	
 	
 	

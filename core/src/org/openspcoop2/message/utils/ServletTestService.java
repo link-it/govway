@@ -54,6 +54,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -473,8 +474,7 @@ public class ServletTestService extends HttpServlet {
 			}
 			
 			if(cookie!=null && foundCookie==false) {
-				org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator uuidGeneratore = new org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator();
-				Cookie newCookie = new Cookie(cookie, uuidGeneratore.newID().getAsString());
+				Cookie newCookie = new Cookie(cookie, UUIDUtilsGenerator.newUUID());
 				newCookie.setMaxAge(5 * 60); // 5 minuti
 				res.addCookie(newCookie);
 			}

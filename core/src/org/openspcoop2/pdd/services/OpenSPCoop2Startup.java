@@ -961,7 +961,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				String classClusterID = null;
 				if(CostantiConfigurazione.NONE.equals(tipoGeneratoreClusterID)){
 					if(clusterID!=null){
-						classClusterID = "org.openspcoop2.utils.id.ClusterIdentifierGenerator";
+						classClusterID = org.openspcoop2.utils.id.ClusterIdentifierGenerator.class.getName();
 					}
 				}else{
 					classClusterID = classNameReader.getUniqueIdentifier(tipoGeneratoreClusterID);
@@ -970,8 +970,25 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(classClusterID==null){
 					UniqueIdentifierManager.disabilitaGenerazioneUID();
 				}else{
-				
-					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(classClusterID,propertiesReader.getClusterId(false));
+					
+					Object [] paramsObject = null;
+					List<String> params = propertiesReader.getIDManagerParameters();
+					if(params!=null && !params.isEmpty()) {
+						paramsObject = new Object [params.size()];
+						for (int i = 0; i < params.size(); i++) {
+							paramsObject[i] = params.get(i);
+						}
+					}
+					else {
+						if(org.openspcoop2.utils.id.ClusterIdentifierGenerator.class.getName().equals(classClusterID)) {
+							String idCluster = propertiesReader.getClusterId(false);
+							if(idCluster!=null) {
+								paramsObject = new Object [1];
+								paramsObject[0] = idCluster;
+							}
+						}
+					}
+					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(propertiesReader.useIDManagerWithThreadLocal(),classClusterID,paramsObject);
 					
 					OpenSPCoop2Startup.log.info("UUID Generator: "+classClusterID);
 					

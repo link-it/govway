@@ -42,7 +42,7 @@ import java.util.concurrent.Executor;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 /**
@@ -75,8 +75,6 @@ public class Connection implements java.sql.Connection {
 	/** Identificativo Datasource */
 	private String uuidDatasource = null;
 	
-	private static UniversallyUniqueIdentifierGenerator uuidGenerator = new UniversallyUniqueIdentifierGenerator();
-	
 	protected Connection(java.sql.Connection connection, TipiDatabase tipoDatabase, String idTransazione, Object moduloFunzionale,
 			String uuidDatasource) throws UtilsException{
 		this.connection = connection;
@@ -85,7 +83,7 @@ public class Connection implements java.sql.Connection {
 		this.idTransazione = idTransazione;
 		this.tipoDatabase = tipoDatabase;
 		try{
-			this.id = uuidGenerator.newID().getAsString();
+			this.id = UUIDUtilsGenerator.newUUID();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}

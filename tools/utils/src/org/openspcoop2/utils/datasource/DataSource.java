@@ -40,7 +40,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 /**
@@ -66,8 +66,6 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	
 	private boolean closed = false;
 
-	private static UniversallyUniqueIdentifierGenerator uuidGenerator = new UniversallyUniqueIdentifierGenerator();
-	
 	private Hashtable<String,org.openspcoop2.utils.datasource.Connection> releasedConnections = new Hashtable<String,org.openspcoop2.utils.datasource.Connection>();
 	
 	public String[] getJmxStatus() throws UtilsException{	
@@ -116,7 +114,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 			this.datasource = datasource;
 			this.tipoDatabase = tipoDatabase;
 			this.wrapOriginalMethods = wrapOriginalMethods;
-			this.uuidDatasource = uuidGenerator.newID().getAsString();
+			this.uuidDatasource = UUIDUtilsGenerator.newUUID();
 			this.jndiName = jndiName;
 			this.applicativeIdDatasource = applicativeIdDatasource;
 			this.date = DateManager.getDate();

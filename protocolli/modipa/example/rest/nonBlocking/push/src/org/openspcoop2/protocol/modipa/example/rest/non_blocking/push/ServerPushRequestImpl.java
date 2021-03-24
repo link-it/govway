@@ -28,7 +28,7 @@ import org.openspcoop2.protocol.modipa.example.rest.non_blocking.push.server.api
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.push.server.model.ACKMessage;
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.push.server.model.ErrorMessage;
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.push.server.model.MType;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -80,9 +80,8 @@ public class ServerPushRequestImpl implements DefaultApi {
     	ackMessage.setOutcome("ACK");
     	
     	if(this.generateCorrelationId) {
-    		org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator gen = new UniversallyUniqueIdentifierGenerator();
     		try {
-    			this.servletResponse.setHeader(this.correlationId, gen.newID().toString());
+    			this.servletResponse.setHeader(this.correlationId, UUIDUtilsGenerator.newUUID());
     		}catch(Exception e) {
         		String descrizione = "Generazione ID Correlazione fallita: "+e.getMessage();
         		Response response = Response.status(500).entity(toFault(500, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();

@@ -30,7 +30,7 @@ import org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.server.stu
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.server.stub.MRequestResponse;
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.server.stub.MType;
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.server.stub.SOAPCallback;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 
 /**
  * ServerImpl
@@ -72,9 +72,8 @@ public class ServerPushRequestImpl implements SOAPCallback {
     	response.value = responseStato;
     	
     	if(this.generateCorrelationId) {
-    		org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator gen = new UniversallyUniqueIdentifierGenerator();
     		try {
-    			headerResponse.value = gen.newID().toString();
+    			headerResponse.value = UUIDUtilsGenerator.newUUID();
     		}catch(Exception e) {
         		String descrizione = "Generazione ID Correlazione fallita: "+e.getMessage();
         		throwFault(500, descrizione);

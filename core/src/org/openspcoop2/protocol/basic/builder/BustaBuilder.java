@@ -61,7 +61,7 @@ import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UniqueIdentifierManager;
 
 /**	
  * BustaBuilder
@@ -82,7 +82,6 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 	}
 
 	private final static String dateformatPattern = "yyyyMMddHHmmssSSS"; // utile per il filtro duplicati
-	private final static UniversallyUniqueIdentifierGenerator uuidGenerator = new UniversallyUniqueIdentifierGenerator();
 	
 	@Override
 	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
@@ -93,9 +92,7 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 		if(generateIDasUUID){
 			
 			try{
-				synchronized (uuidGenerator) {
-					return uuidGenerator.newID().getAsString();	
-				}
+				return UniqueIdentifierManager.newUniqueIdentifier().getAsString();
 			}catch(Exception e){
 				throw new ProtocolException(e.getMessage());
 			}

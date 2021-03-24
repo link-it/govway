@@ -29,7 +29,7 @@ import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.slf4j.Logger;
 
 /**     
@@ -327,8 +327,7 @@ public class GestoreCacheResponseCaching {
 					return ((ResponseCached)responseCache.getObject()).getUuid(); // already saved concurrent thread
 				}
 				
-				UniversallyUniqueIdentifierGenerator uuidObject = new UniversallyUniqueIdentifierGenerator();
-				uuid = uuidObject.newID().getAsString();
+				uuid = UniqueIdentifierManager.newUniqueIdentifier().getAsString();
 				String uuidKey = formatKeyUUID(uuid);
 				
 				try{	

@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 
 
 /**
@@ -43,8 +43,6 @@ import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
  */
 public class ExampleService extends HttpServlet {
 
-	private static UniversallyUniqueIdentifierGenerator uuidGenerator = new UniversallyUniqueIdentifierGenerator();
-	
 	/**
 	 * 
 	 */
@@ -78,7 +76,7 @@ public class ExampleService extends HttpServlet {
 			
 			
 			// Genero identificativo di transazione
-			String idTransazione = uuidGenerator.newID().getAsString();
+			String idTransazione = UUIDUtilsGenerator.newUUID();
 			prefix = "["+idTransazione+"] ";
 			System.out.println(prefix+"Ricevuta richiesta ...");
 			

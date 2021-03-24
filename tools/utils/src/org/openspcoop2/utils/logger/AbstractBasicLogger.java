@@ -21,7 +21,7 @@ package org.openspcoop2.utils.logger;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.logger.beans.Diagnostic;
 import org.openspcoop2.utils.logger.config.DiagnosticConfig;
 import org.openspcoop2.utils.logger.constants.LowSeverity;
@@ -47,8 +47,7 @@ public abstract class AbstractBasicLogger extends AbstractBaseDiagnosticManagerC
 		
 		try{
 			
-			org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator g = new UniversallyUniqueIdentifierGenerator();
-			this.idTransaction = g.newID().toString();
+			this.idTransaction = UUIDUtilsGenerator.newUUID();
 			
 			super.init(this.getContext(), this);
 			
@@ -65,8 +64,7 @@ public abstract class AbstractBasicLogger extends AbstractBaseDiagnosticManagerC
 				this.idTransaction = idTransaction;
 			}
 			else{
-				org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator g = new UniversallyUniqueIdentifierGenerator();
-				this.idTransaction = g.newID().toString();
+				this.idTransaction = UUIDUtilsGenerator.newUUID();
 			}
 			
 			super.init(this.getContext(), this);

@@ -30,7 +30,7 @@ import org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.model.MRes
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.model.MType;
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.model.TaskStatus;
 import org.openspcoop2.protocol.modipa.example.rest.non_blocking.pull.model.TaskStatus.StatusEnum;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -63,9 +63,8 @@ public class ServerImpl implements DefaultApi {
     	System.out.println("\tA2: "+(body.getA()!=null ? body.getA().getA2() : null));
     	System.out.println("\tB: "+body.getB());
 		
-		org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator gen = new UniversallyUniqueIdentifierGenerator();
 		try {
-			this.servletResponse.setHeader("Location","/tasks/queue/"+ gen.newID().toString());
+			this.servletResponse.setHeader("Location","/tasks/queue/"+ UUIDUtilsGenerator.newUUID());
 		}catch(Exception e) {
     		String descrizione = "Generazione ID Correlazione fallita: "+e.getMessage();
     		Response response = Response.status(500).entity(toFault(500, descrizione)).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();

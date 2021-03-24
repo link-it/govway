@@ -36,7 +36,24 @@ import org.openspcoop2.utils.resources.Loader;
 public class UniqueIdentifierManager {
 
 	/** Istanza per creare gli id */
-	private static IUniqueIdentifierGenerator uniqueIdentifierGenerator;
+	private static boolean useThreadLocal = false;
+	private static String className_threadLocal = null;
+	private static Object [] args_threadLocal = null;
+    private static final ThreadLocal<IUniqueIdentifierGenerator> uniqueIdentifierGenerator_threadLocal =
+            new ThreadLocal<IUniqueIdentifierGenerator>() {
+                @Override
+				protected IUniqueIdentifierGenerator initialValue() {
+                	try{
+                		IUniqueIdentifierGenerator uniqueIdentifierGenerator = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className_threadLocal);
+        				uniqueIdentifierGenerator.init(args_threadLocal);
+        				return uniqueIdentifierGenerator;
+        			}catch(Exception e){
+        				throw new RuntimeException("Riscontrato errore durante il caricamento del manager specificato [class:"+className_threadLocal+"]: "+e.getMessage(),e);
+        			}
+                }
+        };
+	
+	private static IUniqueIdentifierGenerator uniqueIdentifierGenerator_staticInstance;
 	
 	/** Generazione UID Disabiltiata */
 	private static boolean generazioneUIDDisabilitata = false;
@@ -48,17 +65,40 @@ public class UniqueIdentifierManager {
 		UniqueIdentifierManager.generazioneUIDDisabilitata=true;
 	}
 	
-	
-	public static synchronized void inizializzaUniqueIdentifierManager(String className,Object ... o)throws UniqueIdentifierException{
-		
-		if(UniqueIdentifierManager.uniqueIdentifierGenerator==null){
-			try{
-				UniqueIdentifierManager.uniqueIdentifierGenerator = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className);
-				UniqueIdentifierManager.uniqueIdentifierGenerator.init(o);
-			}catch(Exception e){
-				throw new UniqueIdentifierException("Riscontrato errore durante il caricamento del data manager specificato [class:"+className+"]: "+e.getMessage(),e);
+	public static boolean isInitialized() {
+		if(!UniqueIdentifierManager.generazioneUIDDisabilitata) {
+			if(useThreadLocal) {
+				return className_threadLocal!=null;
+			}
+			else {
+				return uniqueIdentifierGenerator_staticInstance!=null;
 			}
 		}
+		return false;
+	}
+	
+	public static synchronized void inizializzaUniqueIdentifierManager(boolean useThreadLocal, String className,Object ... o)throws UniqueIdentifierException{
+		inizializzaUniqueIdentifierManager(false, useThreadLocal, className, o);
+	}
+	public static synchronized void inizializzaUniqueIdentifierManager(boolean forceInitManager, boolean useThreadLocal, String className,Object ... o)throws UniqueIdentifierException{
+		UniqueIdentifierManager.useThreadLocal = useThreadLocal;
+		if(useThreadLocal) {
+			if(UniqueIdentifierManager.className_threadLocal==null || forceInitManager){
+				UniqueIdentifierManager.className_threadLocal=className;
+				UniqueIdentifierManager.args_threadLocal=o;
+			}
+		}
+		else {
+			if(UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance==null || forceInitManager){
+				try{
+					UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance = (IUniqueIdentifierGenerator) Loader.getInstance().newInstance(className);
+					UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.init(o);
+				}catch(Exception e){
+					throw new UniqueIdentifierException("Riscontrato errore durante il caricamento del manager specificato [class:"+className+"]: "+e.getMessage(),e);
+				}
+			}
+		}
+		
 	}
 	
 	public static IUniqueIdentifier newUniqueIdentifier() throws UniqueIdentifierException{
@@ -66,12 +106,17 @@ public class UniqueIdentifierManager {
 			return null;
 		}
 		try{
-			if(UniqueIdentifierManager.uniqueIdentifierGenerator==null){
-				Logger log = LoggerWrapperFactory.getLogger(UniqueIdentifierManager.class);
-				log.error("UniqueIdentifierManager non inizializzato");
-				UniqueIdentifierManager.inizializzaUniqueIdentifierManager("org.openspcoop.utils.id.ClusterIdentifier");
+			if(useThreadLocal) {
+				return UniqueIdentifierManager.uniqueIdentifierGenerator_threadLocal.get().newID();
 			}
-			return UniqueIdentifierManager.uniqueIdentifierGenerator.newID();
+			else {
+				if(UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance==null){
+					Logger log = LoggerWrapperFactory.getLogger(UniqueIdentifierManager.class);
+					log.error("UniqueIdentifierManager non inizializzato");
+					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(false, "org.openspcoop.utils.id.ClusterIdentifier");
+				}
+				return UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.newID();
+			}
 		}catch(Exception e){
 			throw new UniqueIdentifierException("UniqueIdentifierManager.newID() non riuscita",e);		
 		}
@@ -82,12 +127,17 @@ public class UniqueIdentifierManager {
 			return null;
 		}
 		try{
-			if(UniqueIdentifierManager.uniqueIdentifierGenerator==null){
-				Logger log = LoggerWrapperFactory.getLogger(UniqueIdentifierManager.class);
-				log.error("UniqueIdentifierManager non inizializzato");
-				UniqueIdentifierManager.inizializzaUniqueIdentifierManager("org.openspcoop.utils.id.ClusterIdentifier");
+			if(useThreadLocal) {
+				return UniqueIdentifierManager.uniqueIdentifierGenerator_threadLocal.get().convertFromString(value);
 			}
-			return UniqueIdentifierManager.uniqueIdentifierGenerator.convertFromString(value);
+			else {
+				if(UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance==null){
+					Logger log = LoggerWrapperFactory.getLogger(UniqueIdentifierManager.class);
+					log.error("UniqueIdentifierManager non inizializzato");
+					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(false, "org.openspcoop.utils.id.ClusterIdentifier");
+				}
+				return UniqueIdentifierManager.uniqueIdentifierGenerator_staticInstance.convertFromString(value);
+			}
 		}catch(Exception e){
 			throw new UniqueIdentifierException("UniqueIdentifierManager.convertFromString() non riuscita",e);		
 		}

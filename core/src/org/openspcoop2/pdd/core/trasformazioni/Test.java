@@ -45,7 +45,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.io.ArchiveType;
 import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.Entry;
@@ -660,8 +660,7 @@ public class Test {
 		Logger log = LoggerWrapperFactory.getLogger(Test.class);
 		
 		PdDContext pddContext = new PdDContext();
-		UniversallyUniqueIdentifierGenerator uuidGenerator = new UniversallyUniqueIdentifierGenerator();
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, uuidGenerator.newID().toString());
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, UUIDUtilsGenerator.newUUID());
 		
 		String urlInvocazione =  "/govway/out/ENTE/Erogatore/Servizio/v1/azione/test?"+
 				QUERY1+"="+QUERY1_VALORE+"&"+

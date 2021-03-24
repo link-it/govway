@@ -35,7 +35,7 @@ import org.openspcoop2.protocol.modipa.example.soap.non_blocking.pull.stub.MResp
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.pull.stub.MType;
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.pull.stub.ProcessingStatus;
 import org.openspcoop2.protocol.modipa.example.soap.non_blocking.pull.stub.SOAPPull;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 
 /**
  * ServerImpl
@@ -69,9 +69,8 @@ public class ServerImpl implements SOAPPull {
     	response.value.getReturn().setStatus("accepted");
     	response.value.getReturn().setMessage("Preso carico della richiesta");
     	
-		org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator gen = new UniversallyUniqueIdentifierGenerator();
 		try {
-			correlationId.value = gen.newID().toString();
+			correlationId.value = UUIDUtilsGenerator.newUUID();
 		}catch(Exception e) {
     		String descrizione = "Generazione ID Correlazione fallita: "+e.getMessage();
     		throwFault(500, descrizione);

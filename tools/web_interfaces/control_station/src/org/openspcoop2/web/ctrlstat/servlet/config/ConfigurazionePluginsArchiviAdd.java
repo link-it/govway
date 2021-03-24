@@ -39,7 +39,7 @@ import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
-import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -208,13 +208,13 @@ public final class ConfigurazionePluginsArchiviAdd extends Action {
 				//URL url = new URL(urlArchivio);
 				//registroPluginArchivio.setNome(FilenameUtils.getName(url.getPath()));
 				// Fix: usando l'utility, url differenti che terminano con la stessa foglia vanno in errore di duplicate key
-				registroPluginArchivio.setNome(new UniversallyUniqueIdentifierGenerator().newID().getAsString());
+				registroPluginArchivio.setNome(UUIDUtilsGenerator.newUUID());
 				break;
 			case DIR:
 				registroPluginArchivio.setDir(dirArchivio);
 				//registroPluginArchivio.setNome(FilenameUtils.getName(dirArchivio));
 				// Fix: usando l'utility, path differenti che terminano con lo stesso file name vanno in errore di duplicate key
-				registroPluginArchivio.setNome(new UniversallyUniqueIdentifierGenerator().newID().getAsString());
+				registroPluginArchivio.setNome(UUIDUtilsGenerator.newUUID());
 				break;
 			}
 			

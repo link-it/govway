@@ -1,3 +1,14 @@
+2021-03-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-1169
+	Migliorate le utility per la generazione di UUID:
+	- aggiunto generatore uuid v4 che utilizza SecureRandom;
+	- aggiunta possibilità di indicare il mac address da associare ad un generatore uuid v1;
+	- nel generatore uuid v1, se non viene fornito un mac address via configurazione, viene adesso utilizzato uno tra quelli appartenenti alle schede di rete disponibili sulla macchina;
+	- per tutti i generatori è adesso possibile attivare una versione con 'ThreadLocal'.
+	Il default del prodotto è stato modificato da UUIDv4 (java.util.UUID senza ThreadLocal) a UUIDv1 (com.fasterxml.uuid.impl.TimeBasedGenerator con ThreadLocal).
+
 2021-03-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

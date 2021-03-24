@@ -21,6 +21,10 @@
 
 package org.openspcoop2.utils.id;
 
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+
+import com.fasterxml.uuid.EthernetAddress;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
 
@@ -42,6 +46,65 @@ public class UniversallyUniqueIdentifierV1Generator extends AbstractUniversallyU
 
 	// Generators are fully thread-safe, so a single instance may be shared among multiple threads.
 	private TimeBasedGenerator uuidv1 = Generators.timeBasedGenerator();
+	
+	@Override
+	public void init(Object... o) throws UniqueIdentifierException {
+		if(o!=null && o.length>0 && o[0]!=null) {
+			EthernetAddress ethAddr = null;
+			if(o[0] instanceof EthernetAddress) {
+				ethAddr = (EthernetAddress) o[0];
+			}
+			else if(o[0] instanceof String) {
+				String macAddress = (String) o[0];
+				ethAddr = new EthernetAddress(macAddress);
+			}
+			else {
+				throw new UniqueIdentifierException("Unknown mac address type ("+o[0].getClass().getName()+")");
+			}
+			//System.out.println("PARAM '"+ethAddr+"'");
+			this.uuidv1 = Generators.timeBasedGenerator(ethAddr);
+		}
+		else {
+			// Voglio selezionare una scheda di rete sulla mia macchina
+			// Altrimenti il metodo che genera senza passargli nulla, genera un mac address casuale:
+			/*Factory method that can be used to construct a random multicast
+		     * address; to be used in cases where there is no "real" ethernet
+		     * address to use. Address to generate should be a multicase address
+		     * to avoid accidental collision with real manufacturer-assigned
+		     * MAC addresses. */
+			
+			try {
+				EthernetAddress ethAddrFounded = null;
+				Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface.getNetworkInterfaces();
+				while (enumNetworkInterfaces.hasMoreElements()) {
+					NetworkInterface networkInterface = (NetworkInterface) enumNetworkInterfaces.nextElement();
+					//System.out.println("\n============");
+					//System.out.println("Network: "+networkInterface.getDisplayName());
+					if(networkInterface.getHardwareAddress()!=null) {
+						EthernetAddress ethAddr = new EthernetAddress(networkInterface.getHardwareAddress());
+						if(ethAddrFounded==null) {
+							ethAddrFounded = ethAddr;
+						}
+						//System.out.println("ethAddr: "+ethAddr.toString());
+					}
+//					Enumeration<InetAddress> enumInetAddresses = networkInterface.getInetAddresses();
+//					while (enumInetAddresses.hasMoreElements()) {
+//						InetAddress inetAddress = (InetAddress) enumInetAddresses.nextElement();
+//						System.out.println("getInetAddresses: "+inetAddress);		
+//					}
+				}
+				if(ethAddrFounded!=null) {
+					//System.out.println("DYNAMIC '"+ethAddrFounded+"'");
+					this.uuidv1 = Generators.timeBasedGenerator(ethAddrFounded);
+				}
+				else {
+					throw new Exception("NetworkInterface with mac address not found");
+				}
+			}catch(Throwable e) {
+				throw new UniqueIdentifierException("MacAddress identification failed: "+e.getMessage(),e);
+			}
+		}
+	}
 	
 	@Override
 	public IUniqueIdentifier newID() throws UniqueIdentifierException {

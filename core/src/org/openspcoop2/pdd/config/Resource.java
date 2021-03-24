@@ -25,7 +25,8 @@ package org.openspcoop2.pdd.config;
 import java.util.Date;
 
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.utils.date.UniqueIDGenerator;
+import org.openspcoop2.utils.id.UUIDUtilsGenerator;
+import org.openspcoop2.utils.id.UniqueIdentifierException;
 
 /**
  * Identifica una risorsa rilasciata dai Manager
@@ -59,8 +60,10 @@ public class Resource {
 	private Object resource = null;
 
 	
-	public static String generaIdentificatoreUnivoco(IDSoggetto identificativoPorta,String moduloFunzionale){
-		return identificativoPorta.getCodicePorta()+"_"+moduloFunzionale+"_"+UniqueIDGenerator.getUniqueID();
+	public static String generaIdentificatoreUnivoco(IDSoggetto identificativoPorta,String moduloFunzionale) throws UniqueIdentifierException{
+		return identificativoPorta.getCodicePorta()+"_"+moduloFunzionale+"_"+
+				UUIDUtilsGenerator.newUUID();
+				// Inefficente: UniqueIDGenerator.getUniqueID();
 	}
 	
 	/**
