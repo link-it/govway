@@ -3984,10 +3984,10 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli al servizioApplicativo "+idServizioApplicativo);
 				
 				
-				// Credenziali
+				// Credenziali (le credenziali in questa tabella partono dal numero maggiore di 1)
 				n=0;
-				if(invPorta!=null && invPorta.sizeCredenzialiList()>0){
-					for (int i = 0; i < invPorta.sizeCredenzialiList(); i++) {
+				if(invPorta!=null && invPorta.sizeCredenzialiList()>1){
+					for (int i = 1; i < invPorta.sizeCredenzialiList(); i++) {
 						Credenziali credenziale = invPorta.getCredenziali(i);
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
@@ -4365,7 +4365,7 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
-				// Credenziali
+				// Credenziali  (le credenziali in questa tabella partono dal numero maggiore di 1)
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
@@ -4378,8 +4378,8 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" credenziali associate al servizioApplicativo "+idServizioApplicativo);
 				
 				n=0;
-				if(invPorta!=null && invPorta.sizeCredenzialiList()>0){
-					for (int i = 0; i < invPorta.sizeCredenzialiList(); i++) {
+				if(invPorta!=null && invPorta.sizeCredenzialiList()>1){
+					for (int i = 1; i < invPorta.sizeCredenzialiList(); i++) {
 						Credenziali credenziale = invPorta.getCredenziali(i);
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);

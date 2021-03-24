@@ -1958,11 +1958,11 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.log.debug("Aggiunti " + n + " ruoli al soggetto "+idSoggetto);
 				
 				
-				// credenziali
+				// credenziali (le credenziali in questa tabella partono dal numero maggiore di 1)
 				
 				n = 0;
-				if(soggetto.sizeCredenzialiList()>0){
-					for (int i = 0; i < soggetto.sizeCredenzialiList(); i++) {
+				if(soggetto.sizeCredenzialiList()>1){
+					for (int i = 1; i < soggetto.sizeCredenzialiList(); i++) {
 						CredenzialiSoggetto credenzialiSoggetto = soggetto.getCredenziali(i);
 						
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -2190,7 +2190,7 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.log.debug("Aggiunti " + n + " ruoli al soggetto "+idSoggetto);
 				
 				
-				// credenziali
+				// credenziali (le credenziali in questa tabella partono dal numero maggiore di 1)
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_CREDENZIALI);
@@ -2203,8 +2203,8 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete roles");
 
 				n = 0;
-				if(soggetto.sizeCredenzialiList()>0){
-					for (int i = 0; i < soggetto.sizeCredenzialiList(); i++) {
+				if(soggetto.sizeCredenzialiList()>1){
+					for (int i = 1; i < soggetto.sizeCredenzialiList(); i++) {
 						CredenzialiSoggetto credenzialiSoggetto = soggetto.getCredenziali(i);
 						
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
