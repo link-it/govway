@@ -80,6 +80,16 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
@@ -141,9 +151,20 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			}
 
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
+
 			AccordoServizioParteComune as = ApiApiHelper.accordoApiToRegistro(body, env);
 
-			if (env.apcCore.existsAccordoServizio(env.idAccordoFactory.getIDAccordoFromAccordo(as)))
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo);
+	
+				if(protocolProperties != null) {
+					as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+			
+			IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+			if (env.apcCore.existsAccordoServizio(idAccordoFromAccordo))
 				throw FaultCode.CONFLITTO.toException("Api già esistente");
 
 			boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
@@ -195,6 +216,27 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
+			
+			if(protocolProperties!=null) {
+				try{
+					
+					String protocolName = "modipa"; //TODO traduzione da profilo
+					
+					IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
+					IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+					
+					IRegistryReader registryReader = env.soggettiCore.getRegistryReader(protocolFactory); 
+					IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(protocolFactory);
+
+					ConsoleConfiguration consoleConf = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(ConsoleOperationType.ADD, env.apcHelper, 
+							registryReader, configRegistryReader, idAccordoFromAccordo);
+					
+					env.apcHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+				}catch(ProtocolException e){
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+				}
+			}
+			
 
 			List<Object> objectToCreate = new ArrayList<>();
 			
@@ -234,7 +276,6 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
-
 	/**
 	 * Creazione di un allegato di una API
 	 *

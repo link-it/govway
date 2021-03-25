@@ -141,6 +141,10 @@
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			
+                        <lib dir="${openspcoop2}/protocolli/modipa/dist">
+                                <include name="openspcoop2_modipa-protocol*.jar"/>
+                        </lib>
+
 			<classes dir="${build_govwayConfigApiRS}/properties">
 				<include name="rs-api-config.datasource.properties"/>
 			</classes>			

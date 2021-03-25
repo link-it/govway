@@ -292,6 +292,9 @@
 			<exclude name="*.userlibraries"/>
 			<exclude name="axis14/*"/>
 		</fileset>
+		<fileset dir="${openspcoop2}/protocolli/modipa/dist" >
+			<include name="openspcoop2_modipa-protocol*.jar"/>
+                </fileset>
 	</path>
 	<path id="classpath_dist" >
 		<fileset dir="${openspcoop2_jars}" >
