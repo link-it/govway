@@ -18688,7 +18688,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sa=this.getServizioApplicativo(risultato.getLong("saIdentificativo"));
 					lista.add(sa);
 				}
-				
+				risultato.close(); risultato=null;
+				stmt.close(); stmt=null;
 			}
 
 			return lista;
