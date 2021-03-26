@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
 import org.openspcoop2.core.config.rs.server.model.Connettore;
 import org.openspcoop2.core.config.rs.server.model.Fruizione;
+import org.openspcoop2.core.config.rs.server.model.FruizioneModI;
 import org.openspcoop2.core.config.rs.server.model.FruizioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaFruizioni;
@@ -696,6 +697,43 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 		}
 	}
 
+    /**
+     * Restituisce le informazioni ModI associate alla fruizione
+     *
+     * Questa operazione consente di ottenere le informazioni ModI associate all&#x27;erogazione identificata dall&#x27;erogatore, dal nome e dalla versione
+     *
+     */
+	@Override
+    public FruizioneModI getFruizioneModI(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+
+			FruizioneModI ret = null; // TODO
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+        
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
 	/**
 	 * Restituisce le informazioni sull'url di invocazione necessaria ad invocare la
 	 * fruizione
@@ -972,6 +1010,41 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+
+    /**
+     * Consente di modificare le informazioni ModI associate alla fruizione
+     *
+     * Questa operazione consente di aggiornare le informazioni ModI associate all&#x27;erogazione identificata dall&#x27;erogatore, dal nome e dalla versione
+     *
+     */
+	@Override
+    public void updateFruizioneModI(FruizioneModI body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
+					"Fruizione");
+			
+			// TODO
+        
+			context.getLogger().info("Invocazione completata con successo");
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 
 	/**
 	 * Consente di modificare la configurazione utilizzata per identificare l'azione

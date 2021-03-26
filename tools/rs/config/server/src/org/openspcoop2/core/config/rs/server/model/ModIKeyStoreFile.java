@@ -25,49 +25,51 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
+public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIKeyStoreRidefinitoDatiKeystore {
   
   @Schema(required = true, description = "")
-  private KeystoreEnum truststoreTipo = null;
+  private ModIKeystoreTipologiaEnum tipologia = null;
   
-  @Schema(example = "PKIX", description = "")
-  private String algoritmo = "PKIX";
+  @Schema(required = true, description = "")
+  private ModIKeystoreEnum keystoreTipo = null;
  /**
-   * Get truststoreTipo
-   * @return truststoreTipo
+   * Get tipologia
+   * @return tipologia
   **/
-  @JsonProperty("truststore_tipo")
+  @Override
+@JsonProperty("tipologia")
   @NotNull
   @Valid
-  public KeystoreEnum getTruststoreTipo() {
-    return this.truststoreTipo;
+  public ModIKeystoreTipologiaEnum getTipologia() {
+    return this.tipologia;
   }
 
-  public void setTruststoreTipo(KeystoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
+  public void setTipologia(ModIKeystoreTipologiaEnum tipologia) {
+    this.tipologia = tipologia;
   }
 
-  public ConnettoreConfigurazioneHttpsServer truststoreTipo(KeystoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
+  public ModIKeyStoreFile tipologia(ModIKeystoreTipologiaEnum tipologia) {
+    this.tipologia = tipologia;
     return this;
   }
 
  /**
-   * Get algoritmo
-   * @return algoritmo
+   * Get keystoreTipo
+   * @return keystoreTipo
   **/
-  @JsonProperty("algoritmo")
+  @JsonProperty("keystore_tipo")
+  @NotNull
   @Valid
- @Size(max=255)  public String getAlgoritmo() {
-    return this.algoritmo;
+  public ModIKeystoreEnum getKeystoreTipo() {
+    return this.keystoreTipo;
   }
 
-  public void setAlgoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
+  public void setKeystoreTipo(ModIKeystoreEnum keystoreTipo) {
+    this.keystoreTipo = keystoreTipo;
   }
 
-  public ConnettoreConfigurazioneHttpsServer algoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
+  public ModIKeyStoreFile keystoreTipo(ModIKeystoreEnum keystoreTipo) {
+    this.keystoreTipo = keystoreTipo;
     return this;
   }
 
@@ -75,10 +77,10 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreConfigurazioneHttpsServer {\n");
-    sb.append("    ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(super.toString())).append("\n");
-    sb.append("    truststoreTipo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststoreTipo)).append("\n");
-    sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("class ModIKeyStoreFile {\n");
+    sb.append("    ").append(ModIKeyStoreFile.toIndentedString(super.toString())).append("\n");
+    sb.append("    tipologia: ").append(ModIKeyStoreFile.toIndentedString(this.tipologia)).append("\n");
+    sb.append("    keystoreTipo: ").append(ModIKeyStoreFile.toIndentedString(this.keystoreTipo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

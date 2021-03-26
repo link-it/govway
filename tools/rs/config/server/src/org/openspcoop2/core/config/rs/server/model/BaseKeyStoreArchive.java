@@ -25,49 +25,27 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
+public class BaseKeyStoreArchive extends BaseKeyStore {
   
   @Schema(required = true, description = "")
-  private KeystoreEnum truststoreTipo = null;
-  
-  @Schema(example = "PKIX", description = "")
-  private String algoritmo = "PKIX";
+  private byte[] keystoreArchivio = null;
  /**
-   * Get truststoreTipo
-   * @return truststoreTipo
+   * Get keystoreArchivio
+   * @return keystoreArchivio
   **/
-  @JsonProperty("truststore_tipo")
+  @JsonProperty("keystore_archivio")
   @NotNull
   @Valid
-  public KeystoreEnum getTruststoreTipo() {
-    return this.truststoreTipo;
+  public byte[] getKeystoreArchivio() {
+    return this.keystoreArchivio;
   }
 
-  public void setTruststoreTipo(KeystoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
+  public void setKeystoreArchivio(byte[] keystoreArchivio) {
+    this.keystoreArchivio = keystoreArchivio;
   }
 
-  public ConnettoreConfigurazioneHttpsServer truststoreTipo(KeystoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
-    return this;
-  }
-
- /**
-   * Get algoritmo
-   * @return algoritmo
-  **/
-  @JsonProperty("algoritmo")
-  @Valid
- @Size(max=255)  public String getAlgoritmo() {
-    return this.algoritmo;
-  }
-
-  public void setAlgoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
-  }
-
-  public ConnettoreConfigurazioneHttpsServer algoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
+  public BaseKeyStoreArchive keystoreArchivio(byte[] keystoreArchivio) {
+    this.keystoreArchivio = keystoreArchivio;
     return this;
   }
 
@@ -75,10 +53,9 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreConfigurazioneHttpsServer {\n");
-    sb.append("    ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(super.toString())).append("\n");
-    sb.append("    truststoreTipo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststoreTipo)).append("\n");
-    sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("class BaseKeyStoreArchive {\n");
+    sb.append("    ").append(BaseKeyStoreArchive.toIndentedString(super.toString())).append("\n");
+    sb.append("    keystoreArchivio: ").append(BaseKeyStoreArchive.toIndentedString(this.keystoreArchivio)).append("\n");
     sb.append("}");
     return sb.toString();
   }

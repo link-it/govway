@@ -25,49 +25,49 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
+public class FruizioneModISoapRichiestaInformazioneUtente  {
   
   @Schema(required = true, description = "")
-  private KeystoreEnum truststoreTipo = null;
+  private StatoDefaultRidefinitoEnum modalita = null;
   
-  @Schema(example = "PKIX", description = "")
-  private String algoritmo = "PKIX";
+  @Schema(description = "")
+  private String valore = null;
  /**
-   * Get truststoreTipo
-   * @return truststoreTipo
+   * Get modalita
+   * @return modalita
   **/
-  @JsonProperty("truststore_tipo")
+  @JsonProperty("modalita")
   @NotNull
   @Valid
-  public KeystoreEnum getTruststoreTipo() {
-    return this.truststoreTipo;
+  public StatoDefaultRidefinitoEnum getModalita() {
+    return this.modalita;
   }
 
-  public void setTruststoreTipo(KeystoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
+  public void setModalita(StatoDefaultRidefinitoEnum modalita) {
+    this.modalita = modalita;
   }
 
-  public ConnettoreConfigurazioneHttpsServer truststoreTipo(KeystoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
+  public FruizioneModISoapRichiestaInformazioneUtente modalita(StatoDefaultRidefinitoEnum modalita) {
+    this.modalita = modalita;
     return this;
   }
 
  /**
-   * Get algoritmo
-   * @return algoritmo
+   * Get valore
+   * @return valore
   **/
-  @JsonProperty("algoritmo")
+  @JsonProperty("valore")
   @Valid
- @Size(max=255)  public String getAlgoritmo() {
-    return this.algoritmo;
+ @Size(max=4000)  public String getValore() {
+    return this.valore;
   }
 
-  public void setAlgoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
+  public void setValore(String valore) {
+    this.valore = valore;
   }
 
-  public ConnettoreConfigurazioneHttpsServer algoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
+  public FruizioneModISoapRichiestaInformazioneUtente valore(String valore) {
+    this.valore = valore;
     return this;
   }
 
@@ -75,10 +75,10 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreConfigurazioneHttpsServer {\n");
-    sb.append("    ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(super.toString())).append("\n");
-    sb.append("    truststoreTipo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststoreTipo)).append("\n");
-    sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("class FruizioneModISoapRichiestaInformazioneUtente {\n");
+    
+    sb.append("    modalita: ").append(FruizioneModISoapRichiestaInformazioneUtente.toIndentedString(this.modalita)).append("\n");
+    sb.append("    valore: ").append(FruizioneModISoapRichiestaInformazioneUtente.toIndentedString(this.valore)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -25,13 +25,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
+public class ModITrustStore extends BaseTrustStore {
   
   @Schema(required = true, description = "")
-  private KeystoreEnum truststoreTipo = null;
-  
-  @Schema(example = "PKIX", description = "")
-  private String algoritmo = "PKIX";
+  private ModITruststoreEnum truststoreTipo = null;
  /**
    * Get truststoreTipo
    * @return truststoreTipo
@@ -39,35 +36,16 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   @JsonProperty("truststore_tipo")
   @NotNull
   @Valid
-  public KeystoreEnum getTruststoreTipo() {
+  public ModITruststoreEnum getTruststoreTipo() {
     return this.truststoreTipo;
   }
 
-  public void setTruststoreTipo(KeystoreEnum truststoreTipo) {
+  public void setTruststoreTipo(ModITruststoreEnum truststoreTipo) {
     this.truststoreTipo = truststoreTipo;
   }
 
-  public ConnettoreConfigurazioneHttpsServer truststoreTipo(KeystoreEnum truststoreTipo) {
+  public ModITrustStore truststoreTipo(ModITruststoreEnum truststoreTipo) {
     this.truststoreTipo = truststoreTipo;
-    return this;
-  }
-
- /**
-   * Get algoritmo
-   * @return algoritmo
-  **/
-  @JsonProperty("algoritmo")
-  @Valid
- @Size(max=255)  public String getAlgoritmo() {
-    return this.algoritmo;
-  }
-
-  public void setAlgoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
-  }
-
-  public ConnettoreConfigurazioneHttpsServer algoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
     return this;
   }
 
@@ -75,10 +53,9 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreConfigurazioneHttpsServer {\n");
-    sb.append("    ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(super.toString())).append("\n");
-    sb.append("    truststoreTipo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststoreTipo)).append("\n");
-    sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("class ModITrustStore {\n");
+    sb.append("    ").append(ModITrustStore.toIndentedString(super.toString())).append("\n");
+    sb.append("    truststoreTipo: ").append(ModITrustStore.toIndentedString(this.truststoreTipo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

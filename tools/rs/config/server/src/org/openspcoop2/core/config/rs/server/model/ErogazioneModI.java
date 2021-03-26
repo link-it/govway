@@ -25,49 +25,31 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
+public class ErogazioneModI  {
   
   @Schema(required = true, description = "")
-  private KeystoreEnum truststoreTipo = null;
-  
-  @Schema(example = "PKIX", description = "")
-  private String algoritmo = "PKIX";
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "protocollo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModISoap.class, name = "soap"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModIRest.class, name = "rest")  })
+  private OneOfErogazioneModIModi modi = null;
  /**
-   * Get truststoreTipo
-   * @return truststoreTipo
+   * Get modi
+   * @return modi
   **/
-  @JsonProperty("truststore_tipo")
+  @JsonProperty("modi")
   @NotNull
   @Valid
-  public KeystoreEnum getTruststoreTipo() {
-    return this.truststoreTipo;
+  public OneOfErogazioneModIModi getModi() {
+    return this.modi;
   }
 
-  public void setTruststoreTipo(KeystoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
+  public void setModi(OneOfErogazioneModIModi modi) {
+    this.modi = modi;
   }
 
-  public ConnettoreConfigurazioneHttpsServer truststoreTipo(KeystoreEnum truststoreTipo) {
-    this.truststoreTipo = truststoreTipo;
-    return this;
-  }
-
- /**
-   * Get algoritmo
-   * @return algoritmo
-  **/
-  @JsonProperty("algoritmo")
-  @Valid
- @Size(max=255)  public String getAlgoritmo() {
-    return this.algoritmo;
-  }
-
-  public void setAlgoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
-  }
-
-  public ConnettoreConfigurazioneHttpsServer algoritmo(String algoritmo) {
-    this.algoritmo = algoritmo;
+  public ErogazioneModI modi(OneOfErogazioneModIModi modi) {
+    this.modi = modi;
     return this;
   }
 
@@ -75,10 +57,9 @@ public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ConnettoreConfigurazioneHttpsServer {\n");
-    sb.append("    ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(super.toString())).append("\n");
-    sb.append("    truststoreTipo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststoreTipo)).append("\n");
-    sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("class ErogazioneModI {\n");
+    
+    sb.append("    modi: ").append(ErogazioneModI.toIndentedString(this.modi)).append("\n");
     sb.append("}");
     return sb.toString();
   }

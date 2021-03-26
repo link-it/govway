@@ -1550,6 +1550,71 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /erogazioni/{nome}/{versione}/modi:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"   
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni
+      summary: Restituisce le informazioni ModI associate all'erogazione
+      operationId: getErogazioneModI
+      description: Questa operazione consente di ottenere le informazioni modI associate all'erogazione identificata dal nome e dalla versione
+      responses:
+        "200":
+          description: Informazioni ModI restituite con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModI"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni
+      summary: Consente di modificare le informazioni ModI associate all'erogazione
+      operationId: updateErogazioneModI
+      description: Questa operazione consente di aggiornare le informazioni ModI assocaite all'erogazione identificata dal nome e dalla versione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModI"
+      responses: 
+        "204":
+          description: Erogazione di API aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /erogazioni/{nome}/{versione}/allegati:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -4006,6 +4071,72 @@ paths:
           application/json:
             schema:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiImplVersioneApi'
+      responses: 
+        "204":
+          description: Fruizione di API aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /fruizioni/{erogatore}/{nome}/{versione}/modi:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"    
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni
+      summary: Restituisce le informazioni ModI associate alla fruizione
+      operationId: getFruizioneModI
+      description: Questa operazione consente di ottenere le informazioni ModI associate all'erogazione identificata dall'erogatore, dal nome e dalla versione
+      responses:
+        "200":
+          description: Informazioni ModI restituite con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModI"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni
+      summary: Consente di modificare le informazioni ModI associate alla fruizione
+      operationId: updateFruizioneModI
+      description: Questa operazione consente di aggiornare le informazioni ModI associate all'erogazione identificata dall'erogatore, dal nome e dalla versione
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModI'
       responses: 
         "204":
           description: Fruizione di API aggiornata correttamente
@@ -7199,6 +7330,15 @@ components:
                 $ref: 'govway_core.yaml#/components/schemas/Versione'
             canale:
                 $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
+            modi:
+              oneOf:
+              - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModISoap'
+              - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModIRest'
+              discriminator:
+                propertyName: protocollo
+                mapping:
+                  'soap': 'govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModISoap'
+                  'rest': 'govway_rs-api_config-commons.yaml#/components/schemas/ErogazioneModIRest' 
     ErogazioneItem:
       type: object
       allOf:
@@ -7239,6 +7379,15 @@ components:
               $ref: 'govway_core.yaml#/components/schemas/SimpleName'
             canale:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/IdCanale'
+            modi:
+              oneOf:
+              - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModISoap'
+              - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIRest'
+              discriminator:
+                propertyName: protocollo
+                mapping:
+                  'soap': 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModISoap'
+                  'rest': 'govway_rs-api_config-commons.yaml#/components/schemas/FruizioneModIRest' 
     FruizioneItem:
       type: object
       allOf:

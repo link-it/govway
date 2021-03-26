@@ -51,7 +51,7 @@ public class Connettore  {
   @JsonProperty("endpoint")
   @NotNull
   @Valid
-  public String getEndpoint() {
+ @Size(max=4000)  public String getEndpoint() {
     return this.endpoint;
   }
 
