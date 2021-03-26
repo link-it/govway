@@ -375,7 +375,8 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			
 	         Api api = apiReader.read();
 	         try {
-	        	 api.validate();
+	        	 boolean usingFromSetProtocolInfo = true;
+	        	 api.validate(usingFromSetProtocolInfo, false);
 	         }catch(ParseWarningException warning) {}
 	         
 	         if(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) {

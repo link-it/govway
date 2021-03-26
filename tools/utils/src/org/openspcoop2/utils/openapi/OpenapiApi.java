@@ -121,19 +121,26 @@ public class OpenapiApi extends Api {
 	}
 	
 	@Override
-	public void validate() throws ProcessingException, ParseWarningException {
+	public void validate() throws ProcessingException,ParseWarningException {
 		this.validate(false);
 	}
 	@Override
 	public void validate(boolean validateBodyParameterElement) throws ProcessingException, ParseWarningException {
+		this.validate(false, false);
+	}
+	@Override
+	public void validate(boolean usingFromSetProtocolInfo, boolean validateBodyParameterElement) throws ProcessingException, ParseWarningException {
 		
 		// Primo valido l'openapi
-		if(ApiFormats.OPEN_API_3.equals(this.format)) {
-			this._validateOpenAPI3();
+		if(!usingFromSetProtocolInfo) {
+			// Se valido poi non riesco a caricare OpenAPI che comunque non sono validi
+			if(ApiFormats.OPEN_API_3.equals(this.format)) {
+				this._validateOpenAPI3();
+			}
 		}
-		
+				
 		// Valido la struttura
-		super.validate(validateBodyParameterElement);
+		super.validate(usingFromSetProtocolInfo, validateBodyParameterElement);
 		
 		// Se ho trovato dei warning li emetto
 		if(this.parseWarningResult!=null && StringUtils.isNotEmpty(this.parseWarningResult)) {

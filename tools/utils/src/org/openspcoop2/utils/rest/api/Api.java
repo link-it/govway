@@ -155,6 +155,9 @@ public abstract class Api extends BaseBean implements Serializable {
 		this.validate(false);
 	}
 	public void validate(boolean validateBodyParameterElement) throws ProcessingException, ParseWarningException {
+		this.validate(false, false);
+	}
+	public void validate(boolean usingFromSetProtocolInfo, boolean validateBodyParameterElement) throws ProcessingException, ParseWarningException {
 		
 		if(this.operations.size()<=0) {
 			throw new ProcessingException("Paths and Operations undefined");
