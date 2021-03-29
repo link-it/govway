@@ -10734,6 +10734,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 					soggetto=this.getSoggetto(risultato.getLong("soggettoIdentificativo"));
 					lista.add(soggetto);
 				}
+				risultato.close(); risultato=null;
+				stmt.close(); stmt=null;
 				
 			}
 
