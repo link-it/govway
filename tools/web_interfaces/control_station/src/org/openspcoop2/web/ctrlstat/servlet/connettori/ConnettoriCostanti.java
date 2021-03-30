@@ -132,7 +132,10 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP = "confSSLCredWizStep";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_DOWNLOAD= "confSSLCredFileCertLink";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_MODIFICA = "confSSLCredFileModificaCertLink";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_PROMUOVI = "confSSLCredFileCertPromLink";
 	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CHANGE_PASSWORD = "changepwd";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID = "idCred";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PROMUOVI = "confSSLCredFileCertProm";
 	
 	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO = "connettore_token_policy_stat";
 	public final static String PARAMETRO_CONNETTORE_TOKEN_POLICY = "connettore_token_policy";
@@ -362,11 +365,15 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE = "Not Before";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER = "Not After";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI = "Verifica tutti i campi";
-	public final static String NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI = "Attenzione questa opzione richiede l'aggiornamento del certificato a scadenza";
+	public final static String NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI = "<b>Attenzione:</b> questa opzione richiede l'aggiornamento del certificato a scadenza";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_MANUALE_SELF_SIGNED = "Self Signed";
 	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS="<br/><br/><b>Nota:</b> Il certiticato selezionato possiede un serial number diverso da quello del certificato già in uso. Abilita l'opzione '"+
 			ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI+"' per consentire la distinzione tra i due certificati.<br>";
-
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_AGGIUNGI = "Aggiungi Certificato";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_PROMUOVI = "Promuovi come Certificato Principale";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_PRINCIPALE = "Principale";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_ELENCO_CERTIFICATI = "Elenco Certificati";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CERTIFICATI = "Certificati";
 	
 	public final static String LABEL_BUTTON_INVIA_CARICA_CERTIFICATO = "Carica Certificato";
 	
@@ -468,4 +475,5 @@ public class ConnettoriCostanti {
 			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_APIKEY, 
 			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL};
 
+	public final static int NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI = 60;
 }

@@ -22,7 +22,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -119,8 +118,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class ServiziApplicativiChange extends Action {
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
-
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
 	private ConsoleConfiguration consoleConfiguration =null;
@@ -386,7 +383,12 @@ public final class ServiziApplicativiChange extends Action {
 			
 			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
 						
-			
+			boolean visualizzaModificaCertificato = false;
+			boolean visualizzaAddCertificato = false;
+			String servletCredenzialiList = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_LIST;
+			List<Parameter> parametersServletCredenzialiList = null;
+			Integer numeroCertificati = 0;
+			String servletCredenzialiAdd = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_ADD;
 			
 			Long soggLong = 0L;
 			if(provider != null){
@@ -411,10 +413,28 @@ public final class ServiziApplicativiChange extends Action {
 			Credenziali oldCredenziali = null;
 			if (ip != null) {
 				ipge = ip.getGestioneErrore();
+				numeroCertificati = ip.sizeCredenzialiList();
 				if(ip.sizeCredenzialiList()>0) {
 					credenziali = ip.getCredenziali(0);
 					oldCredenziali = ip.getCredenziali(0);
+					
+					visualizzaAddCertificato = true;
+					if(ip.sizeCredenzialiList() == 1) {  // se ho definito solo un certificato c'e' il link diretto alla modifica
+						visualizzaModificaCertificato = true;
+					}
 				}
+			}
+			
+			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
+			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
+			
+			parametersServletCredenzialiList = new ArrayList<Parameter>();
+			parametersServletCredenzialiList.add(pIdSA);
+			parametersServletCredenzialiList.add(pIdSoggettoSA);
+			
+			if(dominio != null) {
+				Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
+				parametersServletCredenzialiList.add(pDominio);
 			}
 			
 			boolean encryptOldPlainPwd = false;
@@ -694,8 +714,8 @@ public final class ServiziApplicativiChange extends Action {
 										tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
 										tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
 										tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-										tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
-										tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+										tipoCredenzialiSSLAliasCertificatoNotBefore = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotBefore());
+										tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotAfter());
 										tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK;
 									}catch(UtilsException e) {
 										pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
@@ -723,8 +743,8 @@ public final class ServiziApplicativiChange extends Action {
 								tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
 								tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
 								tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-								tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
-								tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+								tipoCredenzialiSSLAliasCertificatoNotBefore = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotBefore());
+								tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotAfter());
 								
 								// dalla seconda volta che passo, posso salvare, la prima mostro il recap del certificato estratto
 								
@@ -898,8 +918,8 @@ public final class ServiziApplicativiChange extends Action {
 								tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
 								tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
 								tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-								tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
-								tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+								tipoCredenzialiSSLAliasCertificatoNotBefore = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotBefore());
+								tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotAfter());
 							}catch(UtilsException e) {
 								pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
 								tipoCredenzialiSSLAliasCertificato = "";
@@ -1327,7 +1347,8 @@ public final class ServiziApplicativiChange extends Action {
 						changepwd,
 						multipleApiKey, appId, apiKey,
 						autenticazioneToken,token_policy,tipoSA, useAsClient,
-						integrationManagerEnabled);
+						integrationManagerEnabled, 
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1435,7 +1456,8 @@ public final class ServiziApplicativiChange extends Action {
 						changepwd,
 						multipleApiKey, appId, apiKey,
 						autenticazioneToken,token_policy,tipoSA, useAsClient,
-						integrationManagerEnabled);
+						integrationManagerEnabled, 
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1591,7 +1613,7 @@ public final class ServiziApplicativiChange extends Action {
 				else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
 					credenziali.setUser(principalSA);
 				} 
-				ip.addCredenziali(credenziali);
+				ip.getCredenzialiList().set(0,credenziali); // Sovrascrivo la credenziale principale
 				
 				if(secret) {
 					secret_user = credenziali.getUser();

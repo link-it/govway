@@ -164,7 +164,7 @@ public class SoggettiApiHelper {
 		
 		if (env.soggettiCore.isSupportatoAutenticazioneSoggetti(env.tipo_protocollo) && body.getCredenziali() != null && body.getCredenziali().getModalitaAccesso() != null ) {
 			try {
-				CredenzialiSoggetto credenziali = Helper.apiCredenzialiToGovwayCred(
+				List<CredenzialiSoggetto> credenziali = Helper.apiCredenzialiToGovwayCred(
 							body.getCredenziali(),
 							body.getCredenziali().getModalitaAccesso(),
 							CredenzialiSoggetto.class,
@@ -172,7 +172,7 @@ public class SoggettiApiHelper {
 							keyInfo
 				);		
 				ret.getCredenzialiList().clear();
-				ret.addCredenziali(credenziali);
+				ret.getCredenzialiList().addAll(credenziali);
 			}catch(Exception e) {
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -232,9 +232,8 @@ public class SoggettiApiHelper {
 		ret.setNome(s.getNome());
 		ret.setDescrizione(s.getDescrizione());
 		
-		CredenzialiSoggetto soggCred = s.getCredenziali(0);
 		ret.setCredenziali(Helper.govwayCredenzialiToApi(
-				soggCred,
+				s.getCredenzialiList(),
 				CredenzialiSoggetto.class,
 				org.openspcoop2.core.registry.constants.CredenzialeTipo.class
 			));

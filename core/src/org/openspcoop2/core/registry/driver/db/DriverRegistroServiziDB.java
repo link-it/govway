@@ -10001,6 +10001,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("id_soggetto = ?");
 				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("id", true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, soggetto.getId());
@@ -10689,7 +10690,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectAliasField(tabella, "certificate", "soggettoCertificate");
 				
 				if(i>0) {
-					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SOGGETTI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI_CREDENZIALI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
 				}
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipoauth = ?");
 				

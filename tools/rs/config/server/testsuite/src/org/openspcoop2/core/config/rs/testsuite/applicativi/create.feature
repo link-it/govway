@@ -21,6 +21,9 @@ Background:
 * def applicativo_multipleApikey = read('classpath:bodies/applicativo_multipleApikey.json') 
 * eval randomize(applicativo_multipleApikey, ["nome" ])
 
+* def applicativo_https_multipleCertificate = read('classpath:bodies/applicativo_https_multipleCertificate.json') 
+* eval randomize(applicativo_https_multipleCertificate, ["nome" ])
+
 @Create204
 Scenario: Applicativi Creazione 204 OK
 
@@ -35,6 +38,11 @@ Scenario: Applicativi Creazione 204 OK (credenziali https, configurazione manual
 Scenario: Applicativi Creazione 204 OK (credenziali https, upload certificato)
 
     * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_https_certificate)', key: '#(applicativo_https_certificate.nome)' }
+    
+@Create204_httpsMultipleCertificato
+Scenario: Applicativi Creazione 204 OK (credenziali https, lista certificati)
+
+    * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_https_multipleCertificate)', key: '#(applicativo_https_multipleCertificate.nome)' }
 
 @Create409
 Scenario: Applicativi Creazione 409 Conflitto

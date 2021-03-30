@@ -7785,6 +7785,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQueryObject.addOrderBy("id", true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, sa.getId());

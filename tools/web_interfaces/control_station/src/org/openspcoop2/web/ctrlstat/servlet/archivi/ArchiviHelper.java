@@ -97,6 +97,7 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
@@ -2679,6 +2680,14 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			tipoCredenzialiSSLAliasCertificato = "";
 		}
 		
+		// Parametri  accesso alla lista credenziali certificati impostati per nascondere il link.
+		boolean visualizzaModificaCertificato = false;
+		boolean visualizzaAddCertificato = false;
+		String servletCredenzialiList = null;
+		List<Parameter> parametersServletCredenzialiList = null;
+		Integer numeroCertificati = null;
+		String servletCredenzialiAdd = null;
+		
 		// controllo dei postback
 		
 		//}true,endpointtype,true,false, prefix, true
@@ -2690,7 +2699,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 				tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,
 				changepwd, 
-				multipleApiKey, appId, apiKey); 
+				multipleApiKey, appId, apiKey, 
+				visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd); 
 	}
 	
 	private void addDatiConnettore(Vector<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties,

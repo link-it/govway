@@ -26,6 +26,12 @@ Background:
 
 * def credenziali_multipleApikey = read('classpath:bodies/credenziali_multipleApikey.json')
 
+* def soggetto_https_multipleCertificate = read('classpath:bodies/soggetto-esterno-https_multipleCertificate.json')
+* eval randomize(soggetto_https_multipleCertificate, ["nome"])
+* eval soggetto_https_multipleCertificate.ruoli = [ ruolo.nome ]
+
+* def credenziali_https_multipleCertificate = read('classpath:bodies/credenziali_https_multipleCertificate.json')
+
 @Update204
 Scenario: Aggiornamento Soggetto 204
 
@@ -37,6 +43,13 @@ Scenario: Aggiornamento Soggetto 204
 Scenario: Aggiornamento Soggetto 404
 
 * call update_404 { resourcePath: 'soggetti', body: '#(soggetto_https_manuale)', key: '#(soggetto_https_manuale.nome)' }
+
+@Update204_httpsMultipleCertificato
+Scenario: Aggiornamento Soggetto 204
+
+* call create { resourcePath: 'ruoli', body: '#(ruolo)' }
+* call update_204 ( { resourcePath: 'soggetti', body: soggetto_https_multipleCertificate,  body_update: soggetto_https_multipleCertificate, key: soggetto_https_multipleCertificate.nome, delete_key: soggetto_https_multipleCertificate.nome } )
+* call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
 
 @UpdateCredenzialiHttpBasic
 Scenario: Soggetti Aggiornamento Credenziali HttpBasic
@@ -165,4 +178,30 @@ Scenario: Soggetti Aggiornamento Credenziali MultipleApiKey
     And match response.credenziali contains options
 
     * call delete ( { resourcePath: 'soggetti/' + soggetto_https_manuale.nome } )
+    * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
+    
+@UpdateCredenzialiHttsCertificatiMultipli
+Scenario: Soggetti Aggiornamento Credenziali Https Certificati Multipli
+
+    * def options = { modalita_accesso: 'https', certificato: { tipo_certificato: "CER", strict_verification : false, tipo: "certificato", archivio: "#notnull" }, certificati: [ { tipo_certificato: "CER", strict_verification : false, archivio: "#notnull" }] }
+
+    * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
+    * call create { resourcePath: 'soggetti', body: '#(soggetto_https_multipleCertificate)' }
+
+    Given url configUrl
+    And path 'soggetti/' + soggetto_https_multipleCertificate.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_https_multipleCertificate
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'soggetti' , soggetto_https_multipleCertificate.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.credenziali contains options
+
+    * call delete ( { resourcePath: 'soggetti/' + soggetto_https_multipleCertificate.nome } )
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )

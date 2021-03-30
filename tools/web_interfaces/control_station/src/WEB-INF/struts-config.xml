@@ -230,6 +230,33 @@
             <forward name="soggettiEndPointCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="soggettiError" path="/jsplib/info.jsp"/>
         </action>
+        
+         <!--  Soggetti Credenziali -->
+        
+        <action path="/soggettiCredenzialiAdd" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCredenzialiAdd"
+            scope="request" validate="true">
+            <forward name="soggettiCredenzialiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiCredenzialiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiCredenzialiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiCredenzialiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiCredenzialiList" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCredenzialiList"
+            scope="request" validate="true">
+            <forward name="soggettiCredenzialiList" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiCredenzialiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiCredenzialiChange" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCredenzialiChange"
+            scope="request" validate="true">
+            <forward name="soggettiCredenzialiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiCredenzialiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiCredenzialiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiCredenzialiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiCredenzialiDel" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCredenzialiDel"
+            scope="request" validate="true">
+            <forward name="soggettiCredenzialiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiCredenzialiError" path="/jsplib/info.jsp"/>
+        </action>
 
         <!--  Soggetti Ruoli -->
 
@@ -319,6 +346,33 @@
             <forward name="serviziApplicativiEndPointRispostaAsincronaOk" path="/jsplib/listElement.jsp"/>
             <forward name="serviziApplicativiEndPointRispostaAsincronaCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Servizi Applicativi Credenziali -->
+
+		<action path="/serviziApplicativiCredenzialiAdd" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCredenzialiAdd" 
+			scope="request" validate="true">
+            <forward name="serviziApplicativiCredenzialiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiCredenzialiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiCredenzialiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiCredenzialiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiCredenzialiList" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCredenzialiList" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiCredenzialiList" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiCredenzialiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiCredenzialiChange" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCredenzialiChange" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiCredenzialiChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiCredenzialiChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiCredenzialiChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiCredenzialiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiCredenzialiDel" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCredenzialiDel" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiCredenzialiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiCredenzialiError" path="/jsplib/info.jsp"/>
         </action>
         
         <!--  Servizi Applicativi Ruoli -->

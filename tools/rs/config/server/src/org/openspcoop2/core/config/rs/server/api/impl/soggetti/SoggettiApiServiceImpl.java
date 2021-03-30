@@ -386,7 +386,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			final org.openspcoop2.core.registry.Soggetto newSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
 			
 			try {
-				CredenzialiSoggetto newCredenziali = Helper.apiCredenzialiToGovwayCred(
+				List<CredenzialiSoggetto> newCredenziali = Helper.apiCredenzialiToGovwayCred(
 							body.getCredenziali(),
 							body.getCredenziali().getModalitaAccesso(),
 							CredenzialiSoggetto.class,
@@ -394,7 +394,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 							keyInfo
 				);		
 				newSoggetto.getCredenzialiList().clear();
-				newSoggetto.addCredenziali(newCredenziali);
+				newSoggetto.getCredenzialiList().addAll(newCredenziali);
 			}catch(Exception e) {
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}

@@ -76,6 +76,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -211,6 +212,13 @@ public final class SoggettiAdd extends Action {
 			String multipleApiKey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
 			String appId = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 			String apiKey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
+			
+			boolean visualizzaModificaCertificato = false;
+			boolean visualizzaAddCertificato = false;
+			String servletCredenzialiList = null;
+			List<Parameter> parametersServletCredenzialiList = null;
+			Integer numeroCertificati = 0;
+			String servletCredenzialiAdd = null;
 			
 			boolean isRouter = ServletUtils.isCheckBoxEnabled(is_router);
 
@@ -638,7 +646,8 @@ public final class SoggettiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep,
 						changepwd,
-						multipleApiKey, appId, apiKey);
+						multipleApiKey, appId, apiKey, 
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -730,7 +739,8 @@ public final class SoggettiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep,
 						changepwd,
-						multipleApiKey, appId, apiKey);
+						multipleApiKey, appId, apiKey, 
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);

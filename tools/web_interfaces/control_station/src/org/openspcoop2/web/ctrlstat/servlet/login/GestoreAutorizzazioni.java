@@ -166,6 +166,7 @@ public class GestoreAutorizzazioni {
 		this.servletSoggetti = new Vector<String>();
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI);
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_RUOLI);
+		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_CREDENZIALI);
 		/** Permessi associati alla gestione dei soggetti */
 		this.permessiSoggetti = new PermessiUtente();
 		this.permessiSoggetti.setServizi(true);
@@ -317,6 +318,7 @@ public class GestoreAutorizzazioni {
 		this.servletServiziApplicativi = new Vector<String>();
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI);
 		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_RUOLI);
+		this.servletServiziApplicativi.addAll(ServiziApplicativiCostanti.SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI);
 		/** Permessi associati alla gestione i servizi applicativi */
 		this.permessiServiziApplicativi = new PermessiUtente();
 		this.permessiServiziApplicativi.setServizi(true);

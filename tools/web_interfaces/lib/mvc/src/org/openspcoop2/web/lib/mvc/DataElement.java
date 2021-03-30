@@ -226,6 +226,11 @@ public class DataElement {
 		if(DataElementType.CRYPT.toString().equals(s)) {
 			this.password = new DataElementPassword();
 		}
+		// classe css default per gli elementi TEXT
+		if(DataElementType.TEXT.toString().equals(s)) {
+			this.styleClass = Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS;
+		}
+		
 	}
 	public String getType() {
 		return DataElement.checkNull(this.type);
@@ -892,5 +897,13 @@ public class DataElement {
 
 	public void setDialog(Dialog dialog) {
 		this.dialog = dialog;
+	}
+	
+	public void setValoreBold() {
+		this.setStyleClass(Costanti.INPUT_TEXT_BOLD_CSS_CLASS);
+	}
+	
+	public void setValoreBoldRed() {
+		this.setStyleClass(Costanti.INPUT_TEXT_BOLD_RED_CSS_CLASS);
 	}
 }
