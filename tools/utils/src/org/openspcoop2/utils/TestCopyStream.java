@@ -40,17 +40,14 @@ public class TestCopyStream {
 
 	public static void main(String[] args) throws Exception {
 		
-		System.out.println("======================");
 		// init resources: 1GB
 		int size = 1024*1024*1024;
 		test(size);
 		
-		System.out.println("======================");
 		// init resources: 1MB
 		size = 1024*1024;
 		test(size);
 		
-		System.out.println("======================");
 		// init resources: 1KB
 		size = 1024;
 		test(size);
@@ -58,6 +55,8 @@ public class TestCopyStream {
 	}
 	
 	public static void test(int size) throws Exception {
+		
+		System.out.println("======================");
 		
 		byte [] buffer = new byte[size];
 		for (int i = 0; i < size; i++) {
