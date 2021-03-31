@@ -195,7 +195,7 @@
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
 				<include name="xom-1.2.11.jar" /> <!--jmx mini console -->
 				<include name="joda-time-2.10.5.jar" />
-				<include name="guava-28.2-jre.jar"/>
+				<include name="guava-30.1.1-jre.jar"/>
 				<include name="java-uuid-generator-3.3.0.jar"/>
 				<include name="freemarker-2.3.29.jar"/>
 				<include name="snakeyaml-1.25.jar"/>

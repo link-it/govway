@@ -22,6 +22,7 @@ package org.openspcoop2.utils.test.resource;
 
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -35,11 +36,21 @@ public class TestCopyStream {
 
 	private static final String ID_TEST = "CopyStream";
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testCopyStream() throws Exception{
+	@DataProvider(name="copyStreamProvider")
+	public Object[][] provider(){
+		return new Object[][]{
+			{1024}, // 1KB
+			{(1024*1024)}, // 1MB
+			{1024*1024*10}, // 10MB
+			// Jenkins va in OutOfMemory {1024*1024*1024} // 1GB
+		};
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="copyStreamProvider")
+	public void testCopyStream(int size) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.TestCopyStream.main(null);
+		org.openspcoop2.utils.TestCopyStream.test(size);
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}
