@@ -293,7 +293,8 @@ I tipi di messaggi disponibili sono:
 - outResponse: risposta ritornata a client.
 
 .. note::
-      Le informazioni sui 4 tipi di messaggio saranno disponibili solamente se è stata abilitata la funzionalità di dump per ciascun tipo nel file di configurazione locale '/etc/govway/govway_local.properties' (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione). Di seguito un estratto della configurazione che riporta l'abilitazione dei 4 tipi:
+      Le informazioni sui 4 tipi di messaggio saranno disponibili solamente se è stata abilitata la funzionalità di dump per ciascun tipo nel file di configurazione locale '/etc/govway/govway_local.properties' (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione) o tramite le :ref:`configProprieta` come indicato in :ref:`avanzate_fileTrace`. 
+      Di seguito un estratto della configurazione globale che riporta l'abilitazione dei 4 tipi:
 
          ::
 

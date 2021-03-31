@@ -48,28 +48,62 @@ import org.openspcoop2.utils.properties.PropertiesReader;
  */
 public class FileTraceConfig {
 	
-	private static FileTraceConfig staticInstance = null;
-	protected static synchronized void init(InputStream is) throws CoreException {
-		if(staticInstance==null) {
-			staticInstance = new FileTraceConfig(is);
+	private static HashMap<String, FileTraceConfig> staticInstanceMap = new HashMap<String, FileTraceConfig>();
+
+	protected static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
+		synchronized(staticInstanceMap) {
+			if(!staticInstanceMap.containsKey(fileNamePath)){
+				FileTraceConfig instance = new FileTraceConfig(is, globale);
+				staticInstanceMap.put(fileNamePath, instance);
+			}
 		}
 	}
-	public static synchronized void init(File file) throws CoreException {
-		if(staticInstance==null) {
-			staticInstance = new FileTraceConfig(file);
+	public static void init(File file, boolean globale) throws CoreException {
+		synchronized(staticInstanceMap) {
+			if(!staticInstanceMap.containsKey(file.getAbsolutePath())){
+				FileTraceConfig instance = new FileTraceConfig(file, globale);
+				staticInstanceMap.put(file.getAbsolutePath(), instance);
+			}
 		}
 	}
-	public static synchronized void update(File file) throws CoreException {
-		FileTraceConfig newConfig = new FileTraceConfig(file);
-		staticInstance = newConfig;
-	}
-	public static FileTraceConfig getConfig(File file) throws CoreException {
-		if(staticInstance==null) {
-			init(file);
+	public static void update(File file, boolean globale) throws CoreException {
+		synchronized(staticInstanceMap) {
+			_updateWithoutSynchronized(file, globale);
 		}
-		return staticInstance;
+	}
+	public static void resetFileTraceAssociatePorte() throws CoreException {
+		synchronized(staticInstanceMap) {		
+			if(!staticInstanceMap.isEmpty()) {
+				List<String> removeEntries = new ArrayList<String>();
+				for (String path : staticInstanceMap.keySet()) {
+					FileTraceConfig config = staticInstanceMap.get(path);
+					if(config.isGlobale()) {
+						continue;
+					}
+					//_updateWithoutSynchronized(new File(path), config.isGlobale());
+					removeEntries.add(path); // verra poi ricreato
+				}
+				while(removeEntries.size()>0) {
+					String path = removeEntries.remove(0);
+					staticInstanceMap.remove(path);
+				}
+			}
+		}
+	}
+	private static void _updateWithoutSynchronized(File file, boolean globale) throws CoreException {
+		FileTraceConfig newConfig = new FileTraceConfig(file, globale);
+		FileTraceConfig instance = newConfig;
+		staticInstanceMap.remove(file.getAbsolutePath());
+		staticInstanceMap.put(file.getAbsolutePath(), instance);
+	}
+	public static FileTraceConfig getConfig(File file, boolean globale) throws CoreException {
+		if(!staticInstanceMap.containsKey(file.getAbsolutePath())){
+			init(file, globale);
+		}
+		return staticInstanceMap.get(file.getAbsolutePath());
 	}
 	
+	private boolean globale = true;
 	
 	private LogSeverity logSeverity = LogSeverity.info;
 	
@@ -92,18 +126,20 @@ public class FileTraceConfig {
 	private List<String> topicFruizioni = new ArrayList<String>();
 	private Map<String, Topic> topicFruizioneMap = new HashMap<String, Topic>();
 	
-	public FileTraceConfig(File file) throws CoreException {
+	public FileTraceConfig(File file, boolean globale) throws CoreException {
 		try(FileInputStream fin = new FileInputStream(file)){
-			_init(fin);
+			_init(fin, globale);
 		}catch(Exception e) {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
-	public FileTraceConfig(InputStream is) throws CoreException {
-		_init(is);
+	public FileTraceConfig(InputStream is, boolean globale) throws CoreException {
+		_init(is, globale);
 	}
-	private void _init(InputStream is) throws CoreException {
+	private void _init(InputStream is, boolean globale) throws CoreException {
 		try {
+			this.globale = false;
+			
 			Properties p = new Properties();
 			
 			boolean escapeInFile = true;
@@ -421,5 +457,9 @@ public class FileTraceConfig {
 	}
 	public Map<String, Topic> getTopicFruizioneMap() {
 		return this.topicFruizioneMap;
+	}
+	
+	public boolean isGlobale() {
+		return this.globale;
 	}
 }

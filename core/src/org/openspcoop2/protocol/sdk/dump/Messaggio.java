@@ -40,6 +40,7 @@ import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
@@ -66,7 +67,7 @@ public class Messaggio implements Serializable{
 	
 	private String contentType;
 	
-	private byte[] body;
+	private DumpByteArrayOutputStream body;
 	private BodyMultipartInfo bodyMultipartInfo;
 
 	private List<Attachment> attachments = new ArrayList<>();
@@ -108,7 +109,7 @@ public class Messaggio implements Serializable{
 		
 		this.contentType = dumpMessaggio.getContentType();
 		
-		this.body = dumpMessaggio.getBody();
+		this.body = DumpByteArrayOutputStream.newInstance(dumpMessaggio.getBody());
 		if(dumpMessaggio.getMultipartContentId()!=null || 
 				dumpMessaggio.getMultipartContentLocation()!=null ||
 				dumpMessaggio.getMultipartContentType()!=null ||
@@ -193,7 +194,9 @@ public class Messaggio implements Serializable{
 		
 		dumpMessaggio.setContentType(this.contentType);
 		
-		dumpMessaggio.setBody(this.body);
+		if(this.body!=null && this.body.size()>0) {
+			dumpMessaggio.setBody(this.body.toByteArray());
+		}
 		if(this.bodyMultipartInfo!=null) {
 			dumpMessaggio.setMultipartContentId(this.bodyMultipartInfo.getContentId());
 			dumpMessaggio.setMultipartContentLocation(this.bodyMultipartInfo.getContentLocation());
@@ -298,13 +301,19 @@ public class Messaggio implements Serializable{
 		this.tipoMessaggio = tipoMessaggio;
 	}
 
-	public byte[] getBody() {
+	public DumpByteArrayOutputStream getBody() {
 		return this.body;
 	}
+//	public byte[] getBody() {
+//		return this.body.toByteArray();
+//	}
 
-	public void setBody(byte[] body) {
+	public void setBody(DumpByteArrayOutputStream body) {
 		this.body = body;
 	}
+//	public void setBody(byte[] body) {
+//		this.body = new DumpByteArrayOutputStream(body);
+//	}
 
 	public BodyMultipartInfo getBodyMultipartInfo() {
 		return this.bodyMultipartInfo;

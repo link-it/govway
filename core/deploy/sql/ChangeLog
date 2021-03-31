@@ -1,3 +1,18 @@
+2021-03-24  Andrea Poli <apoli@link.it>
+
+	ALTER TABLE dump_config_regola ADD COLUMN payload VARCHAR(255) ;
+	UPDATE dump_config_regola set payload=body;
+	ALTER TABLE dump_config_regola ALTER COLUMN payload SET NOT NULL;
+
+	ALTER TABLE dump_config_regola ADD COLUMN payload_parsing VARCHAR(255) ;
+	UPDATE dump_config_regola set payload_parsing='abilitato' where body='abilitato';
+	UPDATE dump_config_regola set payload_parsing='disabilitato' where body<>'abilitato';
+	ALTER TABLE dump_config_regola ALTER COLUMN payload_parsing SET NOT NULL;
+
+	CREATE INDEX index_dump_config_1 ON dump_config (proprietario);
+
+	ALTER TABLE dump_messaggi ADD COLUMN content_length BIGINT;
+
 2021-03-19  Andrea Poli <apoli@link.it>
 
 	Aggiunto semaforo per lo startup del Gateway

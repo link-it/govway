@@ -1127,7 +1127,9 @@
 	<!-- Dump -->
 	<xsd:complexType name="dump">
 		<xsd:sequence>
-			<xsd:element minOccurs="0" name="configurazione" type="dump-configurazione"/>
+			<xsd:element minOccurs="0" name="configurazione" type="dump-configurazione"/> <!-- Lascio solamente per Backward Compatibility sui package da importare -->
+			<xsd:element minOccurs="0" name="configurazione-porta-delegata" type="dump-configurazione"/>
+			<xsd:element minOccurs="0" name="configurazione-porta-applicativa" type="dump-configurazione"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="openspcoop-appender" type="openspcoop-appender"/>
 		</xsd:sequence>
 		<xsd:attribute default="disabilitato" name="stato" type="StatoFunzionalita"/>
@@ -1144,6 +1146,8 @@
 		<xsd:attribute default="abilitato" name="realtime" type="StatoFunzionalita"/>
 	</xsd:complexType>
 	<xsd:complexType name="dump-configurazione-regola">
+		<xsd:attribute default="abilitato" name="payload" type="StatoFunzionalita"/>
+		<xsd:attribute default="abilitato" name="payload-parsing" type="StatoFunzionalita"/>
 		<xsd:attribute default="abilitato" name="body" type="StatoFunzionalita"/>
 		<xsd:attribute default="abilitato" name="attachments" type="StatoFunzionalita"/>
 		<xsd:attribute default="abilitato" name="headers" type="StatoFunzionalita"/>

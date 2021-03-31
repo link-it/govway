@@ -20,7 +20,6 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +46,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -57,6 +57,7 @@ import org.apache.http.util.EntityUtils;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
@@ -65,6 +66,7 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -178,7 +180,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;
-			if(this.isDumpBinario()) {
+			if(this.isDumpBinarioRichiesta()) {
 				propertiesTrasportoDebug = new HashMap<String, List<String>>();
 			}
 
@@ -235,6 +237,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			// Tipologia di servizio
 			OpenSPCoop2SoapMessage soapMessageRequest = null;
+			MessageType requestMessageType = this.requestMsg.getMessageType();
 			if(this.debug)
 				this.logger.debug("Tipologia Servizio: "+this.requestMsg.getServiceBinding());
 			if(this.isSoap){
@@ -463,31 +466,47 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(httpBody.isDoOutput()){
 				if(this.debug)
 					this.logger.debug("Spedizione byte...");
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				if(this.isSoap && this.sbustamentoSoap){
-					if(this.debug)
-						this.logger.debug("Sbustamento...");
-					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,out);
-				}else{
-					this.requestMsg.writeTo(out, true);
-				}
-				out.flush();
-				out.close();
-				if(this.isDumpBinario()) {
-					this.dumpBinarioRichiestaUscita(out, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
-				}
-				HttpEntity httpEntity = new ByteArrayEntity(out.toByteArray());
-				if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
-					((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
-				}
-				else{
-					throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
+				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+						TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
+				try {
+					if(this.isSoap && this.sbustamentoSoap){
+						if(this.debug)
+							this.logger.debug("Sbustamento...");
+						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
+					}else{
+						this.requestMsg.writeTo(bout, true);
+					}
+					bout.flush();
+					bout.close();
+					if(this.isDumpBinarioRichiesta()) {
+						this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+					}
+					
+					HttpEntity httpEntity = null;
+					if(bout.isSerializedOnFileSystem()) {
+						httpEntity = new FileEntity(bout.getSerializedFile());
+					}
+					else {
+						httpEntity = new ByteArrayEntity(bout.toByteArray());
+					}
+					if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
+						((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
+					}
+					else{
+						throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
+					}
+				}finally {
+					try {
+						bout.clearResources();
+					}catch(Throwable t) {
+						this.logger.error("Release resources failed: "+t.getMessage(),t);
+					}
 				}
 			}
 			else {
-				if(this.isDumpBinario()) {
+				if(this.isDumpBinarioRichiesta()) {
 					// devo registrare almeno gli header HTTP
-					this.dumpBinarioRichiestaUscita(null, null, this.location, propertiesTrasportoDebug);
+					this.dumpBinarioRichiestaUscita(null, null, null, this.location, propertiesTrasportoDebug);
 				}
 			}
 			
@@ -620,7 +639,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			this.initCheckContentTypeConfiguration();
 			
-			if(this.isDumpBinario()){
+			if(this.isDumpBinarioRisposta()){
 				this.dumpResponse(this.propertiesTrasportoRisposta);
 			}
 					

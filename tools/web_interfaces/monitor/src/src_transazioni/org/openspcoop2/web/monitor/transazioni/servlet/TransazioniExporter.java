@@ -191,7 +191,7 @@ public class TransazioniExporter extends HttpServlet{
 			// name to save as
 			// I use the same name as it is stored in the file system of the server.
 
-			String fileName = "TransazioniPdD.zip";
+			String fileName = "Transazioni.zip";
 
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);

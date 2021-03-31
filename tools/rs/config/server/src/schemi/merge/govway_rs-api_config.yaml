@@ -9390,12 +9390,15 @@ components:
           $ref: "#/components/schemas/RegistrazioneMessaggiConfigurazioneRegola"
     RegistrazioneMessaggiConfigurazioneRegola:
       required:
-      - "attachments"
-      - "body"
       - "headers"
+      - "payload"
       type: "object"
       properties:
         headers:
+          type: "boolean"
+        payload:
+          type: "boolean"
+        payload_parsing:
           type: "boolean"
         body:
           type: "boolean"

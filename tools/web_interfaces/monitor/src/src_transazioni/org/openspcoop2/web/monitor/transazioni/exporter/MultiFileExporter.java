@@ -512,7 +512,7 @@ public class MultiFileExporter implements IExporter{
 				FileOutputStream fos = new FileOutputStream(f);
 				ZipOutputStream zip = new ZipOutputStream(fos);
 
-				String rootDir = "TransazioniPdD"+File.separatorChar;
+				String rootDir = "Transazioni"+File.separatorChar;
 
 				int lette = 0;
 

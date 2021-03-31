@@ -47,6 +47,7 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 		this.TIPO_MESSAGGIO = new Field("tipo-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.FORMATO_MESSAGGIO = new Field("formato-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.CONTENT_TYPE = new Field("content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.CONTENT_LENGTH = new Field("content-length",java.lang.Long.class,"dump-messaggio",DumpMessaggio.class);
 		this.MULTIPART_CONTENT_TYPE = new Field("multipart-content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.MULTIPART_CONTENT_ID = new Field("multipart-content-id",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.MULTIPART_CONTENT_LOCATION = new Field("multipart-content-location",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
@@ -78,6 +79,7 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 		this.TIPO_MESSAGGIO = new ComplexField(father,"tipo-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.FORMATO_MESSAGGIO = new ComplexField(father,"formato-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.CONTENT_TYPE = new ComplexField(father,"content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.CONTENT_LENGTH = new ComplexField(father,"content-length",java.lang.Long.class,"dump-messaggio",DumpMessaggio.class);
 		this.MULTIPART_CONTENT_TYPE = new ComplexField(father,"multipart-content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.MULTIPART_CONTENT_ID = new ComplexField(father,"multipart-content-id",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.MULTIPART_CONTENT_LOCATION = new ComplexField(father,"multipart-content-location",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
@@ -113,6 +115,8 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 	public IField FORMATO_MESSAGGIO = null;
 	 
 	public IField CONTENT_TYPE = null;
+	 
+	public IField CONTENT_LENGTH = null;
 	 
 	public IField MULTIPART_CONTENT_TYPE = null;
 	 

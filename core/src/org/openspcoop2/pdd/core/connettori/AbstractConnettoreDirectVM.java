@@ -29,6 +29,7 @@ import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
@@ -202,6 +203,8 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 					this.requestInfo.getBindingConfig(),
 					directVMProtocolInfo,
 					newPddContext);
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			inMessage.setThresholdContext(newPddContext, op2Properties.getDumpBinario_inMemoryThreshold(), op2Properties.getDumpBinario_repository());
 			
 			DirectVMConnectorOutMessage outMessage = new DirectVMConnectorOutMessage();
 			

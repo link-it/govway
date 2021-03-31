@@ -548,6 +548,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI_CONFIG_DI = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI;
 	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE = CostantiControlStation.LABEL_DUMP_CONFIGURAZIONE;
+	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_EROGAZIONI = CostantiControlStation.LABEL_DUMP_CONFIGURAZIONE_EROGAZIONI;
+	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_FRUIZIONI = CostantiControlStation.LABEL_DUMP_CONFIGURAZIONE_FRUIZIONI;
 	public final static String LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER = "Integration Manager";
 	public final static String LABEL_CONFIGURAZIONE_VALIDAZIONE_CONTENUTI_APPLICATIVI = "Validazione Contenuti Applicativi";
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE;
@@ -1416,9 +1418,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_GESTMAN = "Gestione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE = "Buste";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO = "Dump Applicativo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE = "Dump Binario";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD = "Porte Delegate";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA = "Porte Applicative";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE = "Log4j Dump Binario";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD = "Fruizioni";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA = "Erogazioni";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRANSACTION_ERROR = "Errori generati dal Gateway";
 	
@@ -1475,18 +1477,19 @@ public class ConfigurazioneCostanti {
 
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL = "Log4j XML Diagnostici";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE = "govway_diagnostici.log";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL = "Log4J Diagnostici";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL = "Log4j Diagnostici";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_NOTE = "govway.log";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL = "Log4J IntegrationManager";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL = "Log4j IntegrationManager";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_NOTE = "govway_integrationManager.log";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL = "Log4J Tracciamento";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL = "Log4j Tracciamento";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE = "govway_tracciamento.log";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL = "Log4J Dump";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL = "Log4j Dump";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE = "govway_dump.log";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL = "Dump Binario PD";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL = "Log4j Dump Binario Fruizioni";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE = "govway_dumpBinarioPD.log";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL = "Dump Binario PA";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL = "Log4j Dump Binario Erogazioni";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE = "govway_dumpBinarioPA.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_NOTE = "govway_connettori.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_LABEL = "File Trace";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_STATO_LABEL = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_FILE_TRACE_CONFIGURAZIONE_LABEL = "Configurazione";

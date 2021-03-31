@@ -371,10 +371,10 @@ public class Converter {
 			if(this.messaggi_contenuti) {
 				((TransazioneExtDettaglioRichiesta)richiesta).setContenutiIngresso(
 						(TransazioneExtContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
-								TipoMessaggio.RICHIESTA_INGRESSO ,true));
+								TipoMessaggio.RICHIESTA_INGRESSO, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO ,true));
 				((TransazioneExtDettaglioRichiesta)richiesta).setContenutiUscita(
 						(TransazioneExtContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
-								TipoMessaggio.RICHIESTA_USCITA ,true));
+								TipoMessaggio.RICHIESTA_USCITA, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO ,true));
 			}
 			((TransazioneExt)transazione).setRichiesta((TransazioneExtDettaglioRichiesta) richiesta);
 		}
@@ -403,12 +403,12 @@ public class Converter {
 				if(TransazioneRuoloEnum.FRUIZIONE.equals(ruoloTraccia)){
 					((TransazioneDettaglioRichiesta)richiesta).setContenuti(
 							(TransazioneContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
-									TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO ,false));
+									TipoMessaggio.RICHIESTA_USCITA, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO ,false));
 				}
 				else {
 					((TransazioneDettaglioRichiesta)richiesta).setContenuti(
 							(TransazioneContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
-									TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO ,false));
+									TipoMessaggio.RICHIESTA_INGRESSO, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO ,false));
 				}
 			}
 			((Transazione)transazione).setRichiesta((TransazioneDettaglioRichiesta) richiesta);
@@ -458,10 +458,10 @@ public class Converter {
 			if(this.messaggi_contenuti) {
 				((TransazioneExtDettaglioRisposta)risposta).setContenutiIngresso(
 						(TransazioneExtContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
-								TipoMessaggio.RISPOSTA_INGRESSO ,true));
+								TipoMessaggio.RISPOSTA_INGRESSO, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO ,true));
 				((TransazioneExtDettaglioRisposta)risposta).setContenutiUscita(
 						(TransazioneExtContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
-								TipoMessaggio.RISPOSTA_USCITA ,true));
+								TipoMessaggio.RISPOSTA_USCITA, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO ,true));
 			}
 			if(this.risposta_fault) {
 				if(TransazioneRuoloEnum.FRUIZIONE.equals(ruoloTraccia)){
@@ -510,12 +510,12 @@ public class Converter {
 				if(TransazioneRuoloEnum.FRUIZIONE.equals(ruoloTraccia)){
 					((TransazioneDettaglioRisposta)risposta).setContenuti(
 							(TransazioneContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
-									TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO ,false));
+									TipoMessaggio.RISPOSTA_INGRESSO, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO ,false));
 				}
 				else {
 					((TransazioneDettaglioRisposta)risposta).setContenuti(
 							(TransazioneContenutoMessaggio) newTransazioneContenutoMessaggio(transazioneDB, 
-									TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO ,false));
+									TipoMessaggio.RISPOSTA_USCITA, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO ,false));
 				}
 			}
 			if(this.risposta_fault) {
@@ -761,14 +761,22 @@ public class Converter {
 	}
 	
 	private TransazioneContenutoMessaggio newTransazioneContenutoMessaggio(org.openspcoop2.core.transazioni.Transazione transazioneDB, 
-			TipoMessaggio tipoMessaggio, boolean extended) {
+			TipoMessaggio tipoMessaggioNormale, TipoMessaggio tipoMessaggioBinario, boolean extended) {
 		
 		DumpMessaggio dumpMessaggio = null;
 		if(transazioneDB.sizeDumpMessaggioList()>0) {
 			for (DumpMessaggio check : transazioneDB.getDumpMessaggioList()) {
-				if(tipoMessaggio.equals(check.getTipoMessaggio())) {
+				if(tipoMessaggioBinario.equals(check.getTipoMessaggio())) {
 					dumpMessaggio = check;
 					break;
+				}
+			}
+			if(dumpMessaggio==null) {
+				for (DumpMessaggio check : transazioneDB.getDumpMessaggioList()) {
+					if(tipoMessaggioNormale.equals(check.getTipoMessaggio())) {
+						dumpMessaggio = check;
+						break;
+					}
 				}
 			}
 		}
@@ -800,6 +808,7 @@ public class Converter {
 			TransazioneExtContenutoMessaggioBody body = new TransazioneExtContenutoMessaggioBody();
 			body.setFormato(_convert(dumpMessaggio.getFormatoMessaggio()));
 			body.setContentType(dumpMessaggio.getContentType());
+			body.setContentLength(dumpMessaggio.getContentLength());
 			if(dumpMessaggio.getMultipartContentId()!=null || 
 					dumpMessaggio.getMultipartContentLocation()!=null ||
 					dumpMessaggio.getMultipartContentType()!=null ||

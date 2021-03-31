@@ -34,6 +34,7 @@ import java.util.Map;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -1345,6 +1346,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		IConnettore connectorSenderForDisconnect = null;
 		String location = "";
 		OpenSPCoop2Message consegnaMessageTrasformato = null;
+		long responseContentLength = -1;
 		try{	    
 
 
@@ -2170,6 +2172,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					if(responseMessage!=null){
 						responseMessage.setTransportRequestContext(consegnaMessagePrimaTrasformazione.getTransportRequestContext());
 						responseMessage.setTransportResponseContext(transportResponseContext);
+						responseContentLength = connectorSender.getContentLength();
 					}
 					// gestione connessione connettore
 					if(existsModuloInAttesaRispostaApplicativa) {
@@ -3774,7 +3777,19 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						transazioneApplicativoServer.setRichiestaUscitaBytes(consegnaMessageTrasformato.getOutgoingMessageContentLength());
 					}
 					if(responseMessage!=null) {
-						transazioneApplicativoServer.setRispostaIngressoBytes(responseMessage.getIncomingMessageContentLength());
+						long incomingResponseMessageContentLength = responseMessage.getIncomingMessageContentLength();
+						if(incomingResponseMessageContentLength<=0){
+							incomingResponseMessageContentLength = responseContentLength;
+							if(incomingResponseMessageContentLength<0){
+								//System.out.println("FLUSH");
+								// forzo la lettura del messaggio per impostare la dimensione della richiesta
+								try{
+									responseMessage.writeTo(new NullOutputStream(), true);
+								}catch(Exception eFlush){}
+								incomingResponseMessageContentLength = responseMessage.getIncomingMessageContentLength();
+							}
+						}
+						transazioneApplicativoServer.setRispostaIngressoBytes(incomingResponseMessageContentLength);
 					}
 				}
 			}catch(Throwable t) {

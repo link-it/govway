@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -191,7 +192,7 @@ public class Test {
 		richiestaIngresso.setTipoMessaggio(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);
 		if(requestWithPayload) {
 			richiestaIngresso.setContentType("text/xml; charset=\"UTF8\"");
-			richiestaIngresso.setBody("<prova>TEST RICHIESTA_INGRESSO_DUMP_BINARIO</prova>".getBytes());
+			richiestaIngresso.setBody(DumpByteArrayOutputStream.newInstance("<prova>TEST RICHIESTA_INGRESSO_DUMP_BINARIO</prova>".getBytes()));
 			TransportUtils.addHeader(richiestaIngresso.getHeaders(),"Content-Type", "text/xml; charset=\"UTF8\"; tipo=inRequest");
 		}
 		TransportUtils.addHeader(richiestaIngresso.getHeaders(),"Content-XXX", "ADEDE");
@@ -201,7 +202,7 @@ public class Test {
 		richiestaUscita.setTipoMessaggio(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
 		if(requestWithPayload) {
 			richiestaUscita.setContentType("text/xml; charset=\"UTF8\"");
-			richiestaUscita.setBody("<prova>TEST RICHIESTA_USCITA_DUMP_BINARIO</prova>".getBytes());
+			richiestaUscita.setBody(DumpByteArrayOutputStream.newInstance("<prova>TEST RICHIESTA_USCITA_DUMP_BINARIO</prova>".getBytes()));
 			TransportUtils.addHeader(richiestaUscita.getHeaders(),"Content-Type", "text/xml; charset=\"UTF8\"; tipo=outRequest");
 		}
 		TransportUtils.addHeader(richiestaUscita.getHeaders(),"Content-XXX", "ADEDE");
@@ -210,7 +211,7 @@ public class Test {
 		Messaggio rispostaIngresso = new Messaggio();
 		rispostaIngresso.setTipoMessaggio(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
 		rispostaIngresso.setContentType("text/xml; charset=\"UTF8\"");
-		rispostaIngresso.setBody("<prova>TEST RISPOSTA_INGRESSO_DUMP_BINARIO</prova>".getBytes());
+		rispostaIngresso.setBody(DumpByteArrayOutputStream.newInstance("<prova>TEST RISPOSTA_INGRESSO_DUMP_BINARIO</prova>".getBytes()));
 		TransportUtils.addHeader(rispostaIngresso.getHeaders(),"Content-Type", "text/xml; charset=\"UTF8\"; tipo=inResponse");
 		TransportUtils.addHeader(rispostaIngresso.getHeaders(),"Content-XXX", "ADEDE");
 		TransportUtils.addHeader(rispostaIngresso.getHeaders(),"TipoMessaggio", "RISPOSTA_INGRESSO_DUMP_BINARIO");
@@ -218,7 +219,7 @@ public class Test {
 		Messaggio rispostaUscita = new Messaggio();
 		rispostaUscita.setTipoMessaggio(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
 		rispostaUscita.setContentType("text/xml; charset=\"UTF8\"");
-		rispostaUscita.setBody("<prova>TEST RISPOSTA_USCITA_DUMP_BINARIO</prova>".getBytes());
+		rispostaUscita.setBody(DumpByteArrayOutputStream.newInstance("<prova>TEST RISPOSTA_USCITA_DUMP_BINARIO</prova>".getBytes()));
 		TransportUtils.addHeader(rispostaUscita.getHeaders(),"Content-Type", "text/xml; charset=\"UTF8\"; tipo=outResponse");
 		TransportUtils.addHeader(rispostaUscita.getHeaders(),"Content-XXX", "ADEDE");
 		TransportUtils.addHeader(rispostaUscita.getHeaders(),"TipoMessaggio", "RISPOSTA_USCITA_DUMP_BINARIO");
@@ -250,9 +251,10 @@ public class Test {
 //		//LogTraceConfig config = LogTraceConfig.getConfig(fTmp);
 //		fTmp.delete();
 		
-		InputStream is = Test.class.getResourceAsStream("/org/openspcoop2/pdd/logger/filetrace/testFileTrace.properties");
-		FileTraceConfig.init(is);
-		FileTraceConfig config = FileTraceConfig.getConfig(new File("TEST")); // inizializzato sopra
+		String path = "/org/openspcoop2/pdd/logger/filetrace/testFileTrace.properties";
+		InputStream is = Test.class.getResourceAsStream(path);
+		FileTraceConfig.init(is, path, true);
+		FileTraceConfig config = FileTraceConfig.getConfig(new File(path), true); // inizializzato sopra
 			
 		
 		test(tipoPdD, log4j, requestWithPayload,
@@ -287,34 +289,24 @@ public class Test {
 			Messaggio richiestaIngresso, Messaggio richiestaUscita,
 			Messaggio rispostaIngresso, Messaggio rispostaUscita) throws Exception {
 		
-		System.out.println("\n\n ---------------------------- ("+tipoPdD+") (esito:"+transazioneDTO.getEsito()+") (httpMethod:"+transazioneDTO.getTipoRichiesta()+") -----------------------------");
+		boolean onlyLogFileTrace_headers = TipoPdD.APPLICATIVA.equals(tipoPdD) || (TipoPdD.DELEGATA.equals(tipoPdD) && transazioneDTO.getEsito()==16);
+		boolean onlyLogFileTrace_body = TipoPdD.APPLICATIVA.equals(tipoPdD) && transazioneDTO.getEsito()!=16;
+		
+		System.out.println("\n\n ---------------------------- ("+tipoPdD+") (esito:"+transazioneDTO.getEsito()+") (httpMethod:"+transazioneDTO.getTipoRichiesta()+") (onlyLogFileTrace headers:"+onlyLogFileTrace_headers+" body:"+onlyLogFileTrace_body+") -----------------------------");
 		
 		boolean erogazioni = TipoPdD.APPLICATIVA.equals(tipoPdD);
-		boolean onlyLogFileTrace = TipoPdD.APPLICATIVA.equals(tipoPdD);
 		Transaction transaction = new Transaction("UUIDXX", "FileTraceTest", false);
 		transaction.setCredenzialiMittente(credenzialiMittente);
 		transaction.setTracciaRichiesta(tracciaRichiesta);
-		transaction.addMessaggio(richiestaIngresso, onlyLogFileTrace);
-		transaction.addMessaggio(richiestaUscita, onlyLogFileTrace);
-		transaction.addMessaggio(rispostaIngresso, onlyLogFileTrace);
-		transaction.addMessaggio(rispostaUscita, onlyLogFileTrace);
+		transaction.addMessaggio(richiestaIngresso, onlyLogFileTrace_headers, onlyLogFileTrace_body);
+		transaction.addMessaggio(richiestaUscita, onlyLogFileTrace_headers, onlyLogFileTrace_body);
+		transaction.addMessaggio(rispostaIngresso, onlyLogFileTrace_headers, onlyLogFileTrace_body);
+		transaction.addMessaggio(rispostaUscita, onlyLogFileTrace_headers, onlyLogFileTrace_body);
 		
 		System.out.println("Messaggi presenti prima: "+transaction.sizeMessaggi());
 		
 		FileTraceManager manager = new FileTraceManager(log, config);
 		manager.buildTransazioneInfo(transazioneDTO, transaction);
-		int sizeAfter = transaction.sizeMessaggi();
-		System.out.println("Messaggi presenti dopo: "+sizeAfter);
-		if(onlyLogFileTrace) {
-			if(sizeAfter!=0) {
-				throw new Exception("Attesi 0 messaggi");
-			}
-		}
-		else {
-			if(sizeAfter!=4) {
-				throw new Exception("Attesi 4 messaggi");
-			}
-		}
 		
 		boolean requestSended = true;
 		if(transazioneDTO.getEsito()!=0) {
@@ -439,6 +431,43 @@ public class Test {
 						}
 					}
 				}
+			}
+		}
+		
+		manager.cleanResourcesForOnlyFileTrace(transaction);
+		
+		int sizeAfter = transaction.sizeMessaggi();
+		System.out.println("Messaggi presenti dopo: "+sizeAfter);
+		if(onlyLogFileTrace_headers && onlyLogFileTrace_body) {
+			if(sizeAfter!=0) {
+				throw new Exception("Attesi 0 messaggi");
+			}
+		}
+		else if(onlyLogFileTrace_headers || onlyLogFileTrace_body) {
+			if(sizeAfter!=4) {
+				throw new Exception("Attesi 4 messaggi");
+			}
+			if(onlyLogFileTrace_headers) {
+				for (Messaggio msg : transaction.getMessaggi()) {
+					if(msg.getHeaders()!=null && !msg.getHeaders().isEmpty()) {
+						throw new Exception("Heaeders non attesi ("+msg.getTipoMessaggio()+")");
+					}
+				}
+			}	
+			else {
+				for (Messaggio msg : transaction.getMessaggi()) {
+					if(msg.getBody()!=null) {
+						throw new Exception("Body non atteso ("+msg.getTipoMessaggio()+")");
+					}
+					if(msg.getContentType()!=null) {
+						throw new Exception("ContentType non atteso ("+msg.getTipoMessaggio()+")");
+					}
+				}
+			}
+		}
+		else {
+			if(sizeAfter!=4) {
+				throw new Exception("Attesi 4 messaggi");
 			}
 		}
 	}

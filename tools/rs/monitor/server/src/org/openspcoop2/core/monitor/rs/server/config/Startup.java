@@ -37,6 +37,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
@@ -188,6 +189,14 @@ public class Startup implements ServletContextListener {
 				throw new RuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
+			
+			Startup.log.info("Inizializzazione Soglia per Dimensione Messaggi in corso...");
+			try {
+				DumpUtils.setThreshold_readInMemory(properties.getTransazioniDettaglioVisualizzazioneMessaggiThreshold());
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione Soglia per Dimensione Messaggi effettuata con successo");
 						
 			Startup.initializedResources = true;
 			

@@ -142,6 +142,9 @@ public class CostantiPdD {
     public final static String DUMP_RICHIESTA_EFFETTUATO = "DumpRichiestaEffettuato";
     
     /** Configurazione soglia per salvataggio in ram */
+    public static final int DUMP_BINARIO_THRESHOLD = 1048576; // 1MB (1024*1024)
+    
+    /** Configurazione soglia per salvataggio in ram */
     public static final int DUMP_NON_REALTIME_THRESHOLD = 61440;
     /** Modalita di dump non realtime */
     public static final String DUMP_NON_REALTIME_MODE_DB = "db";

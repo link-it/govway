@@ -1906,6 +1906,9 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                     <linkit:sql-table-mapping name="dump_config"
                         comment="Definisce la configurazione del dump per i messaggi in transito sulla Porta di Dominio">
                         <linkit:sql-table-constraint unique="uniq_dump_conf"/>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="proprietario"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -2006,6 +2009,28 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
+                <xsd:element name="payload" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="payload"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare il payload del messaggio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="payload-parsing" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="payload_parsing"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare il body del messaggio facendo il parsing di una eventuale struttura multipart (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="body" type="xsd:string" >
                     <xsd:annotation>
                         <xsd:appinfo>

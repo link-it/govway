@@ -9165,6 +9165,11 @@ public class DriverConfigurazioneDB_LIB {
 		
 	}
 
+	@SuppressWarnings("deprecation")
+	private static DumpConfigurazione getDumpConfigurazioneDeprecated(Dump dump) {
+		return dump.getConfigurazione();
+	}
+	
 	private static long _CRUDConfigurazioneGenerale(int type, Configurazione config, Connection con) throws DriverConfigurazioneException {
 		PreparedStatement updateStmt = null;
 		String updateQuery = "";
@@ -9508,12 +9513,23 @@ public class DriverConfigurazioneDB_LIB {
 		String dumpApplicativo = null;
 		String dumpPD = null;
 		String dumpPA = null;
-		DumpConfigurazione dumpConfig = null;
+		DumpConfigurazione dumpConfigPA = null;
+		DumpConfigurazione dumpConfigPD = null;
 		if (d != null) {
 			dumpApplicativo = DriverConfigurazioneDB_LIB.getValue(d.getStato());
 			dumpPD = DriverConfigurazioneDB_LIB.getValue(d.getDumpBinarioPortaDelegata());
 			dumpPA = DriverConfigurazioneDB_LIB.getValue(d.getDumpBinarioPortaApplicativa());
-			dumpConfig = d.getConfigurazione();
+			
+			DumpConfigurazione dumpConfig = getDumpConfigurazioneDeprecated(d); 
+			if(dumpConfig!=null) {
+				// backward compatibility, lo uso sia per erogazione che per fruizione (per import package)
+				dumpConfigPA = dumpConfig;
+				dumpConfigPD = dumpConfig;
+			}
+			else {
+				dumpConfigPA = d.getConfigurazionePortaApplicativa();
+				dumpConfigPD = d.getConfigurazionePortaDelegata();
+			}
 		}
 
 		Transazioni transazioni = config.getTransazioni();
@@ -10054,7 +10070,15 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache");
 				
 				// dumpConfigurazione
-				CRUDDumpConfigurazione(type, con, dumpConfig, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				
+				// per backward compatibility elimino una config esistente
+				DumpConfigurazione dumpConfigOldBackwardCompatibility = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				if(dumpConfigOldBackwardCompatibility!=null) {
+					CRUDDumpConfigurazione(DELETE, con, dumpConfigOldBackwardCompatibility, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				}
+				
+				CRUDDumpConfigurazione(type, con, dumpConfigPA, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+				CRUDDumpConfigurazione(type, con, dumpConfigPD, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
 				
 
 				// delete from msgdiag ds prop
@@ -10698,7 +10722,15 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache");
 				
 				// dumpConfigurazione
-				CRUDDumpConfigurazione(type, con, dumpConfig, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				
+				// per backward compatibility elimino una config esistente
+				dumpConfigOldBackwardCompatibility = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				if(dumpConfigOldBackwardCompatibility!=null) {
+					CRUDDumpConfigurazione(DELETE, con, dumpConfigOldBackwardCompatibility, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				}
+				
+				CRUDDumpConfigurazione(type, con, dumpConfigPA, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+				CRUDDumpConfigurazione(type, con, dumpConfigPD, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
 				
 
 				// delete from msgdiag ds prop
@@ -10849,6 +10881,16 @@ public class DriverConfigurazioneDB_LIB {
 				CRUDConfigurazioneMessageHandlers(type, con, null, null, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
 				CRUDConfigurazioneServiceHandlers(type, con, null, null, false, (configHandlers!=null) ? configHandlers.getService() : null);
 				
+				// Dump
+				if(config.getDump()!=null) {
+					if(config.getDump().getConfigurazionePortaApplicativa()!=null) {
+						CRUDDumpConfigurazione(DELETE, con, config.getDump().getConfigurazionePortaApplicativa(), null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+					}
+					if(config.getDump().getConfigurazionePortaDelegata()!=null) {
+						CRUDDumpConfigurazione(DELETE, con, config.getDump().getConfigurazionePortaApplicativa(), null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
+					}
+				}
+				
 				// Cache
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
@@ -10997,7 +11039,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_CONFIGURAZIONE);
-				if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
+				if(!CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
+						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
+						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA.equals(tipoProprietario)) {
 					sqlQueryObject.addWhereCondition("id_proprietario=?");
 				}
 				sqlQueryObject.addWhereCondition("proprietario=?");
@@ -11005,7 +11049,9 @@ public class DriverConfigurazioneDB_LIB {
 				updateQuery = sqlQueryObject.createSQLDelete();
 				updateStmt = con.prepareStatement(updateQuery);
 				index = 1;
-				if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
+				if(!CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
+						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
+						!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA.equals(tipoProprietario)) {
 					updateStmt.setLong(index++, idProprietario);
 				}
 				updateStmt.setString(index++, tipoProprietario);
@@ -11032,6 +11078,8 @@ public class DriverConfigurazioneDB_LIB {
 	private static long createDumpConfigurazioneRegola(DumpConfigurazioneRegola dumpRegola, Connection con) throws Exception {
 		List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
 		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("body", getValue(dumpRegola.getBody()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("payload", getValue(dumpRegola.getPayload()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("payload_parsing", getValue(dumpRegola.getPayloadParsing()) , InsertAndGeneratedKeyJDBCType.STRING) );
 		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("attachments", getValue(dumpRegola.getAttachments()) , InsertAndGeneratedKeyJDBCType.STRING) );
 		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("headers", getValue(dumpRegola.getHeaders()) , InsertAndGeneratedKeyJDBCType.STRING) );
 		
@@ -11052,7 +11100,9 @@ public class DriverConfigurazioneDB_LIB {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE);
 			sqlQueryObject.addSelectField("*");
-			if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
+			if(!CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
+					!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
+					!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA.equals(tipoProprietario)) {
 				sqlQueryObject.addWhereCondition("id_proprietario=?");
 			}
 			sqlQueryObject.addWhereCondition("proprietario=?");
@@ -11062,7 +11112,9 @@ public class DriverConfigurazioneDB_LIB {
 			
 			stm1 = con.prepareStatement(sqlQuery);
 			int index = 1;
-			if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
+			if(!CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario) &&
+					!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD.equals(tipoProprietario) &&
+					!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA.equals(tipoProprietario)) {
 				stm1.setLong(index++, idProprietario);
 			}
 			stm1.setString(index++, tipoProprietario);
@@ -11137,6 +11189,8 @@ public class DriverConfigurazioneDB_LIB {
 				
 				dumpConfig.setId(rs1.getLong("id"));
 				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("body")));
+				dumpConfig.setPayload(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("payload")));
+				dumpConfig.setPayloadParsing(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("payload_parsing")));
 				dumpConfig.setAttachments(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("attachments")));
 				dumpConfig.setHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("headers")));
 				

@@ -19,15 +19,19 @@
  */
 package org.openspcoop2.pdd.services.connector.messages;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 
@@ -44,8 +48,12 @@ public interface ConnectorInMessage {
 	
 	public String getIdModulo();
 
+	public void setThresholdContext(Context context, int soglia, File repositoryFile);
+	
 	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException;
 	public RequestInfo getRequestInfo();
+	
+	public MessageType getRequestMessageType();
 	
 	public Object getAttribute(String key) throws ConnectorException;
 	
@@ -61,7 +69,7 @@ public interface ConnectorInMessage {
 	
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException;
 	
-	public byte[] getRequest() throws ConnectorException;
+	public DumpByteArrayOutputStream getRequest() throws ConnectorException;
 	
 	public Date getDataIngressoRichiesta();
 	

@@ -149,6 +149,9 @@ public class Costanti {
     
     public final static String REQUISITI_INPUT_RACCOLTI = "[[InformationMissingRequisiti]]";
     
+    public static final String TRASPARENTE_PROTOCOL_NAME = "trasparente";
+    public static final String TRASPARENTE_PROTOCOL_LABEL = "API Gateway";
+    
     public static final String SPCOOP_PROTOCOL_NAME = "spcoop";
     public static final String SPCOOP_PROTOCOL_LABEL = "SPCoop";
     

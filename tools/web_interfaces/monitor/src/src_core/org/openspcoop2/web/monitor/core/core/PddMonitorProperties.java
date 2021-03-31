@@ -899,6 +899,14 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dettaglio.utilizzaVisualizzazioneCustomConsegneMultiple.enabled", true, true));
 	}
 	
+	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws Exception{
+		return Integer.valueOf(this.appProperties.getProperty("transazioni.dettaglio.visualizzazioneMessaggi.threshold", true, true));
+	}
+	
+	public int getTransazioniDettaglioAnalisiMultipartThreshold() throws Exception{
+		return Integer.valueOf(this.appProperties.getProperty("transazioni.dettaglio.analisiMultipart.threshold", true, true));
+	}
+	
 	public boolean escludiRichiesteScartateDefaultValue() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.escludiRichiesteScartate.defaultValue", true, true));
 	}

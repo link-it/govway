@@ -12737,8 +12737,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm1.close();
 
 				// dump_config
-				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
-				dump.setConfigurazione(dumpConfig);
+				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB._DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				if(dumpConfig!=null) {
+					// backward compatibility, lo uso sia per erogazione che per fruizione
+					dump.setConfigurazionePortaApplicativa(dumpConfig);
+					dump.setConfigurazionePortaDelegata(dumpConfig);
+				}
+				else {
+					DumpConfigurazione dumpConfigPA = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA);
+					dump.setConfigurazionePortaApplicativa(dumpConfigPA);
+					
+					DumpConfigurazione dumpConfigPD = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD);
+					dump.setConfigurazionePortaDelegata(dumpConfigPD);
+				}
+				
 				
 				config.setDump(dump);
 				

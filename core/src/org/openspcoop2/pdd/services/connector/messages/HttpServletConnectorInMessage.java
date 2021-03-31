@@ -20,13 +20,15 @@
 package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
@@ -39,10 +41,12 @@ import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -67,6 +71,11 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	private IDService idModuloAsIDService;
 	private MessageType requestMessageType;
 	protected Date dataIngressoRichiesta;
+
+	private Context context;
+	private String idTransazione;
+	private int soglia;
+	private File repositoryFile;
 	
 	public HttpServletConnectorInMessage(RequestInfo requestInfo, HttpServletRequest req,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
@@ -96,6 +105,17 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
+	public void setThresholdContext(Context context,
+			int soglia, File repositoryFile) {
+		this.context = context;
+		if(this.context!=null) {
+			this.idTransazione = (String) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
+		this.soglia = soglia;
+		this.repositoryFile = repositoryFile;
+	}
+	
+	@Override
 	public IDService getIdModuloAsIDService(){
 		return this.idModuloAsIDService;
 	}
@@ -119,6 +139,11 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public RequestInfo getRequestInfo(){
 		return this.requestInfo;
+	}
+	
+	@Override
+	public MessageType getRequestMessageType() {
+		return this.requestMessageType;
 	}
 	
 	@Override
@@ -174,26 +199,27 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}	
 	}
 	// Metodo utile per il dump
-	public OpenSPCoop2MessageParseResult getRequest(ByteArrayOutputStream buffer,NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException{
+	public OpenSPCoop2MessageParseResult getRequest(DumpByteArrayOutputStream buffer,NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException{
 		try{
-			byte[] b = null;
-			ByteArrayInputStream bin = null;
+			InputStream in = null;
 			try{
-				b = Utilities.getAsByteArray(this.is,false); // se l'input stream is empty ritorna null grazie al parametro false
-				if(b!=null) {
-					bin = new ByteArrayInputStream(b);
+				Utilities.writeAsByteArrayOuputStream(buffer, this.is,false); // se l'input stream is empty ritorna null grazie al parametro false
+				if(buffer.size()>0) {
+					if(buffer.isSerializedOnFileSystem()) {
+						in = new FileInputStream(buffer.getSerializedFile());
+					}
+					else {
+						in = new ByteArrayInputStream(buffer.toByteArray());
+					}
 				}
 			}catch(Throwable t){
 				OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
 				result.setParseException(ParseExceptionUtils.buildParseException(t));
 				return result;
 			}
-			if(b!=null) {
-				buffer.write(b);
-			}
 			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
-					bin,notifierInputStreamParams,
+					in,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return pr;
@@ -206,11 +232,16 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
-	public byte[] getRequest() throws ConnectorException{
+	public DumpByteArrayOutputStream getRequest() throws ConnectorException{
 		try{
-			byte[] b = Utilities.getAsByteArray(this.is,false); // se l'input stream is empty ritorna null grazie al parametro false
 			this.dataIngressoRichiesta = DateManager.getDate();
-			return b;
+			
+			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
+					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
+			Utilities.writeAsByteArrayOuputStream(bout, this.is,false); // se l'input stream is empty ritorna null grazie al parametro false
+			bout.flush();
+			bout.close();
+			return bout;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}

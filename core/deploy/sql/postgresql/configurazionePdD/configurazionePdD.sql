@@ -331,6 +331,8 @@ CREATE TABLE dump_config
 	CONSTRAINT pk_dump_config PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_dump_config_1 ON dump_config (proprietario);
 
 
 
@@ -338,6 +340,8 @@ CREATE SEQUENCE seq_dump_config_regola start 1 increment 1 maxvalue 922337203685
 
 CREATE TABLE dump_config_regola
 (
+	payload VARCHAR(255) NOT NULL,
+	payload_parsing VARCHAR(255) NOT NULL,
 	body VARCHAR(255) NOT NULL,
 	attachments VARCHAR(255) NOT NULL,
 	headers VARCHAR(255) NOT NULL,

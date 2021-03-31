@@ -82,7 +82,8 @@ public class Transaction {
 	
 	/** DumpMessaggi */
 	private List<Messaggio> messaggi = new ArrayList<Messaggio>();
-	private List<TipoMessaggio> messaggi_onlyLogFileTrace = new ArrayList<TipoMessaggio>();
+	private List<TipoMessaggio> messaggi_body_onlyLogFileTrace = new ArrayList<TipoMessaggio>();
+	private List<TipoMessaggio> messaggi_headers_onlyLogFileTrace = new ArrayList<TipoMessaggio>();
 	
 	/** Scenario di cooperazione */
 	private String scenarioCooperazione;
@@ -184,8 +185,11 @@ public class Transaction {
 	public List<Messaggio> getMessaggi() {
 		return this.messaggi;
 	}
-	public List<TipoMessaggio> getMessaggi_onlyLogFileTrace() {
-		return this.messaggi_onlyLogFileTrace;
+	public List<TipoMessaggio> getMessaggi_body_onlyLogFileTrace() {
+		return this.messaggi_body_onlyLogFileTrace;
+	}
+	public List<TipoMessaggio> getMessaggi_headers_onlyLogFileTrace() {
+		return this.messaggi_headers_onlyLogFileTrace;
 	}
 	
 	public int sizeMessaggi(){
@@ -355,21 +359,27 @@ public class Transaction {
 		}
 	}
 	
-	public void addMessaggio(Messaggio messaggio, boolean onlyLogFileTrace) throws TransactionDeletedException {
+	public void addMessaggio(Messaggio messaggio, boolean onlyLogFileTrace_headers,  boolean onlyLogFileTrace_body) throws TransactionDeletedException {
 		if(this.gestioneStateful){
 			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
 				this.messaggi.add(messaggio);
-				if(onlyLogFileTrace) {
-					this.messaggi_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+				if(onlyLogFileTrace_headers) {
+					this.messaggi_headers_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+				}
+				if(onlyLogFileTrace_body) {
+					this.messaggi_body_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
 				}
 			}
 		}else{
 			this.messaggi.add(messaggio);
-			if(onlyLogFileTrace) {
-				this.messaggi_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+			if(onlyLogFileTrace_headers) {
+				this.messaggi_headers_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+			}
+			if(onlyLogFileTrace_body) {
+				this.messaggi_body_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
 			}
 		}
 	}
@@ -770,8 +780,11 @@ public class Transaction {
 		if(this.messaggi!=null && !this.messaggi.isEmpty()) {
 			sb.append("\n").append("messaggi: ").append(this.messaggi.size());
 		}
-		if(this.messaggi_onlyLogFileTrace!=null && !this.messaggi_onlyLogFileTrace.isEmpty()) {
-			sb.append("\n").append("messaggi_onlyLogFileTrace: ").append(this.messaggi_onlyLogFileTrace.size());
+		if(this.messaggi_headers_onlyLogFileTrace!=null && !this.messaggi_headers_onlyLogFileTrace.isEmpty()) {
+			sb.append("\n").append("messaggi_headers_onlyLogFileTrace: ").append(this.messaggi_headers_onlyLogFileTrace.size());
+		}
+		if(this.messaggi_body_onlyLogFileTrace!=null && !this.messaggi_body_onlyLogFileTrace.isEmpty()) {
+			sb.append("\n").append("messaggi_body_onlyLogFileTrace: ").append(this.messaggi_body_onlyLogFileTrace.size());
 		}
 		
 		if(this.scenarioCooperazione!=null) {

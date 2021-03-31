@@ -22,11 +22,14 @@ package org.openspcoop2.core.transazioni.dao.jdbc;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-
+import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import org.slf4j.Logger;
-
+import org.openspcoop2.utils.jdbc.IJDBCAdapter;
+import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
@@ -54,6 +57,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.transazioni.dao.jdbc.converter.DumpMessaggioFieldConverter;
 import org.openspcoop2.core.transazioni.dao.jdbc.fetch.DumpMessaggioFetch;
+import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
@@ -210,6 +214,49 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
         	throw new NotFoundException("Entry with id["+id+"] not found");
         }
 		
+	}
+	
+	public InputStream getContentInputStream(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) 
+			throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
+
+        long id = this.findTableId(jdbcProperties, log, connection, sqlQueryObject, expression);
+        if(id>0){
+        	
+            IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.getDumpMessaggioFieldConverter().getDatabaseType());
+            ISQLQueryObject sqlQueryObjectGet_dumpMessaggio = sqlQueryObject.newSQLQueryObject();
+            sqlQueryObjectGet_dumpMessaggio.setANDLogicOperator(true);
+    		sqlQueryObjectGet_dumpMessaggio.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()));
+    		sqlQueryObjectGet_dumpMessaggio.addSelectAliasField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().BODY,true),"contentBodyStream");
+    		sqlQueryObjectGet_dumpMessaggio.addWhereCondition("id=?");
+            ResultSet rs = null;
+            PreparedStatement pstmt = null;
+            try {
+            	String query = sqlQueryObjectGet_dumpMessaggio.createSQLQuery();
+            	pstmt = connection.prepareStatement(query);
+            	pstmt.setLong(1, id);
+            	rs = pstmt.executeQuery();
+            	if(rs.next()) {
+            		return jdbcAdapter.getBinaryStream(rs, "contentBodyStream");
+            	}
+            	return null;
+            }finally {
+            	try {
+            		if(rs!=null) {
+            			rs.close();
+            		}
+            	}catch(Throwable eClose) {}
+            	try {
+            		if(pstmt!=null) {
+            			pstmt.close();
+            		}
+            	}catch(Throwable eClose) {}
+            }
+        	
+        }else{
+        	throw new NotFoundException("Entry with id["+id+"] not found");
+        }
+        
+
 	}
 	
 	@Override
@@ -591,7 +638,8 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 				
 		DumpMessaggio dumpMessaggio = new DumpMessaggio();
 		
-
+		List<JDBCObject> listJDBCObject = new ArrayList<JDBCObject>();
+		
 		// Object dumpMessaggio
 		ISQLQueryObject sqlQueryObjectGet_dumpMessaggio = sqlQueryObjectGet.newSQLQueryObject();
 		sqlQueryObjectGet_dumpMessaggio.setANDLogicOperator(true);
@@ -604,10 +652,11 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().TIPO_MESSAGGIO,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().FORMATO_MESSAGGIO,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_TYPE,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_LENGTH,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_TYPE,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_ID,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_LOCATION,true));
-		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().BODY,true));
+		DumpUtils.selectContentByThreshold(sqlQueryObjectGet_dumpMessaggio, this.getDumpMessaggioFieldConverter(), listJDBCObject);
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().DUMP_TIMESTAMP,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_HEADER,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_FILENAME,true));
@@ -620,8 +669,9 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio.addWhereCondition("id=?");
 
 		// Get dumpMessaggio
+		listJDBCObject.add(new JDBCObject(tableId,Long.class));
 		dumpMessaggio = (DumpMessaggio) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_dumpMessaggio.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model(), this.getDumpMessaggioFetch(),
-			new JDBCObject(tableId,Long.class));
+				listJDBCObject.toArray(new JDBCObject[1]));
 
 
 

@@ -6,14 +6,12 @@
 	
 		"ingresso": {
 			"headers": true,
-			"body": true,
-			"attachments": false
+			"payload": true
 		},
 
 		"uscita": {
 			"headers": false,
-			"body": false,
-			"attachments": true
+			"payload": false
 		}
 
 	},

@@ -78,6 +78,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().TIPO_MESSAGGIO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().FORMATO_MESSAGGIO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_TYPE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_LENGTH,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_TYPE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_ID,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_LOCATION,false),"?");
@@ -102,6 +103,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getTipoMessaggio(),DumpMessaggio.model().TIPO_MESSAGGIO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getFormatoMessaggio(),DumpMessaggio.model().FORMATO_MESSAGGIO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getContentType(),DumpMessaggio.model().CONTENT_TYPE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getContentLength(),DumpMessaggio.model().CONTENT_LENGTH.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getMultipartContentType(),DumpMessaggio.model().MULTIPART_CONTENT_TYPE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getMultipartContentId(),DumpMessaggio.model().MULTIPART_CONTENT_ID.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getMultipartContentLocation(),DumpMessaggio.model().MULTIPART_CONTENT_LOCATION.getFieldType()),
@@ -319,6 +321,8 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getFormatoMessaggio(), DumpMessaggio.model().FORMATO_MESSAGGIO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_TYPE,false), "?");
 		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getContentType(), DumpMessaggio.model().CONTENT_TYPE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_LENGTH,false), "?");
+		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getContentLength(), DumpMessaggio.model().CONTENT_LENGTH.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_TYPE,false), "?");
 		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getMultipartContentType(), DumpMessaggio.model().MULTIPART_CONTENT_TYPE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_ID,false), "?");

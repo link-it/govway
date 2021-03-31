@@ -110,6 +110,21 @@ public interface ISQLQueryObject {
 	
 	
 	
+	// SELECT FIELDS CASE
+	
+	/**
+	 * Aggiunge un field alla select definendolo tramite la funzione coalesce
+	 * es: SELECT coalesce(nomeField, 'VALORE') as alias FROM ....
+	 * 
+	 * @param caseField Case
+	 * @param alias Alias
+	 */
+	public ISQLQueryObject addSelectCaseField(Case caseField, String alias) throws SQLQueryObjectException;
+	
+	
+	
+	
+	
 	// SELECT FIELDS COUNTS
 	
 	/**

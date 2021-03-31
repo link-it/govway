@@ -56,7 +56,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -67,6 +67,7 @@ import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.TransazioneExport;
 import org.openspcoop2.core.transazioni.constants.DeleteState;
 import org.openspcoop2.core.transazioni.constants.ExportState;
@@ -274,6 +275,15 @@ public class SingleFileExporter implements IExporter{
 									}				
 								}
 								
+								TipoMessaggio [] listTipiDaEsportare = new TipoMessaggio[4];
+								listTipiDaEsportare[0] = TipoMessaggio.RICHIESTA_USCITA;
+								listTipiDaEsportare[1] = TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO;
+								listTipiDaEsportare[2] = TipoMessaggio.RISPOSTA_INGRESSO;
+								listTipiDaEsportare[3] = TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO;
+								for (int i = 0; i < listTipiDaEsportare.length; i++) {
+									exportContenuti(SingleFileExporter.log, tAS, null, this.zip, dirConsegna, this.transazioniService, listTipiDaEsportare[i],
+											this.headersAsProperties, this.contenutiAsProperties);
+								}
 							}
 						}
 					}
@@ -432,6 +442,7 @@ public class SingleFileExporter implements IExporter{
 			if(this.exportDiagnostici){
 				exportDiagnostici(t, transazioneDir, consegnaMultipla, null);
 			}
+			
 			//contenuti e fault
 			if(this.exportContenuti){
 				
@@ -583,7 +594,7 @@ public class SingleFileExporter implements IExporter{
 				transazioni.add(this.transazioniService.findByIdTransazione(id));
 			}
 			
-			String rootDir = "TransazioniPdD"+File.separatorChar;
+			String rootDir = "Transazioni"+File.separatorChar;
 
 			//search filter
 			try{
@@ -690,7 +701,7 @@ public class SingleFileExporter implements IExporter{
 //			if(transazioni.size()>0){
 				//int i = 0;// progressivo per evitare entry duplicate nel file zip
 				// Create a buffer for reading the files
-				String rootDir = "TransazioniPdD"+File.separatorChar;
+				String rootDir = "Transazioni"+File.separatorChar;
 				
 				//search filter
 				try{
@@ -753,8 +764,41 @@ public class SingleFileExporter implements IExporter{
 		}
 	}
 	
+	public static String getDirName(TipoMessaggio tipo) {
+		String fileName = tipo.name().toLowerCase();
+		if(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.equals(tipo)) {
+			fileName = "dati_richiesta_ingresso";
+		}
+		else if(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.equals(tipo)) {
+			fileName = "dati_richiesta_uscita";
+		}
+		else if(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.equals(tipo)) {
+			fileName = "dati_risposta_ingresso";
+		}
+		else if(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(tipo)) {
+			fileName = "dati_risposta_uscita";
+		}
+		return fileName;
+	}
 	
-	public static void exportContenuti(Logger log, Transazione t, ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
+	public static void exportContenuti(Logger log, Transazione t, 
+			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
+			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
+		_exportContenuti(log, t.getIdTransazione(), null, null,
+				zip, dirPath,service, tipo,
+				headersAsProperties, contenutiAsProperties);
+	}
+	
+	public static void exportContenuti(Logger log, TransazioneApplicativoServer transazioneApplicativoServer, Date dataConsegnaErogatore, 
+			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
+			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
+		_exportContenuti(log, transazioneApplicativoServer.getIdTransazione(), transazioneApplicativoServer.getServizioApplicativoErogatore(), dataConsegnaErogatore,
+				zip, dirPath,service, tipo,
+				headersAsProperties, contenutiAsProperties);
+	}
+	
+	private static void _exportContenuti(Logger log, String idTransazione, String saErogatore, Date dataConsegnaErogatore,
+			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
 
 		String contenutiDir = null;
@@ -767,15 +811,21 @@ public class SingleFileExporter implements IExporter{
 
 		DumpMessaggio dump=null;
 		try {
-			dump = service.getDumpMessaggio(t.getIdTransazione(), null, null, tipo);
+			dump = service.getDumpMessaggio(idTransazione, saErogatore, dataConsegnaErogatore, tipo); // se dataConsegnaErogatore == null e saErogatore !=null prendo l'ultimo disponibile
+			if(dump!=null && saErogatore!=null && StringUtils.isNotEmpty(saErogatore) && dataConsegnaErogatore==null) {
+				dataConsegnaErogatore = dump.getDataConsegnaErogatore();
+			}
 		} catch (Exception e) {
-			String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+			String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+idTransazione;
 			msg+=" Non sono riuscito a recuperare il messaggio di dump ("+e.getMessage()+")";
 			log.error(msg,e);
 			throw new ExportException(msg, e);
 		}
 		if(dump!=null){
-			String dir = contenutiDir+tipo.name().toLowerCase()+File.separator;
+			
+			String fileNameTipo = getDirName(tipo);
+			
+			String dir = contenutiDir+fileNameTipo+File.separator;
 
 			boolean dumpBinario = TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.equals(dump.getTipoMessaggio()) ||
 					TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.equals(dump.getTipoMessaggio()) ||
@@ -783,30 +833,40 @@ public class SingleFileExporter implements IExporter{
 					TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(dump.getTipoMessaggio());
 			
 			//messaggio
-			if(dump.getBody()!=null){
+			if(dump.getBody()!=null || (dump.getContentLength()!=null && dump.getContentLength()>0)){
 				try{
 					
 					String ext = "bin";
-					if(dumpBinario==false) {
+					if(dumpBinario==false || dump.getContentType()!=null) {
 						
 						String contentType = dump.getContentType();
+						/*
+						 * Fix: se è multipart è giusto vederlo come un binario
 						if(ContentTypeUtilities.isMultipart(contentType)){
-							contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+							contentType = org.openspcoop2.utils.transport.http.ContentTypeUtilities.getInternalMultipartContentType(contentType);
 						}
+						*/
 						ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
 					}
 					
 					zip.putNextEntry(new ZipEntry(dir+"message."+ext));
-					zip.write(dump.getBody());
+					if(dump.getBody()!=null) {
+						zip.write(dump.getBody());
+					}
+					else {
+						InputStream is = service.getContentInputStream(idTransazione, saErogatore, dataConsegnaErogatore, tipo);
+						CopyStream.copy(is, zip);
+					}
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
-					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+idTransazione;
 					msg+=" Non sono riuscito a creare il file envelope.xml ("+ioe.getMessage()+")";
 					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);
 				}
 			}
+			
 			
 			// message info
 			StringBuilder bf = new StringBuilder();
@@ -823,7 +883,7 @@ public class SingleFileExporter implements IExporter{
 				zip.flush();
 				zip.closeEntry();
 			}catch(Exception ioe){
-				String msg = "Si e' verificato un errore durante l'esportazione del manifest ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+				String msg = "Si e' verificato un errore durante l'esportazione del manifest ("+tipo.toString()+") della transazione con id:"+idTransazione;
 				msg+=" Non sono riuscito a creare il file manifest.txt ("+ioe.getMessage()+")";
 				log.error(msg,ioe);
 				throw new ExportException(msg, ioe);
@@ -868,7 +928,7 @@ public class SingleFileExporter implements IExporter{
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
-					String msg = "Si e' verificato un errore durante l'esportazione degli header del messaggio multipart ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+					String msg = "Si e' verificato un errore durante l'esportazione degli header del messaggio multipart ("+tipo.toString()+") della transazione con id:"+idTransazione;
 					msg+=" Non sono riuscito a creare il file message_multipart_headers.xml ("+ioe.getMessage()+")";
 					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);
@@ -891,7 +951,7 @@ public class SingleFileExporter implements IExporter{
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
-					String msg = "Si e' verificato un errore durante l'esportazione degli header di trasporto ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+					String msg = "Si e' verificato un errore durante l'esportazione degli header di trasporto ("+tipo.toString()+") della transazione con id:"+idTransazione;
 					msg+=" Non sono riuscito a creare il file headers.xml ("+ioe.getMessage()+")";
 					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);
@@ -914,7 +974,7 @@ public class SingleFileExporter implements IExporter{
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
-					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+idTransazione;
 					msg+=" Non sono riuscito a creare il file contents.xml ("+ioe.getMessage()+")";
 					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);
@@ -976,7 +1036,7 @@ public class SingleFileExporter implements IExporter{
 						zip.closeEntry();
 					}
 				}catch(Exception ioe){
-					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+idTransazione;
 					msg+=" Errore durante la gestione degli allegati ("+ioe.getMessage()+")";
 					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);

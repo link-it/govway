@@ -162,11 +162,13 @@ Di seguito un esempio di configurazione che effettua l'escape del carattere '\\"
 
 
 .. note::
-      Anche se la configurazione viene modificata, non sarà utilizzata dal Gateway fino ad un suo riavvio. È possibile forzare la rilettura immediata accendendo alla voce 'Strumenti - Runtime' della console di gestione e selezionando 'Aggiorna la configurazione' nella sezione "Informazioni Tracciamento - File Trace' (:numref:`UpdateFileTrace`)".
+      In caso di configurazione globale (attivata da file govway_local.properties come indicato in :ref:`avanzate_fileTrace`), anche se la configurazione viene modificata non sarà utilizzata dal Gateway fino ad un suo riavvio. È possibile forzare la rilettura immediata accendendo alla voce 'Strumenti - Runtime' della console di gestione e selezionando 'Aggiorna la configurazione' nella sezione "Informazioni Tracciamento - File Trace' (:numref:`UpdateFileTrace`)".
 
-   .. figure:: ../../_figure_console/UpdateFileTrace.png
-    :scale: 70%
-    :align: center
-    :name: UpdateFileTrace
+      .. figure:: ../../_figure_console/UpdateFileTrace.png
+       :scale: 70%
+       :align: center
+       :name: UpdateFileTrace
 
-    Aggiornamento della Configurazione di File Trace
+       Aggiornamento della Configurazione di File Trace
+
+      Anche in caso di configurazione locale (attivata tramite le :ref:`configProprieta` come indicato in :ref:`avanzate_fileTrace`) la configurazione modificata non sarà utilizzata dal Gateway fino ad un suo riavvio. È possibile forzare la rilettura immediata accendendo alla voce 'Strumenti - Runtime' della console di gestione e cliccando sulla voce 'Svuota le Cache'.

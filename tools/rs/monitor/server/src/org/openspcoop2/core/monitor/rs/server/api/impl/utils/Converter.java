@@ -146,25 +146,52 @@ public class Converter {
 
 		CredenzialiMittente credenzialiMittente = Converter.convertToCredenzialiMittente(transazioneDB);		
 		
-		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO)) {
+		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO)) {
+			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);
+			if(dumpMessaggio!=null) {
+				transazioneDB.addDumpMessaggio(dumpMessaggio);
+			}
+		}
+		else if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO)) {
 			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO);
 			if(dumpMessaggio!=null) {
 				transazioneDB.addDumpMessaggio(dumpMessaggio);
 			}
 		}
-		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_USCITA)) {
+		
+		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO)) {
+			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
+			if(dumpMessaggio!=null) {
+				transazioneDB.addDumpMessaggio(dumpMessaggio);
+			}
+		}
+		else if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_USCITA)) {
 			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_USCITA);
 			if(dumpMessaggio!=null) {
 				transazioneDB.addDumpMessaggio(dumpMessaggio);
 			}
 		}
-		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_INGRESSO)) {
+		
+		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO)) {
+			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
+			if(dumpMessaggio!=null) {
+				transazioneDB.addDumpMessaggio(dumpMessaggio);
+			}
+		}
+		else if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_INGRESSO)) {
 			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_INGRESSO);
 			if(dumpMessaggio!=null) {
 				transazioneDB.addDumpMessaggio(dumpMessaggio);
 			}
 		}
-		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_USCITA)) {
+		
+		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO)) {
+			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
+			if(dumpMessaggio!=null) {
+				transazioneDB.addDumpMessaggio(dumpMessaggio);
+			}
+		}
+		else if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_USCITA)) {
 			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_USCITA);
 			if(dumpMessaggio!=null) {
 				transazioneDB.addDumpMessaggio(dumpMessaggio);

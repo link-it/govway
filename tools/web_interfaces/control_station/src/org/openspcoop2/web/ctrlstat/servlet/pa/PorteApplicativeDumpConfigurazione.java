@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -96,6 +97,7 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 			porteApplicativeHelper.makeMenu();
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 
 			boolean showStato = true;
 			String statoDump = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_STATO);
@@ -103,18 +105,31 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 			String realtime = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_REALTIME);
 			String statoDumpRichiesta = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO);
 			String statoDumpRisposta = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO);
+			
 			String dumpRichiestaIngressoHeader = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
+			String dumpRichiestaIngressoPayload = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD);
+			String dumpRichiestaIngressoPayloadParsing = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD_PARSING);
 			String dumpRichiestaIngressoBody = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
 			String dumpRichiestaIngressoAttachments = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
+			
 			String dumpRichiestaUscitaHeader = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
+			String dumpRichiestaUscitaPayload = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD);
+			String dumpRichiestaUscitaPayloadParsing = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD_PARSING);
 			String dumpRichiestaUscitaBody = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
 			String dumpRichiestaUscitaAttachments = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
+			
 			String dumpRispostaIngressoHeader = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
+			String dumpRispostaIngressoPayload = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD);
+			String dumpRispostaIngressoPayloadParsing = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD_PARSING);
 			String dumpRispostaIngressoBody = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
 			String dumpRispostaIngressoAttachments = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
+			
 			String dumpRispostaUscitaHeader = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
+			String dumpRispostaUscitaPayload = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD);
+			String dumpRispostaUscitaPayloadParsing = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD_PARSING);
 			String dumpRispostaUscitaBody = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
 			String dumpRispostaUscitaAttachments = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+			
 			String actionConferma = porteApplicativeHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
@@ -124,6 +139,7 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
 
 			DumpConfigurazione oldConfigurazione = pa.getDump();
 			
@@ -136,23 +152,65 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 				
 				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO)) {
 					if(!porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) && statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
-						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
-						dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRichiestaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
-						dumpRichiestaUscitaBody = StatoFunzionalita.ABILITATO.getValue();
-						dumpRichiestaUscitaAttachments = StatoFunzionalita.ABILITATO.getValue();
+						
+						if(org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo)) {
+							dumpRichiestaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
+							dumpRichiestaIngressoPayload = StatoFunzionalita.ABILITATO.getValue();
+							dumpRichiestaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRichiestaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+							dumpRichiestaUscitaPayload = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						}
+						else {
+							dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+							dumpRichiestaIngressoPayload = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRichiestaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
+							dumpRichiestaUscitaPayload = StatoFunzionalita.ABILITATO.getValue();
+							dumpRichiestaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						}
 					}
 				}
 				
 				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO)) {
 					if(!porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) && statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
-						dumpRispostaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
-						dumpRispostaIngressoBody = StatoFunzionalita.ABILITATO.getValue();
-						dumpRispostaIngressoAttachments = StatoFunzionalita.ABILITATO.getValue();
-						dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
-						dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						
+						if(org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo)) {
+							dumpRispostaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+							dumpRispostaIngressoPayload = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRispostaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
+							dumpRispostaUscitaPayload = StatoFunzionalita.ABILITATO.getValue();
+							dumpRispostaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						}
+						else {
+							dumpRispostaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
+							dumpRispostaIngressoPayload = StatoFunzionalita.ABILITATO.getValue();
+							dumpRispostaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+							dumpRispostaUscitaPayload = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						}
 					}
 				}
 			}
@@ -184,16 +242,28 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 						realtime = oldConfigurazione.getRealtime().getValue();
 						statoDumpRichiesta = porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						statoDumpRisposta = porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+						
 						dumpRichiestaIngressoHeader = oldConfigurazione.getRichiestaIngresso().get_value_headers();	
+						dumpRichiestaIngressoPayload = oldConfigurazione.getRichiestaIngresso().get_value_payload();
+						dumpRichiestaIngressoPayloadParsing = oldConfigurazione.getRichiestaIngresso().get_value_payloadParsing();
 						dumpRichiestaIngressoBody = oldConfigurazione.getRichiestaIngresso().get_value_body();
 						dumpRichiestaIngressoAttachments = oldConfigurazione.getRichiestaIngresso().get_value_attachments();
+						
 						dumpRichiestaUscitaHeader = oldConfigurazione.getRichiestaUscita().get_value_headers();	
+						dumpRichiestaUscitaPayload = oldConfigurazione.getRichiestaUscita().get_value_payload();
+						dumpRichiestaUscitaPayloadParsing = oldConfigurazione.getRichiestaUscita().get_value_payloadParsing();
 						dumpRichiestaUscitaBody = oldConfigurazione.getRichiestaUscita().get_value_body();
 						dumpRichiestaUscitaAttachments = oldConfigurazione.getRichiestaUscita().get_value_attachments();
+						
 						dumpRispostaIngressoHeader = oldConfigurazione.getRispostaIngresso().get_value_headers();	
+						dumpRispostaIngressoPayload = oldConfigurazione.getRispostaIngresso().get_value_payload();
+						dumpRispostaIngressoPayloadParsing = oldConfigurazione.getRispostaIngresso().get_value_payloadParsing();
 						dumpRispostaIngressoBody = oldConfigurazione.getRispostaIngresso().get_value_body();
 						dumpRispostaIngressoAttachments = oldConfigurazione.getRispostaIngresso().get_value_attachments();
+						
 						dumpRispostaUscitaHeader = oldConfigurazione.getRispostaUscita().get_value_headers();	
+						dumpRispostaUscitaPayload = oldConfigurazione.getRispostaUscita().get_value_payload();
+						dumpRispostaUscitaPayloadParsing = oldConfigurazione.getRispostaUscita().get_value_payloadParsing();
 						dumpRispostaUscitaBody = oldConfigurazione.getRispostaUscita().get_value_body();
 						dumpRispostaUscitaAttachments = oldConfigurazione.getRispostaUscita().get_value_attachments();
 					}
@@ -211,18 +281,57 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 						statoDumpRichiesta = porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						statoDumpRisposta = porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						
-						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
-						dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRichiestaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
-						dumpRichiestaUscitaBody = StatoFunzionalita.ABILITATO.getValue();
-						dumpRichiestaUscitaAttachments = StatoFunzionalita.ABILITATO.getValue();
-						dumpRispostaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
-						dumpRispostaIngressoBody = StatoFunzionalita.ABILITATO.getValue();
-						dumpRispostaIngressoAttachments = StatoFunzionalita.ABILITATO.getValue();
-						dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
-						dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						if(org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo)) {
+							dumpRichiestaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
+							dumpRichiestaIngressoPayload = StatoFunzionalita.ABILITATO.getValue();
+							dumpRichiestaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRichiestaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+							dumpRichiestaUscitaPayload = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRispostaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+							dumpRispostaIngressoPayload = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRispostaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
+							dumpRispostaUscitaPayload = StatoFunzionalita.ABILITATO.getValue();
+							dumpRispostaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						}
+						else {
+						
+							dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+							dumpRichiestaIngressoPayload = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRichiestaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
+							dumpRichiestaUscitaPayload = StatoFunzionalita.ABILITATO.getValue();
+							dumpRichiestaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRichiestaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRispostaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
+							dumpRispostaIngressoPayload = StatoFunzionalita.ABILITATO.getValue();
+							dumpRispostaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+							
+							dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+							dumpRispostaUscitaPayload = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+							dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						}
 					}
 				}
 
@@ -231,10 +340,11 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-						dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-						dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-						dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-						dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+						dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+						dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+						dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+						dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+						true);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 
@@ -246,10 +356,11 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.checkDataConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader,
-					dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody,
-					dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
-					dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+			boolean isOk = porteApplicativeHelper.checkDataConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
+					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+					dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
 			if (!isOk) {
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -259,10 +370,11 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-						dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-						dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-						dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-						dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+						dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+						dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+						dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+						dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+						true);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 
@@ -278,26 +390,54 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 			if(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
 				// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
 				if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					
+					boolean bodyIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoPayload);
+					boolean attachmentsIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoPayload);
+					if(StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoPayloadParsing)) {
+						bodyIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoBody);
+						attachmentsIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoAttachments);
+					}
+					boolean bodyUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaPayload);
+					boolean attachmentsUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaPayload);
+					if(StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaPayloadParsing)) {
+						bodyUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaBody);
+						attachmentsUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaAttachments);
+					}
+					
 					// doppio body
-					if(dumpRichiestaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRichiestaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					if(bodyIngresso && bodyUscita) {
 						showConfermaRichiesta = true;
 					}
 					
 					// doppi attachments
-					if(dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					if(attachmentsIngresso && attachmentsUscita) {
 						showConfermaRichiesta = true;
 					}
 				}
 				
 				// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
 				if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					
+					boolean bodyIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoPayload);
+					boolean attachmentsIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoPayload);
+					if(StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoPayloadParsing)) {
+						bodyIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoBody);
+						attachmentsIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoAttachments);
+					}
+					boolean bodyUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaPayload);
+					boolean attachmentsUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaPayload);
+					if(StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaPayloadParsing)) {
+						bodyUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaBody);
+						attachmentsUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaAttachments);
+					}
+					
 					// doppio body
-					if(dumpRispostaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRispostaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					if(bodyIngresso && bodyUscita) {
 						showConfermaRisposta = true;
 					}
 					
 					// doppi attachments
-					if(dumpRispostaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRispostaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					if(attachmentsIngresso && attachmentsUscita) {
 						showConfermaRisposta = true;
 					}
 				}
@@ -314,17 +454,19 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 						
 						porteApplicativeHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-								dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-								dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-								dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-								dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+								dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+								dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+								dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+								dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+								true);
 						
 						
 						porteApplicativeHelper.addConfigurazioneDumpToDatiAsHidden(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-								dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-								dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-								dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-								dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+								dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+								dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+								dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+								dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+								true);
 						
 						dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 						
@@ -374,9 +516,11 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 					(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK))
 						) {
 					DumpConfigurazione newDumpConfigurazione = porteApplicativeHelper.getConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime,
-							statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, 
-							dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+							statoDumpRichiesta, statoDumpRisposta, 
+							dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+							dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+							dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+							dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
 							
 					pa.setDump(newDumpConfigurazione);
 
@@ -415,25 +559,38 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 				realtime = configurazioneAggiornata.getRealtime().getValue();
 				statoDumpRichiesta = porteApplicativeHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 				statoDumpRisposta = porteApplicativeHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				
 				dumpRichiestaIngressoHeader = configurazioneAggiornata.getRichiestaIngresso().get_value_headers();	
+				dumpRichiestaIngressoPayload = configurazioneAggiornata.getRichiestaIngresso().get_value_payload();
+				dumpRichiestaIngressoPayloadParsing = configurazioneAggiornata.getRichiestaIngresso().get_value_payloadParsing();
 				dumpRichiestaIngressoBody = configurazioneAggiornata.getRichiestaIngresso().get_value_body();
 				dumpRichiestaIngressoAttachments = configurazioneAggiornata.getRichiestaIngresso().get_value_attachments();
+				
 				dumpRichiestaUscitaHeader = configurazioneAggiornata.getRichiestaUscita().get_value_headers();	
+				dumpRichiestaUscitaPayload = configurazioneAggiornata.getRichiestaUscita().get_value_payload();
+				dumpRichiestaUscitaPayloadParsing = configurazioneAggiornata.getRichiestaUscita().get_value_payloadParsing();
 				dumpRichiestaUscitaBody = configurazioneAggiornata.getRichiestaUscita().get_value_body();
 				dumpRichiestaUscitaAttachments = configurazioneAggiornata.getRichiestaUscita().get_value_attachments();
+				
 				dumpRispostaIngressoHeader = configurazioneAggiornata.getRispostaIngresso().get_value_headers();	
+				dumpRispostaIngressoPayload = configurazioneAggiornata.getRispostaIngresso().get_value_payload();
+				dumpRispostaIngressoPayloadParsing = configurazioneAggiornata.getRispostaIngresso().get_value_payloadParsing();
 				dumpRispostaIngressoBody = configurazioneAggiornata.getRispostaIngresso().get_value_body();
 				dumpRispostaIngressoAttachments = configurazioneAggiornata.getRispostaIngresso().get_value_attachments();
+				
 				dumpRispostaUscitaHeader = configurazioneAggiornata.getRispostaUscita().get_value_headers();	
+				dumpRispostaUscitaPayload = configurazioneAggiornata.getRispostaUscita().get_value_payload();
+				dumpRispostaUscitaPayloadParsing = configurazioneAggiornata.getRispostaUscita().get_value_payloadParsing();
 				dumpRispostaUscitaBody = configurazioneAggiornata.getRispostaUscita().get_value_body();
 				dumpRispostaUscitaAttachments = configurazioneAggiornata.getRispostaUscita().get_value_attachments();
 			}
 
 			porteApplicativeHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-					dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-					dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-					dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-					dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+					dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+					true);
 			
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 

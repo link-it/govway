@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="formato-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="content-length" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="multipart-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="multipart-content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="multipart-content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
@@ -82,6 +83,7 @@ import java.util.List;
   	"tipoMessaggio",
   	"formatoMessaggio",
   	"contentType",
+  	"contentLength",
   	"multipartContentType",
   	"multipartContentId",
   	"multipartContentLocation",
@@ -188,6 +190,14 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setContentType(java.lang.String contentType) {
     this.contentType = contentType;
+  }
+
+  public java.lang.Long getContentLength() {
+    return this.contentLength;
+  }
+
+  public void setContentLength(java.lang.Long contentLength) {
+    this.contentLength = contentLength;
   }
 
   public java.lang.String getMultipartContentType() {
@@ -439,6 +449,10 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="content-type",required=false,nillable=false)
   protected java.lang.String contentType;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="content-length",required=false,nillable=false)
+  protected java.lang.Long contentLength;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="multipart-content-type",required=false,nillable=false)

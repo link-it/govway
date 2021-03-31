@@ -132,6 +132,9 @@ components:
         content_type:
           type: string
           example: application/json
+        content_length:
+          type: integer
+          format: int64
         multipart:
           $ref: '#/components/schemas/TransazioneExtContenutoMessaggioBodyMultipart' 
         contenuti_body:

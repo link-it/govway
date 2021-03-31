@@ -26,6 +26,7 @@ import java.util.Vector;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.Costanti;
@@ -225,6 +226,8 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE = "Tipo";
 	public final static String LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_CONNETTORE_DEBUG = "Debug";
+	public final static String LABEL_PARAMETRO_CONNETTORE_DEBUG_INFO = "Se viene abilitata l'opzione, l'intera comunicazione viene registrata nel file "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_NOTE+". La registrazione comprende i payload dei messaggi scambiati, gli headers di trasporto, le informazioni sull'handshake tls, eventuali token oauth negoziati etc ... "; 
+	public final static String LABEL_PARAMETRO_CONNETTORE_DEBUG_NODE = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_NOTE;
 	public final static String LABEL_PARAMETRO_CONNETTORE_URL = "Endpoint";
 	public final static int LABEL_PARAMETRO_CONNETTORE_URL_SIZE = LABEL_PARAMETRO_CONNETTORE_TEXT_AREA_SIZE;
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROFILO =  "Versione Protocollo";

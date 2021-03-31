@@ -50,6 +50,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventiThread;
@@ -1149,6 +1150,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			if(this.cacheAbilitata==false)
 				throw new Exception("Cache non abilitata");
 			org.openspcoop2.pdd.config.ConfigurazionePdDReader.resetCache();
+			FileTraceConfig.resetFileTraceAssociatePorte();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);

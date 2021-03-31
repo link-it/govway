@@ -21,13 +21,14 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -37,6 +38,7 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 
@@ -53,6 +55,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 
 	/** InputStream Risposta */
 	protected InputStream isResponse = null;
+	
+	/** MessageType Risposta */
+	protected MessageType messageTypeResponse = null;
 	
 	/** ContentType Risposta */
 	protected String tipoRisposta = null;
@@ -117,24 +122,46 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	}
 	
 	protected void dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+		
+		if(this.isRest){
+			checkRestResponseMessageType();
+		}
+		else {
+			checkSoapResponseMessageType();
+		}
+		
 		if(this.isResponse!=null){
 			// Registro Debug.
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-			int readByte = 0;
-			while((readByte = this.isResponse.read(readB))!= -1){
-				bout.write(readB,0,readByte);
+			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
+			try {
+				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+				int readByte = 0;
+				while((readByte = this.isResponse.read(readB))!= -1){
+					bout.write(readB,0,readByte);
+				}
+				this.isResponse.close();
+				bout.flush();
+				bout.close();
+				if(this.debug) {
+					this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
+				}
+				// Creo nuovo inputStream
+				if(bout.isSerializedOnFileSystem()) {
+					this.isResponse = new FileInputStream(bout.getSerializedFile());
+				}
+				else {
+					this.isResponse = new ByteArrayInputStream(bout.toByteArray());
+				}
+				
+				this.dumpBinarioRispostaIngresso(bout, this.messageTypeResponse, trasporto);
+			}finally {
+				try {
+					bout.clearResources();
+				}catch(Throwable t) {
+					this.logger.error("Release resources failed: "+t.getMessage(),t);
+				}
 			}
-			this.isResponse.close();
-			bout.flush();
-			bout.close();
-			if(this.debug) {
-				this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
-			}
-			// Creo nuovo inputStream
-			this.isResponse = new ByteArrayInputStream(bout.toByteArray());
-			
-			this.dumpBinarioRispostaIngresso(bout.toByteArray(), trasporto);
 		}
 		else {
 			if(this.debug) {
@@ -147,28 +174,29 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			}
 			
 			// devo registrare almeno gli header HTTP
-			this.dumpBinarioRispostaIngresso(null, trasporto);
+			this.dumpBinarioRispostaIngresso(null, null, trasporto);
 		}
 	}
 	
-	protected boolean doRestResponse() throws Exception{
-		if(this.debug)
-			this.logger.debug("gestione REST in corso ...");
+	private void checkRestResponseMessageType() throws Exception{
+		
+		if(this.messageTypeResponse!=null) {
+			return; // gia' calcolato
+		}
 		
 		String contentTypeString = "N.D.";
 		if(this.tipoRisposta!=null && !"".equals(this.tipoRisposta)){
 			contentTypeString = this.tipoRisposta;
 		}
 		
-		MessageType messageTypeResponse = null;
 		String msgErrore = null;
 		Exception exErrore = null;
 		try{
-			messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
+			this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
 					this.requestMsg.getTransportRequestContext(),
 					this.tipoRisposta, 
 					this.codice>0?this.codice:null);				
-			if(messageTypeResponse==null){
+			if(this.messageTypeResponse==null){
 				String ctConosciuti = this.requestInfo.getBindingConfig().getContentTypesSupportedAsString(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
 						this.requestMsg.getTransportRequestContext());
 				if(this.tipoRisposta==null){
@@ -204,9 +232,16 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				else{
 					this.logger.warn(msgErrore);
 				}
-				messageTypeResponse = MessageType.BINARY;
+				this.messageTypeResponse = MessageType.BINARY;
 			}
 		}
+	}
+	
+	protected boolean doRestResponse() throws Exception{
+		if(this.debug)
+			this.logger.debug("gestione REST in corso ...");
+		
+		checkRestResponseMessageType();
 		
 		InputStream isParam = null;
 		if(this.contentLength>=0){
@@ -226,7 +261,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		responseContext.setHeaders(this.propertiesTrasportoRisposta);
 		
 		OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
-				createMessage(messageTypeResponse,responseContext,
+				createMessage(this.messageTypeResponse,responseContext,
 						isParam,this.notifierInputStreamParams,
 						this.openspcoopProperties.getAttachmentsProcessingMode());	
 		if(pr.getParseException()!=null){
@@ -255,22 +290,13 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		return true;
 	}
 	
-	
-	
-	protected boolean doSoapResponse() throws Exception{
-
-		String tipoLetturaRisposta = null;
+	private void checkSoapResponseMessageType() throws Exception{
 		
-		// gestione ordinaria via WS/SOAP
-		
-		if(this.debug)
-			this.logger.debug("gestione WS/SOAP in corso ...");
-		
-		String contentTypeTrasporto = this.tipoRisposta; // serve per funzionalità TunnelSOAP
+		if(this.messageTypeResponse!=null) {
+			return; // gia' calcolato
+		}
 		
 		if(this.isResponse!=null){
-			
-			MessageType messageTypeResponse = null;
 			
 			if(this.sbustamentoSoap==false){
 				
@@ -297,13 +323,13 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						if(this.requestMsg==null) {
 							throw new Exception("RequestMsg is null");
 						}
-						messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
+						this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
 								this.requestMsg.getTransportRequestContext(),
 								this.tipoRisposta, 
 								this.codice>0?this.codice:null);
 					}	
 				
-					if(messageTypeResponse==null){
+					if(this.messageTypeResponse==null){
 						
 						String ctConosciuti = this.requestInfo.getBindingConfig().getContentTypesSupportedAsString(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
 								this.requestMsg.getTransportRequestContext());
@@ -316,8 +342,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						}
 					}
 					else{
-						if(this.requestMsg.getMessageType().equals(messageTypeResponse)==false){
-							msgErrore = "Header Content-Type definito nell'http reply associato ad un tipo ("+messageTypeResponse.name()
+						if(this.requestMsg.getMessageType().equals(this.messageTypeResponse)==false){
+							msgErrore = "Header Content-Type definito nell'http reply associato ad un tipo ("+this.messageTypeResponse.name()
 										+") differente da quello associato al messaggio di richiesta ("+this.requestMsg.getMessageType().name()+")";
 						}
 					}
@@ -341,8 +367,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								ParseExceptionUtils.buildParseException(e));
 						throw e;
 					}else{
-						messageTypeResponse = MessageType.SOAP_11;
-						this.tipoRisposta = SoapUtils.getSoapContentTypeForMessageWithoutAttachments(messageTypeResponse);
+						this.messageTypeResponse = MessageType.SOAP_11;
+						this.tipoRisposta = SoapUtils.getSoapContentTypeForMessageWithoutAttachments(this.messageTypeResponse);
 						msgErrore = msgErrore+"; per trattare il messaggio viene utilizzato forzatamente il content-type "+this.tipoRisposta+" e la tipologia "+MessageType.SOAP_11.name();
 						if(exErrore!=null){
 							this.logger.warn(msgErrore,exErrore);
@@ -354,10 +380,27 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				}
 			}
 			else{
-				messageTypeResponse = this.requestMsg.getMessageType();
-				this.tipoRisposta = SoapUtils.getSoapContentTypeForMessageWithoutAttachments(messageTypeResponse);
+				this.messageTypeResponse = this.requestMsg.getMessageType();
+				this.tipoRisposta = SoapUtils.getSoapContentTypeForMessageWithoutAttachments(this.messageTypeResponse);
 			}
+		}
+	}
+	
+	protected boolean doSoapResponse() throws Exception{
 
+		String tipoLetturaRisposta = null;
+		
+		// gestione ordinaria via WS/SOAP
+		
+		if(this.debug)
+			this.logger.debug("gestione WS/SOAP in corso ...");
+		
+		String contentTypeTrasporto = this.tipoRisposta; // serve per funzionalità TunnelSOAP
+		
+		checkSoapResponseMessageType();
+		
+		if(this.isResponse!=null){
+			
 			TransportResponseContext responseContext = new TransportResponseContext();
 			responseContext.setCodiceTrasporto(this.codice+"");
 			responseContext.setContentLength(this.contentLength);
@@ -374,7 +417,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						
 					if(this.contentLength>0){
 						OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
-								createMessage(messageTypeResponse,responseContext,
+								createMessage(this.messageTypeResponse,responseContext,
 										this.isResponse,this.notifierInputStreamParams,
 										this.openspcoopProperties.getAttachmentsProcessingMode());	
 						if(pr.getParseException()!=null){
@@ -391,7 +434,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						// Devo scoprire se c'e' un payload. Costruisco il messaggio e poi provo ad accedere all'envelope
 						try{
 							OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE)
-									.createMessage(messageTypeResponse,responseContext,
+									.createMessage(this.messageTypeResponse,responseContext,
 											this.isResponse,this.notifierInputStreamParams,
 											this.openspcoopProperties.getAttachmentsProcessingMode());
 							if(pr.getParseException()!=null){
@@ -442,7 +485,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								// Imbustamento per Tunnel OpenSPCoop
 								tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+this.mimeTypeAttachment;
 								this.responseMsg = TunnelSoapUtils.imbustamentoMessaggioConAttachment(org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE),
-										messageTypeResponse,MessageRole.RESPONSE, 
+										this.messageTypeResponse,MessageRole.RESPONSE, 
 										cis,this.mimeTypeAttachment,
 										MailcapActivationReader.existsDataContentHandler(this.mimeTypeAttachment),contentTypeTrasporto, 
 										this.openspcoopProperties.getHeaderSoapActorIntegrazione());
@@ -462,7 +505,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								this.isResponse = new ByteArrayInputStream(msg);
 								
 								OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
-										envelopingMessage(messageTypeResponse, this.tipoRisposta, this.soapAction, responseContext, 
+										envelopingMessage(this.messageTypeResponse, this.tipoRisposta, this.soapAction, responseContext, 
 												this.isResponse, this.notifierInputStreamParams, 
 												this.openspcoopProperties.getAttachmentsProcessingMode(),
 												true);

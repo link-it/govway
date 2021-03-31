@@ -21,17 +21,22 @@
 package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
@@ -47,32 +52,55 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 
 	private ConnectorInMessage connectorInMessage;
 	private Logger log;
-	private ByteArrayOutputStream bout = null;
+	private DumpByteArrayOutputStream bout = null;
 	private OpenSPCoop2MessageParseResult parseResult = null;
 	private String contentType;
 	private Integer contentLength;
+
+	private Context context;
+	private String idTransazione;
+	private int soglia;
+	private File repositoryFile;
 	
-	public DumpRawConnectorInMessage(Logger log,ConnectorInMessage connectorInMessage){
+	public DumpRawConnectorInMessage(Logger log,ConnectorInMessage connectorInMessage, Context context,
+			int soglia, File repositoryFile){
 		this.log = log;
 		this.connectorInMessage = connectorInMessage;
+		
+		this.context = context;
+		this.idTransazione = (String) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		this.soglia = soglia;
+		this.repositoryFile = repositoryFile;
 	}
 
+	@Override
+	public void setThresholdContext(Context context,
+			int soglia, File repositoryFile) {
+		// nop
+	}
+	
 	public ConnectorInMessage getWrappedConnectorInMessage() {
 		return this.connectorInMessage;
 	}
 	
-	public byte[] getRequestAsByte(){
+	public DumpByteArrayOutputStream getDumpByteArrayOutputStream() {
 		if(this.bout!=null && this.bout.size()>0){
-			return this.bout.toByteArray();
+			return this.bout;
 		}
 		return null;
 	}
-	public String getRequestAsString(){
-		if(this.bout!=null && this.bout.size()>0){
-			return this.bout.toString();
-		}
-		return null;
-	}
+//	public byte[] getRequestAsByte(){
+//		if(this.bout!=null && this.bout.size()>0){
+//			return this.bout.toByteArray();
+//		}
+//		return null;
+//	}
+//	public String getRequestAsString(){
+//		if(this.bout!=null && this.bout.size()>0){
+//			return this.bout.toString();
+//		}
+//		return null;
+//	}
 	public boolean isParsingRequestError(){
 		return this.parseResult!=null && this.parseResult.getParseException()!=null;
 	}
@@ -104,7 +132,8 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 
 		if(this.connectorInMessage instanceof HttpServletConnectorInMessage){
 			HttpServletConnectorInMessage http = (HttpServletConnectorInMessage) this.connectorInMessage;
-			this.bout = new ByteArrayOutputStream();
+			this.bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
+					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
 			try{
 				this.parseResult = http.getRequest(this.bout,notifierInputStreamParams); // il bout viene chiuso nel metodo interno
 				if(this.bout.size()<=0){
@@ -127,7 +156,8 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 			this.parseResult = this.connectorInMessage.getRequest(notifierInputStreamParams);
 			if(this.parseResult.getMessage()!=null){
 				try{
-					this.bout = new ByteArrayOutputStream();
+					this.bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
+							TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
 					this.parseResult.getMessage().writeTo(this.bout, false);
 				}catch(Throwable t){
 					this.bout = null;
@@ -159,21 +189,19 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	}
 
 	@Override
-	public byte[] getRequest() throws ConnectorException {
+	public DumpByteArrayOutputStream getRequest() throws ConnectorException {
 		if(this.bout!=null){
-			return this.bout.toByteArray();
+			return this.bout;
 		}
 		
 		try{
-			this.bout = new ByteArrayOutputStream();
-			byte [] tmp = this.connectorInMessage.getRequest();
+			DumpByteArrayOutputStream tmp = this.connectorInMessage.getRequest();
 			if(tmp!=null){
-				this.bout.write(tmp);
+				this.bout = tmp;
 			}
 		}catch(Throwable t){
 			try{
-				this.bout = new ByteArrayOutputStream();
-				this.bout.write(("getRequest error: "+t.getMessage()).getBytes());
+				this.bout = DumpByteArrayOutputStream.newInstance(("getRequest error: "+t.getMessage()).getBytes());
 			}catch(Throwable tWrite){}
 			this.log.error("getRequest error: "+t.getMessage(),t);
 		}finally{
@@ -190,7 +218,7 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		}
 		
 		if(this.bout!=null){
-			return this.bout.toByteArray();
+			return this.bout;
 		}
 		else{
 			return null;
@@ -222,6 +250,12 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	
 	
 	// Wrapped Only
+	
+	@Override
+	public MessageType getRequestMessageType() {
+		// wrapped method
+		return this.connectorInMessage.getRequestMessageType();
+	}
 	
 	@Override
 	public IDService getIdModuloAsIDService() {

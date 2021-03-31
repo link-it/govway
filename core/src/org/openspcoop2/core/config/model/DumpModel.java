@@ -41,6 +41,8 @@ public class DumpModel extends AbstractModel<Dump> {
 		super();
 	
 		this.CONFIGURAZIONE = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new Field("configurazione",org.openspcoop2.core.config.DumpConfigurazione.class,"dump",Dump.class));
+		this.CONFIGURAZIONE_PORTA_DELEGATA = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new Field("configurazione-porta-delegata",org.openspcoop2.core.config.DumpConfigurazione.class,"dump",Dump.class));
+		this.CONFIGURAZIONE_PORTA_APPLICATIVA = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new Field("configurazione-porta-applicativa",org.openspcoop2.core.config.DumpConfigurazione.class,"dump",Dump.class));
 		this.OPENSPCOOP_APPENDER = new org.openspcoop2.core.config.model.OpenspcoopAppenderModel(new Field("openspcoop-appender",org.openspcoop2.core.config.OpenspcoopAppender.class,"dump",Dump.class));
 		this.STATO = new Field("stato",java.lang.String.class,"dump",Dump.class);
 		this.DUMP_BINARIO_PORTA_DELEGATA = new Field("dump-binario-porta-delegata",java.lang.String.class,"dump",Dump.class);
@@ -53,6 +55,8 @@ public class DumpModel extends AbstractModel<Dump> {
 		super(father);
 	
 		this.CONFIGURAZIONE = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new ComplexField(father,"configurazione",org.openspcoop2.core.config.DumpConfigurazione.class,"dump",Dump.class));
+		this.CONFIGURAZIONE_PORTA_DELEGATA = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new ComplexField(father,"configurazione-porta-delegata",org.openspcoop2.core.config.DumpConfigurazione.class,"dump",Dump.class));
+		this.CONFIGURAZIONE_PORTA_APPLICATIVA = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new ComplexField(father,"configurazione-porta-applicativa",org.openspcoop2.core.config.DumpConfigurazione.class,"dump",Dump.class));
 		this.OPENSPCOOP_APPENDER = new org.openspcoop2.core.config.model.OpenspcoopAppenderModel(new ComplexField(father,"openspcoop-appender",org.openspcoop2.core.config.OpenspcoopAppender.class,"dump",Dump.class));
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"dump",Dump.class);
 		this.DUMP_BINARIO_PORTA_DELEGATA = new ComplexField(father,"dump-binario-porta-delegata",java.lang.String.class,"dump",Dump.class);
@@ -63,6 +67,10 @@ public class DumpModel extends AbstractModel<Dump> {
 	
 
 	public org.openspcoop2.core.config.model.DumpConfigurazioneModel CONFIGURAZIONE = null;
+	 
+	public org.openspcoop2.core.config.model.DumpConfigurazioneModel CONFIGURAZIONE_PORTA_DELEGATA = null;
+	 
+	public org.openspcoop2.core.config.model.DumpConfigurazioneModel CONFIGURAZIONE_PORTA_APPLICATIVA = null;
 	 
 	public org.openspcoop2.core.config.model.OpenspcoopAppenderModel OPENSPCOOP_APPENDER = null;
 	 

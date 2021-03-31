@@ -160,6 +160,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_MESSAGE_SECURITY = "Message-Security";
 	public final static String LABEL_PARAMETRO_RICHIESTA = "Richiesta";
 	public final static String LABEL_PARAMETRO_RISPOSTA = "Risposta";
+	public final static String LABEL_PARAMETRO_INGRESSO = "Ingresso";
+	public final static String LABEL_PARAMETRO_USCITA = "Uscita";
 	public final static String LABEL_PARAMETRO_OBBLIGATORIO = "Elemento Obbligatorio";
 	public final static String LABEL_PARAMETRO_PATTERN = "Pattern";
 	public final static String LABEL_PARAMETRO_CONTENT_TYPE = "Content Type";
@@ -434,6 +436,8 @@ public class CostantiControlStation {
 	public final static String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";
 	public final static String LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI = "Registrazione Messaggi di ";
 	public final static String LABEL_DUMP_CONFIGURAZIONE = "Configurazione";
+	public final static String LABEL_DUMP_CONFIGURAZIONE_EROGAZIONI = "Configurazione Erogazioni";
+	public final static String LABEL_DUMP_CONFIGURAZIONE_FRUIZIONI = "Configurazione Fruizioni";
 	
 	public final static String LABEL_PARAMETRO_DUMP_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_DUMP_STATO_DEFAULT = "default";
@@ -441,18 +445,36 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_DUMP_REALTIME = "Realtime";
 	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_STATO = "Stato";
-	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY = "Body";
-	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS = "Attachments";
-	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS = "Headers";
-	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY = "Body";
-	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS = "Attachments";
-	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS = "Headers";
-	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY = "Body";
-	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS = "Attachments";
-	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS = "Headers";
-	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY = "Body";
-	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS = "Attachments";
-	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS = "Headers";
+	
+	public final static String LABEL_PARAMETRO_DUMP_HEADERS = "Headers";
+	public final static String LABEL_PARAMETRO_DUMP_PAYLOAD = "Payload";
+	public final static String LABEL_PARAMETRO_DUMP_PAYLOAD_PARSING = "Multipart Parsing";
+	public final static String LABEL_PARAMETRO_DUMP_BODY = "Body";
+	public final static String LABEL_PARAMETRO_DUMP_ATTACHMENTS = "Attachments";
+	
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS = LABEL_PARAMETRO_DUMP_HEADERS;
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD = LABEL_PARAMETRO_DUMP_PAYLOAD;
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD_PARSING = LABEL_PARAMETRO_DUMP_PAYLOAD_PARSING;
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY = LABEL_PARAMETRO_DUMP_BODY;
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS = LABEL_PARAMETRO_DUMP_ATTACHMENTS;
+	
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS = LABEL_PARAMETRO_DUMP_HEADERS;
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD = LABEL_PARAMETRO_DUMP_PAYLOAD;
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD_PARSING = LABEL_PARAMETRO_DUMP_PAYLOAD_PARSING;
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY = LABEL_PARAMETRO_DUMP_BODY;
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS = LABEL_PARAMETRO_DUMP_ATTACHMENTS;
+	
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS = LABEL_PARAMETRO_DUMP_HEADERS;
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD = LABEL_PARAMETRO_DUMP_PAYLOAD;
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD_PARSING = LABEL_PARAMETRO_DUMP_PAYLOAD_PARSING;
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY = LABEL_PARAMETRO_DUMP_BODY;
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS = LABEL_PARAMETRO_DUMP_ATTACHMENTS;
+	
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS = LABEL_PARAMETRO_DUMP_HEADERS;
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD = LABEL_PARAMETRO_DUMP_PAYLOAD;
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD_PARSING = LABEL_PARAMETRO_DUMP_PAYLOAD_PARSING;
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY = LABEL_PARAMETRO_DUMP_BODY;
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS = LABEL_PARAMETRO_DUMP_ATTACHMENTS;
 
 	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_GENERALE = "Generale";
 	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA = "Richiesta";
@@ -915,19 +937,32 @@ public class CostantiControlStation {
 	public final static int RIGHE_MULTISELECT_AZIONI = 10;
 	public final static String PARAMETRO_NOME_GRUPPO = "nomeGruppo";
 	
+	public final static String PARAMETRO_DUMP_TIPO_CONFIGURAZIONE = "dumpConfigType";
 	public final static String PARAMETRO_DUMP_STATO = "dumpStato";
 	public final static String PARAMETRO_DUMP_REALTIME = "dumpRealTime";
 	public final static String PARAMETRO_DUMP_RICHIESTA_STATO = "dumpStatoReq";
 	public final static String PARAMETRO_DUMP_RISPOSTA_STATO = "dumpStatoRes";
+	
+	public final static String PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD = "dumpReqInPay";
+	public final static String PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD_PARSING = "dumpReqInPars";
 	public final static String PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY = "dumpReqInBody";
 	public final static String PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS = "dumpReqInAtt";
 	public final static String PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS = "dumpReqInHead";
+	
+	public final static String PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD = "dumpReqOutPay";
+	public final static String PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD_PARSING = "dumpReqOutPars";
 	public final static String PARAMETRO_DUMP_RICHIESTA_USCITA_BODY = "dumpReqOutBody";
 	public final static String PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS = "dumpReqOutAtt";
 	public final static String PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS = "dumpReqOutHead";
+	
+	public final static String PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD = "dumpResInPay";
+	public final static String PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD_PARSING = "dumpResInPars";
 	public final static String PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY = "dumpResInBody";
 	public final static String PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS = "dumpResInAtt";
 	public final static String PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS = "dumpResInHead";
+	
+	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD = "dumpResOutPay";
+	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD_PARSING = "dumpResOutPars";
 	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_BODY = "dumpResOutBody";
 	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS = "dumpResOutAtt";
 	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS = "dumpResOutHead";
@@ -2102,7 +2137,9 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO = "Valore del campo {0} della {1} non valido.";
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO = "Valore del campo {0} {1} della {2} non valido.";
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_POLICY_TOKEN_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UNA_MODALITA = "Dati incompleti. &Egrave; necessario abilitare almeno una voce tra {0}";
+	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE_TRA_RICHIESTA_E_RISPOSTA = "Per salvare la configurazione &egrave; necessario abilitare la registrazione almeno in una delle due sezioni";
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE = "Impossibile abilitare la Registrazione dei messaggi di {0} senza specificare almeno una voce di Ingresso o Uscita";
+	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE_PAYLOAD_PARSING = "Nella Registrazione dei messaggi di {0}, se si abilita la funzionalità "+CostantiControlStation.LABEL_PARAMETRO_DUMP_PAYLOAD_PARSING+" deve essere abilitata almeno una voce tra "+CostantiControlStation.LABEL_PARAMETRO_DUMP_BODY+" o "+CostantiControlStation.LABEL_PARAMETRO_DUMP_ATTACHMENTS;
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_TOKEN = "I claims in ogni riga devono essere indicati come coppia (nome=valore); non è stato riscontrato il carattere separatore '='";
 	public static final String MESSAGGIO_ERRORE_POLICY_OBBLIGATORIA_CON_LA_NUOVA_AUTORIZZAZIONE = "La policy &egrave; obbligatoria quando si seleziona l''autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_PRESENTE = "Il nome gruppo indicato &egrave; gi&agrave; utilizzato in un'altra configurazione";

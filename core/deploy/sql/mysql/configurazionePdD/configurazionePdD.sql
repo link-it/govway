@@ -311,11 +311,15 @@ CREATE TABLE dump_config
 	CONSTRAINT pk_dump_config PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
+-- index
+CREATE INDEX index_dump_config_1 ON dump_config (proprietario);
 
 
 
 CREATE TABLE dump_config_regola
 (
+	payload VARCHAR(255) NOT NULL,
+	payload_parsing VARCHAR(255) NOT NULL,
 	body VARCHAR(255) NOT NULL,
 	attachments VARCHAR(255) NOT NULL,
 	headers VARCHAR(255) NOT NULL,

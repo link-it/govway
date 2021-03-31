@@ -931,6 +931,12 @@ public class ControlStationCore {
 		return this.showAllarmiElenchiStatiAllarmi;
 	}
 	
+	/** Registrazione Messaggi */
+	private boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled = false;
+	public Boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled() throws UtilsException{
+		return this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled;
+	}
+	
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -2430,6 +2436,9 @@ public class ControlStationCore {
 		this.showAllarmiSearchStatiAllarmi = core.showAllarmiSearchStatiAllarmi;
 		this.showAllarmiElenchiStatiAllarmi = core.showAllarmiElenchiStatiAllarmi;
 		
+		/** Registrazione Messaggi */
+		this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -2806,6 +2815,7 @@ public class ControlStationCore {
 				this.showAllarmiSearchStatiAllarmi = consoleProperties.isShowAllarmiSearchStatiAllarmi();
 				this.showAllarmiElenchiStatiAllarmi = consoleProperties.isShowAllarmiElenchiStatiAllarmi();
 			}
+			this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = consoleProperties.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

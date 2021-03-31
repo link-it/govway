@@ -4389,8 +4389,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(dumpApplicativo.equals(oldDumpApplicativo)) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
-				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE, 
+						new Parameter(CostantiControlStation.PARAMETRO_DUMP_TIPO_CONFIGURAZIONE, TipoPdD.APPLICATIVA.getTipo()));
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_EROGAZIONI);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE, 
+						new Parameter(CostantiControlStation.PARAMETRO_DUMP_TIPO_CONFIGURAZIONE, TipoPdD.DELEGATA.getTipo()));
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_FRUIZIONI);
 				dati.addElement(de);
 			}
 		}
@@ -4419,24 +4427,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 		}
 		
-		String[] tipoDumpConnettorePD = {
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-		if(this.isModalitaAvanzata()){
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoDumpConnettorePD);
-			de.setSelected(dumpPD);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(dumpPD);
-		}
-		dati.addElement(de);
-		
 		String[] tipoDumpConnettorePA = {
 				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
 				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
@@ -4448,6 +4438,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoDumpConnettorePA);
 			de.setSelected(dumpPA);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -4455,7 +4446,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
-		
+		String[] tipoDumpConnettorePD = {
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+		};
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		if(this.isModalitaAvanzata()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoDumpConnettorePD);
+			de.setSelected(dumpPD);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(dumpPD);
+		}
+		dati.addElement(de);
+				
 	}
 	
 	public void addTracciamentoToDatiAsHidden(String registrazioneTracce, Configurazione configurazione, Vector<DataElement> dati) {
@@ -5218,29 +5227,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		try{
 			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
-			boolean enable = "true".equals(value);
-			
-			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = newDataElementStyleRuntime();
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
-			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE);
-			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoMsg);
-			de.setSelected(v);
-			de.setPostBack_viaPOST(true);
-			dati.addElement(de);
-			
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
-			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
-		}
-			
-		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
 			boolean enable = "true".equals(value);
 			
@@ -5261,6 +5247,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL);
 		}
 		
+		try{
+			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
+			boolean enable = "true".equals(value);
+			
+			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
+			de = newDataElementStyleRuntime();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE);
+			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(v);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul dump binario sulla Porta Delegata (jmxResourcePdD): "+e.getMessage(),e);
+			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
+		}
+					
 		try{
 			String log4j_tracciamento = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 

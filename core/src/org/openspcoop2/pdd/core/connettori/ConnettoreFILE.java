@@ -39,6 +39,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
@@ -47,6 +48,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -233,6 +235,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 			// Tipologia di servizio
+			MessageType requestMessageType = this.requestMsg.getMessageType();
 			OpenSPCoop2SoapMessage soapMessageRequest = null;
 			if(this.debug)
 				this.logger.debug("Tipologia Servizio: "+this.requestMsg.getServiceBinding());
@@ -252,7 +255,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;
-			if(this.isDumpBinario()) {
+			if(this.isDumpBinarioRichiesta()) {
 				propertiesTrasportoDebug = new HashMap<String, List<String>>();
 			}
 			
@@ -317,20 +320,36 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.debug("Serializzazione ["+this.outputFile.getAbsolutePath()+"] (consume-request-message:"+consumeRequestMessage+")...");
 			OutputStream out = new FileOutputStream(this.outputFile);
-			if(this.isDumpBinario()) {
-				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				if(this.isSoap && this.sbustamentoSoap){
-					this.logger.debug("Sbustamento...");
-					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
-				}else{
-					this.requestMsg.writeTo(bout, consumeRequestMessage);
+			if(this.isDumpBinarioRichiesta()) {
+				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+						TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
+				try {
+					if(this.isSoap && this.sbustamentoSoap){
+						this.logger.debug("Sbustamento...");
+						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
+					}else{
+						this.requestMsg.writeTo(bout, consumeRequestMessage);
+					}
+					bout.flush();
+					bout.close();
+					
+					if(bout.isSerializedOnFileSystem()) {
+						try(FileInputStream fin = new FileInputStream(bout.getSerializedFile())) {
+							Utilities.copy(fin, out);
+						}
+					}
+					else {
+						out.write(bout.toByteArray());
+					}
+					
+					this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+				}finally {
+					try {
+						bout.clearResources();
+					}catch(Throwable t) {
+						this.logger.error("Release resources failed: "+t.getMessage(),t);
+					}
 				}
-				bout.flush();
-				bout.close();
-				out.write(bout.toByteArray());
-				bout.close();
-				
-				this.dumpBinarioRichiestaUscita(bout, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 			}else{
 				if(this.isSoap && this.sbustamentoSoap){
 					if(this.debug)
@@ -479,7 +498,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				
 				this.initCheckContentTypeConfiguration();
 				
-				if(this.isDumpBinario()){
+				if(this.isDumpBinarioRisposta()){
 					this.dumpResponse(this.propertiesTrasportoRisposta);
 				}
 								

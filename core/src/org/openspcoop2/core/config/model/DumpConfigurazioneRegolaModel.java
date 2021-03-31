@@ -40,6 +40,8 @@ public class DumpConfigurazioneRegolaModel extends AbstractModel<DumpConfigurazi
 	
 		super();
 	
+		this.PAYLOAD = new Field("payload",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
+		this.PAYLOAD_PARSING = new Field("payload-parsing",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
 		this.BODY = new Field("body",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
 		this.ATTACHMENTS = new Field("attachments",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
 		this.HEADERS = new Field("headers",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
@@ -50,6 +52,8 @@ public class DumpConfigurazioneRegolaModel extends AbstractModel<DumpConfigurazi
 	
 		super(father);
 	
+		this.PAYLOAD = new ComplexField(father,"payload",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
+		this.PAYLOAD_PARSING = new ComplexField(father,"payload-parsing",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
 		this.BODY = new ComplexField(father,"body",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
 		this.ATTACHMENTS = new ComplexField(father,"attachments",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
 		this.HEADERS = new ComplexField(father,"headers",java.lang.String.class,"dump-configurazione-regola",DumpConfigurazioneRegola.class);
@@ -58,6 +62,10 @@ public class DumpConfigurazioneRegolaModel extends AbstractModel<DumpConfigurazi
 	
 	
 
+	public IField PAYLOAD = null;
+	 
+	public IField PAYLOAD_PARSING = null;
+	 
 	public IField BODY = null;
 	 
 	public IField ATTACHMENTS = null;

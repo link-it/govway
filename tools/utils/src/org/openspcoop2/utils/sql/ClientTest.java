@@ -311,6 +311,9 @@ public class ClientTest {
 
 	private static Logger log = null;
 
+	private static String PRIMA_COLONNA = "Prima colonna valorizzata";
+	private static String ULTIMA_COLONNA = "Ultima colonna valorizzata";
+	
 	/**
 	 * @param args
 	 * @throws Exception 
@@ -454,13 +457,13 @@ public class ClientTest {
 				}
 				String campoVuoto = null;
 				if(i==0){
-					campoVuoto = "Prima colonna valorizzata";
+					campoVuoto = PRIMA_COLONNA;
 				}
 				if(i>10){
 					campoVuoto = ""; // Valorizzato con stringa vuota
 				}
 				if(i==(ROW-1)){
-					campoVuoto = "Ultima colonna valorizzata";
+					campoVuoto = ULTIMA_COLONNA;
 				}
 				if(i%2==0){
 					stmtInsert = con.prepareStatement(insertMsgDiagnosticoWithGdo);
@@ -500,13 +503,13 @@ public class ClientTest {
 				}
 				String campoVuoto = null;
 				if(i==0){
-					campoVuoto = "Prima colonna valorizzata";
+					campoVuoto = PRIMA_COLONNA;
 				}
 				if(i>10){
 					campoVuoto = ""; // Valorizzato con stringa vuota
 				}
 				if(i==(ROW-1)){
-					campoVuoto = "Ultima colonna valorizzata";
+					campoVuoto = ULTIMA_COLONNA;
 				}
 				if(i%2==0){
 					stmtInsert = con.prepareStatement(insertTracciaWithGdo);
@@ -558,6 +561,10 @@ public class ClientTest {
 				// step5. Test escape char like
 				testLikeEscapeChar_engine(tipoDatabase,  "msgdiagnostici", con,selectForUpdate, caratteriStraniParte1, caratteriStraniParte2);
 				testLikeEscapeChar_likeConfig_engine(tipoDatabase,  "msgdiagnostici", con,selectForUpdate, caratteriStraniParte1, caratteriStraniParte2, rigaCompletaCaratteriStrani);
+				
+				
+				// step5b. Test coalesce/case
+				test_coalesce_case(tipoDatabase, con, selectForUpdate);
 				
 				
 				// step6. Test query
@@ -2223,6 +2230,257 @@ public class ClientTest {
 	}
 	
 
+	private static void test_coalesce_case(TipiDatabase tipo, Connection con, boolean selectForUpdate) throws Exception {
+
+		Statement stmtQuery = null;
+		ResultSet rs = null;
+		try{
+			
+			// TEST 1. (Case string)
+			
+			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso in group by
+
+			sqlQueryObject.addFromTable("msgdiagnostici","aliasMSG");
+
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectAliasField("aliasMSG", "campo_vuoto", "testCampoVuoto");
+			sqlQueryObject.addSelectCoalesceField("aliasMSG", "campo_vuoto", "testCoalesce", "VALORE_DEFAULT_COALESCE");
+			Case caseValue = new Case(CastColumnType.STRING, true, "CASE_DEFAULT");
+			caseValue.addCase("aliasMSG.campo_vuoto='"+PRIMA_COLONNA+"'", "CASE_PRIMO");
+			caseValue.addCase("aliasMSG.campo_vuoto='"+ULTIMA_COLONNA+"'", "CASE_ULTIMO");
+			sqlQueryObject.addSelectCaseField(caseValue, "testCase");
+			
+			info(log,systemOut,"");
+
+			
+			String test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest0_engine:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				try {
+					while(rs.next()){
+						info(log,systemOut,"riga["+(index++)+"]= (coalesce:"+rs.getString("testCoalesce")+") (case:"+rs.getString("testCase")+")");
+							
+						String campoVuoto = rs.getString("testCampoVuoto");
+						String testCoalesce = rs.getString("testCoalesce");
+						String testCase = rs.getString("testCase");
+
+						if(campoVuoto==null) {
+							if(!"VALORE_DEFAULT_COALESCE".equals(testCoalesce)) {
+								throw new Exception("Test failed; expected testCoalesce '"+testCoalesce+"' con il valore di default 'VALORE_DEFAULT_COALESCE'"); 
+							}
+						}
+						if(PRIMA_COLONNA.equals(campoVuoto)) {
+							if(!"CASE_PRIMO".equals(testCase)) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con il valore 'CASE_PRIMO' per la colonna con valore '"+campoVuoto+"'"); 
+							}
+						}
+						else if(ULTIMA_COLONNA.equals(campoVuoto)) {
+							if(!"CASE_ULTIMO".equals(testCase)) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con il valore 'CASE_ULTIMO' per la colonna con valore '"+campoVuoto+"'"); 
+							}
+						}
+						else {
+							if(!"CASE_DEFAULT".equals(testCase)) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con il valore 'CASE_DEFAULT' per la colonna con valore '"+campoVuoto+"'"); 
+							}
+						}
+					}
+				}finally {
+					if(rs!=null){
+						rs.close();
+						rs = null;
+					}
+					if(stmtQuery!=null){
+						stmtQuery.close();
+						stmtQuery = null;
+					}
+				}
+				
+				if(index==0) {
+					throw new Exception("Test failed"); 
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			
+			
+			
+			// TEST 2. (Case number)
+			
+			sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso in group by
+
+			sqlQueryObject.addFromTable("msgdiagnostici","aliasMSG");
+
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectAliasField("aliasMSG", "campo_vuoto", "testCampoVuoto");
+			sqlQueryObject.addSelectCoalesceField("aliasMSG", "campo_vuoto", "testCoalesce", "VALORE_DEFAULT_COALESCE");
+			caseValue = new Case(CastColumnType.LONG, false, "23");
+			caseValue.addCase("aliasMSG.campo_vuoto='"+PRIMA_COLONNA+"'", "11");
+			caseValue.addCase("aliasMSG.campo_vuoto='"+ULTIMA_COLONNA+"'", "99");
+			sqlQueryObject.addSelectCaseField(caseValue, "testCase");
+			
+			info(log,systemOut,"");
+
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest0_engine:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				try {
+					while(rs.next()){
+						info(log,systemOut,"riga["+(index++)+"]= (coalesce:"+rs.getString("testCoalesce")+") (case:"+rs.getLong("testCase")+")");
+							
+						String campoVuoto = rs.getString("testCampoVuoto");
+						String testCoalesce = rs.getString("testCoalesce");
+						long testCase = rs.getLong("testCase");
+
+						if(campoVuoto==null) {
+							if(!"VALORE_DEFAULT_COALESCE".equals(testCoalesce)) {
+								throw new Exception("Test failed; expected testCoalesce '"+testCoalesce+"' con il valore di default 'VALORE_DEFAULT_COALESCE'"); 
+							}
+						}
+						if(PRIMA_COLONNA.equals(campoVuoto)) {
+							if(testCase!=11l) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con il valore '11' per la colonna con valore '"+campoVuoto+"'"); 
+							}
+						}
+						else if(ULTIMA_COLONNA.equals(campoVuoto)) {
+							if(testCase!=99l) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con il valore '99' per la colonna con valore '"+campoVuoto+"'"); 
+							}
+						}
+						else {
+							if(testCase!=23l) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con il valore '23' per la colonna con valore '"+campoVuoto+"'"); 
+							}
+						}
+					}
+				}finally {
+					if(rs!=null){
+						rs.close();
+						rs = null;
+					}
+					if(stmtQuery!=null){
+						stmtQuery.close();
+						stmtQuery = null;
+					}
+				}
+				
+				if(index==0) {
+					throw new Exception("Test failed"); 
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			
+			
+			
+			// TEST 3. (Column e null)
+			
+			sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso in group by
+
+			sqlQueryObject.addFromTable("msgdiagnostici","aliasMSG");
+
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectAliasField("aliasMSG", "campo_vuoto", "testCampoVuoto");
+			sqlQueryObject.addSelectCoalesceField("aliasMSG", "campo_vuoto", "testCoalesce", "VALORE_DEFAULT_COALESCE");
+			caseValue = new Case(CastColumnType.STRING, false, "null");
+			caseValue.addCase("aliasMSG.campo_vuoto='"+PRIMA_COLONNA+"'", "aliasMSG.campo_vuoto");
+			caseValue.addCase("aliasMSG.campo_vuoto='"+ULTIMA_COLONNA+"'", "null");
+			sqlQueryObject.addSelectCaseField(caseValue, "testCase");
+			
+			info(log,systemOut,"");
+
+			
+			test = sqlQueryObject.createSQLQuery();
+			info(log,systemOut,"\ntest0_engine:\n\t"+test);
+			try{
+				stmtQuery = con.createStatement();
+				rs = stmtQuery.executeQuery(test);
+				int index = 0;
+				try {
+					while(rs.next()){
+						info(log,systemOut,"riga["+(index++)+"]= (coalesce:"+rs.getString("testCoalesce")+") (case:"+rs.getString("testCase")+")");
+							
+						String campoVuoto = rs.getString("testCampoVuoto");
+						String testCoalesce = rs.getString("testCoalesce");
+						String testCase = rs.getString("testCase");
+
+						if(campoVuoto==null) {
+							if(!"VALORE_DEFAULT_COALESCE".equals(testCoalesce)) {
+								throw new Exception("Test failed; expected testCoalesce '"+testCoalesce+"' con il valore di default 'VALORE_DEFAULT_COALESCE'"); 
+							}
+						}
+						if(PRIMA_COLONNA.equals(campoVuoto)) {
+							if(!campoVuoto.equals(testCase)) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con lo stesso valore della colonna campo_vuoto:'"+campoVuoto+"'"); 
+							}
+						}
+						else if(ULTIMA_COLONNA.equals(campoVuoto)) {
+							if(testCase!=null) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con null value per la colonna con valore '"+campoVuoto+"'"); 
+							}
+						}
+						else {
+							if(testCase!=null) {
+								throw new Exception("Test failed; expected testCase '"+testCase+"' con null value per la colonna con valore '"+campoVuoto+"'"); 
+							}
+						}
+					}
+				}finally {
+					if(rs!=null){
+						rs.close();
+						rs = null;
+					}
+					if(stmtQuery!=null){
+						stmtQuery.close();
+						stmtQuery = null;
+					}
+				}
+				
+				if(index==0) {
+					throw new Exception("Test failed"); 
+				}
+			}catch(Exception e){
+				
+				throw e;
+			}
+			
+			
+			
+			
+		}finally{
+			try{
+				if(rs!=null){
+					rs.close();
+					rs = null;
+				}
+			}catch(Exception eClose){}
+			try{
+				if(stmtQuery!=null){
+					stmtQuery.close();
+					stmtQuery = null;
+				}
+			}catch(Exception eClose){}
+		}
+		
+		
+	}
+	
+	
 
 	private static void test0_engine(TipiDatabase tipo, Connection con, boolean selectForUpdate) throws Exception {
 
@@ -2242,7 +2500,7 @@ public class ClientTest {
 			sqlQueryObject.addSelectAvgField("aliasMSG","id", "avgMedio");
 			sqlQueryObject.addSelectField("aliasMSG","mittente");
 			sqlQueryObject.addSelectAliasField("aliasMSG","destinatario", "ALIASDEST");
-
+			
 			sqlQueryObject.addWhereIsNotNullCondition("tracce.tipo_mittente");
 
 			sqlQueryObject.addGroupBy("aliasMSG.mittente");
@@ -2280,7 +2538,7 @@ public class ClientTest {
 				int index = 0;
 				if(rs.next()){
 					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+
-							"->"+rs.getString("ALIASDEST")+") (count:"+rs.getLong("cont")+")");
+							"->"+rs.getString("ALIASDEST")+") (count:"+rs.getLong("cont")+")");					
 					while(rs.next()){
 						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+
 								"->"+rs.getString("ALIASDEST")+") (count:"+rs.getLong("cont")+")");

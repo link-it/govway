@@ -1165,7 +1165,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public String updateFileTrace(){
 		try {
 			if(this.openspcoopProperties.isTransazioniFileTraceEnabled()){
-				FileTraceConfig.update(this.openspcoopProperties.getTransazioniFileTraceConfig());
+				FileTraceConfig.update(this.openspcoopProperties.getTransazioniFileTraceConfig(), true);
 				return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
 			}
 			else {

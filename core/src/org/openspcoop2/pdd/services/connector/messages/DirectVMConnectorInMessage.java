@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.pdd.services.connector.messages;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,9 +27,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
@@ -40,9 +42,11 @@ import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -70,6 +74,11 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private DirectVMProtocolInfo directVMProtocolInfo;
 	private PdDContext pddContext;
 	private Date dataIngressoRichiesta;
+	
+	private Context context;
+	private String idTransazione;
+	private int soglia;
+	private File repositoryFile;
 	
 	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
 			Map<String, List<String>> trasporto,
@@ -156,6 +165,17 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 		}
 	}
 
+	@Override
+	public void setThresholdContext(Context context,
+			int soglia, File repositoryFile) {
+		this.context = context;
+		if(this.context!=null) {
+			this.idTransazione = (String) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
+		this.soglia = soglia;
+		this.repositoryFile = repositoryFile;
+	}
+	
 	public DirectVMProtocolInfo getDirectVMProtocolInfo() {
 		return this.directVMProtocolInfo;
 	}
@@ -180,6 +200,11 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public RequestInfo getRequestInfo(){
 		return this.requestInfo;
+	}
+	
+	@Override
+	public MessageType getRequestMessageType() {
+		return this.message.getMessageType();
 	}
 	
 	private Map<String, Object> attributes = new HashMap<String, Object>();
@@ -248,15 +273,16 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
-	public byte[] getRequest() throws ConnectorException{
+	public DumpByteArrayOutputStream getRequest() throws ConnectorException{
 		try{
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			this.dataIngressoRichiesta = DateManager.getDate();
+			
+			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
+					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
 			this.message.writeTo(bout, true);
 			bout.flush();
 			bout.close();
-			byte[] b = bout.toByteArray();
-			this.dataIngressoRichiesta = DateManager.getDate();
-			return b;
+			return bout;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}

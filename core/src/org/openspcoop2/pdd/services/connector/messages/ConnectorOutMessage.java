@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.services.connector.messages;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 
 /**
  * ConnectorOutMessage
@@ -30,10 +31,10 @@ import org.openspcoop2.pdd.services.connector.ConnectorException;
  * @version $Rev$, $Date$
  */
 public interface ConnectorOutMessage {
-
+	
 	public void sendResponse(OpenSPCoop2Message message, boolean consume) throws ConnectorException; 
 	
-	public void sendResponse(byte[] message) throws ConnectorException;
+	public void sendResponse(DumpByteArrayOutputStream message) throws ConnectorException;
 	public void sendResponseHeaders(OpenSPCoop2Message message) throws ConnectorException; 
 	
 	public void setHeader(String key,String value) throws ConnectorException; 

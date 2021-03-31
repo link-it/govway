@@ -4115,7 +4115,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE, pIdSogg, pIdPorta, pIdAsps);
 					if(visualizzazioneTabs) {
-						setStatoDump(de, paAssociata.getDump(), configurazioneGenerale);
+						setStatoDump(de, paAssociata.getDump(), configurazioneGenerale, true);
 					}
 					else {
 						String statoDump = getStatoDumpPortaApplicativa(paAssociata,false);
@@ -5745,7 +5745,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE);
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 					if(visualizzazioneTabs) {
-						setStatoDump(de, pdAssociata.getDump(), configurazioneGenerale);
+						setStatoDump(de, pdAssociata.getDump(), configurazioneGenerale, false);
 					}
 					else {
 						String statoDump = getStatoDumpPortaDelegata(pdAssociata, false);

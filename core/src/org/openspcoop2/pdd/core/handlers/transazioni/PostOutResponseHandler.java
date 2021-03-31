@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -332,6 +333,9 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		
 		List<String> esitiDaRegistrare = null;
 		boolean exitTransactionAfterRateLimitingRemoveThread = false;
+		boolean fileTraceEnabled = false;
+		File fileTraceConfig = null;
+		boolean fileTraceConfigGlobal = true;
 		try{
 			Tracciamento configTracciamento = this.configPdDManager.getOpenSPCoopAppender_Tracciamento();
 			StringBuilder bf = new StringBuilder();
@@ -348,6 +352,17 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						if(pd!=null && pd.getTracciamento()!=null && pd.getTracciamento().getEsiti()!=null) {
 							esitiConfig = pd.getTracciamento().getEsiti();
 						}
+						try {
+							fileTraceEnabled = this.configPdDManager.isTransazioniFileTraceEnabled(pd);
+							if(fileTraceEnabled) {
+								fileTraceConfig = this.configPdDManager.getFileTraceConfig(pd);
+								fileTraceConfigGlobal = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
+										this.openspcoopProperties.getTransazioniFileTraceConfig().getAbsolutePath().equals(fileTraceConfig.getAbsolutePath());
+							}
+						}catch(Throwable e) {
+							this.log.debug("["+idTransazione+"] Errore avvenuto durante la lettura della configurazione file-trace: "+e.getMessage(),e); 
+							fileTraceEnabled = false;
+						}
 						break;
 					case APPLICATIVA:
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
@@ -355,6 +370,17 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						PortaApplicativa pa = this.configPdDManager.getPortaApplicativa_SafeMethod(idPA);
 						if(pa!=null && pa.getTracciamento()!=null && pa.getTracciamento().getEsiti()!=null) {
 							esitiConfig = pa.getTracciamento().getEsiti();
+						}
+						try {
+							fileTraceEnabled = this.configPdDManager.isTransazioniFileTraceEnabled(pa);
+							if(fileTraceEnabled) {
+								fileTraceConfig = this.configPdDManager.getFileTraceConfig(pa);
+								fileTraceConfigGlobal = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
+										this.openspcoopProperties.getTransazioniFileTraceConfig().getAbsolutePath().equals(fileTraceConfig.getAbsolutePath());
+							}
+						}catch(Throwable e) {
+							this.log.debug("["+idTransazione+"] Errore avvenuto durante la lettura della configurazione file-trace: "+e.getMessage(),e); 
+							fileTraceEnabled = false;
 						}
 						break;
 					default:
@@ -559,14 +585,21 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			
 			// ### FileTrace ###
 			
-			if(this.openspcoopProperties.isTransazioniFileTraceEnabled()) {
+			if(fileTraceEnabled) {
+				FileTraceManager fileTraceManager = null;
 				try {
-					FileTraceConfig config = FileTraceConfig.getConfig(this.openspcoopProperties.getTransazioniFileTraceConfig());
-					FileTraceManager	fileTraceManager = new FileTraceManager(this.log, config);
+					FileTraceConfig config = FileTraceConfig.getConfig(fileTraceConfig, fileTraceConfigGlobal);
+					fileTraceManager = new FileTraceManager(this.log, config);
 					fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction);
 					fileTraceManager.invoke(context.getTipoPorta(), context.getPddContext());
 				}catch (Throwable e) {
 					this.log.error("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);
+				}finally {
+					try {
+						fileTraceManager.cleanResourcesForOnlyFileTrace(transaction);
+					}catch(Throwable eClean) {
+						this.log.error("["+idTransazione+"] File trace 'clean' fallito: "+eClean.getMessage(),eClean);
+					}
 				}
 			}
 
@@ -779,49 +812,60 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				
 				for(int i=0; i<transaction.sizeMessaggi(); i++){
 					Messaggio messaggio = transaction.getMessaggio(i);
-					if(messaggio.getProtocollo()==null) {
-						messaggio.setProtocollo(transazioneDTO.getProtocollo());
-					}
-					if(messaggio.getDominio()==null) {
-						messaggio.setDominio(idDominio);
-					}
-					if(messaggio.getTipoPdD()==null) {
-						messaggio.setTipoPdD(context.getTipoPorta());
-					}
-					if(messaggio.getIdFunzione()==null) {
-						messaggio.setIdFunzione(modulo);
-					}
-					if(messaggio.getIdBusta()==null) {
-						if(context.getProtocollo()!=null) {
-							messaggio.setIdBusta(context.getProtocollo().getIdRichiesta());
+					try {
+						if(messaggio.getProtocollo()==null) {
+							messaggio.setProtocollo(transazioneDTO.getProtocollo());
+						}
+						if(messaggio.getDominio()==null) {
+							messaggio.setDominio(idDominio);
+						}
+						if(messaggio.getTipoPdD()==null) {
+							messaggio.setTipoPdD(context.getTipoPorta());
+						}
+						if(messaggio.getIdFunzione()==null) {
+							messaggio.setIdFunzione(modulo);
+						}
+						if(messaggio.getIdBusta()==null) {
+							if(context.getProtocollo()!=null) {
+								messaggio.setIdBusta(context.getProtocollo().getIdRichiesta());
+							}
+						}
+						if(messaggio.getFruitore()==null) {
+							if(context.getProtocollo()!=null) {
+								messaggio.setFruitore(context.getProtocollo().getFruitore());
+							}
+						}
+						if(messaggio.getServizio()==null) {
+							if(context.getProtocollo()!=null) {
+								IDServizio idServizio = IDServizioFactory.getInstance().
+										getIDServizioFromValuesWithoutCheck(context.getProtocollo().getTipoServizio(), 
+												context.getProtocollo().getServizio(), 
+												context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getTipo() : null, 
+												context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getNome() : null,
+												context.getProtocollo().getVersioneServizio()!=null ? context.getProtocollo().getVersioneServizio() : -1);
+								messaggio.setServizio(idServizio);
+							}
+						}
+						if(this.debug)
+							this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] ...");
+						if(this.dumpOpenSPCoopAppender instanceof org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender) {
+							((org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender)this.dumpOpenSPCoopAppender).dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
+						}
+						else {
+							this.dumpOpenSPCoopAppender.dump(connection,messaggio);
+						}
+						if(this.debug)
+							this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] completata");
+					}finally {
+						try {
+							if(messaggio.getBody()!=null) {
+								messaggio.getBody().unlock();
+								messaggio.getBody().clearResources();
+							}
+						}catch(Throwable t){
+							this.log.error("["+idTransazione+"] errore durante il rilascio delle risorse del messaggio: "+t.getMessage(),t);
 						}
 					}
-					if(messaggio.getFruitore()==null) {
-						if(context.getProtocollo()!=null) {
-							messaggio.setFruitore(context.getProtocollo().getFruitore());
-						}
-					}
-					if(messaggio.getServizio()==null) {
-						if(context.getProtocollo()!=null) {
-							IDServizio idServizio = IDServizioFactory.getInstance().
-									getIDServizioFromValuesWithoutCheck(context.getProtocollo().getTipoServizio(), 
-											context.getProtocollo().getServizio(), 
-											context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getTipo() : null, 
-											context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getNome() : null,
-											context.getProtocollo().getVersioneServizio()!=null ? context.getProtocollo().getVersioneServizio() : -1);
-							messaggio.setServizio(idServizio);
-						}
-					}
-					if(this.debug)
-						this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] ...");
-					if(this.dumpOpenSPCoopAppender instanceof org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender) {
-						((org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender)this.dumpOpenSPCoopAppender).dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
-					}
-					else {
-						this.dumpOpenSPCoopAppender.dump(connection,messaggio);
-					}
-					if(this.debug)
-						this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] completata");
 				}
 				
 				

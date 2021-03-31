@@ -991,7 +991,7 @@ application/xenc+xml xml
 application/xhtml+xml xhtml xhtm xht
 # application/xhtml-voice+xml obsoleted by application/xv+xml
 # xml, xsd, rng: text/xml
-application/xml
+application/xml xml
 # mod: audio/x-mod
 application/xml-dtd dtd
 # ent: text/xml-external-parsed-entity

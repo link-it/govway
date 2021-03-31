@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.monitor.transazioni.dao;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -83,6 +84,8 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio);
 
 	public DumpMessaggio getDumpMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception;
+	
+	public InputStream getContentInputStream(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception;
 	
 	public int countDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore);
 	

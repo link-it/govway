@@ -39,7 +39,10 @@ import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -129,7 +132,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				return false;
 
 			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder, false);
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder, false, DumpUtils.getThreshold_readInMemory());
 			if(errore!= null)
 				return false;
 
@@ -158,7 +161,9 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			//				break;
 			//			}
 		}
-
+		else if(this.dumpMessaggio!=null && this.dumpMessaggio.getContentLength()!=null && this.dumpMessaggio.getContentLength()>0) {
+			return false;
+		}
 
 		return visualizzaMessaggio;
 	}
@@ -167,7 +172,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		String toRet = null;
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
 			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder, true);
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder, true, DumpUtils.getThreshold_readInMemory());
 			if(errore!= null)
 				return "";
 
@@ -301,7 +306,11 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	public String getErroreVisualizzaMessaggio(){
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
 			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder,false);
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder,false, DumpUtils.getThreshold_readInMemory());
+			return errore;
+		}
+		else if(this.dumpMessaggio!=null && this.dumpMessaggio.getContentLength()!=null && this.dumpMessaggio.getContentLength()>0) {
+			String errore = Utilities.getErrorMessagePrintableTextMaxLength(this.dumpMessaggio.getContentLength().intValue(), DumpUtils.getThreshold_readInMemory());
 			return errore;
 		}
 
@@ -396,8 +405,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			// Now we create some variables we will use for writting the file to the
 			// response
 			// String filePath = null;
-			int read = 0;
-			byte[] bytes = new byte[1024];
+//			int read = 0;
+//			byte[] bytes = new byte[1024];
 
 			// Be sure to retrieve the absolute path to the file with the required
 			// method
@@ -422,9 +431,11 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			
 			try {
 				if(contentType != null) {
+					/*
+					 * Fix: se è multipart è giusto vederlo come un binario
 					if(ContentTypeUtilities.isMultipart(contentType)){
 						contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
-					}
+					}*/
 				}
 				ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
 			}catch(Exception e) {
@@ -437,22 +448,35 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			HttpUtilities.setOutputFile(response, true, fileName, contentType);
 
 			// Streams we will use to read, write the file bytes to our response
-			ByteArrayInputStream bis = null;
+			InputStream is = null;
 			OutputStream os = null;
 
 			// First we load the file in our InputStream
 			//			if(this.base64Decode){
 			//				contenutoBody = ((DumpAllegatoBean)this.dumpMessaggio).decodeBase64();
 			//			}
-			byte[] contenutoBody = this.dumpMessaggio.getBody();
-			bis = new ByteArrayInputStream(contenutoBody);
+			if(this.dumpMessaggio.getBody()!=null) {
+				byte[] contenutoBody = this.dumpMessaggio.getBody();
+				is = new ByteArrayInputStream(contenutoBody);
+			}
+			else {
+				try {
+					if(this.ultimaConsegna == null)
+						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
+					else 
+						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
+				} catch (Exception e) {
+					this.log.error(e.getMessage(), e);
+				}
+			}
 			os = response.getOutputStream();
 
 			// While there are still bytes in the file, read them and write them to
 			// our OutputStream
-			while ((read = bis.read(bytes)) != -1) {
-				os.write(bytes, 0, read);
-			}
+//			while ((read = bis.read(bytes)) != -1) {
+//				os.write(bytes, 0, read);
+//			}
+			CopyStream.copy(is, os);
 
 			// Clean resources
 			os.flush();
@@ -673,11 +697,15 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				return "Messaggio di Risposta - Contenuti Ingresso";
 			case RISPOSTA_USCITA:	
 				return "Messaggio di Risposta - Contenuti Uscita";
-			case INTEGRATION_MANAGER:
 			case RICHIESTA_INGRESSO_DUMP_BINARIO:
+				return "Messaggio di Richiesta - Dati Ingresso";
 			case RICHIESTA_USCITA_DUMP_BINARIO:
+				return "Messaggio di Richiesta - Dati Uscita";
 			case RISPOSTA_INGRESSO_DUMP_BINARIO:
+				return "Messaggio di Risposta - Dati Ingresso";
 			case RISPOSTA_USCITA_DUMP_BINARIO:
+				return "Messaggio di Risposta - Dati Uscita";
+			case INTEGRATION_MANAGER:
 			default:
 				return "Contenuti Messaggio";
 			}

@@ -137,6 +137,7 @@
                    	<h:outputLabel value="&#160;|&#160;" />
                    	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.dataUltimaConsegna}" target="#{dettagliDump.ultimaConsegna}"/>
 						<h:outputText value="Esporta" />
 					</h:commandLink>
 				</h:form>

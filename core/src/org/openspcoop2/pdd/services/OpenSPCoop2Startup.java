@@ -657,7 +657,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/* ------------- Inizializzo Configurazione FileTrace --------------- */
 			try {
 				if(propertiesReader.isTransazioniFileTraceEnabled()) {
-					FileTraceConfig.init(propertiesReader.getTransazioniFileTraceConfig());
+					FileTraceConfig.init(propertiesReader.getTransazioniFileTraceConfig(), true);
 				}
 			}catch(Exception e) {
 				this.logError("Riscontrato errore durante l'inizializzazione del FileTrace");
@@ -2046,6 +2046,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				FileSystemUtilities.mkdir(fs.getDirDump().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirEventi().getAbsolutePath(), configMkdir);
 				
+				// dumpBinario
+				File dirBinario = propertiesReader.getDumpBinario_repository();
+				FileSystemUtilities.mkdir(dirBinario, configMkdir);
+								
 				// dumpNotRealTime
 				if(propertiesReader.isDumpNonRealtime_fileSystemMode()) {
 					File dir = propertiesReader.getDumpNonRealtime_repository();

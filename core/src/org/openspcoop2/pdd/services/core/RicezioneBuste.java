@@ -664,7 +664,7 @@ public class RicezioneBuste {
 			dumpConfig = (DumpConfigurazione) internalObjects.get(CostantiPdD.DUMP_CONFIG); // dovrebbe essere stata impostata per la pd/pa specifica
 		}
 		else {
-			dumpConfig = configurazionePdDReader.getDumpConfigurazione();
+			dumpConfig = configurazionePdDReader.getDumpConfigurazionePortaApplicativa();
 		}
 		
 		ProtocolContext protocolContext = this.msgContext.getProtocol();
@@ -1805,7 +1805,7 @@ public class RicezioneBuste {
 				dumpConfig = configurazionePdDReader.getDumpConfigurazione(pa);
 			}
 			else {
-				dumpConfig = configurazionePdDReader.getDumpConfigurazione();
+				dumpConfig = configurazionePdDReader.getDumpConfigurazionePortaApplicativa();
 			}
 			internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
 		} 

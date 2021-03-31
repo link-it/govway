@@ -42,6 +42,8 @@ public class Startup implements ServletContextListener {
 	public static Logger logPing;
 	public static Logger logEcho;
 	public static Logger logStressTest;
+	public static int thresholdRequestDump = -1;
+	public static File repositoryRequestDump = null;
 	public static File repositoryResponseFiles;
 	public static List<String> whitePropertiesList;
 	public static boolean genericError = false;
@@ -65,12 +67,39 @@ public class Startup implements ServletContextListener {
 			
 			Properties p = new Properties();
 			p.load(Startup.class.getResourceAsStream("/testService.properties"));
+			
+			String threshold = p.getProperty("requestDump.inMemory.threshold");
+			if(threshold!=null) {
+				threshold = threshold.trim();
+				thresholdRequestDump = Integer.valueOf(threshold);
+			}
+			
+			String repoDump = p.getProperty("requestDump.msgRepository");
+			if(repoDump!=null) {
+				repoDump = repoDump.trim();
+				File f = new File(repoDump);
+				if(f.exists()==false) {
+					if(f.mkdir()==false) {
+						throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' not exists");
+					}
+				}
+				if(f.isDirectory()==false) {
+					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' is not directory");
+				}
+				if(f.canRead()==false) {
+					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' cannot read");
+				}
+				repositoryRequestDump = f;
+			}
+			
 			String repo = p.getProperty("responseFiles.repository");
 			if(repo!=null) {
 				repo = repo.trim();
 				File f = new File(repo);
 				if(f.exists()==false) {
-					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' not exists");
+					if(f.mkdir()==false) {
+						throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' not exists");
+					}
 				}
 				if(f.isDirectory()==false) {
 					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property 'responseFiles.repository' is not directory");

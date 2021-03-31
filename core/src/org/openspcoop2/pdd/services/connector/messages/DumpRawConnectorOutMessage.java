@@ -21,21 +21,26 @@
 package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
@@ -50,7 +55,8 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 
 	private Logger log;
 	private ConnectorOutMessage connectorOutMessage;
-	private ByteArrayOutputStream bout = null;
+	private DumpByteArrayOutputStream bout = null;
+	private MessageType messageType = null;
 	private ParseException parseException = null;
 	private Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
 	private Integer contentLenght;
@@ -58,27 +64,47 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	private Integer status;
 	private OpenSPCoop2Properties openspcoopProperties;
 	
-	public DumpRawConnectorOutMessage(Logger log,ConnectorOutMessage connectorOutMessage){
+	private Context context;
+	private String idTransazione;
+	private int soglia;
+	private File repositoryFile;
+	
+	public DumpRawConnectorOutMessage(Logger log,ConnectorOutMessage connectorOutMessage, Context context,
+			int soglia, File repositoryFile){
 		this.log = log;
 		this.connectorOutMessage = connectorOutMessage;
 		this.openspcoopProperties =  OpenSPCoop2Properties.getInstance();
+		
+		this.context = context;
+		this.idTransazione = (String) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		this.soglia = soglia;
+		this.repositoryFile = repositoryFile;
 	}
 	
 	public ConnectorOutMessage getWrappedConnectorOutMessage() {
 		return this.connectorOutMessage;
 	}
 	
-	public byte[] getResponseAsByte(){
+	public DumpByteArrayOutputStream getDumpByteArrayOutputStream() {
 		if(this.bout!=null && this.bout.size()>0){
-			return this.bout.toByteArray();
+			return this.bout;
 		}
 		return null;
 	}
-	public String getResponseAsString(){
-		if(this.bout!=null && this.bout.size()>0){
-			return this.bout.toString();
-		}
-		return null;
+//	public byte[] getResponseAsByte(){
+//		if(this.bout!=null && this.bout.size()>0){
+//			return this.bout.toByteArray();
+//		}
+//		return null;
+//	}
+//	public String getResponseAsString(){
+//		if(this.bout!=null && this.bout.size()>0){
+//			return this.bout.toString();
+//		}
+//		return null;
+//	}
+	public MessageType getMessageType() {
+		return this.messageType;
 	}
 	public boolean isParsingResponseError(){
 		return this.parseException!=null;
@@ -149,9 +175,11 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 			
 			// Prima lo registro e dopo serializzo
 			if(this.bout!=null){
+				this.bout.clearResources();
 				this.bout = null;
 			}
-			this.bout = new ByteArrayOutputStream();
+			this.bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
+					TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.getValue());
 			
 			boolean hasContent = false;
 			
@@ -171,6 +199,11 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 			if(hasContent) {
 				message.writeTo(this.bout, consume);
 			}
+			
+			if(message!=null) {
+				this.messageType = message.getMessageType();
+			}
+			
 		}catch(Throwable t){
 			this.bout = null;
 			if(message.getParseException()!=null){
@@ -198,26 +231,25 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		// wrapped method
 		//this.connectorOutMessage.sendResponse(message, consume); Nel caso di attachments genera un nuovo boundary
 		if(this.bout!=null){
-			this.connectorOutMessage.sendResponse(this.bout.toByteArray());
+			this.connectorOutMessage.sendResponse(this.bout);
 		}
 	}
 
 	@Override
-	public void sendResponse(byte[] message) throws ConnectorException {
+	public void sendResponse(DumpByteArrayOutputStream message) throws ConnectorException {
 	
 		try{
 			// Prima lo registro e dopo serializzo
 			if(this.bout!=null){
+				this.bout.clearResources();
 				this.bout = null;
 			}
-			this.bout = new ByteArrayOutputStream();
-			if(message!=null && message.length>0) {
-				this.bout.write(message);
+			if(message!=null && message.size()>0) {
+				this.bout = message;
 			}
 		}catch(Throwable t){
 			try{
-				this.bout = new ByteArrayOutputStream();
-				this.bout.write(("SendResponse byte[] error: "+t.getMessage()).getBytes());
+				this.bout = DumpByteArrayOutputStream.newInstance(("SendResponse byte[] error: "+t.getMessage()).getBytes());
 			}catch(Throwable tWrite){}
 			this.log.error("SendResponse byte[] error: "+t.getMessage(),t);
 		}finally{
@@ -254,8 +286,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 			TransportUtils.setHeader(this.trasporto, key, value);
 		}catch(Throwable t){
 			try{
-				this.bout = new ByteArrayOutputStream();
-				this.bout.write(("setHeader ["+key+"] error: "+t.getMessage()).getBytes());
+				this.bout = DumpByteArrayOutputStream.newInstance(("setHeader ["+key+"] error: "+t.getMessage()).getBytes());
 			}catch(Throwable tWrite){}
 			this.log.error("Set Header ["+key+"]["+value+"] error: "+t.getMessage(),t);
 		}
@@ -270,8 +301,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 			TransportUtils.addHeader(this.trasporto, key, value);
 		}catch(Throwable t){
 			try{
-				this.bout = new ByteArrayOutputStream();
-				this.bout.write(("addHeader ["+key+"] error: "+t.getMessage()).getBytes());
+				this.bout = DumpByteArrayOutputStream.newInstance(("addHeader ["+key+"] error: "+t.getMessage()).getBytes());
 			}catch(Throwable tWrite){}
 			this.log.error("Add Header ["+key+"]["+value+"] error: "+t.getMessage(),t);
 		}

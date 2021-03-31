@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.services.connector.messages;
 
+import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +36,9 @@ import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
@@ -124,11 +127,18 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	@Override
-	public void sendResponse(byte[] message) throws ConnectorException{
+	public void sendResponse(DumpByteArrayOutputStream message) throws ConnectorException{
 		try{
-			if(message!=null && message.length>0) {
+			if(message!=null && message.size()>0) {
 				this.outNullable = this.res.getOutputStream();
-				this.outNullable.write(message);
+				if(message.isSerializedOnFileSystem()) {
+					try(FileInputStream fin = new FileInputStream(message.getSerializedFile())) {
+						Utilities.copy(fin, this.outNullable);
+					}
+				}
+				else {
+					this.outNullable.write(message.toByteArray());
+				}
 			}
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);

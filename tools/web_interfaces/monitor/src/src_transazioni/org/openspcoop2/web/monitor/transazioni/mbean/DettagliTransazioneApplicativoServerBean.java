@@ -54,6 +54,7 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServer
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
+import org.openspcoop2.web.monitor.transazioni.exporter.SingleFileExporter;
 import org.slf4j.Logger;
 
 /**
@@ -115,6 +116,8 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	private Boolean hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita = null;
 	private Boolean hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso = null;
 	
+	private Date dataConsegnaErogatore = null;
+	private Date ultimaConsegna = null;
 	
 	private TipoMessaggio exportContenuto;
 		
@@ -711,9 +714,18 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 			ZipOutputStream zip = new ZipOutputStream(
 					response.getOutputStream());
 			
-//			SingleFileExporter.exportContenuti(log, this.dettaglio, zip, dirPath, this.transazioniSAService, this.exportContenuto,
-//					DettagliTransazioneApplicativoServerBean.headersAsProperties,DettagliTransazioneApplicativoServerBean.contenutiAsProperties);
-//			
+			Date dataConsegna = null;
+			if(this.ultimaConsegna == null) {
+				dataConsegna = this.dataConsegnaErogatore;
+			}
+			else {
+				dataConsegna = this.ultimaConsegna;
+			}
+			
+			SingleFileExporter.exportContenuti(log, this.dettaglio, dataConsegna, 
+					zip, dirPath, this.transazioniService, this.exportContenuto,
+					DettagliTransazioneApplicativoServerBean.headersAsProperties,DettagliTransazioneApplicativoServerBean.contenutiAsProperties);
+			
 			zip.flush();
 			zip.close();
 
@@ -822,5 +834,21 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 		)
 			return true;
 		return false;
+	}
+	
+	public Date getDataConsegnaErogatore() {
+		return this.dataConsegnaErogatore;
+	}
+
+	public void setDataConsegnaErogatore(Date dataConsegnaErogatore) {
+		this.dataConsegnaErogatore = dataConsegnaErogatore;
+	}
+	
+	public Date getUltimaConsegna() {
+		return this.ultimaConsegna;
+	}
+
+	public void setUltimaConsegna(Date ultimaConsegna) {
+		this.ultimaConsegna = ultimaConsegna;
 	}
 }

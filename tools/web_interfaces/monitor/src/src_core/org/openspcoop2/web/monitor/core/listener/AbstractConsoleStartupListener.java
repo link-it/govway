@@ -29,6 +29,7 @@ import javax.servlet.ServletContextListener;
 
 import org.openspcoop2.core.commons.dao.DAOFactoryInstanceProperties;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
 import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -472,6 +473,19 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			throw new RuntimeException(msgErrore,e);
 		}
 
+		
+		// inizializzo accesso dati sul database per i dump
+		try {
+			DumpUtils.setThreshold_readInMemory(appProperties.getTransazioniDettaglioVisualizzazioneMessaggiThreshold());
+		} catch (Exception e) {
+			String msgErrore = "Errore durante l'inizializzazione del threshold per l'accesso ai dump: " + e.getMessage();
+			AbstractConsoleStartupListener.log.error(
+					//					throw new ServletException(
+					msgErrore,e);
+			throw new RuntimeException(msgErrore,e);
+		}
+		
+		
 
 		AbstractConsoleStartupListener.log.debug("PddMonitor Console avviata correttamente.");
 		

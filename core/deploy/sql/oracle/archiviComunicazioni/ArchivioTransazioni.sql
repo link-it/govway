@@ -346,6 +346,7 @@ CREATE TABLE dump_messaggi
 	tipo_messaggio VARCHAR2(255) NOT NULL,
 	formato_messaggio VARCHAR2(20),
 	content_type VARCHAR2(255),
+	content_length NUMBER,
 	multipart_content_type VARCHAR2(255),
 	multipart_content_id VARCHAR2(255),
 	multipart_content_location VARCHAR2(255),

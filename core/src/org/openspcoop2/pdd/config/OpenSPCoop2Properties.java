@@ -1566,9 +1566,13 @@ public class OpenSPCoop2Properties {
 			
 			// Dump
 			this.isDumpAllAttachments();
-			this.isDumpBinario_registrazioneDatabase();
 			this.isDumpFallito_BloccaCooperazioneInCorso();
 			this.isDumpFallito_BloccoServiziPdD();
+			
+			// DumpBinario
+			this.isDumpBinario_registrazioneDatabase();
+			this.getDumpBinario_inMemoryThreshold();
+			this.getDumpBinario_repository();
 
 			// DumpNotRealtime
 			this.getDumpNonRealtime_inMemoryThreshold();
@@ -15818,30 +15822,6 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isDumpAllAttachments;
 	}
 	
-	private static Boolean isDumpBinario_registrazioneDatabase = null;
-	public boolean isDumpBinario_registrazioneDatabase(){
-
-		if(OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase"); 
-
-				if (value != null){
-					value = value.trim();
-					OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = Boolean.parseBoolean(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = false;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = false;
-			}
-		}
-
-		return OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase;
-	}
-	
 	/**
 	 * Indica se in caso di errore di dump applicativo (es. salvataggio contenuto non riuscito) deve essere bloccata la gestione del messaggio e generato un errore al client
 	 *   
@@ -15901,6 +15881,94 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isDumpFallito_BloccoServiziPdD;
 	}
 
+	
+	
+	
+	/* ----------- Dump (Binario) --------------------- */
+	
+	private static Boolean isDumpBinario_registrazioneDatabase = null;
+	public boolean isDumpBinario_registrazioneDatabase(){
+
+		if(OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase;
+	}
+	
+	private static Integer getDumpBinario_inMemoryThreshold = null;
+	public int getDumpBinario_inMemoryThreshold() {	
+		String pName = "org.openspcoop2.pdd.logger.dumpBinario.inMemory.threshold";
+		if(OpenSPCoop2Properties.getDumpBinario_inMemoryThreshold==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getDumpBinario_inMemoryThreshold = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_BINARIO_THRESHOLD);
+					OpenSPCoop2Properties.getDumpBinario_inMemoryThreshold = CostantiPdD.DUMP_BINARIO_THRESHOLD;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_BINARIO_THRESHOLD+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getDumpBinario_inMemoryThreshold = CostantiPdD.DUMP_BINARIO_THRESHOLD;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getDumpBinario_inMemoryThreshold;
+	}
+	
+	private static File getDumpBinario_repository = null;
+	public File getDumpBinario_repository() throws Exception {	
+		String pName = "org.openspcoop2.pdd.logger.dumpBinario.msgRepository";
+		if(OpenSPCoop2Properties.getDumpBinario_repository==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getDumpBinario_repository = new File(name);
+				if(OpenSPCoop2Properties.getDumpBinario_repository.exists()) {
+					if(OpenSPCoop2Properties.getDumpBinario_repository.isDirectory()==false) {
+						throw new Exception("Dir ["+OpenSPCoop2Properties.getDumpBinario_repository.getAbsolutePath()+"] not dir");
+					}
+					if(OpenSPCoop2Properties.getDumpBinario_repository.canRead()==false) {
+						throw new Exception("Dir ["+OpenSPCoop2Properties.getDumpBinario_repository.getAbsolutePath()+"] cannot read");
+					}
+					if(OpenSPCoop2Properties.getDumpBinario_repository.canWrite()==false) {
+						throw new Exception("Dir ["+OpenSPCoop2Properties.getDumpBinario_repository.getAbsolutePath()+"] cannot write");
+					}
+				}
+				else {
+					// viene creata automaticamente
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getDumpBinario_repository;
+	}
+	
+	
 	
 	
 	

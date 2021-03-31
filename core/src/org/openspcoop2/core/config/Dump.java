@@ -40,6 +40,8 @@ import java.util.List;
  * &lt;complexType name="dump"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-porta-delegata" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-porta-applicativa" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
@@ -58,6 +60,8 @@ import java.util.List;
 @XmlType(name = "dump", 
   propOrder = {
   	"configurazione",
+  	"configurazionePortaDelegata",
+  	"configurazionePortaApplicativa",
   	"openspcoopAppender"
   }
 )
@@ -82,12 +86,28 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBean implements Serial
 		this.id=Long.valueOf(-1);
   }
 
-  public DumpConfigurazione getConfigurazione() {
+  @java.lang.Deprecated public DumpConfigurazione getConfigurazione() {
     return this.configurazione;
   }
 
-  public void setConfigurazione(DumpConfigurazione configurazione) {
+  @java.lang.Deprecated public void setConfigurazione(DumpConfigurazione configurazione) {
     this.configurazione = configurazione;
+  }
+
+  public DumpConfigurazione getConfigurazionePortaDelegata() {
+    return this.configurazionePortaDelegata;
+  }
+
+  public void setConfigurazionePortaDelegata(DumpConfigurazione configurazionePortaDelegata) {
+    this.configurazionePortaDelegata = configurazionePortaDelegata;
+  }
+
+  public DumpConfigurazione getConfigurazionePortaApplicativa() {
+    return this.configurazionePortaApplicativa;
+  }
+
+  public void setConfigurazionePortaApplicativa(DumpConfigurazione configurazionePortaApplicativa) {
+    this.configurazionePortaApplicativa = configurazionePortaApplicativa;
   }
 
   public void addOpenspcoopAppender(OpenspcoopAppender openspcoopAppender) {
@@ -183,6 +203,12 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   @XmlElement(name="configurazione",required=false,nillable=false)
   protected DumpConfigurazione configurazione;
+
+  @XmlElement(name="configurazione-porta-delegata",required=false,nillable=false)
+  protected DumpConfigurazione configurazionePortaDelegata;
+
+  @XmlElement(name="configurazione-porta-applicativa",required=false,nillable=false)
+  protected DumpConfigurazione configurazionePortaApplicativa;
 
   @XmlElement(name="openspcoop-appender",required=true,nillable=false)
   protected List<OpenspcoopAppender> openspcoopAppender = new ArrayList<OpenspcoopAppender>();

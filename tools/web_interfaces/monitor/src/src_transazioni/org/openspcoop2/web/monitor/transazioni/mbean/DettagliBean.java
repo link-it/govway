@@ -1051,8 +1051,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			// server.
 
 			String dirPath = null; // per non far produrre la directory contenuti
-			String fileName = this.exportContenuto.name().toLowerCase();
-						
+			String fileName = SingleFileExporter.getDirName(this.exportContenuto);
+									
 			if (this.isRisposta)
 				fileName = fileName+".zip";
 			else

@@ -115,6 +115,13 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 				return "content_type";
 			}
 		}
+		if(field.equals(DumpMessaggio.model().CONTENT_LENGTH)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_length";
+			}else{
+				return "content_length";
+			}
+		}
 		if(field.equals(DumpMessaggio.model().MULTIPART_CONTENT_TYPE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".multipart_content_type";
@@ -371,6 +378,9 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 		if(field.equals(DumpMessaggio.model().CONTENT_TYPE)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().CONTENT_LENGTH)){
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 		if(field.equals(DumpMessaggio.model().MULTIPART_CONTENT_TYPE)){

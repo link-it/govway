@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 
 /**
@@ -127,6 +128,21 @@ public class FileSystemUtilities {
 		return FileSystemUtilities.readFile(new File(f));
 	}
 	public static String readFile(File f) throws Exception{
+		return _readFile(f, null, null);
+	}
+	public static String readFile(String f, String charsetName) throws Exception{
+		return FileSystemUtilities.readFile(new File(f),charsetName);
+	}
+	public static String readFile(File f, String charsetName) throws Exception{
+		return _readFile(f, charsetName, null);
+	}
+	public static String readFile(String f, Charset charset) throws Exception{
+		return FileSystemUtilities.readFile(new File(f), charset);
+	}
+	public static String readFile(File f, Charset charset) throws Exception{
+		return _readFile(f, null, charset);
+	}
+	private static String _readFile(File f, String charsetName, Charset charset) throws Exception{
 		FileInputStream fis =new FileInputStream(f);
 		ByteArrayOutputStream byteInputBuffer = new ByteArrayOutputStream();
 		byte [] readB = new byte[8192];
@@ -138,7 +154,15 @@ public class FileSystemUtilities {
 		byteInputBuffer.flush();
 		byteInputBuffer.close();
 		
-		return  byteInputBuffer.toString();
+		if(charsetName!=null) {
+			return  byteInputBuffer.toString(charsetName);
+		}
+		else if(charset!=null) {
+			return  byteInputBuffer.toString(charset);
+		}
+		else {
+			return  byteInputBuffer.toString();
+		}
 	}
 	
 	public static byte[] readBytesFromFile(String f) throws Exception{

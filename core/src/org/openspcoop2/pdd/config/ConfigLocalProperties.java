@@ -1370,50 +1370,13 @@ public class ConfigLocalProperties extends InstanceProperties {
 			
 			// regole di dump
 			
-			String dumpRealtime = this.getValue("dump.realtime");
-			if(dumpRealtime!=null){
-				dumpRealtime = dumpRealtime.trim();
-				if(!CostantiConfigurazione.ABILITATO.equals(dumpStato) && 
-						!CostantiConfigurazione.DISABILITATO.equals(dumpStato)){
-					throw new Exception("Impostazione sul dump realtime non corretta");
-				}
-			}
+			// *** Backward Compatibility ****
 			
-			DumpConfigurazioneRegola regolaRequestIn = this.readRegola("request", "in");
-			DumpConfigurazioneRegola regolaRequestOut = this.readRegola("request", "out");
-			DumpConfigurazioneRegola regolaResponseIn = this.readRegola("response", "in");
-			DumpConfigurazioneRegola regolaResponseOut = this.readRegola("response", "out");
+			setDump(dumpStato, configurazione);
 			
-			if(dumpRealtime!=null || 
-					regolaRequestIn!=null || regolaRequestOut!=null ||
-					regolaResponseIn!=null || regolaResponseOut!=null ) {
-				if(configurazione.getDump()==null){
-					configurazione.setDump(new Dump());
-					if(dumpStato==null){
-						configurazione.getDump().setStato(CostantiConfigurazione.DISABILITATO); // default
-					}
-				}
-				if(configurazione.getDump().getConfigurazione()==null){
-					configurazione.getDump().setConfigurazione(new DumpConfigurazione());
-				}
-			}
+			setDump(dumpStato, configurazione, true);
 			
-			if(dumpRealtime!=null) {
-				configurazione.getDump().getConfigurazione().setRealtime(StatoFunzionalita.toEnumConstant(dumpRealtime));
-			}
-			if(regolaRequestIn!=null) {
-				configurazione.getDump().getConfigurazione().setRichiestaIngresso(regolaRequestIn);
-			}
-			if(regolaRequestOut!=null) {
-				configurazione.getDump().getConfigurazione().setRichiestaUscita(regolaRequestOut);
-			}
-			if(regolaResponseIn!=null) {
-				configurazione.getDump().getConfigurazione().setRispostaIngresso(regolaResponseIn);
-			}
-			if(regolaResponseOut!=null) {
-				configurazione.getDump().getConfigurazione().setRispostaUscita(regolaResponseOut);
-			}
-			
+			setDump(dumpStato, configurazione, false);
 			
 			
 			
@@ -1440,9 +1403,151 @@ public class ConfigLocalProperties extends InstanceProperties {
 		
 	}
 	
-	private DumpConfigurazioneRegola readRegola(String flow, String inOut) throws Exception {
+	@SuppressWarnings("deprecation")
+	private void setDump(String dumpStato, Configurazione configurazione) throws Exception {
+		String dumpRealtime = this.getValue("dump.realtime");
+		if(dumpRealtime!=null){
+			dumpRealtime = dumpRealtime.trim();
+			if(!CostantiConfigurazione.ABILITATO.equals(dumpStato) && 
+					!CostantiConfigurazione.DISABILITATO.equals(dumpStato)){
+				throw new Exception("Impostazione sul dump realtime non corretta");
+			}
+		}
+		
+		DumpConfigurazioneRegola regolaRequestIn = this.readRegola("request", "in", true);
+		DumpConfigurazioneRegola regolaRequestOut = this.readRegola("request", "out", true);
+		DumpConfigurazioneRegola regolaResponseIn = this.readRegola("response", "in", true);
+		DumpConfigurazioneRegola regolaResponseOut = this.readRegola("response", "out", true);
+		
+		if(dumpRealtime!=null || 
+				regolaRequestIn!=null || regolaRequestOut!=null ||
+				regolaResponseIn!=null || regolaResponseOut!=null ) {
+			if(configurazione.getDump()==null){
+				configurazione.setDump(new Dump());
+				if(dumpStato==null){
+					configurazione.getDump().setStato(CostantiConfigurazione.DISABILITATO); // default
+				}
+			}
+			if(configurazione.getDump().getConfigurazione()==null){
+				configurazione.getDump().setConfigurazione(new DumpConfigurazione());
+			}
+		}
+		
+		if(dumpRealtime!=null) {
+			configurazione.getDump().getConfigurazione().setRealtime(StatoFunzionalita.toEnumConstant(dumpRealtime));
+		}
+		if(regolaRequestIn!=null) {
+			configurazione.getDump().getConfigurazione().setRichiestaIngresso(regolaRequestIn);
+		}
+		if(regolaRequestOut!=null) {
+			configurazione.getDump().getConfigurazione().setRichiestaUscita(regolaRequestOut);
+		}
+		if(regolaResponseIn!=null) {
+			configurazione.getDump().getConfigurazione().setRispostaIngresso(regolaResponseIn);
+		}
+		if(regolaResponseOut!=null) {
+			configurazione.getDump().getConfigurazione().setRispostaUscita(regolaResponseOut);
+		}
+	}
+	
+	private void setDump(String dumpStato, Configurazione configurazione, boolean erogazioni) throws Exception {
+		
+		String tipo = erogazioni ? "erogazioni" : "fruizioni";
+		
+		String dumpRealtime = this.getValue("dump."+tipo+".realtime");
+		if(dumpRealtime!=null){
+			dumpRealtime = dumpRealtime.trim();
+			if(!CostantiConfigurazione.ABILITATO.equals(dumpStato) && 
+					!CostantiConfigurazione.DISABILITATO.equals(dumpStato)){
+				throw new Exception("Impostazione sul dump realtime non corretta");
+			}
+		}
+		
+		DumpConfigurazioneRegola regolaRequestIn = this.readRegola(tipo+".request", "in", false);
+		DumpConfigurazioneRegola regolaRequestOut = this.readRegola(tipo+".request", "out", false);
+		DumpConfigurazioneRegola regolaResponseIn = this.readRegola(tipo+".response", "in", false);
+		DumpConfigurazioneRegola regolaResponseOut = this.readRegola(tipo+".response", "out", false);
+		
+		if(dumpRealtime!=null || 
+				regolaRequestIn!=null || regolaRequestOut!=null ||
+				regolaResponseIn!=null || regolaResponseOut!=null ) {
+			if(configurazione.getDump()==null){
+				configurazione.setDump(new Dump());
+				if(dumpStato==null){
+					configurazione.getDump().setStato(CostantiConfigurazione.DISABILITATO); // default
+				}
+			}
+			if(erogazioni) {
+				if(configurazione.getDump().getConfigurazionePortaApplicativa()==null){
+					configurazione.getDump().setConfigurazionePortaApplicativa(new DumpConfigurazione());
+				}
+			}
+			else {
+				if(configurazione.getDump().getConfigurazionePortaDelegata()==null){
+					configurazione.getDump().setConfigurazionePortaDelegata(new DumpConfigurazione());
+				}
+			}
+		}
+		
+		if(erogazioni) {
+			if(dumpRealtime!=null) {
+				configurazione.getDump().getConfigurazionePortaApplicativa().setRealtime(StatoFunzionalita.toEnumConstant(dumpRealtime));
+			}
+			if(regolaRequestIn!=null) {
+				configurazione.getDump().getConfigurazionePortaApplicativa().setRichiestaIngresso(regolaRequestIn);
+			}
+			if(regolaRequestOut!=null) {
+				configurazione.getDump().getConfigurazionePortaApplicativa().setRichiestaUscita(regolaRequestOut);
+			}
+			if(regolaResponseIn!=null) {
+				configurazione.getDump().getConfigurazionePortaApplicativa().setRispostaIngresso(regolaResponseIn);
+			}
+			if(regolaResponseOut!=null) {
+				configurazione.getDump().getConfigurazionePortaApplicativa().setRispostaUscita(regolaResponseOut);
+			}
+		}
+		else {
+			if(dumpRealtime!=null) {
+				configurazione.getDump().getConfigurazionePortaDelegata().setRealtime(StatoFunzionalita.toEnumConstant(dumpRealtime));
+			}
+			if(regolaRequestIn!=null) {
+				configurazione.getDump().getConfigurazionePortaDelegata().setRichiestaIngresso(regolaRequestIn);
+			}
+			if(regolaRequestOut!=null) {
+				configurazione.getDump().getConfigurazionePortaDelegata().setRichiestaUscita(regolaRequestOut);
+			}
+			if(regolaResponseIn!=null) {
+				configurazione.getDump().getConfigurazionePortaDelegata().setRispostaIngresso(regolaResponseIn);
+			}
+			if(regolaResponseOut!=null) {
+				configurazione.getDump().getConfigurazionePortaDelegata().setRispostaUscita(regolaResponseOut);
+			}
+		}
+	}
+	
+	
+	private DumpConfigurazioneRegola readRegola(String flow, String inOut, boolean backwardCompatibility) throws Exception {
 		
 		DumpConfigurazioneRegola regola = null;
+
+		
+		String payload = this.getValue("dump."+flow+"."+inOut+".payload");
+		if(payload!=null){
+			payload = payload.trim();
+			if(!CostantiConfigurazione.ABILITATO.equals(payload) && 
+					!CostantiConfigurazione.DISABILITATO.equals(payload)){
+				throw new Exception("Impostazione sul dump payload ("+flow+"."+inOut+") non corretta");
+			}
+		}
+		
+		String payload_parsing = this.getValue("dump."+flow+"."+inOut+".payload-parsing");
+		if(payload_parsing!=null){
+			payload_parsing = payload_parsing.trim();
+			if(!CostantiConfigurazione.ABILITATO.equals(payload_parsing) && 
+					!CostantiConfigurazione.DISABILITATO.equals(payload_parsing)){
+				throw new Exception("Impostazione sul dump payload-parsing ("+flow+"."+inOut+") non corretta");
+			}
+		}
 		
 		String body = this.getValue("dump."+flow+"."+inOut+".body");
 		if(body!=null){
@@ -1471,17 +1576,73 @@ public class ConfigLocalProperties extends InstanceProperties {
 			}
 		}
 		
-		if(body!=null || attachments!=null || headers!=null){
-			regola = new DumpConfigurazioneRegola();
+		if(backwardCompatibility) {
+			if(body!=null || attachments!=null || headers!=null){
+				regola = new DumpConfigurazioneRegola();
+			}
+			
+			if(regola!=null) {
+				if(body!=null) {
+					regola.setBody(StatoFunzionalita.toEnumConstant(body));
+				}
+				
+				if(attachments!=null) {
+					regola.setAttachments(StatoFunzionalita.toEnumConstant(attachments));
+				}
+				
+				if(StatoFunzionalita.ABILITATO.equals(regola.getBody()) || StatoFunzionalita.ABILITATO.equals(regola.getAttachments())) {
+					regola.setPayload(StatoFunzionalita.ABILITATO);
+					regola.setPayloadParsing(StatoFunzionalita.ABILITATO);
+				}
+				else {
+					regola.setPayload(StatoFunzionalita.DISABILITATO);
+					regola.setPayloadParsing(StatoFunzionalita.DISABILITATO);
+				}
+			}
 		}
-		
-		if(body!=null) {
-			regola.setBody(StatoFunzionalita.toEnumConstant(body));
+		else {
+						
+			if(payload!=null || payload_parsing!=null || body!=null || attachments!=null || headers!=null){
+				regola = new DumpConfigurazioneRegola();
+			}			
+			
+			if(regola!=null) {
+				if(payload!=null) {
+					regola.setPayload(StatoFunzionalita.toEnumConstant(payload));
+				}
+				
+				if(StatoFunzionalita.ABILITATO.equals(regola.getPayload())){
+					
+					if(payload_parsing!=null) {
+						regola.setPayloadParsing(StatoFunzionalita.toEnumConstant(payload_parsing));
+					}
+					
+					if(StatoFunzionalita.ABILITATO.equals(regola.getPayloadParsing())){
+						
+						if(body!=null) {
+							regola.setBody(StatoFunzionalita.toEnumConstant(body));
+						}
+						
+						if(attachments!=null) {
+							regola.setAttachments(StatoFunzionalita.toEnumConstant(attachments));
+						}
+						
+					}
+					else {
+						regola.setBody(StatoFunzionalita.DISABILITATO);
+						regola.setAttachments(StatoFunzionalita.DISABILITATO);
+					}
+					
+				}
+				else {
+					regola.setPayloadParsing(StatoFunzionalita.DISABILITATO);
+					regola.setBody(StatoFunzionalita.DISABILITATO);
+					regola.setAttachments(StatoFunzionalita.DISABILITATO);
+				}
+			}
 		}
-		if(attachments!=null) {
-			regola.setAttachments(StatoFunzionalita.toEnumConstant(attachments));
-		}
-		if(headers!=null) {
+
+		if(regola!=null && headers!=null) {
 			regola.setHeaders(StatoFunzionalita.toEnumConstant(headers));
 		}
 		

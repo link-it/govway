@@ -773,6 +773,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "content_type";
 			}
 		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENT_LENGTH)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_length";
+			}else{
+				return "content_length";
+			}
+		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_CONTENT_TYPE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".multipart_content_type";
@@ -1591,6 +1598,9 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENT_TYPE)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENT_LENGTH)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_CONTENT_TYPE)){

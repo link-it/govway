@@ -31,6 +31,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
+import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
@@ -72,6 +73,8 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "formato_messaggio", DumpMessaggio.model().FORMATO_MESSAGGIO.getFieldType()));
 				setParameter(object, "setContentType", DumpMessaggio.model().CONTENT_TYPE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "content_type", DumpMessaggio.model().CONTENT_TYPE.getFieldType()));
+				setParameter(object, "setContentLength", DumpMessaggio.model().CONTENT_LENGTH.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "content_length", DumpMessaggio.model().CONTENT_LENGTH.getFieldType()));
 				setParameter(object, "setMultipartContentType", DumpMessaggio.model().MULTIPART_CONTENT_TYPE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "multipart_content_type", DumpMessaggio.model().MULTIPART_CONTENT_TYPE.getFieldType()));
 				setParameter(object, "setMultipartContentId", DumpMessaggio.model().MULTIPART_CONTENT_ID.getFieldType(),
@@ -79,7 +82,7 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 				setParameter(object, "setMultipartContentLocation", DumpMessaggio.model().MULTIPART_CONTENT_LOCATION.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "multipart_content_location", DumpMessaggio.model().MULTIPART_CONTENT_LOCATION.getFieldType()));
 				setParameter(object, "setBody", DumpMessaggio.model().BODY.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "body", DumpMessaggio.model().BODY.getFieldType()));
+					jdbcParameterUtilities.readParameter(rs, DumpUtils.ALIAS_BODY, DumpMessaggio.model().BODY.getFieldType()));
 				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().DUMP_TIMESTAMP.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().DUMP_TIMESTAMP.getFieldType()));
 				setParameter(object, "setPostProcessHeader", DumpMessaggio.model().POST_PROCESS_HEADER.getFieldType(),
@@ -202,6 +205,8 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"formato-messaggio"));
 				setParameter(object, "setContentType", DumpMessaggio.model().CONTENT_TYPE.getFieldType(),
 					this.getObjectFromMap(map,"content-type"));
+				setParameter(object, "setContentLength", DumpMessaggio.model().CONTENT_LENGTH.getFieldType(),
+					this.getObjectFromMap(map,"content-length"));
 				setParameter(object, "setMultipartContentType", DumpMessaggio.model().MULTIPART_CONTENT_TYPE.getFieldType(),
 					this.getObjectFromMap(map,"multipart-content-type"));
 				setParameter(object, "setMultipartContentId", DumpMessaggio.model().MULTIPART_CONTENT_ID.getFieldType(),
@@ -209,7 +214,7 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 				setParameter(object, "setMultipartContentLocation", DumpMessaggio.model().MULTIPART_CONTENT_LOCATION.getFieldType(),
 					this.getObjectFromMap(map,"multipart-content-location"));
 				setParameter(object, "setBody", DumpMessaggio.model().BODY.getFieldType(),
-					this.getObjectFromMap(map,"body"));
+					this.getObjectFromMap(map,DumpUtils.ALIAS_BODY));
 				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().DUMP_TIMESTAMP.getFieldType(),
 					this.getObjectFromMap(map,"dump-timestamp"));
 				setParameter(object, "setPostProcessHeader", DumpMessaggio.model().POST_PROCESS_HEADER.getFieldType(),

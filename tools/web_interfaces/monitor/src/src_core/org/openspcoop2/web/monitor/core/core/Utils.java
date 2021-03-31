@@ -118,6 +118,9 @@ public class Utils {
 	 public static String getTestoVisualizzabile(byte [] b,StringBuilder stringBuffer, boolean logError) {
 		 return FormatUtils.getTestoVisualizzabile(log, b, stringBuffer, logError);
 	 }
+	 public static String getTestoVisualizzabile(byte [] b,StringBuilder stringBuffer, boolean logError, int max) {
+		 return FormatUtils.getTestoVisualizzabile(log, b, stringBuffer, logError, max);
+	 }
 
 	/**
 	 * Legge le proprieta' dal fileProperties passato come parametro

@@ -2683,18 +2683,58 @@ public class ErogazioniApiHelper {
 		final String statoDump = dumpConf.getStato().toString(); 
 		final String statoDumpRichiesta 		 	= Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.isAbilitato() )).toString();
 		final String statoDumpRisposta 				= Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.isAbilitato() )).toString();
+		
 		final String dumpRichiestaIngressoHeader	= Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isHeaders() )).toString();
-		final String dumpRichiestaIngressoBody 		= Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isBody() )).toString();
-		final String dumpRichiestaIngressoAttachments =  Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isAttachments()) ).toString();
-		final String dumpRichiestaUscitaHeader      = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isHeaders() )).toString();
-		final String dumpRichiestaUscitaBody        = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isBody() )).toString();         
-		final String dumpRichiestaUscitaAttachments = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isAttachments() )).toString();  
-		final String dumpRispostaIngressoHeader     = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isHeaders() )).toString();     
-		final String dumpRispostaIngressoBody       = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isBody() )).toString();        
-		final String dumpRispostaIngressoAttachments= Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isAttachments() )).toString(); 
-		final String dumpRispostaUscitaHeader       = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isHeaders() )).toString();       
-		final String dumpRispostaUscitaBody         = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isBody() )).toString();          
-		final String dumpRispostaUscitaAttachments  = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isAttachments() )).toString();
+		final String dumpRichiestaIngressoPayload   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isPayload() )).toString();
+	    String dumpRichiestaIngressoPayloadParsing = Helper.boolToStatoFunzionalitaConf(false).toString();
+		String dumpRichiestaIngressoBody 		= Helper.boolToStatoFunzionalitaConf(false).toString();
+		String dumpRichiestaIngressoAttachments =  Helper.boolToStatoFunzionalitaConf(false).toString();
+		if(richiesta.getIngresso().isPayload()!=null && richiesta.getIngresso().isPayload()) {
+			dumpRichiestaIngressoPayloadParsing = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isPayloadParsing() )).toString();
+			if(richiesta.getIngresso().isPayloadParsing()!=null && richiesta.getIngresso().isPayloadParsing()) {
+				dumpRichiestaIngressoBody   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isBody() )).toString();
+				dumpRichiestaIngressoAttachments   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isAttachments() )).toString();
+			}
+		}
+		
+		final String dumpRichiestaUscitaHeader	= Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isHeaders() )).toString();
+		final String dumpRichiestaUscitaPayload   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isPayload() )).toString();
+	    String dumpRichiestaUscitaPayloadParsing = Helper.boolToStatoFunzionalitaConf(false).toString();
+		String dumpRichiestaUscitaBody 		= Helper.boolToStatoFunzionalitaConf(false).toString();
+		String dumpRichiestaUscitaAttachments =  Helper.boolToStatoFunzionalitaConf(false).toString();
+		if(richiesta.getUscita().isPayload()!=null && richiesta.getUscita().isPayload()) {
+			dumpRichiestaUscitaPayloadParsing = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isPayloadParsing() )).toString();
+			if(richiesta.getUscita().isPayloadParsing()!=null && richiesta.getUscita().isPayloadParsing()) {
+				dumpRichiestaUscitaBody   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isBody() )).toString();
+				dumpRichiestaUscitaAttachments   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isAttachments() )).toString();
+			}
+		}
+		
+		final String dumpRispostaIngressoHeader	= Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isHeaders() )).toString();
+		final String dumpRispostaIngressoPayload   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isPayload() )).toString();
+	    String dumpRispostaIngressoPayloadParsing = Helper.boolToStatoFunzionalitaConf(false).toString();
+		String dumpRispostaIngressoBody 		= Helper.boolToStatoFunzionalitaConf(false).toString();
+		String dumpRispostaIngressoAttachments =  Helper.boolToStatoFunzionalitaConf(false).toString();
+		if(risposta.getIngresso().isPayload()!=null && risposta.getIngresso().isPayload()) {
+			dumpRispostaIngressoPayloadParsing = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isPayloadParsing() )).toString();
+			if(risposta.getIngresso().isPayloadParsing()!=null && risposta.getIngresso().isPayloadParsing()) {
+				dumpRispostaIngressoBody   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isBody() )).toString();
+				dumpRispostaIngressoAttachments   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isAttachments() )).toString();
+			}
+		}
+		
+		final String dumpRispostaUscitaHeader	= Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isHeaders() )).toString();
+		final String dumpRispostaUscitaPayload   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isPayload() )).toString();
+	    String dumpRispostaUscitaPayloadParsing = Helper.boolToStatoFunzionalitaConf(false).toString();
+		String dumpRispostaUscitaBody 		= Helper.boolToStatoFunzionalitaConf(false).toString();
+		String dumpRispostaUscitaAttachments =  Helper.boolToStatoFunzionalitaConf(false).toString();
+		if(risposta.getUscita().isPayload()!=null && risposta.getUscita().isPayload()) {
+			dumpRispostaUscitaPayloadParsing = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isPayloadParsing() )).toString();
+			if(risposta.getUscita().isPayloadParsing()!=null && risposta.getUscita().isPayloadParsing()) {
+				dumpRispostaUscitaBody   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isBody() )).toString();
+				dumpRispostaUscitaAttachments   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isAttachments() )).toString();
+			}
+		}
 		
 		DumpConfigurazione ret = new DumpConfigurazione();
 		
@@ -2707,18 +2747,10 @@ public class ErogazioniApiHelper {
 					StatoFunzionalita.ABILITATO.getValue(), 
 					statoDumpRichiesta, 
 					statoDumpRisposta, 
-					dumpRichiestaIngressoHeader,
-					dumpRichiestaIngressoBody,
-					dumpRichiestaIngressoAttachments, 
-					dumpRichiestaUscitaHeader,
-					dumpRichiestaUscitaBody,
-					dumpRichiestaUscitaAttachments, 
-					dumpRispostaIngressoHeader, 
-					dumpRispostaIngressoBody, 
-					dumpRispostaIngressoAttachments,
-					dumpRispostaUscitaHeader, 
-					dumpRispostaUscitaBody, 
-					dumpRispostaUscitaAttachments
+					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+					dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -2730,18 +2762,10 @@ public class ErogazioniApiHelper {
 					StatoFunzionalita.ABILITATO.getValue(),			// realtime, Come da debug
 					statoDumpRichiesta, 
 					statoDumpRisposta, 
-					dumpRichiestaIngressoHeader,
-					dumpRichiestaIngressoBody,
-					dumpRichiestaIngressoAttachments, 
-					dumpRichiestaUscitaHeader,
-					dumpRichiestaUscitaBody,
-					dumpRichiestaUscitaAttachments, 
-					dumpRispostaIngressoHeader, 
-					dumpRispostaIngressoBody, 
-					dumpRispostaIngressoAttachments,
-					dumpRispostaUscitaHeader, 
-					dumpRispostaUscitaBody, 
-					dumpRispostaUscitaAttachments
+					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+					dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments
 				);
 		} 
 		else {	
@@ -2755,18 +2779,10 @@ public class ErogazioniApiHelper {
 					StatoFunzionalita.ABILITATO.getValue(),	// realtime 
 					statoDumpRichiesta, 
 					statoDumpRisposta, 
-					dumpRichiestaIngressoHeader,
-					dumpRichiestaIngressoBody,
-					dumpRichiestaIngressoAttachments, 
-					dumpRichiestaUscitaHeader,
-					dumpRichiestaUscitaBody,
-					dumpRichiestaUscitaAttachments, 
-					dumpRispostaIngressoHeader, 
-					dumpRispostaIngressoBody, 
-					dumpRispostaIngressoAttachments,
-					dumpRispostaUscitaHeader, 
-					dumpRispostaUscitaBody, 
-					dumpRispostaUscitaAttachments
+					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+					dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
@@ -2778,18 +2794,10 @@ public class ErogazioniApiHelper {
 					StatoFunzionalita.ABILITATO.getValue(),	// realtime, Come da debug 
 					statoDumpRichiesta, 
 					statoDumpRisposta, 
-					dumpRichiestaIngressoHeader,
-					dumpRichiestaIngressoBody,
-					dumpRichiestaIngressoAttachments, 
-					dumpRichiestaUscitaHeader,
-					dumpRichiestaUscitaBody,
-					dumpRichiestaUscitaAttachments, 
-					dumpRispostaIngressoHeader, 
-					dumpRispostaIngressoBody, 
-					dumpRispostaIngressoAttachments,
-					dumpRispostaUscitaHeader, 
-					dumpRispostaUscitaBody, 
-					dumpRispostaUscitaAttachments
+					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+					dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments
 				);
 		}
 		
@@ -3193,9 +3201,15 @@ public class ErogazioniApiHelper {
 		if (r == null) return null;
 		RegistrazioneMessaggiConfigurazioneRegola ret = new RegistrazioneMessaggiConfigurazioneRegola();
 		
-		ret.setAttachments( Helper.statoFunzionalitaConfToBool( r.getAttachments() ));
-		ret.setBody(Helper.statoFunzionalitaConfToBool( r.getBody()) );
+		ret.setPayload(Helper.statoFunzionalitaConfToBool( r.getPayload()) );
 		ret.setHeaders(Helper.statoFunzionalitaConfToBool( r.getHeaders()) );
+		if(ret.isPayload()!=null && ret.isPayload()) {
+			ret.setPayloadParsing(Helper.statoFunzionalitaConfToBool( r.getPayloadParsing()) );
+			if(ret.isPayloadParsing()!=null && ret.isPayloadParsing()) {
+				ret.setBody(Helper.statoFunzionalitaConfToBool( r.getBody()) );
+				ret.setAttachments(Helper.statoFunzionalitaConfToBool( r.getAttachments()) );
+			}
+		}
 		
 		return ret;
 	}

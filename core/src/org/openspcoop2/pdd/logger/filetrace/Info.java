@@ -1340,7 +1340,9 @@ public class Info {
 	public java.lang.String getInRequestContent(String defaultValue) {
 		byte[] c = null;
 		if(this.richiestaIngresso!=null) {
-			c = this.richiestaIngresso.getBody();
+			if(this.richiestaIngresso.getBody()!=null && this.richiestaIngresso.getBody().size()>0) {
+				c = this.richiestaIngresso.getBody().toByteArray();
+			}
 		}
 		return correctByteArray(c, defaultValue);
 	}
@@ -1351,7 +1353,9 @@ public class Info {
 	public int getInRequestSize(String defaultValue) {
 		byte[] c = null;
 		if(this.richiestaIngresso!=null) {
-			c = this.richiestaIngresso.getBody();
+			if(this.richiestaIngresso.getBody()!=null && this.richiestaIngresso.getBody().size()>0) {
+				c = this.richiestaIngresso.getBody().toByteArray();
+			}
 		}
 		int size = 0;
 		if(c!=null) {
@@ -1415,7 +1419,9 @@ public class Info {
 	public java.lang.String getOutRequestContent(String defaultValue) {
 		byte[] c = null;
 		if(this.richiestaUscita!=null) {
-			c = this.richiestaUscita.getBody();
+			if(this.richiestaUscita.getBody()!=null && this.richiestaUscita.getBody().size()>0) {
+				c = this.richiestaUscita.getBody().toByteArray();
+			}
 		}
 		return correctByteArray(c, defaultValue);
 	}
@@ -1426,7 +1432,9 @@ public class Info {
 	public int getOutRequestSize(String defaultValue) {
 		byte[] c = null;
 		if(this.richiestaUscita!=null) {
-			c = this.richiestaUscita.getBody();
+			if(this.richiestaUscita.getBody()!=null && this.richiestaUscita.getBody().size()>0) {
+				c = this.richiestaUscita.getBody().toByteArray();
+			}
 		}
 		int size = 0;
 		if(c!=null) {
@@ -1489,7 +1497,9 @@ public class Info {
 	public java.lang.String getInResponseContent(String defaultValue) {
 		byte[] c = null;
 		if(this.rispostaIngresso!=null) {
-			c = this.rispostaIngresso.getBody();
+			if(this.rispostaIngresso.getBody()!=null && this.rispostaIngresso.getBody().size()>0) {
+				c = this.rispostaIngresso.getBody().toByteArray();
+			}
 		}
 		return correctByteArray(c, defaultValue);
 	}
@@ -1500,7 +1510,9 @@ public class Info {
 	public int getInResponseSize(String defaultValue) {
 		byte[] c = null;
 		if(this.rispostaIngresso!=null) {
-			c = this.rispostaIngresso.getBody();
+			if(this.rispostaIngresso.getBody()!=null && this.rispostaIngresso.getBody().size()>0) {
+				c = this.rispostaIngresso.getBody().toByteArray();
+			}
 		}
 		int size = 0;
 		if(c!=null) {
@@ -1563,7 +1575,9 @@ public class Info {
 	public java.lang.String getOutResponseContent(String defaultValue) {
 		byte[] c = null;
 		if(this.rispostaUscita!=null) {
-			c = this.rispostaUscita.getBody();
+			if(this.rispostaUscita.getBody()!=null && this.rispostaUscita.getBody().size()>0) {
+				c = this.rispostaUscita.getBody().toByteArray();
+			}
 		}
 		return correctByteArray(c, defaultValue);
 	}
@@ -1574,7 +1588,9 @@ public class Info {
 	public int getOutResponseSize(String defaultValue) {
 		byte[] c = null;
 		if(this.rispostaUscita!=null) {
-			c = this.rispostaUscita.getBody();
+			if(this.rispostaUscita.getBody()!=null && this.rispostaUscita.getBody().size()>0) {
+				c = this.rispostaUscita.getBody().toByteArray();
+			}
 		}
 		int size = 0;
 		if(c!=null) {

@@ -302,14 +302,26 @@ public class Utilities {
 	public static ByteArrayOutputStream getAsByteArrayOuputStream(InputStream isParam) throws UtilsException{
 		return getAsByteArrayOuputStream(isParam, true);
 	}
+	public static void writeAsByteArrayOuputStream(ByteArrayOutputStream bout, InputStream isParam) throws UtilsException{
+		writeAsByteArrayOuputStream(bout, isParam, true);
+	}
 	public static ByteArrayOutputStream getAsByteArrayOuputStream(InputStream isParam,boolean throwExceptionInputStreamEmpty) throws UtilsException{
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		writeAsByteArrayOuputStream(bout, isParam, throwExceptionInputStreamEmpty);
+		if(bout.size()>0) {
+			return bout;
+		}else {
+			return null;
+		}
+	}
+	public static void writeAsByteArrayOuputStream(ByteArrayOutputStream bout, InputStream isParam,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
 			if(isParam==null){
 				if(throwExceptionInputStreamEmpty){
 					throw new UtilsException("InputStream is null");
 				}
 				else{
-					return null;
+					return;
 				}
 			}
 			
@@ -320,7 +332,7 @@ public class Utilities {
 					throw new UtilsException("InputStream is empty (class:"+isParam.getClass().getName()+")");
 				}
 				else{
-					return null;
+					return;
 				}
 			} else {
 				// Metodo alternativo: java.io.PushbackInputStream
@@ -328,15 +340,16 @@ public class Utilities {
 			}
 			
 			
-			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
-			int letti = 0;
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			while( (letti=is.read(buffer)) != -1 ){
-				bout.write(buffer, 0, letti);
-			}
-			bout.flush();
-			bout.close();
-			return bout;
+//			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
+//			int letti = 0;
+//			while( (letti=is.read(buffer)) != -1 ){
+//				bout.write(buffer, 0, letti);
+//			}
+//			bout.flush();
+//			bout.close();
+			CopyStream.copy(CopyStreamMethod.AUTO, is, bout);
+			
+			return;
 		} catch (java.lang.Exception e) {
 			if(e instanceof java.io.IOException){
 				if(isEmpytMessageException(e)==false){
@@ -368,12 +381,13 @@ public class Utilities {
 	
 	public static void copy(InputStream is,OutputStream os) throws UtilsException{
 		try{
-			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
-			int letti = 0;
-			while( (letti=is.read(buffer)) != -1 ){
-				os.write(buffer, 0, letti);
-			}
-			os.flush();
+			CopyStream.copy(CopyStreamMethod.AUTO, is, os);
+//			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
+//			int letti = 0;
+//			while( (letti=is.read(buffer)) != -1 ){
+//				os.write(buffer, 0, letti);
+//			}
+//			os.flush();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -1122,6 +1136,9 @@ public class Utilities {
 
 
 	// ** Traduce in String un byte[] se il testo è visualizzabile **
+	public static String getErrorMessagePrintableTextMaxLength(int length, int maxLength) {
+		return "Visualizzazione non riuscita: la dimensione del pacchetto fornito ("+Utilities.convertBytesToFormatString(length)+") supera il limite consentito ("+Utilities.convertBytesToFormatString(maxLength)+")";
+	}
 	public static String convertToPrintableText(byte [] b,int maxBytes) throws UtilsException{
 		ByteArrayOutputStream bout = null;
 		try{
@@ -1129,7 +1146,7 @@ public class Utilities {
 			bout = new ByteArrayOutputStream();
 			
 			if(b.length>maxBytes){
-				throw new UtilsException("Visualizzazione non riuscita: la dimensione del pacchetto fornito ("+Utilities.convertBytesToFormatString(b.length)+") supera il limite consentito ("+Utilities.convertBytesToFormatString(maxBytes)+")");
+				throw new UtilsException(getErrorMessagePrintableTextMaxLength(b.length,maxBytes));
 			}
 
 			for (int i = 0; i < b.length; i++) {

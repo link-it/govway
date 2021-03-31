@@ -1,6 +1,7 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX index_registro_plug_jar_1;
 -- DROP INDEX index_generic_property_1;
+-- DROP INDEX index_dump_config_1;
 DROP TRIGGER trg_config_handlers;
 DROP TRIGGER trg_registro_plug_jar;
 DROP TRIGGER trg_registro_plugins;

@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -48,6 +49,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
@@ -56,8 +58,10 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -395,7 +399,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			
 			// Collezione header di trasporto per dump
 			Map<String, List<String>> propertiesTrasportoDebug = null;
-			if(this.isDumpBinario()) {
+			if(this.isDumpBinarioRichiesta()) {
 				propertiesTrasportoDebug = new HashMap<String, List<String>>();
 			}
 
@@ -481,6 +485,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			
 			
 			// Tipologia di servizio
+			MessageType requestMessageType = this.requestMsg.getMessageType();
 			OpenSPCoop2SoapMessage soapMessageRequest = null;
 			if(this.debug)
 				this.logger.debug("Tipologia Servizio: "+this.requestMsg.getServiceBinding());
@@ -704,21 +709,36 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				if(this.debug)
 					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
 				OutputStream out = this.httpConn.getOutputStream();
-				if(this.isDumpBinario()) {
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					if(this.isSoap && this.sbustamentoSoap){
-						this.logger.debug("Sbustamento...");
-						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
-					}else{
-						this.requestMsg.writeTo(bout, consumeRequestMessage);
+				if(this.isDumpBinarioRichiesta()) {
+					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
+					try {
+						if(this.isSoap && this.sbustamentoSoap){
+							this.logger.debug("Sbustamento...");
+							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
+						}else{
+							this.requestMsg.writeTo(bout, consumeRequestMessage);
+						}
+						bout.flush();
+						bout.close();
+
+						if(bout.isSerializedOnFileSystem()) {
+							try(FileInputStream fin = new FileInputStream(bout.getSerializedFile())) {
+								Utilities.copy(fin, out);
+							}
+						}
+						else {
+							out.write(bout.toByteArray());
+						}
+						
+						this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+					}finally {
+						try {
+							bout.clearResources();
+						}catch(Throwable t) {
+							this.logger.error("Release resources failed: "+t.getMessage(),t);
+						}
 					}
-					bout.flush();
-					bout.close();
-					out.write(bout.toByteArray());
-					bout.close();
-					
-					this.dumpBinarioRichiestaUscita(bout, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
-					
 				}else{
 					if(this.isSoap && this.sbustamentoSoap){
 						if(this.debug)
@@ -732,9 +752,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				out.close();
 			}
 			else {
-				if(this.isDumpBinario()) {
+				if(this.isDumpBinarioRichiesta()) {
 					// devo registrare almeno gli header HTTP
-					this.dumpBinarioRichiestaUscita(null, null, this.location, propertiesTrasportoDebug);
+					this.dumpBinarioRichiestaUscita(null, null, null, this.location, propertiesTrasportoDebug);
 				}
 			}
 			
@@ -904,7 +924,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			
 			this.initCheckContentTypeConfiguration();
 			
-			if(this.isDumpBinario()){
+			if(this.isDumpBinarioRisposta()){
 				this.dumpResponse(this.propertiesTrasportoRisposta);
 			}
 			

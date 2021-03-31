@@ -35,6 +35,8 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="dump-configurazione-regola"&gt;
+ * 		&lt;attribute name="payload" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="payload-parsing" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
  * 		&lt;attribute name="body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
  * 		&lt;attribute name="attachments" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
  * 		&lt;attribute name="headers" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
@@ -68,6 +70,46 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
 		this.id=id;
 	else
 		this.id=Long.valueOf(-1);
+  }
+
+  public void set_value_payload(String value) {
+    this.payload = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_payload() {
+    if(this.payload == null){
+    	return null;
+    }else{
+    	return this.payload.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getPayload() {
+    return this.payload;
+  }
+
+  public void setPayload(org.openspcoop2.core.config.constants.StatoFunzionalita payload) {
+    this.payload = payload;
+  }
+
+  public void set_value_payloadParsing(String value) {
+    this.payloadParsing = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_payloadParsing() {
+    if(this.payloadParsing == null){
+    	return null;
+    }else{
+    	return this.payloadParsing.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getPayloadParsing() {
+    return this.payloadParsing;
+  }
+
+  public void setPayloadParsing(org.openspcoop2.core.config.constants.StatoFunzionalita payloadParsing) {
+    this.payloadParsing = payloadParsing;
   }
 
   public void set_value_body(String value) {
@@ -136,6 +178,18 @@ public class DumpConfigurazioneRegola extends org.openspcoop2.utils.beans.BaseBe
   private Long id;
 
 
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_payload;
+
+  @XmlAttribute(name="payload",required=false)
+  protected StatoFunzionalita payload = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_payloadParsing;
+
+  @XmlAttribute(name="payload-parsing",required=false)
+  protected StatoFunzionalita payloadParsing = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_body;

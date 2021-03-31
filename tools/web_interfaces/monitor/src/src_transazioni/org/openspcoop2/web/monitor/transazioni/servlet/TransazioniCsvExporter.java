@@ -199,7 +199,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 			// calcolo di mime type e nome file
 			String mimeType = MimeTypes.getInstance().getMimeType(formato);
 			String ext = MimeTypeUtils.fileExtensionForMIMEType(mimeType);
-			String fileName = "TransazioniPdD" +"."+ext; 
+			String fileName = "Transazioni" +"."+ext; 
 
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName,mimeType);

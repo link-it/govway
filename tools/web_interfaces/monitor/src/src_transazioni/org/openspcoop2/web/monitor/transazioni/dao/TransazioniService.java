@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.monitor.transazioni.dao;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1361,8 +1362,21 @@ public class TransazioniService implements ITransazioniService {
 			
 			// piu' recenti in cima?
 			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
+			
+			DumpMessaggio mes = null;
+			if(saErogatore!=null && StringUtils.isNotEmpty(saErogatore) && dataConsegnaErogatore==null) {
+				IPaginatedExpression pagExpr = this.dumpMessaggioSearchDAO.toPaginatedExpression(expr);
+				pagExpr.limit(1);
+				List<DumpMessaggio> list = this.dumpMessaggioSearchDAO.findAll(pagExpr);
+				if(list!=null && !list.isEmpty()) {
+					mes = list.get(0);
+				}
+			}
+			else {
+				// ne deve esistere solo uno, altrimenti verra' lanciata una multiple exception
+				mes = this.dumpMessaggioSearchDAO.find(expr);
+			}
 
-			DumpMessaggio mes = this.dumpMessaggioSearchDAO.find(expr);
 			this.updateMessageWithSdk(mes);
 			return mes;
 
@@ -1382,6 +1396,38 @@ public class TransazioniService implements ITransazioniService {
 		return null;
 	}
 
+	@Override
+	public InputStream getContentInputStream(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception {
+
+		try {
+			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
+
+			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
+			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			if(dataConsegnaErogatore != null) {
+				expr.equals(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, dataConsegnaErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
+
+			return ((IDBDumpMessaggioServiceSearch)this.dumpMessaggioSearchDAO).getContentInputStream(expr);
+
+		} catch (Exception e) {
+			this.log.error("Impossibile recuperare DumpMessaggio con idTransazione: "+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: "	+ tipoMessaggio.toString(), e);
+			throw new Exception("Impossibile recuperare DumpMessaggio con idTransazione: "	+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: " + tipoMessaggio.toString(), e);
+		}
+		
+	}
+	
 	@Override
 	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
 
@@ -1616,7 +1662,7 @@ public class TransazioniService implements ITransazioniService {
 			this.updateMessageWithSdk(msg);
 			
 			if(msg != null){
-				return msg.getBody() != null || msg.sizeAllegatoList() > 0 || msg.sizeContenutoList() > 0;
+				return msg.getBody() != null || msg.sizeAllegatoList() > 0 || msg.sizeContenutoList() > 0 || (msg.getContentLength()!=null && msg.getContentLength()>0);
 			}
 
 			//			NonNegativeNumber nnn = this.dumpMessaggioSearchDAO.count(expr);

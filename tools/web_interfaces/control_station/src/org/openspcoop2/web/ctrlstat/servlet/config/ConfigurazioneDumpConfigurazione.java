@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -92,45 +93,70 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			String realtime = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_REALTIME);
 			String statoDumpRichiesta = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO);
 			String statoDumpRisposta = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO);
+			
 			String dumpRichiestaIngressoHeader = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
+			String dumpRichiestaIngressoPayload = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD);
+			String dumpRichiestaIngressoPayloadParsing = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_PAYLOAD_PARSING);
 			String dumpRichiestaIngressoBody = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
 			String dumpRichiestaIngressoAttachments = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
+			
 			String dumpRichiestaUscitaHeader = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
+			String dumpRichiestaUscitaPayload = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD);
+			String dumpRichiestaUscitaPayloadParsing = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_PAYLOAD_PARSING);
 			String dumpRichiestaUscitaBody = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
 			String dumpRichiestaUscitaAttachments = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
+			
 			String dumpRispostaIngressoHeader = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
+			String dumpRispostaIngressoPayload = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD);
+			String dumpRispostaIngressoPayloadParsing = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_PAYLOAD_PARSING);
 			String dumpRispostaIngressoBody = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
 			String dumpRispostaIngressoAttachments = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
+			
 			String dumpRispostaUscitaHeader = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
+			String dumpRispostaUscitaPayload = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD);
+			String dumpRispostaUscitaPayloadParsing = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_PAYLOAD_PARSING);
 			String dumpRispostaUscitaBody = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
 			String dumpRispostaUscitaAttachments = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+			
 			String actionConferma = confHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
+			String tipoConfigurazione = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_TIPO_CONFIGURAZIONE);
+			TipoPdD tipoPdD = TipoPdD.toTipoPdD(tipoConfigurazione);
+			boolean portaApplicativa = TipoPdD.APPLICATIVA.equals(tipoPdD);
+			
 			Configurazione configurazioneGenerale = confCore.getConfigurazioneGenerale();
 			
 			Dump dump = configurazioneGenerale.getDump();
-			DumpConfigurazione oldConfigurazione = dump.getConfigurazione();
+			DumpConfigurazione oldConfigurazione = portaApplicativa ? dump.getConfigurazionePortaApplicativa() : dump.getConfigurazionePortaDelegata();
 			
 			// creo una configurazione di default
 			if(oldConfigurazione == null) {
 				oldConfigurazione = new DumpConfigurazione();
 				
 				oldConfigurazione.setRichiestaIngresso(new DumpConfigurazioneRegola());
+				oldConfigurazione.getRichiestaIngresso().setPayload(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRichiestaIngresso().setPayloadParsing(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRichiestaIngresso().setBody(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRichiestaIngresso().setAttachments(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRichiestaIngresso().setHeaders(StatoFunzionalita.DISABILITATO);
 				
 				oldConfigurazione.setRichiestaUscita(new DumpConfigurazioneRegola());
+				oldConfigurazione.getRichiestaUscita().setPayload(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRichiestaUscita().setPayloadParsing(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRichiestaUscita().setBody(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRichiestaUscita().setAttachments(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRichiestaUscita().setHeaders(StatoFunzionalita.DISABILITATO);
 				
 				oldConfigurazione.setRispostaIngresso(new DumpConfigurazioneRegola());
+				oldConfigurazione.getRispostaIngresso().setPayload(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRispostaIngresso().setPayloadParsing(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRispostaIngresso().setBody(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRispostaIngresso().setAttachments(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRispostaIngresso().setHeaders(StatoFunzionalita.DISABILITATO);
 				
 				oldConfigurazione.setRispostaUscita(new DumpConfigurazioneRegola());
+				oldConfigurazione.getRispostaUscita().setPayload(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRispostaUscita().setPayloadParsing(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRispostaUscita().setBody(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRispostaUscita().setAttachments(StatoFunzionalita.DISABILITATO);
 				oldConfigurazione.getRispostaUscita().setHeaders(StatoFunzionalita.DISABILITATO);
@@ -147,10 +173,16 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			if(postBackElementName != null) {
 				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO)) {
 					if(!confHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) && statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
-						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						
+						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaIngressoPayload = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
 						dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
 						dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						
 						dumpRichiestaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRichiestaUscitaPayload = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
 						dumpRichiestaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
 						dumpRichiestaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
 					}
@@ -158,10 +190,16 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				
 				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO)) {
 					if(!confHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) && statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						
 						dumpRispostaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRispostaIngressoPayload = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaIngressoPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
 						dumpRispostaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
 						dumpRispostaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						
 						dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRispostaUscitaPayload = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaUscitaPayloadParsing = StatoFunzionalita.DISABILITATO.getValue();
 						dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
 						dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
 					}
@@ -177,16 +215,28 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 					realtime = oldConfigurazione.getRealtime().getValue();
 					statoDumpRichiesta = confHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 					statoDumpRisposta = confHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+					
 					dumpRichiestaIngressoHeader = oldConfigurazione.getRichiestaIngresso().get_value_headers();	
+					dumpRichiestaIngressoPayload = oldConfigurazione.getRichiestaIngresso().get_value_payload();
+					dumpRichiestaIngressoPayloadParsing = oldConfigurazione.getRichiestaIngresso().get_value_payloadParsing();
 					dumpRichiestaIngressoBody = oldConfigurazione.getRichiestaIngresso().get_value_body();
 					dumpRichiestaIngressoAttachments = oldConfigurazione.getRichiestaIngresso().get_value_attachments();
+					
 					dumpRichiestaUscitaHeader = oldConfigurazione.getRichiestaUscita().get_value_headers();	
+					dumpRichiestaUscitaPayload = oldConfigurazione.getRichiestaUscita().get_value_payload();
+					dumpRichiestaUscitaPayloadParsing = oldConfigurazione.getRichiestaUscita().get_value_payloadParsing();
 					dumpRichiestaUscitaBody = oldConfigurazione.getRichiestaUscita().get_value_body();
 					dumpRichiestaUscitaAttachments = oldConfigurazione.getRichiestaUscita().get_value_attachments();
+					
 					dumpRispostaIngressoHeader = oldConfigurazione.getRispostaIngresso().get_value_headers();	
+					dumpRispostaIngressoPayload = oldConfigurazione.getRispostaIngresso().get_value_payload();
+					dumpRispostaIngressoPayloadParsing = oldConfigurazione.getRispostaIngresso().get_value_payloadParsing();
 					dumpRispostaIngressoBody = oldConfigurazione.getRispostaIngresso().get_value_body();
 					dumpRispostaIngressoAttachments = oldConfigurazione.getRispostaIngresso().get_value_attachments();
+					
 					dumpRispostaUscitaHeader = oldConfigurazione.getRispostaUscita().get_value_headers();	
+					dumpRispostaUscitaPayload = oldConfigurazione.getRispostaUscita().get_value_payload();
+					dumpRispostaUscitaPayloadParsing = oldConfigurazione.getRispostaUscita().get_value_payloadParsing();
 					dumpRispostaUscitaBody = oldConfigurazione.getRispostaUscita().get_value_body();
 					dumpRispostaUscitaAttachments = oldConfigurazione.getRispostaUscita().get_value_attachments();
 				}
@@ -196,10 +246,11 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-						dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-						dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-						dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-						dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+						dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+						dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+						dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+						dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+						portaApplicativa);
 
 				pd.setDati(dati);
 
@@ -209,10 +260,11 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.checkDataConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader,
-					dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody,
-					dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
-					dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+			boolean isOk = confHelper.checkDataConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
+					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+					dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
 			if (!isOk) {
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -222,10 +274,11 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-						dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-						dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-						dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-						dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+						dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+						dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+						dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+						dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+						portaApplicativa);
 
 				pd.setDati(dati);
 
@@ -238,26 +291,54 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			boolean showConfermaRisposta = false;
 			// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
 			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+							
+				boolean bodyIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoPayload);
+				boolean attachmentsIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoPayload);
+				if(StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoPayloadParsing)) {
+					bodyIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoBody);
+					attachmentsIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaIngressoAttachments);
+				}
+				boolean bodyUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaPayload);
+				boolean attachmentsUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaPayload);
+				if(StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaPayloadParsing)) {
+					bodyUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaBody);
+					attachmentsUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRichiestaUscitaAttachments);
+				}
+				
 				// doppio body
-				if(dumpRichiestaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRichiestaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				if(bodyIngresso && bodyUscita) {
 					showConfermaRichiesta = true;
 				}
 				
 				// doppi attachments
-				if(dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				if(attachmentsIngresso && attachmentsUscita) {
 					showConfermaRichiesta = true;
 				}
 			}
 			
 			// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
 			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				
+				boolean bodyIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoPayload);
+				boolean attachmentsIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoPayload);
+				if(StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoPayloadParsing)) {
+					bodyIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoBody);
+					attachmentsIngresso = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaIngressoAttachments);
+				}
+				boolean bodyUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaPayload);
+				boolean attachmentsUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaPayload);
+				if(StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaPayloadParsing)) {
+					bodyUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaBody);
+					attachmentsUscita = StatoFunzionalita.ABILITATO.getValue().equals(dumpRispostaUscitaAttachments);
+				}
+				
 				// doppio body
-				if(dumpRispostaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRispostaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				if(bodyIngresso && bodyUscita) {
 					showConfermaRisposta = true;
 				}
 				
 				// doppi attachments
-				if(dumpRispostaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRispostaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				if(attachmentsIngresso && attachmentsUscita) {
 					showConfermaRisposta = true;
 				}
 			}
@@ -272,17 +353,19 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
 					confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-							dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-							dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-							dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+							dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+							dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+							dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+							dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+							portaApplicativa);
 					
 					
 					confHelper.addConfigurazioneDumpToDatiAsHidden(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-							dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-							dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-							dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+							dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+							dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+							dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+							dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+							portaApplicativa);
 					
 					pd.setDati(dati);
 					
@@ -331,11 +414,18 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
 				
 				DumpConfigurazione newDumpConfigurazione = confHelper.getConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime,
-							statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, 
-							dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+							statoDumpRichiesta, statoDumpRisposta, 
+							dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+							dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+							dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+							dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
 				
-				newConfigurazione.getDump().setConfigurazione(newDumpConfigurazione); 
+				if(portaApplicativa) {
+					newConfigurazione.getDump().setConfigurazionePortaApplicativa(newDumpConfigurazione);
+				}
+				else {
+					newConfigurazione.getDump().setConfigurazionePortaDelegata(newDumpConfigurazione);
+				}
 	
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
 	
@@ -345,21 +435,33 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				// ricarico la configurazione
 				newConfigurazione = confCore.getConfigurazioneGenerale();
 				
-				DumpConfigurazione configurazioneAggiornata = newConfigurazione.getDump().getConfigurazione();
+				DumpConfigurazione configurazioneAggiornata = portaApplicativa ? newConfigurazione.getDump().getConfigurazionePortaApplicativa() : newConfigurazione.getDump().getConfigurazionePortaDelegata();
 				statoDump = "";
 				realtime = configurazioneAggiornata.getRealtime().getValue();
 				statoDumpRichiesta = confHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 				statoDumpRisposta = confHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				
 				dumpRichiestaIngressoHeader = configurazioneAggiornata.getRichiestaIngresso().get_value_headers();	
+				dumpRichiestaIngressoPayload = configurazioneAggiornata.getRichiestaIngresso().get_value_payload();
+				dumpRichiestaIngressoPayloadParsing = configurazioneAggiornata.getRichiestaIngresso().get_value_payloadParsing();
 				dumpRichiestaIngressoBody = configurazioneAggiornata.getRichiestaIngresso().get_value_body();
 				dumpRichiestaIngressoAttachments = configurazioneAggiornata.getRichiestaIngresso().get_value_attachments();
+				
 				dumpRichiestaUscitaHeader = configurazioneAggiornata.getRichiestaUscita().get_value_headers();	
+				dumpRichiestaUscitaPayload = configurazioneAggiornata.getRichiestaUscita().get_value_payload();
+				dumpRichiestaUscitaPayloadParsing = configurazioneAggiornata.getRichiestaUscita().get_value_payloadParsing();
 				dumpRichiestaUscitaBody = configurazioneAggiornata.getRichiestaUscita().get_value_body();
 				dumpRichiestaUscitaAttachments = configurazioneAggiornata.getRichiestaUscita().get_value_attachments();
+				
 				dumpRispostaIngressoHeader = configurazioneAggiornata.getRispostaIngresso().get_value_headers();	
+				dumpRispostaIngressoPayload = configurazioneAggiornata.getRispostaIngresso().get_value_payload();
+				dumpRispostaIngressoPayloadParsing = configurazioneAggiornata.getRispostaIngresso().get_value_payloadParsing();
 				dumpRispostaIngressoBody = configurazioneAggiornata.getRispostaIngresso().get_value_body();
 				dumpRispostaIngressoAttachments = configurazioneAggiornata.getRispostaIngresso().get_value_attachments();
+				
 				dumpRispostaUscitaHeader = configurazioneAggiornata.getRispostaUscita().get_value_headers();	
+				dumpRispostaUscitaPayload = configurazioneAggiornata.getRispostaUscita().get_value_payload();
+				dumpRispostaUscitaPayloadParsing = configurazioneAggiornata.getRispostaUscita().get_value_payloadParsing();
 				dumpRispostaUscitaBody = configurazioneAggiornata.getRispostaUscita().get_value_body();
 				dumpRispostaUscitaAttachments = configurazioneAggiornata.getRispostaUscita().get_value_attachments();
 			
@@ -371,10 +473,11 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			Vector<DataElement> dati = new Vector<DataElement>();
 			
 			confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
-					dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-					dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
-					dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
-					dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+					dumpRichiestaIngressoHeader, dumpRichiestaIngressoPayload, dumpRichiestaIngressoPayloadParsing, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+					dumpRichiestaUscitaHeader, dumpRichiestaUscitaPayload, dumpRichiestaUscitaPayloadParsing, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
+					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments,
+					portaApplicativa);
 
 			pd.setDati(dati);
 			pd.disableEditMode();

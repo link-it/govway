@@ -26,6 +26,7 @@ import java.util.Map;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
@@ -62,12 +63,12 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 		this.message = msg;
 	}
 
-	private byte[] messageAsBytes;
-	public byte[] getMessageAsBytes() {
+	private DumpByteArrayOutputStream messageAsBytes;
+	public DumpByteArrayOutputStream getMessageAsBytes() {
 		return this.messageAsBytes;
 	}
 	@Override
-	public void sendResponse(byte[] message) throws ConnectorException{
+	public void sendResponse(DumpByteArrayOutputStream message) throws ConnectorException{
 		this.messageAsBytes = message;
 	}
 	

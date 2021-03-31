@@ -85,21 +85,7 @@ public class FileTraceManager {
 			default:
 				break;
 			}
-		}
-		
-		List<TipoMessaggio> tipiDaEliminare = transaction.getMessaggi_onlyLogFileTrace();
-		if(tipiDaEliminare!=null && !tipiDaEliminare.isEmpty()) {
-			while(tipiDaEliminare.size()>0) {
-				TipoMessaggio tipo = tipiDaEliminare.remove(0);
-				if(transaction.sizeMessaggi()>0) {
-					for (int i = 0; i < transaction.sizeMessaggi(); i++) {
-						if(tipo.equals(transaction.getMessaggio(i).getTipoMessaggio())) {
-							transaction.removeMessaggio(i);
-							break;
-						}
-					}
-				}
-			}
+			
 		}
 		
 		CredenzialiMittente credenzialiMittente = transaction.getCredenzialiMittente();
@@ -124,6 +110,82 @@ public class FileTraceManager {
 		
 	}
 		
+	public void cleanResourcesForOnlyFileTrace(Transaction transaction) throws ProtocolException {
+			
+		List<TipoMessaggio> tipiDaEliminare_headers = transaction.getMessaggi_headers_onlyLogFileTrace();
+		List<TipoMessaggio> tipiDaEliminare_body = transaction.getMessaggi_body_onlyLogFileTrace();
+			
+		List<TipoMessaggio> messaggiDaLiminare = new ArrayList<TipoMessaggio>();
+		
+		for(int i=0; i<transaction.sizeMessaggi(); i++){
+			Messaggio messaggio = transaction.getMessaggio(i);
+			TipoMessaggio tipoMessaggio = messaggio.getTipoMessaggio();
+			
+			boolean onlyLogFileTrace_headers = false;
+			if(tipiDaEliminare_headers!=null && !tipiDaEliminare_headers.isEmpty()) {
+				for (int j = 0; j < tipiDaEliminare_headers.size(); j++) {
+					TipoMessaggio tipoMessaggio_headers = tipiDaEliminare_headers.get(j);
+					if(tipoMessaggio_headers.equals(tipoMessaggio)) {
+						onlyLogFileTrace_headers = true;
+						break;
+					}
+				}
+			}
+			if(onlyLogFileTrace_headers) {
+				tipiDaEliminare_headers.remove(tipoMessaggio);	
+			}
+			
+			boolean onlyLogFileTrace_body = false;
+			if(tipiDaEliminare_body!=null && !tipiDaEliminare_body.isEmpty()) {
+				for (int j = 0; j < tipiDaEliminare_body.size(); j++) {
+					TipoMessaggio tipoMessaggio_body = tipiDaEliminare_body.get(j);
+					if(tipoMessaggio_body.equals(tipoMessaggio)) {
+						onlyLogFileTrace_body = true;
+						break;
+					}
+				}
+			}
+			if(onlyLogFileTrace_body) {
+				tipiDaEliminare_body.remove(tipoMessaggio);	
+			}
+			
+			if(onlyLogFileTrace_headers && onlyLogFileTrace_body) {
+				messaggiDaLiminare.add(tipoMessaggio);
+			}
+			else if(onlyLogFileTrace_headers) {
+				messaggio.getHeaders().clear();
+			}
+			else if(onlyLogFileTrace_body) {
+				if(messaggio.getBody()!=null) {
+					messaggio.getBody().unlock();
+					messaggio.getBody().clearResources();
+					messaggio.setBody(null);
+				}
+				messaggio.setContentType(null);
+			}
+		}
+		
+		if(messaggiDaLiminare!=null && !messaggiDaLiminare.isEmpty()) {
+			while(messaggiDaLiminare.size()>0) {
+				TipoMessaggio tipo = messaggiDaLiminare.remove(0);
+				if(transaction.sizeMessaggi()>0) {
+					for (int i = 0; i < transaction.sizeMessaggi(); i++) {
+						if(tipo.equals(transaction.getMessaggio(i).getTipoMessaggio())) {
+							if(transaction.getMessaggio(i).getBody()!=null){
+								transaction.getMessaggio(i).getBody().unlock();
+								transaction.getMessaggio(i).getBody().clearResources();
+								transaction.getMessaggio(i).setBody(null);
+							}
+							transaction.removeMessaggio(i);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+	}
+	
 	public void invoke(TipoPdD tipoPdD, Context context) throws UtilsException {
 		this.invoke(tipoPdD, context, null);
 	}

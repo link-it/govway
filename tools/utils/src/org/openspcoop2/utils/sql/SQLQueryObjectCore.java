@@ -316,6 +316,57 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		return true;
 		
 	}
+	
+	protected String getCaseCondition(Case caseValue) throws SQLQueryObjectException {
+		if(caseValue==null) {
+			throw new SQLQueryObjectException("Field caseValue is null");
+		}
+		if(caseValue.getValori()==null || caseValue.getValori().isEmpty() || 
+				caseValue.getCondizioni()==null || caseValue.getCondizioni().isEmpty()) {
+			throw new SQLQueryObjectException("Field caseValue non contiene condizioni");
+		}
+		if(caseValue.getValori().size()!=caseValue.getCondizioni().size()) {
+			throw new SQLQueryObjectException("Field caseValue contiene condizioni con  un numero di valori differenti dalle condizioni di where?");
+		}
+		if(caseValue.getTipoColonna()==null) {
+			throw new SQLQueryObjectException("Field caseValue non contiene il tipo della colonna");
+		}
+			
+		StringBuilder bf = new StringBuilder();
+		bf.append("CASE");
+		for (int i = 0; i < caseValue.getValori().size(); i++) {
+			String valore = caseValue.getValori().get(i);
+			String condizione = caseValue.getCondizioni().get(i);
+			bf.append(" WHEN ").append(condizione);
+			bf.append(" THEN ");
+			bf.append(getPrefixCastValue(caseValue.getTipoColonna(),caseValue.getDimensioneColonna()));
+			if(caseValue.isStringValueType()){
+				bf.append("'");
+				bf.append(escapeStringValue(valore));
+				bf.append("'");
+			}
+			else{
+				bf.append(valore);
+			}
+			bf.append(getSuffixCastValue(caseValue.getTipoColonna(),caseValue.getDimensioneColonna()));
+		}
+		if(caseValue.getValoreDefault()!=null) {
+			bf.append(" ELSE ");
+			bf.append(getPrefixCastValue(caseValue.getTipoColonna(),caseValue.getDimensioneColonna()));
+			if(caseValue.isStringValueType()){
+				bf.append("'");
+				bf.append(escapeStringValue(caseValue.getValoreDefault()));
+				bf.append("'");
+			}
+			else{
+				bf.append(caseValue.getValoreDefault());
+			}
+			bf.append(getSuffixCastValue(caseValue.getTipoColonna(),caseValue.getDimensioneColonna()));
+		}
+		bf.append(" END");
+					
+		return bf.toString();
+	}
 
 
 
@@ -402,6 +453,34 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		return _engine_addSelectField(aliasTabella, nomeField, alias, true, "coalesce(",",'"+escapeStringValue(valore)+"')",true);
 	}
 
+	
+	
+	
+	// SELECT FIELDS CASE
+	
+	/**
+	 * Aggiunge un field alla select definendolo tramite la funzione coalesce
+	 * es: SELECT coalesce(nomeField, 'VALORE') as alias FROM ....
+	 * 
+	 * @param caseField Case
+	 * @param alias Alias
+	 */
+	@Override
+	public ISQLQueryObject addSelectCaseField(Case caseField, String alias) throws SQLQueryObjectException{
+		
+		if(alias==null || "".equals(alias))
+			throw new SQLQueryObjectException("Alias is null or empty string");
+		
+		String caseValue = this.getCaseCondition(caseField);
+		
+		String field = "("+caseValue+")"+this.getDefaultAliasFieldKeyword()+alias;
+		this.fields.add(field);
+		this.fieldNames.add(alias);
+		this.fieldNameIsFunction.put(alias, false);
+		
+		return this;
+	}
+	
 
 
 
@@ -2139,58 +2218,14 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	public ISQLQueryObject addUpdateField(String nomeField,Case caseValue) throws SQLQueryObjectException{
 		if(nomeField==null || "".equals(nomeField))
 			throw new SQLQueryObjectException("Field name is null or empty string");
-		if(caseValue==null) {
-			throw new SQLQueryObjectException("Field caseValue is null");
-		}
-		if(caseValue.getValori()==null || caseValue.getValori().isEmpty() || 
-				caseValue.getCondizioni()==null || caseValue.getCondizioni().isEmpty()) {
-			throw new SQLQueryObjectException("Field caseValue non contiene condizioni");
-		}
-		if(caseValue.getValori().size()!=caseValue.getCondizioni().size()) {
-			throw new SQLQueryObjectException("Field caseValue contiene condizioni con  un numero di valori differenti dalle condizioni di where?");
-		}
-		if(caseValue.getTipoColonna()==null) {
-			throw new SQLQueryObjectException("Field caseValue non contiene il tipo della colonna");
-		}
+		
 		if(this.updateFieldsName.contains(nomeField)){
 			throw new SQLQueryObjectException("Field name "+nomeField+" gia inserito tra gli update fields");
 		}else{
-			
-			StringBuilder bf = new StringBuilder();
-			bf.append("CASE");
-			for (int i = 0; i < caseValue.getValori().size(); i++) {
-				String valore = caseValue.getValori().get(i);
-				String condizione = caseValue.getCondizioni().get(i);
-				bf.append(" WHEN ").append(condizione);
-				bf.append(" THEN ");
-				bf.append(getPrefixCastValue(caseValue.getTipoColonna(),caseValue.getDimensioneColonna()));
-				if(caseValue.isStringValueType()){
-					bf.append("'");
-					bf.append(escapeStringValue(valore));
-					bf.append("'");
-				}
-				else{
-					bf.append(valore);
-				}
-				bf.append(getSuffixCastValue(caseValue.getTipoColonna(),caseValue.getDimensioneColonna()));
-			}
-			if(caseValue.getValoreDefault()!=null) {
-				bf.append(" ELSE ");
-				bf.append(getPrefixCastValue(caseValue.getTipoColonna(),caseValue.getDimensioneColonna()));
-				if(caseValue.isStringValueType()){
-					bf.append("'");
-					bf.append(escapeStringValue(caseValue.getValoreDefault()));
-					bf.append("'");
-				}
-				else{
-					bf.append(caseValue.getValoreDefault());
-				}
-				bf.append(getSuffixCastValue(caseValue.getTipoColonna(),caseValue.getDimensioneColonna()));
-			}
-			bf.append(" END");
-						
+			String caseCondition = getCaseCondition(caseValue);
+									
 			this.updateFieldsName.add(nomeField);
-			this.updateFieldsValue.add(bf.toString());
+			this.updateFieldsValue.add(caseCondition);
 		}
 		return this;
 	}

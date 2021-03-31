@@ -33,8 +33,11 @@ import java.util.Map;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
+import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -94,6 +97,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -195,31 +199,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if(oPddContextFromServlet!=null){
 			pddContextFromServlet = (PdDContext) oPddContextFromServlet;
 		}
-		
-		// DumpRaw
-		DumpRaw dumpRaw = null;
-		try{
-			boolean dumpBinarioPD = configPdDManager.dumpBinarioPD();
-			boolean onlyLogFileTrace = false;
-			if(!dumpBinarioPD) {
-				onlyLogFileTrace = openSPCoopProperties.isTransazioniFileTraceEnabled() && openSPCoopProperties.isTransazioniFileTraceDumpBinarioPDEnabled();
-			}
-			if(dumpBinarioPD || onlyLogFileTrace){
-				dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, onlyLogFileTrace);
-				req = new DumpRawConnectorInMessage(logCore, req);
-				res = new DumpRawConnectorOutMessage(logCore, res);
-			}
-		}catch(Throwable e){
-			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
-			logCore.error(msg);
-			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
-					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
-			return;
-		}
-			
+					
 		// Identifico Servizio per comprendere correttamente il messageType
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
@@ -246,6 +226,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				TransactionContext.createTransaction(idTransazione,"RicezioneContenutiApplicativiHTTPtoSOAP.1");
 			}
 			requestInfo.setIdTransazione(idTransazione);
+			
+			req.setThresholdContext((context!=null ? context.getPddContext(): null), 
+					openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+			
 		}catch(Throwable e) {
 			context = null;
 			protocolFactory = null;
@@ -270,6 +254,43 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}
 		req.updateRequestInfo(requestInfo);	
 
+		// DumpRaw
+		DumpRaw dumpRaw = null;
+		try{
+			boolean dumpBinario = configPdDManager.dumpBinarioPD();
+			PortaDelegata pd = null;
+			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
+			}
+			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pd);
+			boolean fileTrace = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioEnabled(pd);
+			dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, 
+					dumpBinario, 
+					dumpConfigurazione,
+					fileTrace);
+			if(dumpRaw.isActiveDumpRichiesta()) {
+				req = new DumpRawConnectorInMessage(logCore, req, 
+						(context!=null ? context.getPddContext(): null), 
+						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+			}
+			if(dumpRaw.isActiveDumpRisposta()) {
+				res = new DumpRawConnectorOutMessage(logCore, res, 
+						(context!=null ? context.getPddContext(): null), 
+						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+			}
+		}catch(Throwable e){
+			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
+			logCore.error(msg);
+			cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
+					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			return;
+		}
+		
 		// Questo servizio è invocabile solo con API Soap
 		if(!ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding())){
 			String msg = "Servizio utilizzabile solamente con API SOAP, riscontrata API REST";
@@ -338,7 +359,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				logCore.error("Errore generazione diagnostico di ingresso",e);
 			}
 			
-			if(dumpRaw!=null){
+			if(dumpRaw!=null && dumpRaw.isActiveDump()){
 				dumpRaw.setPddContext(msgDiag.getPorta(), context.getPddContext());
 				dumpRaw.serializeContext(context, protocol);
 			}
@@ -395,7 +416,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			NotifierInputStreamParams notifierInputStreamParams = preInRequestContext.getNotifierInputStreamParams();
 			context.setNotifierInputStreamParams(notifierInputStreamParams);
 			
-			if(dumpRaw!=null){
+			if(dumpRaw!=null && dumpRaw.isActiveDumpRichiesta()){
 				dumpRaw.serializeRequest(((DumpRawConnectorInMessage)req), false, notifierInputStreamParams);
 				dataIngressoRichiesta = req.getDataIngressoRichiesta();
 				context.setDataIngressoRichiesta(dataIngressoRichiesta);
@@ -459,7 +480,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			try{
 				Utilities.printFreeMemory("RicezioneContenutiApplicativiHTTPtoSOAP - Pre costruzione richiesta");
 				msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.inCorso");
-				inputBody = req.getRequest();
+				DumpByteArrayOutputStream bout = req.getRequest();
+				if(bout!=null && bout.size()>0) {
+					inputBody = bout.toByteArray();
+					bout.clearResources();
+					bout=null;
+				}
 				if( inputBody == null || inputBody.length<=0 ){
 					throw new Exception("Ricevuto nessun contenuto da imbustare");
 				}
@@ -875,7 +901,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					// contenuto
 					if(risposta!=null){
 						sendInvoked = true;
-						res.sendResponse(risposta);
+						res.sendResponse(DumpByteArrayOutputStream.newInstance(risposta));
 					}
 				}
 				else {
@@ -1003,7 +1029,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				
 				if(response!=null) {
 					sendInvoked = true;
-					res.sendResponse(response);
+					res.sendResponse(DumpByteArrayOutputStream.newInstance(response));
 				}
 				
 			}			
@@ -1102,7 +1128,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					res.setContentType("text/xml");
 					
 					// contenuto
-					res.sendResponse(rispostaErrore);
+					res.sendResponse(DumpByteArrayOutputStream.newInstance(rispostaErrore));
 				}
 						
 			}catch(Throwable error){
@@ -1120,7 +1146,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				}
 				byte[] ris = error.toString().getBytes();
 				try{
-					res.sendResponse(ris);
+					res.sendResponse(DumpByteArrayOutputStream.newInstance(ris));
 				}catch(Exception erroreStreamChiuso){ 
 					erroreConnessioneClient = true;
 					//se lo stream non e' piu' disponibile non si potra' consegnare alcuna risposta
@@ -1195,7 +1221,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				
 			}
 			
-			if(dumpRaw!=null){
+			if(dumpRaw!=null && dumpRaw.isActiveDumpRisposta()){
 				dumpRaw.serializeResponse(((DumpRawConnectorOutMessage)res));
 			}
 			

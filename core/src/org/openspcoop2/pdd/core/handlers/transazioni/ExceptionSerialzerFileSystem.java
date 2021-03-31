@@ -130,6 +130,16 @@ public class ExceptionSerialzerFileSystem {
 					error = true;
 					this.logger.error("Errore durante la registrazione su file system del messaggio [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 				}
+				finally {
+					try {
+						if(messaggio.getBody()!=null) {
+							messaggio.getBody().unlock();
+							messaggio.getBody().clearResources();
+						}
+					}catch(Throwable t){
+						this.logger.error("Errore durante il rilascio delle risorse su del messaggio [idTransazione: "+idTransazione+"]: "+t.getMessage(),t);
+					}
+				}
 			}
 			if(!error && transazioneDTO!=null){
 				transazioneDTO.getDumpMessaggioList().clear();

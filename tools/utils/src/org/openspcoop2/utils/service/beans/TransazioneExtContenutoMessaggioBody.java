@@ -33,7 +33,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtContenutoMessaggioBody", propOrder =
-    { "formato", "contentType", "multipart", "contenutiBody"
+    { "formato", "contentType", "contentLength", "multipart", "contenutiBody"
 })
 
 @XmlRootElement(name="TransazioneExtContenutoMessaggioBody")
@@ -46,6 +46,10 @@ public class TransazioneExtContenutoMessaggioBody  {
   
   @Schema(example = "application/json", required = true, description = "")
   private String contentType = null;
+  @XmlElement(name="content_length")
+  
+  @Schema(description = "")
+  private Long contentLength = null;
   @XmlElement(name="multipart")
   
   @Schema(description = "")
@@ -90,6 +94,25 @@ public class TransazioneExtContenutoMessaggioBody  {
 
   public TransazioneExtContenutoMessaggioBody contentType(String contentType) {
     this.contentType = contentType;
+    return this;
+  }
+
+ /**
+   * Get contentLength
+   * @return contentLength
+  **/
+  @JsonProperty("content_length")
+  @Valid
+  public Long getContentLength() {
+    return this.contentLength;
+  }
+
+  public void setContentLength(Long contentLength) {
+    this.contentLength = contentLength;
+  }
+
+  public TransazioneExtContenutoMessaggioBody contentLength(Long contentLength) {
+    this.contentLength = contentLength;
     return this;
   }
 
@@ -144,6 +167,7 @@ public class TransazioneExtContenutoMessaggioBody  {
     
     sb.append("    formato: ").append(TransazioneExtContenutoMessaggioBody.toIndentedString(this.formato)).append("\n");
     sb.append("    contentType: ").append(TransazioneExtContenutoMessaggioBody.toIndentedString(this.contentType)).append("\n");
+    sb.append("    contentLength: ").append(TransazioneExtContenutoMessaggioBody.toIndentedString(this.contentLength)).append("\n");
     sb.append("    multipart: ").append(TransazioneExtContenutoMessaggioBody.toIndentedString(this.multipart)).append("\n");
     sb.append("    contenutiBody: ").append(TransazioneExtContenutoMessaggioBody.toIndentedString(this.contenutiBody)).append("\n");
     sb.append("}");

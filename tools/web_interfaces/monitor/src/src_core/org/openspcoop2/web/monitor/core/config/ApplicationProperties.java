@@ -243,4 +243,9 @@ public class ApplicationProperties {
 		}
 		return 300;
 	}
+	
+	
+	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws Exception{
+		return Integer.valueOf(this.getProperty("transazioni.dettaglio.visualizzazioneMessaggi.threshold", true, true));
+	}
 }

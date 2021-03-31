@@ -65,7 +65,7 @@
 				<h:outputText id="outXml" value="#{dettagliDump.titoloPagina}"/>
 			</f:facet>
 			
-			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDump.dumpMessaggio and not empty dettagliDump.dumpMessaggio.body}" collapsible="false" closed="false">
+			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDump.dumpMessaggio and (not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0) )}" collapsible="false" closed="false">
 				<h:form id="formMessaggioDump">
 					<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnl2" rendered="#{dettagliDump.visualizzaMessaggio}">
 						<pre class="brush: #{dettagliDump.brush}; toolbar: false;">#{dettagliDump.prettyEnvelop}</pre>
@@ -73,7 +73,7 @@
 					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliDump.visualizzaMessaggio}">
 						<h:outputText id="outErroreVisualizza" value="#{dettagliDump.erroreVisualizzaMessaggio}"/>
 					</a4j:outputPanel>
-					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliDump.dumpMessaggio.body}">
+					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0)}">
 			      		<a4j:outputPanel layout="block" styleClass="#{dettagliDump.visualizzaMessaggio ? 'buttonrowlista' : 'buttonrowlistaLeft'}">
 			      			 <a4j:htmlCommandLink id="body-iconLink" action="#{dettagliDump.downloadMessaggio}" styleClass="icon-compress" target="_blank" value="Download"/>
 			      		</a4j:outputPanel>

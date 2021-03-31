@@ -19,8 +19,15 @@
  */
 package org.openspcoop2.core.transazioni.dao;
 
+import java.io.InputStream;
+
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.generic_project.dao.IDBServiceSearchWithId;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.core.transazioni.IdDumpMessaggio;
 
 
@@ -33,4 +40,10 @@ import org.openspcoop2.core.transazioni.IdDumpMessaggio;
  */
 
 public interface IDBDumpMessaggioServiceSearch extends IDumpMessaggioServiceSearch,IDBServiceSearchWithId<DumpMessaggio, IdDumpMessaggio> {
+	
+	public InputStream getContentInputStream(IExpression expression) 
+			throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception;
+	public InputStream getContentInputStream(IExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) 
+			throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception;
+	
 }

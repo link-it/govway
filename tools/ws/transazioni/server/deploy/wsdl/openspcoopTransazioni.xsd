@@ -664,6 +664,9 @@
 				<xsd:element minOccurs="0" name="content-type" type="xsd:string">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="content-length" type="xsd:unsignedLong">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="multipart-content-type" type="xsd:string">
 					
 				</xsd:element>

@@ -22,7 +22,10 @@
 
 package org.openspcoop2.protocol.basic.dump;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.OpenspcoopAppender;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
@@ -56,6 +60,10 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.jdbc.IJDBCAdapter;
+import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
 
 
@@ -162,6 +170,9 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			}
 						
 			// MESSAGGIO BASE
+			
+			File fDump = null;
+			
 			DumpMessaggio dumpMessaggio = new DumpMessaggio();
 			dumpMessaggio.setProtocollo(protocollo);
 			dumpMessaggio.setIdTransazione(idTransazione);
@@ -177,7 +188,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 					this.log.debug("body undefined");
 				}
 				else {
-					this.log.debug("body: "+Utilities.convertBytesToFormatString(messaggio.getBody().length));
+					this.log.debug("body: "+Utilities.convertBytesToFormatString(messaggio.getBody().size()));
 				}
 			}
 			if(formatoMessaggio!=null) {
@@ -185,7 +196,16 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			}
 			dumpMessaggio.setDumpTimestamp(gdo);
 			dumpMessaggio.setContentType(messaggio.getContentType());
-			dumpMessaggio.setBody(messaggio.getBody());
+			if(messaggio.getBody()!=null && messaggio.getBody().size()>0) {
+				if(!messaggio.getBody().isSerializedOnFileSystem()) {			
+					dumpMessaggio.setBody(messaggio.getBody().toByteArray());
+					dumpMessaggio.setContentLength(Long.valueOf(messaggio.getBody().size()));
+				}
+				else {
+					fDump = messaggio.getBody().getSerializedFile();
+					dumpMessaggio.setContentLength(fDump.length());
+				}
+			}
 			
 			if(messaggio.getBodyMultipartInfo()!=null) {
 				if(this.debug){
@@ -429,6 +449,34 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			}
 			
 			dumpMessageService.create(dumpMessaggio);
+			
+			if(fDump!=null) {
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+				sqlQueryObject.addUpdateTable(CostantiDB.DUMP_MESSAGGI);
+				sqlQueryObject.addUpdateField("body", "?");
+				sqlQueryObject.addWhereCondition(CostantiDB.DUMP_MESSAGGI+".id=?");
+				
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDatabase);
+				
+				String sqlQueryUpdate =sqlQueryObject.createSQLUpdate();
+				PreparedStatement pstmt = null;
+				try {
+					try(FileInputStream fin = new FileInputStream(fDump)){
+						int index = 1;
+						pstmt = con.prepareStatement(sqlQueryUpdate);
+						jdbcAdapter.setBinaryData(pstmt, index++, fin, true);
+						pstmt.setLong(index++, dumpMessaggio.getId());
+						pstmt.execute();
+					}
+				}finally {
+					try {
+						if(pstmt!=null) {
+							pstmt.close();
+						}
+					}catch(Exception eClose) {}
+				}
+			}
 			
 			if(this.debug){
 				this.log.debug("@@ log"+identificativoDump+" registrazione completata");

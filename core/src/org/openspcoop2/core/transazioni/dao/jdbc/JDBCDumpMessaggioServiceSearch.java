@@ -47,6 +47,8 @@ import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
 import org.openspcoop2.core.transazioni.utils.ProjectInfo;
 
+import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
@@ -467,6 +469,103 @@ public class JDBCDumpMessaggioServiceSearch implements IDBDumpMessaggioServiceSe
 			connection = this.jdbcServiceManager.getConnection();
 
 			return this.serviceSearch.find(this.jdbcProperties,this.log,connection,sqlQueryObject,jdbcExpression,idMappingResolutionBehaviour);			
+
+		}catch(ServiceException e){
+			this.log.error(e.getMessage(),e); throw e;
+		}catch(NotFoundException e){
+			this.log.debug(e.getMessage(),e); throw e;
+		}catch(MultipleResultException e){
+			this.log.error(e.getMessage(),e); throw e;
+		}catch(NotImplementedException e){
+			this.log.error(e.getMessage(),e); throw e;
+		}catch(Exception e){
+			this.log.error(e.getMessage(),e); throw new ServiceException("Find not completed: "+e.getMessage(),e);
+		}finally{
+			if(connection!=null){
+				this.jdbcServiceManager.closeConnection(connection);
+			}
+		}
+		
+	}
+	
+	@Override
+	public InputStream getContentInputStream(IExpression expression) 
+			throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
+		
+		Connection connection = null;
+		try{
+			
+			// check parameters
+			if(expression==null){
+				throw new Exception("Parameter (type:"+IPaginatedExpression.class.getName()+") 'expression' is null");
+			}
+			if( ! (expression instanceof JDBCExpression) ){
+				throw new Exception("Parameter (type:"+expression.getClass().getName()+") 'expression' has wrong type, expect "+JDBCExpression.class.getName());
+			}
+			JDBCExpression jdbcExpression = (JDBCExpression) expression;
+			this.log.debug("sql = "+jdbcExpression.toSql());
+
+			// ISQLQueryObject
+			ISQLQueryObject sqlQueryObject = this.jdbcSqlObjectFactory.createSQLQueryObject(this.jdbcProperties.getDatabase());
+			sqlQueryObject.setANDLogicOperator(true);
+			// Connection sql
+			connection = this.jdbcServiceManager.getConnection();
+
+			Method method = this.serviceSearch.getClass().getMethod("getContentInputStream", 
+					JDBCServiceManagerProperties.class, Logger.class, 
+					Connection.class, ISQLQueryObject.class, JDBCExpression.class, 
+					org.openspcoop2.generic_project.beans.IDMappingBehaviour.class);
+			return (InputStream) method.invoke(this.serviceSearch, this.jdbcProperties,this.log,connection,sqlQueryObject,jdbcExpression,null);			
+
+		}catch(ServiceException e){
+			this.log.error(e.getMessage(),e); throw e;
+		}catch(NotFoundException e){
+			this.log.debug(e.getMessage(),e); throw e;
+		}catch(MultipleResultException e){
+			this.log.error(e.getMessage(),e); throw e;
+		}catch(NotImplementedException e){
+			this.log.error(e.getMessage(),e); throw e;
+		}catch(Exception e){
+			this.log.error(e.getMessage(),e); throw new ServiceException("Find not completed: "+e.getMessage(),e);
+		}finally{
+			if(connection!=null){
+				this.jdbcServiceManager.closeConnection(connection);
+			}
+		}
+		
+	}
+	
+	@Override
+	public InputStream getContentInputStream(IExpression expression, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) 
+			throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException,Exception {
+		
+		Connection connection = null;
+		try{
+			
+			// check parameters
+			if(idMappingResolutionBehaviour==null){
+				throw new Exception("Parameter (type:"+org.openspcoop2.generic_project.beans.IDMappingBehaviour.class.getName()+") 'idMappingResolutionBehaviour' is null");
+			}
+			if(expression==null){
+				throw new Exception("Parameter (type:"+IPaginatedExpression.class.getName()+") 'expression' is null");
+			}
+			if( ! (expression instanceof JDBCExpression) ){
+				throw new Exception("Parameter (type:"+expression.getClass().getName()+") 'expression' has wrong type, expect "+JDBCExpression.class.getName());
+			}
+			JDBCExpression jdbcExpression = (JDBCExpression) expression;
+			this.log.debug("sql = "+jdbcExpression.toSql());
+
+			// ISQLQueryObject
+			ISQLQueryObject sqlQueryObject = this.jdbcSqlObjectFactory.createSQLQueryObject(this.jdbcProperties.getDatabase());
+			sqlQueryObject.setANDLogicOperator(true);
+			// Connection sql
+			connection = this.jdbcServiceManager.getConnection();
+
+			Method method = this.serviceSearch.getClass().getMethod("getContentInputStream", 
+					JDBCServiceManagerProperties.class, Logger.class, 
+					Connection.class, ISQLQueryObject.class, JDBCExpression.class, 
+					org.openspcoop2.generic_project.beans.IDMappingBehaviour.class);
+			return (InputStream) method.invoke(this.serviceSearch, this.jdbcProperties,this.log,connection,sqlQueryObject,jdbcExpression,idMappingResolutionBehaviour);			
 
 		}catch(ServiceException e){
 			this.log.error(e.getMessage(),e); throw e;

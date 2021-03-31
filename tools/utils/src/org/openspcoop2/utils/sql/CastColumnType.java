@@ -29,5 +29,5 @@ package org.openspcoop2.utils.sql;
  */
 public enum CastColumnType {
 
-	STRING,TIMESTAMP,INT,LONG;
+	STRING,TIMESTAMP,INT,LONG,NONE;
 }

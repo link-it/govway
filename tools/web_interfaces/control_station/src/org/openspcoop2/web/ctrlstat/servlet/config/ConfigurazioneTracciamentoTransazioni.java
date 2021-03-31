@@ -347,7 +347,8 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			}
 			
 			if(StatoFunzionalita.DISABILITATO.equals(newConfigurazione.getDump().getStato())) {
-				newConfigurazione.getDump().setConfigurazione(null);
+				newConfigurazione.getDump().setConfigurazionePortaApplicativa(null);
+				newConfigurazione.getDump().setConfigurazionePortaDelegata(null);
 			}
 			
 			if(newConfigurazione.getTransazioni()==null) {

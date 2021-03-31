@@ -44,7 +44,16 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 	
 	@Override
 	protected String getPrefixCastValue(CastColumnType type, int length) {
-		return "CAST( ";
+		switch (type) {
+		case INT:
+		case LONG:
+		case STRING:
+		case TIMESTAMP:
+			return "CAST( ";
+		case NONE:
+			return "";
+		}
+		return "";
 	}
 	@Override
 	protected String getSuffixCastValue(CastColumnType type, int length) {
@@ -63,6 +72,8 @@ public class DB2QueryObject extends SQLQueryObjectCore {
 		case TIMESTAMP:
 			sb.append("TIMESTAMP");
 			break;
+		case NONE:
+			return "";
 		}
 		sb.append(")");
 		return sb.toString();

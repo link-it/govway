@@ -20,7 +20,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +29,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
@@ -38,12 +41,16 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -63,7 +70,6 @@ import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
-import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
@@ -75,6 +81,7 @@ import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -187,7 +194,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	return this.dataAccettazioneRisposta;
     }
     
-    protected Dump dump;
+    protected DumpRaw dumpRaw = null;
     protected boolean logFileTrace = false;
 	
     private boolean registerSendIntoContext = true;
@@ -200,6 +207,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		return this.idAccordo;
 	}
 
+    protected String idTransazione;
+    
+	protected int dumpBinario_soglia;
+	protected File dumpBinario_repositoryFile;
+    
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
 	}
@@ -283,25 +295,76 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		this.msgDiagnostico = request.getMsgDiagnostico();
 
 		// Dump
-		if(this.openspcoopProperties.isTransazioniFileTraceEnabled() && this.idModulo!=null){
-			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
-			}
-			else {
-				this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
-			}
-		}
-		if(this.openspcoopProperties.isDumpBinario_registrazioneDatabase() || this.logFileTrace) {
-			String protocol = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
-			IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(protocol);
-			String nomePorta = (this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) ? this.requestInfo.getProtocolContext().getInterfaceName() : null;
-			try{
-				if(this.outRequestContext!=null) {
-					// sara' null nel caso in cui il connettore viene utilizzato per funzionalita' esterne come ad esempio il token. Es: org.openspcoop2.pdd.core.token.GestoreToken.http
-					this.dump = new Dump(dominio,this.idModulo, this.outRequestContext.getTipoPorta(), nomePorta, this.outRequestContext.getPddContext());
+		boolean dumpBinario = this.debug;
+		DumpConfigurazione dumpConfigurazione = null;
+		String protocol = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+		IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(protocol);
+		String nomePorta = (this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) ? this.requestInfo.getProtocolContext().getInterfaceName() : null;
+		if(this.idModulo!=null) {
+			try {
+				// Soglia Dump
+				this.dumpBinario_soglia = this.openspcoopProperties.getDumpBinario_inMemoryThreshold();
+				this.dumpBinario_repositoryFile = this.openspcoopProperties.getDumpBinario_repository();
+				
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
+				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+					
+					IDPortaApplicativa idPA = null;
+					if(request.getIdPortaApplicativa()!=null) {
+						idPA = request.getIdPortaApplicativa();
+					}
+					else if(nomePorta!=null) {
+						idPA = new IDPortaApplicativa();
+						idPA.setNome(nomePorta);
+					}
+					
+					this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceEnabled() && this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+					
+					if(idPA!=null) {
+						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+						if(pa!=null) {
+							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pa);
+							this.logFileTrace = configurazionePdDManager.isTransazioniFileTraceEnabled(pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreEnabled(pa);
+						}
+					}
+					
+				}
+				else {
+					
+					IDPortaDelegata idPD = null;
+					if(nomePorta!=null) {
+						idPD = new IDPortaDelegata();
+						idPD.setNome(nomePorta);
+					}
+					
+					this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceEnabled() && this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
+					
+					if(idPD!=null) {
+						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+						if(pd!=null) {
+							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pd);
+							this.logFileTrace = configurazionePdDManager.isTransazioniFileTraceEnabled(pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreEnabled(pd);
+						}
+					}
+					
+				}
+			
+				if(request.getTransazioneApplicativoServer()!=null) {
+					this.logFileTrace = false;
+				}
+				
+				this.dumpRaw = new DumpRaw(this.logger,dominio,this.idModulo,this.outRequestContext.getTipoPorta(), 
+						dumpBinario, 
+						dumpConfigurazione,
+						this.logFileTrace);
+				if(this.dumpRaw.isActiveDumpDatabase()) {
 					if(request.getTransazioneApplicativoServer()!=null) {
-						this.dump.setTransazioneApplicativoServer(request.getTransazioneApplicativoServer(), 
+						this.dumpRaw.initDump(nomePorta, this.outRequestContext.getPddContext(),
+								request.getTransazioneApplicativoServer(), 
 								request.getIdPortaApplicativa(), request.getDataConsegnaTransazioneApplicativoServer());
+					}
+					else {
+						this.dumpRaw.initDump(nomePorta, this.outRequestContext.getPddContext());
 					}
 				}
 			}catch(Exception e){
@@ -309,6 +372,15 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				this.logger.error("Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e),e);
 				this.errore = "Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e);
 				return false;
+			}
+		}
+		
+		
+		// IdTransazione
+		if(this.getPddContext()!=null) {
+			Object oIdTransazione = this.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
+			if(oIdTransazione!=null && (oIdTransazione instanceof String)){
+				this.idTransazione = (String) oIdTransazione;
 			}
 		}
 		
@@ -321,13 +393,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					
 					Transaction transactionNullable = null;
 					try{
-						if(this.getPddContext()!=null) {
-							Object oIdTransazione = this.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
-							String idTransazione = null;
-							if(oIdTransazione!=null && (oIdTransazione instanceof String)){
-								idTransazione = (String) oIdTransazione;
-							}
-							transactionNullable = TransactionContext.getTransaction(idTransazione);
+						if(this.idTransazione!=null) {
+							transactionNullable = TransactionContext.getTransaction(this.idTransazione);
 						}
 					}catch(Throwable e){
 						// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
@@ -1032,12 +1099,17 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	return tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage());
     }
     
-    protected boolean isDumpBinario() {
-    	return this.debug || this.logFileTrace;
+    protected boolean isDumpBinarioRichiesta() {
+    	return this.debug || (this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRichiesta()); 
+    			//this.logFileTrace;
+    }
+    protected boolean isDumpBinarioRisposta() {
+    	return this.debug || (this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRisposta()); 
+    			//this.logFileTrace;
     }
     
     private InfoConnettoreUscita infoConnettoreUscita = null;
-    protected void dumpBinarioRichiestaUscita(ByteArrayOutputStream bout,String contentTypeRichiesta,String location, Map<String, List<String>> trasporto) throws DumpException {
+    protected void dumpBinarioRichiestaUscita(DumpByteArrayOutputStream bout, MessageType messageType, String contentTypeRichiesta,String location, Map<String, List<String>> trasporto) throws DumpException {
     	if(this.debug){
     		String content = null;
 	    	if(bout!=null) {
@@ -1048,22 +1120,16 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	    		this.logger.info("Messaggio inviato senza contenuto nell'http-payload", false);
 	    	}
 		}
-    	if(this.dump!=null) {
+    	if(this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRichiesta()) {
 			this.infoConnettoreUscita = new InfoConnettoreUscita();
 			this.infoConnettoreUscita.setLocation(location);
 			this.infoConnettoreUscita.setHeaders(trasporto);
-			boolean onlyLogFileTrace = !this.debug && this.logFileTrace;
-	    	byte[]content = null;
-	    	if(bout!=null) {
-	    		content = bout.toByteArray();
-	    	}
-			this.dump.dumpBinarioRichiestaUscita(onlyLogFileTrace, content, this.infoConnettoreUscita);
+	    	this.dumpRaw.dumpRequest(bout, messageType, this.infoConnettoreUscita);
     	}
     }
-    protected void dumpBinarioRispostaIngresso(byte[]raw,Map<String, List<String>> trasportoRisposta) throws DumpException {
-    	if(this.dump!=null) {
-    		boolean onlyLogFileTrace = !this.debug && this.logFileTrace;
-			this.dump.dumpBinarioRispostaIngresso(onlyLogFileTrace, raw, this.infoConnettoreUscita, trasportoRisposta);
+    protected void dumpBinarioRispostaIngresso(DumpByteArrayOutputStream raw, MessageType messageType, Map<String, List<String>> trasportoRisposta) throws DumpException {
+    	if(this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRisposta()) {
+    		this.dumpRaw.dumpResponse(raw, messageType, this.infoConnettoreUscita, trasportoRisposta);
     	}
     }
     

@@ -2393,12 +2393,25 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	 * @return Configurazione
 	 * 
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Configurazione getConfigurazioneGenerale() throws DriverConfigurazioneException{
 
 		refreshConfigurazioneXML();
 
-		return this.openspcoop.getConfigurazione();
+		Configurazione config = this.openspcoop.getConfigurazione(); 
+				
+		// Backward Compatibility
+		if(config!=null && config.getDump()!=null) {
+			if(config.getDump().getConfigurazione()!=null) {
+				if(config.getDump().getConfigurazionePortaApplicativa()==null && config.getDump().getConfigurazionePortaDelegata()==null) {
+					config.getDump().setConfigurazionePortaApplicativa(config.getDump().getConfigurazione());
+					config.getDump().setConfigurazionePortaDelegata(config.getDump().getConfigurazione());
+				}
+			}
+		}
+		
+		return config;
 	}
 
 

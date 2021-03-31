@@ -1748,7 +1748,7 @@ public class ConfigurazionePdDReader {
 	protected DumpConfigurazione getDumpConfigurazione(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
 		if(pd==null){
 			//configurazione di default
-			return getDumpConfigurazione(connectionPdD);
+			return getDumpConfigurazionePortaDelegata(connectionPdD);
 		}
 
 		if(pd.getDump()!=null) {
@@ -1756,8 +1756,65 @@ public class ConfigurazionePdDReader {
 		}
 		else {
 			//configurazione di default
-			return getDumpConfigurazione(connectionPdD);
+			return getDumpConfigurazionePortaDelegata(connectionPdD);
 		}
+	}
+	
+	protected boolean isTransazioniFileTraceEnabled(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+		
+		boolean defaultValue = this.openspcoopProperties.isTransazioniFileTraceEnabled();
+		if(pd==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceEnabled(pd.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	protected boolean isTransazioniFileTraceDumpBinarioEnabled(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+		
+		boolean defaultValue = this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDEnabled();
+		if(pd==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceDumpBinarioEnabled(pd.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	protected boolean isTransazioniFileTraceDumpBinarioConnettoreEnabled(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+	
+		boolean defaultValue = this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
+		if(pd==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceDumpBinarioConnettoreEnabled(pd.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	protected File getFileTraceConfig(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+
+		try {
+			File defaultValue = this.openspcoopProperties.getTransazioniFileTraceConfig();
+			if(pd==null){
+				//configurazione di default
+				return defaultValue;
+			}
+			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.getFileTraceConfig(pd.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
 	}
 
 	protected Trasformazioni getTrasformazioni(PortaDelegata pd) throws DriverConfigurazioneException{
@@ -2715,7 +2772,7 @@ public class ConfigurazionePdDReader {
 	protected DumpConfigurazione getDumpConfigurazione(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
 		if(pa==null){
 			//configurazione di default
-			return getDumpConfigurazione(connectionPdD);
+			return getDumpConfigurazionePortaApplicativa(connectionPdD);
 		}
 
 		if(pa.getDump()!=null) {
@@ -2723,10 +2780,67 @@ public class ConfigurazionePdDReader {
 		}
 		else {
 			//configurazione di default
-			return getDumpConfigurazione(connectionPdD);
+			return getDumpConfigurazionePortaApplicativa(connectionPdD);
 		}
 	}
 
+	protected boolean isTransazioniFileTraceEnabled(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+		
+		boolean defaultValue = this.openspcoopProperties.isTransazioniFileTraceEnabled();
+		if(pa==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceEnabled(pa.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	protected boolean isTransazioniFileTraceDumpBinarioEnabled(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+		
+		boolean defaultValue = this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAEnabled();
+		if(pa==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceDumpBinarioEnabled(pa.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	protected boolean isTransazioniFileTraceDumpBinarioConnettoreEnabled(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+	
+		boolean defaultValue = this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+		if(pa==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceDumpBinarioConnettoreEnabled(pa.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	protected File getFileTraceConfig(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+
+		try {
+			File defaultValue = this.openspcoopProperties.getTransazioniFileTraceConfig();
+			if(pa==null){
+				//configurazione di default
+				return defaultValue;
+			}
+			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.getFileTraceConfig(pa.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	
 	protected Trasformazioni getTrasformazioni(PortaApplicativa pa) throws DriverConfigurazioneException{
 		if(pa!=null && pa.getTrasformazioni()!=null) {
 			return pa.getTrasformazioni();
@@ -4578,10 +4692,10 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	private static DumpConfigurazione dumpConfigurazione = null;
-	public DumpConfigurazione getDumpConfigurazione(Connection connectionPdD) {
+	private static DumpConfigurazione dumpConfigurazionePortaApplicativa = null;
+	public DumpConfigurazione getDumpConfigurazionePortaApplicativa(Connection connectionPdD) {
 
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpConfigurazione==null){
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpConfigurazionePortaApplicativa==null){
 			try{
 				Configurazione configurazione = null;
 				try{
@@ -4593,17 +4707,46 @@ public class ConfigurazionePdDReader {
 				}
 
 				if(configurazione!=null && configurazione.getDump()!=null){
-					ConfigurazionePdDReader.dumpConfigurazione = configurazione.getDump().getConfigurazione();
+					ConfigurazionePdDReader.dumpConfigurazionePortaApplicativa = configurazione.getDump().getConfigurazionePortaApplicativa();
 				}else{
-					ConfigurazionePdDReader.dumpConfigurazione = new DumpConfigurazione(); // default tutto abilitato
+					ConfigurazionePdDReader.dumpConfigurazionePortaApplicativa = new DumpConfigurazione(); // default tutto abilitato
 				}
 
 			}catch(Exception e){
-				ConfigurazionePdDReader.dumpConfigurazione = new DumpConfigurazione(); // default tutto abilitato
+				ConfigurazionePdDReader.dumpConfigurazionePortaApplicativa = new DumpConfigurazione(); // default tutto abilitato
 			}
 		}
 
-		return ConfigurazionePdDReader.dumpConfigurazione;
+		return ConfigurazionePdDReader.dumpConfigurazionePortaApplicativa;
+
+	}
+	
+	private static DumpConfigurazione dumpConfigurazionePortaDelegata = null;
+	public DumpConfigurazione getDumpConfigurazionePortaDelegata(Connection connectionPdD) {
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpConfigurazionePortaDelegata==null){
+			try{
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("getDumpConfigurazione (not found): "+e.getMessage());
+				}catch(Exception e){
+					this.log.error("getDumpConfigurazione",e);
+				}
+
+				if(configurazione!=null && configurazione.getDump()!=null){
+					ConfigurazionePdDReader.dumpConfigurazionePortaDelegata = configurazione.getDump().getConfigurazionePortaDelegata();
+				}else{
+					ConfigurazionePdDReader.dumpConfigurazionePortaDelegata = new DumpConfigurazione(); // default tutto abilitato
+				}
+
+			}catch(Exception e){
+				ConfigurazionePdDReader.dumpConfigurazionePortaDelegata = new DumpConfigurazione(); // default tutto abilitato
+			}
+		}
+
+		return ConfigurazionePdDReader.dumpConfigurazionePortaDelegata;
 
 	}
 

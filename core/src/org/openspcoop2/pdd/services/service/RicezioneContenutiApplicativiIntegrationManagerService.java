@@ -170,31 +170,6 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			}
 		}
 			
-		// DumpRaw
-		DumpRaw dumpRaw = null;
-		try{
-			boolean dumpBinarioPD = configPdDManager.dumpBinarioPD();
-			boolean onlyLogFileTrace = false;
-			if(!dumpBinarioPD) {
-				onlyLogFileTrace = openSPCoopProperties.isTransazioniFileTraceEnabled() && openSPCoopProperties.isTransazioniFileTraceDumpBinarioPDEnabled();
-			}
-			if(dumpBinarioPD || onlyLogFileTrace){
-				dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, onlyLogFileTrace);
-			}
-		}catch(Throwable e){
-			String msgError = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
-			logCore.error(msgError,e);
-			try{
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msgError,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
-						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, erroriProperties);
-			}catch(Throwable eError){
-				logCore.error("Errore generazione SOAPFault",eError);
-				throw new RuntimeException(eError); // errore che non dovrebbe accadare
-			}
-		}
-		
-		
 		
 		// Identifico Servizio per comprendere correttamente il messageType
 		ServiceIdentificationReader serviceIdentificationReader = null;
@@ -283,7 +258,34 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			}
 		}
 		
-		
+		// DumpRaw
+		DumpRaw dumpRaw = null;
+		try{
+			boolean dumpBinario = configPdDManager.dumpBinarioPD();
+			PortaDelegata pd = null;
+			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
+				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
+			}
+			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pd);
+			boolean fileTrace = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioEnabled(pd);
+			dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, 
+					dumpBinario, 
+					dumpConfigurazione,
+					fileTrace);
+		}catch(Throwable e){
+			String msgError = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
+			logCore.error(msgError,e);
+			try{
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(msgError,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, erroriProperties);
+			}catch(Throwable eError){
+				logCore.error("Errore generazione SOAPFault",eError);
+				throw new RuntimeException(eError); // errore che non dovrebbe accadare
+			}
+		}
 
 
 		
@@ -310,7 +312,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 			
-			if(dumpRaw!=null){
+			if(dumpRaw!=null && dumpRaw.isActiveDump()){
 				dumpRaw.setPddContext(msgDiag.getPorta(), context.getPddContext());
 			}
 		}catch(Exception e){
@@ -334,7 +336,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			logCore.error("Errore generazione diagnostico di ingresso",e);
 		}
 		
-		if(dumpRaw!=null){
+		if(dumpRaw!=null && dumpRaw.isActiveDump()){
 			dumpRaw.serializeContext(context, protocolFactory.getProtocol());
 		}
 		
@@ -532,7 +534,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			Utilities.printFreeMemory("IntegrationManager - Pre costruzione richiesta");
 			if(idInvocazionePerRiferimento!=null){
 
-				if(dumpRaw!=null){
+				if(dumpRaw!=null && dumpRaw.isActiveDump()){
 					String contentTypeRichiesta = null; // idInvocazionePerRiferimento
 					Integer contentLengthRichiesta = null;
 					String rawMessage = idInvocazionePerRiferimento;
@@ -561,7 +563,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 
 			}else{
 
-				if(dumpRaw!=null){
+				if(dumpRaw!=null && dumpRaw.isActiveDump()){
 					String contentTypeRichiesta = "text/xml"; // per ora e' cablato.
 					Integer contentLengthRichiesta = null;
 					String rawMessage = null;
@@ -631,7 +633,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						}
 					}
 					if(dumpConfig==null) {
-						dumpConfig = ConfigurazionePdDManager.getInstance().getDumpConfigurazione();
+						dumpConfig = ConfigurazionePdDManager.getInstance().getDumpConfigurazionePortaDelegata();
 					}
 					
 					Dump dumpApplicativo = new Dump(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),
@@ -956,7 +958,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 
 			msgReturn.setProtocolHeaderInfo(protocolHeaderInfoResponse);
 			
-			if(dumpRaw!=null){
+			if(dumpRaw!=null && dumpRaw.isActiveDump()){
 				String contentTypeRisposta = "text/xml"; // per ora e' cablato.
 				String rawMessage = null;
 				Integer contentLengthRisposta = null;
@@ -975,7 +977,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			
 		}catch(Exception e){
 			
-			if(dumpRaw!=null){
+			if(dumpRaw!=null && dumpRaw.isActiveDump()){
 				String contentTypeRisposta = "text/xml"; // per ora e' cablato.
 				String rawMessage = "[Exception "+e.getClass().getName()+"]: "+ e.getMessage(); // Non riesco ad avere il marshal xml della risposta ritornata
 				Integer contentLengthRisposta = null;

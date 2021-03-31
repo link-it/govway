@@ -1158,7 +1158,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					fruitore,idServizio,
 					TipoPdD.INTEGRATION_MANAGER,null,pddContext,
 					stato.getStatoRichiesta(),stato.getStatoRisposta(),
-					ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta()).getDumpConfigurazione());
+					null);
+					//ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta()).getDumpConfigurazione());
 			dumpApplicativo.dumpIntegrationManagerGetMessage(consegnaMessage);
 
 			// Costruzione Message da ritornare

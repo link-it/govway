@@ -202,6 +202,8 @@ public class DumpRestMessageUtils {
 			    	}
 			    	if(multipartInfoBody!=null) {
 			    		dumpMessaggio.setBody(boutAttach);
+			    		
+			    		dumpMessaggio.setMultipartInfoBody(multipartInfoBody);
 			    	}
 			    	else {
 			    		dumpAttach.setContent(boutAttach);

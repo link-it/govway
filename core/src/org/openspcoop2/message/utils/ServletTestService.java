@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -53,8 +54,10 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SOAPFaultCode;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -86,24 +89,40 @@ public class ServletTestService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	protected Logger log = null;
+	protected int thresholdRequestDump = -1;
+	protected File repositoryRequestDump = null;
 	protected File repositoryResponseFiles = null;
 	protected List<String> whitePropertiesList = null;
 	protected boolean genericError = false;
 	
-	public ServletTestService(Logger log, File repositoryResponseFiles,List<String> whitePropertiesList,boolean genericError){
+	public ServletTestService(Logger log, 
+			int thresholdRequestDump, File repositoryRequestDump,
+			File repositoryResponseFiles,List<String> whitePropertiesList,boolean genericError){
 		this.log = log;
+		this.thresholdRequestDump = thresholdRequestDump;
+		this.repositoryRequestDump = repositoryRequestDump;
 		this.repositoryResponseFiles = repositoryResponseFiles;
 		this.whitePropertiesList = whitePropertiesList;
 		this.genericError = genericError;
 	}
-	public ServletTestService(Logger log, File repositoryResponseFiles,boolean genericError){
-		this(log, repositoryResponseFiles, null,genericError);
+	public ServletTestService(Logger log, 
+			int thresholdRequestDump, File repositoryRequestDump,
+			File repositoryResponseFiles,boolean genericError){
+		this(log, 
+			thresholdRequestDump, repositoryRequestDump,
+			repositoryResponseFiles, null,genericError);
 	}
-	public ServletTestService(Logger log, File repositoryResponseFiles){
-		this(log, repositoryResponseFiles, null, false);
+	public ServletTestService(Logger log, 
+			int thresholdRequestDump, File repositoryRequestDump,
+			File repositoryResponseFiles){
+		this(log, 
+			thresholdRequestDump, repositoryRequestDump,
+			repositoryResponseFiles, null, false);
 	}
 	public ServletTestService(Logger log){
-		this(log, null, null, false);
+		this(log, 
+			-1, null,
+			null, null, false);
 	}
 	
 	private static String getParameter_checkWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
@@ -408,7 +427,7 @@ public class ServletTestService extends HttpServlet {
 	throws ServletException, IOException {
 
 		
-		
+		DumpByteArrayOutputStream dumpByteArrayOutputStreamRichiesta = null;
 		try{
 			
 			checkHttpServletRequestParameter(req, this.whitePropertiesList);
@@ -945,18 +964,20 @@ public class ServletTestService extends HttpServlet {
 				saveMessageDir = saveMessageDir.trim();
 			}
 			
-			boolean consumeRequest = false;
+			boolean consumeRequest = true; 
+			// default lascio true senno si blocca per il discorso di bufferizzazione di wildfly
+			// lo streaming funziona solamente se abbiamo messaggi piccoli che possono sfruttare i buffer ad es. di wildfly (10mb circa)
 			String consumeRequestTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "consumeRequest");
 			if(consumeRequestTmp!=null){
 				consumeRequestTmp = consumeRequestTmp.trim();
-				consumeRequest = Boolean.valueOf(consumeRequest);
+				consumeRequest = Boolean.valueOf(consumeRequestTmp);
 			}
 			
 			
-			byte[] contenuto = null;
+			byte[] contenutoRichiesta = null;
 			if(logMessage || saveMessageDir!=null){
 				if(receiveThrottling) {
-					contenuto = this.readThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
+					contenutoRichiesta = this.readThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
 				}
 				else {
 					ServletInputStream sin = req.getInputStream();
@@ -964,7 +985,7 @@ public class ServletTestService extends HttpServlet {
 					int read;
 					while( (read = sin.read()) != -1)
 						outStr.write(read);
-					contenuto = outStr.toByteArray();
+					contenutoRichiesta = outStr.toByteArray();
 				}
 			}
 			else if(consumeRequest) {
@@ -974,13 +995,30 @@ public class ServletTestService extends HttpServlet {
 				}
 				else {
 					ServletInputStream sin = req.getInputStream();
-					int read;
-					NullOutputStream outStr = new NullOutputStream();
-					while( (read = sin.read()) != -1) {
+					//int read;
+					OutputStream outStr = null;
+					if(oneway || this.thresholdRequestDump<=0 || this.repositoryRequestDump==null) {
+						outStr = new NullOutputStream();
+					}
+					else {						
+						outStr = new DumpByteArrayOutputStream(this.thresholdRequestDump, this.repositoryRequestDump, null, "RichiestaTestService");
+					}
+					CopyStream.copy(sin, outStr);
+					/*while( (read = sin.read()) != -1) {
 						outStr.write(read);
 					}
+					*/
 					outStr.flush();
 					outStr.close();
+					if(!oneway) {
+						DumpByteArrayOutputStream dOut = (DumpByteArrayOutputStream) outStr;
+						if(dOut.isSerializedOnFileSystem()) {
+							dumpByteArrayOutputStreamRichiesta = dOut;
+						}
+						else {
+							contenutoRichiesta = dOut.toByteArray();		
+						}
+					}
 				}
 			}
 			
@@ -988,7 +1026,16 @@ public class ServletTestService extends HttpServlet {
 			StringBuilder sb = new StringBuilder();
 			sb.append("--------  Messaggio ricevuto il : "+(new Date()).toString()+" [ct:"+contentTypeRichiesta+"] -------------\n\n");
 			if(logMessage){
-				sb.append(new String(contenuto));
+				if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {
+					sb.append(new String(contenutoRichiesta));
+				}
+				else if(dumpByteArrayOutputStreamRichiesta!=null) {
+					String msg = "Richiesta più grande della soglia ("+Utilities.convertBytesToFormatString(this.thresholdRequestDump)+")";
+					sb.append(msg).append(": ").append(Utilities.convertBytesToFormatString(dumpByteArrayOutputStreamRichiesta.size()));
+				}
+				else{
+					sb.append("Payload non presente");
+				}
 			}
 			if(saveMessageDir!=null){
 				File dir = new File(saveMessageDir);
@@ -1012,7 +1059,12 @@ public class ServletTestService extends HttpServlet {
 					this.log.warn("Riconoscimento ext file tramite contentType["+contentTypeRichiesta+"] non riuscito: "+e.getMessage(),e);
 				}
 				File f = File.createTempFile("Message", "."+ext, dir);
-				FileSystemUtilities.writeFile(f, contenuto);
+				if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {
+					FileSystemUtilities.writeFile(f, contenutoRichiesta);
+				}
+				else if(dumpByteArrayOutputStreamRichiesta!=null) {
+					CopyStream.copy(dumpByteArrayOutputStreamRichiesta.getSerializedFile(), f);
+				}
 				if(logMessage){
 					sb.append("\n\n");
 				}
@@ -1211,7 +1263,8 @@ public class ServletTestService extends HttpServlet {
 					
 					FileInputStream fin = new FileInputStream(path);
 					boutStaticFile = new ByteArrayOutputStream();
-					FileSystemUtilities.copy(fin, boutStaticFile);
+					CopyStream.copy(fin, boutStaticFile);
+					
 					boutStaticFile.flush();
 					boutStaticFile.close();
 					fin.close();
@@ -1269,9 +1322,12 @@ public class ServletTestService extends HttpServlet {
 				else{
 					if(boutStaticFile!=null){
 						res.setContentLength(boutStaticFile.size());
-					}else if (contenuto!=null){
-						res.setContentLength(contenuto.length);
-					}else{
+					}else if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {
+						res.setContentLength(contenutoRichiesta.length);
+					}else if(dumpByteArrayOutputStreamRichiesta!=null) {
+						res.setContentLength(dumpByteArrayOutputStreamRichiesta.size());
+					}
+					else{
 						// web server default
 					}
 				}
@@ -1315,14 +1371,17 @@ public class ServletTestService extends HttpServlet {
 					byte[] contenutoInteroDaSpedire = null;
 					if(boutStaticFile!=null){
 						contenutoInteroDaSpedire = boutStaticFile.toByteArray();
-					}else if (contenuto!=null){
+					}else if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {
 						if(replaceMap!=null && replaceMap.size()>0){
-							contenutoInteroDaSpedire = this.replace(contenuto, replaceMap);
+							contenutoInteroDaSpedire = this.replace(contenutoRichiesta, replaceMap);
 						}
 						else{
-							contenutoInteroDaSpedire = contenuto;
+							contenutoInteroDaSpedire = contenutoRichiesta;
 						}
-					}else{
+					}else if(dumpByteArrayOutputStreamRichiesta!=null) {
+						throw new Exception("Throttling unsupported with request messege bigger than threshold ("+Utilities.convertBytesToFormatString(this.thresholdRequestDump)+")");
+					}
+					else{
 						byte[] contenutoRequest = null;
 						if(receiveThrottling) {
 							contenutoRequest = this.readThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
@@ -1357,14 +1416,24 @@ public class ServletTestService extends HttpServlet {
 				else {
 					if(boutStaticFile!=null){
 						res.getOutputStream().write(boutStaticFile.toByteArray());
-					}else if (contenuto!=null){
+					}else if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {
 						if(replaceMap!=null && replaceMap.size()>0){
-							res.getOutputStream().write(this.replace(contenuto, replaceMap));
+							res.getOutputStream().write(this.replace(contenutoRichiesta, replaceMap));
 						}
 						else{
-							res.getOutputStream().write(contenuto);
+							res.getOutputStream().write(contenutoRichiesta);
 						}
-					}else{
+					}else if(dumpByteArrayOutputStreamRichiesta!=null) {
+						if(replaceMap!=null && replaceMap.size()>0){
+							throw new Exception("Replace unsupported with request messege bigger than threshold ("+Utilities.convertBytesToFormatString(this.thresholdRequestDump)+")");
+						}
+						else {
+							try(FileInputStream fin = new FileInputStream(dumpByteArrayOutputStreamRichiesta.getSerializedFile())){
+								CopyStream.copy(fin, res.getOutputStream());
+							}
+						}
+					}
+					else{
 						if(replaceMap!=null && replaceMap.size()>0){
 							byte[] contenutoRequest = null;
 							if(receiveThrottling) {
@@ -1381,7 +1450,10 @@ public class ServletTestService extends HttpServlet {
 								res.getOutputStream().write(contenutoRequest);
 							}
 							else {
-								FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+								//FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+								InputStream is = req.getInputStream();
+								OutputStream out = res.getOutputStream();
+								CopyStream.copy(is, out);
 							}
 						}
 					}
@@ -1406,6 +1478,12 @@ public class ServletTestService extends HttpServlet {
 			}
 			else {
 				throw new ServletException(e.getMessage(),e);
+			}
+		}finally {
+			try {
+				dumpByteArrayOutputStreamRichiesta.clearResources();
+			}catch(Throwable t) {
+				this.log.error("TestService (cleanResources): "+t.getMessage(),t);
 			}
 		}
 	}

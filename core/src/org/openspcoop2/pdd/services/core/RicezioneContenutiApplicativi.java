@@ -624,7 +624,7 @@ public class RicezioneContenutiApplicativi {
 			dumpConfig = (DumpConfigurazione) internalObjects.get(CostantiPdD.DUMP_CONFIG); // dovrebbe essere stata impostata per la pd/pa specifica
 		}
 		else {
-			dumpConfig = configurazionePdDReader.getDumpConfigurazione();
+			dumpConfig = configurazionePdDReader.getDumpConfigurazionePortaDelegata();
 		}
 		
 		ProtocolContext protocolContext = this.msgContext.getProtocol();

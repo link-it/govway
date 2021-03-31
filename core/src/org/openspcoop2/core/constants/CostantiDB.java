@@ -232,7 +232,11 @@ public final class CostantiDB {
     public static final String DUMP_CONFIGURAZIONE_REGOLA_SEQUENCE = "seq_dump_config_regola";
     public static final String DUMP_CONFIGURAZIONE_REGOLA_TABLE_FOR_ID = "dump_config_regola_init_seq";
 
+    @Deprecated
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG = "config";
+    public static final String _DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG = DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG;
+    public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PD = "configpd";
+    public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG_PA = "configpa";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PD = "pd";
     public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PA = "pa";
     

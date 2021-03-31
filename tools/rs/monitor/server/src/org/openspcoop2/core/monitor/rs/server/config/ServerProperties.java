@@ -229,4 +229,9 @@ public class ServerProperties  {
 		}
 		return utenzeCryptConfig;
 	}
+	
+	
+	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws Exception{
+		return Integer.valueOf(this.readProperty(true, "transazioni.dettaglio.visualizzazioneMessaggi.threshold"));
+	}
 }

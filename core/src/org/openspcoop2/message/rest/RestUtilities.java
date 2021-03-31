@@ -108,6 +108,27 @@ public class RestUtilities {
 				if(p==null){
 					p = new HashMap<String, List<String>> ();
 				}
+				
+				// elimino tutte le proprieta' che sono poi indicate nella base url
+				for (int i = 0; i < split.length; i++) {
+					if(split[i].contains("=")){
+						int indexOf = split[i].indexOf("=");
+						
+						String nome = null;
+						if(indexOf>0) {
+							nome = split[i].substring(0, indexOf);
+						}
+						if(nome!=null){
+							nome = nome.trim();
+						}
+						
+						if(nome!=null){
+							TransportUtils.removeRawObject(p, nome);
+						}
+					}
+				}
+				
+				// adesso le aggiungo
 				for (int i = 0; i < split.length; i++) {
 					if(split[i].contains("=")){
 						int indexOf = split[i].indexOf("=");
@@ -121,7 +142,7 @@ public class RestUtilities {
 						}
 						
 						String valore = null;
-						if((indexOf+1)<((split[i].length()-1))) {
+						if((indexOf+1)<=((split[i].length()-1))) {
 							valore = split[i].substring((indexOf+1));
 						}
 						if(valore!=null){

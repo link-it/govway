@@ -1985,10 +1985,13 @@ components:
       type: object
       required:
         - headers
-        - body
-        - attachments
+        - payload
       properties:
         headers:
+          type: boolean
+        payload:
+          type: boolean
+        payload_parsing:
           type: boolean
         body:
           type: boolean

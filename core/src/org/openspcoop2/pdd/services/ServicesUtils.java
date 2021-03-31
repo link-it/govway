@@ -92,6 +92,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.CORSRequestType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -553,7 +554,7 @@ public class ServicesUtils {
 			}
 			if(!generazioneWsdlEnabled) {
 				response.setStatus(404);
-				response.sendResponse(ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlUnsupported(idService)).getBytes());
+				response.sendResponse(DumpByteArrayOutputStream.newInstance(ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlUnsupported(idService)).getBytes()));
 				return;
 			}
 			
@@ -632,11 +633,11 @@ public class ServicesUtils {
 			if(wsdl!=null) {
 				HttpUtilities.setOutputFile(new ConnectorHttpServletResponse(response), true, "interface.wsdl");	
 				response.setStatus(200);
-				response.sendResponse(wsdl);
+				response.sendResponse(DumpByteArrayOutputStream.newInstance(wsdl));
 			}
 			else {
 				response.setStatus(404);
-				response.sendResponse(ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlNotDefined(idService)).getBytes());
+				response.sendResponse(DumpByteArrayOutputStream.newInstance(ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlNotDefined(idService)).getBytes()));
 			}
 			
 		}catch(Exception e){

@@ -481,6 +481,10 @@ public class ConsoleProperties {
 	public Boolean isShowAllarmiElenchiStatiAllarmi() throws UtilsException{
 		return this.readBooleanProperty(true, "allarmi.elenchi.statoAllarme");
 	}
+	
+	public Boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled() throws UtilsException{
+		return this.readBooleanProperty(true, "registrazioneMessaggi.multipartPayloadParsing.enabled");
+	}
 
 	
 	

@@ -43,7 +43,9 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
@@ -194,14 +196,15 @@ public class ConnettoreJMS extends ConnettoreBase {
 				this.errore = "Errore avvenuto durante la consegna JMS: Trasformazione del messaggio in byte[] non riuscita";
 				return false;
 			}
-			if(this.isDumpBinario()) {
+			if(this.isDumpBinarioRichiesta()) {
 				try{
+					MessageType requestMessageType = this.requestMsg.getMessageType();
 					String contentTypeRichiesta = this.requestMsg.getContentType();
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					DumpByteArrayOutputStream bout = DumpByteArrayOutputStream.newInstance(consegna);
 					bout.write(consegna);
 					bout.flush();
 					bout.close();
-					this.dumpBinarioRichiestaUscita(bout, contentTypeRichiesta, this.location, this.propertiesTrasporto);
+					this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, this.propertiesTrasporto);
 				}catch(Exception e){
 					this.logger.error("DebugMode, log del messaggio inviato non riuscito",e);
 				}

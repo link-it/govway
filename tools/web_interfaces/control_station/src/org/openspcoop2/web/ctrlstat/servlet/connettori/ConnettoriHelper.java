@@ -2499,29 +2499,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO, 
 						tipoconn, connettoreCustomHidden, dati,
 						false); 				
-				
-				
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
-				if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
-					de.setType(DataElementType.CHECKBOX);
-					if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
-						de.setSelected(true);
-					}
-				}
-				else{
-					de.setType(DataElementType.HIDDEN);
-				}
-				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
-					de.setValue("true");
-				}
-				else{
-					de.setValue("false");
-				}
-				dati.addElement(de);	
-				
-				
+								
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 				String tmpUrl = url;
@@ -2617,7 +2595,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setPostBack(true);
 					dati.addElement(de);
 				}
-				
+								
 				// Extended
 				if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
 					ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
@@ -2641,6 +2619,29 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setPostBack(true);
 					dati.addElement(de);
 				}
+				
+				// Debug
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+				if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
+					de.setType(DataElementType.CHECKBOX);
+					if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+						de.setSelected(true);
+					}
+					de.setInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG_INFO);
+					de.setNote(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG_NODE);
+				}
+				else{
+					de.setType(DataElementType.HIDDEN);
+				}
+				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+					de.setValue("true");
+				}
+				else{
+					de.setValue("false");
+				}
+				dati.addElement(de);
 				
 				// Autenticazione http
 				if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
@@ -3834,7 +3835,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								return false;
 							}
 						}
-						if(this.checkLength255(httpspath, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION)==false) {
+						if(this.checkLength4000(httpspath, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION)==false) {
 							return false;
 						}
 						
@@ -3855,6 +3856,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 						}
 					
 						if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+							
+							if(this.checkLength4000(httpsTrustStoreCRLs, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL)==false) {
+								return false;
+							}
+							
 							httpsTrustStoreCRLs = httpsTrustStoreCRLs.trim();
 							String [] tmp = httpsTrustStoreCRLs.split(",");
 							if(tmp!=null && tmp.length>0) {
@@ -3903,7 +3909,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 									return false;
 								}
 							}
-							if(this.checkLength255(httpspathkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION)==false) {
+							if(this.checkLength4000(httpspathkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION)==false) {
 								return false;
 							}
 							

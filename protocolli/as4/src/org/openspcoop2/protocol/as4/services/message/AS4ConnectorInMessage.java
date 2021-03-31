@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.protocol.as4.services.message;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -46,9 +47,11 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -75,6 +78,14 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	private String functionParameters;
 	private PdDContext pddContext;
 	private Date dataIngressoRichiesta;
+	
+	private Context context;
+	@SuppressWarnings("unused")
+	private String idTransazione;
+	@SuppressWarnings("unused")
+	private int soglia;
+	@SuppressWarnings("unused")
+	private File repositoryFile;
 	
 	public AS4ConnectorInMessage(UserMessage userMessage,HashMap<String, byte[]> content) throws ConnectorException{
 		try{
@@ -136,6 +147,17 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			throw new ConnectorException(e.getMessage(),e);
 		}
 	}
+	
+	@Override
+	public void setThresholdContext(Context context,
+			int soglia, File repositoryFile) {
+		this.context = context;
+		if(this.context!=null) {
+			this.idTransazione = (String) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
+		this.soglia = soglia;
+		this.repositoryFile = repositoryFile;
+	}
 
 	@Override
 	public IDService getIdModuloAsIDService(){
@@ -157,6 +179,11 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public RequestInfo getRequestInfo(){
 		return this.requestInfo;
+	}
+	
+	@Override
+	public MessageType getRequestMessageType() {
+		return this.message.getMessageType();
 	}
 	
 	private Map<String, Object> attributes = new Hashtable<String, Object>();
@@ -225,7 +252,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	}
 	
 	@Override
-	public byte[] getRequest() throws ConnectorException{
+	public DumpByteArrayOutputStream getRequest() throws ConnectorException{
 		try{
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return null;

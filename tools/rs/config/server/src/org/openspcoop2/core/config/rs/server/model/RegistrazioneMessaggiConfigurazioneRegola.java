@@ -31,9 +31,15 @@ public class RegistrazioneMessaggiConfigurazioneRegola  {
   private Boolean headers = null;
   
   @Schema(required = true, description = "")
+  private Boolean payload = null;
+  
+  @Schema(description = "")
+  private Boolean payloadParsing = null;
+  
+  @Schema(description = "")
   private Boolean body = null;
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private Boolean attachments = null;
  /**
    * Get headers
@@ -56,11 +62,49 @@ public class RegistrazioneMessaggiConfigurazioneRegola  {
   }
 
  /**
+   * Get payload
+   * @return payload
+  **/
+  @JsonProperty("payload")
+  @NotNull
+  @Valid
+  public Boolean isPayload() {
+    return this.payload;
+  }
+
+  public void setPayload(Boolean payload) {
+    this.payload = payload;
+  }
+
+  public RegistrazioneMessaggiConfigurazioneRegola payload(Boolean payload) {
+    this.payload = payload;
+    return this;
+  }
+
+ /**
+   * Get payloadParsing
+   * @return payloadParsing
+  **/
+  @JsonProperty("payload_parsing")
+  @Valid
+  public Boolean isPayloadParsing() {
+    return this.payloadParsing;
+  }
+
+  public void setPayloadParsing(Boolean payloadParsing) {
+    this.payloadParsing = payloadParsing;
+  }
+
+  public RegistrazioneMessaggiConfigurazioneRegola payloadParsing(Boolean payloadParsing) {
+    this.payloadParsing = payloadParsing;
+    return this;
+  }
+
+ /**
    * Get body
    * @return body
   **/
   @JsonProperty("body")
-  @NotNull
   @Valid
   public Boolean isBody() {
     return this.body;
@@ -80,7 +124,6 @@ public class RegistrazioneMessaggiConfigurazioneRegola  {
    * @return attachments
   **/
   @JsonProperty("attachments")
-  @NotNull
   @Valid
   public Boolean isAttachments() {
     return this.attachments;
@@ -102,6 +145,8 @@ public class RegistrazioneMessaggiConfigurazioneRegola  {
     sb.append("class RegistrazioneMessaggiConfigurazioneRegola {\n");
     
     sb.append("    headers: ").append(RegistrazioneMessaggiConfigurazioneRegola.toIndentedString(this.headers)).append("\n");
+    sb.append("    payload: ").append(RegistrazioneMessaggiConfigurazioneRegola.toIndentedString(this.payload)).append("\n");
+    sb.append("    payloadParsing: ").append(RegistrazioneMessaggiConfigurazioneRegola.toIndentedString(this.payloadParsing)).append("\n");
     sb.append("    body: ").append(RegistrazioneMessaggiConfigurazioneRegola.toIndentedString(this.body)).append("\n");
     sb.append("    attachments: ").append(RegistrazioneMessaggiConfigurazioneRegola.toIndentedString(this.attachments)).append("\n");
     sb.append("}");

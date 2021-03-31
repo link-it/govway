@@ -41,6 +41,7 @@ import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.DumpRestMessageUtils;
 import org.openspcoop2.message.soap.DumpSoapMessageUtils;
@@ -69,6 +70,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -158,8 +160,8 @@ public class Dump {
 //			DumpConfigurazione dumpConfigurazione) throws DumpException{
 //		this(dominio, modulo, null, null, null, tipoPdD, pddContext,null,null,dumpConfigurazione);
 //	}
-	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, String nomePorta, PdDContext pddContext) throws DumpException{ // dump binario
-		this(dominio, modulo, null, null, null, tipoPdD, nomePorta, pddContext,null,null,null);
+	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, String nomePorta, PdDContext pddContext, DumpConfigurazione dumpConfigurazione) throws DumpException{ // dump binario
+		this(dominio, modulo, null, null, null, tipoPdD, nomePorta, pddContext,null,null,dumpConfigurazione);
 	}
 	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, String nomePorta, PdDContext pddContext,IState statoRichiesta,IState statoRisposta,
 			DumpConfigurazione dumpConfigurazione) throws DumpException{
@@ -247,12 +249,16 @@ public class Dump {
 
 	/** ----------------- METODI DI LOGGING  ---------------- */
 
-	public void dumpBinarioRichiestaIngresso(boolean onlyLogFileTrace, byte[] msg, URLProtocolContext protocolContext) throws DumpException {
+	public void dumpBinarioRichiestaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+			DumpByteArrayOutputStream msg, MessageType messageType, 
+			URLProtocolContext protocolContext) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaIngresso();
 		}
 		try {
-			dump(onlyLogFileTrace, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,null,msg,protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
+			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,
+					null,msg,messageType,
+					protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -266,7 +272,9 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaIngresso();
 		}
 		try {
-			dump(false, TipoMessaggio.RICHIESTA_INGRESSO,msg,null,protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
+			dump(false, false, false, TipoMessaggio.RICHIESTA_INGRESSO,
+					msg,null,null,
+					protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -279,7 +287,9 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaIngresso();
 		}
 		try {
-			dump(false, TipoMessaggio.RICHIESTA_INGRESSO,null,msg,protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
+			dump(false, false, false, TipoMessaggio.RICHIESTA_INGRESSO,
+					null,DumpByteArrayOutputStream.newInstance(msg),null,
+					protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -289,12 +299,16 @@ public class Dump {
 	}
 	
 
-	public void dumpBinarioRichiestaUscita(boolean onlyLogFileTrace, byte[] msg, InfoConnettoreUscita infoConnettore) throws DumpException {
+	public void dumpBinarioRichiestaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+			DumpByteArrayOutputStream msg, MessageType messageType, 
+			InfoConnettoreUscita infoConnettore) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaUscita();
 		}
 		try {
-			dump(onlyLogFileTrace, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getHeaders());
+			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,
+					null,msg,messageType,
+					(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -307,7 +321,9 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRichiestaUscita();
 		}
 		try {
-			dump(false, TipoMessaggio.RICHIESTA_USCITA,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getHeaders());
+			dump(false, false, false, TipoMessaggio.RICHIESTA_USCITA,
+					msg,null,null,
+					(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getHeaders());
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -317,12 +333,16 @@ public class Dump {
 	}
 
 	
-	public void dumpBinarioRispostaIngresso(boolean onlyLogFileTrace, byte[] msg, InfoConnettoreUscita infoConnettore, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
+	public void dumpBinarioRispostaIngresso(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+			DumpByteArrayOutputStream msg, MessageType messageType, 
+			InfoConnettoreUscita infoConnettore, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaIngresso();
 		}
 		try {
-			dump(onlyLogFileTrace, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,null,msg,(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
+			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,
+					null,msg,messageType,
+					(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -336,7 +356,9 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaIngresso();
 		}
 		try {
-			dump(false, TipoMessaggio.RISPOSTA_INGRESSO,msg,null,(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
+			dump(false, false, false, TipoMessaggio.RISPOSTA_INGRESSO,
+					msg,null,null,
+					(infoConnettore!=null ? infoConnettore.getLocation() : null),transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -347,12 +369,16 @@ public class Dump {
 	
 
 	
-	public void dumpBinarioRispostaUscita(boolean onlyLogFileTrace, byte[] msg, URLProtocolContext protocolContext, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
+	public void dumpBinarioRispostaUscita(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+			DumpByteArrayOutputStream msg, MessageType messageType, 
+			URLProtocolContext protocolContext, Map<String, List<String>> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaUscita();
 		}
 		try {
-			dump(onlyLogFileTrace, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,null,msg,protocolContext!=null ? protocolContext.getSource() : null,transportHeaderRisposta);
+			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,
+					null,msg,messageType,
+					protocolContext!=null ? protocolContext.getSource() : null,transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -366,7 +392,9 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaUscita();
 		}
 		try {
-			dump(false, TipoMessaggio.RISPOSTA_USCITA,msg,null,protocolContext!=null ? protocolContext.getSource() : null,transportHeaderRisposta);
+			dump(false, false, false, TipoMessaggio.RISPOSTA_USCITA,
+					msg,null,null,
+					protocolContext!=null ? protocolContext.getSource() : null,transportHeaderRisposta);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -381,7 +409,9 @@ public class Dump {
 			this.transactionNullable.getTempiElaborazione().startDumpIntegrationManager();
 		}
 		try {
-			dump(false, TipoMessaggio.INTEGRATION_MANAGER,msg,null,"IntegrationManager.getMessage()",null);
+			dump(false, false, false, TipoMessaggio.INTEGRATION_MANAGER,
+					msg,null,null,
+					"IntegrationManager.getMessage()",null);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -397,7 +427,8 @@ public class Dump {
 	 * @throws TracciamentoException 
 	 * 
 	 */
-	private void dump(boolean onlyLogFileTrace, TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,byte[] msgBytes, 
+	private void dump(boolean dumpBinarioRegistrazioneDatabase, boolean onlyLogFileTrace_headers, boolean onlyLogFileTrace_body, 
+			TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,DumpByteArrayOutputStream msgBytes, MessageType messageType,
 			String location,Map<String, List<String>> transportHeaderParam) throws DumpException {
 
 		boolean dumpNormale = TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio) ||
@@ -425,37 +456,128 @@ public class Dump {
 		boolean dumpHeaders = true; 
 		boolean dumpBody = true;
 		boolean dumpAttachments = true;
+		if(dumpBinario) {
+			dumpAttachments = false;
+		}
+		
 		if(dumpNormale) {
+			// Il dump non binario si utilizza solo se viene richiesto un payload parsing, altrimenti quello binario è più preciso (anche se sono abilitati solo gli header) 
 			if(TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio)) {
 				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRichiestaIngresso()!=null) {
-					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getHeaders());
-					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getBody());
-					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getAttachments());
+					if(StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getPayload()) &&
+							StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getPayloadParsing())){
+						dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getHeaders());
+						dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getBody());
+						dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getAttachments());		
+					}
+					else {
+						dumpHeaders = false;
+						dumpBody = false;
+						dumpAttachments = false;
+					}
 				}
 			}
 			else if(TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio)) {
 				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRichiestaUscita()!=null) {
-					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getHeaders());
-					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getBody());
-					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getAttachments());
+					if(StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getPayload()) &&
+							StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getPayloadParsing())){
+						dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getHeaders());
+						dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getBody());
+						dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getAttachments());
+					}
+					else {
+						dumpHeaders = false;
+						dumpBody = false;
+						dumpAttachments = false;
+					}
 				}
 			}
 			else if(TipoMessaggio.RISPOSTA_INGRESSO.equals(tipoMessaggio)) {
 				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaIngresso()!=null) {
-					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getHeaders());
-					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getBody());
-					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getAttachments());
+					if(StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getPayload()) &&
+							StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getPayloadParsing())){
+						dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getHeaders());
+						dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getBody());
+						dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getAttachments());
+					}
+					else {
+						dumpHeaders = false;
+						dumpBody = false;
+						dumpAttachments = false;
+					}
 				}
 			}
 			else if(TipoMessaggio.RISPOSTA_USCITA.equals(tipoMessaggio)) {
 				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaUscita()!=null) {
-					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
-					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getBody());
-					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getAttachments());
+					if(StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload()) &&
+							StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayloadParsing())){
+						dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
+						dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getBody());
+						dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getAttachments());
+					}
+					else {
+						dumpHeaders = false;
+						dumpBody = false;
+						dumpAttachments = false;
+					}
 				}
 			}
 			if(!dumpHeaders && !dumpBody && !dumpAttachments) {
 				return; // disabilitato
+			}
+		}
+		else if(dumpBinario) {
+			
+			if(dumpBinarioRegistrazioneDatabase) {
+				// registro tutto
+			}
+			else {
+					
+				// imposto a false; verifico poi regola specifica e faccio successivamente verifica per file trace
+				dumpHeaders = false;
+				dumpBody = false;
+				
+				// Il dump non binario si utilizza solo se viene richiesto un payload parsing, altrimenti quello binario è più preciso (anche se sono abilitati solo gli header) 
+				if(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.equals(tipoMessaggio)) {
+					if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRichiestaIngresso()!=null) {
+						boolean payloadParsing = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getPayload()) &&
+								StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getPayloadParsing());
+						if(!payloadParsing) {
+							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getHeaders());
+							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getPayload());
+						}
+					}
+				}
+				else if(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.equals(tipoMessaggio)) {
+					if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRichiestaUscita()!=null) {
+						boolean payloadParsing = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getPayload()) &&
+								StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getPayloadParsing());
+						if(!payloadParsing) {
+							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getHeaders());
+							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getPayload());
+						}
+					}
+				}
+				else if(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.equals(tipoMessaggio)) {
+					if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaIngresso()!=null) {
+						boolean payloadParsing = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getPayload()) &&
+								StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getPayloadParsing());
+						if(!payloadParsing) {
+							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getHeaders());
+							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getPayload());
+						}
+					}
+				}
+				else if(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(tipoMessaggio)) {
+					if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaUscita()!=null) {
+						boolean payloadParsing = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload()) &&
+								StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayloadParsing());
+						if(!payloadParsing) {
+							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
+							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload());
+						}
+					}
+				}
 			}
 		}
 		boolean dumpMultipartHeaders = dumpHeaders;
@@ -469,6 +591,9 @@ public class Dump {
 		messaggio.setTipoMessaggio(tipoMessaggio);
 		if(msg!=null) {
 			messaggio.setFormatoMessaggio(msg.getMessageType());
+		}
+		else if(messageType!=null) {
+			messaggio.setFormatoMessaggio(messageType);
 		}
 		
 		messaggio.setGdo(DateManager.getDate());
@@ -540,7 +665,7 @@ public class Dump {
 			this.loggerDump.error(messaggioErrore);
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error(messaggioErrore);
 		}
-		if(dumpHeaders) {
+		if(dumpHeaders || onlyLogFileTrace_headers) {
 			if(transportHeader!=null && transportHeader.size()>0){
 				Iterator<String> keys = transportHeader.keySet().iterator();
 				while (keys.hasNext()) {
@@ -560,85 +685,19 @@ public class Dump {
 		DumpMessaggio dumpMessaggio = null;
 		DumpMessaggioConfig dumpMessaggioConfig = null;
 		try {
-			if(dumpBody || dumpAttachments) {
+			if( (dumpBody || onlyLogFileTrace_body) 
+					|| 
+				dumpAttachments
+				) {
 				if(msg!=null){
-					
 					dumpMessaggioConfig = new DumpMessaggioConfig();
-					dumpMessaggioConfig.setDumpBody(dumpBody);
-					dumpMessaggioConfig.setDumpHeaders(false); // utilizzo sempre quello fornito poiche' per il raw il msg openspcoop2 non e' disponibile, altrimenti perche' devo considerare i forward header
-					dumpMessaggioConfig.setDumpAttachments(dumpAttachments);
-					dumpMessaggioConfig.setDumpMultipartHeaders(dumpMultipartHeaders);
-					
-					if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-						dumpMessaggio = DumpSoapMessageUtils.dumpMessage(msg.castAsSoap(), dumpMessaggioConfig, true); //!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());
-					}
-					else{
-						dumpMessaggio = DumpRestMessageUtils.dumpMessage(msg.castAsRest(), dumpMessaggioConfig, true); //!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());
-					}
-					
-					messaggio.setContentType(dumpMessaggio.getContentType());
-					
-					if(dumpBody) {
-						messaggio.setBody(dumpMessaggio.getBody());
-						if(dumpMessaggio.getMultipartInfoBody()!=null) {
-							BodyMultipartInfo bodyMultipartInfo = new BodyMultipartInfo();
-							
-							bodyMultipartInfo.setContentId(dumpMessaggio.getMultipartInfoBody().getContentId());
-							bodyMultipartInfo.setContentLocation(dumpMessaggio.getMultipartInfoBody().getContentLocation());
-							bodyMultipartInfo.setContentType(dumpMessaggio.getMultipartInfoBody().getContentType());
-							
-							if(dumpMultipartHeaders) {
-								if(dumpMessaggio.getMultipartInfoBody().getHeadersValues()!=null &&
-										dumpMessaggio.getMultipartInfoBody().getHeadersValues().size()>0) {
-									Iterator<?> it = dumpMessaggio.getMultipartInfoBody().getHeadersValues().keySet().iterator();
-									while (it.hasNext()) {
-										String key = (String) it.next();
-										List<String> values = dumpMessaggio.getMultipartInfoBody().getHeadersValues().get(key);
-										bodyMultipartInfo.getHeaders().put(key, values);
-									}
-								}
-							}
-							
-							messaggio.setBodyMultipartInfo(bodyMultipartInfo);
-						}
-					}
-					
-					if(dumpAttachments && dumpMessaggio.getAttachments()!=null &&
-							dumpMessaggio.getAttachments().size()>0) {
-						for (DumpAttachment dumpAttach : dumpMessaggio.getAttachments()) {
-							
-							Attachment attachment = new Attachment();
-							
-							attachment.setContentId(dumpAttach.getContentId());
-							attachment.setContentLocation(dumpAttach.getContentLocation());
-							attachment.setContentType(dumpAttach.getContentType());
-							
-							if(dumpMultipartHeaders) {
-								if(dumpAttach.getHeadersValues()!=null &&
-										dumpAttach.getHeadersValues().size()>0) {
-									Iterator<?> it = dumpAttach.getHeadersValues().keySet().iterator();
-									while (it.hasNext()) {
-										String key = (String) it.next();
-										List<String> values = dumpAttach.getHeadersValues().get(key);
-										attachment.getHeaders().put(key, values);
-									}
-								}
-							}
-							
-							if(dumpAttach.getContent()!=null)
-								attachment.setContent(dumpAttach.getContent());
-							else if(dumpAttach.getErrorContentNotSerializable()!=null)
-								attachment.setContent(dumpAttach.getErrorContentNotSerializable().getBytes());
-							else
-								throw new Exception("Contenuto dell'attachment con id '"+attachment.getContentId()+"' non presente ?");
-							
-							messaggio.getAttachments().add(attachment);
-						}
-					}
+					dumpMessaggio = fillMessaggio(msg, dumpMessaggioConfig,
+							dumpBody, dumpAttachments, dumpMultipartHeaders,
+							messaggio);
 				}
 				else {
 					
-					if(dumpBody) {
+					if( dumpBody || onlyLogFileTrace_body ) {
 					
 						if(transportHeader!=null && !transportHeader.isEmpty()) {
 							Iterator<String> keys = transportHeader.keySet().iterator();
@@ -679,7 +738,7 @@ public class Dump {
 		
 		
 		// TransazioneContext
-		if(this.properties.isTransazioniSaveDumpInUniqueTransaction() || onlyLogFileTrace) {
+		if(this.properties.isTransazioniSaveDumpInUniqueTransaction() || onlyLogFileTrace_body || onlyLogFileTrace_headers) {
 			
 			
 			if(this.transazioneApplicativoServer!=null) {
@@ -707,7 +766,10 @@ public class Dump {
 				boolean gestioneStateful = false;
 				try {
 					Transaction tr = TransactionContext.getTransaction(this.idTransazione);
-					tr.addMessaggio(messaggio, onlyLogFileTrace);
+					if(messaggio.getBody()!=null) {
+						messaggio.getBody().lock();
+					}
+					tr.addMessaggio(messaggio, onlyLogFileTrace_headers, onlyLogFileTrace_body);
 				}catch(TransactionDeletedException e){
 					gestioneStateful = true;
 				}catch(TransactionNotExistsException e){
@@ -832,12 +894,12 @@ public class Dump {
 						out.append(dumpMessaggio.toString(dumpMessaggioConfig,this.properties.isDumpAllAttachments()));
 	
 					}else{
-						if(org.openspcoop2.utils.mime.MultipartUtils.messageWithAttachment(msgBytes)){
+						if(org.openspcoop2.utils.mime.MultipartUtils.messageWithAttachment(msgBytes.toByteArray())){
 							out.append("------ MessageWithAttachments ------\n");
 						}else{
 							out.append("------ Message ------\n");
 						}
-						out.append(new String(msgBytes));
+						out.append(msgBytes.toString());
 					}
 				
 				}
@@ -863,6 +925,13 @@ public class Dump {
 		
 		// Il dump via API lo effettuo solamente se ho davvero un messaggio OpenSPCoop
 		// Senno ottengo errori all'interno delle implementazioni degli appender dump
+		boolean onlyLogFileTrace = false;
+		if(onlyLogFileTrace_headers && !dumpHeaders) {
+			onlyLogFileTrace=true;
+		}
+		else if(onlyLogFileTrace_body && !dumpBody) {
+			onlyLogFileTrace=true;
+		}
 		if(!onlyLogFileTrace && !dumpIntegrationManager) {
 			for(int i=0; i<this.loggerDumpOpenSPCoopAppender.size();i++){
 				try{
@@ -883,6 +952,86 @@ public class Dump {
 
 	}
 	
+	public static DumpMessaggio fillMessaggio(OpenSPCoop2Message msg, DumpMessaggioConfig dumpMessaggioConfig,
+			boolean dumpBody, boolean dumpAttachments, boolean dumpMultipartHeaders,
+			Messaggio messaggio) throws Exception {
+			
+		DumpMessaggio dumpMessaggio = null;
+		
+		dumpMessaggioConfig.setDumpBody(dumpBody);
+		dumpMessaggioConfig.setDumpHeaders(false); // utilizzo sempre quello fornito poiche' per il raw il msg openspcoop2 non e' disponibile, altrimenti perche' devo considerare i forward header
+		dumpMessaggioConfig.setDumpAttachments(dumpAttachments);
+		dumpMessaggioConfig.setDumpMultipartHeaders(dumpMultipartHeaders);
+		
+		if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+			dumpMessaggio = DumpSoapMessageUtils.dumpMessage(msg.castAsSoap(), dumpMessaggioConfig, true); //!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());
+		}
+		else{
+			dumpMessaggio = DumpRestMessageUtils.dumpMessage(msg.castAsRest(), dumpMessaggioConfig, true); //!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());
+		}
+		
+		messaggio.setContentType(dumpMessaggio.getContentType());
+		
+		if(dumpBody) {
+			messaggio.setBody(DumpByteArrayOutputStream.newInstance(dumpMessaggio.getBody()));
+			if(dumpMessaggio.getMultipartInfoBody()!=null) {
+				BodyMultipartInfo bodyMultipartInfo = new BodyMultipartInfo();
+				
+				bodyMultipartInfo.setContentId(dumpMessaggio.getMultipartInfoBody().getContentId());
+				bodyMultipartInfo.setContentLocation(dumpMessaggio.getMultipartInfoBody().getContentLocation());
+				bodyMultipartInfo.setContentType(dumpMessaggio.getMultipartInfoBody().getContentType());
+				
+				if(dumpMultipartHeaders) {
+					if(dumpMessaggio.getMultipartInfoBody().getHeadersValues()!=null &&
+							dumpMessaggio.getMultipartInfoBody().getHeadersValues().size()>0) {
+						Iterator<?> it = dumpMessaggio.getMultipartInfoBody().getHeadersValues().keySet().iterator();
+						while (it.hasNext()) {
+							String key = (String) it.next();
+							List<String> values = dumpMessaggio.getMultipartInfoBody().getHeadersValues().get(key);
+							bodyMultipartInfo.getHeaders().put(key, values);
+						}
+					}
+				}
+				
+				messaggio.setBodyMultipartInfo(bodyMultipartInfo);
+			}
+		}
+		
+		if(dumpAttachments && dumpMessaggio.getAttachments()!=null &&
+				dumpMessaggio.getAttachments().size()>0) {
+			for (DumpAttachment dumpAttach : dumpMessaggio.getAttachments()) {
+				
+				Attachment attachment = new Attachment();
+				
+				attachment.setContentId(dumpAttach.getContentId());
+				attachment.setContentLocation(dumpAttach.getContentLocation());
+				attachment.setContentType(dumpAttach.getContentType());
+				
+				if(dumpMultipartHeaders) {
+					if(dumpAttach.getHeadersValues()!=null &&
+							dumpAttach.getHeadersValues().size()>0) {
+						Iterator<?> it = dumpAttach.getHeadersValues().keySet().iterator();
+						while (it.hasNext()) {
+							String key = (String) it.next();
+							List<String> values = dumpAttach.getHeadersValues().get(key);
+							attachment.getHeaders().put(key, values);
+						}
+					}
+				}
+				
+				if(dumpAttach.getContent()!=null)
+					attachment.setContent(dumpAttach.getContent());
+				else if(dumpAttach.getErrorContentNotSerializable()!=null)
+					attachment.setContent(dumpAttach.getErrorContentNotSerializable().getBytes());
+				else
+					throw new Exception("Contenuto dell'attachment con id '"+attachment.getContentId()+"' non presente ?");
+				
+				messaggio.getAttachments().add(attachment);
+			}
+		}
+		
+		return dumpMessaggio;
+	}
 
 	
 	private void gestioneErroreDump(Throwable e) throws DumpException{
