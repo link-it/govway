@@ -8098,6 +8098,7 @@ components:
               api: "#/components/schemas/ApiModISicurezzaMessaggioOperazione"
               ridefinito: "#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito"
           oneOf:
+          - $ref: "#/components/schemas/ApiModISicurezzaMessaggioOperazione"
           - $ref: "#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito"
     ApiModIAzioneSoap:
       required:
@@ -8115,6 +8116,7 @@ components:
               api: "#/components/schemas/ApiModISicurezzaMessaggioOperazione"
               ridefinito: "#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito"
           oneOf:
+          - $ref: "#/components/schemas/ApiModISicurezzaMessaggioOperazione"
           - $ref: "#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito"
     ApiModISicurezzaMessaggioOperazione:
       required:

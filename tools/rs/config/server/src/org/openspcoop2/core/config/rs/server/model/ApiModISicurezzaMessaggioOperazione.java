@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ApiModISicurezzaMessaggioOperazione  {
+public class ApiModISicurezzaMessaggioOperazione  implements OneOfApiModIAzioneSoapSicurezzaMessaggio, OneOfApiModIRisorsaRestSicurezzaMessaggio {
   
   @Schema(required = true, description = "")
   private ModISicurezzaMessaggioOperazioneEnum stato = null;
@@ -33,7 +33,8 @@ public class ApiModISicurezzaMessaggioOperazione  {
    * Get stato
    * @return stato
   **/
-  @JsonProperty("stato")
+  @Override
+@JsonProperty("stato")
   @NotNull
   @Valid
   public ModISicurezzaMessaggioOperazioneEnum getStato() {
