@@ -24,13 +24,15 @@ package org.openspcoop2.utils.serialization;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.CopyCharStream;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
@@ -129,12 +131,13 @@ public class XMLDeserializer implements IDeserializer{
 	}
 	private Object readObject(InputStream is, Class<?> classType, Class<?> elementsTypes) throws IOException{
 		try{
-			byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-			int letti = 0;
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			while( (letti=is.read(reads)) != -1 ){
-				bout.write(reads, 0, letti);
-			}
+//			byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//			int letti = 0;
+//			while( (letti=is.read(reads)) != -1 ){
+//				bout.write(reads, 0, letti);
+//			}
+			CopyStream.copy(is, bout);
 			bout.flush();
 			bout.close();
 			
@@ -167,14 +170,16 @@ public class XMLDeserializer implements IDeserializer{
 	}
 	private Object readObject(Reader reader, Class<?> classType, Class<?> elementsTypes) throws IOException{
 		try{
-			char [] reads = new char[Utilities.DIMENSIONE_BUFFER];
-			int letti = 0;
-			StringBuilder bf = new StringBuilder();
-			while( (letti=reader.read(reads)) != -1 ){
-				bf.append(reads, 0, letti);
-			}
+//			char [] reads = new char[Utilities.DIMENSIONE_BUFFER];
+//			int letti = 0;
+//			StringBuilder bf = new StringBuilder();
+//			while( (letti=reader.read(reads)) != -1 ){
+//				bf.append(reads, 0, letti);
+//			}
+			StringWriter writer = new StringWriter();
+			CopyCharStream.copy(reader, writer);
 						
-			return readObject_engine(bf.toString(), classType, elementsTypes);	
+			return readObject_engine(writer.toString(), classType, elementsTypes);	
 			
 		}catch(Exception e){
 			throw new IOException("Trasformazione in oggetto non riuscita: "+e.getMessage(),e);

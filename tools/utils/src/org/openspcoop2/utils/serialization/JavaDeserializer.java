@@ -28,7 +28,7 @@ import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.io.StringReader;
 
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.CopyCharStream;
 
 
 /**	
@@ -76,13 +76,14 @@ public class JavaDeserializer implements IDeserializer {
 		ObjectInputStream ois = null;
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			int letti = 0;
-			char[]buffer = new char[Utilities.DIMENSIONE_BUFFER];
-			while( (letti = reader.read(buffer)) != -1 ){
-				for(int i=0; i<letti; i++){
-					bout.write(buffer[i]);
-				}
-			}
+//			int letti = 0;
+//			char[]buffer = new char[Utilities.DIMENSIONE_BUFFER];
+//			while( (letti = reader.read(buffer)) != -1 ){
+//				for(int i=0; i<letti; i++){
+//					bout.write(buffer[i]);
+//				}
+//			}
+			CopyCharStream.copy(reader, bout);
 			bout.flush();
 			bout.close();
 			

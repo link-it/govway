@@ -47,7 +47,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -193,11 +193,12 @@ public class ConnectorDispatcherUtils {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
 			if(is!=null){
-				int letti = 0;
-				byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
-				while( (letti=is.read(buffer)) != -1 ){
-					bout.write(buffer, 0, letti);
-				}
+//				int letti = 0;
+//				byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
+//				while( (letti=is.read(buffer)) != -1 ){
+//					bout.write(buffer, 0, letti);
+//				}
+				CopyStream.copy(is, bout);
 				bout.flush();
 				bout.close();
 			}

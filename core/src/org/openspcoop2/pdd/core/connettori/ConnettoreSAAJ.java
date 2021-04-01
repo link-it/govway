@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.SOAPConnection;
@@ -38,16 +39,19 @@ import javax.xml.soap.SOAPMessage;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -67,7 +71,7 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
  * @version $Rev$, $Date$
  */
 
-public class ConnettoreSAAJ extends ConnettoreBase {
+public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 
 	public static final String ENDPOINT_TYPE = "saaj";
 	
@@ -75,7 +79,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 	/** Connessione */
 	private SOAPConnection connection = null;
 
-	
+	private SOAPMessage soapRequestMessage = null;
 	
 	
 	/* ********  METODI  ******** */
@@ -154,12 +158,6 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ENDPOINT_TYPE, this.propertiesUrlBased, this.location,
 					this.getProtocolFactory(), this.idModulo);
 			
-			// Check tipo di messaggio
-			if(ServiceBinding.SOAP.equals(this.requestMsg.getServiceBinding())==false){
-				throw new Exception("Connettore utilizzabile solamente per tipologia di servizio SOAP");
-			}
-			OpenSPCoop2SoapMessage soapRequestMessage = this.requestMsg.castAsSoap();
-			
 			URL urlTest = new URL( this.location );
 			URLConnection connectionTest = urlTest.openConnection();
 			HttpURLConnection httpConnTest = (HttpURLConnection) connectionTest;
@@ -171,6 +169,23 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			outTest.close();
 			httpConnTest.disconnect();
 
+			
+			
+			// Check tipo di messaggio
+			MessageType requestMessageType = this.requestMsg.getMessageType();
+			if(ServiceBinding.SOAP.equals(this.requestMsg.getServiceBinding())==false){
+				throw new Exception("Connettore utilizzabile solamente per tipologia di servizio SOAP");
+			}
+			OpenSPCoop2SoapMessage soapRequestMessage = this.requestMsg.castAsSoap();
+			this.soapRequestMessage = soapRequestMessage.getSOAPMessage();
+
+			// Collezione header di trasporto per dump
+			Map<String, List<String>> propertiesTrasportoDebug = null;
+			if(this.isDumpBinarioRichiesta()) {
+				propertiesTrasportoDebug = new HashMap<String, List<String>>();
+			}
+			
+			
 			// impostazione property
 			if(this.debug)
 				this.logger.debug("PrefixOptimization...");
@@ -179,9 +194,9 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				if("false".equalsIgnoreCase(this.properties.get("prefix-optimization")) )
 					prefixOptimization = "false";
 				this.logger.info("Prefix Optimization = '"+prefixOptimization+"'",false);
-				
 				//AxisProperties.setProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,prefixOptimization);  		
 			}
+			
 
 			// Consegna
 			if(this.debug)
@@ -193,8 +208,73 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			
 			try{
 				// Impostazione Proprieta del trasporto
-												
-				// Header di trasporto
+				
+				// Impostazione Content-Type
+				String contentTypeRichiesta = null;
+				if(this.debug)
+					this.logger.debug("Impostazione content type...");
+				if(this.isSoap){
+					contentTypeRichiesta = this.requestMsg.getContentType();
+					if(contentTypeRichiesta==null){
+						throw new Exception("Content-Type del messaggio da spedire non definito");
+					}
+				}
+				else{
+					contentTypeRichiesta = this.requestMsg.getContentType();
+					// Content-Type non obbligatorio in REST
+				}
+				if(this.debug)
+					this.logger.info("Impostazione Content-Type ["+contentTypeRichiesta+"]",false);
+				if(contentTypeRichiesta!=null){
+					setRequestHeader(HttpConstants.CONTENT_TYPE, contentTypeRichiesta, propertiesTrasportoDebug);
+				}
+				
+				
+				// Aggiunta del SoapAction Header in caso di richiesta SOAP
+				if(this.isSoap && this.sbustamentoSoap == false){
+					if(this.debug)
+						this.logger.debug("Impostazione soap action...");
+					this.soapAction = soapRequestMessage.getSoapAction();
+					if(this.soapAction==null){
+						this.soapAction="\"OpenSPCoop\"";
+					}
+					if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
+						// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
+						setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, propertiesTrasportoDebug);
+					}
+					if(this.debug)
+						this.logger.info("SOAP Action inviata ["+this.soapAction+"]",false);
+				}
+				
+				
+				// Authentication BASIC
+				if(this.debug)
+					this.logger.debug("Impostazione autenticazione...");
+				String user = null;
+				String password = null;
+				if(this.credenziali!=null){
+					user = this.credenziali.getUser();
+					password = this.credenziali.getPassword();
+				}else{
+					user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
+					password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
+				}
+				if(user!=null && password!=null){
+					String authentication = user + ":" + password;
+					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
+					setRequestHeader(HttpConstants.AUTHORIZATION,authentication, propertiesTrasportoDebug);
+					if(this.debug)
+						this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
+				}
+				
+				// Impostazione timeout
+				if(this.debug)
+					this.logger.debug("Set timeout...");
+				//TODO: connection.setTimeout(readConnectionTimeout);
+				
+				
+				
+				// Impostazione Proprieta del trasporto
 				if(this.debug)
 					this.logger.debug("Impostazione header di trasporto...");
 				boolean encodingRFC2047 = false;
@@ -214,103 +294,72 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 						validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
 					}
 				}
-				OpenSPCoop2MessageProperties forwardHeader = null;
-				if(ServiceBinding.REST.equals(this.requestMsg.getServiceBinding())) {
-					forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(true));
-				}
-				else {
-					forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(true));
-				}
-				if(forwardHeader!=null && forwardHeader.size()>0){
-					if(this.debug)
-						this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");
-					if(this.propertiesTrasporto==null){
-						this.propertiesTrasporto = new HashMap<String, List<String>>();
-					}
-					Iterator<String> keys = forwardHeader.getKeys();
-					while (keys.hasNext()) {
-						String key = (String) keys.next();
-						List<String> values = forwardHeader.getPropertyValues(key);
-						if(this.debug) {
-							if(values!=null && !values.isEmpty()) {
-								for (String value : values) {
-									this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
-								}
-							}
-						}
-						this.propertiesTrasporto.put(key, values);
-					}
-				}
+				this.forwardHttpRequestHeader();
 				if(this.propertiesTrasporto != null){
 					Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
-						if(HttpConstants.USER_AGENT.equalsIgnoreCase(key)==false){
-							List<String> values = this.propertiesTrasporto.get(key);
-							if(this.debug) {
-					    		if(values!=null && !values.isEmpty()) {
-					        		for (String value : values) {
-					        			this.logger.info("Set Transport Header ["+key+"]=["+value+"]",false);
-					        		}
-					    		}
-					    	}
-							
-							if(encodingRFC2047){
-								List<String> valuesEncoded = new ArrayList<String>();
-								if(values!=null && !values.isEmpty()) {
-					        		for (String value : values) {
-					        			if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
-											String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
-											//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
-											if(this.debug)
-												this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
-											valuesEncoded.add(encoded);
-										}
-										else{
-											valuesEncoded.add(value);
-										}
-					        		}
-								}
-								setRequestHeader(soapRequestMessage.getSOAPMessage(), validazioneHeaderRFC2047, key, valuesEncoded, this.logger);
+						if(HttpConstants.USER_AGENT.equalsIgnoreCase(key)){
+							continue;
+						}
+						List<String> values = this.propertiesTrasporto.get(key);
+						if(this.debug) {
+				    		if(values!=null && !values.isEmpty()) {
+				        		for (String value : values) {
+				        			this.logger.info("Set Transport Header ["+key+"]=["+value+"]",false);
+				        		}
+				    		}
+				    	}
+						
+						if(encodingRFC2047){
+							List<String> valuesEncoded = new ArrayList<String>();
+							if(values!=null && !values.isEmpty()) {
+				        		for (String value : values) {
+				        			if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
+										String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
+										//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+										if(this.debug)
+											this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
+										valuesEncoded.add(encoded);
+									}
+									else{
+										valuesEncoded.add(value);
+									}
+				        		}
 							}
-							else{
-								setRequestHeader(soapRequestMessage.getSOAPMessage(), validazioneHeaderRFC2047, key, values, this.logger);
-							}
+							setRequestHeader(validazioneHeaderRFC2047, key, valuesEncoded, this.logger, propertiesTrasportoDebug);
+						}
+						else{
+							setRequestHeader(validazioneHeaderRFC2047, key, values, this.logger, propertiesTrasportoDebug);
 						}
 					}
 				}
 				
-				// Authentication BASIC
-				if(this.debug)
-					this.logger.debug("Impostazione autenticazione...");
-				String user = null;
-				String password = null;
-				if(this.credenziali!=null){
-					user = this.credenziali.getUser();
-					password = this.credenziali.getPassword();
-				}else{
-					user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
-					password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
-				}
-				if(user!=null && password!=null){
-					String authentication = user + ":" + password;
-					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
-					soapRequestMessage.getSOAPMessage().getMimeHeaders().addHeader(HttpConstants.AUTHORIZATION,authentication);
-					if(this.debug)
-						this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
-				}
 				
-				// Impostazione timeout
-				if(this.debug)
-					this.logger.debug("Set timeout...");
-				//TODO: connection.setTimeout(readConnectionTimeout);
-				
+				if(this.isDumpBinarioRichiesta()) {
+					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
+					try {
+						this.requestMsg.writeTo(bout, false);
+						bout.flush();
+						bout.close();
+						
+						this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+					}finally {
+						try {
+							bout.clearResources();
+						}catch(Throwable t) {
+							this.logger.error("Release resources failed: "+t.getMessage(),t);
+						}
+					}
+				}
+								
 				// Send
 				if(this.debug)
 					this.logger.debug("Send...");
 				
 				this.responseMsg = messageFactory.
-						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,connection.call( this.requestMsg.castAsSoap().getSOAPMessage(),this.location));
+						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,connection.call( this.soapRequestMessage, this.location));
 				
 				this.dataAccettazioneRisposta = DateManager.getDate();
 				
@@ -357,6 +406,11 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 									this.contentLength = Integer.parseInt(mh.getValue());
 								}catch(Exception e){}
 							}
+							if("content-type".equalsIgnoreCase(mh.getName())){
+								try{
+									this.tipoRisposta = mh.getValue();
+								}catch(Exception e){}
+							}
 						}
 					}
 				}
@@ -376,8 +430,54 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				responseContext.setContentLength(this.contentLength);
 				responseContext.setHeaders(this.propertiesTrasportoRisposta);
 				this.responseMsg.setTransportResponseContext(responseContext);
+				
+				this.messageTypeResponse = this.requestMsg.getMessageType();
+				if(this.tipoRisposta==null) {
+					this.tipoRisposta = this.requestMsg.getContentType();
+				}
 			}
 			
+			if(this.isDumpBinarioRisposta()){
+				if(this.responseMsg!=null){
+					// Registro Debug.
+					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+							TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
+					try {
+						this.responseMsg.writeTo(bout, false);
+						bout.flush();
+						bout.close();
+						if(this.debug) {
+							this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
+						}
+						
+						this.dumpBinarioRispostaIngresso(bout, this.messageTypeResponse, this.propertiesTrasportoRisposta);
+						
+						if(this.contentLength<0){
+							this.contentLength=bout.size(); // la prendo dal dump, poiche' in saaj non ho modo di agganciare il counting stream
+						}
+						
+					}finally {
+						try {
+							bout.clearResources();
+						}catch(Throwable t) {
+							this.logger.error("Release resources failed: "+t.getMessage(),t);
+						}
+					}
+				}
+				else {
+					if(this.debug) {
+						if(this.tipoRisposta!=null) {
+							this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") senza contenuto nell'http-reply",false);
+						}
+						else {
+							this.logger.info("Messaggio ricevuto senza contenuto nell'http-reply",false);
+						}
+					}
+					
+					// devo registrare almeno gli header HTTP
+					this.dumpBinarioRispostaIngresso(null, null, this.propertiesTrasportoRisposta);
+				}
+			}
 			
 			
 			if(this.debug)
@@ -444,24 +544,29 @@ public class ConnettoreSAAJ extends ConnettoreBase {
     	}	
     }
     
-    private void setRequestHeader(SOAPMessage soapMessage, boolean validazioneHeaderRFC2047, String key, List<String> values, ConnettoreLogger logger) {
+    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, List<String> values, ConnettoreLogger logger, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
     	
     	if(validazioneHeaderRFC2047){
     		try{
         		RFC2047Utilities.validHeader(key, values);
-        		for (String value : values) {
-            		soapMessage.getMimeHeaders().addHeader(key,value);	
-				}
+        		setRequestHeader(key, values, propertiesTrasportoDebug);
         	}catch(UtilsException e){
         		logger.error(e.getMessage(),e);
         	}
     	}
     	else{
-    		for (String value : values) {
-        		soapMessage.getMimeHeaders().addHeader(key,value);	
-			}
+    		setRequestHeader(key,values, propertiesTrasportoDebug);
     	}
     	
+    }
+    
+    @Override
+	protected void setRequestHeader(String key,List<String> values) throws Exception {
+    	if(values!=null && !values.isEmpty()) {
+    		for (String value : values) {
+    			this.soapRequestMessage.getMimeHeaders().addHeader(key,value);	
+			}
+    	}
     }
     
 }

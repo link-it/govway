@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -210,15 +211,16 @@ public class Utilities {
 			}
 			
 			isr = new InputStreamReader(is, charsetName);
-			StringBuilder buffer = new StringBuilder();
-			bufferedReader = new BufferedReader(isr);
-	        char[] buf = new char[Utilities.DIMENSIONE_BUFFER];
-	        int numRead=0;
-	        while((numRead=bufferedReader.read(buf)) != -1){
-	            String readData = String.valueOf(buf, 0, numRead);
-	            buffer.append(readData);
-	        }
-	        return buffer;
+			StringWriter writer = new StringWriter();
+//			bufferedReader = new BufferedReader(isr);
+//	        char[] buf = new char[Utilities.DIMENSIONE_BUFFER];
+//	        int numRead=0;
+//	        while((numRead=bufferedReader.read(buf)) != -1){
+//	            String readData = String.valueOf(buf, 0, numRead);
+//	            buffer.append(readData);
+//	        }
+			CopyCharStream.copy(isr, writer);
+	        return new StringBuilder(writer.toString());
 			
 		} catch (java.lang.Exception e) {
 			if(e instanceof java.io.IOException){

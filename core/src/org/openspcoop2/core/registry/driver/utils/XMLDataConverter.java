@@ -89,8 +89,8 @@ import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
@@ -206,11 +206,12 @@ public class XMLDataConverter {
 			}else if (sorgente instanceof InputStream){
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				InputStream is = (InputStream) sorgente;
-				int letti = 0;
-				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-				while( (letti=is.read(reads)) != -1 ){
-					bout.write(reads,0,letti);	
-				}
+//				int letti = 0;
+//				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//				while( (letti=is.read(reads)) != -1 ){
+//					bout.write(reads,0,letti);	
+//				}
+				CopyStream.copy(is, bout);
 				bout.flush();
 				bout.close();
 				createSorgente(bout.toByteArray());
@@ -392,11 +393,12 @@ public class XMLDataConverter {
 			}else if (sorgente instanceof InputStream){
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				InputStream is = (InputStream) sorgente;
-				int letti = 0;
-				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-				while( (letti=is.read(reads)) != -1 ){
-					bout.write(reads,0,letti);	
-				}
+//				int letti = 0;
+//				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//				while( (letti=is.read(reads)) != -1 ){
+//					bout.write(reads,0,letti);	
+//				}
+				CopyStream.copy(is, bout);
 				bout.flush();
 				bout.close();
 				createSorgente(bout.toByteArray());
@@ -514,11 +516,12 @@ public class XMLDataConverter {
 			}else if (sorgente instanceof InputStream){
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				InputStream is = (InputStream) sorgente;
-				int letti = 0;
-				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-				while( (letti=is.read(reads)) != -1 ){
-					bout.write(reads,0,letti);	
-				}
+//				int letti = 0;
+//				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//				while( (letti=is.read(reads)) != -1 ){
+//					bout.write(reads,0,letti);	
+//				}
+				CopyStream.copy(is, bout);
 				bout.flush();
 				bout.close();
 				createSorgente(bout.toByteArray());
@@ -1232,11 +1235,12 @@ public class XMLDataConverter {
 					FileInputStream file = null;
 					try{
 						file = new FileInputStream(f);
-						byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-						int letti = 0;
-						while( (letti=file.read(reads)) >=0 ){
-							bout.write(reads,0,letti);
-						}
+//						byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//						int letti = 0;
+//						while( (letti=file.read(reads)) >=0 ){
+//							bout.write(reads,0,letti);
+//						}
+						CopyStream.copy(file, bout);
 					}finally{
 						try{
 							if(file!=null){
@@ -1251,11 +1255,12 @@ public class XMLDataConverter {
 						FileInputStream file = null;
 						try{
 							file = new FileInputStream(fWithParent);
-							byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-							int letti = 0;
-							while( (letti=file.read(reads)) >=0 ){
-								bout.write(reads,0,letti);
-							}
+//							byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//							int letti = 0;
+//							while( (letti=file.read(reads)) >=0 ){
+//								bout.write(reads,0,letti);
+//							}
+							CopyStream.copy(file, bout);
 						}finally{
 							try{
 								if(file!=null){
@@ -1382,11 +1387,12 @@ public class XMLDataConverter {
 					FileInputStream file = null;
 					try{
 						file = new FileInputStream(f);
-						byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-						int letti = 0;
-						while( (letti=file.read(reads)) >=0 ){
-							bout.write(reads,0,letti);
-						}
+//						byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//						int letti = 0;
+//						while( (letti=file.read(reads)) >=0 ){
+//							bout.write(reads,0,letti);
+//						}
+						CopyStream.copy(file, bout);
 					}finally{
 						try{
 							if(file!=null){
@@ -1401,11 +1407,12 @@ public class XMLDataConverter {
 						FileInputStream file = null;
 						try{
 							file = new FileInputStream(fWithParent);
-							byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-							int letti = 0;
-							while( (letti=file.read(reads)) >=0 ){
-								bout.write(reads,0,letti);
-							}
+//							byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//							int letti = 0;
+//							while( (letti=file.read(reads)) >=0 ){
+//								bout.write(reads,0,letti);
+//							}
+							CopyStream.copy(file, bout);
 						}finally{
 							try{
 								if(file!=null){

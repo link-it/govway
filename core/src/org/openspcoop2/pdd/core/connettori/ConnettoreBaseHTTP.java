@@ -22,7 +22,6 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +29,6 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -41,7 +39,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -160,37 +158,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		return init;
 	}
 	
-	
-	protected void forwardHttpRequestHeader() throws Exception{
-		OpenSPCoop2MessageProperties forwardHeader = null;
-		if(ServiceBinding.REST.equals(this.requestMsg.getServiceBinding())) {
-			forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(true));
-		}
-		else {
-			forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(true));
-		}
-				
-		if(forwardHeader!=null && forwardHeader.size()>0){
-			if(this.debug)
-				this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");
-			if(this.propertiesTrasporto==null){
-				this.propertiesTrasporto = new HashMap<String, List<String>>();
-			}
-			Iterator<String> keys = forwardHeader.getKeys();
-			while (keys.hasNext()) {
-				String key = (String) keys.next();
-				List<String> values = forwardHeader.getPropertyValues(key);
-				if(values!=null && !values.isEmpty()) {
-					for (String value : values) {
-						if(this.debug)
-							this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
-						TransportUtils.addHeader(this.propertiesTrasporto, key, value);		
-					}
-				}
-			}
-		}
-	}
-	
+		
 	protected void updateForwardProxy(ForwardProxy forwardProxy) {
 		if(this.forwardProxy==null) {
 			this.forwardProxy = forwardProxy;
@@ -284,11 +252,12 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			String htmlRicevuto = null;
 			if(this.isResponse!=null){
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-				int readByte = 0;
-				while((readByte = this.isResponse.read(readB))!= -1){
-					bout.write(readB,0,readByte);
-				}
+//				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+//				int readByte = 0;
+//				while((readByte = this.isResponse.read(readB))!= -1){
+//					bout.write(readB,0,readByte);
+//				}
+				CopyStream.copy(this.isResponse, bout);
 				this.isResponse.close();
 				bout.flush();
 				bout.close();

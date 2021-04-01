@@ -6,7 +6,8 @@
 	
 		"ingresso": {
 			"headers": true,
-			"payload": true
+			"payload": true,
+			"payload_parsing": false
 		},
 
 		"uscita": {

@@ -53,7 +53,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Element;
@@ -396,11 +396,12 @@ public class TunnelSoapUtils {
 		try{
 			// Metto inputBody in un byte[] proprio perche' il ByteArrayInputStream non deve essere chiuso.
 			java.io.ByteArrayOutputStream byteBuffer = new java.io.ByteArrayOutputStream();
-			byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-			int readByte = 0;
-			while((readByte = inputBody.read(readB))!= -1){
-				byteBuffer.write(readB,0,readByte);
-			}
+//			byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+//			int readByte = 0;
+//			while((readByte = inputBody.read(readB))!= -1){
+//				byteBuffer.write(readB,0,readByte);
+//			}
+			CopyStream.copy(inputBody, byteBuffer);
 			inputBody.close();
 			if(byteBuffer.size()==0){
 				throw new MessageException("Contenuto da imbustare non presente");

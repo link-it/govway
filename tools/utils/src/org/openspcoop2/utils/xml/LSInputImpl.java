@@ -28,7 +28,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.CopyCharStream;
+import org.openspcoop2.utils.CopyStream;
 import org.w3c.dom.ls.LSInput;
 
 /**
@@ -72,12 +73,13 @@ public class LSInputImpl implements LSInput {
 	public void setCharacterStream(Reader characterStream) {
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			int letti = 0;
-			char [] buffer = new char[Utilities.DIMENSIONE_BUFFER];
-			while( (letti=characterStream.read(buffer)) != -1 ){
-				for(int i=0;i<letti;i++)
-					bout.write(buffer[i]);
-			}
+//			int letti = 0;
+//			char [] buffer = new char[Utilities.DIMENSIONE_BUFFER];
+//			while( (letti=characterStream.read(buffer)) != -1 ){
+//				for(int i=0;i<letti;i++)
+//					bout.write(buffer[i]);
+//			}
+			CopyCharStream.copy(characterStream, bout);
 			this.resource = bout.toByteArray();
 		}catch(Exception e){
 			throw new RuntimeException("Metodo setCharacterStream(Reader characterStream) ha causato un errore",e);
@@ -93,12 +95,13 @@ public class LSInputImpl implements LSInput {
 	public void setByteStream(InputStream byteStream) {
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			int letti = 0;
-			byte[] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
-			while( (letti=byteStream.read(buffer)) != -1 ){
-				for(int i=0;i<letti;i++)
-					bout.write(buffer,0,letti);
-			}
+//			int letti = 0;
+//			byte[] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
+//			while( (letti=byteStream.read(buffer)) != -1 ){
+//				for(int i=0;i<letti;i++)
+//					bout.write(buffer,0,letti);
+//			}
+			CopyStream.copy(byteStream, bout);
 			this.resource = bout.toByteArray();
 		}catch(Exception e){
 			throw new RuntimeException("Metodo setByteStream(InputStream byteStream) ha causato un errore",e);

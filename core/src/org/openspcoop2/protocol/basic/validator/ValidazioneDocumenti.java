@@ -48,7 +48,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.rest.ApiFactory;
@@ -762,11 +762,12 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 					FileInputStream file = null;
 					try{
 						file = new FileInputStream(f);
-						byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-						int letti = 0;
-						while( (letti=file.read(reads)) >=0 ){
-							bout.write(reads,0,letti);
-						}
+//						byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//						int letti = 0;
+//						while( (letti=file.read(reads)) >=0 ){
+//							bout.write(reads,0,letti);
+//						}
+						CopyStream.copy(file, bout);
 					}finally{
 						try{
 							if(file!=null){

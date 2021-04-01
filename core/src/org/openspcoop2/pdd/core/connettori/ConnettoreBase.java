@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -176,6 +178,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected PostOutRequestContext postOutRequestContext;
 	/** PreInResponseContext */
 	protected PreInResponseContext preInResponseContext;
+	
+	/** SOAPAction */
+	protected String soapAction = null;
 	
 	/** RequestInfo */
 	protected RequestInfo requestInfo;
@@ -1200,6 +1205,36 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 
     }
     
+    
+	protected void forwardHttpRequestHeader() throws Exception{
+		OpenSPCoop2MessageProperties forwardHeader = null;
+		if(ServiceBinding.REST.equals(this.requestMsg.getServiceBinding())) {
+			forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(true));
+		}
+		else {
+			forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(true));
+		}
+				
+		if(forwardHeader!=null && forwardHeader.size()>0){
+			if(this.debug)
+				this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");
+			if(this.propertiesTrasporto==null){
+				this.propertiesTrasporto = new HashMap<String, List<String>>();
+			}
+			Iterator<String> keys = forwardHeader.getKeys();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				List<String> values = forwardHeader.getPropertyValues(key);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						if(this.debug)
+							this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
+						TransportUtils.addHeader(this.propertiesTrasporto, key, value);		
+					}
+				}
+			}
+		}
+	}
     
     
     private Map<String,List<String>> headersImpostati = new HashMap<String,List<String>>(); // per evitare che header generati nel conettore siano sovrascritti da eventuali forward. Gli header del connettore vengono impostati prima del forward.

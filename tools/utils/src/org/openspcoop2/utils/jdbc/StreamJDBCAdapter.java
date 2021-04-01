@@ -22,15 +22,15 @@
 
 package org.openspcoop2.utils.jdbc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
 
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.TipiDatabase;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -123,11 +123,12 @@ public class StreamJDBCAdapter extends AbstractJDBCAdapter {
 		ByteArrayOutputStream os = null;
     	try {
     		os = new ByteArrayOutputStream();
-			byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-			int readByte = 0;
-			while((readByte = is.read(readB))!= -1){
-				os.write(readB,0,readByte);
-			}
+//			byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+//			int readByte = 0;
+//			while((readByte = is.read(readB))!= -1){
+//				os.write(readB,0,readByte);
+//			}
+    		CopyStream.copy(is, os);
 			is.close();
 			
 			byte[]dati = os.toByteArray();

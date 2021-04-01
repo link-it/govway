@@ -165,9 +165,3 @@ public class CopyStream {
 	}
 
 }
-
-enum CopyStreamMethod{
-	
-	JAVA, JAVA_TRANSFER_TO, JAVA_NIO, GUAVA, COMMONS_IO, AUTO
-	
-}

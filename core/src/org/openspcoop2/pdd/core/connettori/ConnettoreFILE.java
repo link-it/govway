@@ -305,11 +305,20 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			// Impostazione Proprieta del trasporto
 			if(this.debug)
 				this.logger.debug("Impostazione header di trasporto...");
+			this.forwardHttpRequestHeader();
 			if(this.propertiesTrasporto != null){
 				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
 					List<String> values = this.propertiesTrasporto.get(key);
+					if(this.debug) {
+			    		if(values!=null && !values.isEmpty()) {
+			        		for (String value : values) {
+			        			this.logger.info("Set Transport Header ["+key+"]=["+value+"]",false);
+			        		}
+			    		}
+			    	}
+					
 					setRequestHeader(key, values, this.logger, propertiesTrasportoDebug);
 				}
 			}

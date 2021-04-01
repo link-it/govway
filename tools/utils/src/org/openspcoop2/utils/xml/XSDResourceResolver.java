@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Hashtable;
 
+import org.openspcoop2.utils.CopyStream;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -59,11 +60,16 @@ public class XSDResourceResolver implements LSResourceResolver {
 		if(resource==null){
 			throw new IOException("InputStream is null");
 		}
-		byte [] buffer = new byte[org.openspcoop2.utils.Utilities.DIMENSIONE_BUFFER];
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		int letti = 0;
-		while( (letti=resource.read(buffer))!=-1 ){
-			bout.write(buffer, 0, letti);
+//		byte [] buffer = new byte[org.openspcoop2.utils.Utilities.DIMENSIONE_BUFFER];
+//		int letti = 0;
+//		while( (letti=resource.read(buffer))!=-1 ){
+//			bout.write(buffer, 0, letti);
+//		}
+		try {
+			CopyStream.copy(resource, bout);
+		}catch(Exception e) {
+			throw new IOException(e.getMessage(),e);
 		}
 		bout.flush();
 		bout.close();

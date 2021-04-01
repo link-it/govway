@@ -2689,7 +2689,8 @@ public class ErogazioniApiHelper {
 	    String dumpRichiestaIngressoPayloadParsing = Helper.boolToStatoFunzionalitaConf(false).toString();
 		String dumpRichiestaIngressoBody 		= Helper.boolToStatoFunzionalitaConf(false).toString();
 		String dumpRichiestaIngressoAttachments =  Helper.boolToStatoFunzionalitaConf(false).toString();
-		if(richiesta.getIngresso().isPayload()!=null && richiesta.getIngresso().isPayload()) {
+		if(richiesta!=null && richiesta.getIngresso()!=null && 
+				richiesta.getIngresso().isPayload()!=null && richiesta.getIngresso().isPayload()) {
 			dumpRichiestaIngressoPayloadParsing = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isPayloadParsing() )).toString();
 			if(richiesta.getIngresso().isPayloadParsing()!=null && richiesta.getIngresso().isPayloadParsing()) {
 				dumpRichiestaIngressoBody   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getIngresso().isBody() )).toString();
@@ -2702,7 +2703,8 @@ public class ErogazioniApiHelper {
 	    String dumpRichiestaUscitaPayloadParsing = Helper.boolToStatoFunzionalitaConf(false).toString();
 		String dumpRichiestaUscitaBody 		= Helper.boolToStatoFunzionalitaConf(false).toString();
 		String dumpRichiestaUscitaAttachments =  Helper.boolToStatoFunzionalitaConf(false).toString();
-		if(richiesta.getUscita().isPayload()!=null && richiesta.getUscita().isPayload()) {
+		if(richiesta!=null && richiesta.getUscita()!=null && 
+				richiesta.getUscita().isPayload()!=null && richiesta.getUscita().isPayload()) {
 			dumpRichiestaUscitaPayloadParsing = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isPayloadParsing() )).toString();
 			if(richiesta.getUscita().isPayloadParsing()!=null && richiesta.getUscita().isPayloadParsing()) {
 				dumpRichiestaUscitaBody   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> richiesta.getUscita().isBody() )).toString();
@@ -2715,7 +2717,8 @@ public class ErogazioniApiHelper {
 	    String dumpRispostaIngressoPayloadParsing = Helper.boolToStatoFunzionalitaConf(false).toString();
 		String dumpRispostaIngressoBody 		= Helper.boolToStatoFunzionalitaConf(false).toString();
 		String dumpRispostaIngressoAttachments =  Helper.boolToStatoFunzionalitaConf(false).toString();
-		if(risposta.getIngresso().isPayload()!=null && risposta.getIngresso().isPayload()) {
+		if(risposta!=null && risposta.getIngresso()!=null && 
+				risposta.getIngresso().isPayload()!=null && risposta.getIngresso().isPayload()) {
 			dumpRispostaIngressoPayloadParsing = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isPayloadParsing() )).toString();
 			if(risposta.getIngresso().isPayloadParsing()!=null && risposta.getIngresso().isPayloadParsing()) {
 				dumpRispostaIngressoBody   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getIngresso().isBody() )).toString();
@@ -2728,7 +2731,8 @@ public class ErogazioniApiHelper {
 	    String dumpRispostaUscitaPayloadParsing = Helper.boolToStatoFunzionalitaConf(false).toString();
 		String dumpRispostaUscitaBody 		= Helper.boolToStatoFunzionalitaConf(false).toString();
 		String dumpRispostaUscitaAttachments =  Helper.boolToStatoFunzionalitaConf(false).toString();
-		if(risposta.getUscita().isPayload()!=null && risposta.getUscita().isPayload()) {
+		if(risposta!=null && risposta.getUscita()!=null && 
+				risposta.getUscita().isPayload()!=null && risposta.getUscita().isPayload()) {
 			dumpRispostaUscitaPayloadParsing = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isPayloadParsing() )).toString();
 			if(risposta.getUscita().isPayloadParsing()!=null && risposta.getUscita().isPayloadParsing()) {
 				dumpRispostaUscitaBody   = Helper.boolToStatoFunzionalitaConf( evalnull( () -> risposta.getUscita().isBody() )).toString();

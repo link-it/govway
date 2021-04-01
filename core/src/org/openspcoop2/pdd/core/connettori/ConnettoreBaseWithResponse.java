@@ -36,6 +36,7 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -74,10 +75,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	
 	/** acceptOnlyReturnCode_202_200 SOAP */
 	protected boolean acceptOnlyReturnCode_202_200 = true;
-	
-	/** SOAPAction */
-	protected String soapAction = null;
-		
+			
 	protected void normalizeInputStreamResponse() throws Exception{
 		//Se non e' null, controllo che non sia vuoto.
 		byte[] b = new byte[1];
@@ -135,11 +133,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
 			try {
-				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-				int readByte = 0;
-				while((readByte = this.isResponse.read(readB))!= -1){
-					bout.write(readB,0,readByte);
-				}
+//				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+//				int readByte = 0;
+//				while((readByte = this.isResponse.read(readB))!= -1){
+//					bout.write(readB,0,readByte);
+//				}
+				CopyStream.copy(this.isResponse, bout);
 				this.isResponse.close();
 				bout.flush();
 				bout.close();

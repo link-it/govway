@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -1203,11 +1204,12 @@ public class HttpUtilities {
 						is = httpConn.getErrorStream();
 					}
 				}
-				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-				int readByte = 0;
-				while((readByte = is.read(readB))!= -1){
-					outResponse.write(readB,0,readByte);
-				}
+//				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+//				int readByte = 0;
+//				while((readByte = is.read(readB))!= -1){
+//					outResponse.write(readB,0,readByte);
+//				}
+				CopyStream.copy(is, outResponse);
 				is.close();
 				outResponse.flush();
 				outResponse.close();

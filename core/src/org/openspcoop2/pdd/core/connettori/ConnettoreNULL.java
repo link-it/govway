@@ -23,10 +23,23 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.Utilities;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
 /**
@@ -66,12 +79,124 @@ public class ConnettoreNULL extends ConnettoreBase {
 		
 		try{
 			
-			// SIMULAZIONE WRITE_TO
+			// Tipologia di servizio
+			MessageType requestMessageType = this.requestMsg.getMessageType();
+			OpenSPCoop2SoapMessage soapMessageRequest = null;
+			if(this.debug)
+				this.logger.debug("Tipologia Servizio: "+this.requestMsg.getServiceBinding());
+			if(this.isSoap){
+				soapMessageRequest = this.requestMsg.castAsSoap();
+			}
 			
-			org.apache.commons.io.output.NullOutputStream nullOutputStream = new org.apache.commons.io.output.NullOutputStream();
-			this.requestMsg.writeTo(nullOutputStream,true);
-			nullOutputStream.flush();
-			nullOutputStream.close();
+			
+			// Collezione header di trasporto per dump
+			Map<String, List<String>> propertiesTrasportoDebug = null;
+			if(this.isDumpBinarioRichiesta()) {
+				propertiesTrasportoDebug = new HashMap<String, List<String>>();
+			}
+			
+			
+			// Impostazione Content-Type
+			String contentTypeRichiesta = null;
+			if(this.debug)
+				this.logger.debug("Impostazione content type...");
+			if(this.isSoap){
+				if(this.sbustamentoSoap && soapMessageRequest.countAttachments()>0 && TunnelSoapUtils.isTunnelOpenSPCoopSoap(soapMessageRequest)){
+					contentTypeRichiesta = TunnelSoapUtils.getContentTypeTunnelOpenSPCoopSoap(soapMessageRequest.getSOAPBody());
+				}else{
+					contentTypeRichiesta = this.requestMsg.getContentType();
+				}
+				if(contentTypeRichiesta==null){
+					throw new Exception("Content-Type del messaggio da spedire non definito");
+				}
+			}
+			else{
+				contentTypeRichiesta = this.requestMsg.getContentType();
+				// Content-Type non obbligatorio in REST
+			}
+			if(this.debug)
+				this.logger.info("Impostazione Content-Type ["+contentTypeRichiesta+"]",false);
+			if(contentTypeRichiesta!=null){
+				setRequestHeader(HttpConstants.CONTENT_TYPE, contentTypeRichiesta, this.logger, propertiesTrasportoDebug);
+			}
+			
+			
+			// Aggiunga del SoapAction Header in caso di richiesta SOAP
+			if(this.isSoap && this.sbustamentoSoap == false){
+				if(this.debug)
+					this.logger.debug("Impostazione soap action...");
+				this.soapAction = soapMessageRequest.getSoapAction();
+				if(this.soapAction==null){
+					this.soapAction="\"OpenSPCoop\"";
+				}
+				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
+					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
+					setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, propertiesTrasportoDebug);
+				}
+				if(this.debug)
+					this.logger.info("SOAP Action inviata ["+this.soapAction+"]",false);
+			}
+			
+			
+			// Impostazione Proprieta del trasporto
+			if(this.debug)
+				this.logger.debug("Impostazione header di trasporto...");
+			this.forwardHttpRequestHeader();
+			if(this.propertiesTrasporto != null){
+				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					List<String> values = this.propertiesTrasporto.get(key);
+					if(this.debug) {
+			    		if(values!=null && !values.isEmpty()) {
+			        		for (String value : values) {
+			        			this.logger.info("Set Transport Header ["+key+"]=["+value+"]",false);
+			        		}
+			    		}
+			    	}
+					
+					setRequestHeader(key, values, this.logger, propertiesTrasportoDebug);
+				}
+			}
+			
+			
+			// SIMULAZIONE WRITE_TO
+			boolean consumeRequestMessage = true;
+			if(this.debug)
+				this.logger.debug("Serializzazione (consume-request-message:"+consumeRequestMessage+")...");
+			if(this.isDumpBinarioRichiesta()) {
+				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+						TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
+				try {
+					if(this.isSoap && this.sbustamentoSoap){
+						this.logger.debug("Sbustamento...");
+						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
+					}else{
+						this.requestMsg.writeTo(bout, consumeRequestMessage);
+					}
+					bout.flush();
+					bout.close();
+										
+					this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+				}finally {
+					try {
+						bout.clearResources();
+					}catch(Throwable t) {
+						this.logger.error("Release resources failed: "+t.getMessage(),t);
+					}
+				}
+			}
+			else {
+				org.apache.commons.io.output.NullOutputStream nullOutputStream = new org.apache.commons.io.output.NullOutputStream();
+				if(this.isSoap && this.sbustamentoSoap){
+					this.logger.debug("Sbustamento...");
+					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,nullOutputStream);
+				}else{
+					this.requestMsg.writeTo(nullOutputStream, consumeRequestMessage);
+				}
+				nullOutputStream.flush();
+				nullOutputStream.close();
+			}
 		
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
@@ -125,6 +250,29 @@ public class ConnettoreNULL extends ConnettoreBase {
 		return true;
 	}
 
+	
+    private void setRequestHeader(String key, String value, ConnettoreLogger logger, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
+    	List<String> list = new ArrayList<>(); 
+    	list.add(value);
+    	this.setRequestHeader(key, list, logger, propertiesTrasportoDebug);
+    }
+    private void setRequestHeader(String key, List<String> values, ConnettoreLogger logger, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
+    	
+    	if(this.debug) {
+    		if(values!=null && !values.isEmpty()) {
+        		for (String value : values) {
+        			this.logger.info("Set proprietà trasporto ["+key+"]=["+value+"]",false);		
+        		}
+    		}
+    	}
+    	setRequestHeader(key, values, propertiesTrasportoDebug);
+    	
+    }
+    @Override
+	protected void setRequestHeader(String key,List<String> values) throws Exception {
+    	// nop
+    }
+	
     /**
      * Ritorna l'informazione su dove il connettore sta spedendo il messaggio
      * 

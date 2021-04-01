@@ -87,8 +87,8 @@ import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -255,11 +255,12 @@ public class XMLDataConverter {
 			}else if (sorgente instanceof InputStream){
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				InputStream is = (InputStream) sorgente;
-				int letti = 0;
-				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-				while( (letti=is.read(reads)) != -1 ){
-					bout.write(reads,0,letti);	
-				}
+//				int letti = 0;
+//				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//				while( (letti=is.read(reads)) != -1 ){
+//					bout.write(reads,0,letti);	
+//				}
+				CopyStream.copy(is, bout);
 				bout.flush();
 				bout.close();
 				createSorgente(bout.toByteArray());
@@ -440,11 +441,12 @@ public class XMLDataConverter {
 			}else if (sorgente instanceof InputStream){
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				InputStream is = (InputStream) sorgente;
-				int letti = 0;
-				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-				while( (letti=is.read(reads)) != -1 ){
-					bout.write(reads,0,letti);	
-				}
+//				int letti = 0;
+//				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//				while( (letti=is.read(reads)) != -1 ){
+//					bout.write(reads,0,letti);	
+//				}
+				CopyStream.copy(is, bout);
 				bout.flush();
 				bout.close();
 				createSorgente(bout.toByteArray());
@@ -602,11 +604,12 @@ public class XMLDataConverter {
 			}else if (sorgente instanceof InputStream){
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				InputStream is = (InputStream) sorgente;
-				int letti = 0;
-				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
-				while( (letti=is.read(reads)) != -1 ){
-					bout.write(reads,0,letti);	
-				}
+//				int letti = 0;
+//				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+//				while( (letti=is.read(reads)) != -1 ){
+//					bout.write(reads,0,letti);	
+//				}
+				CopyStream.copy(is, bout);
 				bout.flush();
 				bout.close();
 				createSorgente(bout.toByteArray());
