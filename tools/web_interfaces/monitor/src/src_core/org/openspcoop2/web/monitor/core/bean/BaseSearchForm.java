@@ -1675,6 +1675,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		list.add(new SelectItem(TipoMessaggio.RiferimentoRichiesta.name(),TipoMessaggio.RiferimentoRichiesta.getLabel()));
 		return list;
 	}
+	public List<SelectItem> getTipiIdCorrelazioneApplicativa() {
+		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+		list.add(new SelectItem(TipoMessaggio.Richiesta.name(),TipoMessaggio.Richiesta.getLabel()));
+		list.add(new SelectItem(TipoMessaggio.Risposta.name(),TipoMessaggio.Risposta.getLabel()));
+		return list;
+	}
 
 	//	public OrderBy getOrderBy() {
 	//		return this.orderBy;

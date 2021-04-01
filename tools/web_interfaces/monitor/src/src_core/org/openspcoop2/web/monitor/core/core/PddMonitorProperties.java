@@ -282,11 +282,25 @@ public class PddMonitorProperties {
 		return this.getIndexList("transazioni.forceIndex.andamentoTemporale.count", externalRepository);
 	}
 	
-	public List<String> getTransazioniForceIndexIdApplicativoFindAll(Properties externalRepository) throws Exception{
-		return this.getIndexList("transazioni.forceIndex.idApplicativo.findAll", externalRepository);
+	public List<String> getTransazioniForceIndexIdApplicativoBaseRichiestaFindAll(Properties externalRepository) throws Exception{
+		return this.getIndexList("transazioni.forceIndex.idApplicativo.base.richiesta.findAll", externalRepository);
 	}
-	public List<String> getTransazioniForceIndexIdApplicativoCount(Properties externalRepository) throws Exception{
-		return this.getIndexList("transazioni.forceIndex.idApplicativo.count", externalRepository);
+	public List<String> getTransazioniForceIndexIdApplicativoBaseRichiestaCount(Properties externalRepository) throws Exception{
+		return this.getIndexList("transazioni.forceIndex.idApplicativo.base.richiesta.count", externalRepository);
+	}
+	
+	public List<String> getTransazioniForceIndexIdApplicativoBaseRispostaFindAll(Properties externalRepository) throws Exception{
+		return this.getIndexList("transazioni.forceIndex.idApplicativo.base.risposta.findAll", externalRepository);
+	}
+	public List<String> getTransazioniForceIndexIdApplicativoBaseRispostaCount(Properties externalRepository) throws Exception{
+		return this.getIndexList("transazioni.forceIndex.idApplicativo.base.risposta.count", externalRepository);
+	}
+	
+	public List<String> getTransazioniForceIndexIdApplicativoAvanzataFindAll(Properties externalRepository) throws Exception{
+		return this.getIndexList("transazioni.forceIndex.idApplicativo.avanzata.findAll", externalRepository);
+	}
+	public List<String> getTransazioniForceIndexIdApplicativoAvanzataCount(Properties externalRepository) throws Exception{
+		return this.getIndexList("transazioni.forceIndex.idApplicativo.avanzata.count", externalRepository);
 	}
 	
 	public List<String> getTransazioniForceIndexIdMessaggioRichiestaFindAll(Properties externalRepository) throws Exception{

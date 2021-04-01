@@ -1,3 +1,15 @@
+2021-04-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità XXX
+
+Aggiunto anche in servizio Rest di monitoraggio, dove e' stata ampliata anche la parte di ricerca per IdMessaggio con conversazione e riferimento messaggio
+
++CREATE INDEX INDEX_TR_CORRELAZIONE_REQ ON transazioni (id_correlazione_applicativa);
++CREATE INDEX INDEX_TR_CORRELAZIONE_RES ON transazioni (id_correlazione_risposta);
+ 
+
+
 2021-03-31  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor, ApiRsMonitoraggio, ApiRsConfigurazione]

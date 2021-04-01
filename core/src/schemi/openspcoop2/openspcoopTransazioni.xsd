@@ -374,6 +374,13 @@
 				    	<linkit:sql-table-index name="INDEX_TR_RIF_RICHIESTA">
 				    		<linkit:sql-table-index-field name="id-asincrono"/>
 				    	</linkit:sql-table-index>
+				    	<!-- Indici per ottimizzare la ricerca per id correlazione applicativa -->
+				    	<linkit:sql-table-index name="INDEX_TR_CORRELAZIONE_REQ">
+				    		<linkit:sql-table-index-field name="id-correlazione-applicativa"/>
+				    	</linkit:sql-table-index>
+				    	<linkit:sql-table-index name="INDEX_TR_CORRELAZIONE_RES">
+				    		<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
+				    	</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>

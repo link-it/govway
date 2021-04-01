@@ -39,7 +39,8 @@ public enum ModalitaRicercaTransazioni {
 	MITTENTE_APPLICATIVO ("mittenteApplicativo"),
 	MITTENTE_IDENTIFICATIVO_AUTENTICATO ("mittenteIdentificativoAutenticato"),
 	MITTENTE_INDIRIZZO_IP ("mittenteIndirizzoIP"),
-	ID_APPLICATIVO ("idApplicativo"), 
+	ID_APPLICATIVO_AVANZATA ("idApplicativo"), 
+	ID_APPLICATIVO_BASE ("idApplicativoBase"), 
 	ID_MESSAGGIO ("idMessaggio"),
 	ID_TRANSAZIONE ("idTransazione");
 	

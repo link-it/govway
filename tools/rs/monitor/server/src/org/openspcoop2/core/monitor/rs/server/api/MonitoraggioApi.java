@@ -31,6 +31,7 @@ import org.openspcoop2.core.monitor.rs.server.model.Problem;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
+import org.openspcoop2.core.monitor.rs.server.model.TipoIdApplicativoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoMessaggioEnum;
 import java.util.UUID;
 
@@ -94,6 +95,27 @@ public interface MonitoraggioApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public ListaTransazioni findAllTransazioniByFullSearch(@Valid RicercaIntervalloTemporale body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
+
+    /**
+     * Ricerca delle transazioni in base all'identificativo dell'applicativo
+     *
+     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all'identificativo dell'applicativo
+     *
+     */
+    @GET
+    @Path("/monitoraggio/transazioni/id-applicativo/{id}")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Ricerca delle transazioni in base all'identificativo dell'applicativo", tags={ "Monitoraggio" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "dettaglio transazione restituito correttamente", content = @Content(schema = @Schema(implementation = ListaTransazioni.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaTransazioni findAllTransazioniByIdApplicativo(@QueryParam("tipo_identificativo") @NotNull TipoIdApplicativoEnum tipoIdentificativo, @PathParam("id") String id, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("sort") String sort);
 
     /**
      * Ricerca completa delle transazioni in base all'identificativo applicativo

@@ -1,4 +1,12 @@
+2021-04-01  Andrea Poli <apoli@link.it>
+
+	Aggiunti indici per effettuare la ricerca per id applicativo:
+	CREATE INDEX INDEX_TR_CORRELAZIONE_REQ ON transazioni (id_correlazione_applicativa);
+	CREATE INDEX INDEX_TR_CORRELAZIONE_RES ON transazioni (id_correlazione_risposta);
+
 2021-03-24  Andrea Poli <apoli@link.it>
+
+	Rivista la registrazione dei messaggi in ingresso e in uscita per salvare direttamente lo stream dei dati:
 
 	ALTER TABLE dump_config_regola ADD COLUMN payload VARCHAR(255) ;
 	UPDATE dump_config_regola set payload=body;

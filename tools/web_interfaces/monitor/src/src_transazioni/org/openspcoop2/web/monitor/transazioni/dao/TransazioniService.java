@@ -172,8 +172,12 @@ public class TransazioniService implements ITransazioniService {
 	
 	private List<Index> forceIndexAndamentoTemporaleFindAll;
 	private List<Index> forceIndexAndamentoTemporaleCount;
-	private List<Index> forceIndexIdApplicativoFindAll;
-	private List<Index> forceIndexIdApplicativoCount;
+	private List<Index> forceIndexIdApplicativoBaseRichiestaFindAll;
+	private List<Index> forceIndexIdApplicativoBaseRichiestaCount;
+	private List<Index> forceIndexIdApplicativoBaseRispostaFindAll;
+	private List<Index> forceIndexIdApplicativoBaseRispostaCount;
+	private List<Index> forceIndexIdApplicativoAvanzataFindAll;
+	private List<Index> forceIndexIdApplicativoAvanzataCount;
 	private List<Index> forceIndexIdMessaggioRichiestaFindAll;
 	private List<Index> forceIndexIdMessaggioRichiestaCount;
 	private List<Index> forceIndexIdMessaggioRispostaFindAll;
@@ -189,8 +193,12 @@ public class TransazioniService implements ITransazioniService {
 		Properties repositoryExternal = govwayMonitorProperties.getExternalForceIndexRepository();
 		this.forceIndexAndamentoTemporaleFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexAndamentoTemporaleFindAll(repositoryExternal));
 		this.forceIndexAndamentoTemporaleCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexAndamentoTemporaleCount(repositoryExternal));
-		this.forceIndexIdApplicativoFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoFindAll(repositoryExternal));
-		this.forceIndexIdApplicativoCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoCount(repositoryExternal));
+		this.forceIndexIdApplicativoBaseRichiestaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoBaseRichiestaFindAll(repositoryExternal));
+		this.forceIndexIdApplicativoBaseRichiestaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoBaseRichiestaCount(repositoryExternal));
+		this.forceIndexIdApplicativoBaseRispostaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoBaseRispostaFindAll(repositoryExternal));
+		this.forceIndexIdApplicativoBaseRispostaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoBaseRispostaCount(repositoryExternal));
+		this.forceIndexIdApplicativoAvanzataFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoAvanzataFindAll(repositoryExternal));
+		this.forceIndexIdApplicativoAvanzataCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoAvanzataCount(repositoryExternal));
 		this.forceIndexIdMessaggioRichiestaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRichiestaFindAll(repositoryExternal));
 		this.forceIndexIdMessaggioRichiestaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRichiestaCount(repositoryExternal));
 		this.forceIndexIdMessaggioRispostaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRispostaFindAll(repositoryExternal));
@@ -224,8 +232,20 @@ public class TransazioniService implements ITransazioniService {
 		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 		case MITTENTE_INDIRIZZO_IP:
 			return this.forceIndexAndamentoTemporaleFindAll;
-		case ID_APPLICATIVO:
-			return this.forceIndexIdApplicativoFindAll;
+		case ID_APPLICATIVO_BASE:
+			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoRicerca = 
+					org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
+			switch (tipoRicerca) {
+			case Richiesta:
+				return this.forceIndexIdApplicativoBaseRichiestaFindAll;
+			case Risposta:
+				return this.forceIndexIdApplicativoBaseRispostaFindAll;
+			default:
+				break;
+			}
+			break;
+		case ID_APPLICATIVO_AVANZATA:
+			return this.forceIndexIdApplicativoAvanzataFindAll;
 		case ID_MESSAGGIO:
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoMessaggio = 
 				org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
@@ -256,8 +276,20 @@ public class TransazioniService implements ITransazioniService {
 		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 		case MITTENTE_INDIRIZZO_IP:
 			return this.forceIndexAndamentoTemporaleCount;
-		case ID_APPLICATIVO:
-			return this.forceIndexIdApplicativoCount;
+		case ID_APPLICATIVO_BASE:
+			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoRicerca = 
+					org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
+			switch (tipoRicerca) {
+			case Richiesta:
+				return this.forceIndexIdApplicativoBaseRichiestaCount;
+			case Risposta:
+				return this.forceIndexIdApplicativoBaseRispostaCount;
+			default:
+				break;
+			}
+			break;
+		case ID_APPLICATIVO_AVANZATA:
+			return this.forceIndexIdApplicativoAvanzataCount;
 		case ID_MESSAGGIO:
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoMessaggio = 
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
@@ -2703,6 +2735,49 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+		// ricerca is null in modalità live
+		if(ricerca!=null && ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.equals(ricerca) ){
+			if (StringUtils.isNotEmpty(this.searchForm.getIdCorrelazioneApplicativa())) {
+				
+				org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoMessaggio = 
+						org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
+				
+				String value = this.searchForm.getIdCorrelazioneApplicativa().trim();
+				switch (tipoMessaggio) {
+				case Richiesta:
+					filter.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA, value);
+					break;
+				case Risposta:
+					filter.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA, value);
+					break;
+				default:
+					throw new Exception("Tipo di ricerca non fornito");
+				}
+				// Inefficente altrimenti fare la OR
+//				IExpression idCorrelazioneApplicativa = this.transazioniSearchDAO.newExpression();
+//				idCorrelazioneApplicativa.or();
+//				idCorrelazioneApplicativa.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA,	value);
+//				idCorrelazioneApplicativa.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA,	value);
+//				filter.and(idCorrelazioneApplicativa);
+				
+				
+				// permessi utente operatore
+				if(this.searchForm.getPermessiUtenteOperatore()!=null){
+					IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
+							Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
+							Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
+					filter.and(permessi);
+					filter.and();
+				}
+				
+				
+				return;
+			}
+			else{
+				throw new Exception("ID Applicativo non fornito");
+			}
+		}
+		
 		// check ricerca libera
 		boolean ricercaLibera = isRicercaLibera();
 		boolean ricercaLiberaCaseSensitive = false;
@@ -2920,7 +2995,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 
-			if(ricerca!=null && ModalitaRicercaTransazioni.ID_APPLICATIVO.equals(ricerca) ){
+			if(ricerca!=null && ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA.equals(ricerca) ){
 				if (StringUtils.isNotEmpty(this.searchForm
 						.getIdCorrelazioneApplicativa())) {
 					filter.and();

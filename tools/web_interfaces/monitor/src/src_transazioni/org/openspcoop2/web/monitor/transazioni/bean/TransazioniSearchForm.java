@@ -406,7 +406,9 @@ Context, Cloneable {
 			case MITTENTE_INDIRIZZO_IP:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_BREADCUMP_KEY);
 				
-			case ID_APPLICATIVO:
+			case ID_APPLICATIVO_BASE:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY);
+			case ID_APPLICATIVO_AVANZATA:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY);
 			case ID_MESSAGGIO:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_BREADCUMP_KEY);
@@ -430,9 +432,10 @@ Context, Cloneable {
 			case MITTENTE_APPLICATIVO:
 			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 			case MITTENTE_INDIRIZZO_IP:
-			case ID_APPLICATIVO:
+			case ID_APPLICATIVO_AVANZATA:
 				return true;
 				
+			case ID_APPLICATIVO_BASE:
 			case ID_MESSAGGIO:
 			case ID_TRANSAZIONE:
 			default:
@@ -453,9 +456,10 @@ Context, Cloneable {
 			case MITTENTE_APPLICATIVO:
 			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 			case MITTENTE_INDIRIZZO_IP:
-			case ID_APPLICATIVO:
+			case ID_APPLICATIVO_AVANZATA:
 				return true;
 				
+			case ID_APPLICATIVO_BASE:
 			case ID_MESSAGGIO:
 			case ID_TRANSAZIONE:
 			default:
@@ -480,7 +484,8 @@ Context, Cloneable {
 			case MITTENTE_INDIRIZZO_IP:
 				return true;
 				
-			case ID_APPLICATIVO:
+			case ID_APPLICATIVO_AVANZATA:
+			case ID_APPLICATIVO_BASE:
 			case ID_MESSAGGIO:
 			case ID_TRANSAZIONE:
 			default:
@@ -504,7 +509,7 @@ Context, Cloneable {
 				case RICERCA_LIBERA:
 				case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 				case MITTENTE_INDIRIZZO_IP:
-				case ID_APPLICATIVO:
+				case ID_APPLICATIVO_AVANZATA:
 					return true; // non c'e' motivo per non farli vedere
 				
 				case MITTENTE_TOKEN_INFO: // nelle erogazioni vi è anche il soggetto mittente
@@ -512,6 +517,7 @@ Context, Cloneable {
 				case MITTENTE_APPLICATIVO:
 					return super.isTipologiaRicercaEntrambiEnabled();
 
+				case ID_APPLICATIVO_BASE:
 				case ID_MESSAGGIO:
 				case ID_TRANSAZIONE:
 					return super.isTipologiaRicercaEntrambiEnabled(); // non viene visualizzata l'informazione
@@ -916,12 +922,18 @@ Context, Cloneable {
 				ModalitaRicercaTransazioni ricerca = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
 				if(ricerca!=null){
 					switch (ricerca) {
-					case ID_APPLICATIVO:
+					case ID_APPLICATIVO_AVANZATA:
 						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdCorrelazioneApplicativa())){
 							MessageUtils.addErrorMsg("Indicare un identificativo applicativo");
 							return null;
 						}
 						break;
+					case ID_APPLICATIVO_BASE:
+						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdCorrelazioneApplicativa())){
+							MessageUtils.addErrorMsg("Indicare un identificativo applicativo");
+							return null;
+						}
+						break;	
 					case ID_MESSAGGIO:
 						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdEgov())){
 							MessageUtils.addErrorMsg("Indicare un identificativo messaggio");

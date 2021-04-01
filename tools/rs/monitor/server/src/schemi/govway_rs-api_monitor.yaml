@@ -224,6 +224,48 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /monitoraggio/transazioni/id-applicativo/{id}:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+    get:
+      tags:
+        - Monitoraggio
+      summary: >-
+        Ricerca delle transazioni in base all'identificativo dell'applicativo
+      operationId: findAllTransazioniByIdApplicativo
+      description: >-
+        Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
+        ricercandole in base all'identificativo dell'applicativo
+      parameters:
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
+        - $ref: '#/components/parameters/tipo_id_applicativo'
+        - $ref: '#/components/parameters/id_applicativo'
+
+      responses:
+        "200":
+          description: dettaglio transazione restituito correttamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaTransazioni'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
 
   /monitoraggio/transazioni/id-messaggio:
     parameters:
@@ -1438,6 +1480,14 @@ components:
       schema:
         $ref: 'govway_trace.yaml#/components/schemas/TransazioneId'
 
+    id_applicativo:
+      in: path
+      name: id
+      description: identificativo applicativo
+      required: true
+      schema:
+        type: string
+
     id_evento_path:
       in: path
       name: id
@@ -1488,6 +1538,14 @@ components:
       description: "Distingue se l'identificativo del messaggio è relativo ad una richiesta o una risposta"
       schema:
         $ref: "#/components/schemas/TipoMessaggioEnum"
+
+    tipo_id_applicativo:
+      in: query
+      name: tipo_identificativo
+      required: true
+      description: "Distingue se l'identificativo applicativo è relativo ad una richiesta o una risposta"
+      schema:
+        $ref: "#/components/schemas/TipoIdApplicativoEnum"
 
 
     # Criteri di ricerca opzionali nella query  
@@ -2559,8 +2617,17 @@ components:
       enum:
         - richiesta
         - risposta
+        - conversazione
+        - riferimento_richiesta
       example: richiesta
       
+    TipoIdApplicativoEnum:
+      type: string
+      enum:
+        - richiesta
+        - risposta
+      example: richiesta
+            
     TipoReportEnum:
       type: string
       enum:

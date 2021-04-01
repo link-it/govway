@@ -50,7 +50,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 						<h:form prependId="false"  id="formSearchTransazioni" >
 							<a4j:jsFunction name="refreshPnl" reRender="panelTransazioniCtr"/>
 								
-								<c:if test="#{searchFormTransazioni.modalitaRicercaStorico != 'idMessaggio' and searchFormTransazioni.modalitaRicercaStorico != 'idTransazione'}">
+								<c:if test="#{searchFormTransazioni.modalitaRicercaStorico != 'idMessaggio' and searchFormTransazioni.modalitaRicercaStorico != 'idTransazione' and searchFormTransazioni.modalitaRicercaStorico != 'idApplicativoBase'}">
 									<ui:include src="/transazioni/includes/searchForm.xhtml" >
 										<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
 										<ui:param name="sf_periodo" value="#{searchFormTransazioni.periodo}" />
@@ -98,6 +98,14 @@ xmlns="http://www.w3.org/1999/xhtml"
 								
 								<c:if test="#{searchFormTransazioni.modalitaRicercaStorico == 'idTransazione'}">
 									<ui:include src="/transazioni/includes/searchFormIdTransazione.xhtml" >
+										<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
+										<ui:param name="sf_bean" value="#{searchFormTransazioni}" />
+										<ui:param name="sf_mbean" value="#{transazioniBean}" />
+									</ui:include>
+								</c:if>
+								
+								<c:if test="#{searchFormTransazioni.modalitaRicercaStorico == 'idApplicativoBase'}">
+									<ui:include src="/transazioni/includes/searchFormIdCorrelazioneApplicativa.xhtml" >
 										<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
 										<ui:param name="sf_bean" value="#{searchFormTransazioni}" />
 										<ui:param name="sf_mbean" value="#{transazioniBean}" />
