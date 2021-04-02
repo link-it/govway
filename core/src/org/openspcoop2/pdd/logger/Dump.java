@@ -459,6 +459,7 @@ public class Dump {
 		if(dumpBinario) {
 			dumpAttachments = false;
 		}
+		boolean dumpBinarioAttivatoTramiteRegolaConfigurazione = false;
 		
 		if(dumpNormale) {
 			// Il dump non binario si utilizza solo se viene richiesto un payload parsing, altrimenti quello binario è più preciso (anche se sono abilitati solo gli header) 
@@ -545,6 +546,7 @@ public class Dump {
 						if(!payloadParsing) {
 							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getHeaders());
 							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getPayload());
+							dumpBinarioAttivatoTramiteRegolaConfigurazione = dumpHeaders || dumpBody;
 						}
 					}
 				}
@@ -555,6 +557,7 @@ public class Dump {
 						if(!payloadParsing) {
 							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getHeaders());
 							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getPayload());
+							dumpBinarioAttivatoTramiteRegolaConfigurazione = dumpHeaders || dumpBody;
 						}
 					}
 				}
@@ -565,6 +568,7 @@ public class Dump {
 						if(!payloadParsing) {
 							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getHeaders());
 							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getPayload());
+							dumpBinarioAttivatoTramiteRegolaConfigurazione = dumpHeaders || dumpBody;
 						}
 					}
 				}
@@ -575,6 +579,7 @@ public class Dump {
 						if(!payloadParsing) {
 							dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
 							dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getPayload());
+							dumpBinarioAttivatoTramiteRegolaConfigurazione = dumpHeaders || dumpBody;
 						}
 					}
 				}
@@ -805,7 +810,9 @@ public class Dump {
 		}
 		
 		// Log4J
-		if(OpenSPCoop2Logger.loggerDumpAbilitato && !dumpBinario){
+		if(OpenSPCoop2Logger.loggerDumpAbilitato && 
+				(!dumpBinario || dumpBinarioAttivatoTramiteRegolaConfigurazione) // Se attivato da console deve finire in dump.log
+				){
 			// Su file di log, il log binario viene registrato in altra maniera sul file openspcoop2_connettori.log
 			try{
 				StringBuilder out = new StringBuilder();

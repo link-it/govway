@@ -113,7 +113,7 @@ public class Utils {
 		}
 	}
 	
-	public static Logger logRateLimiting = ConfigLoader.getLogger();
+	public static Logger logRateLimiting = ConfigLoader.getLoggerRateLimiting();
 
 	
 	/**
@@ -121,7 +121,7 @@ public class Utils {
 	 * 
 	 */
 	public static Vector<HttpResponse> makeParallelRequests(HttpRequest request, int count) {
-		logRateLimiting = ConfigLoader.getLogger();
+		logRateLimiting = ConfigLoader.getLoggerRateLimiting();
 
 		final Vector<HttpResponse> responses = new Vector<>();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(count);

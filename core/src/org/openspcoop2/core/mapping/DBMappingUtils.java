@@ -96,73 +96,90 @@ public class DBMappingUtils {
 	
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, 
-			ISearch ricerca) throws CoreException{
+			ISearch ricerca,
+			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
 						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
 						con, tipoDB), 
-				ricerca,CostantiDB.SOGGETTI);
+				ricerca,CostantiDB.SOGGETTI,
+				orderByDescrizione);
 	}
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, 
-			ISearch ricerca,String tabellaSoggetti) throws CoreException{
+			ISearch ricerca,String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
 						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
 						con, tipoDB), 
-				ricerca,tabellaSoggetti);
+				ricerca,tabellaSoggetti,
+				orderByDescrizione);
 	}
 	
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
-			IDServizio idServizio) throws CoreException{
+			IDServizio idServizio,
+			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
 						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
 						con, tipoDB), 
-				null,CostantiDB.SOGGETTI);
+				null,CostantiDB.SOGGETTI,
+				orderByDescrizione);
 	}
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, 
-			String tabellaSoggetti) throws CoreException{
+			String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(), 
 						idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
 						con, tipoDB), 
-				null,tabellaSoggetti);
+				null,tabellaSoggetti,
+				orderByDescrizione);
 	}
 	
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, long idServizioAsLong, 
-			ISearch ricerca) throws CoreException{
+			ISearch ricerca,
+			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, idServizioAsLong, 
-				ricerca,CostantiDB.SOGGETTI);
+				ricerca,CostantiDB.SOGGETTI,
+				orderByDescrizione);
 	}
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, long idServizioAsLong, 
-			ISearch ricerca,String tabellaSoggetti) throws CoreException{
+			ISearch ricerca,String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, idServizioAsLong, 
-				ricerca,tabellaSoggetti);
+				ricerca,tabellaSoggetti,
+				orderByDescrizione);
 	}
 	
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
-			IDServizio idServizio, long idServizioAsLong) throws CoreException{
+			IDServizio idServizio, long idServizioAsLong,
+			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, idServizioAsLong, 
-				null,CostantiDB.SOGGETTI);
+				null,CostantiDB.SOGGETTI,
+				orderByDescrizione);
 	}
 	public static List<MappingErogazionePortaApplicativa> mappingErogazionePortaApplicativaList(Connection con,	String tipoDB, 
 			IDServizio idServizio, long idServizioAsLong, 
-			String tabellaSoggetti) throws CoreException{
+			String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException{
 		return _mappingErogazionePortaApplicativaList(con, tipoDB, 
 				idServizio, idServizioAsLong, 
-				null,tabellaSoggetti);
+				null,tabellaSoggetti,
+				orderByDescrizione);
 	}
 	
 	private static List<MappingErogazionePortaApplicativa> _mappingErogazionePortaApplicativaList(Connection con, String tipoDB, 
 			IDServizio idServizio, long idServizioAsLong, 
-			ISearch ricerca,String tabellaSoggetti) throws CoreException{
+			ISearch ricerca,String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException{
 		int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 		int offset = 0;
 		int limit = 0;
@@ -230,7 +247,12 @@ public class DBMappingUtils {
 			} 
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default",true);
-			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".nome");
+			if(orderByDescrizione) {
+				sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".descrizione");
+			}
+			else {
+				sqlQueryObject.addOrderBy(CostantiDB.MAPPING_EROGAZIONE_PA+".nome");
+			}
 			sqlQueryObject.setSortType(true);
 			if(ricerca != null) {
 				sqlQueryObject.setLimit(limit);
@@ -1055,93 +1077,110 @@ public class DBMappingUtils {
 			long idFruizione, 
 			IDSoggetto idSoggettoFruitore,
 			IDServizio idServizio,
-			ISearch ricerca) throws CoreException {
+			ISearch ricerca,
+			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				idFruizione, 
 				idSoggettoFruitore, 
 				idServizio,
-				ricerca, CostantiDB.SOGGETTI); 
+				ricerca, CostantiDB.SOGGETTI,
+				orderByDescrizione); 
 	}
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			long idFruizione, 
 			IDSoggetto idSoggettoFruitore, 
 			IDServizio idServizio,
-			ISearch ricerca,String tabellaSoggetti) throws CoreException {
+			ISearch ricerca,String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				idFruizione, 
 				idSoggettoFruitore, 
 				idServizio,
-				ricerca, tabellaSoggetti); 
+				ricerca, tabellaSoggetti,
+				orderByDescrizione); 
 	}
 	
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			long idFruizione, 
 			IDSoggetto idSoggettoFruitore,
-			IDServizio idServizio) throws CoreException {
+			IDServizio idServizio,
+			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				idFruizione, 
 				idSoggettoFruitore, 
 				idServizio,
-				null, CostantiDB.SOGGETTI); 
+				null, CostantiDB.SOGGETTI,
+				orderByDescrizione); 
 	}
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			long idFruizione, 
 			IDSoggetto idSoggettoFruitore, 
 			IDServizio idServizio,
-			String tabellaSoggetti) throws CoreException {
+			String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				idFruizione, 
 				idSoggettoFruitore, 
 				idServizio,
-				null, tabellaSoggetti); 
+				null, tabellaSoggetti,
+				orderByDescrizione); 
 	}
 	
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			IDSoggetto idSoggettoFruitore,
 			IDServizio idServizio,
-			ISearch ricerca) throws CoreException {
+			ISearch ricerca,
+			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
 				idSoggettoFruitore, 
 				idServizio,
-				ricerca, CostantiDB.SOGGETTI); 
+				ricerca, CostantiDB.SOGGETTI,
+				orderByDescrizione); 
 	}
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			IDSoggetto idSoggettoFruitore, 
 			IDServizio idServizio,
-			ISearch ricerca,String tabellaSoggetti) throws CoreException {
+			ISearch ricerca,String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
 				idSoggettoFruitore, 
 				idServizio,
-				ricerca, tabellaSoggetti); 
+				ricerca, tabellaSoggetti,
+				orderByDescrizione); 
 	}
 	
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			IDSoggetto idSoggettoFruitore,
-			IDServizio idServizio) throws CoreException {
+			IDServizio idServizio,
+			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
 				idSoggettoFruitore, 
 				idServizio,
-				null, CostantiDB.SOGGETTI); 
+				null, CostantiDB.SOGGETTI,
+				orderByDescrizione); 
 	}
 	public static List<MappingFruizionePortaDelegata> mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			IDSoggetto idSoggettoFruitore, 
 			IDServizio idServizio,
-			String tabellaSoggetti) throws CoreException {
+			String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException {
 		return _mappingFruizionePortaDelegataList(con, tipoDB, 
 				DBUtils.getIdFruizioneServizio(idServizio, idSoggettoFruitore, con, tipoDB), 
 				idSoggettoFruitore, 
 				idServizio,
-				null, tabellaSoggetti); 
+				null, tabellaSoggetti,
+				orderByDescrizione); 
 	}
 	
 	private static List<MappingFruizionePortaDelegata> _mappingFruizionePortaDelegataList(Connection con, String tipoDB, 
 			long idFruizione,
 			IDSoggetto idSoggettoFruitore, 
 			IDServizio idServizio,
-			ISearch ricerca,String tabellaSoggetti) throws CoreException {
+			ISearch ricerca,String tabellaSoggetti,
+			boolean orderByDescrizione) throws CoreException {
 		int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 		int offset = 0;
 		int limit = 0;
@@ -1209,7 +1248,12 @@ public class DBMappingUtils {
 			} 
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default",true);
-			sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
+			if(orderByDescrizione) {
+				sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".descrizione");
+			}
+			else {
+				sqlQueryObject.addOrderBy(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
+			}
 			sqlQueryObject.setSortType(true);
 			if(ricerca != null) {
 				sqlQueryObject.setLimit(limit);

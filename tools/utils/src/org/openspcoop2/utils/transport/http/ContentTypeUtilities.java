@@ -272,11 +272,37 @@ public class ContentTypeUtilities {
 	
 	// Utilities Multipart
 	
-	public static boolean isMultipart(String cType) throws UtilsException {
+	public static boolean isMultipartType(String cType) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);
 			String baseType = contentType.getBaseType().toLowerCase(); 
-			if(baseType!=null && baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART)){
+			if(baseType!=null && baseType.startsWith(HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/")){
+				return true;
+			}
+			return false;
+			
+		} catch (Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static boolean isMultipart(String cType) throws UtilsException {
+		return isMultipartRelated(cType);
+	}
+	public static boolean isMultipartRelated(String cType) throws UtilsException {
+		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_RELATED);
+	}
+	public static boolean isMultipartMixed(String cType) throws UtilsException {
+		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_MIXED);
+	}
+	public static boolean isMultipartAlternative(String cType) throws UtilsException {
+		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_ALTERNATIVE);
+	}
+	private static boolean _isMultipart(String cType, String expected) throws UtilsException {
+		try{
+			ContentType contentType = new ContentType(cType);
+			String baseType = contentType.getBaseType().toLowerCase(); 
+			if(baseType!=null && baseType.equals(expected)){
 				return true;
 			}
 			return false;

@@ -52,10 +52,18 @@ public class ConfigLoader {
         setupProperties();
 	}
     
+    protected static Logger logCore = null;
 	protected static Logger logRateLimiting = null;
+	protected static Logger logRegistrazioneMessaggi = null;
 	
-	public static Logger getLogger() {
+	public static Logger getLoggerCore() {
+		return logCore;
+	}
+	public static Logger getLoggerRateLimiting() {
 		return logRateLimiting;
+	}
+	public static Logger getLoggerRegistrazioneMessaggi() {
+		return logRegistrazioneMessaggi;
 	}
 	
 	public static DbUtils getDbUtils() {
@@ -64,7 +72,9 @@ public class ConfigLoader {
 		
 	@BeforeClass
 	public static void setupLogger()throws Exception {
+		logCore =  LoggerWrapperFactory.getLogger("testsuite.core");
 		logRateLimiting =  LoggerWrapperFactory.getLogger("testsuite.rate_limiting");
+		logRegistrazioneMessaggi =  LoggerWrapperFactory.getLogger("testsuite.registrazione_messaggi");
 	}
 	
 	protected static DbUtils dbUtils;
@@ -73,7 +83,7 @@ public class ConfigLoader {
 
     @Before
     public void before() {
-    	logRateLimiting.info(
+    	logCore.info(
     			"\n###################" +
     			"\nEseguo test: " + this.getClass().getName() + "." + this.testName.getMethodName() +
     			"\n##################"

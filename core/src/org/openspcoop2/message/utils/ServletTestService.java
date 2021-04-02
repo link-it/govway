@@ -1010,7 +1010,7 @@ public class ServletTestService extends HttpServlet {
 					*/
 					outStr.flush();
 					outStr.close();
-					if(!oneway) {
+					if(!oneway && outStr instanceof DumpByteArrayOutputStream) {
 						DumpByteArrayOutputStream dOut = (DumpByteArrayOutputStream) outStr;
 						if(dOut.isSerializedOnFileSystem()) {
 							dumpByteArrayOutputStreamRichiesta = dOut;

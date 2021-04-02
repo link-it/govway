@@ -104,7 +104,7 @@ public class EventiUtils {
 	
 	
 	private static Logger log() {
-		return ConfigLoader.getLogger();
+		return ConfigLoader.getLoggerRateLimiting();
 	}
 	
 	

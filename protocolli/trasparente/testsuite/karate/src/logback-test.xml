@@ -14,6 +14,13 @@
         </encoder>
     </appender>    
 
+    <appender name="fileLoggerTestSuiteCore" class="ch.qos.logback.core.FileAppender">
+        <file>log/core.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="fileLoggerRateLimiting" class="ch.qos.logback.core.FileAppender">
         <file>log/rateLimiting.log</file>
         <encoder>
@@ -21,9 +28,26 @@
         </encoder>
     </appender>
 
+    <appender name="fileLoggerRegistrazioneMessaggi" class="ch.qos.logback.core.FileAppender">
+        <file>log/registrazioneMessaggi.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="testsuite.core" level="debug" additivity="false">
+	<!--    <appender-ref ref="STDOUT" />	-->
+	<appender-ref ref="fileLoggerTestSuiteCore" />
+    </logger>
+
     <logger name="testsuite.rate_limiting" level="debug" additivity="false">
 	<!--    <appender-ref ref="STDOUT" />	-->
 	<appender-ref ref="fileLoggerRateLimiting" />
+    </logger>
+
+    <logger name="testsuite.registrazione_messaggi" level="debug" additivity="false">
+	<!--    <appender-ref ref="STDOUT" />	-->
+	<appender-ref ref="fileLoggerRegistrazioneMessaggi" />
     </logger>
    
     <logger name="com.intuit.karate" level="DEBUG"/>

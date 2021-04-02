@@ -4554,7 +4554,7 @@ public class ConfigurazionePdD  {
 				con = driver.getConnection("getMappingErogazionePortaApplicativaList");
 				release = true;
 			}
-			return DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDatabase, idServizio);
+			return DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDatabase, idServizio, false);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -4678,7 +4678,7 @@ public class ConfigurazionePdD  {
 				con = driver.getConnection("getMappingFruizionePortaDelegataList");
 				release = true;
 			}
-			return DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDatabase, idFruitore, idServizio);
+			return DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDatabase, idFruitore, idServizio, false);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

@@ -127,6 +127,8 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 		if(this.soglia>0) {
 			if(this.attuale>this.soglia) {
 				try {
+					this.attuale++;
+					
 					if(this.f==null) {
 						checkInitFile();
 					}
@@ -151,6 +153,8 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 		if(this.soglia>0) {
 			if( (this.attuale>this.soglia) || ((this.attuale+len)>this.soglia) ) {
 				try {
+					this.attuale=this.attuale+len;
+					
 					if(this.f==null) {
 						checkInitFile();
 					}
@@ -176,6 +180,8 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 		if(this.soglia>0) {
 			if( (this.attuale>this.soglia) || ((this.attuale+b.length)>this.soglia) ) {
 				try {
+					this.attuale=this.attuale+b.length;
+					
 					if(this.f==null) {
 						checkInitFile();
 					}

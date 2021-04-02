@@ -10908,7 +10908,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(labelSezione);
 		dati.addElement(de);
 		
-		// header ingresso
+		// header 
 		de = new DataElement();
 		de.setName(paramHeaders);
 		de.setLabel(labelHeaders);
@@ -10918,7 +10918,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValues(valuesProp);
 		dati.addElement(de);
 		
-		// payload ingresso
+		boolean multipartPayloadParsing = this.core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
+		if(!multipartPayloadParsing) {
+			// regole configurate con modalita' attiva
+			if(StatoFunzionalita.ABILITATO.getValue().equals(dumpPayload) && 
+					StatoFunzionalita.ABILITATO.getValue().equals(dumpPayloadParsing)) {
+				multipartPayloadParsing = true;
+			}
+		}
+		
+		// payload
 		de = new DataElement();
 		de.setName(paramPayload);
 		de.setLabel(labelPayload);
@@ -10926,7 +10935,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setSelected(dumpPayload);
 		de.setLabels(labelsProp);
 		de.setValues(valuesProp);
-		if(this.core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled()) {
+		if(multipartPayloadParsing) {
 			de.setPostBack(true);
 		}
 		dati.addElement(de);
@@ -10936,7 +10945,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(paramPayloadParsing);
 		de.setLabel(labelPayloadParsing);
 		de.setValue(dumpPayloadParsing);
-		if(this.core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled() && dumpPayload!=null && dumpPayload.equals(StatoFunzionalita.ABILITATO.getValue())) {
+		if(multipartPayloadParsing && dumpPayload!=null && dumpPayload.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			de.setType(DataElementType.SELECT);
 			de.setSelected(dumpPayloadParsing);
 			de.setLabels(labelsProp);
@@ -10954,7 +10963,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(paramBody);
 		de.setLabel(labelBody);
 		de.setValue(dumpBody);
-		if(this.core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled() && dumpPayloadParsing!=null && dumpPayloadParsing.equals(StatoFunzionalita.ABILITATO.getValue())) {
+		if(multipartPayloadParsing && dumpPayloadParsing!=null && dumpPayloadParsing.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			de.setType(DataElementType.SELECT);
 			de.setSelected(dumpBody);
 			de.setLabels(labelsProp);
@@ -10971,7 +10980,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(paramAttachments);
 		de.setLabel(labelAttachments);
 		de.setValue(dumpAttachments);
-		if(this.core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled() && dumpPayloadParsing!=null && dumpPayloadParsing.equals(StatoFunzionalita.ABILITATO.getValue())) {
+		if(multipartPayloadParsing && dumpPayloadParsing!=null && dumpPayloadParsing.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			de.setType(DataElementType.SELECT);
 			de.setSelected(dumpAttachments);
 			de.setLabels(labelsProp);

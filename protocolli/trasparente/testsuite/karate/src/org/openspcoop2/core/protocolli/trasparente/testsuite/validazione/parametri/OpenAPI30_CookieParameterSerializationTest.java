@@ -98,10 +98,10 @@ public class OpenAPI30_CookieParameterSerializationTest extends ConfigLoader {
 						
 			// CASO OK
 			
-			logRateLimiting.info("Test con Cookie-"+i+" '"+httpHeader+" ...");
+			logCore.info("Test con Cookie-"+i+" '"+httpHeader+" ...");
 			HttpResponse response = HttpUtilities.httpInvoke(request);
 			assertEquals(200, response.getResultHTTPOperation());
-			logRateLimiting.info("Test con Cookie-"+i+" '"+httpHeader+" ok");
+			logCore.info("Test con Cookie-"+i+" '"+httpHeader+" ok");
 			
 		}
 

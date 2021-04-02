@@ -1,3 +1,8 @@
+2021-04-02  Andrea Poli <apoli@link.it>
+
+	* [TestsuiteProtocolloTrasparente]
+	Aggiunti test che verificano la nuova modalità di salvataggio dello stream dei dati.
+
 2021-03-31  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor, ApiRsMonitoraggio, ApiRsConfigurazione]

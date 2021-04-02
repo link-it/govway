@@ -86,7 +86,13 @@
 	/protocolli/spcoop/testsuite/deploy/wss_examples/jks/pa.p12
 
 	Serve per verificare il raggruppamento per token policy
-		
+	
+- I test sui connettori richiedono che sull'host '127.0.2.2' nella porta '7777', se viene instaurata una connessione, questa viene lasciata sospesa in modo da causare un 'ConnectTimedOut'.
+  Su sistema operativo 'Fedora', ad esempio, si puo' utilizzare il comando, in caso si abbia attivo il servizio 'iptables':
+      	'iptables -A INPUT -p tcp -d 127.0.2.2 --dport 7777 -j DROP'
+  o su fedora più recenti:
+	'iptables -I INPUT 1 -p tcp -d 127.0.2.2 --destination-port 7777 -j DROP'
+	
 
 Per eseguire i test:
 	ant run_test
@@ -164,3 +170,11 @@ Di seguito vengono descritti i test del package 'trasformazione':
 
 - 'form', verifica la trasformazione utilizzata per riconoscere casi di errori generati durante la certificazione di uno SPIDProvider 
   ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.form
+
+Di seguito vengono descritti i test del package 'registrazione_messaggi':
+
+- 'dump_binario', verifica la registrazione dei messaggi in modalità 'binaria'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=registrazione_messaggi.dump_binario
+
+- 'dump_normale', verifica la registrazione dei messaggi in modalità 'normale'. Si tratta della vecchia modalità in cui era il gateway ad analizzare in realtime la struttura multipart.
+   ant run_test -Ddelete=false -Dload=false -Dpackage=registrazione_messaggi.dump_normale

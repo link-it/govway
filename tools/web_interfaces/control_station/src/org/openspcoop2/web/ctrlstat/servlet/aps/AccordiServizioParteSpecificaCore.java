@@ -1150,8 +1150,8 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		try {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
-			
-			return DBMappingUtils.mappingErogazionePortaApplicativaList(con,this.tipoDB,idAccordoServizioParteSpecifica,idServizio, ricerca);
+			boolean orderByDescrizione = true;
+			return DBMappingUtils.mappingErogazionePortaApplicativaList(con,this.tipoDB,idAccordoServizioParteSpecifica,idServizio, ricerca, orderByDescrizione);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1337,9 +1337,11 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		try {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
+			boolean orderByDescrizione = true;
 			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idFru,idSoggettoFruitore,  
 					idAccordoServizio, 
-					ricerca);
+					ricerca,
+					orderByDescrizione);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1357,9 +1359,11 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		try {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
+			boolean orderByDescrizione = true;
 			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idSoggettoFruitore,  
 					idAccordoServizio, 
-					ricerca);
+					ricerca,
+					orderByDescrizione);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

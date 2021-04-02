@@ -486,7 +486,7 @@ public class PorteDelegateCore extends ControlStationCore {
 					
 						for (Fruitore fruitore : listFruitori) {
 							IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
-							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio);
+							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio, false);
 							if(lPD!=null && lPD.size()>0) {
 								for (MappingFruizionePortaDelegata mapping : lPD) {
 									try {
@@ -535,7 +535,7 @@ public class PorteDelegateCore extends ControlStationCore {
 					
 						for (Fruitore fruitore : listFruitori) {
 							IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
-							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio);
+							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio, false);
 							if(lPD!=null && lPD.size()>0) {
 								for (MappingFruizionePortaDelegata mapping : lPD) {
 									if(mapping.isDefault()) {
@@ -963,7 +963,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			
-			return DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idFruitore, idServizio);
+			return DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idFruitore, idServizio, false);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

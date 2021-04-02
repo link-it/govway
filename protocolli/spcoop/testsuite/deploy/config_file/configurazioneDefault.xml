@@ -67,10 +67,10 @@
 	 <!-- Dump su Database -->
 	  <dump stato="abilitato" dump-binario-porta-delegata="disabilitato" dump-binario-porta-applicativa="disabilitato">
 		<configurazione>
-			<richiesta-ingresso body="abilitato" attachments="abilitato" headers="abilitato" />
-			<richiesta-uscita body="abilitato" attachments="abilitato" headers="abilitato" />
-			<risposta-ingresso body="abilitato" attachments="abilitato" headers="abilitato" />
-			<risposta-uscita body="abilitato" attachments="abilitato" headers="abilitato" />
+			<richiesta-ingresso headers="abilitato" payload="abilitato" payload-parsing="disabilitato" body="disabilitato" attachments="disabilitato" />
+			<richiesta-uscita headers="abilitato" payload="abilitato" payload-parsing="disabilitato" body="disabilitato" attachments="disabilitato" />
+			<risposta-ingresso headers="abilitato" payload="abilitato" payload-parsing="disabilitato" body="disabilitato" attachments="disabilitato" />
+			<risposta-uscita headers="abilitato" payload="abilitato" payload-parsing="disabilitato" body="disabilitato" attachments="disabilitato" />
 		</configurazione>
               <openspcoop-appender tipo="protocol">
 		    <!-- jbossDatasource -->

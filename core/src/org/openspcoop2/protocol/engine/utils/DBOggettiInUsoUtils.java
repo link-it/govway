@@ -2624,7 +2624,7 @@ public class DBOggettiInUsoUtils  {
 					// check PA
 					List<MappingErogazionePortaApplicativa> listPA = null;
 					try {
-						listPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio);
+						listPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
 					}catch(Exception e) {}
 					if(listPA!=null && !listPA.isEmpty()) {
 						found=true;
@@ -2667,7 +2667,7 @@ public class DBOggettiInUsoUtils  {
 						IDSoggetto idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
 						List<MappingFruizionePortaDelegata> listPD = null;
 						try {
-							listPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio);
+							listPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
 						}catch(Exception e) {}
 						if(listPD!=null && !listPD.isEmpty()) {
 							found=true;
@@ -3412,7 +3412,7 @@ public class DBOggettiInUsoUtils  {
 						if(listFruitori!=null && !listFruitori.isEmpty()) {
 						
 							for (IDSoggetto idSoggettoFruitore : listFruitori) {
-								List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio);
+								List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
 								if(lPD!=null && lPD.size()>0) {
 									for (MappingFruizionePortaDelegata mapping : lPD) {
 										
@@ -3594,7 +3594,7 @@ public class DBOggettiInUsoUtils  {
 			if(config){
 				if(idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
 					for (IDServizio idServizio : idServiziWithAccordo) {
-						List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio);
+						List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
 						if(lPA!=null && lPA.size()>0) {
 							for (MappingErogazionePortaApplicativa mapping : lPA) {
 								
@@ -4285,7 +4285,7 @@ public class DBOggettiInUsoUtils  {
 						if(listFruitori!=null && !listFruitori.isEmpty()) {
 						
 							for (IDSoggetto idSoggettoFruitore : listFruitori) {
-								List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio);
+								List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
 								if(lPD!=null && lPD.size()>0) {
 									for (MappingFruizionePortaDelegata mapping : lPD) {
 										if(!mapping.isDefault()) {
@@ -4316,7 +4316,7 @@ public class DBOggettiInUsoUtils  {
 			if(config){
 				if(idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
 					for (IDServizio idServizio : idServiziWithAccordo) {
-						List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio);
+						List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
 						if(lPA!=null && lPA.size()>0) {
 							for (MappingErogazionePortaApplicativa mapping : lPA) {
 								if(!mapping.isDefault()) {
@@ -4825,7 +4825,7 @@ public class DBOggettiInUsoUtils  {
 						if(listFruitori!=null && !listFruitori.isEmpty()) {
 						
 							for (IDSoggetto idSoggettoFruitore : listFruitori) {
-								List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio);
+								List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
 								if(lPD!=null && lPD.size()>0) {
 									for (MappingFruizionePortaDelegata mapping : lPD) {
 										
@@ -5047,7 +5047,7 @@ public class DBOggettiInUsoUtils  {
 			if(config){
 				if(idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
 					for (IDServizio idServizio : idServiziWithAccordo) {
-						List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio);
+						List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
 						if(lPA!=null && lPA.size()>0) {
 							for (MappingErogazionePortaApplicativa mapping : lPA) {
 								

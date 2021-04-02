@@ -724,7 +724,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			
 			if(list!=null && !list.isEmpty()) {
 				for (IDServizio idServizio : list) {
-					List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
+					List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio, false);
 					if(lPA!=null && lPA.size()>0) {
 						for (MappingErogazionePortaApplicativa mapping : lPA) {
 							try {
@@ -761,7 +761,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			
 			if(list!=null && !list.isEmpty()) {
 				for (IDServizio idServizio : list) {
-					List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
+					List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio, false);
 					if(lPA!=null && lPA.size()>0) {
 						for (MappingErogazionePortaApplicativa mapping : lPA) {
 							if(mapping.isDefault()) {
@@ -1052,7 +1052,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			
-			return DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
+			return DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio, false);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 
 import org.apache.commons.io.IOUtils;
@@ -156,6 +157,13 @@ public class CopyStream {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	public static void copy(File from,File to, CopyOption ... options) throws UtilsException{
+		try{
+			Files.copy(from.toPath(), to.toPath(), options);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 	public static void copy(InputStream from, File to) throws UtilsException{
 		try{
 			Files.copy(from, to.toPath());
@@ -163,5 +171,13 @@ public class CopyStream {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	public static void copy(InputStream from, File to, CopyOption ... options) throws UtilsException{
+		try{
+			Files.copy(from, to.toPath(), options);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 
+	
 }
