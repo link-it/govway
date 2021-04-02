@@ -12,7 +12,8 @@
 			"pattern": "auth01"
 		},
 		"sicurezza_messaggio": {
-			"pattern": "disabilitato"
+			"pattern": "integrity01-auth01",
+			"applicabilita": "qualsiasi"
 		}
 	}
 }

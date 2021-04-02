@@ -8,6 +8,7 @@ Background:
 * eval randomize(api_modi, ["nome"])
 
 * def api_modipa = read('api_modi_soap.json')
+* eval api_modipa.nome=api_modipa.nome+'MODIPA'
 * eval randomize(api_modipa, ["nome"])
 
 * def api_no_modi = read('api_modi_error_no_modi.json')
@@ -66,13 +67,33 @@ Background:
 * def query_param_profilo_modi = {'profilo': 'ModI'}
 * def query_param_profilo_modipa = {'profilo': 'ModIPA'}
 
+
+* def getExpected =
+"""
+function(modi) {
+var expected = modi;
+expected.sicurezza_messaggio.informazioni_utente = expected.sicurezza_messaggio.informazioni_utente != null ? expected.sicurezza_messaggio.informazioni_utente == 'true' : false
+expected.sicurezza_messaggio.soap_firma_allegati = expected.sicurezza_messaggio.soap_firma_allegati != null ? expected.sicurezza_messaggio.soap_firma_allegati == 'true' : false
+expected.sicurezza_messaggio.digest_richiesta = expected.sicurezza_messaggio.digest_richiesta != null ? expected.sicurezza_messaggio.digest_richiesta == 'true' : false
+return expected;
+} 
+"""
 @Create204_modipa
 Scenario: Api Create 204 con profilo ModIPA
-    * call create_201 ( { resourcePath: 'api', body: api_modipa, key: api_modipa.nome + '/' + api_modipa.versione, query_params: query_param_profilo_modipa } )
+    * call create ( { resourcePath: 'api', body: api_modipa, key: api_modipa.nome + '/' + api_modipa.versione, query_params: query_param_profilo_modipa } )
+	* call get ( { resourcePath: 'api', key: api_modipa.nome + '/' + api_modipa.versione  + '/modi'})
+	* def expected = getExpected(api_modipa.modi)
+    * match response == expected
+	* call delete ( { resourcePath: 'api/' + api_modipa.nome + '/' + api_modipa.versione })
+    
 
 @Create204_modi
 Scenario: Api Create 204 con profilo ModI
-    * call create_201 ( { resourcePath: 'api', body: api_modi, key: api_modi.nome + '/' + api_modi.versione, query_params: query_param_profilo_modi } )
+    * call create ( { resourcePath: 'api', body: api_modi, key: api_modi.nome + '/' + api_modi.versione, query_params: query_param_profilo_modi } )
+	* call get ( { resourcePath: 'api', key: api_modi.nome + '/' + api_modi.versione  + '/modi'})
+	* def expected = getExpected(api_modi.modi)
+    * match response == expected
+	* call delete ( { resourcePath: 'api/' + api_modi.nome + '/' + api_modi.versione })
 
 @Create409_modi
 Scenario: Api Create 409 con profilo ModI
