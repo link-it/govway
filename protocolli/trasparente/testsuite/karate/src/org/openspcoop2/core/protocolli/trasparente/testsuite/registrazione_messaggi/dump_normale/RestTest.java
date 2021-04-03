@@ -24,9 +24,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 
 import org.junit.Test;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.registrazione_messaggi.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.registrazione_messaggi.DumpUtils;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.utils.mime.MimeMultipart;

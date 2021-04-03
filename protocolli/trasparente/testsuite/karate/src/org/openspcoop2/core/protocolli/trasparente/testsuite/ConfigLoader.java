@@ -23,6 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,7 +31,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.resources.MapReader;
 import org.slf4j.Logger;
 
 import com.intuit.karate.FileUtils;
@@ -75,6 +81,11 @@ public class ConfigLoader {
 		logCore =  LoggerWrapperFactory.getLogger("testsuite.core");
 		logRateLimiting =  LoggerWrapperFactory.getLogger("testsuite.rate_limiting");
 		logRegistrazioneMessaggi =  LoggerWrapperFactory.getLogger("testsuite.registrazione_messaggi");
+		
+		Map<String, IProtocolFactory<?>> m = new HashMap<String, IProtocolFactory<?>>();
+		m.put("trasparente", Utilities.newInstance("org.openspcoop2.protocol.trasparente.TrasparenteFactory"));
+		MapReader<String, IProtocolFactory<?>> map = new MapReader<String, IProtocolFactory<?>>(m, false);
+		EsitiProperties.initialize(null, logCore, new Loader(), map);
 	}
 	
 	protected static DbUtils dbUtils;

@@ -20,9 +20,9 @@
 package org.openspcoop2.core.protocolli.trasparente.testsuite.registrazione_messaggi.dump_binario;
 
 import org.junit.Test;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
-import org.openspcoop2.core.protocolli.trasparente.testsuite.registrazione_messaggi.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.registrazione_messaggi.DumpUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;

@@ -901,12 +901,18 @@ public class Dump {
 						out.append(dumpMessaggio.toString(dumpMessaggioConfig,this.properties.isDumpAllAttachments()));
 	
 					}else{
-						if(org.openspcoop2.utils.mime.MultipartUtils.messageWithAttachment(msgBytes.toByteArray())){
-							out.append("------ MessageWithAttachments ------\n");
-						}else{
-							out.append("------ Message ------\n");
+						if(msgBytes!=null && msgBytes.size()>0) {
+							if(org.openspcoop2.utils.mime.MultipartUtils.messageWithAttachment(msgBytes.toByteArray())){
+								out.append("------ MessageWithAttachments ------\n");
+							}else{
+								out.append("------ Message ------\n");
+							}
+							out.append(msgBytes.toString());
 						}
-						out.append(msgBytes.toString());
+						else {
+							out.append("------ Message ------\n");
+							out.append("Non presente\n");
+						}
 					}
 				
 				}

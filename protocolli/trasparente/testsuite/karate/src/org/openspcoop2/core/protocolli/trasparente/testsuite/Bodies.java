@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.core.protocolli.trasparente.testsuite.registrazione_messaggi;
+package org.openspcoop2.core.protocolli.trasparente.testsuite;
 
 import java.io.ByteArrayOutputStream;
 
@@ -49,10 +49,15 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 */
 public class Bodies {
 	
+	public final static int SIZE_1K = 1024; // 1024 byte=1K
+	public final static int SIZE_5K = 1024*5; 
+	public final static int SIZE_50K = 1024*50; 
+	public final static int SIZE_500K = 1024*500; 
+	
 	public final static int SMALL_SIZE = 1024; // 1024 byte=1K
 	public final static int BIG_SIZE = 1024*1024*2; // {(1024*1024*2)}, // 2MB
 	
-	private final static String PATH = "/org/openspcoop2/core/protocolli/trasparente/testsuite/registrazione_messaggi/";
+	private final static String PATH = "/org/openspcoop2/core/protocolli/trasparente/testsuite/";
 	
 	private final static String getXmlPayload(int sizePayload,String prefix) { 
 		StringBuilder sb = new StringBuilder();

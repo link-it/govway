@@ -59,6 +59,9 @@
 		<fileset dir="${openspcoop2.dist}">
 			<include name="*.jar"/>
 		</fileset>
+		<fileset dir="${openspcoop2.trasparente.dist}">
+			<include name="*.jar"/>
+		</fileset>
 		<fileset dir="${required_lib}/jax">
 			<include name="jaxb-*.jar"/>
 		</fileset>	

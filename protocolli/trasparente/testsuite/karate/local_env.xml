@@ -5,6 +5,7 @@
       <!-- root di OpenSPCoop -->
 	  <property name="openspcoop2" location="../../../.."/>
       <property name="openspcoop2.dist" location="${openspcoop2}/core/dist"/>
+      <property name="openspcoop2.trasparente.dist" location="${openspcoop2}/protocolli/trasparente/dist"/>
       <property name="required_lib_govwayTrasparenteTestSuite" location="${openspcoop2}/lib/"/>
       <property name="required_lib" value="${required_lib_govwayTrasparenteTestSuite}"/>
       <property name="openspcoop2.lib" location="${required_lib_govwayTrasparenteTestSuite}"/>
