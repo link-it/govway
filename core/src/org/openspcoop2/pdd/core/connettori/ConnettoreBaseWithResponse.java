@@ -119,7 +119,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	protected void dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+	protected boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		
 		if(this.isRest){
 			checkRestResponseMessageType();
@@ -175,6 +175,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			// devo registrare almeno gli header HTTP
 			this.dumpBinarioRispostaIngresso(null, null, trasporto);
 		}
+		
+		return true;
 	}
 	
 	private void checkRestResponseMessageType() throws Exception{
@@ -295,6 +297,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			return; // gia' calcolato
 		}
 		
+		this.contentTypeMessaggioOriginale_tunnelSoap = this.tipoRisposta; // serve per funzionalità TunnelSOAP
+		
 		if(this.isResponse!=null){
 			
 			if(this.sbustamentoSoap==false){
@@ -385,6 +389,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
+	private String contentTypeMessaggioOriginale_tunnelSoap = null; // serve per funzionalità TunnelSOAP;
+	
 	protected boolean doSoapResponse() throws Exception{
 
 		String tipoLetturaRisposta = null;
@@ -393,8 +399,6 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		
 		if(this.debug)
 			this.logger.debug("gestione WS/SOAP in corso ...");
-		
-		String contentTypeTrasporto = this.tipoRisposta; // serve per funzionalità TunnelSOAP
 		
 		checkSoapResponseMessageType();
 		
@@ -486,7 +490,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								this.responseMsg = TunnelSoapUtils.imbustamentoMessaggioConAttachment(org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE),
 										this.messageTypeResponse,MessageRole.RESPONSE, 
 										cis,this.mimeTypeAttachment,
-										MailcapActivationReader.existsDataContentHandler(this.mimeTypeAttachment),contentTypeTrasporto, 
+										MailcapActivationReader.existsDataContentHandler(this.mimeTypeAttachment),this.contentTypeMessaggioOriginale_tunnelSoap, 
 										this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 							}else{
 								if(this.debug)

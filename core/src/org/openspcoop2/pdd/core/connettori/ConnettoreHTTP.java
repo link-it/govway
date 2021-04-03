@@ -925,7 +925,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			this.initCheckContentTypeConfiguration();
 			
 			if(this.isDumpBinarioRisposta()){
-				this.dumpResponse(this.propertiesTrasportoRisposta);
+				if(!this.dumpResponse(this.propertiesTrasportoRisposta)) {
+					return false;
+				}
 			}
 			
 			if(this.isRest){

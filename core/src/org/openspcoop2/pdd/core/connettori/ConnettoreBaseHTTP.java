@@ -228,6 +228,23 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		
 	}
 	
+	@Override
+	protected boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+		
+		if(this.isRest){
+			checkRestProxyPassReverse();
+		}
+		else {
+			/*
+			 * Se il messaggio e' un html di errore me ne esco 
+			 */		
+			if(!checkSoapHtmlResponse()) {
+				return false;
+			}
+		}
+		
+		return super.dumpResponse(trasporto);
+	}
 	
 	@Override
 	protected boolean doSoapResponse() throws Exception{
@@ -237,6 +254,17 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		if(this.debug)
 			this.logger.debug("gestione WS/SOAP in corso (check HTML) ...");
 		
+		/*
+		 * Se il messaggio e' un html di errore me ne esco 
+		 */		
+		if(!checkSoapHtmlResponse()) {
+			return false;
+		}
+		
+		return super.doSoapResponse();
+	}
+	
+	private boolean checkSoapHtmlResponse() throws Exception {
 		/*
 		 * Se il messaggio e' un html di errore me ne esco 
 		 */			
@@ -271,74 +299,83 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			return false;
 		}
 		
-		return super.doSoapResponse();
+		return true;
 	}
 	
 	@Override
 	protected boolean doRestResponse() throws Exception{
 		
-		 if(this.debug)
-			 this.logger.debug("gestione REST - proxyPassReverse:"+this.rest_proxyPassReverse+" ...");
-			                                 
-		 if(this.rest_proxyPassReverse && this.rest_proxyPassReverse_headers!=null) {
-			 
-			 for (String header : this.rest_proxyPassReverse_headers) {
-				 String redirectLocation = TransportUtils.getFirstValue(this.propertiesTrasportoRisposta, header); 
-				 if(redirectLocation!=null) {
-					 if(this.debug)
-						 this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"] ...");
-	                   
-					 // Aggiorno url
-					 try {
-						 String baseUrl = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-						 if(baseUrl==null) {
-							 throw new Exception("BaseURL undefined");
-						 }
-						 if(this.debug)
-							 this.logger.debug("Base URL: ["+baseUrl+"] ...");
-						 
-						 String interfaceName = null;
-						 if(this.requestMsg!=null) {
-							 Object porta = this.requestMsg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
-							 if(porta!=null && porta instanceof String) {
-								 interfaceName = (String) porta;
-							 }
-							 if(interfaceName==null) {
-								 if(this.requestMsg.getTransportRequestContext()!=null) {
-									 interfaceName = this.requestMsg.getTransportRequestContext().getInterfaceName();
-								 }
-							 }
-						 }
-						 
-						 String prefixGatewayUrl = null;
-						 String contesto = null;
-						 if(this.rest_proxyPassReverse_usePrefixProtocol) {
-							 UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(this.getProtocolFactory(), 
-									 ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
-								     this.requestMsg!=null ? this.requestMsg.getServiceBinding() : null,
-								     interfaceName,
-								     this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : null,
-								     this.getIdAccordo());		 
-							 prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
-							 contesto = urlInvocazioneApi.getContext();
-						 }
-						 
-						 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl, contesto);
-						 if(this.debug)
-							 this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
-	               
-						 TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);
-						 TransportUtils.addHeader(this.propertiesTrasportoRisposta,header, newRedirectLocation);
-					 }catch(Exception e) {
-						 throw new Exception("Errore durante l'aggiornamento dell'header '"+header+
-								 "' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
-					 }
-				 }
-			 }
-			 
-		 }
-
+		checkRestProxyPassReverse();
 		
 		return super.doRestResponse();
+	}
+
+	private boolean proxyPassReverseDone = false;
+	private void checkRestProxyPassReverse() throws Exception {
+		if(!this.proxyPassReverseDone) {
+			try {
+				if(this.debug)
+					this.logger.debug("gestione REST - proxyPassReverse:"+this.rest_proxyPassReverse+" ...");
+				                                 
+				if(this.rest_proxyPassReverse && this.rest_proxyPassReverse_headers!=null) {
+					 
+					 for (String header : this.rest_proxyPassReverse_headers) {
+						 String redirectLocation = TransportUtils.getFirstValue(this.propertiesTrasportoRisposta, header); 
+						 if(redirectLocation!=null) {
+							 if(this.debug)
+								 this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"] ...");
+			                   
+							 // Aggiorno url
+							 try {
+								 String baseUrl = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
+								 if(baseUrl==null) {
+									 throw new Exception("BaseURL undefined");
+								 }
+								 if(this.debug)
+									 this.logger.debug("Base URL: ["+baseUrl+"] ...");
+								 
+								 String interfaceName = null;
+								 if(this.requestMsg!=null) {
+									 Object porta = this.requestMsg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+									 if(porta!=null && porta instanceof String) {
+										 interfaceName = (String) porta;
+									 }
+									 if(interfaceName==null) {
+										 if(this.requestMsg.getTransportRequestContext()!=null) {
+											 interfaceName = this.requestMsg.getTransportRequestContext().getInterfaceName();
+										 }
+									 }
+								 }
+								 
+								 String prefixGatewayUrl = null;
+								 String contesto = null;
+								 if(this.rest_proxyPassReverse_usePrefixProtocol) {
+									 UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(this.getProtocolFactory(), 
+											 ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
+										     this.requestMsg!=null ? this.requestMsg.getServiceBinding() : null,
+										     interfaceName,
+										     this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : null,
+										     this.getIdAccordo());		 
+									 prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
+									 contesto = urlInvocazioneApi.getContext();
+								 }
+								 
+								 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl, contesto);
+								 if(this.debug)
+									 this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
+			               
+								 TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);
+								 TransportUtils.addHeader(this.propertiesTrasportoRisposta,header, newRedirectLocation);
+							 }catch(Exception e) {
+								 throw new Exception("Errore durante l'aggiornamento dell'header '"+header+
+										 "' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
+							 }
+						 }
+					 }
+				 }
+			}finally {
+				this.proxyPassReverseDone = true;
+			}
+		 }
 	}
 }
