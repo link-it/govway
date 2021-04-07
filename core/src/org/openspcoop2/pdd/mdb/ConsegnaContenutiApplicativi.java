@@ -149,6 +149,8 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.utils.TimeoutIOException;
+import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -2725,29 +2727,66 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				String messaggioErroreConsegnaConnettore = "Consegna ["+tipoConnector+"] con errore: "+motivoErroreConsegna;
 				if(existsModuloInAttesaRispostaApplicativa) {
 					OpenSPCoop2Message connettoreMsgRequest = connettoreMsg.getRequestMessage(requestInfo, pddContext);
-					if(connettoreMsgRequest.getParseException() != null){
+					String requestReadTimeout = null;
+					String responseReadTimeout = null;
+					if(pddContext!=null && pddContext.containsKey(TimeoutInputStream.ERROR_MSG_KEY)) {
+						String timeoutMessage = PdDContext.getValue(TimeoutInputStream.ERROR_MSG_KEY, pddContext);
+						if(timeoutMessage!=null && timeoutMessage.startsWith(CostantiPdD.PREFIX_TIMEOUT_REQUEST)) {
+							requestReadTimeout = timeoutMessage;
+						}
+						else if(timeoutMessage!=null && timeoutMessage.startsWith(CostantiPdD.PREFIX_TIMEOUT_RESPONSE)) {
+							responseReadTimeout = timeoutMessage;
+						}
+					}
+					if(connettoreMsgRequest.getParseException() != null || requestReadTimeout!=null){
+						
+						ParseException parseException = null;
+						Throwable tParsing = null;
+						String errorMsg = null;
+						if(requestReadTimeout != null) {
+							tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+							errorMsg = tParsing.getMessage();
+						}
+						else {
+							parseException = connettoreMsgRequest.getParseException();
+							tParsing = parseException.getParseException();
+							errorMsg = tParsing.getMessage();
+						}
 						
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
-						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT);
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+						if(requestReadTimeout!=null) {
+							integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+						}
+						else if(connettoreMsgRequest.getParseException().getSourceException()!=null &&
+								TimeoutIOException.isTimeoutIOException(connettoreMsgRequest.getParseException().getSourceException())) {
+							integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+						}
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
 						if(localForwardEngine!=null) {
-							localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT);
+							localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
 						}
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-								ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(connettoreMsgRequest.getParseException().getParseException()),
+								ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(tParsing),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
-								connettoreMsgRequest.getParseException().getParseException(),connettoreMsgRequest.getParseException(),
+								tParsing,parseException,
 								pddContext);
 						
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
-						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,connettoreMsgRequest.getParseException().getParseException().getMessage());
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,errorMsg);
 						return esito;
 					} else if(responseMessage==null && 
 							!pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
 						// Genero una risposta di errore
 						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
 						if(eccezioneProcessamentoConnettore!=null && motivoErroreConsegna!=null) {
-							if(this.propertiesReader.isServiceUnavailable_ReadTimedOut(motivoErroreConsegna)){
+							if(responseReadTimeout!=null) {
+								integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+								pddContext.removeObject(TimeoutInputStream.ERROR_MSG_KEY);
+								pddContext.removeObject(TimeoutInputStream.EXCEPTION_KEY);
+							}
+							else if(this.propertiesReader.isServiceUnavailable_ReadTimedOut(motivoErroreConsegna)){
 								integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 							}
 						}
@@ -2766,30 +2805,49 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,messaggioErroreConsegnaConnettore);
 						return esito;
 					} else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION) ||
-							responseMessage.getParseException() != null){
+							responseMessage.getParseException() != null ||
+							responseReadTimeout!=null){
 						
 						ParseException parseException = null;
-						if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
-							parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+						Throwable tParsing = null;
+						String errorMsg = null;
+						if(responseReadTimeout != null) {
+							tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+							errorMsg = tParsing.getMessage();
 						}
-						else{
+						else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
+							parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+							tParsing = parseException.getParseException();
+							errorMsg = tParsing.getMessage();
+						}
+						else {
 							parseException = responseMessage.getParseException();
+							tParsing = parseException.getParseException();
+							errorMsg = tParsing.getMessage();
 						}
 						
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
-						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT);
+						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT;
+						if(responseReadTimeout!=null) {
+							integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+						}
+						else if(parseException.getSourceException()!=null &&
+								TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
+							integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+						}
+						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
 						if(localForwardEngine!=null) {
-							localForwardEngine.setIntegrationFunctionError(IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT);
+							localForwardEngine.setIntegrationFunctionError(integrationFunctionError);
 						}
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-								ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
+								ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(tParsing),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
-								parseException.getParseException(),parseException,
+								tParsing,parseException,
 								pddContext);
 						
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
-						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,parseException.getParseException().getMessage());
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,errorMsg);
 						return esito;
 					}
 					

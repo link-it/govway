@@ -60,10 +60,16 @@ public class Bodies {
 	private final static String PATH = "/org/openspcoop2/core/protocolli/trasparente/testsuite/";
 	
 	private final static String getXmlPayload(int sizePayload,String prefix) { 
+		return getXmlPayload(sizePayload, prefix, null);
+	}
+	private final static String getXmlPayload(int sizePayload,String prefix, String applicativeId) { 
 		StringBuilder sb = new StringBuilder();
 		int index = 1;
 		while(sb.length()<sizePayload) {
-			sb.append(prefix).append("<xmlFragment>TEST ESEMPIO ").append(index++).append("</xmlFragment>\n");
+			sb.append(prefix).append("<xmlFragment"+index+">TEST ESEMPIO ").append(index).append("</xmlFragment"+(index++)+">\n");
+		}
+		if(applicativeId!=null) {
+			sb.append(prefix).append(applicativeId).append("\n");
 		}
 		return sb.toString();
 	}
@@ -75,20 +81,26 @@ public class Bodies {
 	}
 	
 	public final static String getSOAPEnvelope11(int sizePayload) { 
+		return getSOAPEnvelope11(sizePayload, null);
+	}
+	public final static String getSOAPEnvelope11(int sizePayload, String applicativeId) { 
 		return "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +  
 			"    <soap:Body>\n" + 
 			"        <ns2:Test xmlns:ns2=\"http://govway.org/example\">\n" + 
-			getXmlPayload(sizePayload,"           ") +
+			getXmlPayload(sizePayload,"           ",applicativeId) +
 			"        </ns2:Test>\n" + 
 			"    </soap:Body>\n" + 
 			"</soap:Envelope>";
 	}
 	
 	public final static String getSOAPEnvelope12(int sizePayload) { 
+		return getSOAPEnvelope12(sizePayload, null);
+	}
+	public final static String getSOAPEnvelope12(int sizePayload, String applicativeId) { 
 		return "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
 			"    <soap:Body>\n" + 
 			"        <ns2:Test xmlns:ns2=\"http://govway.org/example\">\n" + 
-			getXmlPayload(sizePayload,"           ") +
+			getXmlPayload(sizePayload,"           ",applicativeId) +
 			"        </ns2:Test>\n" + 
 			"    </soap:Body>\n" + 
 			"</soap:Envelope>";
@@ -110,6 +122,13 @@ public class Bodies {
 	public final static String getJson(int sizePayload) { 
 		return "{\n" + 
 				getJsonPayload(sizePayload) +
+			"\n}";
+	}
+	public final static String getJson(int sizePayload, String applicativeIdClaim) { 
+		return "{\n" + 
+				getJsonPayload(sizePayload) +
+				","+
+				"\n"+applicativeIdClaim+
 			"\n}";
 	}
 		

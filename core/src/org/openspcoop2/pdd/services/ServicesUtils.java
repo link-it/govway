@@ -90,6 +90,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -144,7 +145,10 @@ public class ServicesUtils {
 				e = (java.net.SocketTimeoutException) Utilities.getInnerInstanceException(t, java.net.SocketTimeoutException.class, true);
 			}
 			
-			if(e.getMessage()!=null && OpenSPCoop2Properties.getInstance().isServiceUnavailable_ReadTimedOut(e.getMessage())){
+			if(e!=null && e.getMessage()!=null && OpenSPCoop2Properties.getInstance().isServiceUnavailable_ReadTimedOut(e.getMessage())){
+				return true;
+			}
+			else if(TimeoutIOException.isTimeoutIOException(t) && t.getMessage()!=null && t.getMessage().startsWith(CostantiPdD.PREFIX_TIMEOUT_RESPONSE)) {
 				return true;
 			}
 			

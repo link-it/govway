@@ -1768,7 +1768,7 @@ public class ConfigurazionePdDReader {
 			return defaultValue;
 		}
 		try {
-			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceEnabled(pd.getProprietaList(), defaultValue);
+			return CostantiProprieta.isFileTraceEnabled(pd.getProprietaList(), defaultValue);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -1782,7 +1782,7 @@ public class ConfigurazionePdDReader {
 			return defaultValue;
 		}
 		try {
-			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceDumpBinarioEnabled(pd.getProprietaList(), defaultValue);
+			return CostantiProprieta.isFileTraceDumpBinarioEnabled(pd.getProprietaList(), defaultValue);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -1796,7 +1796,7 @@ public class ConfigurazionePdDReader {
 			return defaultValue;
 		}
 		try {
-			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceDumpBinarioConnettoreEnabled(pd.getProprietaList(), defaultValue);
+			return CostantiProprieta.isFileTraceDumpBinarioConnettoreEnabled(pd.getProprietaList(), defaultValue);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -1810,7 +1810,36 @@ public class ConfigurazionePdDReader {
 				//configurazione di default
 				return defaultValue;
 			}
-			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.getFileTraceConfig(pd.getProprietaList(), defaultValue);
+			return CostantiProprieta.getFileTraceConfig(pd.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	
+	protected boolean isConnettoriUseTimeoutInputStream(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+		
+		boolean defaultValue = this.openspcoopProperties.isConnettoriUseTimeoutInputStream();
+		if(pd==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return CostantiProprieta.isConnettoriUseTimeoutInputStream(pd.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	protected int getRequestReadTimeout(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+
+		int defaultValue = this.openspcoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi();
+		if(pd==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return CostantiProprieta.getConnettoriRequestTimeout(pd.getProprietaList(), defaultValue);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -2792,7 +2821,7 @@ public class ConfigurazionePdDReader {
 			return defaultValue;
 		}
 		try {
-			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceEnabled(pa.getProprietaList(), defaultValue);
+			return CostantiProprieta.isFileTraceEnabled(pa.getProprietaList(), defaultValue);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -2806,7 +2835,7 @@ public class ConfigurazionePdDReader {
 			return defaultValue;
 		}
 		try {
-			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceDumpBinarioEnabled(pa.getProprietaList(), defaultValue);
+			return CostantiProprieta.isFileTraceDumpBinarioEnabled(pa.getProprietaList(), defaultValue);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -2820,7 +2849,7 @@ public class ConfigurazionePdDReader {
 			return defaultValue;
 		}
 		try {
-			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.isFileTraceDumpBinarioConnettoreEnabled(pa.getProprietaList(), defaultValue);
+			return CostantiProprieta.isFileTraceDumpBinarioConnettoreEnabled(pa.getProprietaList(), defaultValue);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -2834,12 +2863,42 @@ public class ConfigurazionePdDReader {
 				//configurazione di default
 				return defaultValue;
 			}
-			return org.openspcoop2.pdd.logger.filetrace.CostantiProprieta.getFileTraceConfig(pa.getProprietaList(), defaultValue);
+			return CostantiProprieta.getFileTraceConfig(pa.getProprietaList(), defaultValue);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 
 	}
+	
+	protected boolean isConnettoriUseTimeoutInputStream(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+		
+		boolean defaultValue = this.openspcoopProperties.isConnettoriUseTimeoutInputStream();
+		if(pa==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return CostantiProprieta.isConnettoriUseTimeoutInputStream(pa.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	protected int getRequestReadTimeout(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+
+		int defaultValue = this.openspcoopProperties.getReadConnectionTimeout_ricezioneBuste();
+		if(pa==null){
+			//configurazione di default
+			return defaultValue;
+		}
+		try {
+			return CostantiProprieta.getConnettoriRequestTimeout(pa.getProprietaList(), defaultValue);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+	}
+	
 	
 	protected Trasformazioni getTrasformazioni(PortaApplicativa pa) throws DriverConfigurazioneException{
 		if(pa!=null && pa.getTrasformazioni()!=null) {

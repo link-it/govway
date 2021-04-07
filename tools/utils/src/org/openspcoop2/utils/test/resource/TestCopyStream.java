@@ -39,18 +39,20 @@ public class TestCopyStream {
 	@DataProvider(name="copyStreamProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-			{1024}, // 1KB
-			{(1024*1024)}, // 1MB
-			{1024*1024*10}, // 10MB
-			// Jenkins va in OutOfMemory {1024*1024*1024} // 1GB
+			{1024, -1, false}, // 1KB
+			{(1024*1024), -1, false}, // 1MB
+			{1024*1024*10, -1, false}, // 10MB
+			// Jenkins va in OutOfMemory {1024*1024*1024, false} // 1GB
+			{1024*1024*10, 120000, false}, // 10MB
+			{1024*1024*10, 2, true}, // 10MB
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="copyStreamProvider")
-	public void testCopyStream(int size) throws Exception{
+	public void testCopyStream(int size, int timeoutMs, boolean expectedTimeout) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.TestCopyStream.test(size);
+		org.openspcoop2.utils.TestCopyStream.test(size, timeoutMs, expectedTimeout);
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

@@ -94,6 +94,8 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.TimeoutIOException;
+import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -250,7 +252,7 @@ public class RicezioneBusteService  {
 		req.updateRequestInfo(requestInfo);
 		
 		
-		// DumpRaw
+		// Timeout e DumpRaw
 		DumpRaw dumpRaw = null;
 		try{
 			boolean dumpBinario = configPdDManager.dumpBinarioPA();
@@ -260,6 +262,17 @@ public class RicezioneBusteService  {
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
 				pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);
 			}
+			
+			// Timeout
+			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pa);
+			if(useTimeoutInputStream) {
+				int timeout = configPdDManager.getRequestReadTimeout(pa);
+				if(timeout>0) {
+					req.setRequestReadTimeout(timeout);
+				}
+			}
+			
+			// DumpRaw
 			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pa);
 			boolean fileTrace =  configPdDManager.isTransazioniFileTraceEnabled(pa) && configPdDManager.isTransazioniFileTraceDumpBinarioEnabled(pa);
 			dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.APPLICATIVA, 
@@ -654,8 +667,12 @@ public class RicezioneBusteService  {
 
 			// Se viene lanciata una eccezione, riguarda la richiesta, altrimenti è gestita dopo nel finally.
 			Throwable tParsing = null;
+			ParseException parseException = null;
 			if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
-				tParsing = ((ParseException) pddContext.removeObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)).getParseException();
+				parseException = (ParseException) pddContext.removeObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+				if(parseException!=null) {
+					tParsing = parseException.getParseException();
+				}
 			}
 			if(tParsing==null && (requestMessage==null || requestMessage.getParseException() == null)){
 				tParsing = ParseExceptionUtils.getParseException(e);
@@ -698,8 +715,15 @@ public class RicezioneBusteService  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRichiesta",e);
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
+				
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+				if( parseException!=null && parseException.getSourceException()!=null &&
+						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				
 				// Richiesto da certificazione DigitPA
-				responseMessage = this.generatoreErrore.buildErroreIntestazione(pddContext, IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT,
+				responseMessage = this.generatoreErrore.buildErroreIntestazione(pddContext, integrationFunctionError,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(tParsing));
 			}
 			else if (e instanceof HandlerException) {
@@ -729,45 +753,109 @@ public class RicezioneBusteService  {
 		}
 		finally{
 			
+			String requestReadTimeout = null;
+			String responseReadTimeout = null;
+			if(pddContext!=null && pddContext.containsKey(TimeoutInputStream.ERROR_MSG_KEY)) {
+				String timeoutMessage = PdDContext.getValue(TimeoutInputStream.ERROR_MSG_KEY, pddContext);
+				if(timeoutMessage!=null && timeoutMessage.startsWith(CostantiPdD.PREFIX_TIMEOUT_REQUEST)) {
+					requestReadTimeout = timeoutMessage;
+				}
+				else if(timeoutMessage!=null && timeoutMessage.startsWith(CostantiPdD.PREFIX_TIMEOUT_RESPONSE)) {
+					responseReadTimeout = timeoutMessage;
+				}
+			}
+			
 			if((requestMessage!=null && requestMessage.getParseException() != null) || 
-					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)) ||
+					requestReadTimeout!=null){
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+				
 				ParseException parseException = null;
-				if( requestMessage!=null && requestMessage.getParseException() != null ){
+				Throwable tParsing = null;
+				Throwable sParsing = null;
+				String msgErrore = null;
+				if(requestReadTimeout != null) {
+					tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+					sParsing = tParsing;
+					msgErrore = tParsing.getMessage();
+				}
+				else if( requestMessage!=null && requestMessage.getParseException() != null ){
 					parseException = requestMessage.getParseException();
+					tParsing = parseException.getParseException();
+					sParsing = parseException.getSourceException();
+					msgErrore = tParsing.getMessage();
 				}
-				else{
+				else {
 					parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
-				}
-				String msgErrore = parseException.getParseException().getMessage();
-				if(msgErrore==null){
-					msgErrore = parseException.getParseException().toString();
+					tParsing = parseException.getParseException();
+					sParsing = parseException.getSourceException();
+					msgErrore = tParsing.getMessage();
+				}	
+				
+				if(msgErrore==null && tParsing!=null){
+					msgErrore = tParsing.toString();
 				}
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-				logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
+				logCore.error("parsingExceptionRichiesta",sParsing);
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
-				responseMessage =this.generatoreErrore.buildErroreIntestazione(pddContext, IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT,
-							ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()));
+				
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+				if(requestReadTimeout!=null) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				else if( parseException!=null && sParsing!=null &&
+						TimeoutIOException.isTimeoutIOException(sParsing)) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				
+				responseMessage =this.generatoreErrore.buildErroreIntestazione(pddContext, integrationFunctionError,
+							ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(tParsing));
 			}
 			else if( (responseMessage!=null && responseMessage.getParseException() != null) ||
-					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
+					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)) ||
+					responseReadTimeout!=null){
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+				
 				ParseException parseException = null;
-				if( responseMessage!=null && responseMessage.getParseException() != null ){
+				Throwable tParsing = null;
+				Throwable sParsing = null;
+				String msgErrore = null;
+				if(responseReadTimeout != null) {
+					tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+					sParsing = tParsing;
+					msgErrore = tParsing.getMessage();
+				}
+				else if( responseMessage!=null && responseMessage.getParseException() != null ){
 					parseException = responseMessage.getParseException();
+					tParsing = parseException.getParseException();
+					sParsing = parseException.getSourceException();
+					msgErrore = tParsing.getMessage();
 				}
 				else{
 					parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+					tParsing = parseException.getParseException();
+					sParsing = parseException.getSourceException();
+					msgErrore = tParsing.getMessage();
 				}
-				String msgErrore = parseException.getParseException().getMessage();
-				if(msgErrore==null){
-					msgErrore = parseException.getParseException().toString();
+
+				if(msgErrore==null && tParsing!=null){
+					msgErrore = tParsing.toString();
 				}
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-				logCore.error("parsingExceptionRisposta",parseException.getSourceException());
+				logCore.error("parsingExceptionRisposta",sParsing);
+				
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT;
+				if(responseReadTimeout!=null) {
+					integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+				}
+				else if(sParsing!=null &&
+						TimeoutIOException.isTimeoutIOException(sParsing)) {
+					integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+				}
+				
 				msgDiag.logPersonalizzato("parsingExceptionRisposta");
-				responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
-						ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
+				responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, integrationFunctionError,
+						ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(tParsing));
 			}
 			
 			try{

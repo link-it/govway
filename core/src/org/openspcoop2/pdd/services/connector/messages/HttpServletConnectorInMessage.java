@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.services.connector.messages;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -44,6 +46,7 @@ import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -76,6 +79,8 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	private String idTransazione;
 	private int soglia;
 	private File repositoryFile;
+	
+	private int requestReadTimeout;
 	
 	public HttpServletConnectorInMessage(RequestInfo requestInfo, HttpServletRequest req,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
@@ -113,6 +118,19 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}
 		this.soglia = soglia;
 		this.repositoryFile = repositoryFile;
+	}
+	
+	@Override
+	public void setRequestReadTimeout(int timeout) {
+		this.requestReadTimeout = timeout;
+	}
+	private InputStream buildTimeoutInputStream() throws IOException {
+		if(this.requestReadTimeout>0) {
+			this.is = new TimeoutInputStream(this.is, this.requestReadTimeout,
+					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
+					this.context!=null ? this.context.getContext() : null);
+		}
+		return this.is;
 	}
 	
 	@Override
@@ -190,7 +208,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		try{
 			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
-					this.is,notifierInputStreamParams,
+					this.buildTimeoutInputStream(),notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return pr;
@@ -203,7 +221,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		try{
 			InputStream in = null;
 			try{
-				Utilities.writeAsByteArrayOuputStream(buffer, this.is,false); // se l'input stream is empty ritorna null grazie al parametro false
+				Utilities.writeAsByteArrayOuputStream(buffer, this.buildTimeoutInputStream(),false); // se l'input stream is empty ritorna null grazie al parametro false
 				if(buffer.size()>0) {
 					if(buffer.isSerializedOnFileSystem()) {
 						in = new FileInputStream(buffer.getSerializedFile());
@@ -238,7 +256,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			
 			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
 					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
-			Utilities.writeAsByteArrayOuputStream(bout, this.is,false); // se l'input stream is empty ritorna null grazie al parametro false
+			Utilities.writeAsByteArrayOuputStream(bout, this.buildTimeoutInputStream(),false); // se l'input stream is empty ritorna null grazie al parametro false
 			bout.flush();
 			bout.close();
 			return bout;

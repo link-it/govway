@@ -92,6 +92,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.utils.ErroriProperties;
+import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -605,8 +606,12 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				}catch(Exception e){
 					
 					Throwable tParsing = null;
+					ParseException parseException = null;
 					if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
-						tParsing = ((ParseException) context.getPddContext().removeObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)).getParseException();
+						parseException = (ParseException) context.getPddContext().removeObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+						if(parseException!=null) {
+							tParsing = parseException.getParseException();
+						}
 					}
 					if(tParsing==null){
 						tParsing = ParseExceptionUtils.getParseException(e);
@@ -642,18 +647,25 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 							dumpConfig);
 					dumpApplicativo.dumpRichiestaIngressoByIntegrationManagerError(msg.getMessage(),urlProtocolContext);
 							//IntegrationManager.buildInfoConnettoreIngresso(req, credenziali, urlProtocolContext));
+					
+					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+					if( parseException!=null && parseException.getSourceException()!=null &&
+							TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
+						integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+					}
+					
 					if(msg.getImbustamento()==false){
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 						msgDiag.logPersonalizzato("buildMsg.nonRiuscito");
 						throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_421_MSG_SOAP_NON_COSTRUIBILE_TRAMITE_RICHIESTA_APPLICATIVA.
 								getErrore421_MessaggioSOAPNonGenerabile(msgErrore),
-								IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT, erroriProperties);
+								integrationFunctionError, erroriProperties);
 					} else {
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 						msgDiag.logPersonalizzato("buildMsg.imbustamentoSOAP.nonRiuscito");
 						throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA.
 								getErrore422_MessaggioSOAPNonGenerabileTramiteImbustamentoSOAP(msgErrore),
-								IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT, erroriProperties);
+								integrationFunctionError, erroriProperties);
 					}
 				}
 			}
@@ -767,10 +779,17 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 //				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 //						getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()));
 				// Per l'IntegrationManager esiste un codice specifico
+				
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+				if( parseException!=null && parseException.getSourceException()!=null &&
+						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER,"buildMsg.nonRiuscito");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_421_MSG_SOAP_NON_COSTRUIBILE_TRAMITE_RICHIESTA_APPLICATIVA.
 						getErrore421_MessaggioSOAPNonGenerabile(msgErrore),
-						IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT, erroriProperties);
+						integrationFunctionError, erroriProperties);
 			}
 			
 			// Raccolgo l'eventuale header di integrazione

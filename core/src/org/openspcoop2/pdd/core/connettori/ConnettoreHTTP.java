@@ -920,7 +920,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			
 			/* ------------  Gestione Risposta ------------- */
 			
-			this.normalizeInputStreamResponse();
+			this.normalizeInputStreamResponse(readConnectionTimeout);
 			
 			this.initCheckContentTypeConfiguration();
 			
@@ -969,28 +969,49 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
      */
     @Override
 	public void disconnect() throws ConnettoreException{
-    	try{
-    	
+		List<Throwable> listExceptionChiusura = new ArrayList<Throwable>();
+		try{
 			// Gestione finale della connessione
 	    	if(this.isResponse!=null){
 	    		if(this.debug && this.logger!=null)
 	    			this.logger.debug("Chiusura socket...");
-				this.isResponse.close();
+	    		try {
+	    			this.isResponse.close();
+	    		}
+	    		catch(Throwable t) {
+	    			this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+	    			listExceptionChiusura.add(t);
+	    		}
 			}
 	
 			// fine HTTP.
 	    	if(this.httpConn!=null){
 	    		if(this.debug && this.logger!=null)
 					this.logger.debug("Chiusura connessione...");
-				this.httpConn.disconnect();
+	    		try {
+	    			this.httpConn.disconnect();
+	    		}catch(Throwable t) {
+	    			this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+	    			listExceptionChiusura.add(t);
+	    		}
 	    	}
 	    	
 	    	// super.disconnect (Per risorse base)
-	    	super.disconnect();
+	    	try {
+	    		super.disconnect();
+	    	}catch(Throwable t) {
+    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+    			listExceptionChiusura.add(t);
+    		}
 			
     	}catch(Exception e){
     		throw new ConnettoreException("Chiusura connessione non riuscita: "+e.getMessage(),e);
     	}
+		
+		if(listExceptionChiusura!=null && !listExceptionChiusura.isEmpty()) {
+			org.openspcoop2.utils.UtilsMultiException multiException = new org.openspcoop2.utils.UtilsMultiException(listExceptionChiusura.toArray(new Throwable[1]));
+			throw new ConnettoreException("Chiusura connessione non riuscita: "+multiException.getMessage(),multiException);
+		}
     }
 
     

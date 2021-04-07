@@ -21,6 +21,9 @@ configurabili sono:
    Timeout (scadenza del tempo di attesa per ricevere il payload
    dall'interlocutore).
 
+   .. note::
+       È possibile impostare un timeout, in millisecondi, per la ricezione del payload della richiesta configurando la :ref:`configProprieta` 'connettori.request.timeoutMs' sulla singola erogazione o fruizione.
+
 -  *Tempo Medio di Risposta (ms)*: Valore di soglia del tempo medio di
    risposta al fine di valutare la situazione di *Degrado
    Prestazionale*, condizione per l'applicabilità di eventuali politiche

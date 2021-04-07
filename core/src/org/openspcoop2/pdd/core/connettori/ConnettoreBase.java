@@ -217,6 +217,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected int dumpBinario_soglia;
 	protected File dumpBinario_repositoryFile;
     
+	protected boolean useTimeoutInputStream = false;
+	
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
 	}
@@ -299,7 +301,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		this.outRequestContext = request.getOutRequestContext();
 		this.msgDiagnostico = request.getMsgDiagnostico();
 
-		// Dump
+		// Timeout e Dump
+		this.useTimeoutInputStream = this.openspcoopProperties.isConnettoriUseTimeoutInputStream();
 		boolean dumpBinario = this.debug;
 		DumpConfigurazione dumpConfigurazione = null;
 		String protocol = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
@@ -328,6 +331,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					if(idPA!=null) {
 						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
 						if(pa!=null) {
+							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pa);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pa);
 							this.logFileTrace = configurazionePdDManager.isTransazioniFileTraceEnabled(pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreEnabled(pa);
 						}
@@ -347,6 +351,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					if(idPD!=null) {
 						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
 						if(pd!=null) {
+							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pd);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pd);
 							this.logFileTrace = configurazionePdDManager.isTransazioniFileTraceEnabled(pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreEnabled(pd);
 						}

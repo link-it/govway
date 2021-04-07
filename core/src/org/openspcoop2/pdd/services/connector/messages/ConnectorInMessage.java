@@ -50,6 +50,8 @@ public interface ConnectorInMessage {
 
 	public void setThresholdContext(Context context, int soglia, File repositoryFile);
 	
+	public void setRequestReadTimeout(int timeout);
+	
 	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException;
 	public RequestInfo getRequestInfo();
 	

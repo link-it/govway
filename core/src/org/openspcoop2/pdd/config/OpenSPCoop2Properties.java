@@ -1305,12 +1305,15 @@ public class OpenSPCoop2Properties {
 			}
 
 			// Connettore (Warning)
+			this.isConnettoriUseTimeoutInputStream();
 			this.getConnectionTimeout_consegnaContenutiApplicativi();
 			this.getConnectionTimeout_inoltroBuste();
 			this.getReadConnectionTimeout_consegnaContenutiApplicativi();
 			this.getReadConnectionTimeout_inoltroBuste();
 			this.getConnectionLife_consegnaContenutiApplicativi();
 			this.getConnectionLife_inoltroBuste();
+			this.getReadConnectionTimeout_ricezioneContenutiApplicativi();
+			this.getReadConnectionTimeout_ricezioneBuste();
 			
 			// Connettore https
 			this.getConnettoreHttps_secureRandomAlgo();
@@ -11937,6 +11940,30 @@ public class OpenSPCoop2Properties {
 
 
 	/* ************* CONNETTORI ***************** */
+	
+	private static Boolean isConnettoriUseTimeoutInputStream = null;
+	public boolean isConnettoriUseTimeoutInputStream() {	
+		if(OpenSPCoop2Properties.isConnettoriUseTimeoutInputStream==null){
+			String pName = "org.openspcoop2.pdd.connettori.useTimeoutInputStream";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isConnettoriUseTimeoutInputStream = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.isConnettoriUseTimeoutInputStream = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isConnettoriUseTimeoutInputStream = false;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isConnettoriUseTimeoutInputStream;
+	}
+	
 	/**
 	 * Restituisce timeout per la istanziazione della connessione
 	 *
@@ -12109,6 +12136,53 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.connectionLife_consegnaContenutiApplicativi;
 	}
 
+	
+	private static Integer readConnectionTimeout_ricezioneContenutiApplicativi = null;
+	public int getReadConnectionTimeout_ricezioneContenutiApplicativi() {	
+		String pName = "org.openspcoop2.pdd.connettori.ricezioneContenutiApplicativi.readConnection.timeout";
+		if(OpenSPCoop2Properties.readConnectionTimeout_ricezioneContenutiApplicativi==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.readConnectionTimeout_ricezioneContenutiApplicativi = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE);
+					OpenSPCoop2Properties.readConnectionTimeout_ricezioneContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.readConnectionTimeout_ricezioneContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+			}  
+		}
+
+		return OpenSPCoop2Properties.readConnectionTimeout_ricezioneContenutiApplicativi;
+	}
+	
+	private static Integer readConnectionTimeout_ricezioneBuste = null;
+	public int getReadConnectionTimeout_ricezioneBuste() {	
+		String pName = "org.openspcoop2.pdd.connettori.ricezioneBuste.readConnection.timeout";
+		if(OpenSPCoop2Properties.readConnectionTimeout_ricezioneBuste==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.readConnectionTimeout_ricezioneBuste = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE);
+					OpenSPCoop2Properties.readConnectionTimeout_ricezioneBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.readConnectionTimeout_ricezioneBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
+			}  
+		}
+
+		return OpenSPCoop2Properties.readConnectionTimeout_ricezioneBuste;
+	}
+	
 
 	/* ***************** HTTPS  ************* */
 	

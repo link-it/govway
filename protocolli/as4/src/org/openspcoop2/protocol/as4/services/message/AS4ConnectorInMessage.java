@@ -87,6 +87,9 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	@SuppressWarnings("unused")
 	private File repositoryFile;
 	
+	@SuppressWarnings("unused")
+	private int requestReadTimeout;
+	
 	public AS4ConnectorInMessage(UserMessage userMessage,HashMap<String, byte[]> content) throws ConnectorException{
 		try{
 			this.message = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.SOAP_12, MessageRole.REQUEST);
@@ -157,6 +160,11 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 		}
 		this.soglia = soglia;
 		this.repositoryFile = repositoryFile;
+	}
+	
+	@Override
+	public void setRequestReadTimeout(int timeout) {
+		this.requestReadTimeout = timeout;
 	}
 
 	@Override

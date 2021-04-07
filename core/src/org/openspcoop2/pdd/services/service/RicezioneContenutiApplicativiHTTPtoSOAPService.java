@@ -94,6 +94,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
@@ -254,7 +255,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}
 		req.updateRequestInfo(requestInfo);	
 
-		// DumpRaw
+		// Timeout e DumpRaw
 		DumpRaw dumpRaw = null;
 		try{
 			boolean dumpBinario = configPdDManager.dumpBinarioPD();
@@ -264,6 +265,17 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
 				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
 			}
+
+			// Timeout
+			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pd);
+			if(useTimeoutInputStream) {
+				int timeout = configPdDManager.getRequestReadTimeout(pd);
+				if(timeout>0) {
+					req.setRequestReadTimeout(timeout);
+				}
+			}
+			
+			// DumpRaw
 			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pd);
 			boolean fileTrace = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioEnabled(pd);
 			dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, 
@@ -575,8 +587,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			// Se viene lanciata una eccezione, riguarda la richiesta, altrimenti è gestita dopo nel finally.
 			Throwable tParsing = null;
+			ParseException parseException = null;
 			if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
-				tParsing = ((ParseException) pddContext.removeObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)).getParseException();
+				parseException = (ParseException) pddContext.removeObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+				if(parseException!=null) {
+					tParsing = parseException.getParseException();
+				}
 			}
 			if(tParsing==null && (requestMessage==null || requestMessage.getParseException() == null)){
 				tParsing = ParseExceptionUtils.getParseException(e);
@@ -598,7 +614,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					msgErrore = tMessage.toString();
 				}
 				msgDiag.logErroreGenerico(errorImbustamentoSoapNonRiuscito+"  "+msgErrore, "ImbustamentoSOAP");
-				responseMessage = this.generatoreErrore.build(pddContext,IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT,
+				
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+				if( parseException!=null && parseException.getSourceException()!=null &&
+						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				
+				responseMessage = this.generatoreErrore.build(pddContext,integrationFunctionError,
 						ErroriIntegrazione.ERRORE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA.
 						getErrore422_MessaggioSOAPNonGenerabileTramiteImbustamentoSOAP(errorImbustamentoSoapNonRiuscito),tMessage,null);
 			}
@@ -611,7 +634,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRichiesta",e);
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
-				responseMessage = this.generatoreErrore.build(pddContext,IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT,
+				
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+				if( parseException!=null && parseException.getSourceException()!=null &&
+						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				
+				responseMessage = this.generatoreErrore.build(pddContext,integrationFunctionError,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 						getErrore432_MessaggioRichiestaMalformato(tParsing),tParsing,null);
 			}
@@ -659,7 +689,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
-				responseMessage = this.generatoreErrore.build(pddContext, IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT,
+				
+				IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+				if( parseException!=null && parseException.getSourceException()!=null &&
+						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				
+				responseMessage = this.generatoreErrore.build(pddContext, integrationFunctionError,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 						getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()),
 						parseException.getParseException(),null);

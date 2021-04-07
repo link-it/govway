@@ -32,6 +32,7 @@ L'abilitazione permanente può essere invece effettuata disabilitando la seguent
 	SoapMustUnderstandUnknown
         SoapVersionMismatch
 	UnprocessableRequestContent
+	RequestReadTimeout
 	NotSupportedByProtocol
         CorrelationInformationNotFound
 	ApplicationCorrelationIdentificationRequestFailed

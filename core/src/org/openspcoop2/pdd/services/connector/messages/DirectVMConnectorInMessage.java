@@ -80,6 +80,9 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private int soglia;
 	private File repositoryFile;
 	
+	@SuppressWarnings("unused")
+	private int requestReadTimeout;
+	
 	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
 			Map<String, List<String>> trasporto,
 			Map<String, List<String>> formUrl,
@@ -174,6 +177,11 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 		}
 		this.soglia = soglia;
 		this.repositoryFile = repositoryFile;
+	}
+	
+	@Override
+	public void setRequestReadTimeout(int timeout) {
+		this.requestReadTimeout = timeout;
 	}
 	
 	public DirectVMProtocolInfo getDirectVMProtocolInfo() {

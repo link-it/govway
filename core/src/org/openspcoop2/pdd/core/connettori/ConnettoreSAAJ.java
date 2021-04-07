@@ -528,20 +528,36 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
     @Override
 	public void disconnect() throws ConnettoreException{
     	
-    	try{
+    	List<Throwable> listExceptionChiusura = new ArrayList<Throwable>();
+		try{
     	
 	    	if(this.connection!=null){
 				if(this.debug && this.logger!=null)
 					this.logger.debug("Connection.close ...");
-				this.connection.close();
+				try {
+					this.connection.close();
+				}catch(Throwable t) {
+					this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+					listExceptionChiusura.add(t);
+				}
 	    	}
 	    	
 	    	// super.disconnect (Per risorse base)
-	    	super.disconnect();
+	    	try {
+	    		super.disconnect();
+	    	}catch(Throwable t) {
+    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+    			listExceptionChiusura.add(t);
+    		}
 	    	
     	}catch(Exception e){
     		throw new ConnettoreException("Chiusura connessione non riuscita: "+e.getMessage(),e);
     	}	
+		
+		if(listExceptionChiusura!=null && !listExceptionChiusura.isEmpty()) {
+			org.openspcoop2.utils.UtilsMultiException multiException = new org.openspcoop2.utils.UtilsMultiException(listExceptionChiusura.toArray(new Throwable[1]));
+			throw new ConnettoreException("Chiusura connessione non riuscita: "+multiException.getMessage(),multiException);
+		}
     }
     
     private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, List<String> values, ConnettoreLogger logger, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {

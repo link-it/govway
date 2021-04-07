@@ -74,6 +74,7 @@ import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
 
@@ -188,6 +189,26 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			}
 			
 			
+			
+			// Impostazione timeout
+			if(this.debug)
+				this.logger.debug("Impostazione timeout...");
+			int readConnectionTimeout = -1;
+			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
+				try{
+					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
+				}catch(Exception e){
+					this.logger.error("Parametro "+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+" errato",e);
+				}
+			}
+			if(readConnectionTimeout==-1){
+				readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+			}
+			if(this.debug)
+				this.logger.info("Impostazione read timeout ["+readConnectionTimeout+"]",false);
+			
+			
+
 			// Aggiunga del SoapAction Header in caso di richiesta SOAP
 			if(this.isSoap && this.sbustamentoSoap == false){
 				if(this.debug)
@@ -290,7 +311,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			
 			this.isResponse = new ByteArrayInputStream(requestBytes);
 			
-			this.normalizeInputStreamResponse();
+			this.normalizeInputStreamResponse(readConnectionTimeout);
 			
 			this.initCheckContentTypeConfiguration();
 			

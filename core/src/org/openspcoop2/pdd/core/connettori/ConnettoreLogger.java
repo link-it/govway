@@ -125,6 +125,11 @@ public class ConnettoreLogger {
 			this.loggerConnettore.debug(this.buildMsg(msg));
 		}
 	}
+	public void debug(String msg, Throwable t){
+		if(this.debug){
+			this.loggerConnettore.debug(this.buildMsg(msg), t);
+		}
+	}
 
 	
 	

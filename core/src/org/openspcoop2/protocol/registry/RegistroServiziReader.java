@@ -2062,7 +2062,7 @@ public class RegistroServiziReader {
 							ConfigurazioneServizioAzione conf = f.getConfigurazioneAzione(j);
 							if(conf!=null && conf.sizeAzioneList()>0) {
 								for (String azioneCheck : conf.getAzioneList()) {
-									if(azione.equals(azioneCheck)){
+									if(azione!=null && azione.equals(azioneCheck)){
 										findAzione = true;
 									}
 								}

@@ -79,6 +79,11 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		// nop
 	}
 	
+	@Override
+	public void setRequestReadTimeout(int timeout) {
+		// nop
+	}
+	
 	public ConnectorInMessage getWrappedConnectorInMessage() {
 		return this.connectorInMessage;
 	}

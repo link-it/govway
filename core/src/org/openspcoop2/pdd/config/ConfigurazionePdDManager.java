@@ -574,6 +574,13 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getFileTraceConfig(this.getConnection(), pd);
 	}
 
+	public boolean isConnettoriUseTimeoutInputStream(PortaDelegata pd) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isConnettoriUseTimeoutInputStream(this.getConnection(), pd);
+	}
+	public int getRequestReadTimeout(PortaDelegata pd) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getRequestReadTimeout(this.getConnection(), pd);
+	}
+	
 	public Trasformazioni getTrasformazioni(PortaDelegata pd) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getTrasformazioni(pd);
 	}
@@ -845,6 +852,13 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getFileTraceConfig(this.getConnection(), pa);
 	}
 
+	public boolean isConnettoriUseTimeoutInputStream(PortaApplicativa pa) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isConnettoriUseTimeoutInputStream(this.getConnection(), pa);
+	}
+	public int getRequestReadTimeout(PortaApplicativa pa) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getRequestReadTimeout(this.getConnection(), pa);
+	}
+	
 	public Trasformazioni getTrasformazioni(PortaApplicativa pa) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getTrasformazioni(pa);
 	}

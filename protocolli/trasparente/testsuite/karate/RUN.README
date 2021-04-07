@@ -178,3 +178,8 @@ Di seguito vengono descritti i test del package 'registrazione_messaggi':
 
 - 'dump_normale', verifica la registrazione dei messaggi in modalità 'normale'. Si tratta della vecchia modalità in cui era il gateway ad analizzare in realtime la struttura multipart.
    ant run_test -Ddelete=false -Dload=false -Dpackage=registrazione_messaggi.dump_normale
+
+Di seguito vengono descritti i test del package 'connettori':
+
+- 'timeout', verifica i timeout di connessione e lettura dei messaggi di richiesta e risposta
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.timeout

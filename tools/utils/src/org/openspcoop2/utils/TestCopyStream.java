@@ -40,23 +40,29 @@ public class TestCopyStream {
 
 	public static void main(String[] args) throws Exception {
 		
+		
 		// init resources: 1GB
 		int size = 1024*1024*1024;
-		test(size);
+		
+		test(size, -1, false);
+		
+		int timeoutMs = 120000;
+		test(size, timeoutMs, false);
+		test(size, 60, true); // atteso timeout dopo 60ms
 		
 		// init resources: 1MB
 		size = 1024*1024;
-		test(size);
+		test(size, timeoutMs, false);
 		
 		// init resources: 1KB
 		size = 1024;
-		test(size);
+		test(size, timeoutMs, false);
 		
 	}
 	
-	public static void test(int size) throws Exception {
+	public static void test(int size, int timeoutMs, boolean expectedTimeout) throws Exception {
 		
-		System.out.println("======================");
+		System.out.println("\n\n========= (timeoutMs:"+timeoutMs+") =============");
 		
 		byte [] buffer = new byte[size];
 		for (int i = 0; i < size; i++) {
@@ -64,7 +70,9 @@ public class TestCopyStream {
 		}
 		
 		CopyStreamMethod [] methods = CopyStreamMethod.values();
-				
+//		CopyStreamMethod [] methods = new CopyStreamMethod[1];
+//		methods[0] = CopyStreamMethod.JAVA_TRANSFER_TO;
+		
 		System.out.println("Creato buffer di dimensione: "+Utilities.convertBytesToFormatString(buffer.length, true, " "));
 				
 		File fSRC = File.createTempFile("testCopyStream", ".bin");
@@ -75,12 +83,29 @@ public class TestCopyStream {
 			fos.close();
 			System.out.println("Creato file di dimensione: "+Utilities.convertBytesToFormatString(fSRC.length(), true, " "));
 		
-		
+
+			// Il primo giro impiega più tempo (per qualsiasi metodo, impatta anche su transfer)
+			byte [] bufferInit = new byte[Utilities.DIMENSIONE_BUFFER];
+			for (int i = 0; i < Utilities.DIMENSIONE_BUFFER; i++) {
+				bufferInit[i] = 'a';
+			}
+			try (ByteArrayInputStream bin = new ByteArrayInputStream(bufferInit)){
+				testBuffer("Buffer-Java-InitResources", CopyStreamMethod.JAVA, bin, Utilities.DIMENSIONE_BUFFER, -1, false);
+			}
+						
+			
 			System.out.println("\n");
 			
 			for (CopyStreamMethod copyStreamMethod : methods) {
+				
 				try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
-					testBuffer("Buffer", copyStreamMethod, bin, size);
+					testBuffer("Buffer", copyStreamMethod, bin, size, timeoutMs, expectedTimeout);
+				}
+				
+				if(CopyStreamMethod.JAVA.equals(copyStreamMethod)) {
+					try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
+						testBuffer("Buffer-Java-IterazioneBufferSize8192", copyStreamMethod, bin, size, 8192, timeoutMs, expectedTimeout);
+					}
 				}
 			}
 			
@@ -88,7 +113,7 @@ public class TestCopyStream {
 			
 			for (CopyStreamMethod copyStreamMethod : methods) {
 				try (FileInputStream fin = new FileInputStream(fSRC)){
-					testBuffer("File", copyStreamMethod, fin, size);
+					testBuffer("File", copyStreamMethod, fin, size, timeoutMs, expectedTimeout);
 				}
 			}
 			testBuffer("File", fSRC, size);
@@ -99,7 +124,7 @@ public class TestCopyStream {
 				File fout = File.createTempFile("testCopyStreamOut", ".bin");
 				try {
 					try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
-						testFile("Buffer", copyStreamMethod, bin, fout, size);
+						testFile("Buffer", copyStreamMethod, bin, fout, size, timeoutMs, expectedTimeout);
 					}
 				}finally {
 					fout.delete();
@@ -110,7 +135,7 @@ public class TestCopyStream {
 				try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
 					String path = fout.getAbsolutePath();
 					fout.delete();
-					testFile("Buffer", bin, new File(path), size);
+					testFile("Buffer", bin, new File(path), size, timeoutMs, expectedTimeout);
 				}
 			}finally {
 				fout.delete();
@@ -122,7 +147,7 @@ public class TestCopyStream {
 				fout = File.createTempFile("testCopyStreamOut", ".bin");
 				try {
 					try (FileInputStream fin = new FileInputStream(fSRC)){
-						testFile("File", copyStreamMethod, fin, fout, size);
+						testFile("File", copyStreamMethod, fin, fout, size, timeoutMs, expectedTimeout);
 					}
 				}finally {
 					fout.delete();
@@ -143,19 +168,47 @@ public class TestCopyStream {
 		
 	}
 	
-	private static void testBuffer(String src, CopyStreamMethod method, InputStream is, int size) throws Exception {
+	private static void testBuffer(String src, CopyStreamMethod method, InputStream is, int size, int timeout, boolean expectedTimeout) throws Exception {
+		testBuffer(src, method, is, size, -1, timeout, expectedTimeout);
+	}
+	private static void testBuffer(String src, CopyStreamMethod method, InputStream isParam, int size, int sizeBuffer, int timeout, boolean expectedTimeout) throws Exception {
 		//System.out.println("["+src+"->Buffer]["+method+"] .... ");
 		Date startDate = new Date();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		CopyStream.copy(method, is, bout);
+		InputStream is = isParam;
+		if(timeout>0) {
+			is = new TimeoutInputStream(isParam, timeout);
+		}
+		try {
+			if(sizeBuffer>0) {
+				CopyStream.copyBuffer(is, bout, sizeBuffer);
+			}
+			else {
+				CopyStream.copy(method, is, bout);
+			}
+			if(expectedTimeout) {
+				Date endDate = new Date();
+				long time = endDate.getTime() - startDate.getTime(); 
+				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
+			}
+		}catch(Exception e) {
+			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
+				System.out.println("["+src+"->Buffer]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
 		bout.flush();
 		bout.close();
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
-		if(bout.size()!=size) {
-			throw new Exception("Buffer destinazione con dimensione differente");
+		if(!expectedTimeout) {
+			Date endDate = new Date();
+			long time = endDate.getTime() - startDate.getTime(); 
+			if(bout.size()!=size) {
+				throw new Exception("["+src+"->Buffer]["+method+"] Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
+			}
+			System.out.println("["+src+"->Buffer]["+method+"] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 		}
-		System.out.println("["+src+"->Buffer]["+method+"] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 	}
 	
 	private static void testBuffer(String src, File is, int size) throws Exception {
@@ -168,36 +221,78 @@ public class TestCopyStream {
 		Date endDate = new Date();
 		long time = endDate.getTime() - startDate.getTime(); 
 		if(bout.size()!=size) {
-			throw new Exception("Buffer destinazione con dimensione differente");
+			throw new Exception("["+src+"->Buffer][COPY-FILE] Buffer destinazione con dimensione differente (expected: "+size+", found: "+bout.size()+")");
 		}
 		System.out.println("["+src+"->Buffer][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 	}
 	
-	private static void testFile(String src, CopyStreamMethod method, InputStream is, File f, int size) throws Exception {
+	private static void testFile(String src, CopyStreamMethod method, InputStream is, File f, int size, int timeout, boolean expectedTimeout) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
 		Date startDate = new Date();
 		FileOutputStream fout = new FileOutputStream(f);
-		CopyStream.copy(method, is, fout);
+		try {
+			if(timeout>0) {
+				CopyStream.copy(method, is, fout, timeout);
+			}
+			else {
+				CopyStream.copy(method, is, fout);
+			}
+			if(expectedTimeout) {
+				Date endDate = new Date();
+				long time = endDate.getTime() - startDate.getTime(); 
+				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
+			}
+		}catch(Exception e) {
+			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
+				System.out.println("["+src+"->File]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
 		fout.flush();
 		fout.close();
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
-		if(f.length()!=size) {
-			throw new Exception("File destinazione con dimensione differente");
+		if(!expectedTimeout) {
+			Date endDate = new Date();
+			long time = endDate.getTime() - startDate.getTime(); 
+			if(f.length()!=size) {
+				throw new Exception("["+src+"->File]["+method+"] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
+			}
+			System.out.println("["+src+"->File]["+method+"] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 		}
-		System.out.println("["+src+"->File]["+method+"] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 	}
 	
-	private static void testFile(String src, InputStream is, File f, int size) throws Exception {
+	private static void testFile(String src, InputStream is, File f, int size, int timeout, boolean expectedTimeout) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
 		Date startDate = new Date();
-		CopyStream.copy(is, f);
-		Date endDate = new Date();
-		long time = endDate.getTime() - startDate.getTime(); 
-		if(f.length()!=size) {
-			throw new Exception("File destinazione con dimensione differente");
+		try {
+			if(timeout>0) {
+				CopyStream.copy(is, f, timeout);
+			}
+			else {
+				CopyStream.copy(is, f);
+			}
+			if(expectedTimeout) {
+				Date endDate = new Date();
+				long time = endDate.getTime() - startDate.getTime(); 
+				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
+			}
+		}catch(Exception e) {
+			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
+				System.out.println("["+src+"->File][COPY-FILE] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
 		}
-		System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		if(!expectedTimeout) {
+			Date endDate = new Date();
+			long time = endDate.getTime() - startDate.getTime(); 
+			if(f.length()!=size) {
+				throw new Exception("["+src+"->File][COPY-FILE] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
+			}
+			System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
+		}
 	}
 	
 	private static void testFile(String src, File is, File f, int size) throws Exception {
@@ -207,7 +302,7 @@ public class TestCopyStream {
 		Date endDate = new Date();
 		long time = endDate.getTime() - startDate.getTime(); 
 		if(f.length()!=size) {
-			throw new Exception("File destinazione con dimensione differente");
+			throw new Exception("["+src+"->File][COPY-FILE] File destinazione con dimensione differente (expected: "+size+", found: "+f.length()+")");
 		}
 		System.out.println("["+src+"->File][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 	}

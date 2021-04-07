@@ -168,6 +168,8 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
+import org.openspcoop2.utils.TimeoutIOException;
+import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.digest.IDigestReader;
@@ -3410,7 +3412,7 @@ public class InoltroBuste extends GenericLib{
 				if(functionAsRouter){
 					if(responseMessage==null){
 						//	Genero una risposta di errore, poiche' non presente
-						IntegrationFunctionError integrationFunctionError = getIntegrationFunctionErroreConnectionError(eccezioneProcessamentoConnettore, motivoErroreConsegna);
+						IntegrationFunctionError integrationFunctionError = getIntegrationFunctionErroreConnectionError(eccezioneProcessamentoConnettore, motivoErroreConsegna, pddContext);
 						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
@@ -3436,35 +3438,94 @@ public class InoltroBuste extends GenericLib{
 					}
 					if(sendRispostaApplicativa){
 						if(responseMessage==null){
-							if(requestMessagePrimaTrasformazione.getParseException()!=null){
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
-								OpenSPCoop2Message responseMessageError = 
-										this.generatoreErrore.build(pddContext,IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT,
-											ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(requestMessagePrimaTrasformazione.getParseException().getParseException()),
-											requestMessagePrimaTrasformazione.getParseException().getParseException(),
-											requestMessagePrimaTrasformazione.getParseException());
-								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
-								openspcoopstate.releaseResource();
-								esito.setEsitoInvocazione(true);	
-								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,requestMessagePrimaTrasformazione.getParseException().getParseException().getMessage());
-								return esito;
+							
+							String requestReadTimeout = null;
+							String responseReadTimeout = null;
+							if(pddContext!=null && pddContext.containsKey(TimeoutInputStream.ERROR_MSG_KEY)) {
+								String timeoutMessage = PdDContext.getValue(TimeoutInputStream.ERROR_MSG_KEY, pddContext);
+								if(timeoutMessage!=null && timeoutMessage.startsWith(CostantiPdD.PREFIX_TIMEOUT_REQUEST)) {
+									requestReadTimeout = timeoutMessage;
+								}
+								else if(timeoutMessage!=null && timeoutMessage.startsWith(CostantiPdD.PREFIX_TIMEOUT_RESPONSE)) {
+									responseReadTimeout = timeoutMessage;
+								}
 							}
-							else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
-								ParseException parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+							
+							if(requestMessagePrimaTrasformazione.getParseException()!=null || requestReadTimeout!=null){
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+								
+								ParseException parseException = null;
+								Throwable tParsing = null;
+								String errorMsg = null;
+								if(requestReadTimeout != null) {
+									tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+									errorMsg = tParsing.getMessage();
+								}
+								else {
+									parseException = requestMessagePrimaTrasformazione.getParseException();
+									tParsing = parseException.getParseException();
+									errorMsg = tParsing.getMessage();
+								}
+								
+								IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
+								if(requestReadTimeout!=null) {
+									integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+								}
+								else if(requestMessagePrimaTrasformazione.getParseException().getSourceException()!=null &&
+										TimeoutIOException.isTimeoutIOException(requestMessagePrimaTrasformazione.getParseException().getSourceException())) {
+									integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+								}
+								
 								OpenSPCoop2Message responseMessageError = 
-										this.generatoreErrore.build(pddContext,IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
-											ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
-											parseException.getParseException(),
+										this.generatoreErrore.build(pddContext, integrationFunctionError,
+											ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(tParsing),
+											tParsing,
 											parseException);
 								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 								openspcoopstate.releaseResource();
 								esito.setEsitoInvocazione(true);	
-								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,parseException.getParseException().getMessage());
+								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,errorMsg);
+								return esito;
+							}
+							else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)
+									//|| responseReadTimeout!=null deve essere gestito dopo per generare un errore di connessione. Viene gestito all'interno del metodo 'getIntegrationFunctionErroreConnectionError' dell'else sottostante
+									){
+								
+								ParseException parseException = null;
+								Throwable tParsing = null;
+								String errorMsg = null;
+								if(responseReadTimeout != null) {
+									tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+									errorMsg = tParsing.getMessage();
+								}
+								else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
+									parseException = (ParseException) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+									tParsing = parseException.getParseException();
+									errorMsg = tParsing.getMessage();
+								}
+								
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+								IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT;
+								if(responseReadTimeout!=null) {
+									integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+								}
+								else if(parseException.getSourceException()!=null &&
+										TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
+									integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+								}
+								OpenSPCoop2Message responseMessageError = 
+										this.generatoreErrore.build(pddContext,integrationFunctionError,
+											ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(tParsing),
+											tParsing,
+											parseException);
+								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
+								openspcoopstate.releaseResource();
+								esito.setEsitoInvocazione(true);	
+								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,errorMsg);
 								return esito;
 							}
 							else {
-								IntegrationFunctionError integrationFunctionError = getIntegrationFunctionErroreConnectionError(eccezioneProcessamentoConnettore, motivoErroreConsegna);
+								IntegrationFunctionError integrationFunctionError = getIntegrationFunctionErroreConnectionError(eccezioneProcessamentoConnettore, motivoErroreConsegna, pddContext);
 								OpenSPCoop2Message responseMessageError = 
 										this.generatoreErrore.build(pddContext,integrationFunctionError,
 												ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
@@ -4081,7 +4142,7 @@ public class InoltroBuste extends GenericLib{
 						if(soapFault!=null){
 							if (!isMessaggioErroreProtocollo) {
 								if(enrichSoapFaultApplicativo){
-									IntegrationFunctionError integrationFunctionError = getIntegrationFunctionErroreConnectionError(eccezioneProcessamentoConnettore, motivoErroreConsegna);
+									IntegrationFunctionError integrationFunctionError = getIntegrationFunctionErroreConnectionError(eccezioneProcessamentoConnettore, motivoErroreConsegna, pddContext);
 									this.generatoreErrore.getErroreApplicativoBuilderForAddDetailInSoapFault(pddContext, responseMessage.getMessageType(), integrationFunctionError).
 										insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
 												get516_ServizioApplicativoNonDisponibile(), 
@@ -4875,7 +4936,7 @@ public class InoltroBuste extends GenericLib{
 					}
 					else{
 						if(enrichSoapFaultPdD){
-							IntegrationFunctionError integrationFunctionError = getIntegrationFunctionErroreConnectionError(eccezioneProcessamentoConnettore, motivoErroreConsegna);
+							IntegrationFunctionError integrationFunctionError = getIntegrationFunctionErroreConnectionError(eccezioneProcessamentoConnettore, motivoErroreConsegna, pddContext);
 							this.generatoreErrore.getErroreApplicativoBuilderForAddDetailInSoapFault(pddContext, responseMessage.getMessageType(), integrationFunctionError).
 								insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
 										get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+"-"+bustaRichiesta.getDestinatario()), 
@@ -5119,9 +5180,22 @@ public class InoltroBuste extends GenericLib{
 
 	}
 	
-	private IntegrationFunctionError getIntegrationFunctionErroreConnectionError(Exception eccezioneProcessamentoConnettore, String motivoErroreConsegna) {
+	private IntegrationFunctionError getIntegrationFunctionErroreConnectionError(Exception eccezioneProcessamentoConnettore, String motivoErroreConsegna, PdDContext pddContext) {
 		IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
-		if(eccezioneProcessamentoConnettore!=null && motivoErroreConsegna!=null) {
+		
+		String responseReadTimeout = null;
+		if(pddContext!=null && pddContext.containsKey(TimeoutInputStream.ERROR_MSG_KEY)) {
+			String timeoutMessage = PdDContext.getValue(TimeoutInputStream.ERROR_MSG_KEY, pddContext);
+			if(timeoutMessage!=null && timeoutMessage.startsWith(CostantiPdD.PREFIX_TIMEOUT_RESPONSE)) {
+				responseReadTimeout = timeoutMessage;
+			}
+		}
+		if(responseReadTimeout!=null) {
+			integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+			pddContext.removeObject(TimeoutInputStream.ERROR_MSG_KEY);
+			pddContext.removeObject(TimeoutInputStream.EXCEPTION_KEY);
+		}
+		else if(eccezioneProcessamentoConnettore!=null && motivoErroreConsegna!=null) {
 			if(this.propertiesReader.isServiceUnavailable_ReadTimedOut(motivoErroreConsegna)){
 				integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 			}

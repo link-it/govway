@@ -635,7 +635,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			/* ------------  Gestione Risposta ------------- */
 			
-			this.normalizeInputStreamResponse();
+			this.normalizeInputStreamResponse(readConnectionTimeout);
 			
 			this.initCheckContentTypeConfiguration();
 			
@@ -683,7 +683,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	
 	@Override
 	public void disconnect() throws ConnettoreException{
-    	try{
+		List<Throwable> listExceptionChiusura = new ArrayList<Throwable>();
+		try{
 			// Gestione finale della connessione    		
     		//System.out.println("CHECK CLOSE STREAM...");
 	    	if(this.isResponse!=null){
@@ -693,8 +694,10 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				this.isResponse.close();
 				//System.out.println("CLOSE STREAM");
 			}				
-    	}catch(Exception e){
-    		throw new ConnettoreException("Chiusura connessione non riuscita: "+e.getMessage(),e);
+		}
+		catch(Throwable t) {
+			this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
+			listExceptionChiusura.add(t);
     	}
     	try{
 			// Gestione finale della connessione
@@ -711,15 +714,22 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	    		
 	    	}
 				
-    	}catch(Exception e){
-    		throw new ConnettoreException("Chiusura connessione non riuscita: "+e.getMessage(),e);
-    	}
+    	}catch(Throwable t) {
+			this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
+			listExceptionChiusura.add(t);
+		}
     	try{
 	    	// super.disconnect (Per risorse base)
 	    	super.disconnect();
-    	}catch(Exception e){
-    		throw new ConnettoreException("Chiusura risorse non riuscita: "+e.getMessage(),e);
-    	}
+    	}catch(Throwable t) {
+			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+			listExceptionChiusura.add(t);
+		}
+    	
+    	if(listExceptionChiusura!=null && !listExceptionChiusura.isEmpty()) {
+			org.openspcoop2.utils.UtilsMultiException multiException = new org.openspcoop2.utils.UtilsMultiException(listExceptionChiusura.toArray(new Throwable[1]));
+			throw new ConnettoreException("Chiusura connessione non riuscita: "+multiException.getMessage(),multiException);
+		}
     }
 		
 	

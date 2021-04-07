@@ -35,8 +35,10 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -76,7 +78,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	/** acceptOnlyReturnCode_202_200 SOAP */
 	protected boolean acceptOnlyReturnCode_202_200 = true;
 			
-	protected void normalizeInputStreamResponse() throws Exception{
+	protected void normalizeInputStreamResponse(int timeout) throws Exception{
 		//Se non e' null, controllo che non sia vuoto.
 		byte[] b = new byte[1];
 		if(this.isResponse!=null){
@@ -84,11 +86,20 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				this.isResponse = null;
 			} else {
 				// Metodo alternativo: java.io.PushbackInputStream
+				//System.out.println("NORMALIZED BY FROM ["+this.isResponse.getClass().getName()+"] ...");
 				this.isResponse = new SequenceInputStream(new ByteArrayInputStream(b),this.isResponse);
 			}
 		}
 		else{
 			this.logger.info("Stream di risposta (return-code:"+this.codice+") is null",true);
+		}
+		
+		if(this.useTimeoutInputStream) {
+			if(timeout>0) {
+				this.isResponse = new TimeoutInputStream(this.isResponse, timeout, 
+						CostantiPdD.PREFIX_TIMEOUT_RESPONSE,
+						this.getPddContext()!=null ? this.getPddContext().getContext() : null);
+			}
 		}
 	}
 	
@@ -138,7 +149,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 //				while((readByte = this.isResponse.read(readB))!= -1){
 //					bout.write(readB,0,readByte);
 //				}
+				//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] ...");
 				CopyStream.copy(this.isResponse, bout);
+				//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] complete");
 				this.isResponse.close();
 				bout.flush();
 				bout.close();

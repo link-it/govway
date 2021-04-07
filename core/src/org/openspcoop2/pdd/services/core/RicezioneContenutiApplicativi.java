@@ -3190,6 +3190,7 @@ public class RicezioneContenutiApplicativi {
 		try {
 			nomeRegistroForSearch = configurazionePdDReader.getRegistroForImbustamento(soggettoFruitore, idServizio, false);
 		} catch (Exception e) {
+			logCore.error("Connettore associato al servizio non trovato: "+e.getMessage(),e);
 			msgDiag.addKeywordErroreProcessamento(e,"connettore associato al servizio non trovato");
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
 			openspcoopstate.releaseResource();

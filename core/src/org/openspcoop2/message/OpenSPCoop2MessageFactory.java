@@ -408,6 +408,8 @@ public abstract class OpenSPCoop2MessageFactory {
 			try {
 				result.setParseException(ParseExceptionUtils.buildParseException(t));
 			}catch(Throwable e) {
+//				System.err.println("ECCEZIONE?");
+//				e.printStackTrace(System.err);
 				System.err.println("Message reading error: "+t.getMessage());
 				t.printStackTrace(System.err);
 				throw new RuntimeException(t.getMessage(),t);

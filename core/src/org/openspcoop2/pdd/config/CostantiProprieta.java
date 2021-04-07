@@ -21,6 +21,12 @@
 
 package org.openspcoop2.pdd.config;
 
+import java.io.File;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.Proprieta;
+
 /**
  * Classe che raccoglie le proprieta
  *
@@ -31,8 +37,16 @@ package org.openspcoop2.pdd.config;
 
 public class CostantiProprieta {
 
-	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_ENABLED = "true";
-	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_DISABLED = "false";
+	
+	public static final String VALUE_ENABLED = "true";
+	public static final String VALUE_DISABLED = "false";
+	
+	
+	
+	// ****  VALIDAZIONE *****
+	
+	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_VALUE_DISABLED = VALUE_DISABLED;
 	
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RICHIESTA_ENABLED = "validation.request.enabled";
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_RISPOSTA_ENABLED = "validation.response.enabled";
@@ -71,4 +85,107 @@ public class CostantiProprieta {
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_ENABLED = "validation.contentType";
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_LIST_SEPARATOR = ",";
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_CONTENT_TYPE_NOT = "validation.contentType.not";	
+	
+	
+	
+	// ****  CONNETTORI *****
+	
+	public static final String CONNETTORE_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String CONNETTORE_VALUE_DISABLED = VALUE_DISABLED;
+	
+	private static final String CONNETTORE_TIMEOUT_INPUT_STREAM_ENABLED = "connettori.timeoutInputStream.enabled";
+	private static final String CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT = "connettori.request.timeoutMs";
+	
+	public static boolean isConnettoriUseTimeoutInputStream(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
+	}
+	public static int getConnettoriRequestTimeout(List<Proprieta> proprieta, int defaultValue) throws Exception {
+		return readIntValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT, defaultValue);
+	}
+	
+	
+	// ****  FILE TRACE *****
+		
+	public static final String FILE_TRACE_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String FILE_TRACE_VALUE_DISABLED = VALUE_DISABLED;
+	
+	private static final String FILE_TRACE_ENABLED = "fileTrace.enabled";
+	private static final String FILE_TRACE_DUMP_BINARIO_ENABLED = "fileTrace.dumpBinario.enabled";
+	private static final String FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED = "fileTrace.dumpBinario.connettore.enabled";
+	
+	private static final String FILE_TRACE_CONFIG = "fileTrace.config";
+	
+	public static boolean isFileTraceEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, FILE_TRACE_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+	}
+	public static boolean isFileTraceDumpBinarioEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+	}
+	public static boolean isFileTraceDumpBinarioConnettoreEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+	}
+	
+	public static File getFileTraceConfig(List<Proprieta> proprieta, File defaultValue) throws Exception {
+		String v = readValue(proprieta, FILE_TRACE_CONFIG);
+		if(v==null || StringUtils.isEmpty(v)) {
+			return defaultValue;
+		}
+		
+		File getTransazioniFileTraceConfig = new File(v);
+		if(!getTransazioniFileTraceConfig.exists()) {
+			String rootDir = OpenSPCoop2Properties.getInstance().getRootDirectory();
+			if(rootDir!=null && !"".equals(rootDir)) {
+				getTransazioniFileTraceConfig = new File(rootDir, v);
+			}
+		}
+		
+		if(!getTransazioniFileTraceConfig.exists()) {
+			throw new Exception("Config file ["+getTransazioniFileTraceConfig.getAbsolutePath()+"] not exists");
+		}
+		if(getTransazioniFileTraceConfig.isDirectory()) {
+			throw new Exception("Config file ["+getTransazioniFileTraceConfig.getAbsolutePath()+"] is directory");
+		}
+		if(getTransazioniFileTraceConfig.canRead()==false) {
+			throw new Exception("Config file ["+getTransazioniFileTraceConfig.getAbsolutePath()+"] cannot read");
+		}
+		
+		return getTransazioniFileTraceConfig;
+	}
+	
+	
+	
+	// METODI DI UTILITA GENERICI
+	
+	private static String readValue(List<Proprieta> proprieta, String nome) {
+		if(proprieta==null || proprieta.isEmpty()) {
+			return null;
+		}
+		for (Proprieta proprietaCheck : proprieta) {
+			if(nome.equalsIgnoreCase(proprietaCheck.getNome())) {
+				return proprietaCheck.getValore()!=null ? proprietaCheck.getValore().trim() : null;
+			}
+		}
+		return null;
+	}
+	private static boolean readBooleanValueWithDefault(List<Proprieta> proprieta, String nome, boolean defaultValue, String trueValue, String falseValue) {
+		String valueS = readValue(proprieta, nome);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			if(trueValue.equals(valueS.trim())) {
+				return true;
+			}
+			else if(falseValue.equals(valueS.trim())) {
+				return false;
+			}
+		}
+		return defaultValue;
+	}
+	private static int readIntValueWithDefault(List<Proprieta> proprieta, String nome, int defaultValue) {
+		String valueS = readValue(proprieta, nome);
+		if(valueS!=null && !StringUtils.isEmpty(valueS)) {
+			try {
+				return Integer.valueOf(valueS);
+			}catch(Throwable e) {}
+		}
+		return defaultValue;
+	}
 }

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.message.exception;
 
+import org.openspcoop2.utils.TimeoutIOException;
+import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
 
 import com.ctc.wstx.exc.WstxException;
@@ -47,6 +49,28 @@ public class ParseExceptionUtils {
 			pe.setParseException(new Exception("Occurs Parsing Error"));
 			pe.setSourceException(new Exception("Occurs Parsing Error"));
 			return pe;
+		}
+		
+		if(TimeoutIOException.isTimeoutIOException(e) || Utilities.existsInnerMessageException(e, TimeoutInputStream.ERROR_MSG, true)) {
+			
+			Throwable timeoutException = null;
+			if(e instanceof TimeoutIOException) {
+				timeoutException = e;
+			}
+			else {
+				timeoutException = Utilities.getInnerInstanceException(e, TimeoutIOException.class, false);
+			}
+			if(timeoutException==null && Utilities.existsInnerMessageException(e, TimeoutInputStream.ERROR_MSG, true)) {
+				Throwable exceptionMessageTimeout = Utilities.getInnerMessageException(e, TimeoutInputStream.ERROR_MSG, true);
+				if(exceptionMessageTimeout!=null) {
+					timeoutException = new TimeoutIOException(exceptionMessageTimeout.getMessage(), exceptionMessageTimeout);
+				}
+			}
+			if(timeoutException!=null) {
+				pe.setParseException(timeoutException);
+				pe.setSourceException(timeoutException);
+				return pe;
+			}
 		}
 		
 		Throwable tmp = ParseExceptionUtils.getParseException(e);

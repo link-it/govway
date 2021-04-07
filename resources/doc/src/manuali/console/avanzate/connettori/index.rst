@@ -71,6 +71,7 @@ connettore built-in JMS e File.
 	tokenPolicy
         https
         proxy
+	tempiRisposta
 	httpOpzioniAvanzate
 	debug
 	jms

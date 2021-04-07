@@ -45,15 +45,36 @@ import com.google.common.io.ByteStreams;
  * @version $Rev$, $Date$
  */
 public class CopyStream {
-
-
+	
+	/** Timeout Utilities */
+	public static InputStream buildTimeoutInputStream(InputStream isParam, int timeout) throws UtilsException {
+		InputStream is = isParam;
+		if(timeout>0 && !(is instanceof TimeoutInputStream)) {
+			try {
+				is = new TimeoutInputStream(isParam, timeout);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		return is;
+	}
+	
 	
 	/** Copy Stream */
 	
 	public static void copy(InputStream is,OutputStream os) throws UtilsException{
-		copy(CopyStreamMethod.AUTO, is, os);
+		copy(CopyStreamMethod.AUTO, is, os, -1);
 	}
 	public static void copy(CopyStreamMethod method, InputStream is,OutputStream os) throws UtilsException{
+		copy(method, is, os, -1);
+	}
+	public static void copy(InputStream is,OutputStream os, int timeout) throws UtilsException{
+		copy(CopyStreamMethod.AUTO, is, os, timeout);
+	}
+	public static void copy(CopyStreamMethod method, InputStream isParam,OutputStream os, int timeout) throws UtilsException{
+		
+		InputStream is = buildTimeoutInputStream(isParam, timeout);
+		
 		switch (method) {
 		case JAVA:
 			copyBuffer(is,os);
@@ -71,10 +92,29 @@ public class CopyStream {
 			copyCommonsIO(is,os);
 			break;
 		case AUTO:
-			if(is instanceof FileInputStream || os instanceof FileOutputStream) {
+			boolean timeoutInputStream = false;
+			InputStream checkIs = is;
+			OutputStream checkOs = os;
+			if(is instanceof TimeoutInputStream) {
+				checkIs = ((TimeoutInputStream) is).getIsWrapped();
+				timeoutInputStream = true;
+			}
+			if(checkOs instanceof FileOutputStream) {
+				//System.out.println("CHANNEL");
 				copyChannels(is,os);	
 			}
+			else if(checkIs instanceof FileInputStream) {
+				if(timeoutInputStream) {
+					//System.out.println("TRANSFER");
+					transferTo(is,os);
+				}
+				else {
+					//System.out.println("CHANNEL");
+					copyChannels(is,os);
+				}
+			}
 			else {
+				//System.out.println("TRANSFER");
 				transferTo(is,os);
 			}
 			break;
@@ -82,8 +122,11 @@ public class CopyStream {
 	}
 	
 	public static void copyBuffer(InputStream is,OutputStream os) throws UtilsException{
+		copyBuffer(is,os, Utilities.DIMENSIONE_BUFFER);
+	}
+	public static void copyBuffer(InputStream is,OutputStream os, int sizeBuffer) throws UtilsException{
 		try{
-			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
+			byte [] buffer = new byte[sizeBuffer];
 			int letti = 0;
 			while( (letti=is.read(buffer)) != -1 ){
 				os.write(buffer, 0, letti);
@@ -165,15 +208,23 @@ public class CopyStream {
 		}
 	}
 	public static void copy(InputStream from, File to) throws UtilsException{
+		copy(from, to, -1);
+	}
+	public static void copy(InputStream from, File to, int timeout) throws UtilsException{
 		try{
-			Files.copy(from, to.toPath());
+			InputStream is = buildTimeoutInputStream(from, timeout);
+			Files.copy(is, to.toPath());
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	public static void copy(InputStream from, File to, CopyOption ... options) throws UtilsException{
+		copy(from, to, -1, options);
+	}
+	public static void copy(InputStream from, File to, int timeout, CopyOption ... options) throws UtilsException{
 		try{
-			Files.copy(from, to.toPath(), options);
+			InputStream is = buildTimeoutInputStream(from, timeout);
+			Files.copy(is, to.toPath(), options);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}

@@ -773,6 +773,10 @@ public class CostantiPdD {
     
     public final static String PREFIX_MESSAGGIO_CONNETTORE_MULTIPLO = "gw-";
     public final static String SEPARATOR_MESSAGGIO_CONNETTORE_MULTIPLO = "-";
+    
+    
+    public final static String PREFIX_TIMEOUT_REQUEST = "Request ";
+    public final static String PREFIX_TIMEOUT_RESPONSE = "Response ";
 }
 
 

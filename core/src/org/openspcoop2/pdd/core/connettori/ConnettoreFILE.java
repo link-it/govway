@@ -52,6 +52,7 @@ import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
 
@@ -283,7 +284,27 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			if(contentTypeRichiesta!=null){
 				setRequestHeader(HttpConstants.CONTENT_TYPE, contentTypeRichiesta, this.logger, propertiesTrasportoDebug);
 			}
-						
+			
+			
+			
+			// Impostazione timeout
+			if(this.debug)
+				this.logger.debug("Impostazione timeout...");
+			int readConnectionTimeout = -1;
+			if(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
+				try{
+					readConnectionTimeout = Integer.parseInt(this.properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
+				}catch(Exception e){
+					this.logger.error("Parametro "+CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT+" errato",e);
+				}
+			}
+			if(readConnectionTimeout==-1){
+				readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+			}
+			if(this.debug)
+				this.logger.info("Impostazione read timeout ["+readConnectionTimeout+"]",false);
+			
+			
 
 			// Aggiunga del SoapAction Header in caso di richiesta SOAP
 			if(this.isSoap && this.sbustamentoSoap == false){
@@ -503,7 +524,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				
 				this.isResponse = new FileInputStream(this.inputFile);
 								
-				this.normalizeInputStreamResponse();
+				this.normalizeInputStreamResponse(readConnectionTimeout);
 				
 				this.initCheckContentTypeConfiguration();
 				
@@ -553,7 +574,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
      */
     @Override
 	public void disconnect() throws ConnettoreException{
-    	try{
+    	List<Throwable> listExceptionChiusura = new ArrayList<Throwable>();
+		try{
     	
 			// Gestione finale
     		
@@ -564,9 +586,10 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 					this.isResponse.close();
 					if(this.debug && this.logger!=null)
 		    			this.logger.debug("Chiusura inputStream ["+this.inputFile.getAbsolutePath()+"] effettuata con successo");
-	    		}catch(Exception e){
+	    		}catch(Throwable e){
 	    			if(this.logger!=null)
 		    			this.logger.error("Chiusura inputStream ["+this.inputFile.getAbsolutePath()+"] non riuscita");
+	    			listExceptionChiusura.add(e);
 	    		}
 			}
     		
@@ -600,11 +623,21 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 
 	    	
 	    	// super.disconnect (Per risorse base)
-	    	super.disconnect();
+	    	try {
+	    		super.disconnect();
+	    	}catch(Throwable t) {
+    			this.logger.debug("Chiusura risorse fallita: "+t.getMessage(),t);
+    			listExceptionChiusura.add(t);
+    		}
 			
     	}catch(Exception e){
     		throw new ConnettoreException("Chiusura non riuscita: "+e.getMessage(),e);
     	}
+		
+		if(listExceptionChiusura!=null && !listExceptionChiusura.isEmpty()) {
+			org.openspcoop2.utils.UtilsMultiException multiException = new org.openspcoop2.utils.UtilsMultiException(listExceptionChiusura.toArray(new Throwable[1]));
+			throw new ConnettoreException("Chiusura connessione non riuscita: "+multiException.getMessage(),multiException);
+		}
     }
 
     
