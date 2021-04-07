@@ -176,6 +176,8 @@ CREATE INDEX INDEX_TR_FILTROD_REQ_2 ON transazioni (data_id_msg_richiesta,id_mes
 CREATE INDEX INDEX_TR_FILTROD_RES_2 ON transazioni (data_id_msg_risposta,id_messaggio_risposta);
 CREATE INDEX INDEX_TR_COLLABORAZIONE ON transazioni (id_collaborazione);
 CREATE INDEX INDEX_TR_RIF_RICHIESTA ON transazioni (id_asincrono);
+CREATE INDEX INDEX_TR_CORRELAZIONE_REQ ON transazioni (id_correlazione_applicativa);
+CREATE INDEX INDEX_TR_CORRELAZIONE_RES ON transazioni (id_correlazione_risposta);
 
 CREATE SEQUENCE seq_transazioni_sa start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
 

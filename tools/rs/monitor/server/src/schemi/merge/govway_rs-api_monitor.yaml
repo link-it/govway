@@ -204,6 +204,44 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
+  /monitoraggio/transazioni/id-applicativo/{id}:
+    get:
+      tags:
+      - "Monitoraggio"
+      summary: "Ricerca delle transazioni in base all'identificativo dell'applicativo"
+      description: "Permette di recuperare i dettagli delle transazioni, gestite su\
+        \ GovWay, ricercandole in base all'identificativo dell'applicativo"
+      operationId: "findAllTransazioniByIdApplicativo"
+      parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/sort"
+      - $ref: "#/components/parameters/tipo_id_applicativo"
+      - $ref: "#/components/parameters/id_applicativo"
+      responses:
+        "200":
+          description: "dettaglio transazione restituito correttamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaTransazioni"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
   /monitoraggio/transazioni/id-messaggio:
     get:
       tags:
@@ -2137,6 +2175,14 @@ components:
       enum:
       - "richiesta"
       - "risposta"
+      - "conversazione"
+      - "riferimento_richiesta"
+    TipoIdApplicativoEnum:
+      type: "string"
+      example: "richiesta"
+      enum:
+      - "richiesta"
+      - "risposta"
     TipoReportEnum:
       type: "string"
       example: "line"
@@ -2304,6 +2350,9 @@ components:
         content_type:
           type: "string"
           example: "application/json"
+        content_length:
+          type: "integer"
+          format: "int64"
         multipart:
           $ref: "#/components/schemas/TransazioneExtContenutoMessaggioBodyMultipart"
         contenuti_body:
@@ -2995,6 +3044,13 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/TransazioneId"
+    id_applicativo:
+      name: "id"
+      in: "path"
+      description: "identificativo applicativo"
+      required: true
+      schema:
+        type: "string"
     id_evento_path:
       name: "id"
       in: "path"
@@ -3040,6 +3096,14 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/TipoMessaggioEnum"
+    tipo_id_applicativo:
+      name: "tipo_identificativo"
+      in: "query"
+      description: "Distingue se l'identificativo applicativo è relativo ad una richiesta\
+        \ o una risposta"
+      required: true
+      schema:
+        $ref: "#/components/schemas/TipoIdApplicativoEnum"
     uri_api_implementata:
       name: "uri_api_implementata"
       in: "query"

@@ -24,8 +24,8 @@
  			<h:outputText id="iconaStatoValue-IG" 
  				value="#{dettagliTransazioneApplicativoServerBean.dettaglio.tooltipIconaColonnaSX}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}" />
  		
-			<h:outputLabel styleClass="outputFieldLabel" value="Nome Connettore" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" />
-			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" />
+			<h:outputLabel styleClass="outputFieldLabel" value="Nome Connettore" rendered="#{dettagliBean.dettaglio.consegnaMultipla and not empty dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" rendered="#{dettagliBean.dettaglio.consegnaMultipla and not empty dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" />
  		
  			<h:outputLabel value="Data in Coda" styleClass="outputFieldLabel icon-date" />
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataRegistrazione}">

@@ -9,6 +9,17 @@
 	* [TestsuiteProtocolloTrasparente]
 	Aggiunti test che verificano la nuova modalità di salvataggio dello stream dei dati.
 
+2021-04-01  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-1173
+	Sia tramite la console che tramite le API di monitoraggio è adesso possibile ricercare transazioni fornendo come criterio di ricerca il solo identificativo di correlazione applicativa.
+	La funzionalità già esistente consentiva di effettuare una ricerca simile dove però andavano obbligatoriamente indicati ulteriori criteri di ricerca quali l'intervallo temporale, 
+	il profilo di interoperabilità, le modalità di ricerca dell'identificativo (contains, case sensitive) etc... 
+	La nuova ricerca richiede in input solamente l'identificativo applicativo da ricercare consentendo quindi di sfruttare a pieno un indice dedicato a tale informazione.
+	La precedente ricerca rimane disponibile come 'ricerca avanzata' dell'identificativo applicativo.
+	Infine nell'API di monitoraggio è adesso possibile ricercare per IdMessaggio indicando anche l'id di conversazione o di riferimento alla richiesta.
+
 2021-03-31  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor, ApiRsMonitoraggio, ApiRsConfigurazione]

@@ -204,6 +204,14 @@ public class SearchFormUtilities {
 		return searchForm;
 	}
 	
+	public TransazioniSearchForm getIdApplicativoBaseSearchForm(IContext context, ProfiloEnum profilo, String soggetto) throws Exception {
+		TransazioniSearchForm searchForm = new TransazioniSearchForm();
+		initBaseInfo(searchForm, context, profilo, soggetto, null);
+		searchForm.setModalitaRicercaStorico(ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.getValue());
+		
+		return searchForm;
+	}
+	
 	
 	public EventiSearchForm getEventiSearchForm(IContext context, DateTime dataInizio, DateTime dataFine) throws Exception {
 		EventiSearchForm searchForm = new EventiSearchForm();
@@ -216,7 +224,7 @@ public class SearchFormUtilities {
 			DateTime dataInizio, DateTime dataFine) throws Exception {
 		TransazioniSearchForm searchForm = new TransazioniSearchForm();
 		initBaseInfo(searchForm, context, profilo, soggetto, ruolo);
-		searchForm.setModalitaRicercaStorico(ModalitaRicercaTransazioni.ID_APPLICATIVO.getValue());
+		searchForm.setModalitaRicercaStorico(ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA.getValue());
 		if (dataInizio != null && dataFine != null) {
 			searchForm.setDataInizio(dataInizio.toDate());
 			searchForm.setDataFine(dataFine.toDate());

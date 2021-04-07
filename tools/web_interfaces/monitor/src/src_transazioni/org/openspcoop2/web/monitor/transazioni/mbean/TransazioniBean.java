@@ -102,6 +102,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	
 	private List<GruppoStorico> tipiStorico;
 	private String tipoStorico;
+	private List<GruppoStorico> tipiStoricoLivello2;
 	
 	private boolean visualizzazioneStoricoTabellare = false;
 	private boolean exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = false;
@@ -961,10 +962,12 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_LABEL_KEY), 
 					ModalitaRicercaTransazioni.ID_TRANSAZIONE,
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_ICON_KEY)));
-			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO.getValue(), 
+			Storico storicoIdApplicativo = new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA.getValue(), 
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LABEL_KEY), 
-					ModalitaRicercaTransazioni.ID_APPLICATIVO,
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_ICON_KEY)));
+					ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_ICON_KEY));
+			storicoIdApplicativo.setAction(TransazioniCostanti.NOME_ACTION_RICERCA_LVL2);
+			listaGruppoId.add(storicoIdApplicativo);
 			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue(), 
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_LABEL_KEY), 
 					ModalitaRicercaTransazioni.ID_MESSAGGIO,
@@ -1011,5 +1014,33 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 	public void setUpdateTipoStorico(boolean updateTipoStorico) {
 		this.updateTipoStorico = updateTipoStorico;
+	}
+	
+	public void setTipiStoricoLivello2(List<GruppoStorico> tipiStoricoLivello2) {
+		this.tipiStoricoLivello2 = tipiStoricoLivello2;
+	}
+	
+	public List<GruppoStorico> getTipiStoricoLivello2() {
+		if(this.tipoStorico == null)
+			return this.tipiStoricoLivello2;
+		
+		this.tipiStoricoLivello2 = new ArrayList<GruppoStorico>();
+		
+		GruppoStorico gruppoId = new GruppoStorico();
+		gruppoId.setLabel(MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_LABEL_KEY));
+		List<Storico> listaGruppoId = new ArrayList<>();
+		
+		listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.getValue(), 
+				MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_LABEL_KEY),
+				ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE,
+				MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_ICON_KEY), 2));
+		listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA.getValue(), 
+				MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_LABEL_KEY), 
+				ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA,
+				MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_ICON_KEY), 2));
+		gruppoId.setListaStorico(listaGruppoId);
+		this.tipiStoricoLivello2.add(gruppoId);
+		
+		return this.tipiStoricoLivello2;
 	}
 }

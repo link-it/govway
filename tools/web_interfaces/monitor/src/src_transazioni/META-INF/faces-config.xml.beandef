@@ -194,6 +194,10 @@
 			<to-view-id>/transazioni/pages/list/transazioni.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>transazioni_lvl2</from-outcome>
+			<to-view-id>/transazioni/pages/form/transazioniLivello2.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>transazioniList</from-outcome>
 			<to-view-id>/transazioni/pages/list/transazioni.xhtml</to-view-id>
 		</navigation-case>

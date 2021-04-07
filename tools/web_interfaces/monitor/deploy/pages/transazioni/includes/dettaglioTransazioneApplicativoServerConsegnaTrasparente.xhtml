@@ -112,7 +112,7 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Raw" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Uscita" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}">
 				<h:form id="formDumpBinarioReqUscita">
 					<a4j:htmlCommandLink id="dumpBinarioUscita-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
@@ -226,7 +226,7 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Raw" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Ingresso" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}">
 				<h:form id="formDumpBinarioResIngresso">
 					<a4j:htmlCommandLink id="dumpBinarioResIngresso-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"

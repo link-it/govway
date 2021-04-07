@@ -18,6 +18,14 @@
 				<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
 			</li>
 			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16" rendered="#{searchFormTransazioni.periodo != 'Live'}"/></li>
+			<a4j:outputPanel rendered="#{searchFormTransazioni.periodo != 'Live' and searchFormTransazioni.livelloRicerca == 2}">
+				<li>
+					<a4j:htmlCommandLink action="transazioni_lvl2"  rendered="#{searchFormTransazioni.livelloRicerca == 2}" value="#{searchFormTransazioni.tipoStoricoLivello2Label}">
+						<f:setPropertyActionListener value="#{searchFormTransazioni.modalitaRicercaStorico}" target="#{transazioniBean.tipoStorico}" />
+					</a4j:htmlCommandLink>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			</a4j:outputPanel>
 			<li>
 				<a4j:htmlCommandLink action="transazioniList" value="#{searchFormTransazioni.tipoStoricoLabel}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
 				<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}"/>

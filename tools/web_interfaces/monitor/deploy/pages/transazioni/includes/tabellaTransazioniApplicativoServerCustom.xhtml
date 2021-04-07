@@ -99,10 +99,13 @@
 					<a4j:outputPanel layout="block" id="riga1" styleClass="entryDatiTransazioneRiga1">
 						<a4j:outputPanel layout="block" id="titolo" styleClass="divTitoloEntry">
 							<a4j:outputPanel layout="block" id="titoloSx" styleClass="titoloSX">
-								<h:outputText id="outConnettore2" value="#{item.connettoreNome}" rendered="#{true}" styleClass="interno"/>
-								<rich:toolTip for="titoloSx" rendered="#{true}">
+								<h:outputText id="outConnettore2" value="#{dettagliBean.dettaglio.consegnaMultipla ? item.connettoreNome : 'MessageBox'}" rendered="#{true}" styleClass="interno"/>
+								<rich:toolTip for="titoloSx" rendered="#{dettagliBean.dettaglio.consegnaMultipla}">
 									<h:outputText value="Connettore: "/>
 									<h:outputText value="#{item.connettoreNome}" />
+								</rich:toolTip>
+								<rich:toolTip for="titoloSx" rendered="#{not dettagliBean.dettaglio.consegnaMultipla}">
+									<h:outputText value="IntegrationManager/MessageBox"/>
 								</rich:toolTip>
 							</a4j:outputPanel>
 							<a4j:outputPanel layout="block" id="titoloIconaRuolo" styleClass="titoloIconaRuolo">

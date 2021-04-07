@@ -44,7 +44,7 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    	</a4j:htmlCommandLink>
                		<h:outputLabel value="&#160;|&#160;" rendered="#{item.hasDumpRichiestaUscita and item.hasDumpBinarioRichiestaUscita}"/>	 
-					<a4j:htmlCommandLink id="dumpBinarioMessaggiUscita-iconLink" styleClass="icon-details" value="Visualizza Dati Raw" action="dettaglioDump" rendered="#{item.hasDumpBinarioRichiestaUscita}">
+					<a4j:htmlCommandLink id="dumpBinarioMessaggiUscita-iconLink" styleClass="icon-details" value="Visualizza Dati Uscita" action="dettaglioDump" rendered="#{item.hasDumpBinarioRichiestaUscita}">
                    		<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliDump.idTransazione}"/>
                    		<f:setPropertyActionListener value="#{item.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{item.protocollo}" target="#{dettagliDump.protocollo}"/>
@@ -88,7 +88,7 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    	</a4j:htmlCommandLink>
                		<h:outputLabel value="&#160;|&#160;" rendered="#{item.hasDumpRispostaIngresso and item.hasDumpBinarioRispostaIngresso}"/>	 
-					<a4j:htmlCommandLink id="dumpBinarioMessaggiIngresso-iconLink" styleClass="icon-details" value="Visualizza Dati Raw" action="dettaglioDump" rendered="#{item.hasDumpBinarioRispostaIngresso}">
+					<a4j:htmlCommandLink id="dumpBinarioMessaggiIngresso-iconLink" styleClass="icon-details" value="Visualizza Dati Ingresso" action="dettaglioDump" rendered="#{item.hasDumpBinarioRispostaIngresso}">
                    		<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliDump.idTransazione}"/>
                    		<f:setPropertyActionListener value="#{item.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{item.protocollo}" target="#{dettagliDump.protocollo}"/>

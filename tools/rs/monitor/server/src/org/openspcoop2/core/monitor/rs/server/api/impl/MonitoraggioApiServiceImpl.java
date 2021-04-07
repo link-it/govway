@@ -46,6 +46,7 @@ import org.openspcoop2.core.monitor.rs.server.model.ListaEventi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
+import org.openspcoop2.core.monitor.rs.server.model.TipoIdApplicativoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoMessaggioEnum;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.service.BaseImpl;
@@ -158,6 +159,50 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 		}
     }
     
+    /**
+     * Ricerca delle transazioni in base all&#x27;identificativo dell&#x27;applicativo
+     *
+     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all&#x27;identificativo dell&#x27;applicativo
+     *
+     */
+	@Override
+    public ListaTransazioni findAllTransazioniByIdApplicativo(TipoIdApplicativoEnum tipoIdentificativo, String id, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+			TransazioniSearchForm search = searchFormUtilities.getIdApplicativoBaseSearchForm(context, profilo, soggetto);
+			
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
+			search.setIdCorrelazioneApplicativa(id);
+			switch (tipoIdentificativo) {
+			case RICHIESTA:
+				search.setTipoIdMessaggio(org.openspcoop2.web.monitor.core.constants.TipoMessaggio.Richiesta.name());
+				break;
+			case RISPOSTA:
+				search.setTipoIdMessaggio(org.openspcoop2.web.monitor.core.constants.TipoMessaggio.Risposta.name());
+				break;
+			}
+
+			ListaTransazioni ret = TransazioniHelper.searchTransazioni(search, offset, limit, sort, env);        
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Ricerca completa delle transazioni per intervallo temporale
      *
@@ -310,10 +355,23 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 
 			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 			TransazioniSearchForm search = searchFormUtilities.getIdMessaggioSearchForm(context, profilo, soggetto);
-
+			
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			search.setIdEgov(id);
-			search.setTipoIdMessaggio(tipoMessaggio == TipoMessaggioEnum.RICHIESTA ? "Richiesta" : "Risposta");
+			switch (tipoMessaggio) {
+			case RICHIESTA:
+				search.setTipoIdMessaggio(org.openspcoop2.web.monitor.core.constants.TipoMessaggio.Richiesta.name());
+				break;
+			case RISPOSTA:
+				search.setTipoIdMessaggio(org.openspcoop2.web.monitor.core.constants.TipoMessaggio.Risposta.name());
+				break;
+			case CONVERSAZIONE:
+				search.setTipoIdMessaggio(org.openspcoop2.web.monitor.core.constants.TipoMessaggio.Collaborazione.name());
+				break;
+			case RIFERIMENTO_RICHIESTA:
+				search.setTipoIdMessaggio(org.openspcoop2.web.monitor.core.constants.TipoMessaggio.RiferimentoRichiesta.name());
+				break;
+			}
 
 			ListaTransazioni ret = TransazioniHelper.searchTransazioni(search, offset, limit, sort, env);
 			context.getLogger().info("Invocazione completata con successo");

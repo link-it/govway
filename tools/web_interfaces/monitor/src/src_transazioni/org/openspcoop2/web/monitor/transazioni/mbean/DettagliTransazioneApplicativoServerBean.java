@@ -501,6 +501,16 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 
 		return this.dettaglio;
 	}
+	
+	public String getNomeConnettore() {
+		TransazioneApplicativoServerBean dettaglio = this.getDettaglio();
+		if(dettaglio!=null && dettaglio.getConnettoreNome()!=null && StringUtils.isNotEmpty(dettaglio.getConnettoreNome())) {
+			return dettaglio.getConnettoreNome();
+		}
+		else {
+			return "";
+		}
+	}
 
 	public void visualizzaRichiestaListener(ActionEvent ae) {
 		this.dettaglio = null;
