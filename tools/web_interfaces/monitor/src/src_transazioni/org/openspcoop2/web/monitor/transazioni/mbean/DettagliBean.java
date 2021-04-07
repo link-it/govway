@@ -55,6 +55,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utils;
@@ -132,8 +133,15 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private Boolean hasHeaderTrasportoBinarioRichiestaUscita = null;
 	private Boolean hasHeaderTrasportoBinarioRispostaIngresso = null;
 	private Boolean hasHeaderTrasportoBinarioRispostaUscita = null;
+	private Boolean hasDumpBinarioMultipartRichiestaIngresso = null;
+	private Boolean hasDumpBinarioMultipartRichiestaUscita = null;
+	private Boolean hasDumpBinarioMultipartRispostaIngresso = null;
+	private Boolean hasDumpBinarioMultipartRispostaUscita = null;
 	
 	private TipoMessaggio exportContenuto;
+	
+	private Integer multipartThreshold=null;
+	private Boolean exportContenutiMultipart;
 		
 	public String getExportContenuto() {
 		if(this.exportContenuto == null){
@@ -176,6 +184,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			
 			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
 			
+			this.multipartThreshold = govwayMonitorProperties.getTransazioniDettaglioVisualizzazioneMessaggiThreshold(); 
 			
 
 		} catch (Exception e) {
@@ -697,11 +706,80 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		
 		return this.hasHeaderTrasportoBinarioRispostaUscita;
 	}
+	
+	public Boolean getHasDumpBinarioMultipartRichiestaIngresso() {
+		if(this.hasDumpBinarioMultipartRichiestaIngresso == null) {
+			String contentType = this.getContentType(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);
+			Long contentLength = this.getContentLength(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);
+			this.hasDumpBinarioMultipartRichiestaIngresso = DettagliBean.isVisualizzaContenutiMultipartButton(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO, contentType, contentLength, this.multipartThreshold, log);
+		}
+		
+		return this.hasDumpBinarioMultipartRichiestaIngresso;
+	}
+	
+	public Boolean getHasDumpBinarioMultipartRichiestaUscita() {
+		if(this.hasDumpBinarioMultipartRichiestaUscita == null) {
+			String contentType = this.getContentType(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
+			Long contentLength = this.getContentLength(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
+			this.hasDumpBinarioMultipartRichiestaUscita = DettagliBean.isVisualizzaContenutiMultipartButton(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO, contentType, contentLength, this.multipartThreshold, log);
+		}
+
+		return this.hasDumpBinarioMultipartRichiestaUscita;
+	}
+	
+	public Boolean getHasDumpBinarioMultipartRispostaIngresso() {
+		if(this.hasDumpBinarioMultipartRispostaIngresso == null) {
+			String contentType = this.getContentType(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
+			Long contentLength = this.getContentLength(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
+			this.hasDumpBinarioMultipartRispostaIngresso = DettagliBean.isVisualizzaContenutiMultipartButton(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO, contentType, contentLength, this.multipartThreshold, log);
+		}
+
+		return this.hasDumpBinarioMultipartRispostaIngresso;
+	}
+	
+	public Boolean getHasDumpBinarioMultipartRispostaUscita() {
+		if(this.hasDumpBinarioMultipartRispostaUscita == null) {
+			String contentType = this.getContentType(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
+			Long contentLength = this.getContentLength(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);
+			this.hasDumpBinarioMultipartRispostaUscita = DettagliBean.isVisualizzaContenutiMultipartButton(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO, contentType, contentLength, this.multipartThreshold, log);
+		}
+
+		return this.hasDumpBinarioMultipartRispostaUscita;
+	}
 
 	private boolean getHasHeaderTrasporto(TipoMessaggio tipo) {
 		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, null, null, tipo);
 	}
+	
+	private String getContentType(TipoMessaggio tipo) {
+		return this.transazioniService.getContentTypeMessaggio(this.idTransazione, null, null, tipo);
+	}
+	
+	private Long getContentLength(TipoMessaggio tipo) {
+		return this.transazioniService.getContentLengthMessaggio(this.idTransazione, null, null, tipo);
+	}
 
+	public static boolean isVisualizzaContenutiMultipartButton(TipoMessaggio tipoMessaggio, String contentType, Long contentLength, Integer multipartThreshold, Logger log) {
+		
+		switch (tipoMessaggio) {
+		case RICHIESTA_INGRESSO_DUMP_BINARIO:
+		case RICHIESTA_USCITA_DUMP_BINARIO:
+		case RISPOSTA_INGRESSO_DUMP_BINARIO:
+		case RISPOSTA_USCITA_DUMP_BINARIO:
+			try {
+				if(ContentTypeUtilities.isMultipart(contentType)) {
+					return contentLength.intValue() < multipartThreshold.intValue();
+				}
+			} catch (UtilsException e) {
+				log.error("Errore nel check multipart: "+e.getMessage(),e); 
+			}
+			break;
+		default:
+			return false;
+		}
+		return false;
+	}
+	
 	public void visualizzaRichiestaListener(ActionEvent ae) {
 		this.dettaglio = null;
 	}
@@ -1026,6 +1104,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		return null;
 	}
 	
+	@Override
+	public void initExportListener(ActionEvent ae){}
 	
 	public String exportContenuti() {
 
@@ -1065,12 +1145,16 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			response.setStatus(200);
 			response.flushBuffer();
 
-
 			ZipOutputStream zip = new ZipOutputStream(
 					response.getOutputStream());
 			
-			SingleFileExporter.exportContenuti(log, this.dettaglio, zip, dirPath, this.transazioniService, this.exportContenuto,
+			if(this.exportContenutiMultipart != null && this.exportContenutiMultipart.booleanValue() == true) {
+				SingleFileExporter.exportContenutiMultipart(log, this.dettaglio, zip, dirPath, this.transazioniService, this.exportContenuto,
+						DettagliBean.headersAsProperties,DettagliBean.contenutiAsProperties);
+			} else {
+				SingleFileExporter.exportContenuti(log, this.dettaglio, zip, dirPath, this.transazioniService, this.exportContenuto,
 					DettagliBean.headersAsProperties,DettagliBean.contenutiAsProperties);
+			}
 			
 			zip.flush();
 			zip.close();
@@ -1134,4 +1218,12 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public void setVisualizzaIdCluster(boolean visualizzaIdCluster) {
 		this.visualizzaIdCluster = visualizzaIdCluster;
 	}
+	public Boolean getExportContenutiMultipart() {
+		return this.exportContenutiMultipart;
+	}
+	public void setExportContenutiMultipart(Boolean exportContenutiMultipart) {
+		this.exportContenutiMultipart = exportContenutiMultipart;
+	}
+	
+	
 }

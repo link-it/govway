@@ -135,9 +135,14 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    	</a4j:htmlCommandLink>
                    	<h:outputLabel value="&#160;|&#160;" />
-                   	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
+                   	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}"
+                   		rendered="#{not dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita}">
                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.dataUltimaConsegna}" target="#{dettagliDump.ultimaConsegna}"/>
+						<h:outputText value="Esporta" />
+					</h:commandLink>
+					<h:commandLink id="exportDumpBinarioMultipartReqUscita-iconLink" styleClass="icon-compress" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita}"
+                   		onclick="preparaFormModale('RichiestaUscitaDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText value="Esporta" />
 					</h:commandLink>
 				</h:form>
@@ -249,8 +254,13 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    	</a4j:htmlCommandLink>
                    	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
+                   	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}"
+                   		rendered="#{not dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}">
                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
+						<h:outputText value="Esporta" />
+					</h:commandLink>
+					<h:commandLink id="exportDumpBinarioMultipartResIngresso-iconLink" styleClass="icon-compress" rendered="#{dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"
+                   		onclick="preparaFormModale('RispostaIngressoDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText value="Esporta" />
 					</h:commandLink>
 				</h:form>
@@ -258,5 +268,67 @@
 		</h:panelGrid>
     
     </a4j:outputPanel>
+    
+    <a4j:outputPanel layout="block" ajaxRendered="false">
+		<a4j:jsFunction name="preparaFormModale" reRender="panelFormExportContainer" actionListener="#{dettagliTransazioneApplicativoServerBean.initExportListener}" limitToList="true">
+			<a4j:actionparam name="param1" assignTo="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"  />
+       	</a4j:jsFunction>
+   	</a4j:outputPanel>
+    
+    <rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" style="overflow:auto;" autosized="true">
+		<f:facet name="header">
+			<h:outputText id="esportaModalPnlHeaderText" value="Esporta" />
+		</f:facet>
+		<f:facet name="controls">	
+			<h:panelGroup id="panelChiudiExport">
+                <h:graphicImage value="/images/tema_link/clear_white.png" id="hidelinkplugin"/>
+                <rich:componentControl id="componentPlugin" for="esportaModalPnl" attachTo="hidelinkplugin" operation="hide" event="onclick"/>
+            </h:panelGroup>
+		</f:facet>
+		<a4j:outputPanel id="fileExportCsvCtr" ajaxRendered="true">
+			<h:panelGroup  styleClass="errors" layout="block" rendered="#{false}">
+					<h:panelGroup rendered="#{false}">
+							<p>
+								<em>
+									<h:outputText value="Si sono verificati degli errori:"/>
+								</em>
+							</p>
+						<div class="errorsSpacer"/>
+						</h:panelGroup>
+					<div class="errorsSpacer"/>
+							<rich:messages id="errorExportCsvMessages">
+							</rich:messages>
+					<h:outputText id="esportaErrors"  
+						value="No Error"
+						rendered="#{false}" />
+			</h:panelGroup>
+		</a4j:outputPanel>
+		<a4j:outputPanel layout="block" rendered="false">
+		<p class="legend">
+			<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+		</p>
+		</a4j:outputPanel>
+		<h:form id="formExportReport" prependId="false">
+			<a4j:outputPanel layout="block" id="panelFormExportContainer" ajaxRendered="false">
+				<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
+				<div class="form-container noborder"> 
+					<link:fieldset legend="Configura Export" collapsible="false">
+						<link:prop label="Includi Contenuti Multipart">
+							<a4j:outputPanel styleClass="form-container" layout="block">
+								<h:selectBooleanCheckbox id="esportazioniChk"
+										styleClass="controlset"  
+										value="#{dettagliTransazioneApplicativoServerBean.exportContenutiMultipart}" />
+							</a4j:outputPanel>
+						</link:prop>
+					</link:fieldset>
+					<div class="buttonrowmodal">
+						<a4j:htmlCommandLink id="esportaCsvButton-iconLink" styleClass="icon-csv positive" target="_blank" title="Esporta"
+						 value="Esporta" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}"  ajaxSingle="true" onclick="#{rich:component('esportaModalPnl')}.hide();">
+						</a4j:htmlCommandLink>
+					</div>
+				</div>
+			</a4j:outputPanel>
+		</h:form>
+	</rich:modalPanel>
  
 </ui:composition>

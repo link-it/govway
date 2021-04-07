@@ -42,7 +42,9 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.dao.IService;
@@ -116,10 +118,16 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	private Boolean hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita = null;
 	private Boolean hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso = null;
 	
+	private Boolean hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita = null;
+	private Boolean hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso = null;
+	
 	private Date dataConsegnaErogatore = null;
 	private Date ultimaConsegna = null;
 	
 	private TipoMessaggio exportContenuto;
+	
+	private Integer multipartThreshold=null;
+	private Boolean exportContenutiMultipart;
 		
 	public String getExportContenuto() {
 		if(this.exportContenuto == null){
@@ -159,6 +167,8 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 			this.setVisualizzaIdCluster(govwayMonitorare!=null && govwayMonitorare.size()>1);
 
 			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
+			
+			this.multipartThreshold = govwayMonitorProperties.getTransazioniDettaglioVisualizzazioneMessaggiThreshold(); 
 		} catch (Exception e) {
 			DettagliTransazioneApplicativoServerBean.log
 			.warn("Inizializzazione driverTracciamento fallita.....",
@@ -230,6 +240,26 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 		return this.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso;
 	}
 	
+	public Boolean getHasDumpBinarioMultipartUltimaConsegnaRichiestaUscita() {
+		if(this.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita == null) {
+			String contentType = this.getContentType(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
+			Long contentLength = this.getContentLength(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);
+			this.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita = DettagliBean.isVisualizzaContenutiMultipartButton(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO, contentType, contentLength, this.multipartThreshold, log);
+		}
+
+		return this.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita;
+	}
+	
+	public Boolean getHasDumpBinarioMultipartUltimaConsegnaRispostaIngresso() {
+		if(this.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso == null) {
+			String contentType = this.getContentType(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
+			Long contentLength = this.getContentLength(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);
+			this.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso = DettagliBean.isVisualizzaContenutiMultipartButton(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO, contentType, contentLength, this.multipartThreshold, log);
+		}
+		
+		return this.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso;
+	}
+	
 	private boolean getHasDump(TipoMessaggio tipo) {
 		if(this.dettaglio.getNumeroTentativi() > 1) {
 			return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), this.getDataUltimaConsegna(), tipo);
@@ -244,6 +274,41 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 		}
 		
 		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), null, tipo);
+	}
+	
+	private String getContentType(TipoMessaggio tipo) {
+		if(this.dettaglio.getNumeroTentativi() > 1) {
+			return this.transazioniService.getContentTypeMessaggio(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), this.getDataUltimaConsegna(), tipo);
+		}
+		return this.transazioniService.getContentTypeMessaggio(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), null, tipo);
+	}
+	
+	private Long getContentLength(TipoMessaggio tipo) {
+		if(this.dettaglio.getNumeroTentativi() > 1) {
+			return this.transazioniService.getContentLengthMessaggio(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), this.getDataUltimaConsegna(), tipo);
+		}
+		return this.transazioniService.getContentLengthMessaggio(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), null, tipo);
+	}
+
+	public static boolean isVisualizzaContenutiMultipartButton(TipoMessaggio tipoMessaggio, String contentType, Long contentLength, Integer multipartThreshold, Logger log) {
+		
+		switch (tipoMessaggio) {
+		case RICHIESTA_INGRESSO_DUMP_BINARIO:
+		case RICHIESTA_USCITA_DUMP_BINARIO:
+		case RISPOSTA_INGRESSO_DUMP_BINARIO:
+		case RISPOSTA_USCITA_DUMP_BINARIO:
+			try {
+				if(ContentTypeUtilities.isMultipart(contentType)) {
+					return contentLength.intValue() < multipartThreshold.intValue();
+				}
+			} catch (UtilsException e) {
+				log.error("Errore nel check multipart: "+e.getMessage(),e); 
+			}
+			break;
+		default:
+			return false;
+		}
+		return false;
 	}
 
 	public Date getDataUltimaConsegna() {
@@ -722,10 +787,15 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 				dataConsegna = this.ultimaConsegna;
 			}
 			
-			SingleFileExporter.exportContenuti(log, this.dettaglio, dataConsegna, 
+			if(this.exportContenutiMultipart != null && this.exportContenutiMultipart.booleanValue() == true) {
+				SingleFileExporter.exportContenutiMultipart(log, this.dettaglio, dataConsegna, 
 					zip, dirPath, this.transazioniService, this.exportContenuto,
 					DettagliTransazioneApplicativoServerBean.headersAsProperties,DettagliTransazioneApplicativoServerBean.contenutiAsProperties);
-			
+			} else {
+				SingleFileExporter.exportContenuti(log, this.dettaglio, dataConsegna, 
+					zip, dirPath, this.transazioniService, this.exportContenuto,
+					DettagliTransazioneApplicativoServerBean.headersAsProperties,DettagliTransazioneApplicativoServerBean.contenutiAsProperties);
+			}
 			zip.flush();
 			zip.close();
 
@@ -850,5 +920,12 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 
 	public void setUltimaConsegna(Date ultimaConsegna) {
 		this.ultimaConsegna = ultimaConsegna;
+	}
+	
+	public Boolean getExportContenutiMultipart() {
+		return this.exportContenutiMultipart;
+	}
+	public void setExportContenutiMultipart(Boolean exportContenutiMultipart) {
+		this.exportContenutiMultipart = exportContenutiMultipart;
 	}
 }

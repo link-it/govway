@@ -134,6 +134,16 @@
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
+		<managed-bean-name>dettagliDumpMultipart</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DettagliDumpMultipart</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>service</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.dao.TransazioniService</property-class>
+			<value>#{transazioniService}</value>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
 		<managed-bean-name>transazioniDuplicatiDMRichiesta</managed-bean-name>
 		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniDuplicatiDM</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
@@ -296,6 +306,10 @@
 			<from-outcome>dettagliMessaggio</from-outcome>
 			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettaglioDumpMultipart</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettaglioDumpMultipart.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServer.xhtml</from-view-id>
@@ -306,5 +320,35 @@
 		<navigation-case>
 			<from-outcome>dettagliConsegna</from-outcome>
 			<to-view-id>/transazioni/pages/form/dettagliTransazioneApplicativoServer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettaglioDumpMultipart</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServerMultipart.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/transazioni/pages/form/dettaglioDumpMultipart.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>dettaglioDump</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettaglioDump.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettagliMessaggio</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServerMultipart.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>dettaglioDump</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettagliConsegna</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliTransazioneApplicativoServer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettagliMessaggio</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

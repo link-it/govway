@@ -750,9 +750,9 @@ public class SummaryBean implements Serializable{
 					bar.put(CostantiGrafici.OK_KEY, ok_array[i]);
 					bar.put(CostantiGrafici.FAULT_KEY, fault_array[i]);
 					bar.put(CostantiGrafici.ERRORE_KEY, error_array[i]);
-					bar.put(CostantiGrafici.OK_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.OK_LABEL + ", "+ labelArray[i] + ", " + ok_array[i]);
-					bar.put(CostantiGrafici.FAULT_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.FAULT_LABEL + ", "+ labelArray[i] + ", " + fault_array[i]);
-					bar.put(CostantiGrafici.ERRORE_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.ERRORE_LABEL + ", "+ labelArray[i] + ", " + error_array[i]);
+					bar.put(CostantiGrafici.OK_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.OK_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(ok_array[i]));
+					bar.put(CostantiGrafici.FAULT_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.FAULT_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(fault_array[i]));
+					bar.put(CostantiGrafici.ERRORE_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.ERRORE_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(error_array[i]));
 
 					dati.add(bar);
 				}
