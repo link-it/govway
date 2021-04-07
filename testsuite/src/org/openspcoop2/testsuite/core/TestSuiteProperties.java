@@ -22,6 +22,7 @@
 
 package org.openspcoop2.testsuite.core;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -170,7 +171,46 @@ public class TestSuiteProperties {
 		}
 	}
 
+	public int getDumpRequestThresholdRequestDump(){
+		try{
+			String value = this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_REQUEST_DUMP_IN_MEMORY_THRESHOLD);
+			if(value!=null) {
+				return Integer.valueOf(value.trim());
+			}
+			return -1;
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_REQUEST_DUMP_IN_MEMORY_THRESHOLD+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return -1;
+		}
+	}
 	
+	public File getDumpRequestRepository(){
+		try{
+			String repoDump = this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_REQUEST_DUMP_MSG_REPOSITORY);
+			if(repoDump!=null) {
+				repoDump = repoDump.trim();
+				File f = new File(repoDump);
+				if(f.exists()==false) {
+					if(f.mkdir()==false) {
+						throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property '"+CostantiTestSuite.PROPERTY_REQUEST_DUMP_MSG_REPOSITORY+"' not exists");
+					}
+				}
+				if(f.isDirectory()==false) {
+					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property '"+CostantiTestSuite.PROPERTY_REQUEST_DUMP_MSG_REPOSITORY+"' is not directory");
+				}
+				if(f.canRead()==false) {
+					throw new Exception("Directory ["+f.getAbsolutePath()+"] defined in property '"+CostantiTestSuite.PROPERTY_REQUEST_DUMP_MSG_REPOSITORY+"' cannot read");
+				}
+				return f;
+			}
+			return null;
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_REQUEST_DUMP_MSG_REPOSITORY+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
 	
 	
 	/* ********  HEADER RISPOSTA  ******** */

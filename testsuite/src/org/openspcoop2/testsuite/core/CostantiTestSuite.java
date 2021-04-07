@@ -69,6 +69,9 @@ public class CostantiTestSuite {
 	/** Proprieta' del tracciamento is arrived sul database tracciamento */
 	public static final String PROPERTY_IS_ARRIVED = "org.openspcoop2.testsuite.server.database.tracciamentoIsArrived";
 	
+	public static final String PROPERTY_REQUEST_DUMP_IN_MEMORY_THRESHOLD = "org.openspcoop2.testsuite.server.requestDump.inMemory.threshold";
+	public static final String PROPERTY_REQUEST_DUMP_MSG_REPOSITORY = "org.openspcoop2.testsuite.server.requestDump.msgRepository";
+	
 	/** Proprieta' del caricamento MAILCAP */
 	public static final String PROPERTY_MAILCAP = "org.openspcoop2.testsuite.server.mailcap.load";
 	

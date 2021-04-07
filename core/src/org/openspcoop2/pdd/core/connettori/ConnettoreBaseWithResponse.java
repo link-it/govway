@@ -94,7 +94,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			this.logger.info("Stream di risposta (return-code:"+this.codice+") is null",true);
 		}
 		
-		if(this.useTimeoutInputStream) {
+		if(this.isResponse!=null && this.useTimeoutInputStream) {
 			if(timeout>0) {
 				this.isResponse = new TimeoutInputStream(this.isResponse, timeout, 
 						CostantiPdD.PREFIX_TIMEOUT_RESPONSE,

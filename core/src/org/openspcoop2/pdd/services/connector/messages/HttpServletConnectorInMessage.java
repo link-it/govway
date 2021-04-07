@@ -125,7 +125,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		this.requestReadTimeout = timeout;
 	}
 	private InputStream buildTimeoutInputStream() throws IOException {
-		if(this.requestReadTimeout>0) {
+		if(this.is!=null && this.requestReadTimeout>0) {
 			this.is = new TimeoutInputStream(this.is, this.requestReadTimeout,
 					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
 					this.context!=null ? this.context.getContext() : null);

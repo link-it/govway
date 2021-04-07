@@ -119,9 +119,10 @@ public class ServletTestService extends HttpServlet {
 			thresholdRequestDump, repositoryRequestDump,
 			repositoryResponseFiles, null, false);
 	}
-	public ServletTestService(Logger log){
+	public ServletTestService(Logger log,
+			int thresholdRequestDump, File repositoryRequestDump){
 		this(log, 
-			-1, null,
+			thresholdRequestDump, repositoryRequestDump,
 			null, null, false);
 	}
 	
@@ -1481,7 +1482,9 @@ public class ServletTestService extends HttpServlet {
 			}
 		}finally {
 			try {
-				dumpByteArrayOutputStreamRichiesta.clearResources();
+				if(dumpByteArrayOutputStreamRichiesta!=null) {
+					dumpByteArrayOutputStreamRichiesta.clearResources();
+				}
 			}catch(Throwable t) {
 				this.log.error("TestService (cleanResources): "+t.getMessage(),t);
 			}

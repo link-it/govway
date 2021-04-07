@@ -61,7 +61,8 @@ public class ServerOpenSPCoop2EchoService extends ServerCore{
 
 	public void engine(HttpServletRequest request,HttpServletResponse response, Properties pHeaderRisposta) throws IOException, ServletException{
 		
-		ServletTestService servlet = new ServletTestService(this.log);
+		ServletTestService servlet = new ServletTestService(this.log, 
+				this.testsuiteProperties.getDumpRequestThresholdRequestDump(), this.testsuiteProperties.getDumpRequestRepository());
 		servlet.doEngine(request, response, false, pHeaderRisposta);
 		
 		try{
