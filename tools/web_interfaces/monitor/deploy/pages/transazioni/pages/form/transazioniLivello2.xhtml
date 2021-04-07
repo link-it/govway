@@ -8,11 +8,16 @@ xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:link="http://www.link.it"
 	xmlns:c="http://java.sun.com/jstl/core">
 		
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText id="msgLabelRicercaSceltaDiag" value="#{searchFormTransazioni.tipoStoricoLivello2Label}" styleClass="ultimo-path"/></li>
+		</ul>	
+	</ui:define>
 	<ui:define name="body">
-		<style>
-			#crumbs {display: none;	}		
-			}
-		</style>
 		<a4j:keepAlive beanName="transazioniBean" />
 		<rich:panel id="transazioniSearch" >
 		    <f:facet name="header">
@@ -20,7 +25,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 		    </f:facet>
 		    <div class="form-container noborder">
 				<h:form prependId="false">
-					<c:forEach items="#{transazioniBean.tipiStorico}" var="gruppoStorico">
+					<c:forEach items="#{transazioniBean.tipiStoricoLivello2}" var="gruppoStorico">
 						<link:fieldset legend="#{gruppoStorico.label}" rendered="#{true}" collapsible="false" closed="false">
 							<div class="tipologie">
 								<c:forEach items="#{gruppoStorico.listaStorico}" var="tipoStorico">

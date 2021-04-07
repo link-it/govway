@@ -61,6 +61,7 @@ public class ContentAuthorizationCostanti {
 		// Transazioni
 		"/transazioni/pages/list/transazioni.jsf",
 		"/transazioni/pages/form/transazioni.jsf",
+		"/transazioni/pages/form/transazioniLivello2.jsf",
 		
 		// Esiti Live
 		"/transazioni/pages/form/esitiLive.jsf",
@@ -109,6 +110,7 @@ public class ContentAuthorizationCostanti {
 		"/commons/pages/about.jsf",
 		"/transazioni/pages/list/transazioni.jsf",
 		"/transazioni/pages/form/transazioni.jsf",
+		"/transazioni/pages/form/transazioniLivello2.jsf",
 		"/transazioni/pages/form/dettagliMessaggio.jsf",
 		"/transazioni/pages/form/dettagliMessaggioTab.jsf",
 		"/transazioni/pages/form/dettaglioDump.jsf",
@@ -170,6 +172,7 @@ public class ContentAuthorizationCostanti {
 		// Monitoraggio
 		{"/transazioni/pages/list/transazioni.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/transazioni.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/transazioniLivello2.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/dettagliMessaggio.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/dettagliMessaggioTab.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/dettaglioDump.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},

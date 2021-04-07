@@ -28,6 +28,9 @@ package org.openspcoop2.web.monitor.transazioni.constants;
  *
  */
 public class TransazioniCostanti {
+	
+	public static final String NOME_ACTION_RICERCA = "transazioni";
+	public static final String NOME_ACTION_RICERCA_LVL2 = "transazioni_lvl2";
 
 	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
 	public final static Integer NUMERO_GRUPPI_CSS = 30;
@@ -79,7 +82,15 @@ public class TransazioniCostanti {
 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.icona"; 
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.breadcrumb"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.breadcrumb";
+	
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaBase.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaBase.icona"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_BREADCRUMB_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaBase.breadcrumb";
+	
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaLibera.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaLibera.icona"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_BREADCRUMB_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoApplicativo.lvl2.ricercaLibera.breadcrumb";
 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoMessaggio.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoMessaggio.icona"; 

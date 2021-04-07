@@ -129,6 +129,7 @@ Context, Cloneable {
 
 	private static String default_modalitaRicercaStorico = ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE.getValue();
 	private String modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
+	private int livelloRicerca = ModalitaRicercaTransazioni.getLivello(this.modalitaRicercaStorico);
 	
 	private boolean integrationManagerEnabled = false;
 	
@@ -153,6 +154,7 @@ Context, Cloneable {
 			this.setUseCount(pddMonitorProperties.isAttivoUtilizzaCountStoricoTransazioni()); 
 			
 			this.modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
+			this.setLivelloRicerca(ModalitaRicercaTransazioni.getLivello(this.modalitaRicercaStorico));
 			
 			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
 			
@@ -184,6 +186,7 @@ Context, Cloneable {
 			this.setUseCount(pddMonitorProperties.isAttivoUtilizzaCountStoricoTransazioni()); 
 			
 			this.modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
+			this.setLivelloRicerca(ModalitaRicercaTransazioni.getLivello(this.modalitaRicercaStorico));
 			
 			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
 			
@@ -380,6 +383,7 @@ Context, Cloneable {
 				setProtocollo(Costanti.VALUE_PARAMETRO_MODALITA_ALL); // default: tutti
 			}
 		}
+		this.setLivelloRicerca(ModalitaRicercaTransazioni.getLivello(this.modalitaRicercaStorico));
 	}
 	
 	public boolean isRicercaLiberaTuttiProfili() {
@@ -407,12 +411,27 @@ Context, Cloneable {
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_BREADCUMP_KEY);
 				
 			case ID_APPLICATIVO_BASE:
-				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY);
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_BREADCRUMB_KEY);
 			case ID_APPLICATIVO_AVANZATA:
-				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY);
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_BREADCRUMB_KEY);
 			case ID_MESSAGGIO:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_BREADCUMP_KEY);
 			case ID_TRANSAZIONE:
+			default:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_BREADCUMP_KEY);
+			}
+		}
+		
+		return "Visualizza Transazioni";
+	}
+	
+	public String getTipoStoricoLivello2Label() {
+		if(this.getModalitaRicercaStorico() != null) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			switch (t) { 
+			case ID_APPLICATIVO_BASE:
+			case ID_APPLICATIVO_AVANZATA:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY);
 			default:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_BREADCUMP_KEY);
 			}
@@ -1467,6 +1486,14 @@ Context, Cloneable {
 		} else {
 			super.initStatoFiltroRicerca();
 		}
+	}
+
+	public int getLivelloRicerca() {
+		return this.livelloRicerca;
+	}
+
+	public void setLivelloRicerca(int livelloRicerca) {
+		this.livelloRicerca = livelloRicerca;
 	}
 	
 }

@@ -69,4 +69,25 @@ public enum ModalitaRicercaTransazioni {
 		return res;
 	}
 	
+	
+	public static int getLivello(String modalita) {
+		ModalitaRicercaTransazioni modalitaEnum = getFromString(modalita); 
+		switch (modalitaEnum) {
+			case ANDAMENTO_TEMPORALE:
+			case ID_MESSAGGIO:
+			case ID_TRANSAZIONE:
+			case MITTENTE_APPLICATIVO:
+			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+			case MITTENTE_INDIRIZZO_IP:
+			case MITTENTE_SOGGETTO:
+			case MITTENTE_TOKEN_INFO:
+			case RICERCA_LIBERA:
+				return 1;
+			case ID_APPLICATIVO_AVANZATA:
+			case ID_APPLICATIVO_BASE:
+				return 2;
+		}
+		
+		return 1;
+	}
 }

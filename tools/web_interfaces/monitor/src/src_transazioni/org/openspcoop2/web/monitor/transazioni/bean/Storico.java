@@ -22,6 +22,7 @@ package org.openspcoop2.web.monitor.transazioni.bean;
 import java.io.Serializable;
 
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
+import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
 
 /**
  * Storico
@@ -44,17 +45,25 @@ public class Storico implements Serializable {
 
 	private ModalitaRicercaTransazioni modalitaRicercaStorico;
 	private boolean rendered;
+	private String action;
+	private int livello;
 	
 	public Storico(String value, String label, ModalitaRicercaTransazioni modalitaRicercaStorico, String icona) {
-		this(value, label, modalitaRicercaStorico, true, icona);
+		this(value, label, modalitaRicercaStorico, true, icona, 1);
 	}
 	
-	public Storico(String value, String label, ModalitaRicercaTransazioni modalitaRicercaStorico, boolean rendered, String icona) {
+	public Storico(String value, String label, ModalitaRicercaTransazioni modalitaRicercaStorico, String icona, int livello) {
+		this(value, label, modalitaRicercaStorico, true, icona, livello);
+	}
+	
+	public Storico(String value, String label, ModalitaRicercaTransazioni modalitaRicercaStorico, boolean rendered, String icona, int livello) {
 		this.label = label;
 		this.value = value;
 		this.rendered = rendered;
 		this.modalitaRicercaStorico = modalitaRicercaStorico;
 		this.icona = icona;
+		this.action = TransazioniCostanti.NOME_ACTION_RICERCA;
+		this.livello = livello;
 	}
 
 	public String getLabel() {
@@ -75,5 +84,19 @@ public class Storico implements Serializable {
 	
 	public String getModalitaRicercaStorico() {
 		return this.modalitaRicercaStorico.getValue();
+	}
+	public void setAction(String action) {
+		this.action = action;
+	}
+	
+	public String action() {
+		return this.action;
+	}
+	
+	public void setLivello(int livello) {
+		this.livello = livello;
+	}
+	public int getLivello() {
+		return this.livello;
 	}
 }
