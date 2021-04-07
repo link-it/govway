@@ -2357,6 +2357,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
 			ApiApiHelper.validateProperties(env, updateModiProtocolProperties, idAccordoFromAccordo);
 			
+			if(updateModiProtocolProperties != null) {
+				as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(updateModiProtocolProperties, ConsoleOperationType.ADD, null));
+			}
+
+			env.apcCore.performUpdateOperation(env.userLogin, false, as);
+
 			context.getLogger().info("Invocazione completata con successo");
 		}
 		catch(javax.ws.rs.WebApplicationException e) {

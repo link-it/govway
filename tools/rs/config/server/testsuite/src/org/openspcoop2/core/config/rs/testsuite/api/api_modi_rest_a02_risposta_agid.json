@@ -12,7 +12,9 @@
 			"pattern" : "auth02"
 		},
 	  "sicurezza_messaggio" : {
-    	"pattern" : "disabilitato"
+    	"pattern" : "auth02",
+    	"applicabilita" : "risposta",
+    	"rest_header" : "agid"
     	}
 	}
 	
