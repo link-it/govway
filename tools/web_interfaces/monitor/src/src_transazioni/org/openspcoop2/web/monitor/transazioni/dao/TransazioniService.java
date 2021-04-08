@@ -3686,4 +3686,139 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 	}
+	
+	
+	@Override
+	public Long getContentLengthMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) {
+		try {
+
+			this.log.info("getContentLengthMessaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: " + tipoMessaggio.toString() + "]");
+
+			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
+			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			if(dataConsegnaErogatore != null) {
+				expr.equals(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, dataConsegnaErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
+			
+			//			IExpression orExpr = this.dumpMessaggioSearchDAO.newExpression();
+
+			//			orExpr.isNotNull(DumpMessaggio.model().ENVELOPE);
+			//			
+			//					
+			//			orExpr.or().isNotEmpty(DumpMessaggio.model().ALLEGATO.ID_ALLEGATO);
+			//			orExpr.or().isNotEmpty(DumpMessaggio.model().CONTENUTO.NOME);
+			//
+			//			expr.and(orExpr);
+
+			IPaginatedExpression pagExpr = this.dumpMessaggioSearchDAO.toPaginatedExpression(expr);
+			
+			// cerco solo un risultato
+			pagExpr.offset(0).limit(1);
+			
+			List<Object> select = this.dumpMessaggioSearchDAO.select(pagExpr, DumpMessaggio.model().CONTENT_LENGTH);
+			
+			if(select == null || select.isEmpty())
+				return null;
+						
+			Object obj = select.get(0);
+			
+			if(obj instanceof Long)
+				return (Long) obj;
+		}  catch (NotFoundException e) {
+			this.log.debug("non sono state trovate informazioni Dump per [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
+		
+			try{
+				// provo a vedere se esiste virtualmente grazie all'SDK
+				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
+				if(mes!=null){
+					return mes.getContentLength();
+				}
+			}catch (Exception eVirtual) {
+				this.log.error(
+						"Errore durante la costruzione virtuale del messaggio (hasInfoDumpAvailable) [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
+			}
+		}catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+		}
+
+		return null;
+	}
+	
+	@Override
+	public String getContentTypeMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) {
+		try {
+
+			this.log.info("getContentTypeMessaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: " + tipoMessaggio.toString() + "]");
+
+			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
+			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			if(dataConsegnaErogatore != null) {
+				expr.equals(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, dataConsegnaErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
+			
+			//			IExpression orExpr = this.dumpMessaggioSearchDAO.newExpression();
+
+			//			orExpr.isNotNull(DumpMessaggio.model().ENVELOPE);
+			//			
+			//					
+			//			orExpr.or().isNotEmpty(DumpMessaggio.model().ALLEGATO.ID_ALLEGATO);
+			//			orExpr.or().isNotEmpty(DumpMessaggio.model().CONTENUTO.NOME);
+			//
+			//			expr.and(orExpr);
+
+			IPaginatedExpression pagExpr = this.dumpMessaggioSearchDAO.toPaginatedExpression(expr);
+			
+			// cerco solo un risultato
+			pagExpr.offset(0).limit(1);
+			
+			List<Object> select = this.dumpMessaggioSearchDAO.select(pagExpr, DumpMessaggio.model().CONTENT_TYPE);
+			
+			if(select == null || select.isEmpty())
+				return null;
+						
+			Object obj = select.get(0);
+			
+			if(obj instanceof String)
+				return (String) obj;
+		}  catch (NotFoundException e) {
+			this.log.debug("non sono state trovate informazioni Dump per [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
+		
+			try{
+				// provo a vedere se esiste virtualmente grazie all'SDK
+				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
+				if(mes!=null){
+					return mes.getContentType();
+				}
+			}catch (Exception eVirtual) {
+				this.log.error(
+						"Errore durante la costruzione virtuale del messaggio (getContentTypeMessaggio) [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
+			}
+		}catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+		}
+
+		return null;
+	}
 }

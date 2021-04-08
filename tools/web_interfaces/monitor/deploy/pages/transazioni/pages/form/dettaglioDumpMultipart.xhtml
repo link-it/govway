@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:link="http://www.link.it">
+
+<ui:composition template="/templates/defaultTemplate.xhtml">
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16" rendered="#{searchFormTransazioni.periodo != 'Live'}"/></li>
+			<a4j:outputPanel rendered="#{searchFormTransazioni.periodo != 'Live' and searchFormTransazioni.livelloRicerca == 2}">
+				<li>
+					<a4j:htmlCommandLink action="transazioni_lvl2"  rendered="#{searchFormTransazioni.livelloRicerca == 2}" value="#{searchFormTransazioni.tipoStoricoLivello2Label}">
+						<f:setPropertyActionListener value="#{searchFormTransazioni.modalitaRicercaStorico}" target="#{transazioniBean.tipoStorico}" />
+					</a4j:htmlCommandLink>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			</a4j:outputPanel>
+			<li>
+				<a4j:htmlCommandLink action="transazioniList" value="#{searchFormTransazioni.tipoStoricoLabel}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+				<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}"/>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<a4j:htmlCommandLink id="dettagliTransazione" action="dettagliMessaggio" value="Dettagli Transazione">
+					<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+				</a4j:htmlCommandLink>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><a4j:htmlCommandLink id="dettaglioDumpBreadCrumb" action="dettaglioDump" value="#{dettagliDump.titoloPagina}">
+					<f:setPropertyActionListener value="#{dettagliDump.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+          			<f:setPropertyActionListener value="#{dettagliDump.tipoMessaggio}" target="#{dettagliDump.tipoMessaggio}"/>
+                   	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                   	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+				</a4j:htmlCommandLink>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText styleClass="ultimo-path" id="dettaglioDump" value="Contenuti Multipart" /></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="dettagliBean" />
+		<a4j:keepAlive beanName="dettagliDump" />
+		<a4j:keepAlive beanName="dettagliDumpMultipart" />
+		<a4j:loadScript src="/scripts/XRegExp.js" />
+		<a4j:loadScript src="/scripts/shCore.js" />
+		<a4j:loadScript src="/scripts/shBrushXml.js" />
+		<a4j:loadScript src="/scripts/shBrushJson.js" />
+		<a4j:loadStyle src="resource:///css/shCore.css" />
+		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
+		<script type="text/javascript">
+		//<![CDATA[
+			if(#{dettagliDumpMultipart.visualizzaMessaggio}){
+			   var xmlPnl = jQuery("#xmlPnl"); 
+			   var bodyWrapperPanel = jQuery("#bodyWrapper");
+			   jQuery(window).resize(function(){lineWrap()});
+			   jQuery(document).ready(inizializza);
+			   
+			   SyntaxHighlighter.all();
+			   lineWrap();
+			   
+			   function inizializza(){
+				   checkWidth(xmlPnl,bodyWrapperPanel);
+				   lineWrap();
+			   }
+			}
+			 //]]>
+		</script>
+		
+		<rich:panel id="xmlPnl" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio}">
+			<f:facet name="header">
+				<h:outputText id="outXml" value="Contenuti Multipart"/>
+			</f:facet>
+			
+			<link:fieldset legend="Informazioni Generali" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio and (not empty dettagliDumpMultipart.dumpMessaggio.body or (dettagliDumpMultipart.dumpMessaggioLength>0) )}" collapsible="false" closed="false">
+				<h:panelGrid id="panelGridInfoGenerali" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelContentTypeIG" value="Content-Type" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio.contentType}"/>
+					<h:outputText id="outContentTypeIG" value="#{dettagliDumpMultipart.dumpMessaggio.contentType}" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio.contentType}"/>
+			
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelContentLengthIG" value="Content-Length" rendered="#{dettagliDumpMultipart.dumpMessaggioLength>0}"/>
+					<h:outputText id="outContentLengthIG" value="#{dettagliDumpMultipart.dumpMessaggioLength}" rendered="#{dettagliDumpMultipart.dumpMessaggioLength>0}" converter="fileSizeConverter"/>
+				</h:panelGrid>
+			</link:fieldset>
+			
+			<rich:spacer id="spacerInfoGenerali" height="10px" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio and (not empty dettagliDumpMultipart.dumpMessaggio.body or (dettagliDumpMultipart.dumpMessaggioLength>0) )}"/>
+			
+			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio and (not empty dettagliDumpMultipart.dumpMessaggio.body or (dettagliDumpMultipart.dumpMessaggioLength>0) )}" collapsible="false" closed="false">
+				<h:form id="formMessaggioDump">
+					<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnl2" rendered="#{dettagliDumpMultipart.visualizzaMessaggio}">
+						<pre class="brush: #{dettagliDumpMultipart.brush}; toolbar: false;">#{dettagliDumpMultipart.prettyEnvelop}</pre>
+					</a4j:outputPanel>
+					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliDumpMultipart.visualizzaMessaggio}">
+						<h:outputText id="outErroreVisualizza" value="#{dettagliDumpMultipart.erroreVisualizzaMessaggio}"/>
+					</a4j:outputPanel>
+					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio.body or (dettagliDumpMultipart.dumpMessaggioLength>0)}">
+			      		<a4j:outputPanel layout="block" styleClass="#{dettagliDumpMultipart.visualizzaMessaggio ? 'buttonrowlista' : 'buttonrowlistaLeft'}">
+			      			 <a4j:htmlCommandLink id="body-iconLink" action="#{dettagliDumpMultipart.downloadMessaggio}" styleClass="icon-compress" target="_blank" value="Download"/>
+			      		</a4j:outputPanel>
+			      	</a4j:outputPanel>
+				</h:form>
+			</link:fieldset>
+			
+			<rich:spacer id="spacer1" height="10px" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio and not empty dettagliDumpMultipart.dumpMessaggio.body and not empty dettagliDumpMultipart.allegati}"/>
+			
+			<link:fieldset legend="Allegati" rendered="#{not empty dettagliDumpMultipart.allegati}" collapsible="false" closed="false">
+				<h:form id="formDettagliDump">
+						<rich:dataTable 
+							value="#{dettagliDumpMultipart.allegati}"
+							var="allegato"
+							id="table"
+							width="100%"
+							rowClasses="even, odd">
+							<rich:column id="colTipo">
+								<f:facet name="header">
+									<h:outputText id="outTipo1" value="Tipo" />
+								</f:facet>
+								<h:outputText id="outTipo2" value="#{allegato.contentType}" />
+							</rich:column>
+							<rich:column id="colDimensione">
+								<f:facet name="header">
+									<h:outputText id="outDimensione1" value="Dimensione" />
+								</f:facet>
+								<h:outputText id="outDimensione2" value="#{allegato.content}" >
+									<f:converter converterId="fileSizeConverter"/>
+								</h:outputText>
+							</rich:column>
+							<rich:column id="colDownload">
+								<a4j:htmlCommandLink id="iconLink" title="#{allegato.contentId}" action="#{dettagliDumpMultipart.download}" target="_blank"  value="Download">
+									<f:setPropertyActionListener value="#{allegato}" target="#{dettagliDumpMultipart.selectedAttachment}" />
+									<f:setPropertyActionListener value="#{dettagliDumpMultipart.tipoMessaggio}" target="#{dettagliDumpMultipart.tipoMessaggio}" />
+									<f:setPropertyActionListener value="false" target="#{dettagliDumpMultipart.base64Decode}" />
+								</a4j:htmlCommandLink>
+								<h:outputLabel value="&#160;&#160;" />
+								<a4j:htmlCommandLink id="iconLink2" title="#{allegato.contentId}" action="#{dettagliDumpMultipart.download}" 
+									target="_blank"  value="[Decodifica Base64]"
+									rendered="#{allegato.base64}">
+									<f:setPropertyActionListener value="#{allegato}" target="#{dettagliDumpMultipart.selectedAttachment}" />
+									<f:setPropertyActionListener value="#{dettagliDumpMultipart.tipoMessaggio}" target="#{dettagliDumpMultipart.tipoMessaggio}" />
+									<f:setPropertyActionListener value="true" target="#{dettagliDumpMultipart.base64Decode}" />
+								</a4j:htmlCommandLink>							
+							</rich:column>
+						</rich:dataTable>
+						<a4j:outputPanel layout="block" styleClass="buttonrow">
+				      		<div class="buttonrowlista">
+				      			 <a4j:htmlCommandLink id="all-iconLink" action="#{dettagliDumpMultipart.downloadAll}" styleClass="icon-compress" target="_blank" value="Download All"/>
+				      		</div>
+				      	</a4j:outputPanel>
+				</h:form>
+			</link:fieldset>
+		</rich:panel>
+	</ui:define>
+</ui:composition>
+
+</html>

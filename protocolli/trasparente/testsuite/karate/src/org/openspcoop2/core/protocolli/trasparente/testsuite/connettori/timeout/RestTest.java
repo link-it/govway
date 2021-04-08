@@ -245,7 +245,12 @@ public class RestTest extends ConfigLoader {
 	public void erogazione_connessioneCLientInterrotta() throws Exception {
 		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
 		String idApplicativoClaim = "\"identificativoApplicativo\":\""+idApplicativo+"\"";
-		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE, idApplicativoClaim).getBytes(),
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, 
+				Bodies.getJson(
+						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat9 non vale piu' socketBuffer=-1 
+						// Per adesso si usa un messaggio maggiore della dimensione di 8k in modo da andare "fuori" buffer
+						Bodies.SIZE_50K, 
+						idApplicativoClaim).getBytes(),
 				"connessioneClientInterrotta", "connessioneClientInterrotta", "Broken pipe",
 				false,
 				idApplicativo);
@@ -254,7 +259,12 @@ public class RestTest extends ConfigLoader {
 	public void fruizione_connessioneCLientInterrotta() throws Exception {
 		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
 		String idApplicativoClaim = "\"identificativoApplicativo\":\""+idApplicativo+"\"";
-		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.SMALL_SIZE, idApplicativoClaim).getBytes(),
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, 
+				Bodies.getJson(
+						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat9 non vale piu' socketBuffer=-1 
+						// Per adesso si usa un messaggio maggiore della dimensione di 8k in modo da andare "fuori" buffer
+						Bodies.SIZE_50K, 
+						idApplicativoClaim).getBytes(),
 				"connessioneClientInterrotta", "connessioneClientInterrotta", "Broken pipe",
 				false,
 				idApplicativo);

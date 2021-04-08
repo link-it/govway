@@ -913,6 +913,8 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dettaglio.utilizzaVisualizzazioneCustomConsegneMultiple.enabled", true, true));
 	}
 	
+	// Acceduta da ApplicationProperties
+	@Deprecated
 	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws Exception{
 		return Integer.valueOf(this.appProperties.getProperty("transazioni.dettaglio.visualizzazioneMessaggi.threshold", true, true));
 	}

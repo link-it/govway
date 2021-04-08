@@ -80,25 +80,31 @@ dei dati esportati:
 
 -  *contenuti*
 
-   -  *richiesta*
+   Vengono inseriti in questa directory i contenuti registrati dal Gateway che possono interessare i seguenti messaggi:
 
-      -  *header.xml*: header HTTP riguardante la gestione del messaggio
-         di richiesta
+   -  *dati_richiesta_ingresso*
+   -  *dati_richiesta_uscita*
+   -  *dati_risposta_ingresso*
+   -  *dati_risposta_uscita*
+   
+   Per ogni tipo di messaggio sono presenti le seguenti informazioni:
 
-      -  *envelope.xml*: SOAPEnvelope del messaggio di richiesta
+   -  *manifest.txt*: informazioni principali sul messaggio (Content-Type, Content-Length ...)
+   -  *headers.txt*: header HTTP associati alla richiesta in ingresso
+   -  *message.bin*: payload della richiesta (l'estensione del file varierà in funzione del Content-Type)
 
-      -  *allegati*: eventuali allegati presenti nel messaggio di
-         richiesta
+-  *consegne*
 
-   -  *risposta*
+   In caso di consegne con connettori multipli saranno presenti una directory per ogni connettore contenente:
 
-      -  *header.xml*: header HTTP riguardante la gestione del messaggio
-         di risposta
+   -  *manifest-xml*: contiene i dati descrittivi del connettore
+   -  *diagnostici.xml*: diagnostica relativa alla consegna verso il connettore
+   -  *contenuti*: vengono inseriti in questa directory gli eventuali contenuti registrati dal Gateway che possono interessare le seguenti comunicazioni:
 
-      -  *envelope.xml*: SOAPEnvelope del messaggio di risposta
-
-      -  *allegati*: eventuali allegati presenti nel messaggio di
-         risposta
+      -  *dati_richiesta_uscita*
+      -  *dati_risposta_ingresso*
+   
+      Per ogni tipo di messaggio sono presenti le medesime informazioni descritte in precedenza per i contenuti (*manifest.txt*, *headers.txt* e *message.bin*).
 
 .. figure:: ../_figure_monitoraggio/EsportaTransazioni.png
     :scale: 100%
@@ -106,5 +112,6 @@ dei dati esportati:
     :name: mon_esportaTransazioni_fig
 
     Struttura dello ZIP di esportazione delle transazioni
+
 
 

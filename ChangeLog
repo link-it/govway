@@ -1,3 +1,10 @@
+2021-04-07  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayMonitor]
+	Aggiunta funzionalità OP-1171
+	Aggiunto supporto per la visualizzazione del contenuto multipart sulla console di monitoraggio.
+	Corretto formato delle label dell'asse Y dei grafici: aggiunto separatore delle migliaia per una migliore visualizzazione delle label.
+
 2021-04-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

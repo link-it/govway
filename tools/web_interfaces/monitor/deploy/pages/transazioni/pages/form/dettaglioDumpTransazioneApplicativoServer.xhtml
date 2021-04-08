@@ -89,6 +89,19 @@
 				<h:outputText id="outXml" value="#{dettagliDump.titoloPagina}"/>
 			</f:facet>
 			
+			<link:fieldset legend="Informazioni Generali" rendered="#{not empty dettagliDump.dumpMessaggio and (not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0) )}" collapsible="false" closed="false">
+				<h:panelGrid id="panelGridInfoGenerali" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelContentTypeIG" value="Content-Type" rendered="#{not empty dettagliDump.dumpMessaggio.contentType}"/>
+					<h:outputText id="outContentTypeIG" value="#{dettagliDump.dumpMessaggio.contentType}" rendered="#{not empty dettagliDump.dumpMessaggio.contentType}"/>
+			
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelContentLengthIG" value="Content-Length" rendered="#{not empty dettagliDump.dumpMessaggio.contentLength}"/>
+					<h:outputText id="outContentLengthIG" value="#{dettagliDump.dumpMessaggio.contentLength}" rendered="#{not empty dettagliDump.dumpMessaggio.contentLength}" converter="fileSizeConverter"/>
+				</h:panelGrid>
+			</link:fieldset>
+			
+			<rich:spacer id="spacerInfoGenerali" height="10px" rendered="#{not empty dettagliDump.dumpMessaggio and (not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0) )}"/>
+		
+			
 			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDump.dumpMessaggio and (not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0) )}" collapsible="false" closed="false">
 				<h:form id="formMessaggioDump">
 					<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnl2" rendered="#{dettagliDump.visualizzaMessaggio}">
@@ -99,7 +112,41 @@
 					</a4j:outputPanel>
 					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0)}">
 			      		<a4j:outputPanel layout="block" styleClass="#{dettagliDump.visualizzaMessaggio ? 'buttonrowlista' : 'buttonrowlistaLeft'}">
-			      			 <a4j:htmlCommandLink id="body-iconLink" action="#{dettagliDump.downloadMessaggio}" styleClass="icon-compress" target="_blank" value="Download"/>
+			      			 <a4j:htmlCommandLink id="body-iconLink" action="#{dettagliDump.downloadMessaggio}" styleClass="icon-compress" target="_blank" value="Download" rendered="#{not dettagliDump.visualizzaContenutiMultipartButton}"/>
+			      			 
+			      			 <a4j:htmlCommandLink id="bodyMultipart-iconLink" styleClass="icon-compress" value="Download" rendered="#{dettagliDump.visualizzaContenutiMultipartButton}"
+			      				 onclick="preparaFormModale('#{dettagliDump.tipoMessaggio}'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
+			      			 </a4j:htmlCommandLink>
+			      			 
+			      			 <a4j:htmlCommandLink id="visualizzaContentutiMultipartBtn"
+                   						 styleClass="icon-compress"
+                   						 value="Visualizza Contenuti Multipart"
+                   						 rendered="#{dettagliDump.visualizzaContenutiMultipartButton}"
+                   						 action="dettaglioDumpMultipart">
+		                   		
+		                   		<f:setPropertyActionListener value="#{dettagliDump.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliDump.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliDump.protocollo}" target="#{dettagliDump.protocollo}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliDump.tipoMessaggio}" target="#{dettagliDump.tipoMessaggio}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliDump.ultimaConsegna}" target="#{dettagliDump.ultimaConsegna}"/>
+		                    	
+		                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+		                    	
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+		                    	
+		                    	<f:setPropertyActionListener value="#{dettagliDump.idTransazione}" target="#{dettagliDumpMultipart.idTransazione}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliDump.servizioApplicativoErogatore}" target="#{dettagliDumpMultipart.servizioApplicativoErogatore}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliDump.protocollo}" target="#{dettagliDumpMultipart.protocollo}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliDump.tipoMessaggio}" target="#{dettagliDumpMultipart.tipoMessaggio}"/>
+		                   		<f:setPropertyActionListener value="#{dettagliDump.ultimaConsegna}" target="#{dettagliDumpMultipart.ultimaConsegna}"/>
+		                   	</a4j:htmlCommandLink>
 			      		</a4j:outputPanel>
 			      	</a4j:outputPanel>
 				</h:form>
@@ -193,6 +240,68 @@
 				</rich:dataTable>
 			</link:fieldset>
 		</rich:panel>
+		
+		<a4j:outputPanel layout="block" ajaxRendered="false">
+			<a4j:jsFunction name="preparaFormModale" reRender="panelFormExportContainer" actionListener="#{dettagliTransazioneApplicativoServerBean.initExportListener}" limitToList="true">
+				<a4j:actionparam name="param1" assignTo="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"  />
+	       	</a4j:jsFunction>
+	   	</a4j:outputPanel>
+		
+		<rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" style="overflow:auto;" autosized="true">
+		<f:facet name="header">
+			<h:outputText id="esportaModalPnlHeaderText" value="Esporta" />
+		</f:facet>
+		<f:facet name="controls">	
+			<h:panelGroup id="panelChiudiExport">
+                <h:graphicImage value="/images/tema_link/clear_white.png" id="hidelinkplugin"/>
+                <rich:componentControl id="componentPlugin" for="esportaModalPnl" attachTo="hidelinkplugin" operation="hide" event="onclick"/>
+            </h:panelGroup>
+		</f:facet>
+		<a4j:outputPanel id="fileExportCsvCtr" ajaxRendered="true">
+			<h:panelGroup  styleClass="errors" layout="block" rendered="#{false}">
+					<h:panelGroup rendered="#{false}">
+							<p>
+								<em>
+									<h:outputText value="Si sono verificati degli errori:"/>
+								</em>
+							</p>
+						<div class="errorsSpacer"/>
+						</h:panelGroup>
+					<div class="errorsSpacer"/>
+							<rich:messages id="errorExportCsvMessages">
+							</rich:messages>
+					<h:outputText id="esportaErrors"  
+						value="No Error"
+						rendered="#{false}" />
+			</h:panelGroup>
+		</a4j:outputPanel>
+		<a4j:outputPanel layout="block" rendered="false">
+		<p class="legend">
+			<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+		</p>
+		</a4j:outputPanel>
+		<h:form id="formExportReport" prependId="false">
+			<a4j:outputPanel layout="block" id="panelFormExportContainer" ajaxRendered="false">
+				<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
+				<div class="form-container noborder"> 
+					<link:fieldset legend="Modalità" collapsible="false">
+						<link:prop label="Estrai Contenuti Multipart">
+							<a4j:outputPanel styleClass="form-container" layout="block">
+								<h:selectBooleanCheckbox id="esportazioniChk"
+										styleClass="controlset"  
+										value="#{dettagliTransazioneApplicativoServerBean.exportContenutiMultipart}" />
+							</a4j:outputPanel>
+						</link:prop>
+					</link:fieldset>
+					<div class="buttonrowmodal">
+						<a4j:htmlCommandLink id="esportaCsvButton-iconLink" styleClass="icon-csv positive" target="_blank" title="Esporta"
+						 value="Esporta" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}"  ajaxSingle="true" onclick="#{rich:component('esportaModalPnl')}.hide();">
+						</a4j:htmlCommandLink>
+					</div>
+				</div>
+			</a4j:outputPanel>
+		</h:form>
+	</rich:modalPanel>
 	</ui:define>
 </ui:composition>
 

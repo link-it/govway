@@ -107,13 +107,7 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    	</a4j:htmlCommandLink>
 				</rich:column>
-				
-				<ui:define name="buttons">
-					<h:commandLink id="exportDump-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.saveContenuti}">
-						<h:outputText value="Esporta" />
-					</h:commandLink>
-				</ui:define>
-											
+															
 			</link:dataTable>
 		</h:form>
     </a4j:outputPanel>

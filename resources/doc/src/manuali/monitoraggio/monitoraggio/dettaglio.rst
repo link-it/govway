@@ -132,18 +132,13 @@ In questa sezione saranno presenti, quando previste, le tracce applicative dei m
 Quando prevista la registrazione dei messaggi in configurazione, di richiesta e risposta, si
 troveranno in questo riquadro i collegamenti per visualizzare:
 
--  Contenuti Ingresso/Uscita: i contenuti di entrata ed uscita sul
+-  Dati Ingresso/Uscita: i contenuti di entrata ed uscita sul
    gateway. Sia in entrata che uscita comprendono (in base al tipo di
    configurazione attiva):
 
    -  Il messaggio veicolato
 
-   -  Gli eventuali attachment inclusi nel messaggio
-
    -  Gli header di trasporto relativi alla richiesta
-
--  Dati Raw Ingresso/Uscita: la versione raw dei contenuti transitati in
-   ingresso/uscita sul gateway
 
 Per tutte queste voci sono presenti i link *Esporta* che consentono di
 salvare tali informazioni sul proprio filesystem.
@@ -154,6 +149,33 @@ salvare tali informazioni sul proprio filesystem.
     :name: mon_Contenuti_fig
 
     Visualizzazione contenuti in ingresso per una richiesta
+
+.. note::
+
+   **Analisi Contenuti Multipart**
+
+   Nel caso in cui il messaggio veicolato possieda una struttura multipart, e la dimensione complessiva dello stream risulti inferiore a 10MB (valore di soglia ridefinibile nella proprietà 'transazioni.dettaglio.analisiMultipart.threshold' all'interno del file monitor_local.properties), verrà fornita la possibilità di analizzare il contenuto multipart e/o di effettuare un download che estrae le singole parti degli allegati.
+
+   .. figure:: ../_figure_monitoraggio/ContenutiMultipart1.png
+       :scale: 100%
+       :align: center
+       :name: mon_ContenutiMultipart_fig1
+
+       Pulsante di visualizzazione dei contenuti Multipart
+
+   .. figure:: ../_figure_monitoraggio/ContenutiMultipart2.png
+       :scale: 100%
+       :align: center
+       :name: mon_ContenutiMultipart_fig2
+
+       Visualizzazione dei contenuti Multipart
+
+   .. figure:: ../_figure_monitoraggio/ContenutiMultipart3.png
+       :scale: 100%
+       :align: center
+       :name: mon_ContenutiMultipart_fig3
+
+       Esportazione contenuti Multipart
 
 Nei casi di esito "Fault Applicativo", cioè se il servizio erogatore ha
 restituito un messaggio di fault, è possibile visualizzarne il contenuto

@@ -21,40 +21,42 @@ package org.openspcoop2.web.monitor.transazioni.mbean;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.transazioni.DumpAllegato;
-import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.DumpUtils;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.PdDBaseBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
-import org.openspcoop2.web.monitor.transazioni.bean.DumpContenutoBean;
+import org.openspcoop2.web.monitor.transazioni.bean.DumpAttachmentBean;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
+import org.openspcoop2.web.monitor.transazioni.utils.DumpMessaggioUtils;
 import org.slf4j.Logger;
 
 /**
@@ -65,7 +67,7 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  *
  */
-public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniService>{
+public class DettagliDumpMultipart extends PdDBaseBean<Transazione, String, ITransazioniService>{
 
 	/**
 	 * 
@@ -81,31 +83,24 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	private Date dataConsegnaErogatore = null;
 	private Date ultimaConsegna = null;
 
-	private DumpMessaggio dumpMessaggio;
-	private DumpAllegato selectedAttachment;
+	private org.openspcoop2.message.utils.DumpMessaggio dumpMessaggio;
+	private int dumpMessaggioLength;
+	private DumpAttachmentBean selectedAttachment;
+	private List<DumpAttachmentBean> attachments;
 	
-	private Integer multipartThreshold=null;
 	private Boolean exportContenutiMultipart;
 
 	private boolean base64Decode;
 	
 	
-	public DettagliDump() {
-		try {
-
-			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(this.log);
-			this.multipartThreshold = govwayMonitorProperties.getTransazioniDettaglioAnalisiMultipartThreshold(); 
-
-		} catch (Exception e) {
-			this.log.error("Inizializzazione DettagliDump fallita.....", e);
-		}
+	public DettagliDumpMultipart() {
 	}
 
 	public void setBase64Decode(boolean base64Decode) {
 		this.base64Decode = base64Decode;
 	}
 
-	public void setSelectedAttachment(DumpAllegato selectedAttachment) {
+	public void setSelectedAttachment(DumpAttachmentBean selectedAttachment) {
 		this.selectedAttachment = selectedAttachment;
 	}
 
@@ -177,7 +172,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			//				break;
 			//			}
 		}
-		else if(this.dumpMessaggio!=null && this.dumpMessaggio.getContentLength()!=null && this.dumpMessaggio.getContentLength()>0) {
+		else if(this.dumpMessaggio!=null && this.dumpMessaggio.getBodyLength()>0) {
 			return false;
 		}
 
@@ -194,10 +189,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 
 			// sicuramente da qui si hanno messaggi con "testo visualizzabile" e non troppo lunghi
 			
-			MessageType messageType = null;
-			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
-				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
-			}
+			MessageType messageType = this.dumpMessaggio.getMessageType();
 
 			if(messageType==null) {
 				// puo' succedere nei casi binari
@@ -267,10 +259,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		String toRet = null;
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
 			
-			MessageType messageType = null;
-			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
-				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
-			}
+			MessageType messageType = this.dumpMessaggio.getMessageType();
 
 			if(messageType==null) {
 				// puo' succedere nei casi binari
@@ -325,29 +314,68 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder,false, DumpUtils.getThreshold_readInMemory());
 			return errore;
 		}
-		else if(this.dumpMessaggio!=null && this.dumpMessaggio.getContentLength()!=null && this.dumpMessaggio.getContentLength()>0) {
-			String errore = Utilities.getErrorMessagePrintableTextMaxLength(this.dumpMessaggio.getContentLength().intValue(), DumpUtils.getThreshold_readInMemory());
+		else if(this.dumpMessaggio!=null && this.dumpMessaggio.getBodyLength()>0) {
+			String errore = Utilities.getErrorMessagePrintableTextMaxLength((int) this.dumpMessaggio.getBodyLength(), DumpUtils.getThreshold_readInMemory());
 			return errore;
 		}
 
 		return null;
 	}
 
-	public DumpMessaggio getDumpMessaggio(){
+	public org.openspcoop2.message.utils.DumpMessaggio getDumpMessaggio(){
 		if(this.dumpMessaggio!=null)
 			return this.dumpMessaggio;
 
-		try {
-			if(this.ultimaConsegna == null)
-				this.dumpMessaggio = ((this.service)).getDumpMessaggio(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
-			else 
-				this.dumpMessaggio = ((this.service)).getDumpMessaggio(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
-		} catch (Exception e) {
+		try{
+			DumpMessaggio tmp = null;
+			try {
+				if(this.ultimaConsegna == null)
+					tmp = ((this.service)).getDumpMessaggio(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
+				else 
+					tmp = ((this.service)).getDumpMessaggio(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
+			} catch (Exception e) {
+				this.log.error(e.getMessage(), e);
+	
+			}
+			
+			InputStream is = null;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			if(tmp.getBody()!=null) {
+				byte[] contenutoBody = tmp.getBody();
+				is = new ByteArrayInputStream(contenutoBody);
+			}
+			else {
+				try {
+					if(this.ultimaConsegna == null)
+						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
+					else 
+						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
+				} catch (Exception e) {
+					this.log.error(e.getMessage(), e);
+				}
+			}
+		
+			CopyStream.copy(is, baos);
+			
+			byte [] content = baos.toByteArray();
+			String contentType = tmp.getContentType();
+			
+			this.dumpMessaggioLength = content.length;
+			this.dumpMessaggio = DumpMessaggioUtils.getFromBytes(content, contentType);
+			
+		
+		}catch (Exception e) {
 			this.log.error(e.getMessage(), e);
-
+			MessageUtils.addErrorMsg("Si e' verificato un errore durante il download del messaggio.");
 		}
+		
 
 		return this.dumpMessaggio;
+	}
+	
+	public int getDumpMessaggioLength() {
+		getDumpMessaggio();
+		return this.dumpMessaggioLength;
 	}
 
 	/***
@@ -355,59 +383,61 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	 * 
 	 * @return Lista degli Allegati
 	 */
-	public List<DumpAllegato> getAllegati(){
+	public List<DumpAttachmentBean> getAllegati(){
 
 		if(this.getDumpMessaggio()==null)
 			return null;
-
-		List<DumpAllegato> list = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+		
+		if(this.attachments == null) {
+		List<DumpAttachment> list = this.dumpMessaggio.getAttachments();
 
 		if(list.size()>0){
-			List<DumpAllegato> newL = new ArrayList<DumpAllegato>();
-			for (DumpAllegato dumpAllegato : list) {
-				newL.add(new DumpAllegatoBean(dumpAllegato));
+			this.attachments = new ArrayList<DumpAttachmentBean>();
+			for (DumpAttachment dumpAllegato : list) {  
+				this.attachments.add(new DumpAttachmentBean(dumpAllegato));
 			}
-			return newL;
+			return this.attachments;
 		}
 		else{
 			return null;
 		}
-
+		
+		}
+		return this.attachments;
 	}
 
 	public List<DumpHeaderTrasporto> getHeadersTrasporto(){
 
 		if(this.getDumpMessaggio()==null)
 			return null;
-
-		List<DumpHeaderTrasporto> list = ((this.service)).getHeaderTrasporto(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(),  this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
-
-		return (list.size()>0) ? list : null;
-	}
-
-	public List<DumpContenuto> getContenuti(){
-
-		if(this.getDumpMessaggio()==null)
-			return null;
-
-		List<DumpContenuto> list = ((this.service)).getContenutiSpecifici(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
-
-		if(list.size()>0){
-			List<DumpContenuto> listNew = new ArrayList<DumpContenuto>();
-			for (DumpContenuto dumpContenuto : list) {
-				listNew.add(new DumpContenutoBean(dumpContenuto));
+		
+		
+		if(this.getDumpMessaggio().getHeadersValues() != null && this.getDumpMessaggio().getHeadersValues().size() > 0) {
+			
+			List<DumpHeaderTrasporto> headers = new ArrayList<DumpHeaderTrasporto>();
+			Map<String, String> toMapSingleValue = TransportUtils.convertToMapSingleValue(this.getDumpMessaggio().getHeadersValues());
+			
+			Iterator<String> iterator = toMapSingleValue.keySet().iterator();
+			
+			while(iterator.hasNext()) {
+				String key = iterator.next();
+				String value = toMapSingleValue.get(key);
+				
+				DumpHeaderTrasporto header = new DumpHeaderTrasporto();
+				header.setNome(key);
+				header.setValore(value);
+				headers.add(header);
 			}
-			return listNew;
-		}
-		else{
-			return null;
-		}
 
-		//return (list.size()>0) ? list : null;
+			return headers;
+		}
+		
+		return null;
 	}
+
 
 	public String downloadMessaggio(){
-		this.log.debug("downloading messaggio: "+this.dumpMessaggio.getId());
+		this.log.debug("downloading messaggio...");
 		try{
 			//recupero informazioni sul file
 
@@ -471,20 +501,23 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			//			if(this.base64Decode){
 			//				contenutoBody = ((DumpAllegatoBean)this.dumpMessaggio).decodeBase64();
 			//			}
-			if(this.dumpMessaggio.getBody()!=null) {
-				byte[] contenutoBody = this.dumpMessaggio.getBody();
-				is = new ByteArrayInputStream(contenutoBody);
-			}
-			else {
-				try {
-					if(this.ultimaConsegna == null)
-						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
-					else 
-						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
-				} catch (Exception e) {
-					this.log.error(e.getMessage(), e);
-				}
-			}
+			byte[] contenutoBody = this.dumpMessaggio.getBody();
+			is = new ByteArrayInputStream(contenutoBody);
+			
+//			if(this.dumpMessaggio.getBody()!=null) {
+//				byte[] contenutoBody = this.dumpMessaggio.getBody();
+//				is = new ByteArrayInputStream(contenutoBody);
+//			}
+//			else {
+//				try {
+//					if(this.ultimaConsegna == null)
+//						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
+//					else 
+//						is = ((this.service)).getContentInputStream(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
+//				} catch (Exception e) {
+//					this.log.error(e.getMessage(), e);
+//				}
+//			}
 			os = response.getOutputStream();
 
 			// While there are still bytes in the file, read them and write them to
@@ -509,7 +542,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	}
 
 	public String download(){
-		this.log.debug("downloading allegato: "+this.selectedAttachment.getId());
+		this.log.debug("downloading allegato: "+this.selectedAttachment.getContentId());
 		try{
 			//recupero informazioni sul file
 
@@ -556,9 +589,13 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			OutputStream os = null;
 
 			// First we load the file in our InputStream
-			byte[] contenutoAllegato = this.selectedAttachment.getAllegato();
+			byte[] contenutoAllegato = this.selectedAttachment.getContent();
 			if(this.base64Decode){
-				contenutoAllegato = ((DumpAllegatoBean)this.selectedAttachment).decodeBase64();
+				try{
+					contenutoAllegato = DumpMessaggioUtils.decodeAllegatoBase64(this.selectedAttachment.getContent(), this.selectedAttachment.getContentType(), this.selectedAttachment.getContentId(), this.log);
+				}catch(Exception e){
+					this.log.error("IsBase64 error: "+e.getMessage(),e);
+				}
 			}
 			bis = new ByteArrayInputStream(contenutoAllegato);
 			os = response.getOutputStream();
@@ -610,7 +647,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			// name to save as
 			// I use the same name as it is stored in the file system of the server.
 
-			String fileName = this.dumpMessaggio.getIdTransazione()+"-Attachments.zip";
+			String fileName = this.idTransazione +"-Attachments.zip";
 
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);
@@ -618,18 +655,18 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 
 			// Streams we will use to read, write the file bytes to our response
 			// First we load the file in our InputStream
-			List<DumpAllegato> allegatiCore = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+//			List<DumpAllegato> allegatiCore = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
-			List<DumpAllegato> allegati = new ArrayList<DumpAllegato>();
-			for (DumpAllegato dumpAllegato : allegatiCore) {
-				allegati.add(new DumpAllegatoBean(dumpAllegato));
-			}
+//			List<DumpAllegato> allegati = new ArrayList<DumpAllegato>();
+//			for (DumpAllegato dumpAllegato : allegatiCore) {
+//				allegati.add(new DumpAllegatoBean(dumpAllegato));
+//			}
 
 			ZipOutputStream zip = new ZipOutputStream(response.getOutputStream());
 			InputStream in = null;
 
 			int index = 1;
-			for (DumpAllegato allegato : allegati) {
+			for (DumpAttachment allegato : this.dumpMessaggio.getAttachments()) {
 
 				String allegatofileName = "allegato_"+index;
 
@@ -638,7 +675,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				allegatofileName+="."+allegatoExt;
 				zip.putNextEntry(new ZipEntry(allegatofileName));
 
-				byte[] contenutoAllegato = allegato.getAllegato();
+				byte[] contenutoAllegato = allegato.getContent();
 				in = new ByteArrayInputStream(contenutoAllegato);
 				int len;
 				while ((len = in.read(bytes)) > 0) {
@@ -648,9 +685,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				in.close();
 
 				try{
-					DumpAllegatoBean da = (DumpAllegatoBean)allegato;
-					if(da.isBase64()){
-						contenutoAllegato = da.decodeBase64();
+					if(DumpMessaggioUtils.isAllegatoBase64(allegato.getContent(), allegato.getContentType(), allegato.getContentId(), this.log)){
+						contenutoAllegato = DumpMessaggioUtils.decodeAllegatoBase64(allegato.getContent(), allegato.getContentType(), allegato.getContentId(), this.log);
 						allegatofileName = "allegato_"+index+".decodeBase64";
 						allegatofileName+="."+allegatoExt;
 						zip.putNextEntry(new ZipEntry(allegatofileName));
@@ -737,18 +773,6 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		this.ultimaConsegna = ultimaConsegna;
 	}
 	
-	public boolean isVisualizzaContenutiMultipartButton() {
-		if(this.dumpMessaggio!=null && this.dumpMessaggio.getContentLength()!=null && this.dumpMessaggio.getContentLength()>0) {
-			String contentType = this.dumpMessaggio.getContentType();
-			return DettagliBean.isVisualizzaContenutiMultipartButton(this.tipoMessaggio, contentType, this.dumpMessaggio.getContentLength(), this.multipartThreshold, this.log);
-		}
-		
-		return false;
-	}
-
-	public void setVisualizzaContenutiMultipartButton(boolean visualizzaContenutiMultipartButton) {
-	}
-
 	public Boolean getExportContenutiMultipart() {
 		return this.exportContenutiMultipart;
 	}

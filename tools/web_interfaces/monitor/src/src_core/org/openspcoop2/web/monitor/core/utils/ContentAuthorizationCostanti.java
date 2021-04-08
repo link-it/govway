@@ -122,6 +122,8 @@ public class ContentAuthorizationCostanti {
 		"/transazioni/pages/form/dettagliTransazioneApplicativoServer.jsf",
 		"/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServer.jsf",
 		"/transazioni/pages/form/faultTransazioneApplicativoServer.jsf",
+		"/transazioni/pages/form/dettaglioDumpMultipart.jsf",
+		"/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServerMultipart.jsf",
 
 		// Configurazione Utenti
 		"/core/pages/form/user.jsf",
@@ -183,6 +185,8 @@ public class ContentAuthorizationCostanti {
 		{"/transazioni/pages/form/dettagliTransazioneApplicativoServer.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServer.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/faultTransazioneApplicativoServer.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/dettaglioDumpMultipart.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServerMultipart.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		// Export Transazioni
 		{"/diagnosticiexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 		{"/tracceexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},

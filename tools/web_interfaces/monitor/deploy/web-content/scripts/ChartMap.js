@@ -1,3 +1,11 @@
+var gwLocale = d3.formatLocale({
+  decimal: ",",
+  thousands: ".",
+  grouping: [3],
+  currency: ["€", ""]
+});
+
+
 function createChart(chartId, dataString, type, w, h, barwidth) {
 
     if(dataString.length == 0 || !type) {
@@ -81,7 +89,12 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
                     position: 'outer-middle'
                 },
                 min: (dp.type=='line')?0:undefined,
-                padding: (dp.type=='line')?{ bottom: 0 }:undefined
+                padding: (dp.type=='line')?{ bottom: 0 }:undefined,
+                tick: {
+                	format: function (d) { 
+                		return gwLocale.format(",")(d); // inserisco solo il separatore delle cifre perche' ho solo interi positivi 
+                		}
+                }
             }
         },
         bar: {
