@@ -32,6 +32,7 @@ import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.JsonPathNotFoundException;
@@ -209,8 +210,12 @@ public class OpenapiApi extends Api {
 					else {
 						throw new ProcessingException(valExc.getMessage());
 					}
+				}catch(ProcessingException pe) {
+					throw pe;
 				}catch(Throwable e) {
-					throw new ProcessingException(e.getMessage(), e);
+					e.printStackTrace(System.out);
+					Throwable eAnalyze = Utilities.getInnerNotEmptyMessageException(e);
+					throw new ProcessingException(eAnalyze!=null ? eAnalyze.getMessage(): e.getMessage(), e);
 				}
 			}
 		}

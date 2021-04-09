@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.openapi4j</groupId>
 			<artifactId>openapi-parser</artifactId>
-			<version>${openapi4j.version}</version>
+			<version>${openapi4j.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

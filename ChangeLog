@@ -1,3 +1,9 @@
+2021-04-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	L'aggiornamento dell'interfaccia di una API sovrascriveva eventuali impostazioni 'ModI' definite a livello della singola operazione aggiornata. Il problema è stato risolto.
+	Sono inotre stati corretti i problemi che causavano una errata validazione delle interfacce OpenAPI 3.0.x contenenti il cliam 'allowEmptyValue' o security schema vuoti ("security": [ {} ]).
+
 2021-04-07  Giuliano Pintori <pintori@link.it>
 
 	* [GovwayMonitor]

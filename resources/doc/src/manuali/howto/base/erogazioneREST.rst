@@ -18,7 +18,7 @@ registrata in modo che sia accessibile in forma anonima da qualunque
 client invocando l'url esposta da GovWay. Una rappresentazione di questo
 scenario è mostrata nella :numref:`quick_erogazioneREST_fig`. Prima di procedere con la
 configurazione effettuare il download dell'interfaccia OpenAPI 3.0 del servizio *PetStore* disponibile
-all'indirizzo 'https://raw.githubusercontent.com/Mermade/openapi3-examples/master/fail/apimatic-converted-petstore.json'.
+all'indirizzo 'https://raw.githubusercontent.com/link-it/govway/master/resources/openapi/3.0/openapi.yaml'.
 
 .. figure:: ../_figure_howto/erogazioneRESTBase.png
     :scale: 80%
@@ -50,7 +50,7 @@ procedere come segue:
       supportati.
 
    -  *OpenAPI 3.0*: caricare l'interfaccia API scaricata dall'indirizzo
-      'https://raw.githubusercontent.com/Mermade/openapi3-examples/master/fail/apimatic-converted-petstore.json'.
+      'https://raw.githubusercontent.com/link-it/govway/master/resources/openapi/3.0/openapi.yaml'.
 
    .. figure:: ../_figure_howto/erogazioneRESTBaseRegistrazioneAPI.png
        :scale: 100%

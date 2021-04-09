@@ -1755,6 +1755,13 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 							
 							if(vecchiaResource!=null) {
 
+								// riporto eventuali properties
+								if(vecchiaResource.sizeProtocolPropertyList()>0) {
+									for (int i = 0; i < vecchiaResource.sizeProtocolPropertyList(); i++) {
+										nuovoResource.addProtocolProperty(vecchiaResource.getProtocolProperty(i));		
+									}
+								}
+								
 								if(!CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(vecchiaResource.getProfAzione())) {
 									continue;
 								}
@@ -1910,10 +1917,18 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 							aspcDestinazione.addPortType(nuovoPortType);
 							
 							if(oldPT!=null) {
+								
+								// riporto eventuali properties
+								if(oldPT.sizeProtocolPropertyList()>0) {
+									for (int i = 0; i < oldPT.sizeProtocolPropertyList(); i++) {
+										nuovoPortType.addProtocolProperty(oldPT.getProtocolProperty(i));		
+									}
+								}
+								
 								// riporto funzionalità non gestite nel BasicArchive.setProtocolInfo
 								for (Operation vecchiaAzione : oldPT.getAzioneList()) {
 									
-									if(!CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(vecchiaAzione.getProfAzione())) {
+									if(!CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(vecchiaAzione.getProfAzione()) && vecchiaAzione.sizeProtocolPropertyList()<=0 ) {
 										continue;
 									}
 																			
@@ -1924,7 +1939,18 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 											break;
 										}
 									}
-									if(nuovaAzione!=null) {
+									
+									if(nuovaAzione!=null && vecchiaAzione.sizeProtocolPropertyList()>0) {
+										
+										// riporto eventuali properties
+										for (int i = 0; i < vecchiaAzione.sizeProtocolPropertyList(); i++) {
+											nuovaAzione.addProtocolProperty(vecchiaAzione.getProtocolProperty(i));		
+										}
+																				
+									}
+									
+									if(nuovaAzione!=null && CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(vecchiaAzione.getProfAzione())) {
+										
 										boolean ridefinisci = false;
 										if(vecchiaAzione.getConfermaRicezione()!=null && org.openspcoop2.core.registry.constants.StatoFunzionalita.ABILITATO.equals(vecchiaAzione.getConfermaRicezione())) {
 											nuovaAzione.setConfermaRicezione(vecchiaAzione.getConfermaRicezione());

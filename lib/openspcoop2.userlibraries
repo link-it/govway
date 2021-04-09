@@ -147,7 +147,7 @@
 	<archive path="/op2_3.3.dev/lib/lucene/lucene-suggest-8.4.1.jar"/>
 	<!-- openapi4j -->
 	<archive path="/op2_3.3.dev/lib/openapi4j/openapi-core-1.0.4-gov4j-4.jar"/>
-	<archive path="/op2_3.3.dev/lib/openapi4j/openapi-parser-1.0.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/openapi4j/openapi-parser-1.0.4-gov4j-4.jar"/>
 	<archive path="/op2_3.3.dev/lib/openapi4j/openapi-schema-validator-1.0.4-gov4j-4.jar"/>
 	<archive path="/op2_3.3.dev/lib/openapi4j/openapi-operation-validator-1.0.4-gov4j-4.jar"/>
 	<!-- opensaml -->

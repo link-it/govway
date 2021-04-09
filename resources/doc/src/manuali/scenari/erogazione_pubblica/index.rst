@@ -42,7 +42,7 @@ Avvalendosi eventualmente del progetto Postman a corredo, eseguire *"1. Erogazio
 
 Configurazione
 --------------
-Procediamo con la configurazione dell'erogazione del servizio "PetStore", pubblicamente accessibile, assumendo che la relativa API sia stata precedentemente configurata con il proprio descrittore OpenAPI 3 (descrittore scaricabile al seguente indirizzo: https://raw.githubusercontent.com/Mermade/openapi3-examples/master/fail/apimatic-converted-petstore.json).
+Procediamo con la configurazione dell'erogazione del servizio "PetStore", pubblicamente accessibile, assumendo che la relativa API sia stata precedentemente configurata con il proprio descrittore OpenAPI 3 (descrittore scaricabile al seguente indirizzo: https://raw.githubusercontent.com/link-it/govway/master/resources/openapi/3.0/openapi.yaml).
 
 La configurazione si effettua dalla govwayConsole, nella sezione "Erogazione > Aggiungi" (:numref:`erogazione_pubblica_new_fig`):
 
