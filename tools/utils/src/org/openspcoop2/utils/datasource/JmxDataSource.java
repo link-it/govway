@@ -271,7 +271,12 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 	
 	
 	/* Metodi di management JMX */
+
+	public final static String MSG_NESSUNA_CONNESSIONE_ALLOCATA = "Nessuna connessione allocata";
+	public final static String MSG_CONNESSIONI_ALLOCATE = " connessioni allocate: ";
 	
+	public final static String MSG_NESSUN_DATASOURCE_ALLOCATO = "Nessun datasource allocato";
+	public final static String MSG_DATASOURCE_ALLOCATI = " datasource allocati: ";
 
 	public String getUsedDBConnections(String uuidDataSource){
 		String[] risorse = null;
@@ -281,15 +286,18 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			this.log.error(e.getMessage(),e);
 			return MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
+		return getResultUsedDBConnections(risorse);
+	}
+	public static String getResultUsedDBConnections(String[] risorse) {
 		if(risorse==null || risorse.length<=0)
-			return "Nessuna connessione allocata";
+			return MSG_NESSUNA_CONNESSIONE_ALLOCATA;
 		
 		StringBuilder bf = new StringBuilder();
-		bf.append(risorse.length+" connessioni allocate: \n");
+		bf.append(risorse.length+MSG_CONNESSIONI_ALLOCATE+"\n");
 		for(int i=0; i<risorse.length; i++){
 			bf.append(risorse[i]+"\n");
 		}
-		return bf.toString();
+		return bf.toString();		
 	}
 	
 	public String getInformazioniDatabase(String uuidDataSource){
@@ -310,11 +318,14 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			this.log.error(e.getMessage(),e);
 			return MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
+		return getResultDatasource(risorse);
+	}
+	public static String getResultDatasource(String[] risorse) {
 		if(risorse==null || risorse.length<=0)
-			return "Nessun datasource allocato";
+			return MSG_NESSUN_DATASOURCE_ALLOCATO;
 		
 		StringBuilder bf = new StringBuilder();
-		bf.append(risorse.length+" datasource allocati: \n");
+		bf.append(risorse.length+MSG_DATASOURCE_ALLOCATI+"\n");
 		for(int i=0; i<risorse.length; i++){
 			bf.append(risorse[i]+"\n");
 		}

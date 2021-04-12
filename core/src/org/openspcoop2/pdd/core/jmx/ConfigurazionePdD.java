@@ -51,6 +51,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
+import org.openspcoop2.pdd.timers.TimerClusterDinamicoThread;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventiThread;
@@ -126,6 +127,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String TIMER_STATISTICHE_SETTIMANALI = "timerStatisticheSettimanali";
 	public final static String TIMER_STATISTICHE_MENSILI = "timerStatisticheMensili";
 	public final static String TIMER_THRESHOLD_THREAD = "timerThresholdThread";
+	public final static String TIMER_CLUSTER_DINAMICO = "timerClusterDinamico";
 		
 	/** Nomi metodi' */
 	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
@@ -282,6 +284,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
 			return TimerThresholdThread.STATE.name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_CLUSTER_DINAMICO))
+			return TimerClusterDinamicoThread.STATE.name();
 				
 		throw new AttributeNotFoundException("Attributo "+attributeName+" non trovato");
 	}
@@ -431,6 +436,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
 				TimerThresholdThread.STATE = getTimerState(attribute.getValue());
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_CLUSTER_DINAMICO))
+				TimerClusterDinamicoThread.STATE = getTimerState(attribute.getValue());
 			
 			else
 				throw new AttributeNotFoundException("Attributo "+attribute.getName()+" non trovato");
@@ -926,6 +934,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 						"Indicazione se è abilitato il timer '"+TimerThresholdThread.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
+		// MetaData per l'attributo timerClusterDinamicoVAR
+		MBeanAttributeInfo timerClusterDinamicoVAR 
+		= new MBeanAttributeInfo(ConfigurazionePdD.TIMER_CLUSTER_DINAMICO,String.class.getName(),
+				"Indicazione se è abilitato il timer '"+TimerClusterDinamicoThread.ID_MODULO+"' ("+TimerState.ENABLED.name()+"/"+TimerState.DISABLED.name()+")",
+				JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
+
 		// MetaData per l'operazione resetCache
 		MBeanOperationInfo resetCacheOP = JMXUtils.MBEAN_OPERATION_RESET_CACHE;
 				
@@ -1046,6 +1060,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				timerGestoreMessaggiPuliziaCorrelazioneApplicativaVAR, timerGestoreMessaggiVerificaConnessioniAttiveVAR,
 				timerGestorePuliziaMessaggiAnomaliVAR, timerGestoreRepositoryBusteVAR,
 				timerMonitoraggioRisorseThreadVAR, timerThresholdThreadVAR,
+				timerClusterDinamicoVAR,
 				timerRepositoryStatefulThreadVAR};
 		
 		// Lista Costruttori

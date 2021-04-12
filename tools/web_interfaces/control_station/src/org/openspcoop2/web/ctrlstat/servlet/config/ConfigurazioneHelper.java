@@ -5695,12 +5695,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								if(tmp!=null && tmp.length>3) {
 									String nomeDS = tmp[2]+" "+tmp[1];
 									try{
-										String idDS = tmp[1].split(":")[1];
+										// uuid
+										//String paramIdentificazioneDataSource = tmp[1].split(":")[1];
+										// jndi
+										String paramIdentificazioneDataSource = tmp[2].split(":")[1];
 										
 										String statoInfo = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias),
-												idDS);
+												paramIdentificazioneDataSource);
 										if(infoConnessioneAltriDB==null) {
 											infoConnessioneAltriDB = new HashMap<String, String>();
 										}
@@ -5709,7 +5712,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										String statoDB = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
 												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias),
-												idDS);
+												paramIdentificazioneDataSource);
 										if(this.isErroreHttp(statoDB, "stato delle connessioni verso database "+nomeDS)){
 											// e' un errore
 											throw new Exception(statoDB);

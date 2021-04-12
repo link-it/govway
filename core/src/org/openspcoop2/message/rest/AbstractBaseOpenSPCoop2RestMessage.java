@@ -90,6 +90,7 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 		}
 	}
 	
+
 	
 	/* Metodi richiesti da chi implementa questa classe base */
 	
@@ -113,6 +114,16 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean isContentBuilded() {
+		return this.content!=null;
+	}
+	
+	@Override
+	public InputStream getInputStream() {
+		return this.countingInputStream;
 	}
 	
 	@Override

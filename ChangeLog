@@ -1,3 +1,9 @@
+2021-04-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovwayMonitor]
+	Aggiunta funzionalità OP-1155
+	Aggiunta preconfigurazione del software, tramite installer eseguito in modalità avanzata, per poter essere utilizzato in modalità 'cluster dinamico'.
+
 2021-04-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

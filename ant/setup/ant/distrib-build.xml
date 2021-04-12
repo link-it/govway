@@ -266,6 +266,113 @@
 				</replace>
 			</then>
 		</if>
+		<if>
+			<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+			<then>
+				<replaceregexp file="${dist}/cfg/${govway_local_properties_name}"
+					       match="# Identificativo univoco [a-zA-Z].*\s#[a-zA-Z0-9_=\.].*\s\s# [a-zA-Z0-9_\.].*\s# NOTA[a-zA-Z:0-9>&lt;=].*\s#org[a-z0-9_\.].*=NUMERO"
+					       replace="COMMENTOCLUSTERDINAMICO"
+					       byline="false"/>
+				<replace file="${dist}/cfg/${govway_local_properties_name}">
+							<replacetoken>COMMENTOCLUSTERDINAMICO</replacetoken>
+							<replacevalue><![CDATA[# Configurazione Cluster Dinamica
+org.openspcoop2.pdd.cluster_dinamico.enabled=true
+# Refresh della data di registrazione di un nodo (secondi)
+org.openspcoop2.pdd.cluster_dinamico.refresh=60
+# Identificativo del gruppo dei nodi
+org.openspcoop2.pdd.group_id=IDENTIFICATIVOGRUPPO
+# Identificativo del nodo
+org.openspcoop2.pdd.cluster_id=${HOSTNAME}
+org.openspcoop2.pdd.cluster_id.hash.enabled=true
+# Cifre utilizzate per l’identificativo univoco numerico
+# 1: permette di avere 10 macchine (da 0 a 9)
+# 2: permette di avere 100 macchine (da 0 a 99)
+org.openspcoop2.pdd.cluster_id.numeric.dinamico.cifre=CIFREIDMESSAGGIO]]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="IDENTIFICATIVOGRUPPO"/>
+					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="CIFREIDMESSAGGIO"/>
+					<param name="value" value="${antinstaller_gestione_nodi_numeric_id_cifre}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="#org.openspcoop2.pdd.check.readJMXResources.enabled=true"/>
+					<param name="value" value="org.openspcoop2.pdd.check.readJMXResources.enabled=true"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="#org.openspcoop2.pdd.check.readJMXResources.username=USERNAME"/>
+					<param name="value" value="org.openspcoop2.pdd.check.readJMXResources.username=${antinstaller_gestione_nodi_check_username}"/>
+				</antcall>
+				<if>
+					<equals arg1="${antinstaller_gestione_nodi_check_password}" arg2=""/>
+					<then>
+						<java classname="org.openspcoop2.utils.crypt.PasswordGenerator" fork="true" outputproperty="antinstaller_gestione_nodi_check_password_final">
+							<classpath>
+								<path id="classpath_run">
+									<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.14.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-lang-2.6.jar"/>
+							   	</path>				
+							</classpath>
+						</java>
+					</then>
+					<else>
+						<var name="antinstaller_gestione_nodi_check_password_final" value="${antinstaller_gestione_nodi_check_password}"/>
+					</else>
+				</if>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="#org.openspcoop2.pdd.check.readJMXResources.password=PASSWORD"/>
+					<param name="value" value="org.openspcoop2.pdd.check.readJMXResources.password=${antinstaller_gestione_nodi_check_password_final}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="# JMX Resources"/>
+					<param name="value" value="COMMENTOJMXRESOURCES"/>
+				</antcall>
+				<if>
+					<equals arg1="${antinstaller_gestione_nodi_proxy_password}" arg2=""/>
+					<then>
+						<java classname="org.openspcoop2.utils.crypt.PasswordGenerator" fork="true" outputproperty="antinstaller_gestione_nodi_proxy_password_final">
+							<classpath>
+								<path id="classpath_run">
+									<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.14.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-lang-2.6.jar"/>
+							   	</path>				
+							</classpath>
+						</java>
+					</then>
+					<else>
+						<var name="antinstaller_gestione_nodi_proxy_password_final" value="${antinstaller_gestione_nodi_proxy_password}"/>
+					</else>
+				</if>
+				<replace file="${dist}/cfg/${govway_local_properties_name}">
+					<replacetoken>COMMENTOJMXRESOURCES</replacetoken>
+					<replacevalue><![CDATA[# Configurazione Servizio 'proxy'
+org.openspcoop2.pdd.proxyJMXResources.enabled=true
+org.openspcoop2.pdd.proxyJMXResources.username=PROXYUSERNAME
+org.openspcoop2.pdd.proxyJMXResources.password=PROXYPASSWORD
+# Configurazione Servizio 'check']]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="PROXYUSERNAME"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_username}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="PROXYPASSWORD"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_password_final}"/>
+				</antcall>
+			</then>
+		</if>
 
 		<var name="govway_fileTrace_log4j2_properties_name" value="govway.fileTrace.log4j2.properties"/>
 		<if>
@@ -280,6 +387,190 @@
 			<param name="value" value="${log_dir}"/>
 		</antcall>
 		
+		<var name="console_local_properties_name" value="console_local.properties"/>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<var name="console_local_properties_name" value="console_local.properties.new"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="# Configurazione PdD in Load Balancing"/>
+					<param name="value" value="# Configurazione Cluster Dinamica"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="#risorseJmxPdd.tipoAccesso=openspcoop"/>
+					<param name="value" value="CLUSTERDINAMICO"/>
+				</antcall>
+				<replace file="${dist}/cfg/${console_local_properties_name}">
+					<replacetoken>CLUSTERDINAMICO</replacetoken>
+					<replacevalue><![CDATA[cluster_dinamico.enabled=true
+risorseJmxPdd.tipoAccesso=openspcoop]]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="#risorseJmxPdd.aliases=IDGW1,..,IDGWN"/>
+					<param name="value" value="risorseJmxPdd.aliases=${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+				<replaceregexp file="${dist}/cfg/${console_local_properties_name}"
+					       match="# Configurazione IDGW1\s.*\s.*\s.*\s.*\s.*\s.*\s.*\s.*\s.*PASSWORDGWN"
+					       replace="COMMENTOCLUSTERDINAMICO"
+					       byline="false"/>
+				<replace file="${dist}/cfg/${console_local_properties_name}">
+					<replacetoken>COMMENTOCLUSTERDINAMICO</replacetoken>
+					<replacevalue><![CDATA[IDENTIFICATIVOGRUPPO.risorseJmxPdd.descrizione=IDENTIFICATIVOGRUPPO
+IDENTIFICATIVOGRUPPO.risorseJmxPdd.remoteAccess.url=URLSERVIZIOPROXY
+IDENTIFICATIVOGRUPPO.risorseJmxPdd.remoteAccess.username=USERNAMESERVIZIOPROXY
+IDENTIFICATIVOGRUPPO.risorseJmxPdd.remoteAccess.password=PASSWORDSERVIZIOPROXY]]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="IDENTIFICATIVOGRUPPO"/>
+					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="URLSERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_url}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="USERNAMESERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_username}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="PASSWORDSERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_password_final}"/>
+				</antcall>
+				<replaceregexp file="${dist}/cfg/${console_local_properties_name}"
+					       match="\s# Classificazione dei nodi in gruppi\s.*\s.*"
+					       replace=""
+					       byline="false"/>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${console_local_properties_name}"/>
+					<param name="token" value="IDGW1"/>
+					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+
+			</then>
+		</if>
+
+		<var name="monitor_local_properties_name" value="monitor_local.properties"/>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<var name="monitor_local_properties_name" value="monitor_local.properties.new"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+			<then>
+				<replaceregexp file="${dist}/cfg/${monitor_local_properties_name}"
+					       match=".*\s# Configurazione in Singola Istanza\s.*\s.*\s.*\s.*\s.*\s# Configurazione in Load Balancing"
+					       replace="CLUSTERDINAMICO"
+					       byline="false"/>
+				<replace file="${dist}/cfg/${monitor_local_properties_name}">
+					<replacetoken>CLUSTERDINAMICO</replacetoken>
+					<replacevalue><![CDATA[# ================================================
+# Configurazione Cluster Dinamica
+cluster_dinamico.enabled=true]]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="#configurazioni.risorseJmxPdd.tipoAccesso=openspcoop"/>
+					<param name="value" value="configurazioni.risorseJmxPdd.tipoAccesso=openspcoop"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="#configurazioni.risorseJmxPdd.aliases=IDGW1,..,IDGWN"/>
+					<param name="value" value="configurazioni.risorseJmxPdd.aliases=${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="#statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN"/>
+					<param name="value" value="statoPdD.sonde.standard.nodi=${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="#transazioni.idCluster.useSondaPdDList=true"/>
+					<param name="value" value="transazioni.idCluster.useSondaPdDList=true"/>
+				</antcall>
+				<replaceregexp file="${dist}/cfg/${monitor_local_properties_name}"
+					       match="# Configurazione IDGW1\s.*\s.*\s.*\s.*\s.*\s.*\s.*\s.*\s.*\s.*\s.*PASSWORDGWN"
+					       replace="COMMENTOCLUSTERDINAMICO"
+					       byline="false"/>
+				<replace file="${dist}/cfg/${monitor_local_properties_name}">
+					<replacetoken>COMMENTOCLUSTERDINAMICO</replacetoken>
+					<replacevalue><![CDATA[# Servizio 'proxy'
+IDENTIFICATIVOGRUPPO.configurazioni.risorseJmxPdd.remoteAccess.url=URLSERVIZIOPROXY
+IDENTIFICATIVOGRUPPO.configurazioni.risorseJmxPdd.remoteAccess.username=USERNAMESERVIZIOPROXY
+IDENTIFICATIVOGRUPPO.configurazioni.risorseJmxPdd.remoteAccess.password=PASSWORDSERVIZIOPROXY
+
+# Servizio 'check'
+statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replacevalue>
+				</replace>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="IDENTIFICATIVOGRUPPO"/>
+					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="URLSERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_url}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="USERNAMESERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_username}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="PASSWORDSERVIZIOPROXY"/>
+					<param name="value" value="${antinstaller_gestione_nodi_proxy_password_final}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="URLSERVIZIOCHECK"/>
+					<param name="value" value="${antinstaller_gestione_nodi_check_url}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/cfg/${monitor_local_properties_name}"/>
+					<param name="token" value="IDGW1"/>
+					<param name="value" value="${antinstaller_gestione_nodi_group_id}"/>
+				</antcall>
+			</then>
+		</if>
+
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}" />
+			<then>
+				<var name="spcoop_local_properties_name" value="spcoop_local.properties"/>
+				<if>
+					<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+					<then>
+						<var name="spcoop_local_properties_name" value="spcoop_local.properties.new"/>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+					<then>
+						<antcall target="replace_token">
+						    <param name="file" value="${dist}/cfg/${spcoop_local_properties_name}"/>
+							<param name="token" value="org.openspcoop2.protocol.spcoop.id.tipo=static"/>
+							<param name="value" value="org.openspcoop2.protocol.spcoop.id.tipo=${antinstaller_gestione_nodi_numeric_id_mode}"/>
+						</antcall>
+					</then>
+				</if>
+			</then>
+		</if>
+
 		<if>
 			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
 			<then>

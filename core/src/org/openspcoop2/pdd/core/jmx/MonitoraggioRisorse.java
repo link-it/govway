@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -711,6 +712,16 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		}
 	}
 	
+	public final static String MSG_NESSUNA_CONNESSIONE_ALLOCATA = "Nessuna connessione allocata";
+	public final static String MSG_CONNESSIONI_ALLOCATE = " risorse allocate: ";
+	public final static String MSG_CONNESSIONI_ALLOCATE_TRANSAZIONI = " risorse allocate per la gestione delle transazioni: ";
+	public final static String MSG_CONNESSIONI_ALLOCATE_STATISTICHE = " risorse allocate per la generazione delle statistiche: ";
+	public final static String MSG_CONNESSIONI_HTTP_ALLOCATE = " connessioni allocate: ";
+	
+	public final static String MSG_NESSUNA_TRANSAZIONE_ATTIVA = "Nessuna transazione attiva";
+	public final static String MSG_TRANSAZIONI_ATTIVE = " transazioni attive: ";
+	public final static String MSG_TRANSAZIONI_ATTIVE_ID_PROTOCOLLO = " id di protocollo attivi: ";
+	
 	public String getUsedDBConnections(){
 		String[] risorse = null;
 		String[] risorseTransaction = null;
@@ -742,25 +753,33 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
-		}
-		if(risorse==null && risorseTransaction==null && risorseStatistiche==null)
-			return "Nessuna connessione allocata";
+		}		
+		return getResultUsedDBConnections(risorse, risorseTransaction, risorseStatistiche);
+	}
+	public static String getResultUsedDBConnections(String[] risorse, String[] risorseTransaction, String[] risorseStatistiche) {
 		
+		if((risorse==null || risorse.length<=0) && 
+				(risorseTransaction==null || risorseTransaction.length<=0) && 
+				(risorseStatistiche==null || risorseStatistiche.length<=0)
+				) {
+			return MSG_NESSUNA_CONNESSIONE_ALLOCATA;
+		}
+			
 		StringBuilder bf = new StringBuilder();
 		if(risorse!=null && risorse.length>0) {
-			bf.append(risorse.length+" risorse allocate: \n");
+			bf.append(risorse.length+MSG_CONNESSIONI_ALLOCATE+"\n");
 			for(int i=0; i<risorse.length; i++){
 				bf.append(risorse[i]+"\n");
 			}
 		}
 		if(risorseTransaction!=null && risorseTransaction.length>0) {
-			bf.append(risorseTransaction.length+" risorse allocate per la gestione delle transazioni: \n");
+			bf.append(risorseTransaction.length+MSG_CONNESSIONI_ALLOCATE_TRANSAZIONI+"\n");
 			for(int i=0; i<risorseTransaction.length; i++){
 				bf.append(risorseTransaction[i]+"\n");
 			}
 		}
 		if(risorseStatistiche!=null && risorseStatistiche.length>0) {
-			bf.append(risorseStatistiche.length+" risorse allocate per la generazione delle statistiche: \n");
+			bf.append(risorseStatistiche.length+MSG_CONNESSIONI_ALLOCATE_STATISTICHE+"\n");
 			for(int i=0; i<risorseStatistiche.length; i++){
 				bf.append(risorseStatistiche[i]+"\n");
 			}
@@ -777,11 +796,14 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
-		if(risorse==null)
-			return "Nessuna connessione allocata";
+		return getResultUsedQueueConnections(risorse);
+	}
+	public static String getResultUsedQueueConnections(String[] risorse) {
+		if(risorse==null || risorse.length<=0)
+			return MSG_NESSUNA_CONNESSIONE_ALLOCATA;
 		
 		StringBuilder bf = new StringBuilder();
-		bf.append(risorse.length+" risorse allocate: \n");
+		bf.append(risorse.length+MSG_CONNESSIONI_ALLOCATE+"\n");
 		for(int i=0; i<risorse.length; i++){
 			bf.append(risorse[i]+"\n");
 		}
@@ -796,11 +818,14 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
+		return getResultTransazioniAttiveId(risorse);
+	}
+	public static String getResultTransazioniAttiveId(List<String> risorse) {
 		if(risorse==null || risorse.size()<=0)
-			return "Nessuna transazione attiva";
+			return MSG_NESSUNA_TRANSAZIONE_ATTIVA;
 		
 		StringBuilder bf = new StringBuilder();
-		bf.append(risorse.size()+" transazioni attive: \n");
+		bf.append(risorse.size()+MSG_TRANSAZIONI_ATTIVE+"\n");
 		for(int i=0; i<risorse.size(); i++){
 			bf.append(risorse.get(i)+"\n");
 		}
@@ -834,11 +859,14 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
+		return getResultTransazioniAttiveIdProtocollo(risorse);
+	}
+	public static String getResultTransazioniAttiveIdProtocollo(List<String> risorse) {
 		if(risorse==null || risorse.size()<=0)
-			return "Nessuna transazione attiva";
+			return MSG_NESSUNA_TRANSAZIONE_ATTIVA;
 		
 		StringBuilder bf = new StringBuilder();
-		bf.append(risorse.size()+" id di protocollo attivi: \n");
+		bf.append(risorse.size()+MSG_TRANSAZIONI_ATTIVE_ID_PROTOCOLLO+"\n");
 		for(int i=0; i<risorse.size(); i++){
 			bf.append(risorse.get(i)+"\n");
 		}
@@ -853,25 +881,32 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		Hashtable<String, IConnettore> connettori_pa = RepositoryConnettori.getConnettori_pa();		
 		return getActiveConnections(connettori_pa);
 	}
-	private String getActiveConnections(Hashtable<String, IConnettore> connettori){
+	private String getActiveConnections(Hashtable<String, IConnettore> connettoriParam){
 		
-		if(connettori==null || connettori.size()==0)
-			return "Nessuna connessione allocata";
-		
-		StringBuilder bf = new StringBuilder();
-		bf.append(connettori.size()+" connessioni allocate: \n");
-		
-		Enumeration<String> cs = connettori.keys();
+		List<String> cConnettori = new ArrayList<String>();
+		Enumeration<String> cs = connettoriParam.keys();
 		while(cs.hasMoreElements()){
 			String id = cs.nextElement();
-			IConnettore c = connettori.get(id);
+			IConnettore c = connettoriParam.get(id);
 			String location = null;
 			try{
 				location = c.getLocation();
 			}catch(Exception e){
 				location = "ERRORE: "+e.getMessage();
 			}
-			bf.append(id+" -> ["+location+"]\n");
+			cConnettori.add((id+" -> ["+location+"]"));
+		}
+		return getResultActiveConnections(cConnettori);
+		
+	}
+	public static String getResultActiveConnections(List<String> cConnettori) {
+		if(cConnettori==null || cConnettori.size()==0)
+			return MSG_NESSUNA_CONNESSIONE_ALLOCATA;
+		
+		StringBuilder bf = new StringBuilder();
+		bf.append(cConnettori.size()+MSG_CONNESSIONI_HTTP_ALLOCATE+"\n");
+		for(int i=0; i<cConnettori.size(); i++){
+			bf.append(cConnettori.get(i)+"\n");
 		}
 		return bf.toString();
 	}

@@ -109,6 +109,8 @@ public class OpenSPCoop2Logger {
 	protected static org.apache.logging.log4j.Logger loggerOpenSPCoopResourcesAsLoggerImpl = null;
 	/**  Logger log4j utilizzato per la configurazione di sistema */
 	protected static Logger loggerOpenSPCoopConfigurazioneSistema = null;
+	/**  Logger log4j utilizzato per il servizio proxy */
+	protected static Logger loggerOpenSPCoopProxy = null;
 	/**  Logger log4j utilizzato per i connettori */
 	protected static Logger loggerOpenSPCoopConnettori = null;
 	/**  Logger log4j utilizzato per i dati binari del servizio PD */
@@ -440,6 +442,11 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema = LoggerWrapperFactory.getLogger("govway.configurazioneSistema");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema==null)
 				throw new Exception("Logger govway.configurazioneSistema non trovato");
+			
+			// PROXY LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopProxy = LoggerWrapperFactory.getLogger("govway.proxy");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopProxy==null)
+				throw new Exception("Logger govway.proxy non trovato");
 			
 			// CONNETTORI LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopConnettori = LoggerWrapperFactory.getLogger("govway.connettori");
@@ -1158,6 +1165,10 @@ public class OpenSPCoop2Logger {
 
 	public static Logger getLoggerOpenSPCoopConfigurazioneSistema() {
 		return OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema;
+	}
+
+	public static Logger getLoggerOpenSPCoopProxy() {
+		return OpenSPCoop2Logger.loggerOpenSPCoopProxy;
 	}
 	
 	public static Logger getLoggerOpenSPCoopConnettori() {

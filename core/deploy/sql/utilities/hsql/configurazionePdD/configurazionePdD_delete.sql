@@ -1,3 +1,4 @@
+DELETE FROM nodi_runtime;
 DELETE FROM config_handlers;
 DELETE FROM registro_plug_jar;
 DELETE FROM registro_plugins;

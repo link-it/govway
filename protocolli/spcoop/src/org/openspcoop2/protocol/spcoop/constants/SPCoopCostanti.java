@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.spcoop.constants;
 
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica eGov, 
@@ -78,11 +79,13 @@ public class SPCoopCostanti {
     public static final int CIFRE_SERIALI_ID_EGOV = 7;
    
     /** Tipo di identificativo egov: default */
-    public final static String IDENTIFICATIVO_EGOV_SERIALE_DB = "db";
+    public final static String IDENTIFICATIVO_EGOV_SERIALE_DB = CostantiProtocollo.IDENTIFICATIVO_SERIALE_DB;
     /** Tipo di identificativo egov: mysql */
-    public final static String IDENTIFICATIVO_EGOV_SERIALE_MYSQL = "mysql";
+    public final static String IDENTIFICATIVO_EGOV_SERIALE_MYSQL = CostantiProtocollo.IDENTIFICATIVO_SERIALE_MYSQL;
     /** Tipo di identificativo egov: static */
-    public final static String IDENTIFICATIVO_EGOV_SERIALE_STATIC = "static";
+    public final static String IDENTIFICATIVO_EGOV_SERIALE_STATIC = CostantiProtocollo.IDENTIFICATIVO_SERIALE_STATIC;
+    /** Tipo di identificativo egov: static */
+    public final static String IDENTIFICATIVO_EGOV_SERIALE_DYNAMIC = CostantiProtocollo.IDENTIFICATIVO_SERIALE_DYNAMIC;
     
     /** Attesa attiva di default effettuata per la gestione del livello serializable nel DB, in millisecondi */
     public final static long GESTIONE_SERIALIZABLE_ATTESA_ATTIVA = 60 * 1000; // 1 minut

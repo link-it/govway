@@ -54,8 +54,6 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
@@ -94,11 +92,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
 	public ByteArrayOutputStream outByte = new ByteArrayOutputStream();
-	
-	/** SSL Configuration */
-	protected boolean connettoreHttps = false;
-	protected ConnettoreHTTPSProperties sslContextProperties;
-	
+		
 	/** Proxy Configuration */
 	protected Proxy.Type proxyType = null;
 	protected String proxyHostname = null;
@@ -130,39 +124,6 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	
 	
 	/* ********  METODI  ******** */
-
-	protected void setSSLContext() throws Exception{
-		if(this.connettoreHttps){
-			this.sslContextProperties = ConnettoreHTTPSProperties.readProperties(this.properties);
-		}
-		else {
-			String location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-			if(location.trim().startsWith("https")==false){
-				if(this.debug){
-					this.logger.debug("Location non richiede gestione https ["+location.trim()+"]");
-				}
-				return;
-			}
-			boolean urlHttps_overrideDefaultConfiguration = false;
-			boolean fruizioni = false;
-			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				urlHttps_overrideDefaultConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi();
-				fruizioni = false;
-			}
-			else{
-				// InoltroBuste e InoltroRisposte
-				urlHttps_overrideDefaultConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste();
-				fruizioni = true;
-			}
-			if(urlHttps_overrideDefaultConfiguration==false) {
-				if(this.debug){
-					this.logger.debug("Location https ["+location.trim()+"]; gestione personalizzata dei keystore disabilitata");
-				}
-				return;
-			}
-			this.sslContextProperties = ConnettoreHTTP_urlHttps_keystoreRepository.readSSLContext(this.debug, this.logger, this.busta, fruizioni);
-		}
-	}
 	
 	@Override
 	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
@@ -343,50 +304,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 		try{
 
 			// Gestione https
-			SSLContext sslContext = null;
-			if(this.sslContextProperties!=null){
-				
-				// provo a leggere i keystore dalla cache
-				if(this.sslContextProperties.getKeyStoreLocation()!=null) {
-					try {
-						this.sslContextProperties.setKeyStore(GestoreKeystoreCaching.getMerlinKeystore(this.sslContextProperties.getKeyStoreLocation(), 
-								this.sslContextProperties.getKeyStoreType(), this.sslContextProperties.getKeyStorePassword()).getKeyStore());
-					}catch(Exception e) {
-						this.logger.error("Lettura keystore '"+this.sslContextProperties.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
-					}
-				}
-				if(this.sslContextProperties.getTrustStoreLocation()!=null) {
-					try {
-						this.sslContextProperties.setTrustStore(GestoreKeystoreCaching.getMerlinTruststore(this.sslContextProperties.getTrustStoreLocation(), 
-								this.sslContextProperties.getTrustStoreType(), this.sslContextProperties.getTrustStorePassword()).getTrustStore());
-					}catch(Exception e) {
-						this.logger.error("Lettura truststore '"+this.sslContextProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
-					}
-				}
-				if(this.sslContextProperties.getTrustStoreCRLsLocation()!=null) {
-					try {
-						this.sslContextProperties.setTrustStoreCRLs(GestoreKeystoreCaching.getCRLCertstore(this.sslContextProperties.getTrustStoreCRLsLocation()).getCertStore());
-					}catch(Exception e) {
-						this.logger.error("Lettura CRLs '"+this.sslContextProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
-					}
-				}
-				
-				if(!this.sslContextProperties.isSecureRandomSet()) {
-					if(this.openspcoopProperties.isConnettoreHttps_useSecureRandom()) {
-						this.sslContextProperties.setSecureRandom(true);
-						if(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo()!=null) {
-							this.sslContextProperties.setSecureRandomAlgorithm(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo());
-						}
-					}
-				}
-				
-				StringBuilder bfSSLConfig = new StringBuilder();
-				sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);
-				
-				if(this.debug)
-					this.logger.info(bfSSLConfig.toString(),false);					
-			}
-			
+			SSLContext sslContext = buildSSLContext();		
 
 			// Creazione URL
 			if(this.debug)

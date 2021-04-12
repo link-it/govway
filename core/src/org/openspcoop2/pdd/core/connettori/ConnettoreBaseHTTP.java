@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -34,12 +36,15 @@ import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.ForwardProxyConfigurazione;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -48,6 +53,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
+import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
  * ConnettoreBaseHTTP
@@ -80,6 +86,10 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			}
 		}
 	}
+	
+	/** SSL Configuration */
+	protected boolean connettoreHttps = false;
+	protected ConnettoreHTTPSProperties sslContextProperties;
 	
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;
@@ -156,6 +166,87 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		}
 		
 		return init;
+	}
+	
+	protected void setSSLContext() throws Exception{
+		if(this.connettoreHttps){
+			this.sslContextProperties = ConnettoreHTTPSProperties.readProperties(this.properties);
+		}
+		else {
+			String location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
+			if(location.trim().startsWith("https")==false){
+				if(this.debug){
+					this.logger.debug("Location non richiede gestione https ["+location.trim()+"]");
+				}
+				return;
+			}
+			boolean urlHttps_overrideDefaultConfiguration = false;
+			boolean fruizioni = false;
+			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+				urlHttps_overrideDefaultConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi();
+				fruizioni = false;
+			}
+			else{
+				// InoltroBuste e InoltroRisposte
+				urlHttps_overrideDefaultConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste();
+				fruizioni = true;
+			}
+			if(urlHttps_overrideDefaultConfiguration==false) {
+				if(this.debug){
+					this.logger.debug("Location https ["+location.trim()+"]; gestione personalizzata dei keystore disabilitata");
+				}
+				return;
+			}
+			this.sslContextProperties = ConnettoreHTTP_urlHttps_keystoreRepository.readSSLContext(this.debug, this.logger, this.busta, fruizioni);
+		}
+	}
+	
+	protected SSLContext buildSSLContext() throws UtilsException {
+		// Gestione https
+		SSLContext sslContext = null;
+		if(this.sslContextProperties!=null){
+			
+			// provo a leggere i keystore dalla cache
+			if(this.sslContextProperties.getKeyStoreLocation()!=null) {
+				try {
+					this.sslContextProperties.setKeyStore(GestoreKeystoreCaching.getMerlinKeystore(this.sslContextProperties.getKeyStoreLocation(), 
+							this.sslContextProperties.getKeyStoreType(), this.sslContextProperties.getKeyStorePassword()).getKeyStore());
+				}catch(Exception e) {
+					this.logger.error("Lettura keystore '"+this.sslContextProperties.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
+				}
+			}
+			if(this.sslContextProperties.getTrustStoreLocation()!=null) {
+				try {
+					this.sslContextProperties.setTrustStore(GestoreKeystoreCaching.getMerlinTruststore(this.sslContextProperties.getTrustStoreLocation(), 
+							this.sslContextProperties.getTrustStoreType(), this.sslContextProperties.getTrustStorePassword()).getTrustStore());
+				}catch(Exception e) {
+					this.logger.error("Lettura truststore '"+this.sslContextProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
+				}
+			}
+			if(this.sslContextProperties.getTrustStoreCRLsLocation()!=null) {
+				try {
+					this.sslContextProperties.setTrustStoreCRLs(GestoreKeystoreCaching.getCRLCertstore(this.sslContextProperties.getTrustStoreCRLsLocation()).getCertStore());
+				}catch(Exception e) {
+					this.logger.error("Lettura CRLs '"+this.sslContextProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
+				}
+			}
+			
+			if(!this.sslContextProperties.isSecureRandomSet()) {
+				if(this.openspcoopProperties.isConnettoreHttps_useSecureRandom()) {
+					this.sslContextProperties.setSecureRandom(true);
+					if(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo()!=null) {
+						this.sslContextProperties.setSecureRandomAlgorithm(this.openspcoopProperties.getConnettoreHttps_secureRandomAlgo());
+					}
+				}
+			}
+			
+			StringBuilder bfSSLConfig = new StringBuilder();
+			sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);
+			
+			if(this.debug)
+				this.logger.info(bfSSLConfig.toString(),false);					
+		}
+		return sslContext;
 	}
 	
 		

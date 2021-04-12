@@ -327,6 +327,46 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				checkStatoPdD.doGet(req, res);
 				
 			}
+			else if(function.equals(URLProtocolContext.Proxy_FUNCTION)){
+				
+				if(!op2Properties.isProxyReadJMXResourcesEnabled()) {
+					throw new Exception("Service ["+function+"] not supported");
+				}
+				
+				if(HttpRequestMethod.GET.equals(method)==false){
+					// messaggio di errore
+					boolean errore404 = false;
+					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled()){
+						errore404 = true;
+					}
+					
+					if(errore404){
+						res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeHttpMethodNotSupported(IDService.PROXY, method)));
+						return;
+					}
+					else{
+						
+						res.setStatus(500);
+						
+						ConnectorUtils.generateErrorMessage(IDService.PROXY,method,req,res, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
+								
+						try{
+							res.getOutputStream().flush();
+						}catch(Exception eClose){}
+						try{
+							res.getOutputStream().close();
+						}catch(Exception eClose){}
+						
+						return;
+					}
+				}
+				
+				// Dispatching al servizio 
+				Proxy proxy = new Proxy();
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolContext.getProtocolName());
+				proxy.doGet(req, res);
+				
+			}
 			else{
 				throw new Exception("Service ["+function+"] not supported");
 			}

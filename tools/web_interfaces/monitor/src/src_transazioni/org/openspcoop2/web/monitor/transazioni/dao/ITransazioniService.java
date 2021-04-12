@@ -30,16 +30,15 @@ import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.generic_project.expression.SortOrder;
-
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
-import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
+import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.transazioni.bean.DumpMessaggioBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
@@ -157,5 +156,8 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	public void setLiveMaxResults(Integer limit);
 	
 	public ITransazioniApplicativoServerService getTransazioniApplicativoServerService();
+	
+	public List<String> getHostnames(String gruppo, int refreshSecondsInterval);
+	public List<String> getClusterIdDinamici(String gruppo, int refreshSecondsInterval);
 
 }

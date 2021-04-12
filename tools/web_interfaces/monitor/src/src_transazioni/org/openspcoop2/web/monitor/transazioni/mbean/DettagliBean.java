@@ -98,6 +98,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private transient ITransazioniService transazioniService;
 	
 	private boolean visualizzaIdCluster = false;
+	private boolean clusterDinamico = false;
 	
 	private String selectedTab = null;
 	private DiagnosticiBean diagnosticiBean;
@@ -179,7 +180,9 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
 			List<String> govwayMonitorare = govwayMonitorProperties.getListaPdDMonitorate_StatusPdD();
 			this.setVisualizzaIdCluster(govwayMonitorare!=null && govwayMonitorare.size()>1);
-
+			
+			this.clusterDinamico = govwayMonitorProperties.isClusterDinamico();
+			
 			this.driver  = govwayMonitorProperties.getDriverTracciamento();
 			
 			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
@@ -1220,6 +1223,11 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public void setVisualizzaIdCluster(boolean visualizzaIdCluster) {
 		this.visualizzaIdCluster = visualizzaIdCluster;
 	}
+	
+	public boolean isClusterDinamico() {
+		return this.clusterDinamico;
+	}
+	
 	public Boolean getExportContenutiMultipart() {
 		return this.exportContenutiMultipart;
 	}

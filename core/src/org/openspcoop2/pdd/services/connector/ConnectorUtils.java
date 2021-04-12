@@ -324,36 +324,39 @@ public class ConnectorUtils {
 		// other infos
 		switch (idService) {
 		case PORTA_DELEGATA:
-			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2</i><br/><br/>\n");
+			risposta.append("<i>Servizio utilizzabile per l'invocazione delle fruizioni esposte dall'API Gateway GovWay</i><br/><br/>\n");
 			break;
 		case PORTA_APPLICATIVA:
-			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Applicative esposte dalla PdD OpenSPCoop v2</i><br/><br/>\n");
+			risposta.append("<i>Servizio utilizzabile per l'invocazione delle erogazioni esposte dall'API Gateway GovWay</i><br/><br/>\n");
 			break;
 		case PORTA_DELEGATA_XML_TO_SOAP:
-			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2, con messaggi xml non imbustati nel protocollo SOAP</i><br/><br/>\n");
+			risposta.append("<i>Servizio utilizzabile per l'invocazione delle fruizioni esposte dall'API Gateway GovWay, con messaggi xml non imbustati nel protocollo SOAP</i><br/><br/>\n");
 			break;
 		case INTEGRATION_MANAGER_SOAP:
 			if(parameters==null){
 				risposta.append("<i>Servizio IntegrationManager</i><br/><br/>\n");
 			}
 			else if( (function+"/"+parameters).equals(URLProtocolContext.IntegrationManager_FUNCTION_PD) ){
-				risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2</i><br/><br/>\n");
+				risposta.append("<i>Servizio utilizzabile per l'invocazione delle fruizioni esposte dall'API Gateway GovWay</i><br/><br/>\n");
 			}
 			else if( (function+"/"+parameters).startsWith(URLProtocolContext.IntegrationManager_FUNCTION_PD+"/") ){
-				risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2</i><br/><br/>\n");
+				risposta.append("<i>Servizio utilizzabile per l'invocazione delle fruizioni esposte dall'API Gateway GovWay</i><br/><br/>\n");
 			}
 			else if( (function+"/"+parameters).equals(URLProtocolContext.IntegrationManager_FUNCTION_MessageBox) ){
-				risposta.append("<i>Servizio utilizzabile per accedere alla MessageBox esposta dalla PdD OpenSPCoop v2</i><br/><br/>\n");
+				risposta.append("<i>Servizio utilizzabile per accedere alla MessageBox esposta dall'API Gateway GovWay</i><br/><br/>\n");
 			}
 			else if( (function+"/"+parameters).startsWith(URLProtocolContext.IntegrationManager_FUNCTION_MessageBox+"/") ){
-				risposta.append("<i>Servizio utilizzabile per accedere alla MessageBox esposta dalla PdD OpenSPCoop v2</i><br/><br/>\n");
+				risposta.append("<i>Servizio utilizzabile per accedere alla MessageBox esposta dall'API Gateway GovWay</i><br/><br/>\n");
 			}
 			else{
-				risposta.append("<i>Servizio IntegrationManager della PdD OpenSPCoop v2</i><br/><br/>\n");
+				risposta.append("<i>Servizio IntegrationManager dell'API Gateway GovWay</i><br/><br/>\n");
 			}
 			break;
 		case CHECK_PDD:
-			risposta.append("<i>Servizio utilizzabile per comprendere lo stato di funzionamento della PdD OpenSPCoop v2</i><br/><br/>\n");
+			risposta.append("<i>Servizio utilizzabile per comprendere lo stato di funzionamento dell'API Gateway GovWay</i><br/><br/>\n");
+			break;
+		case PROXY:
+			risposta.append("<i>Servizio utilizzato in installazioni container dell'API Gateway GovWay</i><br/><br/>\n");
 			break;
 		default:
 			if(htmlMessage){

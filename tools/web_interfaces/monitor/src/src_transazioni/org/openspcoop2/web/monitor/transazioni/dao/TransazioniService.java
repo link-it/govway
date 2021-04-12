@@ -31,11 +31,15 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
@@ -87,8 +91,6 @@ import org.openspcoop2.monitor.engine.config.SearchServiceLibrary;
 import org.openspcoop2.monitor.engine.config.SearchServiceLibraryReader;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibraryReader;
-import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
-import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
@@ -100,6 +102,7 @@ import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
@@ -159,6 +162,8 @@ public class TransazioniService implements ITransazioniService {
 	private org.openspcoop2.core.transazioni.dao.IDumpMessaggioServiceSearch dumpMessaggioSearchDAO;
 	
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	
+	private DriverConfigurazioneDB driverConfigurazioneDB;
 
 	private ISQLFieldConverter transazioniFieldConverter = null;
 	
@@ -167,6 +172,9 @@ public class TransazioniService implements ITransazioniService {
 	private SearchServiceLibraryReader searchServiceLibraryReader = null;
 	
 	private Integer liveUltimiGiorni = null;
+	
+	private boolean clusterDinamico = false;
+	private int clusterDinamicoRefresh;
 	
 	private boolean isAttivoSqlFilterTransazioniIntegrationManager = true;
 	
@@ -346,6 +354,11 @@ public class TransazioniService implements ITransazioniService {
 			this.utilsServiceManager = 
 					(org.openspcoop2.core.commons.search.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),this.log);
 				
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(this.log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(this.log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String tipoDatabase = DAOFactoryProperties.getInstance(this.log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			this.driverConfigurazioneDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, this.log, tipoDatabase);
+			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(this.log);
 			
 			this.liveUltimiGiorni = monitorProperties.getTransazioniLiveUltimiGiorni();
@@ -363,6 +376,11 @@ public class TransazioniService implements ITransazioniService {
 					this.searchServiceLibraryReader = 
 							new SearchServiceLibraryReader( (this.ricerchePluginsServiceManager), true);
 				}
+			}
+			
+			this.clusterDinamico = monitorProperties.isClusterDinamico();
+			if(this.clusterDinamico) {
+				this.clusterDinamicoRefresh = monitorProperties.getClusterDinamicoRefresh();
 			}
 			
 			this.isAttivoSqlFilterTransazioniIntegrationManager = monitorProperties.isAttivoSqlFilterTransazioniIntegrationManager();
@@ -415,6 +433,9 @@ public class TransazioniService implements ITransazioniService {
 			this.utilsServiceManager = 
 					(org.openspcoop2.core.commons.search.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), con,autoCommit,serviceManagerProperties,this.log);
 			
+			String tipoDatabase = (serviceManagerProperties!=null && serviceManagerProperties.getDatabaseType()!=null) ? serviceManagerProperties.getDatabaseType() : DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+				this.driverConfigurazioneDB = new DriverConfigurazioneDB(con, log, tipoDatabase);
+			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(this.log);
 			
 			this.liveUltimiGiorni = monitorProperties.getTransazioniLiveUltimiGiorni();
@@ -433,6 +454,11 @@ public class TransazioniService implements ITransazioniService {
 						new SearchServiceLibraryReader( (this.ricerchePluginsServiceManager), true);
 				}
 				
+			}
+			
+			this.clusterDinamico = monitorProperties.isClusterDinamico();
+			if(this.clusterDinamico) {
+				this.clusterDinamicoRefresh = monitorProperties.getClusterDinamicoRefresh();
 			}
 			
 			this.isAttivoSqlFilterTransazioniIntegrationManager = monitorProperties.isAttivoSqlFilterTransazioniIntegrationManager();
@@ -3359,7 +3385,18 @@ public class TransazioniService implements ITransazioniService {
 		
 		if (StringUtils.isNotEmpty(this.searchForm.getClusterId())) {
 			
-			filter.and().equals(Transazione.model().CLUSTER_ID,	this.searchForm.getClusterId().trim());
+			if(this.clusterDinamico) {
+				List<String> listId = this.getClusterIdDinamici(this.searchForm.getClusterId().trim(), this.clusterDinamicoRefresh);
+				if(listId!=null && !listId.isEmpty()) {
+					filter.and().in(Transazione.model().CLUSTER_ID, listId);
+				}
+				else {
+					filter.and().equals(Transazione.model().CLUSTER_ID,	"--"); // non esistente volutamente
+				}
+			}
+			else {
+				filter.and().equals(Transazione.model().CLUSTER_ID,	this.searchForm.getClusterId().trim());
+			}
 			
 		}
 		else if (StringUtils.isNotEmpty(this.searchForm.getCanale())) {
@@ -3820,5 +3857,33 @@ public class TransazioniService implements ITransazioniService {
 		}
 
 		return null;
+	}
+	
+	@Override
+	public List<String> getHostnames(String gruppo, int refreshSecondsInterval){
+		Connection con = null;
+		try {
+			con = this.driverConfigurazioneDB.getConnection("TransazioniService.getHostnames");
+			return DynamicClusterManager.getHostnames(con, this.driverConfigurazioneDB.getTipoDB(), gruppo, refreshSecondsInterval);
+		}catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+			return null;
+		}finally {
+			try {
+				this.driverConfigurazioneDB.releaseConnection(con);
+			}catch(Throwable eClose) {}
+		}
+	}
+	@Override
+	public List<String> getClusterIdDinamici(String gruppo, int refreshSecondsInterval){
+		List<String> l = this.getHostnames(gruppo, refreshSecondsInterval);
+		List<String> list = null;
+		if(l!=null && !l.isEmpty()) {
+			list = new ArrayList<String>();
+			for (String id : l) {
+				list.add( DynamicClusterManager.hashClusterId(id) );
+			}
+		}
+		return list;
 	}
 }

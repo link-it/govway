@@ -1496,6 +1496,20 @@ public class OpenSPCoop2Properties {
 			// Configurazione Cluster
 			this.getClusterId(false);
 			this.getClusterIdNumerico();
+			if(this.isClusterDinamico()) {
+				if(this.getClusterId(true)==null) {
+					return false;
+				}
+				this.getClusterDinamicoRefreshSecondsInterval();
+				this.getClusterHostname();
+				if(this.getGroupId()==null) {
+					return false;
+				}
+				if(this.getClusterDinamicoIdNumericoCifre()<0) {
+					return false;
+				}
+				this.isUseHashClusterId();
+			}
 			if(this.isTimerLockByDatabase()) {
 				this.isTimerLockByDatabaseNotifyLogEnabled();
 			}
@@ -1684,6 +1698,7 @@ public class OpenSPCoop2Properties {
 			this.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled();
 			this.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled();
 			this.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled();
+			this.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled();
 			
 			// Informazioni generazione WSDL
 			this.isGenerazioneWsdlPortaDelegataEnabled();
@@ -1695,6 +1710,13 @@ public class OpenSPCoop2Properties {
 			this.isCheckReadJMXResourcesEnabled();
 			this.getCheckReadJMXResourcesUsername();
 			this.getCheckReadJMXResourcesPassword();
+			this.isProxyReadJMXResourcesEnabled();
+			this.getProxyReadJMXResourcesUsername();
+			this.getProxyReadJMXResourcesPassword();
+			if(this.isProxyReadJMXResourcesEnabled()) {
+				this.getProxyReadJMXResourcesConnectionTimeout();
+				this.getProxyReadJMXResourcesReadTimeout();
+			}
 						
 			// Datasource Wrapped
 			this.isDSOp2UtilsEnabled();
@@ -13828,6 +13850,96 @@ public class OpenSPCoop2Properties {
 
 	/*---------- Cluster ID -------------*/
 
+	private static Boolean isClusterDinamico = null;
+	public boolean isClusterDinamico(){
+		String pName = "org.openspcoop2.pdd.cluster_dinamico.enabled";
+		if(OpenSPCoop2Properties.isClusterDinamico==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isClusterDinamico = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isClusterDinamico = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isClusterDinamico = false;
+			}
+		}
+		return OpenSPCoop2Properties.isClusterDinamico;
+	}
+	
+	private static Integer getClusterDinamicoRefreshSecondsInterval = null;
+	public int getClusterDinamicoRefreshSecondsInterval() {	
+		String pName = "org.openspcoop2.pdd.cluster_dinamico.refresh";
+		if(OpenSPCoop2Properties.getClusterDinamicoRefreshSecondsInterval==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getClusterDinamicoRefreshSecondsInterval = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CLUSTER_DINAMICO_REFRESH_SECONDS);
+					OpenSPCoop2Properties.getClusterDinamicoRefreshSecondsInterval = CostantiPdD.CLUSTER_DINAMICO_REFRESH_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CLUSTER_DINAMICO_REFRESH_SECONDS+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getClusterDinamicoRefreshSecondsInterval = CostantiPdD.CLUSTER_DINAMICO_REFRESH_SECONDS;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getClusterDinamicoRefreshSecondsInterval;
+	}
+	
+	private static String cluster_hostname = null;
+	public String getClusterHostname() {
+		if(OpenSPCoop2Properties.cluster_hostname==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cluster_id.hostname");
+				if(name==null) {
+					OpenSPCoop2Properties.cluster_hostname = getClusterId(true);
+				}
+				else{
+					name = name.trim();
+					OpenSPCoop2Properties.cluster_hostname = name;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id.hostname': "+e.getMessage(),e);
+				OpenSPCoop2Properties.cluster_hostname = null;
+			}  
+		}
+
+		return OpenSPCoop2Properties.cluster_hostname;
+	}
+		
+	private static String group_id = null;
+	public String getGroupId() {
+		String pName = "org.openspcoop2.pdd.group_id";
+		if(OpenSPCoop2Properties.group_id==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.group_id = name;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.group_id = null;
+			}  
+		}
+
+		return OpenSPCoop2Properties.group_id;
+	}
+	
 	/**
 	 * Restituisce il cluster id del nodo del cluster su cui gira la pdd 
 	 *
@@ -13855,6 +13967,39 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.cluster_id;
 	}
 	
+	private static Boolean isUseHashClusterId = null;
+	public boolean isUseHashClusterId(){
+		String pName = "org.openspcoop2.pdd.cluster_id.hash.enabled";
+		if(OpenSPCoop2Properties.isUseHashClusterId==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isUseHashClusterId = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isUseHashClusterId = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isUseHashClusterId = false;
+			}
+		}
+		return OpenSPCoop2Properties.isUseHashClusterId;
+	}
+	
+	private static String cluster_id_preCodificaHash = null;
+	public String getCluster_id_preCodificaHash() {
+		return cluster_id_preCodificaHash;
+	}
+	public void updateClusterId() {
+		OpenSPCoop2Properties.cluster_id_preCodificaHash = OpenSPCoop2Properties.cluster_id;
+		// calcolo il cluster fornito come hash value
+		OpenSPCoop2Properties.cluster_id = DynamicClusterManager.hashClusterId(OpenSPCoop2Properties.cluster_id);
+	}
+	
 	private static String cluster_id_numerico =null;
 	private static Boolean cluster_id_numerico_read =null;
 	public String getClusterIdNumerico() throws ProtocolException {
@@ -13880,6 +14025,35 @@ public class OpenSPCoop2Properties {
 			}   
 		}
 		return OpenSPCoop2Properties.cluster_id_numerico;
+	}
+	
+	private static Integer getClusterDinamicoIdNumericoCifre = null;
+	public int getClusterDinamicoIdNumericoCifre() {	
+		String pName = "org.openspcoop2.pdd.cluster_id.numeric.dinamico.cifre";
+		if(OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre = java.lang.Integer.parseInt(name);
+					if(OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre<=0) {
+						throw new Exception("Il valore indicato deve essere maggiore di 0");
+					}
+				}
+				else{
+					throw new Exception("Non Impostato");
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre = -1;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre;
+	}
+	public boolean isClusterIdNumericoDinamico() {
+		return getClusterDinamicoIdNumericoCifre()>0;
 	}
 
 	private static Boolean isTimerLockByDatabase = null;
@@ -16669,6 +16843,27 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled;
 	}
 	
+	private static Boolean isGenerazioneErroreHttpMethodUnsupportedProxyEnabled = null;
+	public boolean isGenerazioneErroreHttpMethodUnsupportedProxyEnabled() {	
+		if(OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled;
+	}
+	
 	
 	
 	
@@ -16823,6 +17018,104 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
+	private static Boolean isProxyReadJMXResourcesEnabled = null;
+	public boolean isProxyReadJMXResourcesEnabled() {	
+		if(OpenSPCoop2Properties.isProxyReadJMXResourcesEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isProxyReadJMXResourcesEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.enabled': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isProxyReadJMXResourcesEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isProxyReadJMXResourcesEnabled;
+	}
+	
+	private static String getProxyReadJMXResourcesUsername = null;
+	private static Boolean getProxyReadJMXResourcesUsername_read = null;
+	public String getProxyReadJMXResourcesUsername() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesUsername_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.username");
+				if(name!=null){
+					name = name.trim();
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesUsername_read = true;
+				OpenSPCoop2Properties.getProxyReadJMXResourcesUsername = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.username': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesUsername;
+	}
+	
+	private static String getProxyReadJMXResourcesPassword = null;
+	private static Boolean getProxyReadJMXResourcesPassword_read = null;
+	public String getProxyReadJMXResourcesPassword() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesPassword_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.password");
+				if(name!=null){
+					name = name.trim();
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesPassword_read = true;
+				OpenSPCoop2Properties.getProxyReadJMXResourcesPassword = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.password': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesPassword;
+	}
+	
+	private static Integer getProxyReadJMXResourcesConnectionTimeout = null;
+	public Integer getProxyReadJMXResourcesConnectionTimeout() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesConnectionTimeout==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.connection.timeout");
+				if(name!=null){
+					name = name.trim();
+				}
+				else {
+					throw new Exception("non esistente");
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesConnectionTimeout = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.connection.timeout': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesConnectionTimeout;
+	}
+	
+	private static Integer getProxyReadJMXResourcesReadTimeout = null;
+	public Integer getProxyReadJMXResourcesReadTimeout() {	
+		if(OpenSPCoop2Properties.getProxyReadJMXResourcesReadTimeout==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.readConnection.timeout");
+				if(name!=null){
+					name = name.trim();
+				}
+				else {
+					throw new Exception("non esistente");
+				}
+				OpenSPCoop2Properties.getProxyReadJMXResourcesReadTimeout = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.readConnection.timeout': "+e.getMessage(),e);
+			}    
+		}
+		return OpenSPCoop2Properties.getProxyReadJMXResourcesReadTimeout;
+	}
 	
 	
 

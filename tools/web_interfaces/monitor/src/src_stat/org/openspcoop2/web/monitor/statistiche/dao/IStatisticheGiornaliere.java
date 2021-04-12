@@ -75,5 +75,8 @@ public interface IStatisticheGiornaliere extends IService<ResBase, Integer>,ILiv
 	//distribuzione personalizzata
 	public List<String> getValoriRisorse() throws ServiceException;
 	
+	// cluster dinamico
+	public List<String> getHostnames(String gruppo, int refreshSecondsInterval);
+	public List<String> getClusterIdDinamici(String gruppo, int refreshSecondsInterval);
 
 }

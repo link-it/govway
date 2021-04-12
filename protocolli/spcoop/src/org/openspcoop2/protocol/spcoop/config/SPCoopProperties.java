@@ -135,7 +135,8 @@ public class SPCoopProperties {
 			String tipo = this.getTipoSeriale_IdentificativoBusta();
 			if( CostantiProtocollo.IDENTIFICATIVO_SERIALE_DB.equals(tipo) == false && 
 					CostantiProtocollo.IDENTIFICATIVO_SERIALE_MYSQL.equals(tipo) == false &&
-					CostantiProtocollo.IDENTIFICATIVO_SERIALE_STATIC.equals(tipo) == false ){
+					CostantiProtocollo.IDENTIFICATIVO_SERIALE_STATIC.equals(tipo) == false &&
+					CostantiProtocollo.IDENTIFICATIVO_SERIALE_DYNAMIC.equals(tipo) == false ){
 				String msg = "Riscontrato errore durante la lettura della proprieta': 'org.openspcoop2.protocol.spcoop.id.tipo': tipo non gestito";
 				this.log.error(msg);
 				throw new ProtocolException(msg);
@@ -151,6 +152,14 @@ public class SPCoopProperties {
 						this.log.error(msg);
 						throw new ProtocolException(msg);
 					}
+				}
+			}
+			else if(CostantiProtocollo.IDENTIFICATIVO_SERIALE_DYNAMIC.equals(tipo)){
+				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+				if(op2Properties!=null && !op2Properties.isClusterDinamico()) {
+					String msg = "La generazione dell'identificativo eGov richiede un identificativo del cluster dinamico";
+					this.log.error(msg);
+					throw new ProtocolException(msg);
 				}
 			}
 			this.isHttpEmptyResponseOneWay();

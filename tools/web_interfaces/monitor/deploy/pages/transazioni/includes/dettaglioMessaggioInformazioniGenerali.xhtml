@@ -25,8 +25,8 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdTransazione" value="ID Transazione" rendered="#{not empty dettagliBean.dettaglio.idTransazione}" />
 			<h:outputText id="outIdTransazione" value="#{dettagliBean.dettaglio.idTransazione}" rendered="#{not empty dettagliBean.dettaglio.idTransazione}" />
 			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdCluster" value="ID Cluster" rendered="#{not empty dettagliBean.dettaglio.clusterId}" />
-			<h:outputText id="outIdCluster" value="#{dettagliBean.dettaglio.clusterId}" rendered="#{not empty dettagliBean.dettaglio.clusterId}" />
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdCluster" value="ID Cluster" rendered="#{not empty dettagliBean.dettaglio.clusterId and dettagliBean.visualizzaIdCluster and not dettagliBean.clusterDinamico}" />
+			<h:outputText id="outIdCluster" value="#{dettagliBean.dettaglio.clusterId}" rendered="#{not empty dettagliBean.dettaglio.clusterId and dettagliBean.visualizzaIdCluster and not dettagliBean.clusterDinamico}" />
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipologia" value="Tipologia" rendered="#{not empty dettagliBean.tipologiaConProtocollo}" />
 			<h:outputText id="outTipologia" value="#{dettagliBean.tipologiaConProtocollo}" rendered="#{not empty dettagliBean.tipologiaConProtocollo}" />

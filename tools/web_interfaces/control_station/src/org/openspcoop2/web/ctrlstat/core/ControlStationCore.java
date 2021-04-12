@@ -937,6 +937,12 @@ public class ControlStationCore {
 		return this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled;
 	}
 	
+	/** Cluster dinamico */
+	private boolean isClusterDinamico_enabled = false;
+	public Boolean isClusterDinamico_enabled() throws UtilsException{
+		return this.isClusterDinamico_enabled;
+	}
+	
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -2437,7 +2443,10 @@ public class ControlStationCore {
 		this.showAllarmiElenchiStatiAllarmi = core.showAllarmiElenchiStatiAllarmi;
 		
 		/** Registrazione Messaggi */
-		this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
+		this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = core.isRegistrazioneMessaggi_multipartPayloadParsing_enabled;
+		
+		/** Cluster dinamico */
+		this.isClusterDinamico_enabled = core.isClusterDinamico_enabled;
 		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
@@ -2816,6 +2825,7 @@ public class ControlStationCore {
 				this.showAllarmiElenchiStatiAllarmi = consoleProperties.isShowAllarmiElenchiStatiAllarmi();
 			}
 			this.isRegistrazioneMessaggi_multipartPayloadParsing_enabled = consoleProperties.isRegistrazioneMessaggi_multipartPayloadParsing_enabled();
+			this.isClusterDinamico_enabled = consoleProperties.isClusterDinamico_enabled();
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

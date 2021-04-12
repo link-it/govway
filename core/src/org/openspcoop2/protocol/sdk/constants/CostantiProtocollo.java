@@ -81,6 +81,8 @@ public class CostantiProtocollo {
     public final static String IDENTIFICATIVO_SERIALE_MYSQL = TipiDatabase.MYSQL.toString();
     /** Tipo di identificativo: static */
     public final static String IDENTIFICATIVO_SERIALE_STATIC = "static";
+    /** Tipo di identificativo: dynamic */
+    public final static String IDENTIFICATIVO_SERIALE_DYNAMIC = "dynamic";
         
     
 	// Costanti Key per i Messaggi di Errore Integrazione

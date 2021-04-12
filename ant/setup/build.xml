@@ -95,6 +95,7 @@
 			antinstaller_console_env=runtime/manager
 			antinstaller_stats_env=runtime/batch
 			antinstaller_batch_dir=
+			antinstaller_gestione_nodi=static/dynamic
 
 		Informazioni DataSource
 			antinstaller_driver_jdbc_classname=org.postgresql.Driver
@@ -129,6 +130,17 @@
 			antinstaller_dbusername_stats=openspcoop
 			antinstaller_dbpassword_stats=openspcoop
 			antinstaller_oracle_mode_stats=SID/serviceName
+
+		Dispiegamento Dinamico
+			antinstaller_gestione_nodi_group_id=
+			antinstaller_gestione_nodi_numeric_id_mode=static/dynamic/db
+			antinstaller_gestione_nodi_numeric_id_cifre=1
+			antinstaller_gestione_nodi_check_url=
+			antinstaller_gestione_nodi_check_username=
+			antinstaller_gestione_nodi_check_password=
+			antinstaller_gestione_nodi_proxy_url=
+			antinstaller_gestione_nodi_proxy_username=
+			antinstaller_gestione_nodi_proxy_password=
 
 		Configurazione Utenze
 			antinstaller_pddconsole_username=amministratore
@@ -520,6 +532,10 @@
 		<copy file="${deploy_resources}/protocolli/modipa/modipa_local.properties" todir="${tmp_cfg}"/>
 
 		<replace file="${tmp_cfg}/modipa_local.properties" token="WORK_DIR" value="${work_dir}"/>
+		<antcall target="dos2unix">
+			<param name="dir" value="${tmp_cfg}"/>
+		    <param name="file" value="modipa_local.properties"/>
+		</antcall>
 	</target>
 
 	<target name="setup_spcoop" depends="_setup_spcoop"/>

@@ -59,6 +59,8 @@
                                 <linkit:sql-table object-name="registro-plugin-archivio" object-type="registro-plugin-archivio"/>
                                 <linkit:sql-comment><![CDATA[**** Handlers ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="handlers" object-type="handlers"/>
+                                <linkit:sql-comment><![CDATA[**** Nodi Runtime ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="nodi-runtime" object-type="nodi-runtime"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -3072,5 +3074,85 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
+
+    <xsd:element name="nodi-runtime">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="nodi_runtime"
+                        comment="Elenco dei nodi attivi">
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="hostname" />
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="gruppo" />
+                            <linkit:sql-table-unique-field name="id-numerico" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="hostname" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping varchar="4000"/>
+                                <linkit:sql-ddl-column-comment>Hostname del nodo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gruppo" type="xsd:string" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping varchar="4000"/>
+                                <linkit:sql-ddl-column-comment>Gruppo di appartenenza del nodo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data-registrazione" type="xsd:dateTime" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_registrazione" />
+                                <linkit:sql-ddl-column-comment>Data di registrazione del nodo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data-refresh" type="xsd:dateTime" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_refresh" />
+                                <linkit:sql-ddl-column-comment>Data di refresh del nodo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id-numerico" type="xsd:integer" minOccurs="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_numerico" />
+                                <linkit:sql-ddl-column-comment>Identificativo numerico del nodo</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
 </xsd:schema>

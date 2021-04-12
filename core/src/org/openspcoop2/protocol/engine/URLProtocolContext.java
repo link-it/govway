@@ -63,6 +63,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	public static final String IntegrationManager_ENGINE_FUNCTION_PD = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_PD;
 	public static final String IntegrationManager_ENGINE_FUNCTION_MessageBox = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_MessageBox;
 	public static final String Check_FUNCTION = "check";
+	public static final String Proxy_FUNCTION = "proxy";
 	
 	private IDService idServiceCustom;
 	
@@ -234,6 +235,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 						protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
 						protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
 						protocollo.equals(URLProtocolContext.Check_FUNCTION) ||
+						protocollo.equals(URLProtocolContext.Proxy_FUNCTION) ||
 						(customContexts!=null && customContexts.isMatch(protocollo, function))) {
 					// ContextProtocol Empty
 					if(logCore!=null)
@@ -305,6 +307,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 											function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
 											function.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
 											function.equals(URLProtocolContext.Check_FUNCTION) ||
+											function.equals(URLProtocolContext.Proxy_FUNCTION) ||
 										(customContexts!=null && customContexts.isMatch(function, functionParameterForCheckCustom))) 
 									)
 							){

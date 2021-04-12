@@ -94,14 +94,14 @@ public class CheckStatoPdD extends HttpServlet {
 				HttpServletCredential identity = new HttpServletCredential(req, log);
 				if(username.equals(identity.getUsername())==false){
 					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
-					log.error("[CheckStatoPdD] "+msg+". Richiesta effettuata da un username ["+identity.getUsername()+"]");
+					log.error("[CheckStatoPdD] "+msg+". Richiesta effettuata da username ["+identity.getUsername()+"] sconosciuto");
 					res.setStatus(500);
 					res.getOutputStream().write(msg.getBytes());	
 					return;
 				}
 				if(password.equals(identity.getPassword())==false){
 					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
-					log.error("[CheckStatoPdD] "+msg+". Richiesta effettuata da un username ["+identity.getUsername()+"] (password errata)");
+					log.error("[CheckStatoPdD] "+msg+". Richiesta effettuata da username ["+identity.getUsername()+"] (password errata)");
 					res.setStatus(500);
 					res.getOutputStream().write(msg.getBytes());
 					return;

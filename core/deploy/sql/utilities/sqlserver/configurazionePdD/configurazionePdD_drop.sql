@@ -1,4 +1,6 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_nodi_runtime_2 ON nodi_runtime ;
+-- DROP INDEX index_nodi_runtime_1 ON nodi_runtime ;
 -- DROP INDEX index_config_handlers_1 ON config_handlers ;
 -- DROP INDEX index_registro_plugins_1 ON registro_plugins ;
 -- DROP INDEX index_generic_properties_1 ON generic_properties ;
@@ -8,6 +10,7 @@
 -- DROP INDEX index_registro_plug_jar_1 ON registro_plug_jar ;
 -- DROP INDEX index_generic_property_1 ON generic_property ;
 -- DROP INDEX index_dump_config_1 ON dump_config ;
+DROP TABLE nodi_runtime;
 DROP TABLE config_handlers;
 DROP TABLE registro_plug_jar;
 DROP TABLE registro_plugins;

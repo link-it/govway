@@ -21,6 +21,8 @@
 package org.openspcoop2.message;
 
 
+import java.io.InputStream;
+
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 
@@ -35,6 +37,10 @@ import org.openspcoop2.message.exception.MessageNotSupportedException;
 public interface OpenSPCoop2RestMessage<T> extends OpenSPCoop2Message {
 	
 	/* Elementi REST */
+	
+	public boolean isContentBuilded();
+	
+	public InputStream getInputStream();
 	
 	public boolean hasContent() throws MessageException,MessageNotSupportedException;
 	

@@ -767,6 +767,17 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("abilitaMultipartRequestCache.enabled", true, true));
 	}
 	
+	// Abilita il cluster dinamico
+	public boolean isClusterDinamico() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("cluster_dinamico.enabled", true, true));
+	}
+	public int getClusterDinamicoRefresh() throws Exception{
+		if(this.isClusterDinamico()) {
+			return Integer.valueOf(this.appProperties.getProperty("cluster_dinamico.refresh", true, true));
+		}
+		return -1;
+	}
+	
 	// properties per la gestione del login
 	public String getLoginTipo() throws Exception{
 		return this.appProperties.getProperty("login.tipo", true, true);

@@ -90,6 +90,7 @@ import org.openspcoop2.monitor.engine.statistic.StatisticheMensili;
 import org.openspcoop2.monitor.engine.statistic.StatisticheSettimanali;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
@@ -164,6 +165,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private boolean useStatisticheGiornaliereCalcoloDistribuzioneMensile;
 	private boolean isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere;
 	
+	private boolean clusterDinamico = false;
+	private int clusterDinamicoRefresh;
+	
 	public StatisticheGiornaliereService() {
 
 		try {
@@ -198,6 +202,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			this.driverRegistroServiziDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
 			this.driverConfigurazioneDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			
+			this.clusterDinamico = this.govwayMonitorProperties.isClusterDinamico();
+			if(this.clusterDinamico) {
+				this.clusterDinamicoRefresh = this.govwayMonitorProperties.getClusterDinamicoRefresh();
+			}
 			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -246,6 +255,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.driverRegistroServiziDB = new DriverRegistroServiziDB(con, log, tipoDatabase);
 			this.driverConfigurazioneDB = new DriverConfigurazioneDB(con, log, tipoDatabase);
 			
+			this.clusterDinamico = this.govwayMonitorProperties.isClusterDinamico();
+			if(this.clusterDinamico) {
+				this.clusterDinamicoRefresh = this.govwayMonitorProperties.getClusterDinamicoRefresh();
+			}
+			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -292,6 +306,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String tipoDatabase = (serviceManagerProperties!=null && serviceManagerProperties.getDatabaseType()!=null) ? serviceManagerProperties.getDatabaseType() : DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			this.driverRegistroServiziDB = new DriverRegistroServiziDB(conConfig, log, tipoDatabase);
 			this.driverConfigurazioneDB = new DriverConfigurazioneDB(conConfig, log, tipoDatabase);
+			
+			this.clusterDinamico = this.govwayMonitorProperties.isClusterDinamico();
+			if(this.clusterDinamico) {
+				this.clusterDinamicoRefresh = this.govwayMonitorProperties.getClusterDinamicoRefresh();
+			}
 			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -7507,8 +7526,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private void impostaFiltroIdClusterOrCanale(IExpression filter, BaseSearchForm searchForm, StatisticaModel model, boolean isCount) throws UtilsException, ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
 		if (StringUtils.isNotEmpty(searchForm.getClusterId())) {
 			
-			filter.and().equals(model.CLUSTER_ID,	searchForm.getClusterId().trim());
-			
+			if(this.clusterDinamico) {
+				List<String> listId = this.getClusterIdDinamici(searchForm.getClusterId().trim(), this.clusterDinamicoRefresh);
+				if(listId!=null && !listId.isEmpty()) {
+					filter.and().in(model.CLUSTER_ID, listId);
+				}
+				else {
+					filter.and().equals(model.CLUSTER_ID,	"--"); // non esistente volutamente
+				}
+			}
+			else {
+				filter.and().equals(model.CLUSTER_ID,	searchForm.getClusterId().trim());
+			}
 		}
 		else if (StringUtils.isNotEmpty(searchForm.getCanale())) {
 			
@@ -7745,5 +7774,34 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				filter.and().in(fieldCredenziale, ids); 
 			}
 		}
+	}
+	
+	
+	@Override
+	public List<String> getHostnames(String gruppo, int refreshSecondsInterval){
+		Connection con = null;
+		try {
+			con = this.driverConfigurazioneDB.getConnection("StatisticheGiornaliereService.getHostnames");
+			return DynamicClusterManager.getHostnames(con, this.driverConfigurazioneDB.getTipoDB(), gruppo, refreshSecondsInterval);
+		}catch (Exception e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+			return null;
+		}finally {
+			try {
+				this.driverConfigurazioneDB.releaseConnection(con);
+			}catch(Throwable eClose) {}
+		}
+	}
+	@Override
+	public List<String> getClusterIdDinamici(String gruppo, int refreshSecondsInterval){
+		List<String> l = this.getHostnames(gruppo, refreshSecondsInterval);
+		List<String> list = null;
+		if(l!=null && !l.isEmpty()) {
+			list = new ArrayList<String>();
+			for (String id : l) {
+				list.add( DynamicClusterManager.hashClusterId(id) );
+			}
+		}
+		return list;
 	}
 }

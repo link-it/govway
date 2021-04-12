@@ -51,6 +51,10 @@ public class PasswordGenerator extends PasswordVerifier {
 		DEFAULT.setIncludeNotAlphanumericSymbol(true);
 	}
 	
+	public static void main(String[] args) throws UtilsException {
+		// Metodo utilizzato dal setup antinstaller
+		System.out.println(DEFAULT.generate());
+	}
 	
 	public PasswordGenerator(){
 		super();

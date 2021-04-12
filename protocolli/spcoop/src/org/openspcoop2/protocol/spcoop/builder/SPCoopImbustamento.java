@@ -42,6 +42,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
@@ -128,7 +129,7 @@ public class SPCoopImbustamento {
 	
 	
 	/** MAX_SERIALE */
-	private static int maxSeriale = 0;
+	protected static int maxSeriale = 0;
 	/** LunghezzaPrefisso */
 	private static int prefixLenght = 0;
 
@@ -149,17 +150,6 @@ public class SPCoopImbustamento {
 		}
 	}
 	
-	// Usato nel tipo di identificativo static
-	/** Contatore seriale */
-	private static int serialCounter = 0;
-	public static synchronized int getNextSerialCounter(){
-
-		if((SPCoopImbustamento.serialCounter+1) > SPCoopImbustamento.maxSeriale){
-			SPCoopImbustamento.serialCounter = 0;
-		} 
-		SPCoopImbustamento.serialCounter++;
-		return SPCoopImbustamento.serialCounter;
-	}
 	
 	/* ********  Metodi per la costruzione di parti della busta SPCoop  ******** */ 
 	
@@ -192,9 +182,19 @@ public class SPCoopImbustamento {
 		}
 		
 		Integer prefix = null;
-		String prefixS = OpenSPCoop2Properties.getInstance().getClusterIdNumerico();
-		if(prefixS!=null) {
-			prefix = Integer.valueOf(prefixS);
+		OpenSPCoop2Properties openSPCoop2Properties = OpenSPCoop2Properties.getInstance();
+		if(openSPCoop2Properties.isClusterDinamico()) {
+			try {
+				prefix = DynamicClusterManager.getInstance().getIdentificativoNumerico();
+			}catch(Exception e) {
+				throw new ProtocolException("Creazione ID eGov non riuscita; identificativo numerico del cluster dinamico non ottenibile: "+e.getMessage(), e);
+			}
+		}
+		else {
+			String prefixS =openSPCoop2Properties.getClusterIdNumerico();
+			if(prefixS!=null) {
+				prefix = Integer.valueOf(prefixS);
+			}
 		}
 		initSerialCounter(prefix==null ? -1 : prefix);
 
@@ -229,11 +229,13 @@ public class SPCoopImbustamento {
 				serialGeneratorParameter.setTipo(IDSerialGeneratorType.MYSQL);
 				counter = serialGenerator.buildIDAsNumber(serialGeneratorParameter);
 	
-			} else if(SPCoopCostanti.IDENTIFICATIVO_EGOV_SERIALE_STATIC.equals(this.spcoopProperties.getTipoSeriale_IdentificativoBusta())){
+			} else if(SPCoopCostanti.IDENTIFICATIVO_EGOV_SERIALE_STATIC.equals(this.spcoopProperties.getTipoSeriale_IdentificativoBusta())
+					||
+					SPCoopCostanti.IDENTIFICATIVO_EGOV_SERIALE_DYNAMIC.equals(this.spcoopProperties.getTipoSeriale_IdentificativoBusta())){
 	
-				counter = SPCoopImbustamento.getNextSerialCounter();
+				counter = SPCoopStaticCounter.getNextSerialCounter(codAmm, idPD);
 					
-			}else {
+			} else {
 	
 				counter = serialGenerator.buildIDAsNumber(serialGeneratorParameter);
 	

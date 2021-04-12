@@ -485,6 +485,10 @@ public class ConsoleProperties {
 	public Boolean isRegistrazioneMessaggi_multipartPayloadParsing_enabled() throws UtilsException{
 		return this.readBooleanProperty(true, "registrazioneMessaggi.multipartPayloadParsing.enabled");
 	}
+	
+	public Boolean isClusterDinamico_enabled() throws UtilsException{
+		return this.readBooleanProperty(true, "cluster_dinamico.enabled");
+	}
 
 	
 	

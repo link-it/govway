@@ -1,3 +1,7 @@
+2021-04-09  Andrea Poli <apoli@link.it>
+
+	Aggiunta tabella 'nodi_runtime' per gestire registrazione di nodi dinamici
+
 2021-04-01  Andrea Poli <apoli@link.it>
 
 	Aggiunti indici per effettuare la ricerca per id applicativo:

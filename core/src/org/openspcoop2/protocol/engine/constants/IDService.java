@@ -44,7 +44,8 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	
 	INTEGRATION_MANAGER_SOAP ("IntegrationManager"),
 	
-	CHECK_PDD ("Check");
+	CHECK_PDD ("Check"),
+	PROXY ("Proxy");
 	
 	
 	// ID: 7 cifre (parlante)
@@ -55,6 +56,7 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	private final static String ID_INTEGRATION_MANAGER = "IM00000";
 	private final static String ID_PORTA_DELEGATA_INTEGRATION_MANAGER = "PDIM000";
 	private final static String ID_CHECK_PDD = "CHKPDD0";
+	private final static String ID_PROXY = "PROXY00";
 	
 	public String getCode() throws ProtocolException{
 		switch (this) {
@@ -72,6 +74,8 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 			return ID_INTEGRATION_MANAGER;
 		case CHECK_PDD:
 			return ID_CHECK_PDD;
+		case PROXY:
+			return ID_PROXY;
 		}
 		throw new ProtocolException("Service ["+this.name()+"] unsupported");
 	}

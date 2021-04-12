@@ -162,6 +162,7 @@ public final class CostantiDB {
     public static final String CONFIGURAZIONE_CANALI_NODI = "canali_nodi";
     public static final String CONFIGURAZIONE_HANDLERS = "config_handlers";
 
+    public static final String CONFIG_NODI_RUNTIME = "nodi_runtime";
     
     public static final String CONFIG_URL_INVOCAZIONE = "config_url_invocazione";
     public static final String CONFIG_URL_REGOLE = "config_url_regole";

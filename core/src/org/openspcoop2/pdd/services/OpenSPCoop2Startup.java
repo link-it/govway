@@ -86,6 +86,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
+import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.config.GeneralInstanceProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PddProperties;
@@ -135,6 +136,7 @@ import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
+import org.openspcoop2.pdd.timers.TimerClusterDinamicoThread;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventiThread;
@@ -268,6 +270,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerStatisticheThread threadGenerazioneStatisticheGiornaliere;
 	private TimerStatisticheThread threadGenerazioneStatisticheSettimanali;
 	private TimerStatisticheThread threadGenerazioneStatisticheMensili;
+	
+	/** DynamicCluster */
+	private TimerClusterDinamicoThread threadClusterDinamico;
 	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -951,7 +956,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 
-
+			
 			/*----------- Inizializzazione Generatore di ClusterID  --------------*/
 			String clusterID = null;
 			try{
@@ -1051,6 +1056,30 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 
 
+			
+			
+			/*----------- Inizializzazione Configurazione Cluster Dinamica --------------*/
+			try{
+				if(propertiesReader.isClusterDinamico()) {
+					if(propertiesReader.isUseHashClusterId()) {
+						propertiesReader.updateClusterId();
+					}
+					OpenSPCoop2Startup.log.info("Nodo avviato in modalità cluster dinamica con identificativo '"+propertiesReader.getClusterId(false)+"' ("+propertiesReader.getCluster_id_preCodificaHash()+")");
+					
+					// aggiorno
+					clusterID = propertiesReader.getClusterId(false);
+					
+					
+					DynamicClusterManager.initStaticInstance();
+					DynamicClusterManager.getInstance().register(OpenSPCoop2Startup.log);
+				}
+			}catch(Exception e){
+				this.logError("Riscontrato errore durante l'inizializzazione della configurazione relativa al cluster dinamico: "+e.getMessage(),e);
+				return;
+			}
+			
+			
+			
 
 
 
@@ -3005,6 +3034,23 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/*----------- Inizializzazione Thread per Configurazione Cluster Dinamica --------------*/
+			try{
+				if(propertiesReader.isClusterDinamico()) {
+					OpenSPCoop2Startup.this.threadClusterDinamico = new TimerClusterDinamicoThread(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
+					OpenSPCoop2Startup.this.threadClusterDinamico.start();
+					TimerClusterDinamicoThread.STATE = TimerState.ENABLED;
+					forceLogEventi.info("Thread per l'aggiornamento del cluster avviato correttamente");
+				}
+			}catch(Exception e){
+				this.logError("Riscontrato errore durante l'inizializzazione del thread che aggiorna il cluster dinamico: "+e.getMessage(),e);
+				return;
+			}
+			
+			
+			
+			
+			
 			
 			
 
@@ -3063,7 +3109,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		try {
 			properties = OpenSPCoop2Properties.getInstance();
 		}catch(Throwable e){}
-				
+		
+		// ID Cluster
+		try{
+			if(OpenSPCoop2Startup.this.threadClusterDinamico!=null){
+				OpenSPCoop2Startup.this.threadClusterDinamico.setStop(true);
+			}
+		}catch(Throwable e){}
+		try{
+			if(properties.isClusterDinamico()) {
+				DynamicClusterManager.getInstance().unregister(OpenSPCoop2Startup.log);
+			}
+		}catch(Throwable e){}
+		
+		
 		// Eventi
 		try{
 			String clusterID = properties.getClusterId(false);
@@ -3405,6 +3464,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(this.timerThreshold!=null) {
 				this.timerThreshold.waitShutdown();
 			}
+		}catch (Throwable e) {}
+		try{
+			if(this.threadClusterDinamico!=null)
+				this.threadClusterDinamico.waitShutdown();
 		}catch (Throwable e) {}
 		
 		// Rilascio lock (da fare dopo che i timer sono stati fermati)

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +29,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -45,8 +51,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -58,6 +66,7 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
@@ -70,8 +79,11 @@ import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
+import org.openspcoop2.utils.transport.http.SSLUtilities;
+import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
 
 /**
  * Connettore che utilizza la libreria httpcore
@@ -86,12 +98,22 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	public static final String ENDPOINT_TYPE = "httpcore";
 	
 	
-	private static boolean USE_POOL = true;
+	private static boolean USE_POOL = false;
 	
 	private HttpEntity httpEntityResponse = null;
 	private HttpClient httpClient = null;
 		
 	private HttpRequestBase httpRequest;
+	
+	
+	/* Costruttori */
+	public ConnettoreHTTPCORE(){
+		this.connettoreHttps = false;
+	}
+	public ConnettoreHTTPCORE(boolean https){
+		this.connettoreHttps = https;
+	}
+	
 	
 	private static PoolingHttpClientConnectionManager cm = null;
 	private static synchronized void initialize(){
@@ -109,8 +131,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 		}
 	}
-	private static HttpClient getHttpClient(ConnectionKeepAliveStrategy keepAliveStrategy){
-		// Caso senza pool
+	
+	private HttpClient buildHttpClient(ConnectionKeepAliveStrategy keepAliveStrategy, SSLContext sslContext, boolean usePool) throws UtilsException{
 		
 		HttpClientBuilder httpClientBuilder = HttpClients.custom();
 		
@@ -118,33 +140,49 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy);
 		}
 		
-		return httpClientBuilder.build();
-	}
-	private static HttpClient getHttpClientFromPool(ConnectionKeepAliveStrategy keepAliveStrategy){
-		// Caso con pool
-		if(ConnettoreHTTPCORE.cm==null){
-			ConnettoreHTTPCORE.initialize();
+		// Imposta Contesto SSL se attivo
+		if(this.sslContextProperties!=null){
+			SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+			if(this.debug) {
+				String clientCertificateConfigurated = this.sslContextProperties.getKeyStoreLocation();
+				sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
+						this.logger.getLogger(), this.logger.buildMsg(""),
+						clientCertificateConfigurated);
+			}		
+			
+			StringBuilder bfLog = new StringBuilder();
+			HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(this.sslContextProperties, bfLog, 
+					this.logger.getLogger(), this.loader);
+			if(this.debug)
+				this.logger.debug(bfLog.toString());
+			
+			if(hostnameVerifier==null) {
+				hostnameVerifier = SSLConnectionSocketFactory.getDefaultHostnameVerifier();
+			}
+			SSLConnectionSocketFactory f = new SSLConnectionSocketFactory(sslSocketFactory, hostnameVerifier);
+			httpClientBuilder.setSSLSocketFactory(f);
 		}
-		//System.out.println("-----GET CONNECTION [START] ----");
-		//System.out.println("PRIMA CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
-		//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
-		ConnettoreHTTPCORE.cm.closeExpiredConnections();
-		ConnettoreHTTPCORE.cm.closeIdleConnections(30, TimeUnit.SECONDS);
-		//System.out.println("DOPO CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
-		//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
-		
-		HttpClientBuilder httpClientBuilder = HttpClients.custom();
-		httpClientBuilder.setConnectionManager(ConnettoreHTTPCORE.cm);
-		if(keepAliveStrategy!=null){
-			httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy);
+
+		if(usePool) {
+			// Caso con pool
+			if(ConnettoreHTTPCORE.cm==null){
+				ConnettoreHTTPCORE.initialize();
+			}
+			//System.out.println("-----GET CONNECTION [START] ----");
+			//System.out.println("PRIMA CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
+			//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
+			ConnettoreHTTPCORE.cm.closeExpiredConnections();
+			ConnettoreHTTPCORE.cm.closeIdleConnections(30, TimeUnit.SECONDS);
+			//System.out.println("DOPO CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
+			//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
+			httpClientBuilder.setConnectionManager(ConnettoreHTTPCORE.cm);
 		}
-		
-		HttpClient http = httpClientBuilder.build();
 		
 		//System.out.println("PRESA LA CONNESSIONE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
 		//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
 		//System.out.println("-----GET CONNECTION [END] ----");
-		return http;
+		
+		return httpClientBuilder.build();
 	}
 	
 	
@@ -162,7 +200,20 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	@Override
 	protected boolean send(ConnettoreMsg request) {
 		
+		// HTTPS
 		try{
+			this.setSSLContext();
+		}catch(Exception e){
+			this.eccezioneProcessamento = e;
+			this.logger.error("[HTTPS error]"+ this.readExceptionMessageFromException(e),e);
+			this.errore = "[HTTPS error]"+ this.readExceptionMessageFromException(e);
+			return false;
+		}
+		
+		try{
+			
+			// Gestione https
+			SSLContext sslContext = buildSSLContext();	
 			
 			// Creazione URL
 			if(this.debug)
@@ -188,12 +239,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			// Creazione Connessione
 			if(this.debug)
 				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
-			if(ConnettoreHTTPCORE.USE_POOL){
-				this.httpClient = ConnettoreHTTPCORE.getHttpClientFromPool(keepAliveStrategy);
-			}
-			else{
-				this.httpClient = ConnettoreHTTPCORE.getHttpClient(keepAliveStrategy);
-			}
+			this.httpClient = buildHttpClient(keepAliveStrategy, sslContext, ConnettoreHTTPCORE.USE_POOL);
 			
 			// HttpMethod
 			if(this.httpMethod==null){
@@ -226,6 +272,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 					this.httpRequest = new HttpPatch(url.toString());
 					break;	
 				default:
+					this.httpRequest = new CustomHttpEntity(this.httpMethod, url.toString());
 					break;
 			}
 			if(this.httpMethod==null){
@@ -466,40 +513,63 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(httpBody.isDoOutput()){
 				if(this.debug)
 					this.logger.debug("Spedizione byte...");
-				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
-						TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
-				try {
-					if(this.isSoap && this.sbustamentoSoap){
-						if(this.debug)
-							this.logger.debug("Sbustamento...");
-						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
-					}else{
-						this.requestMsg.writeTo(bout, true);
-					}
-					bout.flush();
-					bout.close();
-					if(this.isDumpBinarioRichiesta()) {
-						this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
-					}
-					
-					HttpEntity httpEntity = null;
-					if(bout.isSerializedOnFileSystem()) {
-						httpEntity = new FileEntity(bout.getSerializedFile());
-					}
-					else {
-						httpEntity = new ByteArrayEntity(bout.toByteArray());
-					}
-					if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
-						((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
-					}
-					else{
-						throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
-					}
-				}finally {
+				boolean hasContentRestBuilded = false;
+				boolean hasContentRest = false;
+				OpenSPCoop2RestMessage<?> restMessage = null;
+				if(this.isRest) {
+					restMessage = this.requestMsg.castAsRest();
+					hasContentRest = restMessage.hasContent();
+					hasContentRestBuilded = restMessage.isContentBuilded();
+				}
+				if(this.isDumpBinarioRichiesta() || this.isSoap || hasContentRestBuilded) {
+					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
-						bout.clearResources();
-					}catch(Throwable t) {
-						this.logger.error("Release resources failed: "+t.getMessage(),t);
+						if(this.isSoap && this.sbustamentoSoap){
+							if(this.debug)
+								this.logger.debug("Sbustamento...");
+							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
+						}else{
+							this.requestMsg.writeTo(bout, true);
+						}
+						bout.flush();
+						bout.close();
+						if(this.isDumpBinarioRichiesta()) {
+							this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+						}
+						
+						HttpEntity httpEntity = null;
+						if(bout.isSerializedOnFileSystem()) {
+							httpEntity = new FileEntity(bout.getSerializedFile());
+						}
+						else {
+							httpEntity = new ByteArrayEntity(bout.toByteArray());
+						}
+						if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
+							((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
+						}
+						else{
+							throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
+						}
+					}finally {
+						try {
+							bout.clearResources();
+						}catch(Throwable t) {
+							this.logger.error("Release resources failed: "+t.getMessage(),t);
+						}
+					}
+				}
+				else {
+					// Siamo per forza rest con contenuto non costruito
+					if(hasContentRest) {
+						InputStream isRequest = this.requestMsg.castAsRest().getInputStream();
+						HttpEntity httpEntity = new InputStreamEntity(isRequest);
+						if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
+							((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
+						}
+						else{
+							throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
+						}
 					}
 				}
 			}
@@ -836,6 +906,33 @@ class ConnectionKeepAliveStrategyCustom implements ConnectionKeepAliveStrategy{
         //System.out.println("RETURN 2 minuti");
         return 2 * 60 * 1000;
 		
+	}
+	
+}
+
+class CustomHttpEntity extends HttpEntityEnclosingRequestBase{
+
+	private HttpRequestMethod httpMethod;
+	public CustomHttpEntity(HttpRequestMethod httpMethod) {
+		super();
+		this.httpMethod = httpMethod;
+	} 
+	
+    public CustomHttpEntity(HttpRequestMethod httpMethod, final URI uri) {
+        super();
+        setURI(uri);
+        this.httpMethod = httpMethod;
+    }
+
+    public CustomHttpEntity(HttpRequestMethod httpMethod, final String uri) {
+        super();
+        setURI(URI.create(uri));
+        this.httpMethod = httpMethod;
+    }
+	
+	@Override
+	public String getMethod() {
+		return this.httpMethod.name();
 	}
 	
 }

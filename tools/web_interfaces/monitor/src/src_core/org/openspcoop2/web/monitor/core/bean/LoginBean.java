@@ -93,11 +93,13 @@ public class LoginBean extends AbstractLoginBean {
 	private Boolean visualizzaMenuModalita = null;
 	private Boolean visualizzaSezioneModalita = null;
 	private List<MenuModalitaItem> vociMenuModalita = null;
+	private Boolean vociMenuModalita_semaphore = true;
 	
 	private String soggettoPddMonitor = null;
 	private Boolean visualizzaMenuSoggetto = null;
 	private Boolean visualizzaSezioneSoggetto = null;
 	private List<MenuModalitaItem> vociMenuSoggetto = null;
+	private Boolean vociMenuSoggetto_semaphore = true;
 	private Boolean visualizzaLinkSelezioneSoggetto = null;
 	
 	private Configurazione configurazioneGenerale = null;
@@ -471,62 +473,71 @@ public class LoginBean extends AbstractLoginBean {
 	}
 
 	public List<MenuModalitaItem> getVociMenuModalita() {
-		this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
-		try {
-			List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
+		
+		synchronized (this.vociMenuModalita_semaphore) {
 			
-			if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
-				// prelevo l'eventuale protocollo selezionato
-				String protocolloSelezionato = this.getUtente().getProtocolloSelezionatoPddMonitor();
-				if(listaNomiProtocolli.size()==1) {
-					protocolloSelezionato = listaNomiProtocolli.get(0); // forzo
-				}
+			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
+			try {
+				List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
 				
-				// prelevo l'eventuale protocollo selezionato
-				// popolo la tendina con i protocolli disponibili
-				for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(listaNomiProtocolli) ) {
-					// String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+				if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
+					// prelevo l'eventuale protocollo selezionato
+					String protocolloSelezionato = this.getUtente().getProtocolloSelezionatoPddMonitor();
+					if(listaNomiProtocolli.size()==1) {
+						protocolloSelezionato = listaNomiProtocolli.get(0); // forzo
+					}
 					
-					String labelProtocollo = NamingUtils.getLabelProtocollo(protocolloDisponibile); 
-					Integer labelProtocolloWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelProtocollo); 
-					MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, labelProtocollo, null); 
-					menuItem.setLabelWidth(labelProtocolloWidth); 
-					if(protocolloSelezionato != null && protocolloSelezionato.equals(protocolloDisponibile))
-						menuItem.setDisabled(true); 
+					// prelevo l'eventuale protocollo selezionato
+					// popolo la tendina con i protocolli disponibili
+					for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(listaNomiProtocolli) ) {
+						// String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+						
+						String labelProtocollo = NamingUtils.getLabelProtocollo(protocolloDisponibile); 
+						Integer labelProtocolloWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelProtocollo); 
+						MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, labelProtocollo, null); 
+						menuItem.setLabelWidth(labelProtocolloWidth); 
+						if(protocolloSelezionato != null && protocolloSelezionato.equals(protocolloDisponibile))
+							menuItem.setDisabled(true); 
+						this.vociMenuModalita.add(menuItem);
+					}
+	
+					// seleziona tutti
+					// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
+					String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+					Integer labelTuttiWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelTutti); 
+					MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, labelTutti, null);
+					menuItem.setLabelWidth(labelTuttiWidth); 
+					if((protocolloSelezionato == null)) 
+						menuItem.setDisabled(true);
+					
 					this.vociMenuModalita.add(menuItem);
 				}
-
-				// seleziona tutti
-				// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
-				String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
-				Integer labelTuttiWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelTutti); 
-				MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, labelTutti, null);
-				menuItem.setLabelWidth(labelTuttiWidth); 
-				if((protocolloSelezionato == null)) 
-					menuItem.setDisabled(true);
-				
-				this.vociMenuModalita.add(menuItem);
+	
+			}catch(Throwable e) {
+				this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
 			}
-
-		}catch(Throwable e) {
-			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
-		}
 		
-		return this.vociMenuModalita;
+			return this.vociMenuModalita;
+		}
 	}
 	
 	public int getWidthVociMenuModalita() {
-		if(this.vociMenuModalita.isEmpty())
-			return 0;
-
-		int max = 0;
-		for (MenuModalitaItem menuModalitaItem : this.vociMenuModalita) {
-			if(menuModalitaItem.getLabelWidth() > max)
-				max = menuModalitaItem.getLabelWidth();
-				 
-		}
 		
-		return 44 + max;
+		synchronized (this.vociMenuModalita_semaphore) {
+		
+			if(this.vociMenuModalita.isEmpty())
+				return 0;
+	
+			int max = 0;
+			for (MenuModalitaItem menuModalitaItem : this.vociMenuModalita) {
+				if(menuModalitaItem.getLabelWidth() > max)
+					max = menuModalitaItem.getLabelWidth();
+					 
+			}
+			
+			return 44 + max;
+			
+		}
 	}
 
 	public void setVociMenuModalita(List<MenuModalitaItem> vociMenuModalita) {
@@ -838,119 +849,129 @@ public class LoginBean extends AbstractLoginBean {
 	}
 
 	public List<MenuModalitaItem> getVociMenuSoggetto() {
-		this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
-		try {
-			User utente = this.getUtente();
-			List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
-			String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
-			if(protocolliDispondibili.size()==1) {
-				protocolloSelezionato = protocolliDispondibili.get(0); // forzo
-			}
-			
-			// prelevo il soggetto selezionato
-			String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
-			IDSoggetto idSoggettoOperativo = null;
-			if(soggettoOperativoSelezionato!=null) {
-				String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(soggettoOperativoSelezionato);
-				String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(soggettoOperativoSelezionato);
-				idSoggettoOperativo = new IDSoggetto(tipoSoggettoOperativoSelezionato, nomeSoggettoOperativoSelezionato);
-			}
-			
-			List<Soggetto> soggettiOperativi = listaSoggettiDisponibilePerUtentePddMonitor();
-			
-			// visualizzo il menu' soggetti solo se e' stato selezionato un protocollo 
-			if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) &&
-					soggettiOperativi != null && !soggettiOperativi.isEmpty()) {
-				
-				if(soggettoOperativoSelezionato==null && soggettiOperativi.size()==1) {
-					Soggetto soggetto = soggettiOperativi.get(0);
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
-					soggettoOperativoSelezionato = idSoggetto.toString(); // forzo
+		
+		synchronized (this.vociMenuSoggetto_semaphore) {
+		
+			this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
+			try {
+				User utente = this.getUtente();
+				List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
+				String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
+				if(protocolliDispondibili.size()==1) {
+					protocolloSelezionato = protocolliDispondibili.get(0); // forzo
 				}
-
-				//Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = PddMonitorProperties.getInstance(this.log).getNumeroMassimoSoggettiOperativiMenuUtente();
 				
-//				if(soggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {
+				// prelevo il soggetto selezionato
+				String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
+				IDSoggetto idSoggettoOperativo = null;
+				if(soggettoOperativoSelezionato!=null) {
+					String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(soggettoOperativoSelezionato);
+					String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(soggettoOperativoSelezionato);
+					idSoggettoOperativo = new IDSoggetto(tipoSoggettoOperativoSelezionato, nomeSoggettoOperativoSelezionato);
+				}
+				
+				List<Soggetto> soggettiOperativi = listaSoggettiDisponibilePerUtentePddMonitor();
+				
+				// visualizzo il menu' soggetti solo se e' stato selezionato un protocollo 
+				if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) &&
+						soggettiOperativi != null && !soggettiOperativi.isEmpty()) {
 					
-				if(soggettiOperativi.size()>1) {
-					List<String> listaLabel = new ArrayList<>();
-					Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
-					for (Soggetto soggetto : soggettiOperativi) {
+					if(soggettoOperativoSelezionato==null && soggettiOperativi.size()==1) {
+						Soggetto soggetto = soggettiOperativi.get(0);
 						IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
-						String labelSoggetto = NamingUtils.getLabelSoggetto(idSoggetto);
-						if(!listaLabel.contains(labelSoggetto)) {
-							listaLabel.add(labelSoggetto);
-							mapLabelIds.put(labelSoggetto, idSoggetto);
-						}
+						soggettoOperativoSelezionato = idSoggetto.toString(); // forzo
 					}
+	
+					//Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = PddMonitorProperties.getInstance(this.log).getNumeroMassimoSoggettiOperativiMenuUtente();
 					
-					// Per ordinare in maniera case insensistive
-					Collections.sort(listaLabel, new Comparator<String>() {
-						 @Override
-						public int compare(String o1, String o2) {
-					           return o1.toLowerCase().compareTo(o2.toLowerCase());
-					        }
-						});
-					
-					int i = 1;
-					for (String label : listaLabel) {
-						String labelSoggetto = NamingUtils.getLabelSoggetto(mapLabelIds.get(label)); 
-						MenuModalitaItem menuItem = new MenuModalitaItem(mapLabelIds.get(label).toString(), labelSoggetto, null); 
+	//				if(soggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {
 						
-						if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString()))
-							menuItem.setDisabled(true);
-						
-						Integer labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(menuItem.getLabel()); 
-						if(labelSoggetto.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()) {
-							menuItem.setTooltip(labelSoggetto);
-							menuItem.setLabel(Utility.normalizeLabel(labelSoggetto, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()));
-							// per misurare la dimensione utilizzo solo la prima linea
-							labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(Utility.normalizeLabel(labelSoggetto, 
-									PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente())); 
+					if(soggettiOperativi.size()>1) {
+						List<String> listaLabel = new ArrayList<>();
+						Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+						for (Soggetto soggetto : soggettiOperativi) {
+							IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
+							String labelSoggetto = NamingUtils.getLabelSoggetto(idSoggetto);
+							if(!listaLabel.contains(labelSoggetto)) {
+								listaLabel.add(labelSoggetto);
+								mapLabelIds.put(labelSoggetto, idSoggetto);
+							}
 						}
 						
-						menuItem.setLabelWidth(labelSoggettoWidth); 
+						// Per ordinare in maniera case insensistive
+						Collections.sort(listaLabel, new Comparator<String>() {
+							 @Override
+							public int compare(String o1, String o2) {
+						           return o1.toLowerCase().compareTo(o2.toLowerCase());
+						        }
+							});
+						
+						int i = 1;
+						for (String label : listaLabel) {
+							String labelSoggetto = NamingUtils.getLabelSoggetto(mapLabelIds.get(label)); 
+							MenuModalitaItem menuItem = new MenuModalitaItem(mapLabelIds.get(label).toString(), labelSoggetto, null); 
+							
+							if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString()))
+								menuItem.setDisabled(true);
+							
+							Integer labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(menuItem.getLabel()); 
+							if(labelSoggetto.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()) {
+								menuItem.setTooltip(labelSoggetto);
+								menuItem.setLabel(Utility.normalizeLabel(labelSoggetto, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()));
+								// per misurare la dimensione utilizzo solo la prima linea
+								labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(Utility.normalizeLabel(labelSoggetto, 
+										PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente())); 
+							}
+							
+							menuItem.setLabelWidth(labelSoggettoWidth); 
+							
+							menuItem.setId("voceSoggetto_"+ (i++));
+							
+							this.vociMenuSoggetto.add(menuItem);
+						}
+						
+						// seleziona tutti
+						// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
+						String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+						Integer labelTuttiWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelTutti); 
+						MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, labelTutti, null);
+						menuItem.setLabelWidth(labelTuttiWidth); 
+						if((soggettoOperativoSelezionato == null)) 
+							menuItem.setDisabled(true);
 						
 						menuItem.setId("voceSoggetto_"+ (i++));
 						
 						this.vociMenuSoggetto.add(menuItem);
 					}
-					
-					// seleziona tutti
-					// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
-					String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
-					Integer labelTuttiWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelTutti); 
-					MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, labelTutti, null);
-					menuItem.setLabelWidth(labelTuttiWidth); 
-					if((soggettoOperativoSelezionato == null)) 
-						menuItem.setDisabled(true);
-					
-					menuItem.setId("voceSoggetto_"+ (i++));
-					
-					this.vociMenuSoggetto.add(menuItem);
+	//				} 		
 				}
-//				} 		
+	
+			}catch(Throwable e) {
+				this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
 			}
-
-		}catch(Throwable e) {
-			this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
+			
+			return this.vociMenuSoggetto;
+			
 		}
-		
-		return this.vociMenuSoggetto;
 	}
 	
 	public int getWidthVociMenuSoggetto() {
-		if(this.vociMenuSoggetto.isEmpty())
-			return 0;
-
-		int max = 0;
-		for (MenuModalitaItem menuModalitaItem : this.vociMenuSoggetto) {
-			if(menuModalitaItem.getLabelWidth() > max)
-				max = menuModalitaItem.getLabelWidth();
-				 
-		}
 		
-		return 44 + max;
+		synchronized (this.vociMenuSoggetto_semaphore) {
+		
+			if(this.vociMenuSoggetto.isEmpty())
+				return 0;
+	
+			int max = 0;
+			for (MenuModalitaItem menuModalitaItem : this.vociMenuSoggetto) {
+				if(menuModalitaItem.getLabelWidth() > max)
+					max = menuModalitaItem.getLabelWidth();
+					 
+			}
+			
+			return 44 + max;
+			
+		}
 	}
 
 	public void setVociMenuSoggetto(List<MenuModalitaItem> vociMenuModalita) {
