@@ -1,0 +1,16 @@
+{
+  "http_method": "Qualsiasi",
+  "path": "/libri",
+  "nome": "risorsa_",
+  "descrizione": "string",
+  "id_collaborazione": false,
+  "riferimento_id_richiesta": false,
+  "modi": {
+    "interazione": {
+      "pattern": "crud"
+    },
+    "sicurezza_messaggio": {
+      "stato": "api"
+    }
+  }
+}

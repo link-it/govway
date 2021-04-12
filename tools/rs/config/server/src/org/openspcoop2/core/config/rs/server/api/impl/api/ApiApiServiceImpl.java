@@ -1323,16 +1323,18 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Nessun Servizio con nome: " + nomeServizio);
 
 			Operation az = pt.getAzioneList().stream().filter(a -> nomeAzione.equals(a.getNome()))
-			.map(a -> a).findFirst().orElse(null);
-			ApiAzione ret = ApiApiHelper.operazioneToApiAzione(az);
+					.findFirst().orElse(null);
 
-			if (ret == null)
+			if (az == null)
 				throw FaultCode.NOT_FOUND
 						.toException("Nessuna azione con nome " + nomeAzione + " registrato per il servizio " + nomeServizio);
 
-			ApiModIAzioneSoap modi = ApiApiHelper.getApiAzioneModI(as, az, profilo, env);
-			ret.setModi(modi);
+			ApiAzione ret = ApiApiHelper.operazioneToApiAzione(az);
 
+			if(profilo!=null && (profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA))) {
+				ApiModIAzioneSoap modi = ModiApiApiHelper.getApiAzioneModI(as, az, profilo, env);
+				ret.setModi(modi);
+			}
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
@@ -1555,7 +1557,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 
-			ApiModI ret = ApiApiHelper.getApiModI(as, profilo, env);
+			ApiModI ret = ModiApiApiHelper.getApiModI(as, profilo, env);
 			
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1633,16 +1635,20 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 
 			Resource res = as.getResourceList().stream().filter(r -> nomeRisorsa.equals(r.getNome()))
-			.map(r -> r).findFirst().orElse(null);
-			ApiRisorsa ret = ApiApiHelper.risorsaRegistroToApi(res);
+					.findFirst().orElse(null);
 
-			if (ret == null)
+			if (res == null)
 				throw FaultCode.NOT_FOUND
 						.toException("Nessuna risorsa con nome " + nomeRisorsa + " è registrata per la Api indicata");
 
-			ApiModIRisorsaRest modi = ApiApiHelper.getApiRisorsaModI(as, res, profilo, env);
 
-			ret.setModi(modi);
+			ApiRisorsa ret = ApiApiHelper.risorsaRegistroToApi(res);
+
+			if(profilo!=null && (profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA))) {
+				ApiModIRisorsaRest modi = ModiApiApiHelper.getApiRisorsaModI(as, res, profilo, env);
+				ret.setModi(modi);
+			}
+
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
@@ -2352,7 +2358,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 
-			ProtocolProperties updateModiProtocolProperties = ApiApiHelper.updateModiProtocolProperties(as, profilo, body);
+			ProtocolProperties updateModiProtocolProperties = ModiApiApiHelper.updateModiProtocolProperties(as, profilo, body);
 			
 			IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
 			ApiApiHelper.validateProperties(env, updateModiProtocolProperties, idAccordoFromAccordo);

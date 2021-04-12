@@ -1,8 +1,0 @@
-{
-	"sicurezza_canale": {
-		"pattern": "auth01"
-	},
-	"sicurezza_messaggio": {
-		"pattern": "disabilitato"
-	}
-}
