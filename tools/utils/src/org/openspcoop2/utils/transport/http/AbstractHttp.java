@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -45,6 +46,14 @@ public abstract class AbstractHttp {
 	}
 	public void setContent(byte[] content) {
 		this.content = content;
+	}
+	
+	private InputStream contentStream;
+	public InputStream getContentStream() {
+		return this.contentStream;
+	}
+	public void setContentStream(InputStream contentStream) {
+		this.contentStream = contentStream;
 	}
 	
 	public void addHeader(String key,String value){

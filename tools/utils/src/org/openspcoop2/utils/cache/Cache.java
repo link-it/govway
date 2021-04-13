@@ -392,6 +392,7 @@ public class Cache {
 	
 	// PRIVATE
 	
+	private boolean errorOccursCountingBytes_debug = false;
 	private boolean errorOccursCountingBytes = false;
     public <K, V> int getByteCount(CompositeCache<K, V> cache)
     {
@@ -416,6 +417,10 @@ public class Cache {
 				catch (IOException e)
 				{
 					//Modificato per openspcoop
+					if(this.errorOccursCountingBytes_debug) {
+						System.err.println("["+this.cacheName+"] Element cache get");
+						e.printStackTrace(System.err);
+					}
 					this.errorOccursCountingBytes = true;
 					continue;
 	                // throw new RuntimeException("IOException while trying to get a cached element", e);
@@ -435,6 +440,9 @@ public class Cache {
 	                Object element = ice.getVal();
 	                if(element == null) {
 	                	//Modificato per openspcoop
+	                	if(this.errorOccursCountingBytes_debug) {
+							System.err.println("["+this.cacheName+"] Element cache is null");
+						}
 	    				this.errorOccursCountingBytes = true;
 	    				continue;
 	                }
@@ -450,6 +458,10 @@ public class Cache {
 	                catch (IOException e)
 	                {
 	                	//Modificato per openspcoop
+	                	if(this.errorOccursCountingBytes_debug) {
+	                		System.err.println("["+this.cacheName+"] Element cache writeObject ("+element.getClass().getName()+")");
+							e.printStackTrace(System.err);
+						}
 	    				this.errorOccursCountingBytes = true;
 	    				continue;
 	                    //throw new RuntimeException("IOException while trying to measure the size of the cached element", e);

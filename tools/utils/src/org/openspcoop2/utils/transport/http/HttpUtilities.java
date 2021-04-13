@@ -1163,6 +1163,10 @@ public class HttpUtilities {
 				out.flush();
 				out.close();
 			}
+			else if(httpContent.isDoOutput() && request.getContentStream() != null){
+				OutputStream out = httpConn.getOutputStream();
+				CopyStream.copy(request.getContentStream(), out);
+			}
 			
 			HttpResponse response = new HttpResponse();
 			

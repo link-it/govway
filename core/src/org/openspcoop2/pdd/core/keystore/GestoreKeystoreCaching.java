@@ -26,11 +26,13 @@ import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.security.keystore.MultiKeystore;
+import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
 /**     
@@ -366,5 +368,10 @@ public class GestoreKeystoreCaching {
 	
 	public static CRLCertstore getCRLCertstore(String crlPath) throws SecurityException{
 		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getCRLCertstore(crlPath);
+	}
+	
+	
+	public static SSLSocketFactory getSSLSocketFactory(SSLConfig sslConfig) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSSLSocketFactory(sslConfig);
 	}
 }

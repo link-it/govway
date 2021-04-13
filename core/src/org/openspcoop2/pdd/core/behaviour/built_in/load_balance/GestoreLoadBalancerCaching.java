@@ -25,9 +25,9 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
-import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
@@ -42,7 +42,6 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -82,29 +81,7 @@ public class GestoreLoadBalancerCaching {
 		try{
 			if(cache!=null){
 				try{
-					String stats = cache.printStats(separator);
-					String lifeTimeLabel = "LifeTime:";
-					if(stats.contains(lifeTimeLabel)) {
-						
-						StringBuilder bf = new StringBuilder();
-						bf.append("CRLsLifeTime:");
-						long lifeTime = GestoreLoadBalancerCaching.getItemCrlLifeSecond();
-						if(lifeTime>0){
-							bf.append(Utilities.convertSystemTimeIntoString_millisecondi(lifeTime*1000,false));
-						}
-						else if(lifeTime==0){
-							bf.append("0");
-						}
-						else if(lifeTime<0){
-							bf.append("Infinito");
-						}
-						bf.append(separator);
-					
-						return stats.replace(lifeTimeLabel, bf.toString() + lifeTimeLabel);
-					}
-					else {
-						return stats;
-					}
+					return cache.printStats(separator);
 				}catch(Exception e){
 					throw new Exception(e.getMessage(),e);
 				}
@@ -287,10 +264,6 @@ public class GestoreLoadBalancerCaching {
 			throw new Exception(msg,error);
 		}
 		
-		
-		// impostazione di JCS nel gestore delle cache dei keystore 
-		
-		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.setKeystoreCacheJCS(true, longItemLife>0 ? (int)longItemLife : 7200, cache);
 	}
 	
 	public static void disableSyncronizedGet() throws UtilsException {
@@ -307,16 +280,7 @@ public class GestoreLoadBalancerCaching {
 	}
 	
 	
-	
-	
-	private static long itemCrlLifeSecond; 
-	public static void setCacheCrlLifeSeconds(long itemCrlLifeSecondParam,Logger alog) throws Exception{
-		itemCrlLifeSecond = itemCrlLifeSecondParam;
-		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.setKeystoreCacheJCS_crlLifeSeconds(itemCrlLifeSecond>0 ? (int)itemCrlLifeSecond : 7200);
-	}
-	public static long getItemCrlLifeSecond() {
-		return itemCrlLifeSecond;
-	}
+
 	
 	
 	private static GestoreLoadBalancerCaching staticInstance = null;

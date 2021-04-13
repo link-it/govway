@@ -27,8 +27,10 @@ import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.security.keystore.MultiKeystore;
+import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.cache.Cache;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
  * GestoreKeystoreCache
@@ -46,6 +48,7 @@ public class GestoreKeystoreCache {
 	private static final JWKSetStoreCache jwkSetStoreCache = new JWKSetStoreCache();
 	private static final HttpStoreCache httpStoreCache = new HttpStoreCache();
 	private static final CRLCertstoreCache crlCertstoreCache = new CRLCertstoreCache();
+	private static final SSLSocketFactoryCache sslSocketFactoryCache = new SSLSocketFactoryCache();
 	private static boolean cacheEnabled = false;
 	
 	public static void setKeystoreCacheParameters(boolean cacheEnabled,int cacheLifeSecond,int cacheSize){
@@ -57,6 +60,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.jwkSetStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.httpStoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 		GestoreKeystoreCache.crlCertstoreCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
+		GestoreKeystoreCache.sslSocketFactoryCache.setKeystoreCacheParameters(cacheLifeSecond, cacheSize);
 	}
 	public static void setKeystoreCacheJCS(boolean cacheEnabled,int cacheLifeSecond, Cache cacheJCS){
 		GestoreKeystoreCache.cacheEnabled = cacheEnabled;
@@ -67,6 +71,7 @@ public class GestoreKeystoreCache {
 		GestoreKeystoreCache.jwkSetStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.httpStoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 		GestoreKeystoreCache.crlCertstoreCache.setCacheJCS(cacheLifeSecond, cacheJCS);
+		GestoreKeystoreCache.sslSocketFactoryCache.setCacheJCS(cacheLifeSecond, cacheJCS);
 	}
 	public static void setKeystoreCacheJCS_crlLifeSeconds(int cacheCrlLifeSecond){
 		GestoreKeystoreCache.crlCertstoreCache.updateCacheLifeSecond(cacheCrlLifeSecond);
@@ -192,5 +197,12 @@ public class GestoreKeystoreCache {
 			return GestoreKeystoreCache.crlCertstoreCache.getKeystoreAndCreateIfNotExists(crlPath);
 		else
 			return new CRLCertstore(crlPath);
+	}
+	
+	public static SSLSocketFactory getSSLSocketFactory(SSLConfig sslConfig) throws SecurityException{
+		if(GestoreKeystoreCache.cacheEnabled)
+			return GestoreKeystoreCache.sslSocketFactoryCache.getKeystoreAndCreateIfNotExists(sslConfig.toString(), sslConfig);
+		else
+			return new SSLSocketFactory(sslConfig);
 	}
 }

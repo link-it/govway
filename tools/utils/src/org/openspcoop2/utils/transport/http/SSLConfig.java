@@ -44,7 +44,7 @@ public class SSLConfig implements Serializable  {
 	// TrustAllCerts
 	private boolean trustAllCerts = false;
 	// TrustStore
-	private KeyStore trustStore;
+	private transient KeyStore trustStore;
 	// Path del trustStore che contiene il certificato del server.
 	private String trustStoreLocation;
 	// Password del trustStore che contiene il certificato del server.
@@ -56,12 +56,12 @@ public class SSLConfig implements Serializable  {
 	// CRLs
 	private String trustStoreCRLsLocation;
 	// CertStore
-	private CertStore trustStoreCRLs;
+	private transient CertStore trustStoreCRLs;
 	
 	
 	// AUTENTICAZIONE CLIENT:
 	// KeyStore
-	private KeyStore keyStore;
+	private transient KeyStore keyStore;
 	// Path del keyStore che contiene il certificato del client e la chiave privata del client.
 	private String keyStoreLocation;
 	// Password del keyStore che contiene il certificato del client
@@ -88,6 +88,70 @@ public class SSLConfig implements Serializable  {
 	private boolean secureRandom = false;
 	private String secureRandomAlgorithm = null;
 	
+	// Utilities
+	private StringBuilder sbError;
+	private StringBuilder sbDebug;
+	
+	@Override
+	public String toString() {
+		return this.toString(false);
+	}
+	public String toString(boolean includePassword) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("sslType=").append(this.sslType);
+		sb.append(" ");
+		
+		sb.append("secureRandom=").append(this.secureRandom);
+		sb.append(" ");
+		if(this.secureRandomAlgorithm!=null) {
+			sb.append("secureRandomAlgorithm=").append(this.secureRandomAlgorithm);
+			sb.append(" ");
+		}
+		
+		sb.append("hostnameVerifier=").append(this.hostnameVerifier);
+		sb.append(" ");
+		if(this.classNameHostnameVerifier!=null) {
+			sb.append("classNameHostnameVerifier=").append(this.classNameHostnameVerifier);
+			sb.append(" ");
+		}
+		
+		sb.append("trustAllCerts=").append(this.trustAllCerts);
+		sb.append(" ");
+		if(!this.trustAllCerts) {
+			sb.append("trustStoreLocation=").append(this.trustStoreLocation);
+			sb.append(" ");
+			sb.append("trustStoreType=").append(this.trustStoreType);
+			sb.append(" ");
+			sb.append("trustStorePassword=").append(includePassword? this.trustStorePassword : ((this.trustStorePassword!=null) ? "***" : "unset" ) );
+			sb.append(" ");
+			sb.append("trustManagementAlgorithm=").append(this.trustManagementAlgorithm);
+			sb.append(" ");
+			sb.append("trustStoreCRLsLocation=").append(this.trustStoreCRLsLocation);
+			sb.append(" ");
+		}
+		
+		if(this.keyStoreLocation!=null) {
+			sb.append("keyStoreLocation=").append(this.keyStoreLocation);
+			sb.append(" ");
+			sb.append("keyStoreType=").append(this.keyStoreType);
+			sb.append(" ");
+			sb.append("keyStorePassword=").append(includePassword? this.keyStorePassword : ((this.keyStorePassword!=null) ? "***" : "unset" ) );
+			sb.append(" ");
+			sb.append("keyAlias=").append(this.keyAlias);
+			sb.append(" ");
+			sb.append("keyPassword=").append(includePassword? this.keyPassword : ((this.keyPassword!=null) ? "***" : "unset" ) );
+			sb.append(" ");
+			sb.append("keyManagementAlgorithm=").append(this.keyManagementAlgorithm);
+			sb.append(" ");
+		}
+		else {
+			sb.append("keyStore=disabled");
+			sb.append(" ");
+		}
+		
+		return sb.toString();
+	}
 
 	public boolean isTrustAllCerts() {
 		return this.trustAllCerts;
@@ -252,5 +316,21 @@ public class SSLConfig implements Serializable  {
 
 	public void setSecureRandomAlgorithm(String secureRandomAlgorithm) {
 		this.secureRandomAlgorithm = secureRandomAlgorithm;
+	}
+	
+	public StringBuilder getSbError() {
+		return this.sbError;
+	}
+
+	public void setSbError(StringBuilder sbError) {
+		this.sbError = sbError;
+	}
+
+	public StringBuilder getSbDebug() {
+		return this.sbDebug;
+	}
+
+	public void setSbDebug(StringBuilder sbDebug) {
+		this.sbDebug = sbDebug;
 	}
 }

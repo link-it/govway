@@ -458,6 +458,21 @@ public class SSLUtilities {
 			else {
 				sslContext.init(km, tm, null);
 			}
+			
+			
+			if(sslContext.getClientSessionContext()!=null) {
+				bfLog.append("ClientSessionContext size:").
+					append(sslContext.getClientSessionContext().getSessionCacheSize()).
+					append(" timeout:").
+					append(sslContext.getClientSessionContext().getSessionTimeout()).append("\n");
+			}
+			if(sslContext.getServerSessionContext()!=null) {
+				bfLog.append("ServerSessionContext size:").
+					append(sslContext.getServerSessionContext().getSessionCacheSize()).
+					append(" timeout:").
+					append(sslContext.getServerSessionContext().getSessionTimeout()).append("\n");
+			}
+			
 			bfLog.append("Init SSLContext type["+sslConfig.getSslType()+"] effettuato\n");
 			
 			return sslContext;

@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
@@ -53,7 +53,6 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
-import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
  * ConnettoreBaseHTTP
@@ -199,38 +198,8 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			}
 			this.sslContextProperties = ConnettoreHTTP_urlHttps_keystoreRepository.readSSLContext(this.debug, this.logger, this.busta, fruizioni);
 		}
-	}
-	
-	protected SSLContext buildSSLContext() throws UtilsException {
-		// Gestione https
-		SSLContext sslContext = null;
+		
 		if(this.sslContextProperties!=null){
-			
-			// provo a leggere i keystore dalla cache
-			if(this.sslContextProperties.getKeyStoreLocation()!=null) {
-				try {
-					this.sslContextProperties.setKeyStore(GestoreKeystoreCaching.getMerlinKeystore(this.sslContextProperties.getKeyStoreLocation(), 
-							this.sslContextProperties.getKeyStoreType(), this.sslContextProperties.getKeyStorePassword()).getKeyStore());
-				}catch(Exception e) {
-					this.logger.error("Lettura keystore '"+this.sslContextProperties.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
-				}
-			}
-			if(this.sslContextProperties.getTrustStoreLocation()!=null) {
-				try {
-					this.sslContextProperties.setTrustStore(GestoreKeystoreCaching.getMerlinTruststore(this.sslContextProperties.getTrustStoreLocation(), 
-							this.sslContextProperties.getTrustStoreType(), this.sslContextProperties.getTrustStorePassword()).getTrustStore());
-				}catch(Exception e) {
-					this.logger.error("Lettura truststore '"+this.sslContextProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
-				}
-			}
-			if(this.sslContextProperties.getTrustStoreCRLsLocation()!=null) {
-				try {
-					this.sslContextProperties.setTrustStoreCRLs(GestoreKeystoreCaching.getCRLCertstore(this.sslContextProperties.getTrustStoreCRLsLocation()).getCertStore());
-				}catch(Exception e) {
-					this.logger.error("Lettura CRLs '"+this.sslContextProperties.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage(),e);
-				}
-			}
-			
 			if(!this.sslContextProperties.isSecureRandomSet()) {
 				if(this.openspcoopProperties.isConnettoreHttps_useSecureRandom()) {
 					this.sslContextProperties.setSecureRandom(true);
@@ -239,14 +208,36 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 					}
 				}
 			}
-			
-			StringBuilder bfSSLConfig = new StringBuilder();
-			sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);
-			
-			if(this.debug)
-				this.logger.info(bfSSLConfig.toString(),false);					
 		}
-		return sslContext;
+	}
+	
+	protected SSLSocketFactory buildSSLContextFactory() throws UtilsException {
+		// Gestione https
+		if(this.sslContextProperties!=null){
+			
+			StringBuilder sbError = null;
+			StringBuilder sbDebug = null;
+			try {
+				sbError = new StringBuilder();
+				this.sslContextProperties.setSbError(sbError);
+				if(this.debug) {
+					sbDebug = new StringBuilder();
+					this.sslContextProperties.setSbDebug(sbDebug);
+				}
+				return GestoreKeystoreCaching.getSSLSocketFactory(this.sslContextProperties).getSslSocketFactory();
+			}catch(Exception e) {
+				this.logger.error("Lettura SSLSocketFactory '"+this.sslContextProperties.toString()+"' dalla cache fallita: "+e.getMessage(),e);
+			}finally {
+				if(sbError!=null && sbError.length()>0) {
+					this.logger.error(sbError.toString());
+				}
+				if(sbDebug!=null && sbDebug.length()>0) {
+					this.logger.info(sbDebug.toString(), false);
+				}
+			}
+			
+		}
+		return null;
 	}
 	
 		

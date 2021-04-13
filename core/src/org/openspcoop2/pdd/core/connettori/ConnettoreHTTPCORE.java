@@ -28,10 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.http.Header;
@@ -50,11 +48,15 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -98,7 +100,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	public static final String ENDPOINT_TYPE = "httpcore";
 	
 	
-	private static boolean USE_POOL = false;
+	private static boolean USE_POOL = true;
 	
 	private HttpEntity httpEntityResponse = null;
 	private HttpClient httpClient = null;
@@ -115,34 +117,46 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	}
 	
 	
-	private static PoolingHttpClientConnectionManager cm = null;
-	private static synchronized void initialize(){
-		if(ConnettoreHTTPCORE.cm==null){
+	private static Map<String, PoolingHttpClientConnectionManager> cmMap = new HashMap<String, PoolingHttpClientConnectionManager>();
+	private static synchronized void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory){
+		if(!ConnettoreHTTPCORE.cmMap.containsKey(key)){
 						
-			ConnettoreHTTPCORE.cm = new PoolingHttpClientConnectionManager();
+			PoolingHttpClientConnectionManager cm = null;
+			if(sslConnectionSocketFactory!=null) {
+				Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
+				        .<ConnectionSocketFactory> create().register("https", sslConnectionSocketFactory)
+				        .build();
+				cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+			}
+			else {
+				cm = new PoolingHttpClientConnectionManager();
+			}
 			// Increase max total connection to 200
-			ConnettoreHTTPCORE.cm.setMaxTotal(10000);
+			cm.setMaxTotal(200);
 			// Increase default max connection per route to 20
-			ConnettoreHTTPCORE.cm.setDefaultMaxPerRoute(1000);
+			cm.setDefaultMaxPerRoute(5);
 			// Increase max connections for localhost:80 to 50
 			//HttpHost localhost = new HttpHost("locahost", 80);
 			//cm.setMaxPerRoute(new HttpRoute(localhost), 50);
 			 
-			
+			ConnettoreHTTPCORE.cmMap.put(key, cm);
 		}
 	}
 	
-	private HttpClient buildHttpClient(ConnectionKeepAliveStrategy keepAliveStrategy, SSLContext sslContext, boolean usePool) throws UtilsException{
+	private HttpClient buildHttpClient(ConnectionKeepAliveStrategy keepAliveStrategy, SSLSocketFactory sslSocketFactory, boolean usePool) throws UtilsException{
 		
 		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+			
+		// Imposta Contesto SSL se attivo
 		
-		if(keepAliveStrategy!=null){
-			httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy);
+		String key = "default";
+		if(this.sslContextProperties!=null){
+			key = this.sslContextProperties.toString();
 		}
 		
-		// Imposta Contesto SSL se attivo
-		if(this.sslContextProperties!=null){
-			SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+		SSLConnectionSocketFactory sslConnectionSocketFactory = null;
+		if(this.sslContextProperties!=null && 
+				(!usePool || !ConnettoreHTTPCORE.cmMap.containsKey(key))){
 			if(this.debug) {
 				String clientCertificateConfigurated = this.sslContextProperties.getKeyStoreLocation();
 				sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
@@ -159,25 +173,40 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(hostnameVerifier==null) {
 				hostnameVerifier = SSLConnectionSocketFactory.getDefaultHostnameVerifier();
 			}
-			SSLConnectionSocketFactory f = new SSLConnectionSocketFactory(sslSocketFactory, hostnameVerifier);
-			httpClientBuilder.setSSLSocketFactory(f);
+			sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslSocketFactory, hostnameVerifier);
 		}
-
+		
 		if(usePool) {
+						
 			// Caso con pool
-			if(ConnettoreHTTPCORE.cm==null){
-				ConnettoreHTTPCORE.initialize();
+			if(!ConnettoreHTTPCORE.cmMap.containsKey(key)){
+				ConnettoreHTTPCORE.initialize(key, sslConnectionSocketFactory);
 			}
+			
+			PoolingHttpClientConnectionManager cm = ConnettoreHTTPCORE.cmMap.get(key);
+			
 			//System.out.println("-----GET CONNECTION [START] ----");
 			//System.out.println("PRIMA CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
 			//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
-			ConnettoreHTTPCORE.cm.closeExpiredConnections();
-			ConnettoreHTTPCORE.cm.closeIdleConnections(30, TimeUnit.SECONDS);
+			// BLOCKED ConnettoreHTTPCORE.cm.closeExpiredConnections();
+			// BLOCKED ConnettoreHTTPCORE.cm.closeIdleConnections(30, java.util.concurrent.TimeUnit.SECONDS);
 			//System.out.println("DOPO CLOSE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
 			//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
-			httpClientBuilder.setConnectionManager(ConnettoreHTTPCORE.cm);
+			httpClientBuilder.setConnectionManager(cm);
+		}
+		else {
+			if(sslConnectionSocketFactory!=null) {
+				httpClientBuilder.setSSLSocketFactory(sslConnectionSocketFactory);		
+			}
 		}
 		
+		DefaultClientConnectionReuseStrategy defaultClientConnectionReuseStrategy = new DefaultClientConnectionReuseStrategy();
+		httpClientBuilder.setConnectionReuseStrategy(defaultClientConnectionReuseStrategy);
+		
+		if(keepAliveStrategy!=null){
+			httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy);
+		}
+				
 		//System.out.println("PRESA LA CONNESSIONE AVAILABLE["+cm.getTotalStats().getAvailable()+"] LEASED["
 		//		+cm.getTotalStats().getLeased()+"] MAX["+cm.getTotalStats().getMax()+"] PENDING["+cm.getTotalStats().getPending()+"]");
 		//System.out.println("-----GET CONNECTION [END] ----");
@@ -212,9 +241,6 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 		
 		try{
 			
-			// Gestione https
-			SSLContext sslContext = buildSSLContext();	
-			
 			// Creazione URL
 			if(this.debug)
 				this.logger.debug("Creazione URL...");
@@ -225,7 +251,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			
 			// Keep-alive
-			ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategyCustom();
+			ConnectionKeepAliveStrategy keepAliveStrategy = null; //new ConnectionKeepAliveStrategyCustom();
 			
 			
 			
@@ -239,7 +265,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			// Creazione Connessione
 			if(this.debug)
 				this.logger.info("Creazione connessione alla URL ["+this.location+"]...",false);
-			this.httpClient = buildHttpClient(keepAliveStrategy, sslContext, ConnettoreHTTPCORE.USE_POOL);
+			this.httpClient = buildHttpClient(keepAliveStrategy, buildSSLContextFactory(), ConnettoreHTTPCORE.USE_POOL);
 			
 			// HttpMethod
 			if(this.httpMethod==null){

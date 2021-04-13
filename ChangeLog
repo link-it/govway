@@ -1,3 +1,10 @@
+2021-04-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1177
+	I connettori http non preservavano il 'keep-alive' http. Problema risolto.
+	Inoltre viene adesso inserito in una cache la SSLSocketFactory istanziata per i connettori https dove vengono personalizzati i truststore e keystore utilizzati rispetto a quelli di default della JVM.
+
 2021-04-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovwayMonitor]

@@ -62,6 +62,8 @@ public class HttpRequest extends AbstractHttp {
 	private Integer throttlingSendMs;
 	private Integer throttlingSendByte;
 	
+	private boolean disconnect = true;
+	
 	public Boolean getFollowRedirects() {
 		return this.followRedirects;
 	}
@@ -212,5 +214,13 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setThrottlingSendByte(Integer throttlingSendByte) {
 		this.throttlingSendByte = throttlingSendByte;
+	}
+	
+	public boolean isDisconnect() {
+		return this.disconnect;
+	}
+
+	public void setDisconnect(boolean disconnect) {
+		this.disconnect = disconnect;
 	}
 }

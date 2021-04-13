@@ -41,7 +41,6 @@ import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
@@ -112,6 +111,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	
 	/** Connessione */
 	protected HttpURLConnection httpConn = null;
+	
+	/** KeepAlive */
+	protected boolean keepAlive = false;
 			
 	/* Costruttori */
 	public ConnettoreHTTP(){
@@ -299,12 +301,10 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	 * @return true in caso di consegna con successo, false altrimenti
 	 * 
 	 */
+	
 	protected boolean sendHTTP(ConnettoreMsg request){
 		
 		try{
-
-			// Gestione https
-			SSLContext sslContext = buildSSLContext();		
 
 			// Creazione URL
 			if(this.debug)
@@ -355,7 +355,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// Imposta Contesto SSL se attivo
 			if(this.sslContextProperties!=null){
 				HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
-				SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+				SSLSocketFactory sslSocketFactory = buildSSLContextFactory();
 				if(this.debug) {
 					String clientCertificateConfigurated = this.sslContextProperties.getKeyStoreLocation();
 					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
@@ -681,6 +681,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			if(this.debug)
 				this.logger.debug("Analisi risposta...");
 			Map<String, List<String>> mapHeaderHttpResponse = this.httpConn.getHeaderFields();
+			boolean protocolHttp10 = false;
 			if(mapHeaderHttpResponse!=null && mapHeaderHttpResponse.size()>0){
 				if(this.propertiesTrasportoRisposta==null){
 					this.propertiesTrasportoRisposta = new HashMap<String, List<String>>();
@@ -695,10 +696,17 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					}
 					if(keyHttpResponse==null){ // Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
 						keyHttpResponse=HttpConstants.RETURN_CODE;
+						// es. HTTP/1.1 200 OK
+						if(valueHttpResponse!=null && valueHttpResponse.contains("/1.0")) {
+							protocolHttp10 = true;
+						}
 					}
 					this.propertiesTrasportoRisposta.put(keyHttpResponse, valueHttpResponse);
 				}
 			}
+			
+			// KeepAlive
+			this.setKeepAlive(protocolHttp10, TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONNECTION));
 			
 			// TipoRisposta
 			this.tipoRisposta = TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_TYPE);
@@ -907,7 +915,25 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	    		if(this.debug && this.logger!=null)
 					this.logger.debug("Chiusura connessione...");
 	    		try {
-	    			this.httpConn.disconnect();
+	    			// FIX: https://docs.oracle.com/javase/8/docs/technotes/guides/net/http-keepalive.html
+	    			/*
+	    			 * Do not abandon a connection by ignoring the response body. Doing so may results in idle TCP connections. That needs to be garbage collected when they are no longer referenced. 
+	    			 * If getInputStream() successfully returns, read the entire response body.
+	    			 * When calling getInputStream() from HttpURLConnection, if an IOException occurs, catch the exception and call getErrorStream() to get the response body (if there is any).
+	    			 * Reading the response body cleans up the connection even if you are not interested in the response content itself. But if the response body is long and you are not interested in the rest of it after seeing the beginning, you can close the InputStream. 
+	    			 * But you need to be aware that more data could be on its way. Thus the connection may not be cleared for reuse.
+	    			 * 
+	    			 * (Quindi se keepAlive == true)
+	    			 * If client called HttpURLConnection.getInputSteam().close(), 
+	    			 *    the later call to HttpURLConnection.disconnect() will NOT close the Socket. i.e. The Socket is reused (cached)
+	    			 * If client does not call close(), call disconnect() will close the InputStream and close the Socket.
+	    			 * 
+	    			 * !!! So in order to reuse the Socket, just call InputStream.close(). Do not call HttpURLConnection.disconnect().
+	    			 * 
+	    			 * */
+	    			if(!this.keepAlive) {
+	    				this.httpConn.disconnect();
+	    			}
 	    		}catch(Throwable t) {
 	    			this.logger.debug("Chiusura connessione fallita: "+t.getMessage(),t);
 	    			listExceptionChiusura.add(t);
@@ -932,6 +958,41 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 		}
     }
 
+    
+    private void setKeepAlive(boolean protocolHttp10, String connectionHeaderValue) {
+    	/* https://tools.ietf.org/html/rfc7230#section-6.3 */
+    	/*
+    	A recipient determines whether a connection is persistent or not
+    	   based on the most recently received message's protocol version and
+    	   Connection header field (if any):
+
+    	   -  If the "close" connection option is present, the connection will
+    	      not persist after the current response; else,
+
+    	   -  If the received protocol is HTTP/1.1 (or later), the connection
+    	      will persist after the current response; else,
+
+    	   -  If the received protocol is HTTP/1.0, the "keep-alive" connection
+    	      option is present, the recipient is not a proxy, and the recipient
+    	      wishes to honor the HTTP/1.0 "keep-alive" mechanism, the
+    	      connection will persist after the current response; otherwise,
+
+    	   -  The connection will close after the current response.
+    	 */
+    	
+    	if(HttpConstants.CONNECTION_VALUE_CLOSE.equalsIgnoreCase(connectionHeaderValue)) {
+    		this.keepAlive = false;
+    	}
+    	else if(!protocolHttp10) {
+    		this.keepAlive = true;
+    	}
+    	else if(connectionHeaderValue!=null){
+    		this.keepAlive = HttpConstants.CONNECTION_VALUE_KEEP_ALIVE.equalsIgnoreCase(connectionHeaderValue);
+    	}
+    	else {
+    		this.keepAlive = false;
+    	}
+    }
     
     /**
      * Ritorna l'informazione su dove il connettore sta spedendo il messaggio

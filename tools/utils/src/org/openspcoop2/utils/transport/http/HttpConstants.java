@@ -70,6 +70,11 @@ public class HttpConstants {
 	/** Accept */
 	public final static String ACCEPT = "Accept";
 	
+	/** Connection */
+	public final static String CONNECTION = "Connection";
+	public final static String CONNECTION_VALUE_KEEP_ALIVE = "keep-alive";
+	public final static String CONNECTION_VALUE_CLOSE = "close";
+	
 	/** Retry-After */
 	public final static String RETRY_AFTER = "Retry-After";
 	
