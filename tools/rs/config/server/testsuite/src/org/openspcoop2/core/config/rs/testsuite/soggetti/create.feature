@@ -8,6 +8,7 @@ Background:
 * def soggetto_principal = read('classpath:bodies/soggetto-esterno-principal.json')
 * def soggetto_apikey = read('classpath:bodies/soggetto-esterno-apikey.json')
 * def soggetto_multipleapikey = read('classpath:bodies/soggetto-esterno-multipleapikey.json')
+* def soggetto_https_multipleCertificate = read('classpath:bodies/soggetto-esterno-https_multipleCertificate.json')
 * def ruolo = read('classpath:bodies/ruolo.json')
 
 * eval randomize(soggetto_http, ["nome", "credenziali.username"])
@@ -17,6 +18,9 @@ Background:
 * eval soggetto_principal.ruoli = [ ruolo.nome ]
 * eval soggetto_apikey.ruoli = [ ruolo.nome ]
 * eval soggetto_multipleapikey.ruoli = [ ruolo.nome ]
+
+* eval randomize(soggetto_https_multipleCertificate, ["nome"])
+* eval soggetto_https_multipleCertificate.ruoli = [ ruolo.nome ]
 
 @CreateCredHttp
 Scenario: Creazione Soggetti 204 OK
@@ -44,6 +48,13 @@ Scenario: Creazione Soggetti 204 OK (multipleapikey)
 
     * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
     * call create_201_multipleapikey { resourcePath: 'soggetti', body: '#(soggetto_multipleapikey)', key: '#(soggetto_multipleapikey.nome)' }
+    * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
+    
+@CreateCredHttpsMultipleCertificate
+Scenario: Creazione Soggetti 204 OK (credenziali https, lista certificati)
+
+    * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
+    * call create_201 { resourcePath: 'soggetti', body: '#(soggetto_https_multipleCertificate)', key: '#(soggetto_https_multipleCertificate.nome)' }
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
 
 @CreateSPCoop204

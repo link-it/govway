@@ -386,14 +386,15 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			final org.openspcoop2.core.registry.Soggetto newSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
 			
 			try {
-				CredenzialiSoggetto newCredenziali = Helper.apiCredenzialiToGovwayCred(
+				List<CredenzialiSoggetto> newCredenziali = Helper.apiCredenzialiToGovwayCred(
 							body.getCredenziali(),
 							body.getCredenziali().getModalitaAccesso(),
 							CredenzialiSoggetto.class,
 							org.openspcoop2.core.registry.constants.CredenzialeTipo.class,
 							keyInfo
-				);				
-				newSoggetto.setCredenziali(newCredenziali);
+				);		
+				newSoggetto.getCredenzialiList().clear();
+				newSoggetto.getCredenzialiList().addAll(newCredenziali);
 			}catch(Exception e) {
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -490,9 +491,9 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				if(httpBasic.getPassword()==null || StringUtils.isEmpty(httpBasic.getPassword())) {
 					// password in update non è obbligatoria
 					boolean set = false;
-					if(oldSoggetto.getCredenziali()!=null) {
-						CredenzialiSoggetto cImageDB = oldSoggetto.getCredenziali();
-						CredenzialiSoggetto cTmp = newSoggetto.getCredenziali();
+					if(oldSoggetto.sizeCredenzialiList()>0) {
+						CredenzialiSoggetto cImageDB = oldSoggetto.getCredenziali(0);
+						CredenzialiSoggetto cTmp = newSoggetto.getCredenziali(0);
 						if(cImageDB!=null && cTmp!=null) {
 							cTmp.setPassword(cImageDB.getPassword());
 							cTmp.setCertificateStrictVerification(cImageDB.isCertificateStrictVerification());

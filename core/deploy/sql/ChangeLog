@@ -25,6 +25,12 @@
 
 	ALTER TABLE dump_messaggi ADD COLUMN content_length BIGINT;
 
+2021-03-23  Andrea Poli <apoli@link.it>
+
+	Aggiunte tabelle che consentono di definire ulteriori credenziali TLS ai servizi applicativi e ai soggetti:	
+	sa_credenziali
+	soggetti_credenziali
+
 2021-03-19  Andrea Poli <apoli@link.it>
 
 	Aggiunto semaforo per lo startup del Gateway

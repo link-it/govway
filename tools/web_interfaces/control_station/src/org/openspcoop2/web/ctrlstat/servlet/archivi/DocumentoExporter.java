@@ -78,6 +78,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
@@ -890,11 +891,19 @@ public class DocumentoExporter extends HttpServlet {
 						IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 						IRegistryReader registryReader = soggettiCore.getRegistryReader(protocolFactory);
 
+						int posizioneCredenziale = 0;
+						String pos = archiviHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID);
+						if(StringUtils.isNotEmpty(pos)) {
+							posizioneCredenziale = Integer.valueOf(pos);
+						}
+						
 						CredenzialiSoggetto credenziali = null;
 						org.openspcoop2.core.registry.Soggetto soggetto = null;
 						try{
 							soggetto =  registryReader.getSoggetto(idSoggetto);
-							credenziali = soggetto.getCredenziali();
+							if(soggetto.sizeCredenzialiList()>0) {
+								credenziali = soggetto.getCredenziali(posizioneCredenziale);
+							}
 						}catch(RegistryNotFound r){
 							throw r;
 						}
@@ -920,11 +929,17 @@ public class DocumentoExporter extends HttpServlet {
 						
 						fileName = sa.getNome() + ".crt";
 						
+						int posizioneCredenziale = 0;
+						String pos = archiviHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID);
+						if(StringUtils.isNotEmpty(pos)) {
+							posizioneCredenziale = Integer.valueOf(pos);
+						}
+						
 						InvocazionePorta ip = sa.getInvocazionePorta();
 						Credenziali credenziali = null;
 						if (ip != null) {
 							if(ip.sizeCredenzialiList()>0) {
-								credenziali = ip.getCredenziali(0);
+								credenziali = ip.getCredenziali(posizioneCredenziale);
 							}
 						}
 						

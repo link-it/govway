@@ -1852,7 +1852,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, soggetto.getVersioneProtocollo());
 				updateStmt.setString(index++, codiceIPA);
 				
-				CredenzialiSoggetto credenziali = soggetto.getCredenziali();
+				CredenzialiSoggetto credenziali = (soggetto.sizeCredenzialiList() > 0 ? soggetto.getCredenziali(0) : null);
 				updateStmt.setString(index++, (credenziali != null ? DriverRegistroServiziDB_LIB.getValue(credenziali.getTipo()) : null));
 				updateStmt.setString(index++, (credenziali != null ? credenziali.getUser() : null));
 				updateStmt.setString(index++, (credenziali != null ? credenziali.getPassword() : null));
@@ -1928,8 +1928,9 @@ public class DriverRegistroServiziDB_LIB {
 						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
 				
 				
-
+				// ruoli
 				
+				n = 0;
 				if(soggetto.getRuoli()!=null && soggetto.getRuoli().sizeRuoloList()>0){
 					for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
 						RuoloSoggetto ruoloSoggetto = soggetto.getRuoli().getRuolo(i);
@@ -1947,11 +1948,83 @@ public class DriverRegistroServiziDB_LIB {
 						updateStmt.setLong(1, idSoggetto);
 						updateStmt.setLong(2, idRuolo);
 						
-						n = updateStmt.executeUpdate();
+						int r= updateStmt.executeUpdate();
+						n++;
 						updateStmt.close();
-						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" create role ["+ruoloSoggetto.getNome()+"]");
+						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + r+" create role ["+ruoloSoggetto.getNome()+"]");
 					}
 				}
+				
+				DriverRegistroServiziDB_LIB.log.debug("Aggiunti " + n + " ruoli al soggetto "+idSoggetto);
+				
+				
+				// credenziali (le credenziali in questa tabella partono dal numero maggiore di 1)
+				
+				n = 0;
+				if(soggetto.sizeCredenzialiList()>1){
+					for (int i = 1; i < soggetto.sizeCredenzialiList(); i++) {
+						CredenzialiSoggetto credenzialiSoggetto = soggetto.getCredenziali(i);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SOGGETTI_CREDENZIALI);
+						sqlQueryObject.addInsertField("id_soggetto", "?");
+						sqlQueryObject.addInsertField("subject", "?");
+						sqlQueryObject.addInsertField("cn_subject", "?");
+						sqlQueryObject.addInsertField("issuer", "?");
+						sqlQueryObject.addInsertField("cn_issuer", "?");
+						sqlQueryObject.addInsertField("certificate", "?");
+						sqlQueryObject.addInsertField("cert_strict_verification", "?");
+						updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						
+						index = 1;
+						updateStmt.setLong(index++, idSoggetto);
+						
+						String subjectCredenziali = null;
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.getSubject()!=null && !"".equals(credenzialiSoggetto.getSubject()))
+							subjectCredenziali = credenzialiSoggetto.getSubject();
+						updateStmt.setString(index++, (subjectCredenziali != null ? CertificateUtils.formatPrincipal(subjectCredenziali, PrincipalType.subject) : null));
+						String subjectCredenzialiCN = null;
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCnSubject()!=null && !"".equals(credenzialiSoggetto.getCnSubject()))
+							subjectCredenzialiCN = credenzialiSoggetto.getCnSubject();
+						updateStmt.setString(index++, subjectCredenzialiCN);
+						
+						String issuerCredenziali = null;
+						if(credenzialiSoggetto != null && org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(credenzialiSoggetto.getTipo())) {
+							updateStmt.setString(index++, CostantiDB.getISSUER_APIKEY(credenzialiSoggetto.isAppId()));
+						}
+						else {
+							if(credenzialiSoggetto!=null && credenzialiSoggetto.getIssuer()!=null && !"".equals(credenzialiSoggetto.getIssuer()))
+								issuerCredenziali = credenzialiSoggetto.getIssuer();
+							updateStmt.setString(index++, (issuerCredenziali != null ? CertificateUtils.formatPrincipal(issuerCredenziali, PrincipalType.issuer) : null));
+						}
+						String issuerCredenzialiCN = null;
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCnIssuer()!=null && !"".equals(credenzialiSoggetto.getCnIssuer()))
+							issuerCredenzialiCN = credenzialiSoggetto.getCnIssuer();
+						updateStmt.setString(index++, issuerCredenzialiCN);
+						
+						byte [] certificateCredenziali = null;
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCertificate()!=null) {
+							certificateCredenziali = credenzialiSoggetto.getCertificate();
+						}
+						jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+						jdbcAdapter.setBinaryData(updateStmt, index++, certificateCredenziali);
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.isCertificateStrictVerification()) {
+							updateStmt.setInt(index++, CostantiDB.TRUE);
+						}				
+						else {
+							updateStmt.setInt(index++, CostantiDB.FALSE);
+						}
+						
+						int r = updateStmt.executeUpdate();
+						n++;
+						updateStmt.close();
+						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + r+" create credenziale");
+					}
+					
+				}
+				
+				DriverRegistroServiziDB_LIB.log.debug("Aggiunte " + n + " credenziali al soggetto "+idSoggetto);
 				
 				break;
 
@@ -2018,7 +2091,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, soggetto.getVersioneProtocollo());
 				updateStmt.setString(index++, codiceIPA);
 				
-				credenziali = soggetto.getCredenziali();
+				credenziali = (soggetto.sizeCredenzialiList() > 0 ? soggetto.getCredenziali(0) : null);
 				updateStmt.setString(index++, (credenziali != null ? DriverRegistroServiziDB_LIB.getValue(credenziali.getTipo()) : null));
 				updateStmt.setString(index++, (credenziali != null ? credenziali.getUser() : null));
 				updateStmt.setString(index++, (credenziali != null ? credenziali.getPassword() : null));
@@ -2077,6 +2150,7 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nome, descizione, identificativoPorta, tipo, idSoggetto));
 
 				
+				// Ruoli
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_RUOLI);
@@ -2088,6 +2162,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.close();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete roles");
 				
+				n = 0;
 				if(soggetto.getRuoli()!=null && soggetto.getRuoli().sizeRuoloList()>0){
 					for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
 						RuoloSoggetto ruoloSoggetto = soggetto.getRuoli().getRuolo(i);
@@ -2105,11 +2180,93 @@ public class DriverRegistroServiziDB_LIB {
 						updateStmt.setLong(1, idSoggetto);
 						updateStmt.setLong(2, idRuolo);
 						
-						n = updateStmt.executeUpdate();
+						int r = updateStmt.executeUpdate();
+						n++;
 						updateStmt.close();
-						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" create role ["+ruoloSoggetto.getNome()+"]");
+						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + r+" create role ["+ruoloSoggetto.getNome()+"]");
 					}
 				}
+				
+				DriverRegistroServiziDB_LIB.log.debug("Aggiunti " + n + " ruoli al soggetto "+idSoggetto);
+				
+				
+				// credenziali (le credenziali in questa tabella partono dal numero maggiore di 1)
+
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_CREDENZIALI);
+				sqlQueryObject.addWhereCondition("id_soggetto=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idSoggetto);
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete roles");
+
+				n = 0;
+				if(soggetto.sizeCredenzialiList()>1){
+					for (int i = 1; i < soggetto.sizeCredenzialiList(); i++) {
+						CredenzialiSoggetto credenzialiSoggetto = soggetto.getCredenziali(i);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SOGGETTI_CREDENZIALI);
+						sqlQueryObject.addInsertField("id_soggetto", "?");
+						sqlQueryObject.addInsertField("subject", "?");
+						sqlQueryObject.addInsertField("cn_subject", "?");
+						sqlQueryObject.addInsertField("issuer", "?");
+						sqlQueryObject.addInsertField("cn_issuer", "?");
+						sqlQueryObject.addInsertField("certificate", "?");
+						sqlQueryObject.addInsertField("cert_strict_verification", "?");
+						updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						
+						index = 1;
+						updateStmt.setLong(index++, idSoggetto);
+						
+						String subjectCredenziali = null;
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.getSubject()!=null && !"".equals(credenzialiSoggetto.getSubject()))
+							subjectCredenziali = credenzialiSoggetto.getSubject();
+						updateStmt.setString(index++, (subjectCredenziali != null ? CertificateUtils.formatPrincipal(subjectCredenziali, PrincipalType.subject) : null));
+						String subjectCredenzialiCN = null;
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCnSubject()!=null && !"".equals(credenzialiSoggetto.getCnSubject()))
+							subjectCredenzialiCN = credenzialiSoggetto.getCnSubject();
+						updateStmt.setString(index++, subjectCredenzialiCN);
+						
+						String issuerCredenziali = null;
+						if(credenzialiSoggetto != null && org.openspcoop2.core.registry.constants.CredenzialeTipo.APIKEY.equals(credenzialiSoggetto.getTipo())) {
+							updateStmt.setString(index++, CostantiDB.getISSUER_APIKEY(credenzialiSoggetto.isAppId()));
+						}
+						else {
+							if(credenzialiSoggetto!=null && credenzialiSoggetto.getIssuer()!=null && !"".equals(credenzialiSoggetto.getIssuer()))
+								issuerCredenziali = credenzialiSoggetto.getIssuer();
+							updateStmt.setString(index++, (issuerCredenziali != null ? CertificateUtils.formatPrincipal(issuerCredenziali, PrincipalType.issuer) : null));
+						}
+						String issuerCredenzialiCN = null;
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCnIssuer()!=null && !"".equals(credenzialiSoggetto.getCnIssuer()))
+							issuerCredenzialiCN = credenzialiSoggetto.getCnIssuer();
+						updateStmt.setString(index++, issuerCredenzialiCN);
+						
+						byte [] certificateCredenziali = null;
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.getCertificate()!=null) {
+							certificateCredenziali = credenzialiSoggetto.getCertificate();
+						}
+						jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+						jdbcAdapter.setBinaryData(updateStmt, index++, certificateCredenziali);
+						if(credenzialiSoggetto!=null && credenzialiSoggetto.isCertificateStrictVerification()) {
+							updateStmt.setInt(index++, CostantiDB.TRUE);
+						}				
+						else {
+							updateStmt.setInt(index++, CostantiDB.FALSE);
+						}
+						
+						int r = updateStmt.executeUpdate();
+						n++;
+						updateStmt.close();
+						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + r+" create credenziale");
+					}
+					
+				}
+				
+				DriverRegistroServiziDB_LIB.log.debug("Aggiunte " + n + " credenziali al soggetto "+idSoggetto);
 				
 				
 				// ProtocolProperties
@@ -2132,7 +2289,18 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
 						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
 				
-				// elimino il soggetto
+				// elimino le credenziali del soggetto
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_CREDENZIALI);
+				sqlQueryObject.addWhereCondition("id_soggetto=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idSoggetto);
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete credentials");
+				
+				// elimino i ruoli del soggetto
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_RUOLI);
 				sqlQueryObject.addWhereCondition("id_soggetto=?");
@@ -2143,6 +2311,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.close();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete roles");
 				
+				// elimino il soggetto
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI);
 				sqlQueryObject.addWhereCondition("id=?");

@@ -2011,7 +2011,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					}
 					// Filtro By Credenziali
 					if(filtroRicerca.getCredenzialiSoggetto()!=null){
-						CredenzialiSoggetto credenziali = ss.getCredenziali();
+						CredenzialiSoggetto credenziali = (ss.sizeCredenzialiList() > 0 ? ss.getCredenziali(0) : null);
 						if(credenziali==null){
 							continue;
 						}

@@ -85,6 +85,7 @@ import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -221,6 +222,13 @@ public final class SoggettiChange extends Action {
 			String appId = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 			String apiKey = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 			
+			boolean visualizzaModificaCertificato = false;
+			boolean visualizzaAddCertificato = false;
+			String servletCredenzialiList = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_LIST;
+			List<Parameter> parametersServletCredenzialiList = null;
+			Integer numeroCertificati = 0;
+			String servletCredenzialiAdd = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_ADD;
+			
 			this.modificaOperativo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO);
 	
 			// Preparo il menu
@@ -272,11 +280,20 @@ public final class SoggettiChange extends Action {
 				oldnomeprov = soggettoConfig.getNome();
 				oldtipoprov = soggettoConfig.getTipo();
 			}
+			
+			
+			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, this.id);
+			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, oldnomeprov);
+			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, oldtipoprov);
+			parametersServletCredenzialiList = new ArrayList<Parameter>();
+			parametersServletCredenzialiList.add(pIdSoggetto);
+			parametersServletCredenzialiList.add(pNomeSoggetto);
+			parametersServletCredenzialiList.add(pTipoSoggetto);
 
 			boolean encryptOldPlainPwd = false;
-			if(soggettoRegistry!=null && soggettoRegistry.getCredenziali()!=null && 
-					org.openspcoop2.core.registry.constants.CredenzialeTipo.BASIC.equals(soggettoRegistry.getCredenziali().getTipo())) {
-				encryptOldPlainPwd = !soggettoRegistry.getCredenziali().isCertificateStrictVerification() && soggettiCore.isSoggettiPasswordEncryptEnabled(); 
+			if(soggettoRegistry!=null && soggettoRegistry.sizeCredenzialiList()>0 && 
+					org.openspcoop2.core.registry.constants.CredenzialeTipo.BASIC.equals(soggettoRegistry.getCredenziali(0).getTipo())) {
+				encryptOldPlainPwd = !soggettoRegistry.getCredenziali(0).isCertificateStrictVerification() && soggettiCore.isSoggettiPasswordEncryptEnabled(); 
 			}
 			
 			// Tipi protocollo supportati
@@ -394,7 +411,15 @@ public final class SoggettiChange extends Action {
 			try{
 				Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
 				oldProtocolPropertyList = soggetto.getProtocolPropertyList(); 
-				oldCredenziali = soggetto.getCredenziali();
+				numeroCertificati = soggetto.sizeCredenzialiList();
+				if(soggetto.sizeCredenzialiList()>0) {
+					oldCredenziali = soggetto.getCredenziali(0);
+					
+					visualizzaAddCertificato = true;
+					if(soggetto.sizeCredenzialiList() == 1) {  // se ho definito solo un certificato c'e' il link diretto alla modifica
+						visualizzaModificaCertificato = true;
+					}
+				}
 			}catch(RegistryNotFound r){}
 
 			Properties propertiesProprietario = new Properties();
@@ -767,7 +792,10 @@ public final class SoggettiChange extends Action {
 					}
 					if(isSupportatoAutenticazioneSoggetti){
 						if (this.tipoauthSoggetto == null){
-							CredenzialiSoggetto credenziali = soggettoRegistry.getCredenziali();
+							CredenzialiSoggetto credenziali = null;
+							if(soggettoRegistry.sizeCredenzialiList()>0) {
+								credenziali = soggettoRegistry.getCredenziali(0);
+							}
 							if (credenziali != null){
 								if(credenziali.getTipo()!=null)
 									this.tipoauthSoggetto = credenziali.getTipo().toString();
@@ -887,7 +915,8 @@ public final class SoggettiChange extends Action {
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep,
 						changepwd,
-						multipleApiKey, appId, apiKey);
+						multipleApiKey, appId, apiKey, 
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -975,7 +1004,8 @@ public final class SoggettiChange extends Action {
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSoggetto,tipoCredenzialiSSLWizardStep,
 						changepwd,
-						multipleApiKey, appId, apiKey);
+						multipleApiKey, appId, apiKey, 
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1129,10 +1159,10 @@ public final class SoggettiChange extends Action {
 							secret_appId = credenziali.isAppId();
 						}
 						
-						soggettoRegistry.setCredenziali(credenziali);
+						soggettoRegistry.getCredenzialiList().set(0,credenziali); // Sovrascrivo la credenziale principale
 					}
 					else{
-						soggettoRegistry.setCredenziali(null);
+						soggettoRegistry.getCredenzialiList().clear();
 					}
 				}
 				

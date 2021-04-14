@@ -26,6 +26,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -44,7 +45,7 @@ public class ServiziApplicativiCostanti {
 	public final static ForwardParams TIPO_OPERAZIONE_ENDPOINT_RISPOSTA_ASINCRONA = ForwardParams.OTHER("EndPointRispostaAsincrona");
 	
 	public final static String OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI = "serviziApplicativiRuoli";
-	
+	public final static String OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI = "serviziApplicativiCredenziali";
 	
 	/* SERVLET NAME */
 	
@@ -72,6 +73,18 @@ public class ServiziApplicativiCostanti {
 		SERVLET_SERVIZI_APPLICATIVI_RUOLI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_ADD);
 		SERVLET_SERVIZI_APPLICATIVI_RUOLI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_DELETE);
 		SERVLET_SERVIZI_APPLICATIVI_RUOLI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST);
+	}
+	
+	public final static String SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_ADD = OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI+"Add.do";
+	public final static String SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_CHANGE = OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI+"Change.do";
+	public final static String SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_DELETE = OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI+"Del.do";
+	public final static String SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_LIST = OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI+"List.do";
+	public final static Vector<String> SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI = new Vector<String>();
+	static{
+		SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_ADD);
+		SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_CHANGE);
+		SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_DELETE);
+		SERVLET_SERVIZI_APPLICATIVI_CREDENZIALI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_LIST);
 	}
 
 	
@@ -145,6 +158,8 @@ public class ServiziApplicativiCostanti {
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO = "correlato";
 	
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT = "useAsClient";
+	
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_CREDENZIALI_ID = ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CREDENZIALI_ID;
 	
 	
 	/* LABEL PARAMETRI */

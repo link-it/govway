@@ -417,8 +417,14 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										  //onclick
 										  %><span class="<%= classSpan %>" <%= deTip %> onClick="<%= visualizzaAjaxStatus %><%= de.getOnClick() %>; return false;"><%= de.getValue() %></span><%
 										} else {
+											String tip = "";
+											String deTip = " ";
+									  		if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
+								  				tip=de.getToolTip();
+								  				deTip = " title=\"" + tip + "\"";
+								  			}
 										  //string only
-										  %><span class="<%= classSpan %>" ><%= de.getValue() %></span><%
+										  %><span class="<%= classSpan %>" <%= deTip %> ><%= de.getValue() %></span><%
 										}
 							      	}
 								} else { 

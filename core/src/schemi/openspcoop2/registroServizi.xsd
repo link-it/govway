@@ -1021,7 +1021,7 @@
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 			<!-- Accordi Servizio Parte Specifica -->
-			<xsd:element maxOccurs="1" minOccurs="0" name="credenziali" type="credenziali-soggetto"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="credenziali" type="credenziali-soggetto"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="ruoli-soggetto"/>
 			<xsd:element ref="accordo-servizio-parte-specifica" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>

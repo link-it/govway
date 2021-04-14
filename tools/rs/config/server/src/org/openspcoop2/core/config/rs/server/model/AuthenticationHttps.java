@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,6 +37,9 @@ public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpsCertificato.class, name = "certificato"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpsConfigurazioneManuale.class, name = "configurazione-manuale")  })
   private OneOfAuthenticationHttpsCertificato certificato = null;
+  
+  @Schema(description = "")
+  private List<AuthenticationHttpsBaseCertificato> certificati = null;
  /**
    * Get modalitaAccesso
    * @return modalitaAccesso
@@ -77,6 +81,30 @@ public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
     return this;
   }
 
+ /**
+   * Get certificati
+   * @return certificati
+  **/
+  @JsonProperty("certificati")
+  @Valid
+  public List<AuthenticationHttpsBaseCertificato> getCertificati() {
+    return this.certificati;
+  }
+
+  public void setCertificati(List<AuthenticationHttpsBaseCertificato> certificati) {
+    this.certificati = certificati;
+  }
+
+  public AuthenticationHttps certificati(List<AuthenticationHttpsBaseCertificato> certificati) {
+    this.certificati = certificati;
+    return this;
+  }
+
+  public AuthenticationHttps addCertificatiItem(AuthenticationHttpsBaseCertificato certificatiItem) {
+    this.certificati.add(certificatiItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -85,6 +113,7 @@ public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
     
     sb.append("    modalitaAccesso: ").append(AuthenticationHttps.toIndentedString(this.modalitaAccesso)).append("\n");
     sb.append("    certificato: ").append(AuthenticationHttps.toIndentedString(this.certificato)).append("\n");
+    sb.append("    certificati: ").append(AuthenticationHttps.toIndentedString(this.certificati)).append("\n");
     sb.append("}");
     return sb.toString();
   }

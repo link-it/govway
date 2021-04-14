@@ -1,3 +1,9 @@
+2021-04-14  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1167
+	È adesso possibile associare più di un certificato X509 agli applicativi e ai soggetti in modo da poter gestire i periodi di transizione relativi all'aggiornamento di un certificato.
+
 2021-04-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

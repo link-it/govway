@@ -20,6 +20,7 @@
 package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -168,9 +169,9 @@ public class ApplicativiApiHelper {
 		
 		// *** Invocazione Porta ***
 		InvocazionePorta invocazionePorta = new InvocazionePorta();
-		Credenziali credenziali = credenzialiFromAuth(applicativo.getCredenziali(), keyInfo);
+		List<Credenziali> credenziali = credenzialiFromAuth(applicativo.getCredenziali(), keyInfo);
 
-		invocazionePorta.addCredenziali(credenziali);
+		invocazionePorta.getCredenzialiList().addAll(credenziali);
 		
 	    //Imposto i ruoli
 		FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
@@ -221,9 +222,7 @@ public class ApplicativiApiHelper {
 			}
 		}
 	
-		
-		Credenziali cred = invPorta.getCredenziali(0);
-		ret.setCredenziali(authFromCredenziali(cred));
+		ret.setCredenziali(authFromCredenziali(invPorta.getCredenzialiList()));
 			
 		return ret;
 	}
@@ -390,9 +389,9 @@ public class ApplicativiApiHelper {
 	 * @throws IllegalAccessException 
 	 * 
 	 */
-	public static Credenziali credenzialiFromAuth(OneOfBaseCredenzialiCredenziali cred, ApiKeyInfo keyInfo) throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
+	public static List<Credenziali> credenzialiFromAuth(OneOfBaseCredenzialiCredenziali cred, ApiKeyInfo keyInfo) throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
-		Credenziali credenziali = null;
+		List<Credenziali> credenziali = null;
 		
 		if(cred!=null) {
 		
@@ -403,9 +402,12 @@ public class ApplicativiApiHelper {
 			
 			String tipoauthSA = Helper.tipoAuthSAFromModalita.get(modalitaAccesso.toString());
 			
-			credenziali = new Credenziali();
+			
 			if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
-				credenziali.setTipo(null);
+				credenziali = new ArrayList<Credenziali>();
+				Credenziali cre = new Credenziali();
+				cre.setTipo(null);
+				credenziali.add(cre);
 			}
 			else {
 			
@@ -433,7 +435,7 @@ public class ApplicativiApiHelper {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public static OneOfBaseCredenzialiCredenziali authFromCredenziali(Credenziali cred) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public static OneOfBaseCredenzialiCredenziali authFromCredenziali(List<Credenziali> cred) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		
 		return Helper.govwayCredenzialiToApi(
 				cred,

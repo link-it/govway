@@ -990,8 +990,12 @@ public class ValidazioneSemantica {
 		}
 		
 		// credenziali
-		if(sogg.getCredenziali()!=null){
-			this.validaCredenziale(sogg.getCredenziali(), "soggetto "+sogg.getTipo()+"/"+sogg.getNome());
+		if(sogg.sizeCredenzialiList()>0){
+			int i = 0;
+			for (CredenzialiSoggetto credenziale : sogg.getCredenzialiList()) {
+				this.validaCredenziale(credenziale, "soggetto "+sogg.getTipo()+"/"+sogg.getNome() +" (credenziale-i"+i+")");
+				i++;
+			}
 		}
 		
 		// ruoli

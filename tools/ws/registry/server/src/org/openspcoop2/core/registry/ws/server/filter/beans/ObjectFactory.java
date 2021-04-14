@@ -69,12 +69,5 @@ public class ObjectFactory {
         return new AccordoServizioParteComuneServizioComposto();
     }
     
-    /**
-     * Create an instance of {@link CredenzialiSoggetto }
-     */
-    public CredenzialiSoggetto createCredenzialiSoggetto() {
-        return new CredenzialiSoggetto();
-    }
-    
 
 }

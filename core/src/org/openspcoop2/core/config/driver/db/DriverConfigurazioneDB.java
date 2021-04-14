@@ -7209,8 +7209,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("tipoauth = ?");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "subject", "saSubject");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "issuer", "saIssuer");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "tipoauth", "saTipoAuth");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
 
 				Enumeration<String> keys = hashSubject.keys();
 				while(keys.hasMoreElements()){
@@ -7218,7 +7221,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					
 					List<String> listValues = hashSubject.get(key);
 					for (String value : listValues) {
-						sqlQueryObject.addWhereLikeCondition("subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+						sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
 					}
 				}
 				
@@ -7229,12 +7232,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						
 						List<String> listValues = hashIssuer.get(key);
 						for (String value : listValues) {
-							sqlQueryObject.addWhereLikeCondition("issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
 						}
 					}
 				}
 				else {
-					sqlQueryObject.addWhereIsNullCondition("issuer");
+					sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer");
 				}
 
 				sqlQueryObject.setANDLogicOperator(true);
@@ -7252,12 +7255,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				while(rs.next()){
 					// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
 					
-					String subjectPotenziale =  rs.getString("subject");
+					String subjectPotenziale =  rs.getString("saSubject");
 					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.subject, this.log);
 					
 					boolean issuerValid = true;
 					if(hashIssuer!=null) {
-						String issuerPotenziale =  rs.getString("issuer");
+						String issuerPotenziale =  rs.getString("saIssuer");
 						if(StringUtils.isNotEmpty(issuerPotenziale)) {
 							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.issuer, this.log);
 						}
@@ -7268,16 +7271,96 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					
 					
 					if( subjectValid && issuerValid ) {
-						idSA = rs.getLong("id");
+						idSA = rs.getLong("saIdentificativo");
 						break;
 					}
 				}
 				rs.close();
 				stm.close();
 				//System.out.println("TROVATO["+idSA+"]");
+				
+				if(idSA<=0) {
+					// provo a vedere all'interno delle credenziali ulteriori
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "subject", "saSubject");
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "issuer", "saIssuer");
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "tipoauth", "saTipoAuth");
+					sqlQueryObject.setANDLogicOperator(true);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+					
+					keys = hashSubject.keys();
+					while(keys.hasMoreElements()){
+						String key = keys.nextElement();
+						
+						List<String> listValues = hashSubject.get(key);
+						for (String value : listValues) {
+							sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+						}
+					}
+					
+					if(hashIssuer!=null) {
+						keys = hashIssuer.keys();
+						while(keys.hasMoreElements()){
+							String key = keys.nextElement();
+							
+							List<String> listValues = hashIssuer.get(key);
+							for (String value : listValues) {
+								sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+							}
+						}
+					}
+					else {
+						sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".issuer");
+					}
+
+					sqlQueryObject.setANDLogicOperator(true);
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					
+					//System.out.println("QUERY["+sqlQuery+"]["+type+"]["+idSoggettoFruitore+"]["+CostantiConfigurazione.CREDENZIALE_SSL.toString()+"]");
+
+					stm = con.prepareStatement(sqlQuery);
+					stm.setString(1, CostantiConfigurazione.CREDENZIALE_SSL.toString());
+
+					this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
+
+					rs = stm.executeQuery();
+					while(rs.next()){
+						// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
+						
+						String subjectPotenziale =  rs.getString("saSubject");
+						boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, aSubject, PrincipalType.subject, this.log);
+						
+						boolean issuerValid = true;
+						if(hashIssuer!=null) {
+							String issuerPotenziale =  rs.getString("saIssuer");
+							if(StringUtils.isNotEmpty(issuerPotenziale)) {
+								issuerValid = CertificateUtils.sslVerify(issuerPotenziale, aIssuer, PrincipalType.issuer, this.log);
+							}
+							else {
+								issuerValid = false;
+							}
+						}
+						
+						
+						if( subjectValid && issuerValid ) {
+							idSA = rs.getLong("saIdentificativo");
+							break;
+						}
+					}
+					rs.close();
+					stm.close();
+					//System.out.println("TROVATO["+idSA+"]");
+				}
+				
 				if(idSA<=0){
 					throw new DriverConfigurazioneNotFound("Nessun Servizio Applicativo trovato.");
 				}
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
@@ -7296,25 +7379,31 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("tipoauth = ?");
-				sqlQueryObject.addWhereCondition("cn_subject = ?");
-				sqlQueryObject.addWhereCondition("cn_issuer = ?");
-				sqlQueryObject.addWhereCondition("cert_strict_verification = ?");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "cn_subject", "saCNSubject");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "cn_issuer", "saCNIssuer");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "cert_strict_verification", "saCertStrictVerificationr");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "certificate", "saCertificate");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "tipoauth", "saTipoAuth");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".cert_strict_verification = ?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 
 				//System.out.println("QUERY["+sqlQuery+"]["+type+"]["+idSoggettoFruitore+"]["+CostantiConfigurazione.CREDENZIALE_SSL.toString()+"]");
 
 				stm = con.prepareStatement(sqlQuery);
-				stm.setString(1, CostantiConfigurazione.CREDENZIALE_SSL.toString());
-				stm.setString(2, cnSubject);
-				stm.setString(3, cnIssuer);
+				int index = 1;
+				stm.setString(index++, CostantiConfigurazione.CREDENZIALE_SSL.toString());
+				stm.setString(index++, cnSubject);
+				stm.setString(index++, cnIssuer);
 				if(aStrictVerifier) {
-					stm.setInt(4, CostantiDB.TRUE);
+					stm.setInt(index++, CostantiDB.TRUE);
 				}
 				else {
-					stm.setInt(4, CostantiDB.FALSE);
+					stm.setInt(index++, CostantiDB.FALSE);
 				}
 
 				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
@@ -7326,13 +7415,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				while(rs.next()){
 					// Possono esistere piu' sil che hanno un CN con subject e issuer diverso.
 					
-					byte[] certificatoBytes = jdbcAdapter.getBinaryData(rs, "certificate");
+					byte[] certificatoBytes = jdbcAdapter.getBinaryData(rs, "saCertificate");
 					Certificate certificato = ArchiveLoader.load(ArchiveType.CER, certificatoBytes, 0, null);
 					//int tmpStrict = rs.getInt("cert_strict_verification");
 					//boolean strict = tmpStrict == CostantiDB.TRUE;
 					
 					if(aCertificate.equals(certificato.getCertificate(),aStrictVerifier)) {
-						idSA = rs.getLong("id");
+						idSA = rs.getLong("saIdentificativo");
 						break;
 					}
 
@@ -7340,9 +7429,69 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				rs.close();
 				stm.close();
 				//System.out.println("TROVATO["+idSA+"]");
+				
+				if(idSA<=0) {
+					// provo a vedere all'interno delle credenziali ulteriori
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "cn_subject", "saCNSubject");
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "cn_issuer", "saCNIssuer");
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "cert_strict_verification", "saCertStrictVerificationr");
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI, "certificate", "saCertificate");
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "tipoauth", "saTipoAuth");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".cn_subject = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".cn_issuer = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".cert_strict_verification = ?");
+					sqlQueryObject.setANDLogicOperator(true);
+					sqlQuery = sqlQueryObject.createSQLQuery();
+
+					//System.out.println("QUERY["+sqlQuery+"]["+type+"]["+idSoggettoFruitore+"]["+CostantiConfigurazione.CREDENZIALE_SSL.toString()+"]");
+
+					stm = con.prepareStatement(sqlQuery);
+					index = 1;
+					stm.setString(index++, CostantiConfigurazione.CREDENZIALE_SSL.toString());
+					stm.setString(index++, cnSubject);
+					stm.setString(index++, cnIssuer);
+					if(aStrictVerifier) {
+						stm.setInt(index++, CostantiDB.TRUE);
+					}
+					else {
+						stm.setInt(index++, CostantiDB.FALSE);
+					}
+
+					this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
+
+					jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+					
+					rs = stm.executeQuery();
+					while(rs.next()){
+						// Possono esistere piu' sil che hanno un CN con subject e issuer diverso.
+						
+						byte[] certificatoBytes = jdbcAdapter.getBinaryData(rs, "saCertificate");
+						Certificate certificato = ArchiveLoader.load(ArchiveType.CER, certificatoBytes, 0, null);
+						//int tmpStrict = rs.getInt("cert_strict_verification");
+						//boolean strict = tmpStrict == CostantiDB.TRUE;
+						
+						if(aCertificate.equals(certificato.getCertificate(),aStrictVerifier)) {
+							idSA = rs.getLong("saIdentificativo");
+							break;
+						}
+
+					}
+					rs.close();
+					stm.close();
+					//System.out.println("TROVATO["+idSA+"]");
+				}
+				
 				if(idSA<=0){
 					throw new DriverConfigurazioneNotFound("Nessun Servizio Applicativo trovato.");
 				}
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
@@ -7626,6 +7775,47 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					ruolo.setNome(rs.getString("ruolo"));
 					sa.getInvocazionePorta().getRuoli().addRuolo(ruolo);
 				
+				}
+				rs.close();
+				stm.close();
+				
+				
+				// credenziali
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQueryObject.addOrderBy("id", true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, sa.getId());
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					if(sa.getInvocazionePorta()==null){
+						sa.setInvocazionePorta(new InvocazionePorta());
+					}
+					
+					Credenziali credenziali = new Credenziali();
+					
+					credenziali.setTipo(DriverConfigurazioneDB_LIB.getEnumCredenzialeTipo(tipoAuth));
+										
+					credenziali.setIssuer(rs.getString("issuer"));
+					credenziali.setSubject(rs.getString("subject"));
+					credenziali.setCnSubject(rs.getString("cn_subject"));
+					credenziali.setCnIssuer(rs.getString("cn_issuer"));
+					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+					credenziali.setCertificate(jdbcAdapter.getBinaryData(rs, "certificate"));
+					int strict = rs.getInt("cert_strict_verification");
+					if(strict == CostantiDB.TRUE) {
+						credenziali.setCertificateStrictVerification(true);
+					}
+					else if(strict == CostantiDB.FALSE) {
+						credenziali.setCertificateStrictVerification(false);
+					}
+				
+					sa.getInvocazionePorta().addCredenziali(credenziali);	
 				}
 				rs.close();
 				stm.close();
@@ -18283,82 +18473,104 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addSelectField("nome");
-			sqlQueryObject.addSelectField("subject");
-			sqlQueryObject.addSelectField("issuer");
-			sqlQueryObject.addSelectField("id_soggetto");
-			sqlQueryObject.addWhereCondition("tipoauth = ?");
-			
-			Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(subject, PrincipalType.subject);
-			Hashtable<String, List<String>> hashIssuer = null;
-			if(StringUtils.isNotEmpty(issuer)) {
-				hashIssuer = CertificateUtils.getPrincipalIntoHashtable(issuer, PrincipalType.issuer);
-			}
-			
-			Enumeration<String> keys = hashSubject.keys();
-			while(keys.hasMoreElements()){
-				String key = keys.nextElement();
-				
-				List<String> listValues = hashSubject.get(key);
-				for (String value : listValues) {
-					sqlQueryObject.addWhereLikeCondition("subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+			for (int i = 0; i < 2; i++) {
+							
+				String tabella = null;
+				if(i==0) {
+					tabella = CostantiDB.SERVIZI_APPLICATIVI;
+				}
+				else {
+					tabella = CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI;
 				}
 				
-			}
-			
-			if(hashIssuer!=null) {
-				keys = hashIssuer.keys();
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				if(i>0) {
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+				}
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
+				//sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "nome", "saNome");
+				//sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id_soggetto", "saIdentificativoSoggetto");
+				sqlQueryObject.addSelectAliasField(tabella, "subject", "saSubject");
+				sqlQueryObject.addSelectAliasField(tabella, "issuer", "saIssuer");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "tipoauth", "saTipoAuth");
+				
+				if(i>0) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				}
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+				
+				Hashtable<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoHashtable(subject, PrincipalType.subject);
+				Hashtable<String, List<String>> hashIssuer = null;
+				if(StringUtils.isNotEmpty(issuer)) {
+					hashIssuer = CertificateUtils.getPrincipalIntoHashtable(issuer, PrincipalType.issuer);
+				}
+				
+				Enumeration<String> keys = hashSubject.keys();
 				while(keys.hasMoreElements()){
 					String key = keys.nextElement();
 					
-					List<String> listValues = hashIssuer.get(key);
+					List<String> listValues = hashSubject.get(key);
 					for (String value : listValues) {
-						sqlQueryObject.addWhereLikeCondition("issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+						sqlQueryObject.addWhereLikeCondition(tabella+".subject", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
 					}
+					
 				}
 				
-			}
-			else {
-				sqlQueryObject.addWhereIsNullCondition("issuer");
-			}
-			
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, CredenzialeTipo.SSL.getValue());
-			
-			risultato = stmt.executeQuery();
-
-			ServizioApplicativo sa;
-			while (risultato.next()) {
-
-				// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
-				
-				String subjectPotenziale =  risultato.getString("subject");
-				boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, subject, PrincipalType.subject, this.log);
-				
-				boolean issuerValid = true;
 				if(hashIssuer!=null) {
-					String issuerPotenziale =  risultato.getString("issuer");
-					if(StringUtils.isNotEmpty(issuerPotenziale)) {
-						issuerValid = CertificateUtils.sslVerify(issuerPotenziale, issuer, PrincipalType.issuer, this.log);
+					keys = hashIssuer.keys();
+					while(keys.hasMoreElements()){
+						String key = keys.nextElement();
+						
+						List<String> listValues = hashIssuer.get(key);
+						for (String value : listValues) {
+							sqlQueryObject.addWhereLikeCondition(tabella+".issuer", "/"+CertificateUtils.formatKeyPrincipal(key)+"="+CertificateUtils.formatValuePrincipal(value)+"/", true, true, false);
+						}
 					}
-					else {
-						issuerValid = false;
-					}
+					
+				}
+				else {
+					sqlQueryObject.addWhereIsNullCondition(tabella+".issuer");
 				}
 				
-				if( !subjectValid || !issuerValid ) {
-					continue;
-				}
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, CredenzialeTipo.SSL.getValue());
 				
-				sa=this.getServizioApplicativo(risultato.getLong("id"));
-				lista.add(sa);
+				risultato = stmt.executeQuery();
+	
+				ServizioApplicativo sa;
+				while (risultato.next()) {
+	
+					// Possono esistere piu' sil che hanno una porzione di subject uguale, devo quindi verificare che sia proprio quello che cerco
+					
+					String subjectPotenziale =  risultato.getString("saSubject");
+					boolean subjectValid = CertificateUtils.sslVerify(subjectPotenziale, subject, PrincipalType.subject, this.log);
+					
+					boolean issuerValid = true;
+					if(hashIssuer!=null) {
+						String issuerPotenziale =  risultato.getString("saIssuer");
+						if(StringUtils.isNotEmpty(issuerPotenziale)) {
+							issuerValid = CertificateUtils.sslVerify(issuerPotenziale, issuer, PrincipalType.issuer, this.log);
+						}
+						else {
+							issuerValid = false;
+						}
+					}
+					
+					if( !subjectValid || !issuerValid ) {
+						continue;
+					}
+					
+					sa=this.getServizioApplicativo(risultato.getLong("saIdentificativo"));
+					lista.add(sa);
+				}
+				risultato.close(); risultato = null;
+				stmt.close(); stmt = null;
+				
 			}
-
+			
 			return lista;
 
 		} catch (Exception qe) {
@@ -18419,54 +18631,78 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
 		try {
-
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addSelectField("nome");
-			sqlQueryObject.addSelectField("certificate");
-			sqlQueryObject.addSelectField("id_soggetto");
-			sqlQueryObject.addWhereCondition("tipoauth = ?");
-			sqlQueryObject.addWhereCondition("cn_subject = ?");
-			sqlQueryObject.addWhereCondition("cn_issuer = ?");
-			//sqlQueryObject.addWhereCondition("cert_strict_verification = ?");
 			
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			String cnSubject = certificate.getSubject().getCN();
-			String cnIssuer = certificate.getIssuer().getCN();
-			stmt = con.prepareStatement(queryString);
-			int indexStmt = 1;
-			stmt.setString(indexStmt++, CredenzialeTipo.SSL.getValue());
-			stmt.setString(indexStmt++, cnSubject);
-			stmt.setString(indexStmt++, cnIssuer);
-			// Il controllo serve ad evitare di caricare piu' applicativi con stesso certificato medesimo (indipendentemente dallo strict)
-			// Se quindi sto creando un entita con strict abilitato, verifichero sotto tra i vari certificati la corrispondenza esatta, altrimenti una corrispondenza non esatta
-//			if(strictVerifier) {
-//				stmt.setInt(indexStmt++, CostantiDB.TRUE);
-//			}
-//			else {
-//				stmt.setInt(indexStmt++, CostantiDB.FALSE);
-//			}
-			risultato = stmt.executeQuery();
-
-			ServizioApplicativo sa;
-			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
-			while (risultato.next()) {
-
-				// Possono esistere piu' servizi applicativi che hanno un CN con subject e issuer diverso.
+			
+			for (int i = 0; i < 2; i++) {
 				
-				byte[] certificatoBytes = jdbcAdapter.getBinaryData(risultato, "certificate");
-				Certificate certificato = ArchiveLoader.load(ArchiveType.CER, certificatoBytes, 0, null);
-				//int tmpStrict = rs.getInt("cert_strict_verification");
-				//boolean strict = tmpStrict == CostantiDB.TRUE;
-				
-				if(!certificate.equals(certificato.getCertificate(),strictVerifier)) {
-					continue;
+				String tabella = null;
+				if(i==0) {
+					tabella = CostantiDB.SERVIZI_APPLICATIVI;
 				}
+				else {
+					tabella = CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI;
+				}
+
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				if(i>0) {
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+				}
+				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "saIdentificativo");
+				//sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "nome", "saNome");
+				//sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id_soggetto", "saIdentificativoSoggetto");
+				sqlQueryObject.addSelectAliasField(tabella, "cn_subject", "saCNSubject");
+				sqlQueryObject.addSelectAliasField(tabella, "cn_issuer", "saCNIssuer");
+				sqlQueryObject.addSelectAliasField(tabella, "cert_strict_verification", "saCertStrictVerificationr");
+				sqlQueryObject.addSelectAliasField(tabella, "certificate", "saCertificate");
 				
-				sa=this.getServizioApplicativo(risultato.getLong("id"));
-				lista.add(sa);
+				if(i>0) {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				}
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+				sqlQueryObject.addWhereCondition(tabella+".cn_subject = ?");
+				sqlQueryObject.addWhereCondition(tabella+".cn_issuer = ?");
+				//sqlQueryObject.addWhereCondition(tabella+".cert_strict_verification = ?");
+				
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				String cnSubject = certificate.getSubject().getCN();
+				String cnIssuer = certificate.getIssuer().getCN();
+				stmt = con.prepareStatement(queryString);
+				int indexStmt = 1;
+				stmt.setString(indexStmt++, CredenzialeTipo.SSL.getValue());
+				stmt.setString(indexStmt++, cnSubject);
+				stmt.setString(indexStmt++, cnIssuer);
+				// Il controllo serve ad evitare di caricare piu' applicativi con stesso certificato medesimo (indipendentemente dallo strict)
+				// Se quindi sto creando un entita con strict abilitato, verifichero sotto tra i vari certificati la corrispondenza esatta, altrimenti una corrispondenza non esatta
+	//			if(strictVerifier) {
+	//				stmt.setInt(indexStmt++, CostantiDB.TRUE);
+	//			}
+	//			else {
+	//				stmt.setInt(indexStmt++, CostantiDB.FALSE);
+	//			}
+				risultato = stmt.executeQuery();
+	
+				ServizioApplicativo sa;
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDB);
+				while (risultato.next()) {
+	
+					// Possono esistere piu' servizi applicativi che hanno un CN con subject e issuer diverso.
+					
+					byte[] certificatoBytes = jdbcAdapter.getBinaryData(risultato, "saCertificate");
+					Certificate certificato = ArchiveLoader.load(ArchiveType.CER, certificatoBytes, 0, null);
+					//int tmpStrict = rs.getInt("cert_strict_verification");
+					//boolean strict = tmpStrict == CostantiDB.TRUE;
+					
+					if(!certificate.equals(certificato.getCertificate(),strictVerifier)) {
+						continue;
+					}
+					
+					sa=this.getServizioApplicativo(risultato.getLong("saIdentificativo"));
+					lista.add(sa);
+				}
+				risultato.close(); risultato=null;
+				stmt.close(); stmt=null;
 			}
 
 			return lista;
@@ -24213,6 +24449,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.executeUpdate();
 			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+						
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
 			updateString = sqlQueryObject.createSQLDelete();

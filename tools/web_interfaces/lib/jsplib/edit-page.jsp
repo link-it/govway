@@ -251,6 +251,7 @@ for (int i = 0; i < dati.size(); i++) {
 	            		} else { // else link
 	            			if (type.equals("text")){
 	            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+	            				classSpanNoEdit = de.getStyleClass(); // gestione override classe di default 24/03/2021
 	            				%>
 	                			<div class="prop">
 	                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
@@ -751,6 +752,11 @@ for (int i = 0; i < dati.size(); i++) {
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
 								    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 								    									String controlSetClass = deInfo != null ? "controlset-cb-info" : "controlset";
+								    									if(deInfo == null) {
+								    										if(!deNote.equals("") && de.isLabelAffiancata()){
+								    											controlSetClass = "controlset-cb-note-affiancate";
+								    										}
+								    									}
 								    									%>	<table class="<%=controlSetClass %>">
 						    													<tr> 
 						    														<td>
@@ -761,6 +767,15 @@ for (int i = 0; i < dati.size(); i++) {
 								   														<span class="controlset"><%=de.getLabelRight() %></span>
 								   													</td>
 								   													<% } %>
+								   													<%
+																			      		if(!deNote.equals("") && de.isLabelAffiancata()){
+																			      			String idDivIconInfo = "divIconInfo_"+i;
+																			      			String idIconInfo = "iconInfo_"+i; 
+																			      	%> <td>	
+																			      			<p class="note-checkbox-affiancata <%= labelStyleClass %>"><%=deNote %></p>
+																						</td>
+																			      	<% } 
+																			      	%>
 								   													<%
 																			      		if(deInfo != null){
 																			      			String idDivIconInfo = "divIconInfo_"+i;
@@ -778,7 +793,7 @@ for (int i = 0; i < dati.size(); i++) {
 																			      	%>
 							   													</tr>
 							   												</table>
-								  										<% if(!deNote.equals("")){ %>
+								  										<% if(!deNote.equals("") && !de.isLabelAffiancata()){ %>
 										      								<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 										      							<% } %>
 			                                            			</div>

@@ -492,12 +492,12 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			ApiKeyInfo keyInfo = ApplicativiApiHelper.createApiKey(credenziali, oldID, env.saCore, env.protocolFactory.getProtocol());
 			boolean updateKey = true;
 			
-			Credenziali newCredenziali = ApplicativiApiHelper.credenzialiFromAuth(credenziali, keyInfo);
+			List<Credenziali> newCredenziali = ApplicativiApiHelper.credenzialiFromAuth(credenziali, keyInfo);
 			if(oldSa.getInvocazionePorta()==null) {
 				oldSa.setInvocazionePorta(new InvocazionePorta());
 			}
 			oldSa.getInvocazionePorta().getCredenzialiList().clear();
-			oldSa.getInvocazionePorta().addCredenziali(newCredenziali);
+			oldSa.getInvocazionePorta().getCredenzialiList().addAll(newCredenziali);
 			
 			oldSa.setOldIDServizioApplicativoForUpdate(oldID);
 				

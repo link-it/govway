@@ -22,7 +22,9 @@ package org.openspcoop2.core.config.rs.server.api.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +37,7 @@ import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsBaseCertificato;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsCertificato;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsConfigurazioneManuale;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
@@ -347,11 +350,13 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	
 	// TODO: Manage exceptions.
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T,E> T apiCredenzialiToGovwayCred(Object creds, ModalitaAccessoEnum tipoAuth, Class<T> credClass, Class<E> enumClass, ApiKeyInfo keyInfo)
+	public static <T,E> List<T> apiCredenzialiToGovwayCred(Object creds, ModalitaAccessoEnum tipoAuth, Class<T> credClass, Class<E> enumClass, ApiKeyInfo keyInfo)
 			throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
 		if (!enumClass.isEnum())
 			throw new IllegalArgumentException("Il parametro enumClass deve essere un'enumerazione");
+		
+		List<T> lstRet = new ArrayList<T>();
 		
 		T ret = Utilities.newInstance(credClass);
 		
@@ -366,6 +371,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "BASIC"));
 			BeanUtils.setProperty(ret, "user", auth.getUsername());
 			BeanUtils.setProperty(ret, "password", auth.getPassword());
+			lstRet.add(ret);
 			break;
 		}
 		case HTTPS: {
@@ -389,12 +395,38 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 				BeanUtils.setProperty(ret, "certificate", cre.getArchivio());
 				BeanUtils.setProperty(ret, "certificateStrictVerification", cre.isStrictVerification());
 				BeanUtils.setProperty(ret, "cnSubject", cInfo.getSubject().getCN());
-				BeanUtils.setProperty(ret, "cnIssuer", cInfo.getIssuer().getCN());				
+				BeanUtils.setProperty(ret, "cnIssuer", cInfo.getIssuer().getCN());	
+				lstRet.add(ret);
+				
+				// lettura altri certificati
+				List<AuthenticationHttpsBaseCertificato> certificati = auth.getCertificati();
+				if(certificati!= null && certificati.size() > 0) {
+					for (AuthenticationHttpsBaseCertificato secondaryCre : certificati) {
+						T cert = Utilities.newInstance(credClass);
+						BeanUtils.setProperty(cert, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "SSL"));
+						
+						ArchiveType secondaryType = ArchiveType.CER;
+						String secondaryAlias = secondaryCre.getAlias();
+						String secondaryPassword = secondaryCre.getPassword();
+						if(secondaryCre.getTipoCertificato()!=null) {
+							secondaryType = ArchiveType.valueOf(secondaryCre.getTipoCertificato().toString());
+						}
+						CertificateInfo secondaryCInfo = ArchiveLoader.load(secondaryType, secondaryCre.getArchivio(), secondaryAlias, secondaryPassword).getCertificate();
+						BeanUtils.setProperty(cert, "certificate", secondaryCre.getArchivio());
+						BeanUtils.setProperty(cert, "certificateStrictVerification", secondaryCre.isStrictVerification());
+						BeanUtils.setProperty(cert, "cnSubject", secondaryCInfo.getSubject().getCN());
+						BeanUtils.setProperty(cert, "cnIssuer", secondaryCInfo.getIssuer().getCN());	
+						
+						lstRet.add(cert);
+					}
+				}
+				
 				break;
 			case CONFIGURAZIONE_MANUALE:
 				AuthenticationHttpsConfigurazioneManuale creManuale = (AuthenticationHttpsConfigurazioneManuale) auth.getCertificato();
 				BeanUtils.setProperty(ret, "subject", creManuale.getSubject());
 				BeanUtils.setProperty(ret, "issuer", creManuale.getIssuer());
+				lstRet.add(ret);
 				break;
 			}
 			break;
@@ -408,6 +440,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			AuthenticationPrincipal auth = (AuthenticationPrincipal) creds;
 			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "PRINCIPAL"));
 			BeanUtils.setProperty(ret, "user", auth.getUserid());
+			lstRet.add(ret);
 			break;
 		}
 		case API_KEY: {
@@ -426,18 +459,20 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			boolean appId = isAppId(auth.isAppId());
 			BeanUtils.setProperty(ret, "appId", appId);
 			BeanUtils.setProperty(ret, "certificateStrictVerification", keyInfo.isCifrata());
+			lstRet.add(ret);
 			break;
 		}
 		default:
 			BeanUtils.setProperty(ret, "tipo", null);
-			
+			lstRet.add(ret);
+			break;
 		}
 		
-		return ret;
+		return lstRet;
 	}
 
 	
-	public static final <T,E> OneOfBaseCredenzialiCredenziali govwayCredenzialiToApi(Object govwayCreds, Class<T> credClass, Class<E> enumClass) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public static final <T,E> OneOfBaseCredenzialiCredenziali govwayCredenzialiToApi(List<?> govwayCredsList, Class<T> credClass, Class<E> enumClass) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		
 		if (!enumClass.isEnum())
 			throw new IllegalArgumentException("Il parametro enumClass deve essere un'enumerazione");
@@ -445,8 +480,10 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		OneOfBaseCredenzialiCredenziali ret = null;		
 		
 		// Questo è il caso di autenticazione di tipo NESSUNO.
-		if (govwayCreds == null)
+		if (govwayCredsList == null)
 			return ret;
+		
+		Object govwayCreds = govwayCredsList.get(0); // riportato dal metodo chiamante
 		
 		String tipo = BeanUtils.getProperty(govwayCreds, "tipo");
 		
@@ -483,6 +520,22 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 				auth.setCertificato(certificato);
 			}
 			auth.setModalitaAccesso(ModalitaAccessoEnum.HTTPS);
+			
+			if(govwayCredsList.size() > 1) { // riporto i certificati aggiuntivi
+				List<AuthenticationHttpsBaseCertificato> certificati = new ArrayList<AuthenticationHttpsBaseCertificato>();
+				for (int i = 1; i < govwayCredsList.size(); i++) {
+					Object govwayCredsCertificato = govwayCredsList.get(i);
+					AuthenticationHttpsBaseCertificato certificato = new AuthenticationHttpsBaseCertificato();
+					certificato.setTipoCertificato(TipoKeystore.CER);
+					Object oCertificateCertificato = mCertificate.invoke(govwayCredsCertificato);
+					certificato.setArchivio((byte[])oCertificateCertificato);
+					Method mCertificateStrictVerification = credClass.getMethod("isCertificateStrictVerification");
+					certificato.setStrictVerification((Boolean) mCertificateStrictVerification.invoke(govwayCredsCertificato));
+					
+					certificati.add(certificato );
+				}
+				auth.setCertificati(certificati );
+			}
 			ret = auth;
 		}
 		else if ("principal".equals(tipo)) {

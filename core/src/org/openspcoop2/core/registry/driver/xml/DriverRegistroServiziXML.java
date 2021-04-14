@@ -1506,7 +1506,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 		
 		for(int i=0; i<this.registro.sizeSoggettoList(); i++){
 			org.openspcoop2.core.registry.Soggetto ss = this.registro.getSoggetto(i);
-			CredenzialiSoggetto credenziali = ss.getCredenziali();
+			CredenzialiSoggetto credenziali = (ss.sizeCredenzialiList() > 0 ? ss.getCredenziali(0) : null);
 			if(credenziali==null){
 				continue;
 			}
@@ -1711,7 +1711,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 					}
 					// Filtro By Credenziali
 					if(filtroRicerca.getCredenzialiSoggetto()!=null){
-						CredenzialiSoggetto credenziali = ss.getCredenziali();
+						CredenzialiSoggetto credenziali = (ss.sizeCredenzialiList() > 0 ? ss.getCredenziali(0) : null);
 						if(credenziali==null){
 							continue;
 						}

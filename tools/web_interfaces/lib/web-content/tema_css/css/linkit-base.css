@@ -1240,6 +1240,11 @@ p.note.labelLong {
     color: ${p.note.color};
 }
 
+p.note-checkbox-affiancata {
+    margin: 2px 8px 4px 8px;
+    color: ${p.note.color};
+}
+
 
 .campiObbligatori {
 	display: block;
@@ -1266,6 +1271,15 @@ p.note.labelLong {
 .spanNoEdit-image-msval {
 	vertical-align: sub;
 	margin-right: 4px;
+}
+
+.spanNoEdit-bold {
+	font-weight: bold;
+}
+
+.spanNoEdit-bold-red {
+	font-weight: bold;
+	color: ${p.legend.color};
 }
 
 .divNoEdit {
@@ -1890,7 +1904,8 @@ div.prop table.controlset-cb-info label{
 	width: auto;
 }
 
-div.prop table.controlset-cb-info {
+div.prop table.controlset-cb-info,
+div.prop table.controlset-cb-note-affiancate {
 	margin-top: 4px;
 	margin-bottom: 0px;
 }

@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -112,8 +111,6 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class ServiziApplicativiAdd extends Action {
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
-
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
 	private ConsoleConfiguration consoleConfiguration =null;
@@ -378,6 +375,13 @@ public final class ServiziApplicativiAdd extends Action {
 			String responseInputDeleteAfterRead = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
+			boolean visualizzaModificaCertificato = false;
+			boolean visualizzaAddCertificato = false;
+			String servletCredenzialiList = null;
+			List<Parameter> parametersServletCredenzialiList = null;
+			Integer numeroCertificati = 0;
+			String servletCredenzialiAdd = null;
+			
 			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
 						
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
@@ -624,8 +628,8 @@ public final class ServiziApplicativiAdd extends Action {
 										tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
 										tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
 										tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-										tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
-										tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+										tipoCredenzialiSSLAliasCertificatoNotBefore = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotBefore());
+										tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotAfter());
 										tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_CERTIFICATO_OK;
 									}catch(UtilsException e) {
 										pd.setMessage("Il Certificato selezionato non &egrave; valido: "+e.getMessage());
@@ -653,8 +657,8 @@ public final class ServiziApplicativiAdd extends Action {
 								tipoCredenzialiSSLAliasCertificatoSerialNumber = cSelezionato.getCertificate().getSerialNumber() + "";
 								tipoCredenzialiSSLAliasCertificatoType = cSelezionato.getCertificate().getType();
 								tipoCredenzialiSSLAliasCertificatoVersion = cSelezionato.getCertificate().getVersion() + "";
-								tipoCredenzialiSSLAliasCertificatoNotBefore = this.sdf.format(cSelezionato.getCertificate().getNotBefore());
-								tipoCredenzialiSSLAliasCertificatoNotAfter = this.sdf.format(cSelezionato.getCertificate().getNotAfter());
+								tipoCredenzialiSSLAliasCertificatoNotBefore = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotBefore());
+								tipoCredenzialiSSLAliasCertificatoNotAfter = saHelper.getSdfCredenziali().format(cSelezionato.getCertificate().getNotAfter());
 								
 								// dalla seconda volta che passo, posso salvare, la prima mostro il recap del certificato estratto
 								
@@ -848,7 +852,8 @@ public final class ServiziApplicativiAdd extends Action {
 						changepwd,
 						multipleApiKey, appId, apiKey,
 						autenticazioneToken,token_policy, tipoSA, useAsClient,
-						integrationManagerEnabled);
+						integrationManagerEnabled, 
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -959,7 +964,8 @@ public final class ServiziApplicativiAdd extends Action {
 						changepwd,
 						multipleApiKey, appId, apiKey,
 						autenticazioneToken,token_policy, tipoSA, useAsClient,
-						integrationManagerEnabled);
+						integrationManagerEnabled, 
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);

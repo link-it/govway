@@ -9,6 +9,13 @@ Background:
 
     * def applicativo_update = read('applicativo_update.json')
     * eval applicativo_update.nome = applicativo.nome
+    
+    * def applicativo_https_multipleCertificate = read('classpath:bodies/applicativo_https_multipleCertificate.json') 
+		* eval randomize(applicativo_https_multipleCertificate, ["nome" ])
+		
+		* def applicativo_https_multipleCertificate_update = read('applicativo_update.json')
+    * eval applicativo_https_multipleCertificate_update.nome = applicativo_https_multipleCertificate.nome
+    * eval applicativo_https_multipleCertificate_update.credenziali = applicativo_https_multipleCertificate.credenziali
 
     * def credenziali_httpBasic = read('classpath:bodies/credenziali_httpBasic.json')
     * eval randomize(credenziali_httpBasic, ["credenziali.username"])
@@ -22,6 +29,8 @@ Background:
     * def credenziali_apikey = read('classpath:bodies/credenziali_apikey.json')
 
     * def credenziali_multipleApikey = read('classpath:bodies/credenziali_multipleApikey.json')
+    
+    * def credenziali_https_multipleCertificate = read('classpath:bodies/credenziali_https_multipleCertificate.json')
 
 @Update204
 Scenario: Applicativi Aggiornamento 204 OK
@@ -48,6 +57,11 @@ Scenario: Applicativi Aggiornamento Ruolo Inesistente 400
     Then status 400
 
     * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+    
+@Update204_httpsMultipleCertificato
+Scenario: Applicativi Aggiornamento 204 OK (credenziali https, lista certificati)
+
+    * call update_204 { resourcePath: 'applicativi',  body: '#(applicativo_https_multipleCertificate)',  body_update: '#(applicativo_https_multipleCertificate_update)',  key: '#(applicativo_https_multipleCertificate.nome)',  delete_key: '#(applicativo_https_multipleCertificate_update.nome)' }
 
 @UpdateCredenzialiHttpBasic
 Scenario: Applicativi Aggiornamento Credenziali HttpBasic
@@ -167,3 +181,29 @@ Scenario: Applicativi Aggiornamento Credenziali MultipleApiKey
     And match response.credenziali contains options
 
     * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+    
+@UpdateCredenzialiHttsCertificatiMultipli
+Scenario: Applicativi Aggiornamento Credenziali Https Certificati Multipli
+
+    * def options = { modalita_accesso: 'https', certificato: { tipo_certificato: "CER", strict_verification : false, tipo: "certificato", archivio: "#notnull" }, certificati: [ { tipo_certificato: "CER", strict_verification : false, archivio: "#notnull" }] }
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo_https_multipleCertificate)' }
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo_https_multipleCertificate.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_https_multipleCertificate
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    Given url configUrl
+    And path 'applicativi' , applicativo_https_multipleCertificate.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.credenziali contains options
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo_https_multipleCertificate.nome } )
