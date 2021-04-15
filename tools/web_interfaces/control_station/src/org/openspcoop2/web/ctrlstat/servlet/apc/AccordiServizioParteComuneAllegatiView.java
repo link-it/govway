@@ -124,7 +124,7 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 
 			apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.OTHER,idAccordo,
 					null,null,null,null,tipoAccordo,
-					idAllegato,doc,as,errore,contenutoAllegato);
+					idAllegato,doc,as,errore,contenutoAllegato,null);
 						
 			pd.setDati(dati);
 

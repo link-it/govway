@@ -566,7 +566,12 @@ for (int i = 0; i < dati.size(); i++) {
 		                                			</div>
 		                                			<%
 		                                		} else { // else button
-		                                			if (type.equals("file")){
+		                                			if (type.equals("file") || type.equals("multi-file")){
+		                                				String multipleFiles = "";
+		                                				if(type.equals("multi-file")){
+		                                					multipleFiles = " multiple ";
+		                                				}
+		                                				
 		                                				%>
 		                                    			<div class="prop">
 		                                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
@@ -576,7 +581,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    	            	%> 
 		                                    	            	<div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=fileValue %></span></div><%
 		                                    	      		} else {
-		                                    	          		%><input size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  
+		                                    	          		%><input size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> 
 											  	<%
 												  if (!de.getOnChange().equals("")) {
 													  	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";

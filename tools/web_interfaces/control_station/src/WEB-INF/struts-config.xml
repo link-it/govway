@@ -548,7 +548,7 @@
 		<!--  Accordi di Servizio Parte Comune Allegati -->
 
         <action path="/accordiServizioParteComuneAllegatiAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneAllegatiAdd" 
-        	scope="request" validate="true" name="FileUpload">
+        	scope="request" validate="true">
         	<forward name="accordiServizioParteComuneAllegatiAddForm" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteComuneAllegatiAddOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteComuneAllegatiAddCheckError" path="/jsplib/addElement.jsp"/>
@@ -788,7 +788,7 @@
 		<!--  Accordi di Servizio Parte Specifica Allegati -->
 
         <action path="/accordiServizioParteSpecificaAllegatiAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaAllegatiAdd" 
-        	scope="request" validate="true" name="FileUpload">
+        	scope="request" validate="true">
         	<forward name="accordiServizioParteSpecificaAllegatiAddForm" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaAllegatiAddOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaAllegatiAddCheckError" path="/jsplib/addElement.jsp"/>

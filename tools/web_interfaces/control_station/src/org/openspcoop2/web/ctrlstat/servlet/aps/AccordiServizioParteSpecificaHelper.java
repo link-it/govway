@@ -82,6 +82,9 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -1729,6 +1732,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			String labelServizio = getLabelServizioMessaggioErroreDocumentoDuplicato();
+			
 			boolean documentoUnivocoIndipendentementeTipo = true;
 			if(this.archiviCore.existsDocumento(documento,ProprietariDocumento.servizio,documentoUnivocoIndipendentementeTipo)){
 
@@ -1751,20 +1756,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()) || documentoUnivocoIndipendentementeTipo) {
 					if(documentoUnivocoIndipendentementeTipo) {
 						this.pd.setMessage(MessageFormat.format(allegatoMsg,
-								documento.getFile()));
+								documento.getFile(),labelServizio));
 					}
 					else {
 						this.pd.setMessage(MessageFormat.format(allegatoMsg,
-								documento.getFile(), documento.getTipo()));
+								documento.getFile(), documento.getTipo(),labelServizio));
 					}
 				}else {
 					if(documentoUnivocoIndipendentementeTipo) {
 						this.pd.setMessage(MessageFormat.format(specificaMsg, documento.getRuolo(),
-								documento.getFile()));
+								documento.getFile(),labelServizio));
 					}
 					else {
 						this.pd.setMessage(MessageFormat.format(specificaMsg, documento.getRuolo(),
-								documento.getFile(), documento.getTipo()));
+								documento.getFile(), documento.getTipo(),labelServizio));
 					}
 				}
 				
@@ -1779,6 +1784,194 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 
+			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	private String getLabelServizioMessaggioErroreDocumentoDuplicato() {
+		String labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_SERVIZIO;
+		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		boolean gestioneFruitori = false;
+		if(tipologia!=null) {
+			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
+			}
+		}
+		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+		if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+			if(gestioneFruitori) {
+				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_FRUIZIONE;
+			} else {
+				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_EROGAZIONE;
+			}
+		} else {
+			if(gestioneFruitori) {
+				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_FRUIZIONE;
+			}
+			else {
+				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_EROGAZIONE;
+			}
+		}
+		return labelServizio;
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	public boolean serviziAllegatiCheckData(TipoOperazione tipoOp, List<BinaryParameter> binaryParameterDocumenti, Long idProprietarioDocumento, IProtocolFactory<?> pf)
+			throws Exception {
+
+		try{
+
+			// String userLogin = (String) this.session.getAttribute("Login");
+
+			String ruolo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RUOLO);
+			String tipoFile = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE  );
+
+			// Campi obbligatori
+			if (ruolo.equals("")) {
+				this.pd.setMessage(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_IL_TIPO_DI_DOCUMENTO);
+				return false;
+			}
+			
+			// 1. Controllo selezione almeno un documento -> cioe' almento un value della lista non e' vuoto
+			boolean almenoUnoSelezionato = false;
+			for (int i = 0; i < binaryParameterDocumenti.size() ; i++) {
+				BinaryParameter binaryParameter = binaryParameterDocumenti.get(i);
+				
+				// al primo file non vuoto che trovo mi fermo
+				if(binaryParameter.getValue() != null && binaryParameter.getValue().length > 0){
+					almenoUnoSelezionato = true;
+					break;
+				}
+			}
+			
+			if(!almenoUnoSelezionato) {
+				this.pd.setMessage("&Egrave; necessario selezionare almeno un documento.");
+				return false;
+			}
+			
+			List<String> listaErrori = new ArrayList<String>();
+			String labelServizio = getLabelServizioMessaggioErroreDocumentoDuplicato();
+			
+			for (int i = 0; i < binaryParameterDocumenti.size() ; i++) {
+				BinaryParameter binaryParameter = binaryParameterDocumenti.get(i);
+				
+				if(StringUtils.isBlank(binaryParameter.getFilename())){
+					listaErrori.add("Il documento selezionato in posizione ("+(i+1)+") non ha un nome valido.");
+					continue;
+				}
+
+				if(binaryParameter.getValue()==null || binaryParameter.getValue().length<=0){
+					listaErrori.add("Il documento '"+ binaryParameter.getFilename() +"' &egrave; vuoto.");
+					continue;
+				}
+			
+				String tipo = null;
+				switch (RuoliDocumento.valueOf(ruolo)) {
+					case allegato:
+						tipo = binaryParameter.getFilename().substring(binaryParameter.getFilename().lastIndexOf('.')+1, binaryParameter.getFilename().length());
+						break;
+					case specificaSemiformale:
+						tipo = TipiDocumentoSemiformale.valueOf(tipoFile).getNome();
+						break;
+					case specificaSicurezza:
+						tipo = TipiDocumentoSicurezza.valueOf(tipoFile).getNome();
+						break;
+					case specificaLivelloServizio:
+						tipo = TipiDocumentoLivelloServizio.valueOf(tipoFile).getNome();
+						break;
+				}
+				
+				
+				if(tipo==null || "".equals(tipo) || tipo.length()>30 || binaryParameter.getFilename().lastIndexOf(".")==-1){
+					if(tipo==null || "".equals(tipo) || binaryParameter.getFilename().lastIndexOf(".")==-1){
+						listaErrori.add("L'estensione del documento '"+ binaryParameter.getFilename() +"' non &egrave; valida.");
+					}else{
+						listaErrori.add("L'estensione del documento '"+ binaryParameter.getFilename() +"' non &egrave; valida. La dimensione dell'estensione &egrave; troppo lunga.");
+					}
+					continue;
+				}
+				
+				Documento documento = new Documento();
+				documento.setRuolo(RuoliDocumento.valueOf(ruolo).toString());
+				documento.setByteContenuto(binaryParameter.getValue());
+				documento.setFile(binaryParameter.getFilename());
+
+				switch (RuoliDocumento.valueOf(ruolo)) {
+					case allegato:
+						documento.setTipo(binaryParameter.getFilename().substring(binaryParameter.getFilename().lastIndexOf('.')+1, binaryParameter.getFilename().length()));
+						break;
+					case specificaSemiformale:
+						documento.setTipo(TipiDocumentoSemiformale.valueOf(tipoFile).getNome());
+						break;
+					case specificaSicurezza:
+						documento.setTipo(TipiDocumentoSicurezza.valueOf(tipoFile).getNome());
+						break;
+					case specificaLivelloServizio:
+						documento.setTipo(TipiDocumentoLivelloServizio.valueOf(tipoFile).getNome());
+						break;
+				}
+				documento.setIdProprietarioDocumento(idProprietarioDocumento);
+				
+				boolean documentoUnivocoIndipendentementeTipo = true;
+				if(this.archiviCore.existsDocumento(documento,ProprietariDocumento.servizio,documentoUnivocoIndipendentementeTipo)){
+	
+					tipo = documento.getTipo();
+					String ruoloDoc = documento.getRuolo();
+					String allegatoMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI;
+					String specificaMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO;
+					if(documentoUnivocoIndipendentementeTipo) {
+						tipo = null;
+						ruoloDoc = null;
+						allegatoMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI_SENZA_TIPO;
+						specificaMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_SENZA_TIPO;
+					}
+					
+					Documento existing = this.archiviCore.getDocumento(documento.getFile(),tipo,ruoloDoc,documento.getIdProprietarioDocumento(),false,ProprietariDocumento.servizio);
+					if(!(existing.getId().longValue() == documento.getId().longValue())) {
+						if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()) || documentoUnivocoIndipendentementeTipo) {
+							if(documentoUnivocoIndipendentementeTipo) {
+								listaErrori.add(MessageFormat.format(allegatoMsg, documento.getFile(), labelServizio));
+							}
+							else {
+								listaErrori.add(MessageFormat.format(allegatoMsg, documento.getFile(), documento.getTipo(), labelServizio));
+							}
+						}else {
+							if(documentoUnivocoIndipendentementeTipo) {
+								listaErrori.add(MessageFormat.format(specificaMsg, documento.getRuolo(), documento.getFile(), labelServizio));
+							}
+							else {
+								listaErrori.add(MessageFormat.format(specificaMsg, documento.getRuolo(), documento.getFile(), documento.getTipo(), labelServizio));
+							}
+						}
+	
+						continue;
+					}
+				}
+	
+				ValidazioneResult valida = pf.createValidazioneDocumenti().valida (documento);
+				if(!valida.isEsito()) {
+					listaErrori.add(valida.getMessaggioErrore());
+					continue;
+				}
+			}
+			
+			if(!listaErrori.isEmpty()) {
+				StringBuffer sb = new StringBuffer();
+				
+				for (int i = 0; i < listaErrori.size(); i++) {
+					if(i != 0) {
+						sb.append("<br/>");
+					}
+					sb.append(listaErrori.get(i));
+				}
+				
+				this.pd.setMessage(sb.toString());
+				return false;
+			}
+			
 			return true;
 
 		} catch (Exception e) {
@@ -8855,7 +9048,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 	public Vector<DataElement>  addTipiAllegatiToDati(TipoOperazione tipoOp, String idServizio, String ruolo,
 			String[] ruoli, String[] tipiAmmessi, String[] tipiAmmessiLabel,
-			Vector<DataElement> dati, String modificaAPI) {
+			Vector<DataElement> dati, String modificaAPI, List<BinaryParameter> binaryParameterDocumenti) {
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
@@ -8884,13 +9077,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 
-		de = new DataElement();
-		de.setValue(idServizio);
-		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_THE_FILE);
-		de.setType(DataElementType.FILE);
-		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_THE_FILE);
-		de.setSize( getSize());
-		dati.addElement(de);
+		
+		if(TipoOperazione.ADD.equals(tipoOp)){
+			// dal parametro in posizione 0 leggiamo i dati per creare l'elemento grafico
+			BinaryParameter allegato0 = binaryParameterDocumenti.get(0);
+			
+			DataElement fileDataElement = allegato0.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_THE_FILE, "", getSize());
+			fileDataElement.setType(DataElementType.MULTI_FILE);
+			fileDataElement.setRequired(true);
+			dati.add(fileDataElement);
+			dati.addAll(BinaryParameter.getFileNameDataElement(binaryParameterDocumenti));
+			dati.add(BinaryParameter.getFileIdDataElement(binaryParameterDocumenti));
+		} else {
+			de = new DataElement();
+			de.setValue(idServizio);
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_THE_FILE);
+			de.setType(DataElementType.FILE);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_THE_FILE);
+			de.setSize( getSize());
+			dati.addElement(de);
+		}
 		
 		if(modificaAPI!=null) {
 			de = new DataElement();

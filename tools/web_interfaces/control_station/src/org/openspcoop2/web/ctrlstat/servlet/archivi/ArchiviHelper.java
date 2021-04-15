@@ -51,6 +51,8 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
+import org.openspcoop2.core.registry.constants.TipiDocumentoCoordinamento;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -2940,25 +2942,25 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 			// Campi obbligatori
 			if (ruolo.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il Tipo di documento");
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il Tipo di documento");
 				return false;
 			}
 
 			if(formFile==null || formFile.getFileName()!=null && "".equals(formFile.getFileName())){
-				this.pd.setMessage("E' necessario selezionare un documento.");
+				this.pd.setMessage("&Egrave; necessario selezionare un documento.");
 				return false;
 			}
 
 			if(formFile==null || formFile.getFileSize()<=0){
-				this.pd.setMessage("Il documento selezionato non puo essere vuoto.");
+				this.pd.setMessage("Il documento selezionato non pu&ograve; essere vuoto.");
 				return false;
 			}
 
 			if(documento.getTipo()==null || "".equals(documento.getTipo()) || documento.getTipo().length()>30 || formFile.getFileName().lastIndexOf(".")==-1){
 				if(documento.getTipo()==null || "".equals(documento.getTipo()) || formFile.getFileName().lastIndexOf(".")==-1){
-					this.pd.setMessage("L'estensione del documento non e' valida.");
+					this.pd.setMessage("L'estensione del documento non &egrave; valida.");
 				}else{
-					this.pd.setMessage("L'estensione del documento non e' valida. La dimensione dell'estensione e' troppo lunga.");
+					this.pd.setMessage("L'estensione del documento non &egrave; valida. La dimensione dell'estensione &egrave; troppo lunga.");
 				}
 				return false;
 			}
@@ -2980,9 +2982,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					return true;
 
 				if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()) || documentoUnivocoIndipendentementeTipo)
-					this.pd.setMessage("L'allegato con nome "+documento.getFile()+" "+msgTipo+"è già presente nella API.");
+					this.pd.setMessage("L'allegato con nome "+documento.getFile()+" "+msgTipo+"&egrave; gi&agrave; presente nella API.");
 				else
-					this.pd.setMessage("La specifica semiformale con nome "+documento.getFile()+" "+msgTipo+"è già presente nella API.");
+					this.pd.setMessage("La specifica semiformale con nome "+documento.getFile()+" "+msgTipo+"&egrave; gi&agrave; presente nella API.");
 
 				return false;
 			}
@@ -2990,6 +2992,147 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			ValidazioneResult valida = pf.createValidazioneDocumenti().valida (documento);
 			if(!valida.isEsito()) {
 				this.pd.setMessage(valida.getMessaggioErrore());
+				return false;
+			}
+			
+			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	public boolean accordiAllegatiCheckData(TipoOperazione tipoOperazione, List<BinaryParameter> binaryParameterDocumenti, Long idProprietarioDocumento, ProprietariDocumento proprietario, IProtocolFactory<?> pf)
+			throws Exception {
+
+		try{
+
+			String ruolo = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO);
+			String tipoFile = this.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_TIPO_FILE);
+			
+			// Campi obbligatori
+			if (ruolo.equals("")) {
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare il Tipo di documento");
+				return false;
+			}
+			
+			// 1. Controllo selezione almeno un documento -> cioe' almento un value della lista non e' vuoto
+			boolean almenoUnoSelezionato = false;
+			for (int i = 0; i < binaryParameterDocumenti.size() ; i++) {
+				BinaryParameter binaryParameter = binaryParameterDocumenti.get(i);
+				
+				// al primo file non vuoto che trovo mi fermo
+				if(binaryParameter.getValue() != null && binaryParameter.getValue().length > 0){
+					almenoUnoSelezionato = true;
+					break;
+				}
+			}
+			
+			if(!almenoUnoSelezionato) {
+				this.pd.setMessage("&Egrave; necessario selezionare almeno un documento.");
+				return false;
+			}
+			
+			
+			List<String> listaErrori = new ArrayList<String>();
+			
+			for (int i = 0; i < binaryParameterDocumenti.size() ; i++) {
+				BinaryParameter binaryParameter = binaryParameterDocumenti.get(i);
+				
+				if(StringUtils.isBlank(binaryParameter.getFilename())){
+					listaErrori.add("Il documento selezionato in posizione ("+(i+1)+") non ha un nome valido.");
+					continue;
+				}
+
+				if(binaryParameter.getValue()==null || binaryParameter.getValue().length<=0){
+					listaErrori.add("Il documento '"+ binaryParameter.getFilename() +"' &egrave; vuoto.");
+					continue;
+				}
+			
+				String tipo = null;
+				switch (RuoliDocumento.valueOf(ruolo)) {
+					case allegato:
+						tipo = binaryParameter.getFilename().substring(binaryParameter.getFilename().lastIndexOf('.')+1, binaryParameter.getFilename().length());
+						break;
+					case specificaSemiformale:
+						tipo = TipiDocumentoSemiformale.valueOf(tipoFile).getNome();
+						break;
+					case specificaCoordinamento:
+						tipo = TipiDocumentoCoordinamento.valueOf(tipoFile).getNome();
+						break;
+				}
+				
+				
+				if(tipo==null || "".equals(tipo) || tipo.length()>30 || binaryParameter.getFilename().lastIndexOf(".")==-1){
+					if(tipo==null || "".equals(tipo) || binaryParameter.getFilename().lastIndexOf(".")==-1){
+						listaErrori.add("L'estensione del documento '"+ binaryParameter.getFilename() +"' non &egrave; valida.");
+					}else{
+						listaErrori.add("L'estensione del documento '"+ binaryParameter.getFilename() +"' non &egrave; valida. La dimensione dell'estensione &egrave; troppo lunga.");
+					}
+					continue;
+				}
+				
+				Documento documento = new Documento();
+				documento.setRuolo(RuoliDocumento.valueOf(ruolo).toString());
+				documento.setByteContenuto(binaryParameter.getValue());
+				documento.setFile(binaryParameter.getFilename());
+
+				switch (RuoliDocumento.valueOf(ruolo)) {
+					case allegato:
+						documento.setTipo(binaryParameter.getFilename().substring(binaryParameter.getFilename().lastIndexOf('.')+1, binaryParameter.getFilename().length()));
+						break;
+					case specificaSemiformale:
+						documento.setTipo(TipiDocumentoSemiformale.valueOf(tipoFile).getNome());
+						break;
+					case specificaCoordinamento:
+						documento.setTipo(TipiDocumentoCoordinamento.valueOf(tipoFile).getNome());
+						break;
+				}
+				documento.setIdProprietarioDocumento(idProprietarioDocumento);
+				
+				boolean documentoUnivocoIndipendentementeTipo = true;
+				if(this.archiviCore.existsDocumento(documento,proprietario,documentoUnivocoIndipendentementeTipo)){
+	
+					tipo = documento.getTipo();
+					String ruoloDoc = documento.getRuolo();
+					String msgTipo = "(tipo: "+documento.getTipo()+") ";
+					if(documentoUnivocoIndipendentementeTipo) {
+						tipo = null;
+						ruoloDoc = null;
+						msgTipo = "";
+					}
+					
+					Documento existing = this.archiviCore.getDocumento(documento.getFile(),tipo,ruoloDoc,documento.getIdProprietarioDocumento(),false,proprietario);
+					if(!(existing.getId().longValue() == documento.getId().longValue())) {
+						if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()) || documentoUnivocoIndipendentementeTipo)
+							listaErrori.add("L'allegato con nome '"+documento.getFile()+"' "+msgTipo+"&egrave; gi&agrave; presente nella API.");
+						else
+							listaErrori.add("La specifica semiformale con nome '"+documento.getFile()+"' "+msgTipo+"&egrave; gi&agrave; presente nella API.");
+	
+						continue;
+					}
+				}
+	
+				ValidazioneResult valida = pf.createValidazioneDocumenti().valida (documento);
+				if(!valida.isEsito()) {
+					listaErrori.add(valida.getMessaggioErrore());
+					continue;
+				}
+			}
+			
+			if(!listaErrori.isEmpty()) {
+				StringBuffer sb = new StringBuffer();
+				
+				for (int i = 0; i < listaErrori.size(); i++) {
+					if(i != 0) {
+						sb.append("<br/>");
+					}
+					sb.append(listaErrori.get(i));
+				}
+				
+				this.pd.setMessage(sb.toString());
 				return false;
 			}
 			
