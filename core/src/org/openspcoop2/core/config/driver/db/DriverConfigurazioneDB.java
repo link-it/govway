@@ -7821,6 +7821,28 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm.close();
 				
 				
+				// proprieta'
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, sa.getId());
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					Proprieta proprieta = new Proprieta();
+					proprieta.setNome(rs.getString("nome"));
+					proprieta.setValore(rs.getString("valore"));
+					sa.addProprieta(proprieta);
+				
+				}
+				rs.close();
+				stm.close();
+				
+				
 				// Protocol Properties
 				try{
 					List<ProtocolProperty> listPP = DriverConfigurazioneDB_LIB.getListaProtocolProperty(sa.getId(), ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, this.tipoDB);
@@ -24455,7 +24477,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
 			stmt.close();
-						
+				
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
 			updateString = sqlQueryObject.createSQLDelete();

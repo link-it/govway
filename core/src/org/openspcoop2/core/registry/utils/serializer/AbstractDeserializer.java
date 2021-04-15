@@ -45,6 +45,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
+import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
@@ -1589,6 +1590,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public AccordoCooperazionePartecipanti readAccordoCooperazionePartecipantiFromString(String in) throws DeserializerException {
 		return (AccordoCooperazionePartecipanti) this.xmlToObj(in.getBytes(), AccordoCooperazionePartecipanti.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: proprieta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @return Object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Proprieta readProprieta(String fileName) throws DeserializerException {
+		return (Proprieta) this.xmlToObj(fileName, Proprieta.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @return Object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Proprieta readProprieta(File file) throws DeserializerException {
+		return (Proprieta) this.xmlToObj(file, Proprieta.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @return Object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Proprieta readProprieta(InputStream in) throws DeserializerException {
+		return (Proprieta) this.xmlToObj(in, Proprieta.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @return Object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Proprieta readProprieta(byte[] in) throws DeserializerException {
+		return (Proprieta) this.xmlToObj(in, Proprieta.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @return Object type {@link org.openspcoop2.core.registry.Proprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Proprieta readProprietaFromString(String in) throws DeserializerException {
+		return (Proprieta) this.xmlToObj(in.getBytes(), Proprieta.class);
 	}	
 	
 	

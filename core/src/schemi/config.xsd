@@ -264,6 +264,7 @@
 			<xsd:element name="invocazione-porta" type="invocazione-porta" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="invocazione-servizio" type="invocazione-servizio" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="risposta-asincrona" type="risposta-asincrona" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>

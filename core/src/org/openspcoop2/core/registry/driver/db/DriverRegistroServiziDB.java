@@ -93,6 +93,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceParameter;
@@ -10031,6 +10032,31 @@ IDriverWS ,IMonitoraggioRisorsa{
 				stm.close();
 				
 				
+				// PROPERTIES
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_PROPS);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_soggetto = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, soggetto.getId());
+				this.log.debug("eseguo query ruoli: " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, soggetto.getId()));
+				rs = stm.executeQuery();
+				while (rs.next()) {
+					
+					Proprieta proprieta = new Proprieta();
+					proprieta.setNome(rs.getString("nome"));
+					proprieta.setValore(rs.getString("valore"));
+					soggetto.addProprieta(proprieta);
+
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
 			}else{
 				throw new DriverRegistroServiziNotFound("Nessun risultato trovato eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
 			}
@@ -19361,6 +19387,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_PROPS);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_CREDENZIALI);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -19519,6 +19552,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();

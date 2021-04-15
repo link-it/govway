@@ -60,6 +60,7 @@ public final class CostantiDB {
     public static final String SCOPE	= "scope";
     public static final String SOGGETTI_RUOLI = "soggetti_ruoli";
     public static final String SOGGETTI_CREDENZIALI = "soggetti_credenziali";
+    public static final String SOGGETTI_PROPS = "soggetti_properties";
     public static final String SERVIZI = "servizi";
     public static final String SERVIZI_AZIONI = "servizi_azioni";
     public static final String SERVIZI_AZIONE = "servizi_azione";
@@ -87,6 +88,7 @@ public final class CostantiDB {
     public static final String SERVIZI_APPLICATIVI = "servizi_applicativi";
     public static final String SERVIZI_APPLICATIVI_RUOLI = "sa_ruoli";
     public static final String SERVIZI_APPLICATIVI_CREDENZIALI = "sa_credenziali";
+    public static final String SERVIZI_APPLICATIVI_PROPS = "sa_properties";
     public static final String PORTE_APPLICATIVE = "porte_applicative";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
     public static final String PORTE_APPLICATIVE_SA_PROPS = "pa_sa_properties";

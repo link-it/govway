@@ -40,6 +40,7 @@ import java.util.List;
  * &lt;complexType name="soggetto"&gt;
  * 		&lt;sequence&gt;
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/registry}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/registry}credenziali-soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/registry}ruoli-soggetto" minOccurs="0" maxOccurs="1"/&gt;
@@ -68,6 +69,7 @@ import java.util.List;
 @XmlType(name = "soggetto", 
   propOrder = {
   	"connettore",
+  	"proprieta",
   	"protocolProperty",
   	"credenziali",
   	"ruoli",
@@ -109,6 +111,30 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   public void setConnettore(Connettore connettore) {
     this.connettore = connettore;
+  }
+
+  public void addProprieta(Proprieta proprieta) {
+    this.proprieta.add(proprieta);
+  }
+
+  public Proprieta getProprieta(int index) {
+    return this.proprieta.get( index );
+  }
+
+  public Proprieta removeProprieta(int index) {
+    return this.proprieta.remove( index );
+  }
+
+  public List<Proprieta> getProprietaList() {
+    return this.proprieta;
+  }
+
+  public void setProprietaList(List<Proprieta> proprieta) {
+    this.proprieta=proprieta;
+  }
+
+  public int sizeProprietaList() {
+    return this.proprieta.size();
   }
 
   public void addProtocolProperty(ProtocolProperty protocolProperty) {
@@ -295,6 +321,36 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   @XmlElement(name="connettore",required=false,nillable=false)
   protected Connettore connettore;
+
+  @XmlElement(name="proprieta",required=true,nillable=false)
+  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
+
+  /**
+   * @deprecated Use method getProprietaList
+   * @return List&lt;Proprieta&gt;
+  */
+  @Deprecated
+  public List<Proprieta> getProprieta() {
+  	return this.proprieta;
+  }
+
+  /**
+   * @deprecated Use method setProprietaList
+   * @param proprieta List&lt;Proprieta&gt;
+  */
+  @Deprecated
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.proprieta=proprieta;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprieta() {
+  	return this.proprieta.size();
+  }
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
   protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();

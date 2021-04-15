@@ -1,3 +1,9 @@
+2021-04-15  Andrea Poli <apoli@link.it>
+
+	Aggiunte tabelle che consentono di definire proprietà generiche ai servizi applicativi e ai soggetti:	
+	sa_properties
+	soggetti_properties
+
 2021-04-09  Andrea Poli <apoli@link.it>
 
 	Aggiunta tabella 'nodi_runtime' per gestire registrazione di nodi dinamici

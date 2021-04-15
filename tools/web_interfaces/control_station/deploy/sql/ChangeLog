@@ -1,3 +1,8 @@
+2021-04-15  Andrea Poli <apoli@link.it>
+
+	Aggiunte tabelle che consentono di definire proprietà generiche ai servizi applicativi e ai soggetti:	
+	soggetti_properties
+
 2021-03-23  Andrea Poli <apoli@link.it>
 
 	Aggiunte tabelle che consentono di definire ulteriori credenziali TLS ai soggetti:
