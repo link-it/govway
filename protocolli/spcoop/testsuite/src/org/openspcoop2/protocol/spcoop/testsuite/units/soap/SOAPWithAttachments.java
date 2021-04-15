@@ -242,6 +242,7 @@ public class SOAPWithAttachments {
 	@DataProvider (name="Sincrono_Stateful")
 	public Object[][]testSincrono_Stateful()throws Exception{
 		String id=this.repositorySincrono_Stateful.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	

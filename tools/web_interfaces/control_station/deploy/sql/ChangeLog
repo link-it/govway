@@ -1,3 +1,8 @@
+2021-03-23  Andrea Poli <apoli@link.it>
+
+	Aggiunte tabelle che consentono di definire ulteriori credenziali TLS ai soggetti:
+	soggetti_credenziali
+
 2020-10-13  Andrea Poli <apoli@link.it>
 
 	CREATE INDEX index_mapping_fruizione_pd_2 ON mapping_fruizione_pd (id_porta);

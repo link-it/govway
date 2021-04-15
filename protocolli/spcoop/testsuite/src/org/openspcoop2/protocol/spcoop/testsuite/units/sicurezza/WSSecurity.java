@@ -168,7 +168,9 @@ public class WSSecurity extends GestioneViaJmx {
 	/**
 	 * Test per un profilo oneway con WSSecurity, con autorizzazione non permessa.
 	 */
-	Repository repositoryOneWayWSSNonAutorizzato=new Repository();
+	Repository repositoryOneWayWSSNonAutorizzato_genericCode_wrap=new Repository();
+	Repository repositoryOneWayWSSNonAutorizzato_genericCode_unwrap=new Repository();
+	Repository repositoryOneWayWSSNonAutorizzato_specificCode=new Repository();
 	private boolean faultCorrettoRicevuto = false;
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"})
 	public void oneWayWSSNonAutorizzato_genericCode_wrap() throws TestSuiteException, IOException, Exception{
@@ -177,7 +179,7 @@ public class WSSecurity extends GestioneViaJmx {
 		try {
 			super.lockForCode(genericCode, unwrap);
 			
-			_oneWayWSSNonAutorizzato(genericCode, unwrap);
+			_oneWayWSSNonAutorizzato(genericCode, unwrap, this.repositoryOneWayWSSNonAutorizzato_genericCode_wrap);
 		}finally {
 			super.unlockForCode(genericCode);
 		}
@@ -189,7 +191,7 @@ public class WSSecurity extends GestioneViaJmx {
 		try {
 			super.lockForCode(genericCode, unwrap);
 			
-			_oneWayWSSNonAutorizzato(genericCode, unwrap);
+			_oneWayWSSNonAutorizzato(genericCode, unwrap, this.repositoryOneWayWSSNonAutorizzato_genericCode_unwrap);
 		}finally {
 			super.unlockForCode(genericCode);
 		}
@@ -201,19 +203,19 @@ public class WSSecurity extends GestioneViaJmx {
 		try {
 			super.lockForCode(genericCode, unwrap);
 			
-			_oneWayWSSNonAutorizzato(genericCode, unwrap);
+			_oneWayWSSNonAutorizzato(genericCode, unwrap, this.repositoryOneWayWSSNonAutorizzato_specificCode);
 		}finally {
 			super.unlockForCode(genericCode);
 		}
 	}
 	
-	private void _oneWayWSSNonAutorizzato(boolean genericCode, boolean unwrap) throws TestSuiteException, Exception{
+	private void _oneWayWSSNonAutorizzato(boolean genericCode, boolean unwrap, Repository repositoryOneWayWSSNonAutorizzato) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
 		try{
 			// Creazione client OneWay
-			ClientOneWay client=new ClientOneWay(this.repositoryOneWayWSSNonAutorizzato);
+			ClientOneWay client=new ClientOneWay(repositoryOneWayWSSNonAutorizzato);
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_HELLO_WORLD_AUTORIZZAZIONE_OK);
 			client.connectToSoapEngine();
@@ -262,9 +264,9 @@ public class WSSecurity extends GestioneViaJmx {
 		}
 		
 	}
-	@DataProvider (name="OneWayWSSNonAutorizzato")
-	public Object[][]testOneWayWSSNonAutorizzato()throws Exception{
-		String id=this.repositoryOneWayWSSNonAutorizzato.getNext();
+	@DataProvider (name="OneWayWSSNonAutorizzato_genericCode_wrap")
+	public Object[][]testOneWayWSSNonAutorizzato_genericCode_wrap()throws Exception{
+		String id=this.repositoryOneWayWSSNonAutorizzato_genericCode_wrap.getNext();
 		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try{
 				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
@@ -275,15 +277,41 @@ public class WSSecurity extends GestioneViaJmx {
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}
 		};
 	}
-	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato",dependsOnMethods="oneWayWSSNonAutorizzato_genericCode_wrap")
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato_genericCode_wrap",dependsOnMethods="oneWayWSSNonAutorizzato_genericCode_wrap")
 	public void testDBWSSNonAutorizzato_genericCode_wrap(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		_testDBWSSNonAutorizzato(data, id, checkServizioApplicativo);
 	}
-	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato",dependsOnMethods="oneWayWSSNonAutorizzato_genericCode_unwrap")
+	@DataProvider (name="OneWayWSSNonAutorizzato_genericCode_unwrap")
+	public Object[][]testOneWayWSSNonAutorizzato_genericCode_unwrap()throws Exception{
+		String id=this.repositoryOneWayWSSNonAutorizzato_genericCode_unwrap.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try{
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			}catch(InterruptedException e){}
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}
+		};
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato_genericCode_unwrap",dependsOnMethods="oneWayWSSNonAutorizzato_genericCode_unwrap")
 	public void testDBWSSNonAutorizzato_genericCode_unwrap(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		_testDBWSSNonAutorizzato(data, id, checkServizioApplicativo);
 	}
-	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato",dependsOnMethods="oneWayWSSNonAutorizzato_specificCode")
+	@DataProvider (name="OneWayWSSNonAutorizzato_specificCode")
+	public Object[][]testOneWayWSSNonAutorizzato_specificCode()throws Exception{
+		String id=this.repositoryOneWayWSSNonAutorizzato_specificCode.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try{
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			}catch(InterruptedException e){}
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}
+		};
+	}
+	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".AutorizzazioneKO"},dataProvider="OneWayWSSNonAutorizzato_specificCode",dependsOnMethods="oneWayWSSNonAutorizzato_specificCode")
 	public void testDBWSSNonAutorizzato_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		_testDBWSSNonAutorizzato(data, id, checkServizioApplicativo);
 	}
@@ -532,7 +560,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/**
 	 * Test per un profilo sincrono con WSSecurityEncrypt che riceve un messaggio alterato
 	 */
-	Repository repositoryWSSEncryptMessaggioAlterato=new Repository();
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSEncryptMessaggioAlterato"})
 	public void wssEncryptMessaggioAlterato_genericCode_wrap() throws TestSuiteException, IOException, Exception{
 		boolean genericCode = true;
@@ -580,7 +607,8 @@ public class WSSecurity extends GestioneViaJmx {
 		ClientSincrono client=null;
 		try{
 			// Creazione client Sincrono
-			client=new ClientSincrono(this.repositoryWSSEncryptMessaggioAlterato);
+			Repository repositoryWSSEncryptMessaggioAlterato=new Repository();
+			client=new ClientSincrono(repositoryWSSEncryptMessaggioAlterato);
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_ENCRYPT_MESSAGGIO_ALTERATO);
 			client.connectToSoapEngine();
@@ -650,7 +678,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/**
 	 * Test per un profilo sincrono con WSSecuritySignature che riceve un messaggio alterato
 	 */
-	Repository repositoryWSSSignatureMessaggioAlterato=new Repository();
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".WSSSignatureMessaggioAlterato"})
 	public void wssSignatureMessaggioAlterato_genericCode_wrap() throws TestSuiteException, IOException, Exception{
 		boolean genericCode = true;
@@ -698,7 +725,8 @@ public class WSSecurity extends GestioneViaJmx {
 		ClientSincrono client=null;
 		try{
 			// Creazione client Sincrono
-			client=new ClientSincrono(this.repositoryWSSSignatureMessaggioAlterato);
+			Repository repositoryWSSSignatureMessaggioAlterato=new Repository();
+			client=new ClientSincrono(repositoryWSSSignatureMessaggioAlterato);
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_WSS_SIGNATURE_MESSAGGIO_ALTERATO);
 			client.connectToSoapEngine();
@@ -960,6 +988,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".ASINCRONO_SIMMETRICO"},dataProvider="AsincronoSimmetrico_ModalitaSincronaWSS",dependsOnMethods={"asincronoSimmetrico_ModalitaSincronaWSS"})
 	public void testAsincronoSimmetrico_ModalitaSincronaWSS(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaSincrona(data, id, 
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
 				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
@@ -1157,6 +1186,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test1")
 	public Object[][]testSincronoWSSBUG18_Test1()throws Exception{
 		String id=this.repositoryWSSBUG18_Test1.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1260,6 +1290,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test2")
 	public Object[][]testSincronoWSSBUG18_Test2()throws Exception{
 		String id=this.repositoryWSSBUG18_Test2.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1367,6 +1398,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test3")
 	public Object[][]testSincronoWSSBUG18_Test3()throws Exception{
 		String id=this.repositoryWSSBUG18_Test3.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1471,6 +1503,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test4")
 	public Object[][]testSincronoWSSBUG18_Test4()throws Exception{
 		String id=this.repositoryWSSBUG18_Test4.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1577,6 +1610,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test5")
 	public Object[][]testSincronoWSSBUG18_Test5()throws Exception{
 		String id=this.repositoryWSSBUG18_Test5.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1681,6 +1715,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test6")
 	public Object[][]testSincronoWSSBUG18_Test6()throws Exception{
 		String id=this.repositoryWSSBUG18_Test6.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1787,6 +1822,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test1_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test1_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test1_FunzioniWSSInvertite.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1887,6 +1923,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test2_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test2_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test2_FunzioniWSSInvertite.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1992,6 +2029,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test3_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test3_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test3_FunzioniWSSInvertite.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2094,6 +2132,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test4_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test4_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test4_FunzioniWSSInvertite.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2198,6 +2237,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test5_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test5_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test5_FunzioniWSSInvertite.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2300,6 +2340,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test6_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test6_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test6_FunzioniWSSInvertite.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2412,6 +2453,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSAnnidamento")
 	public Object[][]testSincronoWSSAnnidamento()throws Exception{
 		String id=this.repositoryAnnidamento.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2446,7 +2488,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/***
 	 * Test per Encrypt Attachments
 	 */
-	Repository repositorySincronoWSS_ENCRYPT_ATTACH=new Repository();
 	@DataProvider (name="SincronoWSS_ENCRYPT_ATTACH_invocazione")
 	public Object[][]testSincronoWSS_ENCRYPT_ATTACH_invocazione()throws Exception{
 		return new Object[][]{
@@ -2463,8 +2504,10 @@ public class WSSecurity extends GestioneViaJmx {
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity Encrypt Attachments")
 	public void sincronoWSS_ENCRYPT_ATTACH(String azione) throws Exception{
 		
+		Repository repositorySincronoWSS_ENCRYPT_ATTACH=new Repository();
+				
 		// Creazione client Sincrono
-		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_ENCRYPT_ATTACH);
+		ClientSincrono client=new ClientSincrono(repositorySincronoWSS_ENCRYPT_ATTACH);
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
 		client.connectToSoapEngine(MessageType.SOAP_11);
@@ -2479,7 +2522,7 @@ public class WSSecurity extends GestioneViaJmx {
 		Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 
 		
-		String id=this.repositorySincronoWSS_ENCRYPT_ATTACH.getNext();
+		String id=repositorySincronoWSS_ENCRYPT_ATTACH.getNext();
 		
 		// Check Fruitore
 		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
@@ -2522,7 +2565,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/***
 	 * Test per Signature Attachments
 	 */
-	Repository repositorySincronoWSS_SIGNATURE_ATTACH=new Repository();
 	@DataProvider (name="SincronoWSS_SIGNATURE_ATTACH_invocazione")
 	public Object[][]testSincronoWSS_SIGNATURE_ATTACH_invocazione()throws Exception{
 		return new Object[][]{
@@ -2539,8 +2581,10 @@ public class WSSecurity extends GestioneViaJmx {
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity Signature Attachments")
 	public void sincronoWSS_SIGNATURE_ATTACH(String azione) throws Exception{
 		
+		Repository repositorySincronoWSS_SIGNATURE_ATTACH=new Repository();
+				
 		// Creazione client Sincrono
-		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_SIGNATURE_ATTACH);
+		ClientSincrono client=new ClientSincrono(repositorySincronoWSS_SIGNATURE_ATTACH);
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
 		client.connectToSoapEngine(MessageType.SOAP_11);
@@ -2555,7 +2599,7 @@ public class WSSecurity extends GestioneViaJmx {
 		Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 
 		
-		String id=this.repositorySincronoWSS_SIGNATURE_ATTACH.getNext();
+		String id=repositorySincronoWSS_SIGNATURE_ATTACH.getNext();
 		
 		// Check Fruitore
 		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
@@ -2590,7 +2634,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/***
 	 * Test per Encrypt e Signature sia Attachments che senza
 	 */
-	Repository repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH=new Repository();
 	@DataProvider (name="SincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH_invocazione")
 	public Object[][]testSincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH_invocazione()throws Exception{
 		return new Object[][]{
@@ -2604,8 +2647,10 @@ public class WSSecurity extends GestioneViaJmx {
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity Signature Attachments")
 	public void sincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH(String azione) throws Exception{
 		
+		Repository repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH=new Repository();
+				
 		// Creazione client Sincrono
-		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH);
+		ClientSincrono client=new ClientSincrono(repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH);
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
 		client.connectToSoapEngine(MessageType.SOAP_11);
@@ -2620,7 +2665,7 @@ public class WSSecurity extends GestioneViaJmx {
 		Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
 
 		
-		String id=this.repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH.getNext();
+		String id=repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH.getNext();
 		
 		// Check Fruitore
 		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
@@ -2663,7 +2708,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/***
 	 * Test per SAML 2.0
 	 */
-	Repository repositorySincronoWSS_SAML20=new Repository();
 	@DataProvider (name="SincronoWSS_SAML20_invocazione")
 	public Object[][]testSincronoWSS_SAML20_invocazione()throws Exception{
 		return new Object[][]{
@@ -2683,36 +2727,55 @@ public class WSSecurity extends GestioneViaJmx {
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SAML20"},dataProvider="SincronoWSS_SAML20_invocazione",
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SAML 2.0")
 	public void sincronoWSS_SAML20(String azione) throws Exception{
-		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_SAML20,azione,addIDUnivoco);
 		
-		String id=this.repositorySincronoWSS_SAML20.getNext();
+		Repository repositorySincronoWSS_SAML20=new Repository();
+				
+		this.collaborazioneSPCoopBase.sincrono(repositorySincronoWSS_SAML20,azione,addIDUnivoco);
+		
+		String id=repositorySincronoWSS_SAML20.getNext();
 		
 		org.openspcoop2.utils.Utilities.sleep(2000);
-		
-		// Check Fruitore
-		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					azione, false,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-		
-		// Check Erogatore
-		data = DatabaseProperties.getDatabaseComponentErogatore();
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					azione, true,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
+		for (int i = 0; i < 5; i++) {
+			
+			// Check Fruitore
+			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						azione, false,null);
+			}catch(Throwable e){
+				if(i==4) {
+					throw e;
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(1000);
+					continue;
+				}
+			}finally{
+				data.close();
+			}
+			
+			// Check Erogatore
+			data = DatabaseProperties.getDatabaseComponentErogatore();
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						azione, true,null);
+			}catch(Throwable e){
+				if(i==4) {
+					throw e;
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(1000);
+					continue;
+				}
+			}finally{
+				data.close();
+			}
+			
+			break;
 		}
 	}
 	
@@ -2722,7 +2785,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/***
 	 * Test per SAML 1.1
 	 */
-	Repository repositorySincronoWSS_SAML11=new Repository();
 	@DataProvider (name="SincronoWSS_SAML11_invocazione")
 	public Object[][]testSincronoWSS_SAML11_invocazione()throws Exception{
 		return new Object[][]{
@@ -2742,36 +2804,56 @@ public class WSSecurity extends GestioneViaJmx {
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SAML11"},dataProvider="SincronoWSS_SAML11_invocazione",
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity SAML 1.1")
 	public void sincronoWSS_SAML11(String azione) throws Exception{
-		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_SAML11,azione,addIDUnivoco);
 		
-		String id=this.repositorySincronoWSS_SAML11.getNext();
+		Repository repositorySincronoWSS_SAML11=new Repository();
+				
+		this.collaborazioneSPCoopBase.sincrono(repositorySincronoWSS_SAML11,azione,addIDUnivoco);
+		
+		String id=repositorySincronoWSS_SAML11.getNext();
 		
 		org.openspcoop2.utils.Utilities.sleep(2000);
+		for (int i = 0; i < 5; i++) {
 		
-		// Check Fruitore
-		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					azione, false,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-		
-		// Check Erogatore
-		data = DatabaseProperties.getDatabaseComponentErogatore();
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					azione, true,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
+			// Check Fruitore
+			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						azione, false,null);
+			}catch(Throwable e){
+				if(i==4) {
+					throw e;
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(1000);
+					continue;
+				}
+			}finally{
+				data.close();
+			}
+			
+			// Check Erogatore
+			data = DatabaseProperties.getDatabaseComponentErogatore();
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						azione, true,null);
+			}catch(Throwable e){
+				if(i==4) {
+					throw e;
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(1000);
+					continue;
+				}
+			}finally{
+				data.close();
+			}
+			
+			break;
+			
 		}
 	}
 	
@@ -2785,7 +2867,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/***
 	 * Test per XACML POLICY
 	 */
-	Repository repositorySincronoWSS_XACML_POLICY=new Repository();
 	@DataProvider (name="SincronoWSS_XACML_POLICY_invocazione")
 	public Object[][]testSincronoWSS_XACML_POLICY_invocazione()throws Exception{
 		return new Object[][]{
@@ -2841,38 +2922,56 @@ public class WSSecurity extends GestioneViaJmx {
 	
 	private void _sincronoWSS_XACML_POLICY(String azione, boolean genericCode, boolean unwrap) throws Exception{
 		
+		Repository repositorySincronoWSS_XACML_POLICY=new Repository();
+				
 		if(azione.endsWith("Ok")){
 		
-			this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_XACML_POLICY,azione,addIDUnivoco);
+			this.collaborazioneSPCoopBase.sincrono(repositorySincronoWSS_XACML_POLICY,azione,addIDUnivoco);
 			
-			String id=this.repositorySincronoWSS_XACML_POLICY.getNext();
+			String id=repositorySincronoWSS_XACML_POLICY.getNext();
 			
 			org.openspcoop2.utils.Utilities.sleep(2000);
+			for (int i = 0; i < 5; i++) {
 			
-			// Check Fruitore
-			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
-			try{
-				this.collaborazioneSPCoopBase.testSincrono(data, id, 
-						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-						azione, false,null);
-			}catch(Exception e){
-				throw e;
-			}finally{
-				data.close();
-			}
-			
-			// Check Erogatore
-			data = DatabaseProperties.getDatabaseComponentErogatore();
-			try{
-				this.collaborazioneSPCoopBase.testSincrono(data, id, 
-						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-						azione, true,null);
-			}catch(Exception e){
-				throw e;
-			}finally{
-				data.close();
+				// Check Fruitore
+				DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+				try{
+					this.collaborazioneSPCoopBase.testSincrono(data, id, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+							azione, false,null);
+				}catch(Throwable e){
+					if(i==4) {
+						throw e;
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(1000);
+						continue;
+					}
+				}finally{
+					data.close();
+				}
+				
+				// Check Erogatore
+				data = DatabaseProperties.getDatabaseComponentErogatore();
+				try{
+					this.collaborazioneSPCoopBase.testSincrono(data, id, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+							azione, true,null);
+				}catch(Throwable e){
+					if(i==4) {
+						throw e;
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(1000);
+						continue;
+					}
+				}finally{
+					data.close();
+				}
+				
+				break;
 			}
 			
 		}
@@ -2882,13 +2981,13 @@ public class WSSecurity extends GestioneViaJmx {
 			
 			DatabaseMsgDiagnosticiComponent data = null;
 			try{
-				this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_XACML_POLICY,azione,addIDUnivoco);
+				this.collaborazioneSPCoopBase.sincrono(repositorySincronoWSS_XACML_POLICY,azione,addIDUnivoco);
 				
 				throw new Exception("Atteso errore");
 			
 			}catch(org.apache.axis.AxisFault error){
 				
-				String id=this.repositorySincronoWSS_XACML_POLICY.getNext();
+				String id=repositorySincronoWSS_XACML_POLICY.getNext();
 				
 				String codiceEccezione = Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA);
 				String msgErrore = null;
@@ -2955,7 +3054,6 @@ public class WSSecurity extends GestioneViaJmx {
 	/***
 	 * Test per UsernameToken
 	 */
-	Repository repositorySincronoWSS_UsernameToken=new Repository();
 	@DataProvider (name="SincronoWSS_UsernameToken_invocazione")
 	public Object[][]testSincronoWSS_UsernameToken_invocazione()throws Exception{
 		return new Object[][]{
@@ -2968,36 +3066,56 @@ public class WSSecurity extends GestioneViaJmx {
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".UsernameToken"},dataProvider="SincronoWSS_UsernameToken_invocazione",
 			description="Test per il profilo di collaborazione Sincrono con WSSecurity Username Token")
 	public void sincronoWSS_UsernameToken(String azione) throws Exception{
-		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_UsernameToken,azione,addIDUnivoco);
 		
-		String id=this.repositorySincronoWSS_UsernameToken.getNext();
+		Repository repositorySincronoWSS_UsernameToken=new Repository();
+				
+		this.collaborazioneSPCoopBase.sincrono(repositorySincronoWSS_UsernameToken,azione,addIDUnivoco);
+		
+		String id=repositorySincronoWSS_UsernameToken.getNext();
 		
 		org.openspcoop2.utils.Utilities.sleep(2000);
-		
-		// Check Fruitore
-		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					azione, false,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-		
-		// Check Erogatore
-		data = DatabaseProperties.getDatabaseComponentErogatore();
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					azione, true,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
+		for (int i = 0; i < 5; i++) {
+			
+			// Check Fruitore
+			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						azione, false,null);
+			}catch(Throwable e){
+				if(i==4) {
+					throw e;
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(1000);
+					continue;
+				}
+			}finally{
+				data.close();
+			}
+			
+			// Check Erogatore
+			data = DatabaseProperties.getDatabaseComponentErogatore();
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						azione, true,null);
+			}catch(Throwable e){
+				if(i==4) {
+					throw e;
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(1000);
+					continue;
+				}
+			}finally{
+				data.close();
+			}
+			
+			break;
+			
 		}
 	}
 	
