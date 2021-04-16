@@ -2214,6 +2214,7 @@ public class Integrazione extends GestioneViaJmx {
 	@DataProvider (name="SincronoContentBased2")
 	public Object[][]testSincronoContentBased2()throws Exception{
 		String id=this.repositorySincronoContentBased2.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2445,6 +2446,7 @@ public class Integrazione extends GestioneViaJmx {
 	@DataProvider (name="SincronoContentBasedConcat")
 	public Object[][]testSincronoContentBasedConcat()throws Exception{
 		String id=this.repositorySincronoContentBasedConcat.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2576,6 +2578,7 @@ public class Integrazione extends GestioneViaJmx {
 	@DataProvider (name="SincronoContentBasedConcatErroreIdentificazione")
 	public Object[][]testSincronoContentBasedConcatErroreIdentificazione()throws Exception{
 		String id=this.repositorySincronoContentBasedConcatErroreIdentificazione.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	

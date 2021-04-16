@@ -378,7 +378,6 @@ components:
           type: boolean
           example: false
           default: false
-      additionalProperties: false
     AuthenticationHttpsCertificato:
       allOf:
         - $ref: '#/components/schemas/AuthenticationHttpsBaseCertificato'
@@ -388,7 +387,6 @@ components:
           properties:
             tipo: 
               $ref: '#/components/schemas/TipoAutenticazioneHttps'
-          additionalProperties: false
     AuthenticationHttpsConfigurazioneManuale:
       type: object
       required:
@@ -421,6 +419,8 @@ components:
       additionalProperties: false
     AuthenticationApiKey:
       type: object
+      required:
+       - modalita_accesso
       properties:
         modalita_accesso:
           $ref: '#/components/schemas/ModalitaAccessoEnum'

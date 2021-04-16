@@ -64,6 +64,105 @@ public class TestOpenApi4j {
 
 	public static void main(String[] args) throws Exception {
 				
+		// *** TEST per il Parser e validazione dello schema *** //
+		
+		{
+		
+			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ...");
+			
+			URL url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/openapi.yaml");
+			
+			IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+			ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+			configOpenApi4j.setProcessInclude(false);
+			apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j);
+			Api apiOpenApi4j = apiReaderOpenApi4j.read();
+			
+			IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+			configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
+			configO.getOpenApi4JConfig().setUseOpenApi4J(true);
+			configO.getOpenApi4JConfig().setValidateAPISpec(true);
+			apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
+					
+			System.out.println("Test Schema#1 (openapi.yaml) [Elementi aggiuntivi come 'allowEmptyValue'] ok");
+			
+			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ...");
+			
+			url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/parser.yaml");
+			
+			apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+			apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j);
+			apiOpenApi4j = apiReaderOpenApi4j.read();
+			
+			apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			try {
+				apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
+				throw new Exception("Atteso errore");
+			}catch(Exception e) {
+				String msgErrore1 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is not a property of this schema (code: 134)";
+				if(!e.getMessage().contains(msgErrore1)) {
+					throw new Exception("Errore atteso '"+msgErrore1+"' non rilevato",e);
+				}
+				String msgErrore2 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
+				if(!e.getMessage().contains(msgErrore2)) {
+					throw new Exception("Errore atteso '"+msgErrore2+"' non rilevato",e);
+				}
+				String msgErrore3 = "components.schemas.Pet2.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+				if(!e.getMessage().contains(msgErrore3)) {
+					throw new Exception("Errore atteso '"+msgErrore3+"' non rilevato",e);
+				}
+				String msgErrore4 = "components.schemas.Pet3.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+				if(!e.getMessage().contains(msgErrore4)) {
+					throw new Exception("Errore atteso '"+msgErrore4+"' non rilevato",e);
+				}
+				String msgErrore5 = "components.schemas.Pet5.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+				if(!e.getMessage().contains(msgErrore5)) {
+					throw new Exception("Errore atteso '"+msgErrore5+"' non rilevato",e);
+				}
+				String msgErrore6 = "components.schemas.Pet6.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+				if(!e.getMessage().contains(msgErrore6)) {
+					throw new Exception("Errore atteso '"+msgErrore6+"' non rilevato",e);
+				}
+				String msgErrore7 = "components.schemas.Pet7.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+				if(!e.getMessage().contains(msgErrore7)) {
+					throw new Exception("Errore atteso '"+msgErrore7+"' non rilevato",e);
+				}
+				String msgErrore8 = "components.schemas.Pet8.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+				if(!e.getMessage().contains(msgErrore8)) {
+					throw new Exception("Errore atteso '"+msgErrore8+"' non rilevato",e);
+				}
+			}
+			
+			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
+			
+			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 2/2] ...");
+			
+			url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/parser2.yaml");
+			
+			apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+			apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), new File(url.toURI()), configOpenApi4j);
+			apiOpenApi4j = apiReaderOpenApi4j.read();
+			
+			apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			try {
+				apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
+				throw new Exception("Atteso errore");
+			}catch(Exception e) {
+				String msgErrore = "components.schemas.Pet4.properties.pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
+				if(!e.getMessage().contains(msgErrore)) {
+					throw new Exception("Errore atteso '"+msgErrore+"' non rilevato",e);
+				}
+			}
+			
+			System.out.println("Test Schema#2 (allegati.yaml) [Discriminator non presente o non required Step 1/2] ok");
+			
+		}
+		
+		
+		
+		// *** TEST per la validazione delle richieste *** //
+		
 		URL url = TestOpenApi4j.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
 		
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
@@ -87,6 +186,7 @@ public class TestOpenApi4j {
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
 		configO.getOpenApi4JConfig().setUseOpenApi4J(true);
+		configO.getOpenApi4JConfig().setValidateAPISpec(true);
 		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi4j.class), apiOpenApi4j, configO);
 		
 		IApiValidator apiValidatorNoOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
@@ -3027,6 +3127,105 @@ public class TestOpenApi4j {
 		}
 		
 		System.out.println("Test #20 (Elementi nullable) completato\n\n");
+		
+		
+		
+		
+		
+		// ** Test su discriminator ... **
+		
+		System.out.println("Test #21 Discriminator ...");
+		String testUrl21Base = baseUri+"/pets";
+		
+		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
+		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
+		String dog2 = "{\"pet_type\": \"Dog\",  \"bark\": true }";
+		List<String> tipoTest_test21 = new ArrayList<String>();
+		tipoTest_test21.add(cat);
+		tipoTest_test21.add(dog1);
+		tipoTest_test21.add(dog2);
+		
+		int NUMERO_RISORSE_PET = 5;
+		
+		for (int k = 0; k < NUMERO_RISORSE_PET; k++) {
+			
+			int numeroPet = (k+1);
+			String testPet = "[test pets"+numeroPet+"] ";
+			String testUrl21 = testUrl21Base+numeroPet;
+			
+			for (String contenutoParam : tipoTest_test21) {
+				
+				String contenuto = contenutoParam;
+				if(k==1 || k==2 || k==4) {
+					contenuto = "{\"altro\":\"descrizione generica\", \"pet\":"+contenutoParam+"}";
+				}
+				
+				TextHttpRequestEntity httpEntity21 = new TextHttpRequestEntity();
+				httpEntity21.setMethod(HttpRequestMethod.PATCH);
+				httpEntity21.setUrl(testUrl21); 
+				Map<String, List<String>> parametersTrasporto19 = new HashMap<>();
+				TransportUtils.setHeader(parametersTrasporto19, HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				httpEntity21.setHeaders(parametersTrasporto19);
+				httpEntity21.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // uso data valida, il test e' path
+				httpEntity21.setContent(contenuto);
+				
+				TextHttpResponseEntity httpEntityResponse_test21 = new TextHttpResponseEntity();
+				httpEntityResponse_test21.setStatus(200);
+				httpEntityResponse_test21.setMethod(HttpRequestMethod.PATCH);
+				httpEntityResponse_test21.setUrl(testUrl21);	
+				Map<String, List<String>> parametersTrasportoRisposta_test21 = new HashMap<>();
+				TransportUtils.setHeader(parametersTrasportoRisposta_test21,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				httpEntityResponse_test21.setHeaders(parametersTrasportoRisposta_test21);
+				httpEntityResponse_test21.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+				httpEntityResponse_test21.setContent(contenuto);
+				
+				int numeroTest = 2; // con 2 viene verificato anche libreria non openapi4j.
+				numeroTest = 1; // la libreria json schema normale non supporta il discriminator e si ottiene un errore simile al seguente se si abilita: 1022 $: should be valid to one and only one of the schemas 
+				for (int j = 0; j < numeroTest; j++) {
+					
+					boolean openapi4j = (j==0);
+					IApiValidator apiValidator = null;
+					String tipoTest = testPet+" ";
+					if(openapi4j) {
+						apiValidator = apiValidatorOpenApi4j;
+						tipoTest = tipoTest+"[openapi4j]";
+					}
+					else {
+						apiValidator = apiValidatorNoOpenApi4j;
+						tipoTest = tipoTest+"[json]";
+					}
+					tipoTest = tipoTest + "(url:"+testUrl21+") contenuto("+contenuto+")";
+				
+					try {
+						System.out.println("\t "+tipoTest+" validate ...");
+						apiValidator.validate(httpEntity21);
+						System.out.println("\t "+tipoTest+" validate ok");
+					} catch(ValidatorException e) {
+						String error = e.getMessage();
+						if(error.length()>200) {
+							error = error.substring(0, 198)+" ...";
+						}
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+					
+					try {
+						System.out.println("\t "+tipoTest+" validate response ...");
+						apiValidator.validate(httpEntityResponse_test21);	
+						System.out.println("\t "+tipoTest+" validate response ok");
+					} catch(ValidatorException e) {
+						String error = e.getMessage();
+						if(error.length()>200) {
+							error = error.substring(0, 198)+" ...";
+						}
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
+				}
+			}
+		}
+		
+		System.out.println("Test #21 Discriminator completato\n\n");
 	}
 
 	private static void checkErrorTest20(boolean esito, String tipoTest, Exception e, String tipologia, boolean openapi4j) throws Exception {
@@ -3131,4 +3330,5 @@ public class TestOpenApi4j {
 			}
 		}
 	}
+	
 }

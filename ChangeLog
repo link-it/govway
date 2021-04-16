@@ -1,3 +1,13 @@
+2021-04-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug 
+	La validazione di strutture che utilizzano il discriminator, e gli oggetti sono definiti tramite strutture allOf, falliva erroneamente.
+	L'errore si presentava se uno degli oggetti indicati nel oneOf del discriminator viene dichiarato tramite costrutto 'allOf' e 
+	quindi il required claim discriminator è presente solamente in uno degli oggetti riferiti.
+	In tale struttura la validazione falliva erroneamente riportando un errore simile al seguente:
+		components.schemas.xxx.properties.xxx.discriminator: The discriminator 'nomeDiscriminator' is not required or not a property of the allOf schemas (code: 133)
+
 2021-04-14  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]

@@ -19,13 +19,15 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
 public class AuthenticationApiKey  implements OneOfBaseCredenzialiCredenziali {
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private ModalitaAccessoEnum modalitaAccesso = null;
   
   @Schema(description = "")
@@ -36,6 +38,7 @@ public class AuthenticationApiKey  implements OneOfBaseCredenzialiCredenziali {
   **/
   @Override
 @JsonProperty("modalita_accesso")
+  @NotNull
   @Valid
   public ModalitaAccessoEnum getModalitaAccesso() {
     return this.modalitaAccesso;

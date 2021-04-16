@@ -7804,7 +7804,6 @@ components:
           type: "boolean"
           example: false
           default: false
-      additionalProperties: false
     AuthenticationHttpsCertificato:
       allOf:
       - $ref: "#/components/schemas/AuthenticationHttpsBaseCertificato"
@@ -7814,7 +7813,6 @@ components:
         properties:
           tipo:
             $ref: "#/components/schemas/TipoAutenticazioneHttps"
-        additionalProperties: false
     AuthenticationHttpsConfigurazioneManuale:
       required:
       - "subject"
@@ -7846,6 +7844,8 @@ components:
           example: "idEsterno"
       additionalProperties: false
     AuthenticationApiKey:
+      required:
+      - "modalita_accesso"
       type: "object"
       properties:
         modalita_accesso:

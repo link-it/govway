@@ -33,7 +33,9 @@ tags:
   - name: enum
     description: test su enumeration
   - name: nullable
-    description: test su nullable serialization   
+    description: test su nullable serialization 
+  - name: discriminator
+    description: test su discriminator  
     
 paths:
           
@@ -976,7 +978,99 @@ paths:
           $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
-          
+
+  /pets1:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/Cat'
+                - $ref: '#/components/schemas/Dog'
+              discriminator:
+                propertyName: pet_type
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Cat'
+                  - $ref: '#/components/schemas/Dog'
+                discriminator:
+                  propertyName: pet_type
+  /pets2:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet2'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet2'
+
+  /pets3:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet3'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet3'
+                
+  /pets4:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet4'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet4'
+
+  /pets5:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet5'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet5'
+                                    
 components:
 
   parameters:
@@ -1733,6 +1827,214 @@ components:
         descrizione:
           type: string
 
+    Pet:
+      type: object
+      required:
+        - pet_type
+      properties:
+        pet_type:
+          type: string
+      discriminator:
+        propertyName: pet_type
+    Dog:     # "Dog" is a value for the pet_type property (the discriminator value)
+      allOf: # Combines the main `Pet` schema with `Dog`-specific properties 
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          # all other properties specific to a `Dog`
+          properties:
+            bark:
+              type: boolean
+            breed:
+              type: string
+              enum: [Dingo, Husky, Retriever, Shepherd]
+    Cat:     # "Cat" is a value for the pet_type property (the discriminator value)
+      allOf: # Combines the main `Pet` schema with `Cat`-specific properties 
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          # all other properties specific to a `Cat`
+          properties:
+            hunts:
+              type: boolean
+            age:
+              type: integer
+
+    Pet4:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/Cat'
+      - $ref: '#/components/schemas/Dog'
+      discriminator:
+        propertyName: pet_type
+
+    Pet2:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Dog2'
+            - $ref: '#/components/schemas/Cat2'
+          discriminator:
+            propertyName: pet_type
+            mapping:
+              'Dog': '#/components/schemas/Dog2'
+              'Cat': '#/components/schemas/Cat2'
+    Dog2Base:
+      type: object
+      required:
+        - bark
+      properties: 
+        bark:
+          type: boolean
+        breed:
+          type: string
+          enum: [Dingo, Husky, Retriever, Shepherd]
+
+    Dog2:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dog2Base'
+        - type: object
+          required:
+            - pet_type
+          properties:
+            pet_type: 
+              type: string
+
+    Cat2:
+      type: object
+      required:
+        - pet_type
+        - age
+      properties:
+        pet_type: 
+          type: string
+        hunts:
+          type: boolean
+        age:
+          type: integer
+      additionalProperties: false
+      
+    Pet3:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Dog3'
+            - $ref: '#/components/schemas/Cat3'
+          discriminator:
+            propertyName: pet_type
+            mapping:
+              'Dog': '#/components/schemas/Dog3'
+              'Cat': '#/components/schemas/Cat3'
+    Dog3BaseA:
+      type: object
+      required:
+        - bark
+      properties: 
+        bark:
+          type: boolean
+        breed:
+          type: string
+          enum: [Dingo, Husky, Retriever, Shepherd]
+    Dog3BaseB:
+      type: object
+      required:
+        - pet_type
+      properties: 
+        pet_type: 
+           type: string
+    Dog3:
+      allOf:
+        - $ref: '#/components/schemas/Dog3BaseA'
+        - $ref: '#/components/schemas/Dog3BaseB'
+    Cat3:
+      type: object
+      required:
+        - pet_type
+        - age
+      properties:
+        pet_type: 
+          type: string
+        hunts:
+          type: boolean
+        age:
+          type: integer
+      additionalProperties: false
+
+
+    Pet5:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Dog5'
+            - $ref: '#/components/schemas/Cat5'
+          discriminator:
+            propertyName: pet_type
+            mapping:
+              'Dog': '#/components/schemas/Dog5'
+              'Cat': '#/components/schemas/Cat5'     
+    Dog5:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Dog5BaseA"
+      - type: "object"
+        properties:
+          altraProprieta:
+            type: string
+    Dog5BaseA:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Dog5BaseB"
+      - type: "object"
+        required:
+        - pet_type
+        properties:
+          pet_type: 
+            type: string
+    Dog5BaseB:
+      type: object
+      required:
+        - bark
+      properties: 
+        bark:
+          type: boolean
+        breed:
+          type: string
+          enum: [Dingo, Husky, Retriever, Shepherd]
+    Cat5:
+      type: object
+      required:
+        - pet_type
+        - age
+      properties:
+        pet_type: 
+          type: string
+        hunts:
+          type: boolean
+        age:
+          type: integer
+      additionalProperties: false
+
+
     ProblemInLineOriginaleTeamDigitale:
       type: object
       properties:
@@ -1891,3 +2193,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/ProblemId'
         - $ref: '#/components/schemas/ProblemDetails'
+
+security:
+  - {}

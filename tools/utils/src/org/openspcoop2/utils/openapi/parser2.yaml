@@ -1,0 +1,147 @@
+openapi: 3.0.3
+servers:
+  - url: http://petstore.swagger.io/api
+    description: esempio
+
+info:
+  x-api-id: https://esempioId
+  title: Document Retrieve
+  x-summary: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  description: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  version: "0.1"
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+
+tags:
+  - name: discriminator
+    description: test su discriminator  
+    
+paths:
+   
+  /pets:
+    patch:
+      tags:
+       - discriminator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet4'
+      responses:
+        '200':
+          description: Updated
+          
+components:
+        
+  schemas:
+
+      
+    # NotRequired
+    Pet4:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Dog4'
+            - $ref: '#/components/schemas/Cat4'
+          discriminator:
+            propertyName: pet_type
+            mapping:
+              'dog': '#/components/schemas/Dog4'
+              'cat': '#/components/schemas/Cat4'
+              
+    Dog4:
+      type: object
+      required:
+        - bark
+        - breed
+        - pet_type
+      properties:
+        bark:
+          type: boolean
+        breed:
+          type: string
+          enum: [Dingo, Husky, Retriever, Shepherd] 
+        pet_type: 
+           type: string
+      additionalProperties: false
+    Cat4:
+      type: object
+      required:
+        - hunts
+        - age
+      properties:
+        pet_type: 
+          type: string
+        hunts:
+          type: boolean
+        age:
+          type: integer
+      additionalProperties: false
+            
+    # Struttura corretta in allOf+properties
+    Pet5:
+      type: object
+      required:
+         - altro
+         - pet
+      properties:
+        altro:
+          type: string
+        pet:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Dog5'
+            - $ref: '#/components/schemas/Cat5'
+          discriminator:
+            propertyName: pet_type5
+            mapping:
+              'dog': '#/components/schemas/Dog5'
+              'cat': '#/components/schemas/Cat5'
+    Dog5Base:
+      type: object
+      required:
+        - bark
+        - breed
+      properties: 
+        bark:
+          type: boolean
+        breed:
+          type: string
+          enum: [Dingo, Husky, Retriever, Shepherd]
+      additionalProperties: false
+    Dog5:
+      allOf:
+        - $ref: '#/components/schemas/Dog5Base'
+        - type: object
+          required:
+           - pet_type5
+          properties:
+            pet_type5: 
+              type: string
+          additionalProperties: false
+    Cat5:
+      type: object
+      required:
+        - pet_type5
+        - hunts
+        - age
+      properties:
+        pet_type5: 
+          type: string
+        hunts:
+          type: boolean
+        age:
+          type: integer
+      additionalProperties: false
+    
+      

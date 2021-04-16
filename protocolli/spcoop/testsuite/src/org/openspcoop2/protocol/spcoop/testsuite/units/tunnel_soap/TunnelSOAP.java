@@ -469,6 +469,7 @@ public class TunnelSOAP {
 	@DataProvider (name="SincronoMultipartRelatedMIME")
 	public Object[][]testSincronoMultipartRelatedMIME()throws Exception{		
 		String id=this.repositorySincronoMultipartRelatedMIME.getNext();
+		org.openspcoop2.utils.Utilities.sleep(4000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
