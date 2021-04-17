@@ -2749,7 +2749,7 @@ public class WSSecurity extends GestioneViaJmx {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
-					org.openspcoop2.utils.Utilities.sleep(2000);
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
 					continue;
 				}
 			}finally{
@@ -2768,7 +2768,7 @@ public class WSSecurity extends GestioneViaJmx {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
-					org.openspcoop2.utils.Utilities.sleep(2000);
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
 					continue;
 				}
 			}finally{
@@ -2826,7 +2826,7 @@ public class WSSecurity extends GestioneViaJmx {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
-					org.openspcoop2.utils.Utilities.sleep(2000);
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
 					continue;
 				}
 			}finally{
@@ -2845,7 +2845,7 @@ public class WSSecurity extends GestioneViaJmx {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
-					org.openspcoop2.utils.Utilities.sleep(2000);
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
 					continue;
 				}
 			}finally{
@@ -2945,7 +2945,7 @@ public class WSSecurity extends GestioneViaJmx {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
-						org.openspcoop2.utils.Utilities.sleep(2000);
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
 						continue;
 					}
 				}finally{
@@ -2964,7 +2964,7 @@ public class WSSecurity extends GestioneViaJmx {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
-						org.openspcoop2.utils.Utilities.sleep(2000);
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
 						continue;
 					}
 				}finally{
@@ -3088,7 +3088,7 @@ public class WSSecurity extends GestioneViaJmx {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
-					org.openspcoop2.utils.Utilities.sleep(2000);
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
 					continue;
 				}
 			}finally{
@@ -3107,7 +3107,7 @@ public class WSSecurity extends GestioneViaJmx {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
-					org.openspcoop2.utils.Utilities.sleep(2000);
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
 					continue;
 				}
 			}finally{

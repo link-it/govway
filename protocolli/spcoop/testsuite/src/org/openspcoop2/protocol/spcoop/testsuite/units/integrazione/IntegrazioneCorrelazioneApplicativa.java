@@ -3964,6 +3964,12 @@ public class IntegrazioneCorrelazioneApplicativa extends GestioneViaJmx {
 		String id=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso2_erroreAccettato.getNext();
 		String idSecondaInvocazione=this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso2_erroreAccettato.getNext();
 		String idUnivoco = this.repositorySincronoCorrelazioneApplicativaCorrelazioneApplicativaScelteMultipleCaso2IDUnivoco_erroreAccettato.getNext();
+		
+		Reporter.log("Sleep 5 secondi...");
+		try{
+			Thread.sleep(5000);
+		}catch(Exception e){}
+		
 		return new Object[][]{
 				{idUnivoco,idSecondaInvocazione,DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{idUnivoco,idSecondaInvocazione,null,DatabaseProperties.getDatabaseComponentErogatore(),id,false}	

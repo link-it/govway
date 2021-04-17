@@ -2222,15 +2222,24 @@ public class Integrazione extends GestioneViaJmx {
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_2"},dataProvider="SincronoContentBased2",dependsOnMethods={"sincronoContentBased2"})
 	public void testSincronoContentBased2(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
+		
+		for (int i = 0; i < 5; i++) {
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+						null);
+			}catch(Throwable e){
+				if(i==4) {
+					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+					continue;
+				}
+			}finally{
+				data.close();
+			}
 		}
 	}
 	
@@ -2454,15 +2463,24 @@ public class Integrazione extends GestioneViaJmx {
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT"},dataProvider="SincronoContentBasedConcat",dependsOnMethods={"sincronoContentBasedConcat"})
 	public void testSincronoContentBasedConcat(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_CONCAT, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
+
+		for (int i = 0; i < 5; i++) {
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_CONCAT, checkServizioApplicativo,
+						null);
+			}catch(Throwable e){
+				if(i==4) {
+					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+					continue;
+				}
+			}finally{
+				data.close();
+			}
 		}
 	}
 	
@@ -2599,13 +2617,21 @@ public class Integrazione extends GestioneViaJmx {
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".CONTENT_BASED_CONCAT_ERRORE_IDENTIFICAZIONE"},
 			dataProvider="SincronoContentBasedConcatErroreIdentificazione",dependsOnMethods={"sincronoContentBasedConcatErroreIdentificazione_specificCode"})
 	public void testSincronoContentBasedConcatErroreIdentificazione_specificCode(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
+		for (int i = 0; i < 5; i++) {
+			try{
+				Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+			}catch(Throwable e){
+				if(i==4) {
+					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+				}
+				else {
+					org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+					continue;
+				}
+			}finally{
+				data.close();
+			}
 		}
 	}
 	
