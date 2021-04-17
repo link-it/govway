@@ -1643,6 +1643,9 @@ public class LocalForward extends GestioneViaJmx {
 				e.printStackTrace();
 			}
 		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(5000);
+		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),DatabaseProperties.getDatabaseComponentDiagnosticaFruitore(),id},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),DatabaseProperties.getDatabaseComponentDiagnosticaErogatore(),id}	

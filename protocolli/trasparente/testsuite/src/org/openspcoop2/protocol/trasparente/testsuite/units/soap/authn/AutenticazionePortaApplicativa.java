@@ -306,6 +306,14 @@ public class AutenticazionePortaApplicativa extends GestioneViaJmx {
 						new String[] {"CN=soggetto2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
 						null},
 				
+				// Credenziali corrette con caricamento certificato doppio associato allo stesso applicativo
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/soggetto1_alternativo.jks", "openspcoopjks", "openspcoop"), 
+							null,
+							CostantiTestSuite.PROXY_SOGGETTO_TRASPARENTE_CERT1,
+							null, -1,true, 200,
+							new String[] {"CN=soggetto1alternativo","C=IT","L=Pisa"},
+							null},
+				
 				// Credenziali corrette con caricamento certificato (applicativo)
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo1_multipleOU.jks", "123456", "123456"), 
 						null,
@@ -331,6 +339,14 @@ public class AutenticazionePortaApplicativa extends GestioneViaJmx {
 						null, -1,true, 200,
 						new String[] {"CN=applicativo2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
 						"EsempioFruitoreTrasparenteCert2_serialNumberDifferente"},
+				
+				// Credenziali corrette con caricamento certificato doppio associato allo stesso applicativo
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo1_alternativo.jks", "openspcoopjks", "openspcoop"), 
+							null,
+							CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+							null, -1,true, 200,
+							new String[] {"CN=applicativo1alternativo","C=IT","L=Pisa"},
+							"EsempioFruitoreTrasparenteCert1"},
 		};
 	}
 	@Test(groups={AutenticazionePortaApplicativa.ID_GRUPPO,AutenticazionePortaApplicativa.ID_GRUPPO+".SSL"},dataProvider="sslProvider")

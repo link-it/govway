@@ -988,7 +988,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".ASINCRONO_SIMMETRICO"},dataProvider="AsincronoSimmetrico_ModalitaSincronaWSS",dependsOnMethods={"asincronoSimmetrico_ModalitaSincronaWSS"})
 	public void testAsincronoSimmetrico_ModalitaSincronaWSS(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(5000);
 		this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaSincrona(data, id, 
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
 				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
@@ -1186,7 +1186,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test1")
 	public Object[][]testSincronoWSSBUG18_Test1()throws Exception{
 		String id=this.repositoryWSSBUG18_Test1.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1290,7 +1290,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test2")
 	public Object[][]testSincronoWSSBUG18_Test2()throws Exception{
 		String id=this.repositoryWSSBUG18_Test2.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1398,7 +1398,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test3")
 	public Object[][]testSincronoWSSBUG18_Test3()throws Exception{
 		String id=this.repositoryWSSBUG18_Test3.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1503,7 +1503,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test4")
 	public Object[][]testSincronoWSSBUG18_Test4()throws Exception{
 		String id=this.repositoryWSSBUG18_Test4.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1610,7 +1610,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test5")
 	public Object[][]testSincronoWSSBUG18_Test5()throws Exception{
 		String id=this.repositoryWSSBUG18_Test5.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1715,7 +1715,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test6")
 	public Object[][]testSincronoWSSBUG18_Test6()throws Exception{
 		String id=this.repositoryWSSBUG18_Test6.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1822,7 +1822,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test1_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test1_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test1_FunzioniWSSInvertite.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -1923,7 +1923,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test2_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test2_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test2_FunzioniWSSInvertite.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2029,7 +2029,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test3_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test3_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test3_FunzioniWSSInvertite.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2132,7 +2132,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test4_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test4_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test4_FunzioniWSSInvertite.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2237,7 +2237,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test5_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test5_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test5_FunzioniWSSInvertite.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2340,7 +2340,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSBUG18_Test6_FunzioniWSSInvertite")
 	public Object[][]testSincronoWSSBUG18_Test6_FunzioniWSSInvertite()throws Exception{
 		String id=this.repositoryWSSBUG18_Test6_FunzioniWSSInvertite.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2453,7 +2453,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSAnnidamento")
 	public Object[][]testSincronoWSSAnnidamento()throws Exception{
 		String id=this.repositoryAnnidamento.getNext();
-		org.openspcoop2.utils.Utilities.sleep(4000);
+		org.openspcoop2.utils.Utilities.sleep(10000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	

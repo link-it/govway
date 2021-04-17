@@ -259,6 +259,14 @@ public class AutenticazionePortaDelegata extends GestioneViaJmx {
 						null, -1,true, 200,
 						new String[] {"CN=applicativo2_multipleOU","OU=\" Piano=2, Scala=B, porta=3\"","caratteri accentati"},
 						"EsempioFruitoreTrasparenteCert2_serialNumberDifferente"},
+				
+				// Credenziali corrette con caricamento certificato doppio associato allo stesso applicativo
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/applicativo1_alternativo.jks", "openspcoopjks", "openspcoop"), 
+							null, 
+							null, -1,true, 200,
+							new String[] {"CN=applicativo1alternativo","C=IT","L=Pisa"},
+							"EsempioFruitoreTrasparenteCert1"},
+					
 		};
 	}
 

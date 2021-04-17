@@ -155,6 +155,9 @@ public class RiconoscimentoProfiloGestione {
 				e.printStackTrace();
 			}
 		}
+		else {
+			org.openspcoop2.utils.Utilities.sleep(5000);
+		}
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -181,6 +184,7 @@ public class RiconoscimentoProfiloGestione {
 	public Object[][]testRispostaAsincronoAsimmetrico_AzioneCorrelata_ModalitaSincronaTEST1() throws Exception{
 		String id=this.repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaSincronaTEST1.getNextIDRisposta();
 		String idCorrelazioneAsincrona = this.repositoryCorrelazioneIstanzeAsincroneAsimmetriche_AzioneCorrelata_modalitaSincronaTEST1.getIDRichiestaByReference(id);
+		org.openspcoop2.utils.Utilities.sleep(5000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,idCorrelazioneAsincrona,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,idCorrelazioneAsincrona,true}	
