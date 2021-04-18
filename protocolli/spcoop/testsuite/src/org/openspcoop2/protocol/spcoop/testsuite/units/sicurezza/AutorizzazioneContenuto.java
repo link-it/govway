@@ -258,12 +258,22 @@ public class AutorizzazioneContenuto extends GestioneViaJmx {
 	}
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,AutorizzazioneContenuto.ID_GRUPPO,AutorizzazioneContenuto.ID_GRUPPO+".SINCRONO_PA_OK"},dataProvider="sincronoPA_OK",dependsOnMethods={"sincronoPA_OK"})
 	public void testsincronoPA_OK(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_AUTORIZZAZIONE_CONTENUTO_OK, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_AUTORIZZAZIONE_CONTENUTO_OK, checkServizioApplicativo,
+							null);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}

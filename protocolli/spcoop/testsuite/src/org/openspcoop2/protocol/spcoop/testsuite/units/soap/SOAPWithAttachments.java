@@ -251,13 +251,23 @@ public class SOAPWithAttachments {
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".SINCRONO_STATEFUL"},
 			dataProvider="Sincrono_Stateful",dependsOnMethods={"sincrono_Stateful"})
 	public void testSincrono_Stateful(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_STATEFUL , 
-					checkServizioApplicativo,null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_STATEFUL , 
+							checkServizioApplicativo,null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -313,16 +323,26 @@ public class SOAPWithAttachments {
 	}
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_SIMMETRICO_asincr"},dataProvider="AsincronoSimmetrico_ModalitaAsincrona",dependsOnMethods={"asincronoSimmetrico_ModalitaAsincrona"})
 	public void testAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaAsincrona(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA, checkServizioApplicativo,
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaAsincrona(data, id, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA, checkServizioApplicativo,
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -338,16 +358,26 @@ public class SOAPWithAttachments {
 	}
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_SIMMETRICO_asincr"},dataProvider="RispostaAsincronoSimmetrico_ModalitaAsincrona",dependsOnMethods={"testAsincronoSimmetrico_ModalitaAsincrona"})
 	public void testRispostaAsincronoSimmetrico_ModalitaAsincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testRispostaAsincronoSimmetrico_ModalitaAsincrona(data, id,idCorrelazioneAsincrona, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA, 
-					checkServizioApplicativo,this.repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,
-					null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testRispostaAsincronoSimmetrico_ModalitaAsincrona(data, id,idCorrelazioneAsincrona, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA, 
+							checkServizioApplicativo,this.repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,
+							null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -409,16 +439,26 @@ public class SOAPWithAttachments {
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_SIMMETRICO_asincr_stateful"},dataProvider="AsincronoSimmetrico_ModalitaAsincrona_Stateful",
 			dependsOnMethods={"asincronoSimmetrico_ModalitaAsincrona_Stateful"})
 	public void testAsincronoSimmetrico_ModalitaAsincrona_Stateful(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaAsincrona(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA_STATEFUL, checkServizioApplicativo,
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaAsincrona(data, id, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA_STATEFUL, checkServizioApplicativo,
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -435,16 +475,26 @@ public class SOAPWithAttachments {
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_SIMMETRICO_asincr_stateful"},dataProvider="RispostaAsincronoSimmetrico_ModalitaAsincrona_Stateful",
 			dependsOnMethods={"testAsincronoSimmetrico_ModalitaAsincrona_Stateful"})
 	public void testRispostaAsincronoSimmetrico_ModalitaAsincrona_Stateful(DatabaseComponent data,String id,String idCorrelazioneAsincrona,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testRispostaAsincronoSimmetrico_ModalitaAsincrona(data, id,idCorrelazioneAsincrona, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA_STATEFUL, 
-					checkServizioApplicativo,this.repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona_Stateful,
-					null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testRispostaAsincronoSimmetrico_ModalitaAsincrona(data, id,idCorrelazioneAsincrona, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA_STATEFUL, 
+							checkServizioApplicativo,this.repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona_Stateful,
+							null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -495,17 +545,27 @@ public class SOAPWithAttachments {
 	}
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_SIMMETRICO_sincr"},dataProvider="AsincronoSimmetrico_ModalitaSincrona",dependsOnMethods={"asincronoSimmetrico_ModalitaSincrona"})
 	public void testAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaSincrona(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA, checkServizioApplicativo,
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaSincrona(data, id, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA, checkServizioApplicativo,
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -526,15 +586,25 @@ public class SOAPWithAttachments {
 	}
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_SIMMETRICO_sincr"},dataProvider="RispostaAsincronoSimmetrico_ModalitaSincrona",dependsOnMethods={"testAsincronoSimmetrico_ModalitaSincrona"})
 	public void testRispostaAsincronoSimmetrico_ModalitaSincrona(DatabaseComponent data,String id,String idCorrelazioneAsincrona,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testRispostaAsincronoSimmetrico_ModalitaSincrona(data, id, idCorrelazioneAsincrona, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA, checkServizioApplicativo,
-					null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testRispostaAsincronoSimmetrico_ModalitaSincrona(data, id, idCorrelazioneAsincrona, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA, checkServizioApplicativo,
+							null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -587,17 +657,27 @@ public class SOAPWithAttachments {
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_SIMMETRICO_sincr_stateful"},dataProvider="AsincronoSimmetrico_ModalitaSincrona_Stateful",
 			dependsOnMethods={"asincronoSimmetrico_ModalitaSincrona_Stateful"})
 	public void testAsincronoSimmetrico_ModalitaSincrona_Stateful(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaSincrona(data, id, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA_STATEFUL, checkServizioApplicativo,
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testAsincronoSimmetrico_ModalitaSincrona(data, id, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA_STATEFUL, checkServizioApplicativo,
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -619,15 +699,25 @@ public class SOAPWithAttachments {
 	@Test(groups={CostantiSOAP.ID_GRUPPO_SOAP,SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".ASINCRONO_SIMMETRICO_sincr_stateful"},dataProvider="RispostaAsincronoSimmetrico_ModalitaSincrona_Stateful",
 			dependsOnMethods={"testAsincronoSimmetrico_ModalitaSincrona_Stateful"})
 	public void testRispostaAsincronoSimmetrico_ModalitaSincrona_Stateful(DatabaseComponent data,String id,String idCorrelazioneAsincrona,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testRispostaAsincronoSimmetrico_ModalitaSincrona(data, id, idCorrelazioneAsincrona, 
-					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA_STATEFUL, checkServizioApplicativo,
-					null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testRispostaAsincronoSimmetrico_ModalitaSincrona(data, id, idCorrelazioneAsincrona, 
+							CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA_STATEFUL, checkServizioApplicativo,
+							null, 
+							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
+				}catch(Throwable e){
+					if(i==4) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}

@@ -2735,7 +2735,7 @@ public class WSSecurity extends GestioneViaJmx {
 		String id=repositorySincronoWSS_SAML20.getNext();
 		
 		org.openspcoop2.utils.Utilities.sleep(2000);
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 			
 			// Check Fruitore
 			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
@@ -2812,7 +2812,7 @@ public class WSSecurity extends GestioneViaJmx {
 		String id=repositorySincronoWSS_SAML11.getNext();
 		
 		org.openspcoop2.utils.Utilities.sleep(2000);
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 		
 			// Check Fruitore
 			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
@@ -2931,7 +2931,7 @@ public class WSSecurity extends GestioneViaJmx {
 			String id=repositorySincronoWSS_XACML_POLICY.getNext();
 			
 			org.openspcoop2.utils.Utilities.sleep(2000);
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 10; i++) {
 			
 				// Check Fruitore
 				DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
@@ -3074,7 +3074,7 @@ public class WSSecurity extends GestioneViaJmx {
 		String id=repositorySincronoWSS_UsernameToken.getNext();
 		
 		org.openspcoop2.utils.Utilities.sleep(2000);
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 			
 			// Check Fruitore
 			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
