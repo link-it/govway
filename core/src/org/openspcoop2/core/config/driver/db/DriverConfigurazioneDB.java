@@ -24107,6 +24107,164 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return listIdRuoli;
 	}
 	
+	public List<Proprieta> serviziApplicativiProprietaList(int idSA, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "serviziApplicativiProprietaList";
+		int idLista = Liste.SERVIZI_APPLICATIVI_PROP;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<Proprieta> lista = null;
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_PROPS+".id_servizio_applicativo");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".nome", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_PROPS+".id_servizio_applicativo");
+
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSA);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".nome");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".valore");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_PROPS+".id_servizio_applicativo");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".nome", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".nome");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".valore");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_PROPS+".id_servizio_applicativo");
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSA);
+
+			risultato = stmt.executeQuery();
+
+			lista = new ArrayList<>();
+			while (risultato.next()) {
+				
+				Proprieta proprieta = new Proprieta();
+				proprieta.setId(risultato.getLong("id"));
+				proprieta.setNome(risultato.getString("nome"));
+				proprieta.setValore(risultato.getString("valore"));
+				lista.add(proprieta );
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return lista;
+	}
 	
 	
 	//RESET

@@ -47,6 +47,8 @@ public class SoggettiCostanti {
 	
 	public final static String OBJECT_NAME_SOGGETTI_CREDENZIALI = "soggettiCredenziali";
 	
+	public final static String OBJECT_NAME_SOGGETTI_PROPRIETA = "soggettiProprieta";
+	
 	/* SERVLET NAME */
 
 	public final static String SERVLET_NAME_SOGGETTI_ADD = OBJECT_NAME_SOGGETTI
@@ -93,6 +95,18 @@ public class SoggettiCostanti {
 		SERVLET_SOGGETTI_CREDENZIALI.add(SERVLET_NAME_SOGGETTI_CREDENZIALI_LIST);
 	}
 	
+	public final static String SERVLET_NAME_SOGGETTI_PROPRIETA_ADD = OBJECT_NAME_SOGGETTI_PROPRIETA + "Add.do";
+	public final static String SERVLET_NAME_SOGGETTI_PROPRIETA_CHANGE = OBJECT_NAME_SOGGETTI_PROPRIETA + "Change.do";
+	public final static String SERVLET_NAME_SOGGETTI_PROPRIETA_DELETE = OBJECT_NAME_SOGGETTI_PROPRIETA + "Del.do";
+	public final static String SERVLET_NAME_SOGGETTI_PROPRIETA_LIST = OBJECT_NAME_SOGGETTI_PROPRIETA + "List.do";
+	public final static Vector<String> SERVLET_SOGGETTI_PROPRIETA = new Vector<String>();
+	static {
+		SERVLET_SOGGETTI_PROPRIETA.add(SERVLET_NAME_SOGGETTI_PROPRIETA_ADD);
+		SERVLET_SOGGETTI_PROPRIETA.add(SERVLET_NAME_SOGGETTI_PROPRIETA_CHANGE);
+		SERVLET_SOGGETTI_PROPRIETA.add(SERVLET_NAME_SOGGETTI_PROPRIETA_DELETE);
+		SERVLET_SOGGETTI_PROPRIETA.add(SERVLET_NAME_SOGGETTI_PROPRIETA_LIST);
+	}
+	
 	/* NOME VISTA CUSTOM */
 	public final static String SOGGETTI_NOME_VISTA_CUSTOM_LISTA = "soggetti";
 
@@ -107,6 +121,7 @@ public class SoggettiCostanti {
 	public final static String LABEL_SOGGETTI_ESPORTA_SELEZIONATI = "Esporta";
 	public final static String LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.SOGGETTO.name()+"')";
 	public final static String LABEL_SOGGETTI_MENU_VISUALE_AGGREGATA = "Soggetti";
+	public final static String LABEL_SOGGETTI_RISULTATI_RICERCA = "Risultati ricerca";
 
 	/* PARAMETRI */
 
@@ -132,6 +147,9 @@ public class SoggettiCostanti {
 	
 	public final static String PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO = "modificaDatiOperativo";
 	
+	public final static String PARAMETRO_SOGGETTI_PROP_NOME = "propNome";
+	public final static String PARAMETRO_SOGGETTI_PROP_VALORE = "propValore";
+	
 	/* LABEL PARAMETRI */
 	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO = "Dominio";
@@ -149,6 +167,9 @@ public class SoggettiCostanti {
 	public final static String LABEL_PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER = "UrlPrefix rewriter";
 	public final static String LABEL_PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER = "UrlPrefix rewriter";
 	
+	public final static String LABEL_PARAMETRO_SOGGETTI_PROPRIETA = "Propriet&agrave;";
+	public final static String LABEL_PARAMETRO_SOGGETTI_PROP_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_SOGGETTI_PROP_VALORE = CostantiControlStation.LABEL_PARAMETRO_VALORE;
 
 	/* DEFAULT VALUE PARAMETRI */
 
@@ -182,4 +203,7 @@ public class SoggettiCostanti {
 	
 	public final static String LABEL_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il soggetto non risulta utilizzato in alcuna configurazione";
 
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}";
+	public static final String MESSAGGIO_ERRORE_LA_PROPRIETA_XX_E_GIA_STATO_ASSOCIATA_AL_SA_YY = "La propriet&agrave; {0} &egrave; gi&agrave; stata associata all''applicativo {1}";
+	
 }

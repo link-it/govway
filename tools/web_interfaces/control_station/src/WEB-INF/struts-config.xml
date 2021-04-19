@@ -278,6 +278,32 @@
             <forward name="soggettiRuoliError" path="/jsplib/info.jsp"/>
         </action>
                
+        <!--  Soggetti (Proprieta') -->
+               
+        <action path="/soggettiProprietaAdd" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiProprietaAdd"
+            scope="request" validate="true">
+            <forward name="soggettiProprietaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiProprietaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiProprietaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiProprietaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiProprietaList" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiProprietaList" 
+        	scope="request" validate="true">
+            <forward name="soggettiProprietaList" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiProprietaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiProprietaChange" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiProprietaChange" 
+        	scope="request" validate="true">
+            <forward name="soggettiProprietaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiProprietaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiProprietaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiProprietaChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiProprietaDel" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiProprietaDel"
+            scope="request" validate="true">
+            <forward name="soggettiProprietaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiProprietaError" path="/jsplib/info.jsp"/>
+        </action>
         
         
         
@@ -395,9 +421,32 @@
             <forward name="serviziApplicativiRuoliError" path="/jsplib/info.jsp"/>
         </action>
 
-    
-    
-    
+    	<!--  Servizi Applicativi (Proprieta') -->
+               
+        <action path="/serviziApplicativiProprietaAdd" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiProprietaAdd"
+            scope="request" validate="true">
+            <forward name="serviziApplicativiProprietaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiProprietaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiProprietaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiProprietaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiProprietaList" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiProprietaList" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiProprietaList" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiProprietaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiProprietaChange" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiProprietaChange" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiProprietaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiProprietaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiProprietaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="serviziApplicativiProprietaChangeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/serviziApplicativiProprietaDel" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiProprietaDel"
+            scope="request" validate="true">
+            <forward name="serviziApplicativiProprietaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiProprietaError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     

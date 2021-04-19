@@ -38,6 +38,7 @@ public final class Liste
 	
 	public final static int SOGGETTI;
 	public final static int SOGGETTI_RUOLI;
+	public final static int SOGGETTI_PROP;
 	
 	public final static int PORTE_APPLICATIVE;
 	public final static int PORTE_APPLICATIVE_BY_SOGGETTO;
@@ -98,6 +99,7 @@ public final class Liste
 	public final static int SERVIZIO_APPLICATIVO;
 	public final static int SERVIZI_APPLICATIVI_BY_SOGGETTO;
 	public final static int SERVIZIO_APPLICATIVO_RUOLI;
+	public final static int SERVIZI_APPLICATIVI_PROP;
 	
 	public final static int ACCORDI;
 	public final static int ACCORDI_AZIONI;
@@ -180,6 +182,7 @@ public final class Liste
     	PDD_SOGGETTI = numeroListe ++;
     	SOGGETTI = numeroListe ++;
     	SOGGETTI_RUOLI = numeroListe ++;
+    	SOGGETTI_PROP = numeroListe ++;
     	PORTE_APPLICATIVE= numeroListe ++;
     	PORTE_APPLICATIVE_BY_SOGGETTO= numeroListe ++;
     	PORTE_APPLICATIVE_PROP = numeroListe ++;
@@ -237,6 +240,7 @@ public final class Liste
     	SERVIZIO_APPLICATIVO = numeroListe ++;
     	SERVIZI_APPLICATIVI_BY_SOGGETTO = numeroListe ++;
     	SERVIZIO_APPLICATIVO_RUOLI = numeroListe ++;
+    	SERVIZI_APPLICATIVI_PROP = numeroListe ++;
     	ACCORDI = numeroListe ++;
     	ACCORDI_AZIONI = numeroListe ++;
     	ACCORDI_EROGATORI = numeroListe ++;

@@ -34,6 +34,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -42,11 +43,14 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
+import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -125,7 +129,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer,tipoCredenzialiSSLStatoElaborazioneCertificato,
 				changepwd,
 				multipleApiKey, appId, apiKey,
-				visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
+				visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd, 0);
 	}
 	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
 			boolean isRouter, List<String> tipiSoggetti, String profilo, boolean privato, String codiceIpa, List<String> versioni, 
@@ -141,7 +145,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String issuer,String tipoCredenzialiSSLStatoElaborazioneCertificato,
 			String changepwd,
 			String multipleApiKey, String appId, String apiKey, 
-			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd) throws Exception {
+			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd, int numeroProprieta) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -494,6 +498,29 @@ public class SoggettiHelper extends ConnettoriHelper {
 		
 		}
 		
+		// link proprieta
+		if(TipoOperazione.CHANGE.equals(tipoOp)){
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
+			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, nomeprov);
+			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
+			parametersServletSoggettoChange.add(pIdSoggetto);
+			parametersServletSoggettoChange.add(pNomeSoggetto);
+			parametersServletSoggettoChange.add(pTipoSoggetto);
+			
+			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_PROPRIETA_LIST, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
+			if (contaListe) {
+				de.setValue(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA+"(" + numeroProprieta + ")");
+			} else {
+				de.setValue(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA);
+			}
+			
+			dati.add(de);
+			
+		}
 		
 		// Credenziali di accesso
 		if(isSupportatoAutenticazioneSoggetti){
@@ -2170,6 +2197,203 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 			}
 			
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	public void prepareSoggettiProprietaList(Soggetto soggettoRegistry, String id, Search ricerca,	List<Proprieta> lista) throws Exception {
+		try {
+			List<Parameter> parametersServletSoggettoChange = new ArrayList<Parameter>();
+			Parameter pIdSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id);
+			Parameter pNomeSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, soggettoRegistry.getNome());
+			Parameter pTipoSoggetto = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, soggettoRegistry.getTipo());
+			parametersServletSoggettoChange.add(pIdSoggetto);
+			parametersServletSoggettoChange.add(pNomeSoggetto);
+			parametersServletSoggettoChange.add(pTipoSoggetto);
+			
+			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_PROPRIETA, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
+
+			// setto la barra del titolo
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoRegistry.getTipo());
+			
+			int idLista = Liste.SOGGETTI_PROP;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+			lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+			lstParam.add(new Parameter(this.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome()),
+					SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
+
+			this.pd.setSearchLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA, null));
+			}else{
+				lstParam.add(new Parameter(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA,
+						SoggettiCostanti.SERVLET_NAME_SOGGETTI_PROPRIETA_LIST, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()])));
+				lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI_RISULTATI_RICERCA, null));
+			}
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA, search);
+			}
+
+			// setto le label delle colonne
+			String valueLabel = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_VALORE;
+			String[] labels = { SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_NOME, valueLabel };
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<Proprieta> it = lista.iterator();
+				while (it.hasNext()) {
+					Proprieta ssp = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					Parameter pNomeProprieta = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME, ssp.getNome());
+					List<Parameter> parametersServletProprietaChange = new ArrayList<Parameter>();
+					parametersServletProprietaChange.add(pNomeProprieta);
+					parametersServletProprietaChange.addAll(parametersServletSoggettoChange);
+				
+					DataElement de = new DataElement();
+					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_PROPRIETA_CHANGE, 
+							parametersServletProprietaChange.toArray(new Parameter[parametersServletProprietaChange.size()]));
+					de.setValue(ssp.getNome());
+					de.setIdToRemove(ssp.getNome());
+					e.addElement(de);
+
+					de = new DataElement();
+					if(ssp.getValore()!=null)
+						de.setValue(ssp.getValore().toString());
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		
+	}
+	
+	public  Vector<DataElement> addProprietaToDati(TipoOperazione tipoOp, int size, String nome, String valore, Vector<DataElement> dati) {
+
+		DataElement de = new DataElement();
+		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROPRIETA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_NOME);
+		de.setValue(nome);
+		if(TipoOperazione.ADD.equals(tipoOp)){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.TEXT);
+		}
+		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME);
+		de.setSize(size);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
+		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);
+		de.setValue(valore);
+		de.setSize(size);
+		dati.addElement(de);
+
+		return dati;
+	}
+	
+	public boolean soggettiProprietaCheckData(TipoOperazione tipoOp) throws Exception {
+		try {
+			String id = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			int idSogg = Integer.parseInt(id);
+			String nome = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_NOME);
+			String valore = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTI_PROP_VALORE);
+
+			// Campi obbligatori
+			if (nome.equals("") || valore.equals("")) {
+				String tmpElenco = "";
+				if (nome.equals("")) {
+					tmpElenco = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_NOME;
+				}
+				if (valore.equals("")) {
+					if (tmpElenco.equals("")) {
+						tmpElenco = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_VALORE;
+					} else {
+						tmpElenco = tmpElenco + ", " + SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_VALORE;
+					}
+				}
+				this.pd.setMessage(MessageFormat.format(SoggettiCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				return false;
+			}
+
+			// Controllo che non ci siano spazi nei campi di testo
+			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				return false;
+			}
+			
+			// Check Lunghezza
+			if(this.checkLength255(nome, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength4000(valore, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTI_PROP_VALORE)==false) {
+				return false;
+			}
+
+			// Se tipoOp = add, controllo che la property non sia gia'
+			// stata
+			// registrata per l'applicativo
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = false;
+				
+				Soggetto soggettoRegistry = this.soggettiCore.getSoggettoRegistro(idSogg);
+				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoRegistry.getTipo());
+				String nomeporta = this.getLabelNomeSoggetto(protocollo, soggettoRegistry.getTipo() , soggettoRegistry.getNome());
+
+				for (int i = 0; i < soggettoRegistry.sizeProprietaList(); i++) {
+					Proprieta tmpProp = soggettoRegistry.getProprieta(i);
+					if (nome.equals(tmpProp.getNome())) {
+						giaRegistrato = true;
+						break;
+					}
+				}
+
+				if (giaRegistrato) {
+					this.pd.setMessage(MessageFormat.format(
+							SoggettiCostanti.MESSAGGIO_ERRORE_LA_PROPRIETA_XX_E_GIA_STATO_ASSOCIATA_AL_SA_YY, nome,
+							nomeporta));
+					return false;
+				}
+			}
+
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

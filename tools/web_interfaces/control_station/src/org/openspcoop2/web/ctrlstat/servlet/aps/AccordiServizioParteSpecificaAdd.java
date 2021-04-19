@@ -567,9 +567,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			int accordoPrimoAccesso = -1;
 
 			if (listaIdAPI.size() > 0) {
-				accordiList = new String[listaIdAPI.size()];
-				accordiListLabel = new String[listaIdAPI.size()];
 				int i = 0;
+				if(listaIdAPI.size() > 1) {
+					accordiList = new String[listaIdAPI.size()+1];
+					accordiListLabel = new String[listaIdAPI.size()+1];
+					accordiList[0] = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO;
+					accordiListLabel[0] = AccordiServizioParteSpecificaCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO;
+					i = 1;
+				} else {
+					accordiList = new String[listaIdAPI.size()];
+					accordiListLabel = new String[listaIdAPI.size()];
+				}
 				for (IDAccordoDB as : listaIdAPI) {
 					accordiList[i] = as.getId().toString();
 					soggettoReferente = null;
@@ -604,8 +612,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			//			}
-
-
+			
+			// dopo il primo accesso le variabili della classe rimangono inizializzate
+			this.serviceBinding = null;
+			this.formatoSpecifica = null;
+			
 			String postBackElementName = apsHelper.getPostBackElementName();
 
 			// Controllo se ho modificato l'accordo, se si allora suggerisco il referente dell'accordo
@@ -682,9 +693,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if (this.accordo != null && !"".equals(this.accordo)) {
 					as = apcCore.getAccordoServizioSintetico(Long.parseLong(this.accordo));
 				} else {
+					this.accordo = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO;
 					if (accordiList != null){
-						if(accordoPrimoAccesso >= 0 && accordoPrimoAccesso < accordiList.length)
+						if(accordiList.length == 1) 
 							as = apcCore.getAccordoServizioSintetico(Long.parseLong(accordiList[accordoPrimoAccesso]));
+						
+//						if(accordoPrimoAccesso >= 0 && accordoPrimoAccesso < accordiList.length)
+//							as = apcCore.getAccordoServizioSintetico(Long.parseLong(accordiList[accordoPrimoAccesso]));
 						if(as!=null)
 							this.accordo = as.getId() + "";
 					}
@@ -888,9 +903,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
 
-					if(listaIdAPI.size()>0){
-						this.accordo = listaIdAPI.get(0).getId()+"";
-					}
+//					if(listaIdAPI.size()>0){
+//						this.accordo = listaIdAPI.get(0).getId()+"";
+//					}
 				}
 			}
 			
@@ -1309,67 +1324,69 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 				}
 				
-				switch (this.serviceBinding) {
-					case REST:
-						if(this.nomeservizio==null || "".equals(this.nomeservizio)){
-							this.nomeservizio = as.getNome();
-						}
-						
-						break;
-					case SOAP:
-					default:
-						if(this.portType!=null && !"".equals(this.portType) && !"-".equals(this.portType)){
-		
-							boolean ptValid = true;
-		
-							if(ptList!=null && ptList.length>0){
-								// controllo che l'attuale port Type sia tra quelli presenti nell'accordo.
-								boolean found = false;
-								for (String portType : ptList) {
-									if(portType.equals(this.portType)){
-										found = true;
-										break;
-									}
-								}
-								if(!found){
-									ptValid = false;
-								}
-		
-							}
-		
-							if(ptValid){
-		
-								if(this.nomeservizio==null || "".equals(this.nomeservizio)){
-									this.nomeservizio = this.portType;
-								}
-								else if(this.nomeservizio.equals(this.oldPortType)){
-									this.nomeservizio = this.portType;
-								}
-		
-								this.oldPortType = this.portType;
-		
-							}
-							else{
-		
-								this.nomeservizio = null;
-								this.portType = null;
-								this.oldPortType = null;
-		
-							}
-						}  else {
-							if(ptList ==null || ptList.length < 1){
+				if(this.serviceBinding != null) {
+					switch (this.serviceBinding) {
+						case REST:
+							if(this.nomeservizio==null || "".equals(this.nomeservizio)){
 								this.nomeservizio = as.getNome();
 							}
-							else if(ptList!=null && ptList.length==2){
-								this.portType = ptList[1]; // al posto 0 è presente '-'
-								this.nomeservizio = this.portType;
+							
+							break;
+						case SOAP:
+						default:
+							if(this.portType!=null && !"".equals(this.portType) && !"-".equals(this.portType)){
+			
+								boolean ptValid = true;
+			
+								if(ptList!=null && ptList.length>0){
+									// controllo che l'attuale port Type sia tra quelli presenti nell'accordo.
+									boolean found = false;
+									for (String portType : ptList) {
+										if(portType.equals(this.portType)){
+											found = true;
+											break;
+										}
+									}
+									if(!found){
+										ptValid = false;
+									}
+			
+								}
+			
+								if(ptValid){
+			
+									if(this.nomeservizio==null || "".equals(this.nomeservizio)){
+										this.nomeservizio = this.portType;
+									}
+									else if(this.nomeservizio.equals(this.oldPortType)){
+										this.nomeservizio = this.portType;
+									}
+			
+									this.oldPortType = this.portType;
+			
+								}
+								else{
+			
+									this.nomeservizio = null;
+									this.portType = null;
+									this.oldPortType = null;
+			
+								}
+							}  else {
+								if(ptList ==null || ptList.length < 1){
+									this.nomeservizio = as.getNome();
+								}
+								else if(ptList!=null && ptList.length==2){
+									this.portType = ptList[1]; // al posto 0 è presente '-'
+									this.nomeservizio = this.portType;
+								}
 							}
-						}
-		
-					
-					break;
+			
+						
+						break;
+					}
 				}
-
+				
 //				this.erogazioneServizioApplicativoServerEnabled = false;
 				if(this.erogazioneServizioApplicativoServer==null)
 					this.erogazioneServizioApplicativoServer = "";
@@ -1541,49 +1558,54 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						forceEnableConnettore = true;
 					}
 					
-					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-							null,//(apsHelper.isModalitaCompleta() || !multitenant)?null:
-							//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
-							this.url, this.nome,
-							tipoJms, this.user,
-							this.password, this.initcont, this.urlpgk,
-							this.provurl, this.connfact, tipoSendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
-							this.httpsurl, this.httpstipologia,	this.httpshostverify, 
-							this.httpsTrustVerifyCert, this.httpspath, this.httpstipo, this.httpspwd,
-							this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
-							this.httpspwdprivatekeytrust, this.httpspathkey,
-							this.httpstipokey, this.httpspwdkey, 
-							this.httpspwdprivatekey, this.httpsalgoritmokey,
-							this.httpsKeyAlias, this.httpsTrustStoreCRLs,
-							this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-							null, null, null, null, null, null, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-							this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							this.autenticazioneToken,this.token_policy,
-							listExtendedConnettore, forceEnableConnettore,
-							this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
-							this.erogazioneServizioApplicativoServer, saSoggetti);
+					if(!(this.accordo == null || this.accordo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO))) {
 					
-					// url suggerita
-					if(urlAPI!=null) {
-						for (DataElement dataElement : dati) {
-							if(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL.equals(dataElement.getName())) {
-								if(dataElement.getValue()==null || dataElement.getValue().endsWith("://")) {
-									dataElement.setValue(urlAPI);
+						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+								null,//(apsHelper.isModalitaCompleta() || !multitenant)?null:
+								//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
+								this.url, this.nome,
+								tipoJms, this.user,
+								this.password, this.initcont, this.urlpgk,
+								this.provurl, this.connfact, tipoSendas,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+								this.httpsurl, this.httpstipologia,	this.httpshostverify, 
+								this.httpsTrustVerifyCert, this.httpspath, this.httpstipo, this.httpspwd,
+								this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
+								this.httpspwdprivatekeytrust, this.httpspathkey,
+								this.httpstipokey, this.httpspwdkey, 
+								this.httpspwdprivatekey, this.httpsalgoritmokey,
+								this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+								this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+								null, null, null, null, null, null, true,
+								isConnettoreCustomUltimaImmagineSalvata, 
+								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+								this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
+								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+								this.autenticazioneToken,this.token_policy,
+								listExtendedConnettore, forceEnableConnettore,
+								this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
+								this.erogazioneServizioApplicativoServer, saSoggetti);
+						
+						// url suggerita
+						if(urlAPI!=null) {
+							for (DataElement dataElement : dati) {
+								if(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL.equals(dataElement.getName())) {
+									if(dataElement.getValue()==null || dataElement.getValue().endsWith("://")) {
+										dataElement.setValue(urlAPI);
+									}
+									break;
 								}
-								break;
 							}
 						}
 					}
 				}
 					
-				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				if(!(this.accordo == null || this.accordo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO))) {
+					// 	aggiunta campi custom
+					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				}
 				
 				pd.setDati(dati);
 
@@ -1593,18 +1615,18 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						ForwardParams.ADD());
 			}
 
-			if (apsHelper.isModalitaStandard()) {
-				switch (this.serviceBinding) {
-				case REST:
-					// il nome del servizio e' quello dell'accordo
-					this.nomeservizio = as.getNome();
-					break;
-				case SOAP:
-				default:
-					// il nome del servizio e' quello del porttype selezionato
-					this.nomeservizio = this.portType;
-					break;
-				}
+			if (apsHelper.isModalitaStandard() && this.serviceBinding != null) {
+					switch (this.serviceBinding) {
+					case REST:
+						// il nome del servizio e' quello dell'accordo
+						this.nomeservizio = as.getNome();
+						break;
+					case SOAP:
+					default:
+						// il nome del servizio e' quello del porttype selezionato
+						this.nomeservizio = this.portType;
+						break;
+					}
 			}
 
 			// Controlli sui campi immessi
@@ -1747,51 +1769,54 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						forceEnableConnettore = true;
 					}
 					
-					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
-							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:
-							//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
-							this.url, this.nome, this.tipo, this.user,
-							this.password, this.initcont, this.urlpgk,
-							this.provurl, this.connfact, this.sendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
-							this.httpsurl, this.httpstipologia, this.httpshostverify, 
-							this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
-							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
-							this.httpskeystore, this.httpspwdprivatekeytrust,
-							this.httpspathkey, this.httpstipokey,
-							this.httpspwdkey, this.httpspwdprivatekey,
-							this.httpsalgoritmokey, 
-							this.httpsKeyAlias, this.httpsTrustStoreCRLs,
-							this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-							null, null, null, null, null, null, true,
-							isConnettoreCustomUltimaImmagineSalvata, 
-							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
-							this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
-							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
-							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-							this.autenticazioneToken,this.token_policy,
-							listExtendedConnettore, forceEnableConnettore,
-							this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
-							this.erogazioneServizioApplicativoServer, saSoggetti);
-					
-					// url suggerita
-					if(urlAPI!=null) {
-						for (DataElement dataElement : dati) {
-							if(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL.equals(dataElement.getName())) {
-								if(dataElement.getValue()==null || dataElement.getValue().endsWith("://")) {
-									dataElement.setValue(urlAPI);
+					if(!(this.accordo == null || this.accordo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO))) {
+						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, 
+								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:
+								//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
+								this.url, this.nome, this.tipo, this.user,
+								this.password, this.initcont, this.urlpgk,
+								this.provurl, this.connfact, this.sendas,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, 
+								this.httpsurl, this.httpstipologia, this.httpshostverify, 
+								this.httpsTrustVerifyCert, this.httpspath, this.httpstipo,
+								this.httpspwd, this.httpsalgoritmo, this.httpsstato,
+								this.httpskeystore, this.httpspwdprivatekeytrust,
+								this.httpspathkey, this.httpstipokey,
+								this.httpspwdkey, this.httpspwdprivatekey,
+								this.httpsalgoritmokey, 
+								this.httpsKeyAlias, this.httpsTrustStoreCRLs,
+								this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
+								null, null, null, null, null, null, true,
+								isConnettoreCustomUltimaImmagineSalvata, 
+								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+								this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
+								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+								this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+								this.autenticazioneToken,this.token_policy,
+								listExtendedConnettore, forceEnableConnettore,
+								this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
+								this.erogazioneServizioApplicativoServer, saSoggetti);
+						
+						// url suggerita
+						if(urlAPI!=null) {
+							for (DataElement dataElement : dati) {
+								if(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL.equals(dataElement.getName())) {
+									if(dataElement.getValue()==null || dataElement.getValue().endsWith("://")) {
+										dataElement.setValue(urlAPI);
+									}
+									break;
 								}
-								break;
 							}
 						}
 					}
 					
 				}
-
-				// aggiunta campi custom
-				dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
-
+				if(!(this.accordo == null || this.accordo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO))) {
+					// aggiunta campi custom
+					dati = apsHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
+				}
+				
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

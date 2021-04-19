@@ -12126,6 +12126,164 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return listIdRuoli;
 	}
 	
+	public List<Proprieta> soggettiProprietaList(long idSoggetto, ISearch ricerca) throws DriverRegistroServiziException {
+		String nomeMetodo = "soggettiRuoliList";
+		int idLista = Liste.SOGGETTI_PROP;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("soggettiRuoliList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<Proprieta> lista = null;
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_PROPS);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_PROPS+".id_soggetto");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI_PROPS+".nome", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_PROPS);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_PROPS+".id_soggetto");
+
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSoggetto);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_PROPS);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".id");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".nome");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".valore");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_PROPS+".id_soggetto");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI_PROPS+".nome", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_PROPS+".nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_PROPS);
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".id");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".nome");
+				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS+".valore");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_PROPS+".id_soggetto");
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_PROPS+".nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSoggetto);
+
+			risultato = stmt.executeQuery();
+
+			lista = new ArrayList<>();
+			while (risultato.next()) {
+				Proprieta proprieta = new Proprieta();
+				proprieta.setId(risultato.getLong("id"));
+				proprieta.setNome(risultato.getString("nome"));
+				proprieta.setValore(risultato.getString("valore"));
+				
+				lista.add(proprieta );
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return lista;
+	}
+	
 	
 	@Override
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {

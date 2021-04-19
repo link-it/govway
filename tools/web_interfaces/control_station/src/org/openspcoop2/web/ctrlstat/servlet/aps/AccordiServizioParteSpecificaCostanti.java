@@ -320,6 +320,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_RIPRISTINA_STATO_OPERATIVO = "Ripristina Stato Operativo";
 	public final static String LABEL_PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING;
 	
+	public final static String LABEL_DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO = "-";	
+	
 	/* DEFAULT VALUE PARAMETRI */
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE = "wsdlimplfru";
@@ -335,6 +337,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String DEFAULT_VALUE_NORMALE = "normale";
 	public final static String DEFAULT_VALUE_PRIVATA = "privata";
 	public final static String DEFAULT_VALUE_PUBBLICA = "pubblica";	
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO = "";	
 	
 	/* DEFAULT VALUE ATTRIBUTI SESSIONE */
 	
@@ -402,7 +406,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_CON_FRUIZIONE = MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA+"Nella fruizione {0} non è possibile assegnare il soggetto selezionato come erogatore dell'API fruita.";
 	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA_VERSIONE = "La modifica richiesta impatta su altre configurazioni, oltre a quella selezionata.<BR/><BR/>";
 	public static final String MESSAGGIO_ERRORE_CAMBIO_VERSIONE_ACCORDO = "La nuova versione dell''API indicata non è utilizzabile poichè l''attuale configurazione riferisce operazioni non presenti nella nuova versione. Le operazioni non individuate nella nuova versione dell''API sono riferite: <BR/><BR/>{0}";
-
+	public static final String MESSAGGIO_ERRORE_API_NON_INDICATA = "Dati incompleti. &Egrave; necessario selezionare un'API";
+	
 	// Il cambio verso un accordo già esistente succede quando si modifica il nome, la versione o il soggetto erogatore in una erogazione o fruizione e la modifica di questi parametri
 	// identificano un accordo di servizio parte specifica già esistente e usato in una fruizione o erogazione (check incrociato).
 	//
