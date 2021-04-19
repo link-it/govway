@@ -19,14 +19,19 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.openspcoop2.core.config.rs.server.model.Api;
 import org.openspcoop2.core.config.rs.server.model.ApiAzione;
 import org.openspcoop2.core.config.rs.server.model.ApiModI;
 import org.openspcoop2.core.config.rs.server.model.ApiModIAzioneSoap;
+import org.openspcoop2.core.config.rs.server.model.ApiModIPatternInterazioneCorrelazioneRest;
+import org.openspcoop2.core.config.rs.server.model.ApiModIPatternInterazioneCorrelazioneSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiModIPatternInterazioneRest;
+import org.openspcoop2.core.config.rs.server.model.ApiModIPatternInterazioneSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiModIRisorsaRest;
 import org.openspcoop2.core.config.rs.server.model.ApiModISicurezzaCanale;
 import org.openspcoop2.core.config.rs.server.model.ApiModISicurezzaMessaggio;
@@ -34,7 +39,10 @@ import org.openspcoop2.core.config.rs.server.model.ApiModISicurezzaMessaggioAppl
 import org.openspcoop2.core.config.rs.server.model.ApiModISicurezzaMessaggioOperazione;
 import org.openspcoop2.core.config.rs.server.model.ApiModISicurezzaMessaggioOperazioneRidefinito;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
+import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.core.config.rs.server.model.ModIPatternInterazioneEnum;
+import org.openspcoop2.core.config.rs.server.model.ModIPatternInterazioneFunzioneEnum;
+import org.openspcoop2.core.config.rs.server.model.ModIPatternInterazioneTipoEnum;
 import org.openspcoop2.core.config.rs.server.model.ModISicurezzaCanaleEnum;
 import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioApplicabilitaCustomEnum;
 import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioApplicabilitaEnum;
@@ -43,12 +51,23 @@ import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioOperazi
 import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioRestHeaderEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.core.registry.constants.HttpMethod;
+import org.openspcoop2.protocol.engine.utils.AzioniUtils;
+import org.openspcoop2.protocol.modipa.config.ModIProperties;
+import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.modipa.properties.ModIProfiliInterazioneRESTConfig;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
@@ -57,6 +76,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 
@@ -71,87 +91,82 @@ public class ModiApiApiHelper {
 
 
 
-	public static ApiModIAzioneSoap getApiAzioneModI(AccordoServizioParteComune as, Operation az, ProfiloEnum profilo,
-			ApiEnv env) {
-
-		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
-			return null; //TODO generalizzare 
-		}
-
+	public static void populateApiAzioneWithProtocolInfo(AccordoServizioParteComune as, Operation az, ApiEnv env, ApiAzione ret) throws Exception {
 
 		Map<String, AbstractProperty<?>> p = new HashMap<>();
-		try{
-			IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
-			ConsoleConfiguration consoleConf = ApiApiHelper.getConsoleConfiguration(env, idAccordoFromAccordo);
+		Optional<PortType> portType = as.getPortTypeList().stream().filter(pt -> pt.getId().equals(az.getIdPortType())).findAny();
+				
+		if(!portType.isPresent()) {
+			throw FaultCode.ERRORE_INTERNO.toException("Port type non trovato");
+		}
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+		IDPortTypeAzione idPortTypeAzione = new IDPortTypeAzione();
+		IDPortType idPortType = new IDPortType();
+		idPortType.setIdAccordo(idAccordoFromAccordo);
+		idPortType.setNome(portType.get().getNome());
+		idPortTypeAzione.setIdPortType(idPortType);
+		idPortTypeAzione.setNome(az.getNome());
+		ConsoleConfiguration consoleConf = ApiApiHelper.getConsoleConfiguration(env, idPortTypeAzione);
 
-			ProtocolProperties prop = env.apcHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
-			ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, as.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		ProtocolProperties prop = env.apcHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, az.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
 
-			for(int i =0; i < prop.sizeProperties(); i++) {
-				p.put(prop.getIdProperty(i), prop.getProperty(i));
-			}
-
-			ApiModIAzioneSoap apimodi = new ApiModIAzioneSoap();
-			if(p!= null) {
-
-				//TODO interazione tipo funz azione
-
-
-				if(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true)) {
-					ApiModISicurezzaMessaggioOperazione op = new ApiModISicurezzaMessaggioOperazione();
-					op.setStato(ModISicurezzaMessaggioOperazioneEnum.API);
-					apimodi.setSicurezzaMessaggio(op);
-				} else {
-
-					ApiModISicurezzaMessaggioOperazioneRidefinito rid = new ApiModISicurezzaMessaggioOperazioneRidefinito();
-					rid.setStato(ModISicurezzaMessaggioOperazioneEnum.RIDEFINITO);
-
-					ApiModISicurezzaMessaggio conf = new ApiModISicurezzaMessaggio();
-					ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
-
-					String sicurezzaMessaggioApplicabilitaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
-
-					if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS)) {
-						applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
-						conf.setSoapFirmaAllegati(true);
-					} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA_CON_ATTACHMENTS)) {
-						applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
-						conf.setSoapFirmaAllegati(true);
-					} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS)) {
-						applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
-						conf.setSoapFirmaAllegati(true);
-					} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
-						applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
-					} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
-						applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
-					} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
-						applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
-					}
-					conf.setApplicabilita(applicabilita);
-					conf.setDigestRichiesta(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, true));
-					conf.setInformazioniUtente(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, true));
-
-					rid.setConfigurazione(conf);
-					apimodi.setSicurezzaMessaggio(rid);
-				}
-
-			}
-
-			return apimodi;
-
-		}catch(Exception e){
-			throw FaultCode.ERRORE_INTERNO.toException(e.getMessage());
+		for(int i =0; i < prop.sizeProperties(); i++) {
+			p.put(prop.getIdProperty(i), prop.getProperty(i));
 		}
 
+		ApiModIAzioneSoap apimodi = new ApiModIAzioneSoap();
+		if(p!= null) {
+
+			ApiModIPatternInterazioneSoap interazione = new ApiModIPatternInterazioneSoap();
+
+			if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
+				interazione.setPattern(ModIPatternInterazioneEnum.CRUD);
+			} else if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
+				interazione.setPattern(ModIPatternInterazioneEnum.BLOCCANTE);
+			} else if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
+
+				ModIPatternInterazioneTipoEnum tipo = getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
+						ModIPatternInterazioneTipoEnum.PULL : ModIPatternInterazioneTipoEnum.PUSH;
+				
+				interazione.setTipo(tipo);
+
+				ModIPatternInterazioneFunzioneEnum funzione = getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
+						ModIPatternInterazioneFunzioneEnum.RICHIESTA: ModIPatternInterazioneFunzioneEnum.RISPOSTA;
+				
+				interazione.setFunzione(funzione);
+				
+				if(funzione.equals(ModIPatternInterazioneFunzioneEnum.RISPOSTA)) {
+					interazione.setAzioneCorrelata(getAzioneCorrelata(p, env));
+				}
+				
+				interazione.setPattern(ModIPatternInterazioneEnum.NON_BLOCCANTE);
+			}
+
+			apimodi.setInterazione(interazione);
+
+
+			if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+				ApiModISicurezzaMessaggioOperazione op = new ApiModISicurezzaMessaggioOperazione();
+				op.setStato(ModISicurezzaMessaggioOperazioneEnum.API);
+				apimodi.setSicurezzaMessaggio(op);
+			} else {
+
+				ApiModISicurezzaMessaggioOperazioneRidefinito rid = new ApiModISicurezzaMessaggioOperazioneRidefinito();
+				rid.setStato(ModISicurezzaMessaggioOperazioneEnum.RIDEFINITO);
+				rid.setConfigurazione(getSicurezzaMessaggio(p, true));
+
+				apimodi.setSicurezzaMessaggio(rid);
+			}
+
+		}
+
+		ret.setModi(apimodi);
 
 	}
 
 
-	public static ApiModIRisorsaRest getApiRisorsaModI(AccordoServizioParteComune as, Resource res, ProfiloEnum profilo, ApiEnv env) throws Exception {
-		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
-			return null; //TODO generalizzare 
-		}
-
+	public static void populateApiRisorsaWithProtocolInfo(AccordoServizioParteComune as, Resource res, ApiEnv env, ApiRisorsa ret) throws Exception {
 
 		Map<String, AbstractProperty<?>> p = new HashMap<>();
 		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
@@ -170,7 +185,6 @@ public class ModiApiApiHelper {
 		ApiModIRisorsaRest apimodi = new ApiModIRisorsaRest();
 		if(p!= null) {
 
-			//TODO tipo funz azione
 
 			ApiModIPatternInterazioneRest interazione = new ApiModIPatternInterazioneRest();
 
@@ -179,11 +193,26 @@ public class ModiApiApiHelper {
 			} else if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
 				interazione.setPattern(ModIPatternInterazioneEnum.BLOCCANTE);
 			} else if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
+
+				ModIPatternInterazioneTipoEnum tipo = getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
+						ModIPatternInterazioneTipoEnum.PULL : ModIPatternInterazioneTipoEnum.PUSH;
+				
+				interazione.setTipo(tipo);
+
+				ModIPatternInterazioneFunzioneEnum funzione = getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
+						ModIPatternInterazioneFunzioneEnum.RICHIESTA: ModIPatternInterazioneFunzioneEnum.RISPOSTA;
+				
+				interazione.setFunzione(funzione);
+				
+				if(funzione.equals(ModIPatternInterazioneFunzioneEnum.RISPOSTA)) {
+					interazione.setRisorsaCorrelata(getRisorsaCorrelata(p, env));
+				}
+				
 				interazione.setPattern(ModIPatternInterazioneEnum.NON_BLOCCANTE);
 			}
-			
+
 			apimodi.setInterazione(interazione);
-			
+
 
 			if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
 				ApiModISicurezzaMessaggioOperazione op = new ApiModISicurezzaMessaggioOperazione();
@@ -194,239 +223,237 @@ public class ModiApiApiHelper {
 				ApiModISicurezzaMessaggioOperazioneRidefinito rid = new ApiModISicurezzaMessaggioOperazioneRidefinito();
 				rid.setStato(ModISicurezzaMessaggioOperazioneEnum.RIDEFINITO);
 
-				ApiModISicurezzaMessaggio conf = new ApiModISicurezzaMessaggio();
-
-				ModISicurezzaMessaggioRestHeaderEnum restHeader = null;
-				String restHeaderString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, true);
-
-				if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA)) {
-					restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID;
-				} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION)) {
-					restHeader = ModISicurezzaMessaggioRestHeaderEnum.BEARER;
-				}
-				conf.setRestHeader(restHeader);
-
-				ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
-
-				String sicurezzaMessaggioApplicabilitaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
-
-				if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
-					applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
-				} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
-					applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
-				} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
-					applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
-				} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO)) {
-					applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.CUSTOM;
-
-					ApiModISicurezzaMessaggioApplicabilitaCustom appCustom = new ApiModISicurezzaMessaggioApplicabilitaCustom();
-					appCustom.setApplicabilita(applicabilita);
-
-
-					String applicabilitaCustomRichiestaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE, true);
-					ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRichiesta = null;
-
-					if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO)) {
-						applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.ABILITATO;
-					} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO)) {
-						applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
-					} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO)) {
-						applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
-						appCustom.setRichiestaContentType(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID);
-					} 
-
-					appCustom.setRichiesta(applicabilitaCustomRichiesta);
-
-
-					String applicabilitaCustomRispostaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE, true);
-					ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRisposta = null;
-
-					if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO)) {
-						applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.ABILITATO;
-					} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO)) {
-						applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
-					} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO)) {
-						applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
-
-						appCustom.setRispostaContentType(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID);
-						appCustom.setRispostaCodice(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID);
-					} 
-
-					appCustom.setRisposta(applicabilitaCustomRisposta);
-
-					conf.setApplicabilitaCustom(appCustom);
-				}
-
-				conf.setApplicabilita(applicabilita);
-
-				conf.setDigestRichiesta(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, true));
-				conf.setInformazioniUtente(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, true));
-
-				rid.setConfigurazione(conf);
+				rid.setConfigurazione(getSicurezzaMessaggio(p, false));
 				apimodi.setSicurezzaMessaggio(rid);
 			}
 
 		}
 
-		return apimodi;
+		ret.setModi(apimodi);
 
 	}
 
-	public static ApiModI getApiModI(AccordoServizioParteComune as, ProfiloEnum profilo, ApiEnv env) {
+	private static ApiModIPatternInterazioneCorrelazioneRest getRisorsaCorrelata(Map<String, AbstractProperty<?>> p, ApiEnv env) throws Exception {
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
+		IDResource id = new IDResource();
+		id.setIdAccordo(idAccordoFromAccordo);
+		id.setNome(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory);
+		Resource resource = registryReader.getResourceAccordo(id);
+
+		ApiModIPatternInterazioneCorrelazioneRest risorsaCorrelata = new ApiModIPatternInterazioneCorrelazioneRest();
+		risorsaCorrelata.setApiNome(idAccordoFromAccordo.getNome());
+		risorsaCorrelata.setApiVersione(idAccordoFromAccordo.getVersione());
+		
+		HttpMethodEnum method = HttpMethodEnum.QUALSIASI;			
+		
+		if(resource.getMethod()!=null) {
+			switch(resource.getMethod()) {
+			case DELETE: method = HttpMethodEnum.DELETE;
+				break;
+			case GET: method = HttpMethodEnum.GET;
+				break;
+			case HEAD: method = HttpMethodEnum.HEAD;
+				break;
+			case LINK: method = HttpMethodEnum.LINK;
+				break;
+			case OPTIONS: method = HttpMethodEnum.OPTIONS;
+				break;
+			case PATCH: method = HttpMethodEnum.PATCH;
+				break;
+			case POST: method = HttpMethodEnum.POST;
+				break;
+			case PUT: method = HttpMethodEnum.PUT;
+				break;
+			case TRACE: method = HttpMethodEnum.TRACE;
+				break;
+			case UNLINK: method = HttpMethodEnum.UNLINK;
+				break;}
+		}
+		
+		risorsaCorrelata.setRisorsaHttpMethod(method);
+		risorsaCorrelata.setRisorsaPath(resource.getPath());
+		
+		return risorsaCorrelata;
+	}
+
+	private static ApiModIPatternInterazioneCorrelazioneSoap getAzioneCorrelata(Map<String, AbstractProperty<?>> p, ApiEnv env) throws Exception {
+
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
+
+		ApiModIPatternInterazioneCorrelazioneSoap risorsaCorrelata = new ApiModIPatternInterazioneCorrelazioneSoap();
+		risorsaCorrelata.setApiNome(idAccordoFromAccordo.getNome());
+		risorsaCorrelata.setApiVersione(idAccordoFromAccordo.getVersione());
+		
+		risorsaCorrelata.setServizio(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, true));
+		risorsaCorrelata.setAzione(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
+		
+		return risorsaCorrelata;
+	}
+
+
+	public static ApiModI getApiModI(AccordoServizioParteComune as, ProfiloEnum profilo, ApiEnv env) throws Exception {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Operazione utilizzabile solamente con Profilo 'ModI'");
 		}
 
 		Map<String, AbstractProperty<?>> p = new HashMap<>();
-		try{
-			IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
-			ConsoleConfiguration consoleConf = ApiApiHelper.getConsoleConfiguration(env, idAccordoFromAccordo);
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+		ConsoleConfiguration consoleConf = ApiApiHelper.getConsoleConfiguration(env, idAccordoFromAccordo);
 
-			ProtocolProperties prop = env.apcHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
-			ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, as.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		ProtocolProperties prop = env.apcHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, as.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
 
-			for(int i =0; i < prop.sizeProperties(); i++) {
-				p.put(prop.getIdProperty(i), prop.getProperty(i));
-			}
-
-
-			ApiModI apimodi = new ApiModI();
-			if(p!= null) {
-				ApiModISicurezzaCanale sicurezzaCanale = new ApiModISicurezzaCanale();
-
-				String sicurezzaCanalePatternString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE, true);
-
-				sicurezzaCanale.setPattern(sicurezzaCanalePatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01) ? ModISicurezzaCanaleEnum.AUTH01:ModISicurezzaCanaleEnum.AUTH02);
-				apimodi.setSicurezzaCanale(sicurezzaCanale);
-
-				ApiModISicurezzaMessaggio sicurezzaMessaggio = new ApiModISicurezzaMessaggio();
-
-				String sicurezzaMessaggioPatternString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, true);
-
-				ModISicurezzaMessaggioEnum profiloSicurezzaMessaggioPattern = null;
-				if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01)) {
-					profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.AUTH01;
-				} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02)) {
-					profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.AUTH02;
-				} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED)) {
-					profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.DISABILITATO;
-				} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301)) {
-					profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY01_AUTH01;
-				} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302)) {
-					profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY01_AUTH02;
-				}
-				sicurezzaMessaggio.setPattern(profiloSicurezzaMessaggioPattern);
-
-				if(!profiloSicurezzaMessaggioPattern.equals(ModISicurezzaMessaggioEnum.DISABILITATO)) {
-
-					boolean isSoap = as.getServiceBinding().equals(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP);
-
-					if(isSoap) {
-						ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
-
-						String sicurezzaMessaggioApplicabilitaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
-
-						if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
-							sicurezzaMessaggio.setSoapFirmaAllegati(true);
-						} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA_CON_ATTACHMENTS)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
-							sicurezzaMessaggio.setSoapFirmaAllegati(true);
-						} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
-							sicurezzaMessaggio.setSoapFirmaAllegati(true);
-						} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
-						} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
-						} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
-						}
-						sicurezzaMessaggio.setApplicabilita(applicabilita);
-					} else {
-
-						ModISicurezzaMessaggioRestHeaderEnum restHeader = null;
-						String restHeaderString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, true);
-
-						if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA)) {
-							restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID;
-						} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION)) {
-							restHeader = ModISicurezzaMessaggioRestHeaderEnum.BEARER;
-						}
-						sicurezzaMessaggio.setRestHeader(restHeader);
-
-						ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
-
-						String sicurezzaMessaggioApplicabilitaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
-
-						if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
-						} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
-						} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
-						} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO)) {
-							applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.CUSTOM;
-
-							ApiModISicurezzaMessaggioApplicabilitaCustom appCustom = new ApiModISicurezzaMessaggioApplicabilitaCustom();
-							appCustom.setApplicabilita(applicabilita);
-
-
-							String applicabilitaCustomRichiestaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE, true);
-							ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRichiesta = null;
-
-							if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO)) {
-								applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.ABILITATO;
-							} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO)) {
-								applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
-							} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO)) {
-								applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
-								appCustom.setRichiestaContentType(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID, true));
-							} 
-
-							appCustom.setRichiesta(applicabilitaCustomRichiesta);
-
-
-							String applicabilitaCustomRispostaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE, true);
-							ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRisposta = null;
-
-							if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO)) {
-								applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.ABILITATO;
-							} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO)) {
-								applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
-							} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO)) {
-								applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
-
-								appCustom.setRispostaContentType(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID, true));
-								appCustom.setRispostaCodice(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID, true));
-							} 
-
-							appCustom.setRisposta(applicabilitaCustomRisposta);
-
-							sicurezzaMessaggio.setApplicabilitaCustom(appCustom);
-						}
-
-						sicurezzaMessaggio.setApplicabilita(applicabilita);
-
-
-					}
-
-					sicurezzaMessaggio.setDigestRichiesta(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, true));
-					sicurezzaMessaggio.setInformazioniUtente(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, true));
-
-				}
-
-				apimodi.setSicurezzaMessaggio(sicurezzaMessaggio);
-
-			}
-
-			return apimodi;
-
-		}catch(Exception e){
-			throw FaultCode.ERRORE_INTERNO.toException(e.getMessage());
+		for(int i =0; i < prop.sizeProperties(); i++) {
+			p.put(prop.getIdProperty(i), prop.getProperty(i));
 		}
+
+
+		ApiModI apimodi = new ApiModI();
+		if(p!= null) {
+			ApiModISicurezzaCanale sicurezzaCanale = new ApiModISicurezzaCanale();
+
+			String sicurezzaCanalePatternString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE, true);
+
+			sicurezzaCanale.setPattern(sicurezzaCanalePatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01) ? ModISicurezzaCanaleEnum.AUTH01:ModISicurezzaCanaleEnum.AUTH02);
+			apimodi.setSicurezzaCanale(sicurezzaCanale);
+
+			apimodi.setSicurezzaMessaggio(getSicurezzaMessaggio(p, as.getServiceBinding().equals(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP)));
+
+		}
+
+		return apimodi;
 	}
 
+	private static ApiModISicurezzaMessaggio getSicurezzaMessaggio(Map<String, AbstractProperty<?>> p, boolean isSOAP) throws Exception {
+		ApiModISicurezzaMessaggio sicurezzaMessaggio = new ApiModISicurezzaMessaggio();
+
+		String sicurezzaMessaggioPatternString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, true);
+
+		ModISicurezzaMessaggioEnum profiloSicurezzaMessaggioPattern = null;
+		if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01)) {
+			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.AUTH01;
+		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02)) {
+			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.AUTH02;
+		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED)) {
+			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.DISABILITATO;
+		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301)) {
+			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY01_AUTH01;
+		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302)) {
+			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY01_AUTH02;
+		}
+		sicurezzaMessaggio.setPattern(profiloSicurezzaMessaggioPattern);
+
+		
+		if(!profiloSicurezzaMessaggioPattern.equals(ModISicurezzaMessaggioEnum.DISABILITATO)) {
+			if(isSOAP) {
+				populateSicurezzaMessaggioSOAP(p, sicurezzaMessaggio);
+			} else {
+				populateSicurezzaMessaggioREST(p, sicurezzaMessaggio);
+			}
+
+			sicurezzaMessaggio.setDigestRichiesta(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, true));
+			sicurezzaMessaggio.setInformazioniUtente(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, true));
+
+		} else {
+			sicurezzaMessaggio.setInformazioniUtente(false);
+			sicurezzaMessaggio.setDigestRichiesta(false);
+			sicurezzaMessaggio.setSoapFirmaAllegati(false);
+		}
+		
+		return sicurezzaMessaggio;
+
+	}
+
+	private static void populateSicurezzaMessaggioSOAP(Map<String, AbstractProperty<?>> p, ApiModISicurezzaMessaggio sicurezzaMessaggio) throws Exception {
+		ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
+
+		String sicurezzaMessaggioApplicabilitaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
+
+		if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
+			sicurezzaMessaggio.setSoapFirmaAllegati(true);
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA_CON_ATTACHMENTS)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
+			sicurezzaMessaggio.setSoapFirmaAllegati(true);
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
+			sicurezzaMessaggio.setSoapFirmaAllegati(true);
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
+		}
+		sicurezzaMessaggio.setApplicabilita(applicabilita);
+		
+	}
+
+	private static void populateSicurezzaMessaggioREST(Map<String, AbstractProperty<?>> p, ApiModISicurezzaMessaggio sicurezzaMessaggio) throws Exception {
+		ModISicurezzaMessaggioRestHeaderEnum restHeader = null;
+		String restHeaderString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, true);
+
+		if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA)) {
+			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID;
+		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION)) {
+			restHeader = ModISicurezzaMessaggioRestHeaderEnum.BEARER;
+		}
+		sicurezzaMessaggio.setRestHeader(restHeader);
+
+		ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
+
+		String sicurezzaMessaggioApplicabilitaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
+
+		if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO)) {
+			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.CUSTOM;
+
+			ApiModISicurezzaMessaggioApplicabilitaCustom appCustom = new ApiModISicurezzaMessaggioApplicabilitaCustom();
+			appCustom.setApplicabilita(applicabilita);
+			String applicabilitaCustomRichiestaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE, true);
+			ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRichiesta = null;
+
+			if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO)) {
+				applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.ABILITATO;
+			} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO)) {
+				applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
+			} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO)) {
+				applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
+				appCustom.setRichiestaContentType(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID, true));
+			} 
+
+			appCustom.setRichiesta(applicabilitaCustomRichiesta);
+
+
+			String applicabilitaCustomRispostaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE, true);
+			ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRisposta = null;
+
+			if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO)) {
+				applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.ABILITATO;
+			} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO)) {
+				applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
+			} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO)) {
+				applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
+
+				appCustom.setRispostaContentType(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID, true));
+				appCustom.setRispostaCodice(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID, true));
+			} 
+
+			appCustom.setRisposta(applicabilitaCustomRisposta);
+
+			sicurezzaMessaggio.setApplicabilitaCustom(appCustom);
+		}
+		
+		sicurezzaMessaggio.setApplicabilita(applicabilita);
+
+
+	}
 
 	private static Boolean getBooleanProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
 		AbstractProperty<?> prop = getProperty(p, key, required);
@@ -460,59 +487,102 @@ public class ModiApiApiHelper {
 		}
 	}
 
-	public static ProtocolProperties getProtocolProperties(ApiAzione body) {
-		return getSOAPModiProtocolProperties(body.getModi());
-	}
-	
-
-	public static ProtocolProperties getProtocolProperties(ApiRisorsa body) {
-		return getRESTModiProtocolProperties(body.getModi());
+	public static ProtocolProperties getProtocolProperties(ApiAzione body, AccordoServizioParteComune as, Operation op, ApiEnv env) throws Exception {
+		return getSOAPModiProtocolProperties(body.getModi(), as, op, env);
 	}
 
-	public static ProtocolProperties getRESTModiProtocolProperties(ApiModIRisorsaRest modi) {
+
+	public static ProtocolProperties getProtocolProperties(ApiRisorsa body, Resource res, ApiEnv env) throws Exception {
+		return getRESTModiProtocolProperties(body.getModi(), res, env);
+	}
+
+	public static ProtocolProperties getRESTModiProtocolProperties(ApiModIRisorsaRest modi, Resource res, ApiEnv env) throws Exception {
 
 		if(modi == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
 		}
+		
+		ModIProfiliInterazioneRESTConfig config = null;
+		try {
+			config = new ModIProfiliInterazioneRESTConfig(ModIProperties.getInstance(),  res.getMethod() != null ? res.getMethod().toString() : null, res);
+		} catch (ProtocolException e) {
+			throw FaultCode.ERRORE_INTERNO.toException(e.getMessage());
+		}
 
 		ProtocolProperties p = new ProtocolProperties();
 
-		String profiloSicurezzaMessaggio = null;
+		if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.BLOCCANTE)) {
+			if(!config.isCompatibileBloccante()) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
+			} 
 
-		switch(modi.getInterazione().getPattern()) {
-		case BLOCCANTE:  p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE);
-			break;
-		case CRUD: p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD);
-		break;
-		case NON_BLOCCANTE:  p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE);
-			break;
-		default:
-			break;
+			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE);
 
+		} else if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.NON_BLOCCANTE)) {
+
+			boolean isPull = modi.getInterazione().getTipo().equals(ModIPatternInterazioneTipoEnum.PULL);
+			boolean isRichiesta = modi.getInterazione().getFunzione().equals(ModIPatternInterazioneFunzioneEnum.RICHIESTA);
+			
+			if(isPull) {
+				if(!config.isCompatibileNonBloccantePull()) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
+				} 
+
+				p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL);
+				
+				if(isRichiesta) {
+					if(!config.isCompatibileNonBloccantePullRequest()) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
+					} 
+					
+					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
+				} else {
+					if(!config.isCompatibileNonBloccantePullResponse()) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
+					} 
+					
+					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
+				}
+			} else {
+				if(!config.isCompatibileNonBloccantePush()) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
+				} 
+				
+				p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH);
+				
+				
+				if(isRichiesta) {
+					if(!config.isCompatibileNonBloccantePushRequest()) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
+					} 
+					
+					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
+				} else {
+					if(!config.isCompatibileNonBloccantePushResponse()) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
+					} 
+					
+					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
+				}
+				
+			}
+
+			if(!isRichiesta) {
+				addRisorsaCorrelata(modi.getInterazione().getRisorsaCorrelata(), env, p, isPull);
+			}
+
+			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE);
+			
+		} else if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.CRUD)) {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD);
 		}
-		
-		//TODO interazione tipo funz azione
-		
+
+
 		if(modi.getSicurezzaMessaggio().getStato().equals(ModISicurezzaMessaggioOperazioneEnum.API)) {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
 		} else {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
 			ApiModISicurezzaMessaggioOperazioneRidefinito rid = ((ApiModISicurezzaMessaggioOperazioneRidefinito)modi.getSicurezzaMessaggio());
-
-			switch(rid.getConfigurazione().getPattern()) {
-			case AUTH01: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
-			break;
-			case AUTH02: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02;
-			break;
-			case DISABILITATO: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED;
-			break;
-			case INTEGRITY01_AUTH01: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301;
-			break;
-			case INTEGRITY01_AUTH02: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302;
-			break;}
-
-
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, profiloSicurezzaMessaggio);
 
 			if(!rid.getConfigurazione().getPattern().equals(ModISicurezzaMessaggioEnum.DISABILITATO)) {
 				getRESTProperties(rid.getConfigurazione(), p);
@@ -523,7 +593,73 @@ public class ModiApiApiHelper {
 	}
 
 
-	public static ProtocolProperties getSOAPModiProtocolProperties(ApiModIAzioneSoap modi) {
+	private static void addRisorsaCorrelata(ApiModIPatternInterazioneCorrelazioneRest corr, ApiEnv env, ProtocolProperties p, boolean isPull) throws Exception {
+
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromValues(corr.getApiNome(), env.idSoggetto.getTipo(),env.idSoggetto.getNome(),corr.getApiVersione());
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory);
+		AccordoServizioParteComune accordoServizioFull = env.apcCore.getAccordoServizioFull(idAccordoFromAccordo);
+		Resource found = null;
+		
+		HttpMethod method = null;
+		
+		switch(corr.getRisorsaHttpMethod()) {
+		case DELETE: method = HttpMethod.DELETE;
+			break;
+		case GET:method = HttpMethod.GET;
+			break;
+		case HEAD:method = HttpMethod.HEAD;
+			break;
+		case LINK:method = HttpMethod.LINK;
+			break;
+		case OPTIONS:method = HttpMethod.OPTIONS;
+			break;
+		case PATCH:method = HttpMethod.PATCH;
+			break;
+		case POST:method = HttpMethod.POST;
+			break;
+		case PUT:method = HttpMethod.PUT;
+			break;
+		case TRACE: method = HttpMethod.TRACE;
+			break;
+		case UNLINK:method = HttpMethod.UNLINK;
+			break;
+		default:
+			break;
+		}
+		for(Resource r: accordoServizioFull.getResourceList()) {
+			if(sameResource(r, method, corr.getRisorsaPath())) {
+				found = r;
+			}
+		}
+		
+		if(found == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Azione non trovata");				
+		}
+		
+		String nomeRisorsa = found.getNome();
+		checkAzione(idAccordoFromAccordo, null, nomeRisorsa, isPull, registryReader);
+
+		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, idAccordoFromAccordo.toString());
+		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, nomeRisorsa);
+		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED);
+
+	}
+
+
+	private static boolean sameResource(Resource r, HttpMethod method, String path) {
+		
+		boolean equalsMethod = false;
+		if(r.getMethod() == null) {
+			equalsMethod = method == null;
+		} else {
+			equalsMethod = r.getMethod().equals(method);
+		}
+		
+		return equalsMethod && r.getPath().equals(path);
+	}
+
+
+	public static ProtocolProperties getSOAPModiProtocolProperties(ApiModIAzioneSoap modi, AccordoServizioParteComune as, Operation op, ApiEnv env) throws Exception {
 
 		if(modi == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
@@ -531,30 +667,127 @@ public class ModiApiApiHelper {
 
 		ProtocolProperties p = new ProtocolProperties();
 
-		switch(modi.getInterazione().getPattern()) {
-		case BLOCCANTE:  p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE);
-			break;
-		case CRUD: p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD);
-		break;
-		case NON_BLOCCANTE:  p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE);
-			break;
-		default:
-			break;
+		if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.BLOCCANTE)) {
 
+			if(modi.getInterazione().getTipo()!= null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile specificare interazione.tipo con pattern " + modi.getInterazione().getPattern());
+			}
+
+			if(modi.getInterazione().getFunzione()!= null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile specificare interazione.funzione con pattern " + modi.getInterazione().getPattern());
+			}
+			
+			if(modi.getInterazione().getAzioneCorrelata()!=null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile specificare interazione.azione_correlata con funzione " + modi.getInterazione().getFunzione());
+			}
+
+			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE);
+
+		} else if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.NON_BLOCCANTE)) {
+			
+			boolean isPull = modi.getInterazione().getTipo().equals(ModIPatternInterazioneTipoEnum.PULL);
+			boolean isRichiesta = modi.getInterazione().getFunzione().equals(ModIPatternInterazioneFunzioneEnum.RICHIESTA);
+			
+			if(isPull) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL);
+				
+				if(isRichiesta) {
+					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
+				} else {
+					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
+				}
+			} else {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH);
+				
+				
+				if(isRichiesta) {
+					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
+				} else {
+					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
+				}
+			}
+
+			if(!isRichiesta) {
+				addAzioneCorrelata(modi.getInterazione().getAzioneCorrelata(), env, p, isPull);
+			}
+
+			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE);
+			
+		} else if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.CRUD)) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern interazione CRUD non permesso per servizi SOAP");
 		}
-		
-		//TODO interazione tipo funz azione
+
 
 		if(modi.getSicurezzaMessaggio().getStato().equals(ModISicurezzaMessaggioOperazioneEnum.API)) {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
 		} else {
 			ApiModISicurezzaMessaggioOperazioneRidefinito rid = ((ApiModISicurezzaMessaggioOperazioneRidefinito)modi.getSicurezzaMessaggio());
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
 			getSOAPProperties(rid.getConfigurazione(), p);
 
 		}
 
 		return p;
 	}
+
+	private static void addAzioneCorrelata(ApiModIPatternInterazioneCorrelazioneSoap azioneCorrelata, ApiEnv env,
+			ProtocolProperties p, boolean isPull) throws Exception {
+		
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromValues(azioneCorrelata.getApiNome(), env.idSoggetto.getTipo(),env.idSoggetto.getNome(),azioneCorrelata.getApiVersione());
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory);
+		
+		checkAzione(idAccordoFromAccordo, azioneCorrelata.getServizio(), azioneCorrelata.getAzione(), isPull, registryReader);
+
+		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, idAccordoFromAccordo.toString());
+		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, azioneCorrelata.getServizio());
+		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, azioneCorrelata.getAzione());
+
+	}
+
+
+	private static void checkAzione(IDAccordo idAccordoFromAccordo, String servizio, String azione, boolean isPull, IRegistryReader registryReader) throws Exception {
+		
+		AccordoServizioParteSpecifica asps = new AccordoServizioParteSpecifica();
+		asps.setTipoSoggettoErogatore(idAccordoFromAccordo.getSoggettoReferente().getTipo());
+		asps.setNomeSoggettoErogatore(idAccordoFromAccordo.getSoggettoReferente().getNome());
+		asps.setNome(idAccordoFromAccordo.getNome());
+		asps.setVersione(idAccordoFromAccordo.getVersione());
+		asps.setPortType(servizio);
+		AccordoServizioParteComune as = registryReader.getAccordoServizioParteComune(idAccordoFromAccordo,false);
+
+		AccordoServizioParteComuneSintetico aspc = new AccordoServizioParteComuneSintetico(as);
+
+		Map<String,String> azioni = AzioniUtils.getAzioniConLabel(asps, aspc, false, false, 
+		new ArrayList<>(), ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, org.slf4j.LoggerFactory.getLogger(ApiApiServiceImpl.class));
+		
+		
+		
+		if(azioni!=null && !azioni.isEmpty()) {
+			
+			for (String azioneId : azioni.keySet()) {
+				String tmpInterazione = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ID);
+				if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE.equals(tmpInterazione)) {
+					continue;
+				}
+				String tmpRuolo = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_ID);
+				if(isPull != ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL.equals(tmpRuolo)) {
+					continue;
+				}
+				String tmpRelazione = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_ID);
+				if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(tmpRelazione)) {
+					continue;
+				}
+				
+				if(azioneId.equals(azione)) {
+					return;
+				}
+			}
+		}
+
+		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Azione non correlabile");				
+		
+	}
+
 
 	public static ProtocolProperties getProtocolProperties(Api body) {
 		return getModiProtocolProperties(body.getModi(), body.getTipoInterfaccia().getProtocollo());
@@ -581,9 +814,22 @@ public class ModiApiApiHelper {
 		String chan = modi.getSicurezzaCanale().getPattern().equals(ModISicurezzaCanaleEnum.AUTH01) ? ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01 : ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02;
 		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE, chan);
 
+		if(protocollo.equals(TipoApiEnum.SOAP)) {
+			getSOAPProperties(modi.getSicurezzaMessaggio(), p);
+		} else if(protocollo.equals(TipoApiEnum.REST)) {
+			getRESTProperties(modi.getSicurezzaMessaggio(), p);
+		}
+
+
+		return p;
+	}
+
+
+	private static void getRESTProperties(ApiModISicurezzaMessaggio sicurezzaMessaggio, ProtocolProperties p) {
+	
 		String profiloSicurezzaMessaggio = null;
 
-		switch(modi.getSicurezzaMessaggio().getPattern()) {
+		switch(sicurezzaMessaggio.getPattern()) {
 		case AUTH01: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
 		break;
 		case AUTH02: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02;
@@ -597,20 +843,7 @@ public class ModiApiApiHelper {
 
 
 		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, profiloSicurezzaMessaggio);
-
-
-		if(protocollo.equals(TipoApiEnum.SOAP)) {
-			getSOAPProperties(modi.getSicurezzaMessaggio(), p);
-		} else if(protocollo.equals(TipoApiEnum.REST)) {
-			getRESTProperties(modi.getSicurezzaMessaggio(), p);
-		}
-
-
-		return p;
-	}
-
-
-	private static void getRESTProperties(ApiModISicurezzaMessaggio sicurezzaMessaggio, ProtocolProperties p) {
+		
 		boolean cornicePropValue = false;
 		boolean digestPropValue = false;
 
@@ -619,7 +852,7 @@ public class ModiApiApiHelper {
 				sicurezzaMessaggio.isSoapFirmaAllegati()) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("sicurezza_messaggio.soap_firma_allegati specificato con servizio di tipo REST");
 		}
-		
+
 		if(!sicurezzaMessaggio.getPattern().equals(ModISicurezzaMessaggioEnum.DISABILITATO)) {
 
 			if(sicurezzaMessaggio.getRestHeader() == null) {
@@ -708,7 +941,7 @@ public class ModiApiApiHelper {
 
 				applicabilitaDigest = true;
 				applicabilitaInfoUtente= true;
-				
+
 				if((sicurezzaMessaggio.isInformazioniUtente() != null && sicurezzaMessaggio.isInformazioniUtente())) {
 
 					if(integrity && applicabilitaInfoUtente) {
@@ -745,7 +978,7 @@ public class ModiApiApiHelper {
 				}
 
 				p.addProperty(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, applicabilita);
-				
+
 				if((sicurezzaMessaggio.isInformazioniUtente() != null && sicurezzaMessaggio.isInformazioniUtente())) {
 
 					if(integrity && applicabilitaInfoUtente) {
@@ -782,6 +1015,24 @@ public class ModiApiApiHelper {
 
 
 	private static void getSOAPProperties(ApiModISicurezzaMessaggio sicurezzaMessaggio, ProtocolProperties p) {
+		
+		String profiloSicurezzaMessaggio = null;
+
+		switch(sicurezzaMessaggio.getPattern()) {
+		case AUTH01: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
+		break;
+		case AUTH02: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02;
+		break;
+		case DISABILITATO: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED;
+		break;
+		case INTEGRITY01_AUTH01: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301;
+		break;
+		case INTEGRITY01_AUTH02: profiloSicurezzaMessaggio = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302;
+		break;}
+
+
+		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, profiloSicurezzaMessaggio);
+
 		boolean cornicePropValue = false;
 		boolean digestPropValue = false;
 
@@ -853,7 +1104,7 @@ public class ModiApiApiHelper {
 			p.addProperty(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID, "");
 			p.addProperty(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID, "");
 		}
-		
+
 		p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, digestPropValue));
 		p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, cornicePropValue));
 	}

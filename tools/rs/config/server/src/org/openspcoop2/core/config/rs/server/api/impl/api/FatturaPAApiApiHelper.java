@@ -22,6 +22,9 @@ package org.openspcoop2.core.config.rs.server.api.impl.api;
 import org.openspcoop2.core.config.rs.server.model.Api;
 import org.openspcoop2.core.config.rs.server.model.ApiAzione;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
 /**
@@ -33,18 +36,19 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
  */
 public class FatturaPAApiApiHelper {
 
-	public static ProtocolProperties getProtocolProperties(Api body) {
+	public static ProtocolProperties getProtocolProperties(Api body) throws Exception {
 		return null;
 	}
 
-	public static ProtocolProperties getProtocolProperties(ApiRisorsa body) {
+	public static ProtocolProperties getProtocolProperties(ApiRisorsa body) throws Exception {
 		return null;
 	}
 
-	public static ProtocolProperties getProtocolProperties(ApiAzione body) {
+	public static ProtocolProperties getProtocolProperties(ApiAzione body) throws Exception {
 		return null;
 	}
 
+	public static void populateApiRisorsaWithProtocolInfo(AccordoServizioParteComune as, Resource res, ApiEnv env, ApiRisorsa ret) throws Exception {}
 
-
+	public static void populateApiAzioneWithProtocolInfo(AccordoServizioParteComune as, Operation az, ApiEnv env, ApiAzione ret) throws Exception {}
 }

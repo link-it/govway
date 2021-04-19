@@ -44,8 +44,6 @@ import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaView;
 import org.openspcoop2.core.config.rs.server.model.ApiItem;
 import org.openspcoop2.core.config.rs.server.model.ApiModI;
-import org.openspcoop2.core.config.rs.server.model.ApiModIAzioneSoap;
-import org.openspcoop2.core.config.rs.server.model.ApiModIRisorsaRest;
 import org.openspcoop2.core.config.rs.server.model.ApiReferenteView;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
@@ -370,7 +368,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo);
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, as, newOp, env);
 	
 				if(protocolProperties != null) {
 					newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
@@ -455,7 +453,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo);
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, newRes, env);
 	
 				if(protocolProperties != null) {
 					newRes.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
@@ -587,10 +585,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
+
 			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 
 			if (as != null) {
 				StringBuilder inUsoMessage = new StringBuilder();
+				
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComune(as, env.userLogin, env.apcCore,
 						env.apcHelper, inUsoMessage, "\n");
 				if (inUsoMessage.length() > 0)
@@ -1331,10 +1331,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ApiAzione ret = ApiApiHelper.operazioneToApiAzione(az);
 
-			if(profilo!=null && (profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA))) {
-				ApiModIAzioneSoap modi = ModiApiApiHelper.getApiAzioneModI(as, az, profilo, env);
-				ret.setModi(modi);
-			}
+			ApiApiHelper.populateApiAzioneWithProtocolInfo(as, az, env, profilo, ret);
+
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 
@@ -1644,10 +1642,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ApiRisorsa ret = ApiApiHelper.risorsaRegistroToApi(res);
 
-			if(profilo!=null && (profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA))) {
-				ApiModIRisorsaRest modi = ModiApiApiHelper.getApiRisorsaModI(as, res, profilo, env);
-				ret.setModi(modi);
-			}
+			ApiApiHelper.populateApiRisorsaWithProtocolInfo(as, res, env, profilo, ret);
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1856,7 +1851,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo);
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, as, newOp, env);
 	
 				if(protocolProperties != null) {
 					newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.CHANGE, null));
@@ -2423,7 +2418,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo);
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, newRes, env);
 	
 				if(protocolProperties != null) {
 					newRes.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.CHANGE, null));

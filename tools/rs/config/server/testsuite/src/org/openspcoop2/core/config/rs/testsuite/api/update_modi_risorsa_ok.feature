@@ -1,17 +1,24 @@
-Feature: Creazione Risorsa Api ModI
+Feature: Update Api
 
 Background:
 
 * call read('classpath:crud_commons.feature')
 
 * def query_param_profilo_modi = {'profilo': 'ModI'}
-* def query_param_profilo_modipa = {'profilo': 'ModIPA'}
 
 * def setSicurezzaMessaggio =
 """
 function(apimodiazione, api) {
 apimodiazione.modi.sicurezza_messaggio.stato = 'ridefinito'
 apimodiazione.modi.sicurezza_messaggio.configurazione=api.modi.sicurezza_messaggio
+} 
+"""
+
+* def setModi =
+"""
+function(apimodiazione, api) {
+api.nome = apimodiazione.nome
+api.path = apimodiazione.path
 } 
 """
 
@@ -36,23 +43,28 @@ function(x,  nome, api_modi_risorsa_crud){
 }
 """
 
-@CreateRisorsa204_modi
-Scenario Outline: Api Create Risorsa 204 con profilo ModI <nome-test>
+
+@UpdateRisorsaModi204
+Scenario Outline: Api Update Interfaccia 204 modi risorsa <nome-test>
+
 	* def api_rest = read('api_modi_rest.json')
 	* eval randomize(api_rest, ["nome"])
-	* def api_modi_risorsa_crud = read('api_modi_rest_risorsa_non_bloccante_push_richiesta.json')
-	* def api_modi_risorsa = read('<nome-test>')
-	* eval randomize(api_modi_risorsa, ["nome", "path"])
-	* eval setRisorsaCorrelataApiNome(api_modi_risorsa, api_rest.nome, api_modi_risorsa_crud)
-	* call create ( { resourcePath: 'api', body: api_rest, key: api_rest.nome + '/' + api_rest.versione, query_params: query_param_profilo_modipa } )
-	* call create ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione + '/risorse', body: api_modi_risorsa_crud, key: api_rest.nome + '/' + api_rest.versione + '/risorse' + api_modi_risorsa_crud.nome, query_params: query_param_profilo_modi } )
-	
-    * call create ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione + '/risorse', body: api_modi_risorsa, key: api_rest.nome + '/' + api_rest.versione + '/risorse' + api_modi_risorsa.nome, query_params: query_param_profilo_modi } )
-	* call get ( { resourcePath: 'api', key: api_rest.nome + '/' + api_rest.versione  + '/risorse/' + api_modi_risorsa.nome})
-    * match response.modi == api_modi_risorsa.modi
-	* call delete ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione  + '/risorse/' + api_modi_risorsa.nome })
-	* call delete ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione })
+	* call create ( { resourcePath: 'api', body: api_rest, key: api_rest.nome + '/' + api_rest.versione, query_params: query_param_profilo_modi } )
+	* def api_modi_risorsa = read('api_modi_rest_risorsa_non_bloccante_push_richiesta.json');
+	* eval randomize(api_modi_risorsa, ["nome"])
+	* def api_modi_risorsa1 = read('api_modi_rest_risorsa_crud.json');
+	* eval randomize(api_modi_risorsa1, ["nome", "path"])
+    * call create ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione + '/risorse', body: api_modi_risorsa1, key: api_rest.nome + '/' + api_rest.versione + '/risorse' + api_modi_risorsa1.nome, query_params: query_param_profilo_modi } )
 
+	* def api_for_update = read('<nome-test>');
+	* eval setModi(api_modi_risorsa1, api_for_update)
+	* eval setRisorsaCorrelataApiNome(api_for_update, api_rest.nome, api_modi_risorsa)
+    * call create ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione + '/risorse', body: api_modi_risorsa, key: api_rest.nome + '/' + api_rest.versione + '/risorse' + api_modi_risorsa.nome, query_params: query_param_profilo_modi } )
+    * call put ( { body: api_for_update, resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione + '/risorse/' + api_for_update.nome, query_params: query_param_profilo_modi } )
+	* call get ( { resourcePath: 'api', key: api_rest.nome + '/' + api_rest.versione  + '/risorse/' + api_for_update.nome})
+    * match response.modi == api_for_update.modi
+	* call delete ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione  + '/risorse/' + api_for_update.nome })
+	* call delete ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione })
 
 Examples:
 | nome-test |
@@ -63,23 +75,23 @@ Examples:
 | api_modi_rest_risorsa_non_bloccante_push_risposta.json |
 #| api_modi_rest_risorsa_non_bloccante_pull_risposta.json |
 
-@CreateRisorsa204_modi
-Scenario Outline: Api Create Risorsa 204 con profilo ModI <nome-test>
+@UpdateRisorsaModi204_sicurezzaMessaggio
+Scenario Outline: Api Update Interfaccia 204 modi risorsa <nome-test>
+
 	* def api_rest = read('api_modi_rest.json')
 	* eval randomize(api_rest, ["nome"])
-	* call create ( { resourcePath: 'api', body: api_rest, key: api_rest.nome + '/' + api_rest.versione, query_params: query_param_profilo_modipa } )
+	* call create ( { resourcePath: 'api', body: api_rest, key: api_rest.nome + '/' + api_rest.versione, query_params: query_param_profilo_modi } )
 	* def api_modi_risorsa = read('api_modi_rest_risorsa_crud.json');
-	* eval randomize(api_modi_risorsa, ["nome", "path"])
+	* eval randomize(api_modi_risorsa, ["nome"])
+    * call create ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione + '/risorse', body: api_modi_risorsa, key: api_rest.nome + '/' + api_rest.versione + '/risorse' + api_modi_risorsa.nome, query_params: query_param_profilo_modi } )
 	* def api_for_sicurezza_messaggio = read('<nome-test>');
 	* eval setSicurezzaMessaggio(api_modi_risorsa, api_for_sicurezza_messaggio) 
-
-    * call create ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione + '/risorse', body: api_modi_risorsa, key: api_rest.nome + '/' + api_rest.versione + '/risorse' + api_modi_risorsa.nome, query_params: query_param_profilo_modi } )
+    * call put ( { body: api_modi_risorsa, resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione + '/risorse/' + api_modi_risorsa.nome, query_params: query_param_profilo_modi } )
 	* call get ( { resourcePath: 'api', key: api_rest.nome + '/' + api_rest.versione  + '/risorse/' + api_modi_risorsa.nome})
 	* def expected = getExpected(api_modi_risorsa.modi)
     * match response.modi == expected
 	* call delete ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione  + '/risorse/' + api_modi_risorsa.nome })
 	* call delete ( { resourcePath: 'api/' + api_rest.nome + '/' + api_rest.versione })
-
 
 Examples:
 | nome-test |

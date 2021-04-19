@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -77,10 +78,8 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
@@ -125,13 +124,10 @@ public class ApiApiHelper {
 
 	public static ConsoleConfiguration getConsoleConfiguration(ApiEnv env, IDAccordo idAccordoFromAccordo)
 			throws ProtocolException, DriverConfigurazioneException {
-		String protocolName = "modipa"; //TODO traduzione da profilo
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
 
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
-		IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
-
-		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(protocolFactory); 
-		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(protocolFactory);
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
 
 		ConsoleConfiguration consoleConf = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(ConsoleOperationType.ADD, env.apcHelper, 
 				registryReader, configRegistryReader, idAccordoFromAccordo);
@@ -140,20 +136,30 @@ public class ApiApiHelper {
 
 	public static ConsoleConfiguration getConsoleConfiguration(ApiEnv env, IDResource idResource, String method, String path)
 			throws ProtocolException, DriverConfigurazioneException {
-		String protocolName = "modipa"; //TODO traduzione da profilo
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
 
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
-		IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
-
-		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(protocolFactory); 
-		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(protocolFactory);
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
 
 		ConsoleConfiguration consoleConf = consoleDynamicConfiguration.getDynamicConfigResource(ConsoleOperationType.ADD, env.apcHelper, registryReader, configRegistryReader,
 				idResource, method, path);
 		return consoleConf;
 	}
 
-	public static ProtocolProperties getProtocolProperties(ApiAzione body, ProfiloEnum profilo) {
+	public static ConsoleConfiguration getConsoleConfiguration(ApiEnv env, IDPortTypeAzione idAccordoAzione)
+			throws ProtocolException, DriverConfigurazioneException {
+		
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		ConsoleConfiguration consoleConf = consoleDynamicConfiguration.getDynamicConfigOperation(ConsoleOperationType.ADD, env.apcHelper, registryReader, configRegistryReader,
+				idAccordoAzione);
+		return consoleConf;
+	}
+
+	public static ProtocolProperties getProtocolProperties(ApiAzione body, ProfiloEnum profilo, AccordoServizioParteComune as, Operation op, ApiEnv env) throws Exception {
 		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non conforme con il profilo '"+profilo+"' indicato");
 		}
@@ -167,7 +173,7 @@ public class ApiApiHelper {
 			return FatturaPAApiApiHelper.getProtocolProperties(body);
 		case MODI:
 		case MODIPA:
-			return ModiApiApiHelper.getProtocolProperties(body);
+			return ModiApiApiHelper.getProtocolProperties(body, as, op, env);
 		case SPCOOP:
 			return SPCoopApiApiHelper.getProtocolProperties(body);
 		}
@@ -175,7 +181,7 @@ public class ApiApiHelper {
 	}
 
 
-	public static ProtocolProperties getProtocolProperties(ApiRisorsa body, ProfiloEnum profilo) {
+	public static ProtocolProperties getProtocolProperties(ApiRisorsa body, ProfiloEnum profilo, Resource res, ApiEnv env) throws Exception {
 		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non conforme con il profilo '"+profilo+"' indicato");
 		}
@@ -189,7 +195,7 @@ public class ApiApiHelper {
 			return FatturaPAApiApiHelper.getProtocolProperties(body);
 		case MODI:
 		case MODIPA:
-			return ModiApiApiHelper.getProtocolProperties(body);
+			return ModiApiApiHelper.getProtocolProperties(body, res, env);
 		case SPCOOP:
 			return SPCoopApiApiHelper.getProtocolProperties(body);
 		}
@@ -197,7 +203,7 @@ public class ApiApiHelper {
 	}
 
 
-	public static ProtocolProperties getProtocolProperties(Api body, ProfiloEnum profilo) {
+	public static ProtocolProperties getProtocolProperties(Api body, ProfiloEnum profilo) throws Exception {
 
 
 		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
@@ -651,6 +657,50 @@ public class ApiApiHelper {
 		ret.setPath(r.getPath());
 
 		return ret;
+	}
+
+	public static void populateApiRisorsaWithProtocolInfo(AccordoServizioParteComune as, Resource res, ApiEnv env, ProfiloEnum profilo, ApiRisorsa ret) throws Exception {
+		
+		if(profilo != null) {
+			switch(profilo) {
+			case APIGATEWAY:
+				return ;// trasparente 
+			case EDELIVERY:
+				EDeliveryApiApiHelper.populateApiRisorsaWithProtocolInfo(as, res, env, ret);
+				break;
+			case FATTURAPA:
+				FatturaPAApiApiHelper.populateApiRisorsaWithProtocolInfo(as, res, env, ret);
+				break;
+			case MODI:
+			case MODIPA:
+				ModiApiApiHelper.populateApiRisorsaWithProtocolInfo(as, res,  env, ret);
+				break;
+			case SPCOOP:
+				SPCoopApiApiHelper.populateApiRisorsaWithProtocolInfo(as, res, env, ret);
+			}
+		}		
+	}
+
+	public static void populateApiAzioneWithProtocolInfo(AccordoServizioParteComune as, Operation az, ApiEnv env, ProfiloEnum profilo, ApiAzione ret) throws Exception {
+		
+		if(profilo != null) {
+			switch(profilo) {
+			case APIGATEWAY:
+				return ;// trasparente 
+			case EDELIVERY:
+				EDeliveryApiApiHelper.populateApiAzioneWithProtocolInfo(as, az, env, ret);
+				break;
+			case FATTURAPA:
+				FatturaPAApiApiHelper.populateApiAzioneWithProtocolInfo(as, az, env, ret);
+				break;
+			case MODI:
+			case MODIPA:
+				ModiApiApiHelper.populateApiAzioneWithProtocolInfo(as, az,  env, ret);
+				break;
+			case SPCOOP:
+				SPCoopApiApiHelper.populateApiAzioneWithProtocolInfo(as, az, env, ret);
+			}
+		}		
 	}
 
 	public static final ApiItem apiToItem(Api api, AccordoServizioParteComuneSintetico as, ApiEnv env) {
