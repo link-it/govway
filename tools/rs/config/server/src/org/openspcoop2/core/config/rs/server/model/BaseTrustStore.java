@@ -81,7 +81,7 @@ public class BaseTrustStore  {
   **/
   @JsonProperty("truststore_crl")
   @Valid
-  public String getTruststoreCrl() {
+ @Size(max=4000)  public String getTruststoreCrl() {
     return this.truststoreCrl;
   }
 

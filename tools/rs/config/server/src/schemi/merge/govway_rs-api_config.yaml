@@ -8272,7 +8272,7 @@ components:
           example: "pwd"
         truststore_crl:
           maxLength: 4000
-          type: "string'"
+          type: "string"
     BaseKeyStore:
       required:
       - "key_password"
@@ -10642,7 +10642,7 @@ components:
       - "RSA-SHA-512"
     ModISicurezzaMessaggioSoapFormaCanonicaXml:
       type: "string"
-      default: "exclusive-canonical-xml-1.0"
+      default: "exclusive-canonical-xml-10"
       enum:
       - "canonical-xml-10"
       - "canonical-xml-11"

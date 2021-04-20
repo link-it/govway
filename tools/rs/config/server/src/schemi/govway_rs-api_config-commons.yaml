@@ -626,7 +626,7 @@ components:
           maxLength: 255
           example: 'pwd'
         truststore_crl:
-          type: string'
+          type: string
           maxLength: 4000
     BaseKeyStore:
       type: object
@@ -2878,7 +2878,7 @@ components:
     ModISicurezzaMessaggioSoapFormaCanonicaXml:
       type: string
       enum: ['canonical-xml-10', 'canonical-xml-11', 'exclusive-canonical-xml-10']
-      default: exclusive-canonical-xml-1.0       
+      default: exclusive-canonical-xml-10       
     ModISicurezzaMessaggioSoapRiferimentoX509:
       type: string
       enum: ['binary-security-token', 'issuer-serial-security-token-reference', 'ski-key-identifier', 'thumbprint-key-identifier', 'x509-key-identifier']
