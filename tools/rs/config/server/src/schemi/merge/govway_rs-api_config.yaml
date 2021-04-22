@@ -9146,6 +9146,16 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        truststore_ssl:
+          type: "object"
+          discriminator:
+            propertyName: "modalita"
+            mapping:
+              default: "#/components/schemas/ModITrustStoreDefault"
+              ridefinito: "#/components/schemas/ModITrustStoreRidefinito"
+          oneOf:
+          - $ref: "#/components/schemas/ModITrustStoreDefault"
+          - $ref: "#/components/schemas/ModITrustStoreRidefinito"
         audience:
           maxLength: 4000
           type: "string"
@@ -9163,6 +9173,11 @@ components:
       properties:
         algoritmo:
           $ref: "#/components/schemas/ModISicurezzaMessaggioRestAlgoritmoFirma"
+        header_http_firmare:
+          type: "array"
+          items:
+            maxLength: 200
+            type: "string"
         riferimento_x509:
           $ref: "#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509Risposta"
         riferimento_x509_risposta:
@@ -9312,6 +9327,11 @@ components:
       properties:
         algoritmo:
           $ref: "#/components/schemas/ModISicurezzaMessaggioRestAlgoritmoFirma"
+        header_http_firmare:
+          type: "array"
+          items:
+            maxLength: 200
+            type: "string"
         riferimento_x509:
           maxItems: 3
           minItems: 1
@@ -9320,9 +9340,6 @@ components:
             $ref: "#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509"
         certificate_chain:
           type: "boolean"
-        url:
-          maxLength: 4000
-          type: "string"
         time_to_live:
           type: "integer"
           format: "int32"
@@ -9330,6 +9347,12 @@ components:
         audience:
           maxLength: 4000
           type: "string"
+        informazioni_utente_codice_ente:
+          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+        informazioni_utente_userid:
+          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+        informazioni_utente_indirizzo_ip:
+          $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
     FruizioneModIRestRisposta:
       required:
       - "sicurezza_messaggio"
@@ -9351,6 +9374,16 @@ components:
           items:
             $ref: "#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509"
         truststore:
+          type: "object"
+          discriminator:
+            propertyName: "modalita"
+            mapping:
+              default: "#/components/schemas/ModITrustStoreDefault"
+              ridefinito: "#/components/schemas/ModITrustStoreRidefinito"
+          oneOf:
+          - $ref: "#/components/schemas/ModITrustStoreDefault"
+          - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        truststore_ssl:
           type: "object"
           discriminator:
             propertyName: "modalita"

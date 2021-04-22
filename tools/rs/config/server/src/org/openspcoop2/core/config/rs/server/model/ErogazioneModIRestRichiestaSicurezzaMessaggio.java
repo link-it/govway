@@ -40,6 +40,13 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
   private OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststore truststore = null;
   
   @Schema(description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModITrustStoreDefault.class, name = "default"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModITrustStoreRidefinito.class, name = "ridefinito")  })
+  private OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl truststoreSsl = null;
+  
+  @Schema(description = "")
   private String audience = null;
  /**
    * Get riferimentoX509
@@ -87,6 +94,25 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
   }
 
  /**
+   * Get truststoreSsl
+   * @return truststoreSsl
+  **/
+  @JsonProperty("truststore_ssl")
+  @Valid
+  public OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl getTruststoreSsl() {
+    return this.truststoreSsl;
+  }
+
+  public void setTruststoreSsl(OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl truststoreSsl) {
+    this.truststoreSsl = truststoreSsl;
+  }
+
+  public ErogazioneModIRestRichiestaSicurezzaMessaggio truststoreSsl(OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl truststoreSsl) {
+    this.truststoreSsl = truststoreSsl;
+    return this;
+  }
+
+ /**
    * Get audience
    * @return audience
   **/
@@ -113,6 +139,7 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
     
     sb.append("    riferimentoX509: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    truststore: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.truststore)).append("\n");
+    sb.append("    truststoreSsl: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.truststoreSsl)).append("\n");
     sb.append("    audience: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.audience)).append("\n");
     sb.append("}");
     return sb.toString();

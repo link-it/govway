@@ -1520,6 +1520,16 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        truststore_ssl: # x5u
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModITrustStoreDefault'
+            - $ref: '#/components/schemas/ModITrustStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModITrustStoreDefault'
+              'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
         audience:
           type: string
           maxLength: 4000
@@ -1537,6 +1547,11 @@ components:
       properties:
         algoritmo:
           $ref: '#/components/schemas/ModISicurezzaMessaggioRestAlgoritmoFirma'
+        header_http_firmare:
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000 
         riferimento_x509:
           $ref: '#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509Risposta'
         riferimento_x509_risposta:
@@ -1692,6 +1707,11 @@ components:
       properties:
         algoritmo:
           $ref: '#/components/schemas/ModISicurezzaMessaggioRestAlgoritmoFirma'
+        header_http_firmare:
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000 
         riferimento_x509:
           type: array
           items:
@@ -1700,9 +1720,6 @@ components:
           maxItems: 3
         certificate_chain:
           type: boolean
-        url:
-          type: string
-          maxLength: 4000
         time_to_live:
           type: integer
           format: int32
@@ -1710,6 +1727,12 @@ components:
         audience:
           type: string
           maxLength: 4000
+        informazioni_utente_codice_ente:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+        informazioni_utente_userid:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+        informazioni_utente_indirizzo_ip:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
     FruizioneModIRestRisposta:
       type: object      
       required:
@@ -1731,6 +1754,16 @@ components:
           minItems: 1
           maxItems: 3
         truststore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModITrustStoreDefault'
+            - $ref: '#/components/schemas/ModITrustStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModITrustStoreDefault'
+              'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        truststore_ssl: #x5u
           type: object
           oneOf:
             - $ref: '#/components/schemas/ModITrustStoreDefault'

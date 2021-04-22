@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ModITrustStoreRidefinito extends ModITrustStore implements OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststore, OneOfErogazioneModISoapRichiestaSicurezzaMessaggioTruststore, OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststore, OneOfFruizioneModISoapRispostaSicurezzaMessaggioTruststore {
+public class ModITrustStoreRidefinito extends ModITrustStore implements OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststore, OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl, OneOfErogazioneModISoapRichiestaSicurezzaMessaggioTruststore, OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststore, OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststoreSsl, OneOfFruizioneModISoapRispostaSicurezzaMessaggioTruststore {
   
   @Schema(required = true, description = "")
   private StatoDefaultRidefinitoEnum modalita = null;

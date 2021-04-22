@@ -32,6 +32,9 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   @Schema(description = "")
   private ModISicurezzaMessaggioRestAlgoritmoFirma algoritmo = null;
   
+  @Schema(description = "")
+  private List<String> headerHttpFirmare = null;
+  
   @Schema(required = true, description = "")
   private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<ModISicurezzaMessaggioRestRiferimentoX509>();
   
@@ -39,13 +42,19 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   private Boolean certificateChain = null;
   
   @Schema(description = "")
-  private String url = null;
-  
-  @Schema(description = "")
   private Integer timeToLive = 300;
   
   @Schema(description = "")
   private String audience = null;
+  
+  @Schema(description = "")
+  private FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteCodiceEnte = null;
+  
+  @Schema(description = "")
+  private FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteUserid = null;
+  
+  @Schema(description = "")
+  private FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteIndirizzoIp = null;
  /**
    * Get algoritmo
    * @return algoritmo
@@ -62,6 +71,30 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
 
   public FruizioneModIRestRichiestaSicurezzaMessaggio algoritmo(ModISicurezzaMessaggioRestAlgoritmoFirma algoritmo) {
     this.algoritmo = algoritmo;
+    return this;
+  }
+
+ /**
+   * Get headerHttpFirmare
+   * @return headerHttpFirmare
+  **/
+  @JsonProperty("header_http_firmare")
+  @Valid
+  public List<String> getHeaderHttpFirmare() {
+    return this.headerHttpFirmare;
+  }
+
+  public void setHeaderHttpFirmare(List<String> headerHttpFirmare) {
+    this.headerHttpFirmare = headerHttpFirmare;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio headerHttpFirmare(List<String> headerHttpFirmare) {
+    this.headerHttpFirmare = headerHttpFirmare;
+    return this;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio addHeaderHttpFirmareItem(String headerHttpFirmareItem) {
+    this.headerHttpFirmare.add(headerHttpFirmareItem);
     return this;
   }
 
@@ -110,25 +143,6 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   }
 
  /**
-   * Get url
-   * @return url
-  **/
-  @JsonProperty("url")
-  @Valid
- @Size(max=4000)  public String getUrl() {
-    return this.url;
-  }
-
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-  public FruizioneModIRestRichiestaSicurezzaMessaggio url(String url) {
-    this.url = url;
-    return this;
-  }
-
- /**
    * Get timeToLive
    * @return timeToLive
   **/
@@ -166,6 +180,63 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
     return this;
   }
 
+ /**
+   * Get informazioniUtenteCodiceEnte
+   * @return informazioniUtenteCodiceEnte
+  **/
+  @JsonProperty("informazioni_utente_codice_ente")
+  @Valid
+  public FruizioneModISoapRichiestaInformazioneUtente getInformazioniUtenteCodiceEnte() {
+    return this.informazioniUtenteCodiceEnte;
+  }
+
+  public void setInformazioniUtenteCodiceEnte(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteCodiceEnte) {
+    this.informazioniUtenteCodiceEnte = informazioniUtenteCodiceEnte;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio informazioniUtenteCodiceEnte(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteCodiceEnte) {
+    this.informazioniUtenteCodiceEnte = informazioniUtenteCodiceEnte;
+    return this;
+  }
+
+ /**
+   * Get informazioniUtenteUserid
+   * @return informazioniUtenteUserid
+  **/
+  @JsonProperty("informazioni_utente_userid")
+  @Valid
+  public FruizioneModISoapRichiestaInformazioneUtente getInformazioniUtenteUserid() {
+    return this.informazioniUtenteUserid;
+  }
+
+  public void setInformazioniUtenteUserid(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteUserid) {
+    this.informazioniUtenteUserid = informazioniUtenteUserid;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio informazioniUtenteUserid(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteUserid) {
+    this.informazioniUtenteUserid = informazioniUtenteUserid;
+    return this;
+  }
+
+ /**
+   * Get informazioniUtenteIndirizzoIp
+   * @return informazioniUtenteIndirizzoIp
+  **/
+  @JsonProperty("informazioni_utente_indirizzo_ip")
+  @Valid
+  public FruizioneModISoapRichiestaInformazioneUtente getInformazioniUtenteIndirizzoIp() {
+    return this.informazioniUtenteIndirizzoIp;
+  }
+
+  public void setInformazioniUtenteIndirizzoIp(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteIndirizzoIp) {
+    this.informazioniUtenteIndirizzoIp = informazioniUtenteIndirizzoIp;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio informazioniUtenteIndirizzoIp(FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteIndirizzoIp) {
+    this.informazioniUtenteIndirizzoIp = informazioniUtenteIndirizzoIp;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -173,11 +244,14 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
     sb.append("class FruizioneModIRestRichiestaSicurezzaMessaggio {\n");
     
     sb.append("    algoritmo: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("    headerHttpFirmare: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.headerHttpFirmare)).append("\n");
     sb.append("    riferimentoX509: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    certificateChain: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.certificateChain)).append("\n");
-    sb.append("    url: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.url)).append("\n");
     sb.append("    timeToLive: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    audience: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.audience)).append("\n");
+    sb.append("    informazioniUtenteCodiceEnte: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteCodiceEnte)).append("\n");
+    sb.append("    informazioniUtenteUserid: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteUserid)).append("\n");
+    sb.append("    informazioniUtenteIndirizzoIp: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteIndirizzoIp)).append("\n");
     sb.append("}");
     return sb.toString();
   }

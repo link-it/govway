@@ -42,6 +42,13 @@ public class FruizioneModIRestRispostaSicurezzaMessaggio  {
   private OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststore truststore = null;
   
   @Schema(description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModITrustStoreDefault.class, name = "default"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModITrustStoreRidefinito.class, name = "ridefinito")  })
+  private OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststoreSsl truststoreSsl = null;
+  
+  @Schema(description = "")
   private Boolean verificaAudience = true;
  /**
    * Get riferimentoX509
@@ -107,6 +114,25 @@ public class FruizioneModIRestRispostaSicurezzaMessaggio  {
   }
 
  /**
+   * Get truststoreSsl
+   * @return truststoreSsl
+  **/
+  @JsonProperty("truststore_ssl")
+  @Valid
+  public OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststoreSsl getTruststoreSsl() {
+    return this.truststoreSsl;
+  }
+
+  public void setTruststoreSsl(OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststoreSsl truststoreSsl) {
+    this.truststoreSsl = truststoreSsl;
+  }
+
+  public FruizioneModIRestRispostaSicurezzaMessaggio truststoreSsl(OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststoreSsl truststoreSsl) {
+    this.truststoreSsl = truststoreSsl;
+    return this;
+  }
+
+ /**
    * Get verificaAudience
    * @return verificaAudience
   **/
@@ -134,6 +160,7 @@ public class FruizioneModIRestRispostaSicurezzaMessaggio  {
     sb.append("    riferimentoX509: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    riferimentoX509Risposta: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.riferimentoX509Risposta)).append("\n");
     sb.append("    truststore: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.truststore)).append("\n");
+    sb.append("    truststoreSsl: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.truststoreSsl)).append("\n");
     sb.append("    verificaAudience: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.verificaAudience)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -32,6 +32,9 @@ public class ErogazioneModIRestRispostaSicurezzaMessaggio  {
   private ModISicurezzaMessaggioRestAlgoritmoFirma algoritmo = null;
   
   @Schema(description = "")
+  private List<String> headerHttpFirmare = null;
+  
+  @Schema(description = "")
   private ModISicurezzaMessaggioRestRiferimentoX509Risposta riferimentoX509 = null;
   
   @Schema(description = "")
@@ -68,6 +71,30 @@ public class ErogazioneModIRestRispostaSicurezzaMessaggio  {
 
   public ErogazioneModIRestRispostaSicurezzaMessaggio algoritmo(ModISicurezzaMessaggioRestAlgoritmoFirma algoritmo) {
     this.algoritmo = algoritmo;
+    return this;
+  }
+
+ /**
+   * Get headerHttpFirmare
+   * @return headerHttpFirmare
+  **/
+  @JsonProperty("header_http_firmare")
+  @Valid
+  public List<String> getHeaderHttpFirmare() {
+    return this.headerHttpFirmare;
+  }
+
+  public void setHeaderHttpFirmare(List<String> headerHttpFirmare) {
+    this.headerHttpFirmare = headerHttpFirmare;
+  }
+
+  public ErogazioneModIRestRispostaSicurezzaMessaggio headerHttpFirmare(List<String> headerHttpFirmare) {
+    this.headerHttpFirmare = headerHttpFirmare;
+    return this;
+  }
+
+  public ErogazioneModIRestRispostaSicurezzaMessaggio addHeaderHttpFirmareItem(String headerHttpFirmareItem) {
+    this.headerHttpFirmare.add(headerHttpFirmareItem);
     return this;
   }
 
@@ -198,6 +225,7 @@ public class ErogazioneModIRestRispostaSicurezzaMessaggio  {
     sb.append("class ErogazioneModIRestRispostaSicurezzaMessaggio {\n");
     
     sb.append("    algoritmo: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.algoritmo)).append("\n");
+    sb.append("    headerHttpFirmare: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.headerHttpFirmare)).append("\n");
     sb.append("    riferimentoX509: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    riferimentoX509Risposta: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.riferimentoX509Risposta)).append("\n");
     sb.append("    certificateChain: ").append(ErogazioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.certificateChain)).append("\n");
