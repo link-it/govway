@@ -89,6 +89,7 @@
 						<id>check owasp</id>
 						<phase>${owasp}</phase>
 						<configuration>
+							<autoUpdate>${owasp.plugin.autoUpdate}</autoUpdate>
 							<failBuildOnAnyVulnerability>${owasp.plugin.failBuildOnAnyVulnerability}</failBuildOnAnyVulnerability>
 							<!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
 							<outputDirectory>${owasp.output.dir}</outputDirectory>
