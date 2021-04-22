@@ -954,7 +954,11 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			isPddCongestionataInformazioneIdentificataDalThread = (Boolean) oPddCongestionataThread;
 		}
 		
-		StatoTraffico statoControlloCongestione = gestoreControlloCongestione.getStatoControlloTraffico();
+		String idTransazione = null;
+		if(context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+			idTransazione = (String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
+		StatoTraffico statoControlloCongestione = gestoreControlloCongestione.getStatoControlloTraffico(idTransazione);
 		if(statoControlloCongestione.getPddCongestionata()!=isPddCongestionataInformazioneIdentificataDalThread){
 			//System.out.println("Rilevata differenza tra controllo del traffico attivo PREINHANDLER ["+controlloTrafficoAttivoThread+"] e stato attuale["+statoControlloCongestione.getControlloTraffico()+"]");
 			pddContext.removeObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA);

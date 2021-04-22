@@ -92,6 +92,21 @@ public class JWKSetStore implements Serializable {
 		}
 		
 	}
+	
+	public JWKSetStore(byte[] archive) throws SecurityException{
+
+		try{
+			if(archive==null){
+				throw new Exception("Store non indicato");
+			}
+			
+			this.jwkSetContent = new String(archive, Charset.UTF_8.getValue());
+			
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
+		
+	}
 
 	public String getJwkSetPath() {
 		return this.jwkSetPath;

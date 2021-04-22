@@ -11043,7 +11043,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					registro = new RegistroPlugins();
 				}
 				for (String nome : nomi) {
-					registro.addPlugin(this.getRegistroPlugin(nome));
+					registro.addPlugin(this.getRegistroPlugin(con, nome));
 				}
 			}
 			
@@ -11091,11 +11091,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	private RegistroPlugin getRegistroPlugin(String nome, boolean soloDati) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		Connection con = null;
-		PreparedStatement stm = null;
-		ResultSet rs = null;
 		
-		String sqlQuery = "";
-
 		if (this.atomica) {
 			try {
 				con = getConnectionFromDatasource("getRegistroPlugin");
@@ -11105,6 +11101,35 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		} else
 			con = this.globalConnection;
+
+			try {
+			
+			return getRegistroPlugin(con, nome, soloDati);
+			
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
+
+	public RegistroPlugin getRegistroPlugin(Connection conParam, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getRegistroPlugin(conParam, nome, false);
+	}
+	public RegistroPlugin getDatiRegistroPlugin(Connection conParam, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getRegistroPlugin(conParam, nome, true);
+	}
+	private RegistroPlugin getRegistroPlugin(Connection conParam, String nome, boolean soloDati) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		
+		String sqlQuery = "";
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
@@ -11118,7 +11143,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			 
-			stm = con.prepareStatement(sqlQuery);
+			stm = conParam.prepareStatement(sqlQuery);
 			stm.setString(1, nome);
 			rs = stm.executeQuery();
 			if(rs.next()) {
@@ -11161,7 +11186,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				 
-				stm = con.prepareStatement(sqlQuery);
+				stm = conParam.prepareStatement(sqlQuery);
 				stm.setLong(1, plugin.getId());
 				rs = stm.executeQuery();
 				while(rs.next()) {
@@ -11206,14 +11231,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(stm!=null) stm.close();
 			}catch (Exception e) {
 				//ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
 			}
 		}
 

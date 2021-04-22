@@ -479,9 +479,9 @@ public class PorteDelegateCore extends ControlStationCore {
 				for (IDServizio idServizio : list) {
 					
 					AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
-					Long idS = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
+					Long idS = aspsCore.getIdAccordoServizioParteSpecifica(con, idServizio);
 					Search s = new Search(true);
-					List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(idS, s);
+					List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(con, idS, s);
 					if(listFruitori!=null && !listFruitori.isEmpty()) {
 					
 						for (Fruitore fruitore : listFruitori) {
@@ -528,9 +528,9 @@ public class PorteDelegateCore extends ControlStationCore {
 				for (IDServizio idServizio : list) {
 					
 					AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
-					Long idS = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
+					Long idS = aspsCore.getIdAccordoServizioParteSpecifica(con, idServizio);
 					Search s = new Search(true);
-					List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(idS, s);
+					List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(con, idS, s);
 					if(listFruitori!=null && !listFruitori.isEmpty()) {
 					
 						for (Fruitore fruitore : listFruitori) {

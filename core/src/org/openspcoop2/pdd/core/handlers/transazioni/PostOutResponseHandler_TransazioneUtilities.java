@@ -708,7 +708,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							}
 						}
 						if(gruppi.size()>0){
-							CredenzialeMittente credGruppi = GestoreAutenticazione.convertGruppiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, gruppi, null);
+							CredenzialeMittente credGruppi = GestoreAutenticazione.convertGruppiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, gruppi, 
+									null, "PostOutResponse.gruppi");
 							if(credGruppi!=null) {
 								transactionDTO.setGruppi(credGruppi.getId()+"");
 							}
@@ -723,7 +724,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					if(transactionDTO.getUriAccordoServizio()==null){
 						transactionDTO.setUriAccordoServizio(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
 					}
-					CredenzialeMittente credAPI = GestoreAutenticazione.convertAPIToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, transactionDTO.getUriAccordoServizio(), null);
+					CredenzialeMittente credAPI = GestoreAutenticazione.convertAPIToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, transactionDTO.getUriAccordoServizio(), 
+							null, "PostOutResponse.api");
 					if(credAPI!=null) {
 						transactionDTO.setUriApi(credAPI.getId()+"");
 					}
@@ -1054,7 +1056,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			if(transactionDTO.getSocketClientAddress()!=null || transactionDTO.getTransportClientAddress()!=null) {
 				try {
 					CredenzialeMittente credClientAddress =GestoreAutenticazione.convertClientCredentialToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, 
-							transactionDTO.getSocketClientAddress(), transactionDTO.getTransportClientAddress(), null); 
+							transactionDTO.getSocketClientAddress(), transactionDTO.getTransportClientAddress(), 
+							null, "PostOutResponse.clientAddress"); 
 					if(credClientAddress!=null) {
 						transactionDTO.setClientAddress(credClientAddress.getId()+"");
 					}
@@ -1132,7 +1135,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 			if(eventiGestione.size()>0){
 				try {
-					CredenzialeMittente credEventi = GestoreAutenticazione.convertEventiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, eventiGestione, null);
+					CredenzialeMittente credEventi = GestoreAutenticazione.convertEventiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, eventiGestione, 
+							null, "PostOutResponse.eventi");
 					if(credEventi!=null) {
 						transactionDTO.setEventiGestione(credEventi.getId()+"");
 					}

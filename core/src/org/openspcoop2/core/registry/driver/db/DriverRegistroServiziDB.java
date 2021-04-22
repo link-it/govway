@@ -4093,7 +4093,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			// Check soggetto referente se esiste.
 			if(idAccordo.getSoggettoReferente()!=null){
-				if(this.existsSoggetto(idAccordo.getSoggettoReferente())==false){
+				if(this.existsSoggetto(connection, idAccordo.getSoggettoReferente())==false){
 					return false;
 				}
 			}
@@ -11310,18 +11310,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	public boolean existsSoggetto(IDSoggetto idSoggetto) throws DriverRegistroServiziException {
 		boolean exist = false;
 		Connection con = null;
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-
-		if (idSoggetto == null)
-			throw new DriverRegistroServiziException("Parametro non valido");
-
-		String nome_soggetto = idSoggetto.getNome();
-		String tipo_soggetto = idSoggetto.getTipo();
-		if (nome_soggetto == null || nome_soggetto.equals(""))
-			throw new DriverRegistroServiziException("Parametro Nome non valido");
-		if (tipo_soggetto == null || tipo_soggetto.equals(""))
-			throw new DriverRegistroServiziException("Parametro Tipo non valido");
+		
 		if (this.atomica) {
 			try {
 				con = this.getConnectionFromDatasource("existsSoggetto(idSoggetto)");
@@ -11335,6 +11324,39 @@ IDriverWS ,IMonitoraggioRisorsa{
 			con = this.globalConnection;
 
 		try {
+			exist = existsSoggetto(con, idSoggetto);
+
+		} catch (Exception e) {
+			exist = false;
+			this.log.error("Errore durante verifica esistenza soggetto :", e);
+		} finally {
+
+			if (this.atomica) {
+				try {
+					con.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+
+		return exist;
+	}
+	public boolean existsSoggetto(Connection conParam, IDSoggetto idSoggetto) throws DriverRegistroServiziException {
+		boolean exist = false;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if (idSoggetto == null)
+			throw new DriverRegistroServiziException("Parametro non valido");
+
+		String nome_soggetto = idSoggetto.getNome();
+		String tipo_soggetto = idSoggetto.getTipo();
+		if (nome_soggetto == null || nome_soggetto.equals(""))
+			throw new DriverRegistroServiziException("Parametro Nome non valido");
+		if (tipo_soggetto == null || tipo_soggetto.equals(""))
+			throw new DriverRegistroServiziException("Parametro Tipo non valido");
+
+		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 			sqlQueryObject.addSelectField("*");
@@ -11342,7 +11364,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addWhereCondition("tipo_soggetto = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = con.prepareStatement(sqlQuery);
+			stm = conParam.prepareStatement(sqlQuery);
 			stm.setString(1, nome_soggetto);
 			stm.setString(2, tipo_soggetto);
 			rs = stm.executeQuery();
@@ -11364,12 +11386,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 				//ignore
 			}
 
-			if (this.atomica) {
-				try {
-					con.close();
-				} catch (Exception e) {
-				}
-			}
 		}
 
 		return exist;

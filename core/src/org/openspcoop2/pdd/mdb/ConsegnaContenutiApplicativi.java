@@ -2179,9 +2179,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					// gestione connessione connettore
 					if(existsModuloInAttesaRispostaApplicativa) {
 						if(localForward){
-							RepositoryConnettori.salvaConnettorePD(idMessaggioConsegna, connectorSender);
+							RepositoryConnettori.salvaConnettorePD(
+									//idMessaggioConsegna,
+									idTransazione,
+									connectorSender);
 						}else{
-							RepositoryConnettori.salvaConnettorePA(idMessaggioConsegna, connectorSender);
+							RepositoryConnettori.salvaConnettorePA(
+									//idMessaggioConsegna, 
+									idTransazione,
+									connectorSender);
 						}
 					}else{
 						// Sono nella casistica di messaggio preso in carico.

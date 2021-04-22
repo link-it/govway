@@ -21,7 +21,6 @@ package org.openspcoop2.security.message.utils;
 
 import java.io.File;
 import java.net.URI;
-import java.security.KeyStore;
 import java.util.Properties;
 
 import org.openspcoop2.security.keystore.MerlinKeystore;
@@ -32,6 +31,7 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;

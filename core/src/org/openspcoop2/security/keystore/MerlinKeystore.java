@@ -20,7 +20,6 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -47,7 +46,8 @@ public class MerlinKeystore implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private transient KeyStore ks = null;
+	private transient org.openspcoop2.utils.certificate.KeyStore ks = null;
+	
 	private byte[] ksBytes;
 	private String tipoStore = null;
 	private String pathStore = null;
@@ -153,9 +153,25 @@ public class MerlinKeystore implements Serializable {
 		
 	}
 	
+	public MerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore) throws SecurityException{
+		_initMerlinKeystore(bytesKeystore,tipoStore,passwordStore,null, false);
+	}
+	public MerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
+		_initMerlinKeystore(bytesKeystore,tipoStore,passwordStore,passwordPrivateKey, true);
+	}
+	public void _initMerlinKeystore(byte[]bytesKeystore,String tipoStore,String passwordStore,String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
+			
+		this.ksBytes = bytesKeystore;
+		this.tipoStore = tipoStore;
+		this.passwordStore = passwordStore;
+		
+		init(passwordPrivateKey, privatePasswordRequired);
+		
+	}
+	
 	private void init(String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException{
 		try{
-			if(this.pathStore==null){
+			if(this.ksBytes==null && this.pathStore==null){
 				throw new Exception("Path per lo Store non indicato");
 			}
 			if(this.tipoStore==null){
@@ -165,33 +181,40 @@ public class MerlinKeystore implements Serializable {
 				throw new Exception("Password dello Store non indicata");
 			}
 			
-			InputStream isStore = null;
-			try{
-				File fPathStore = new File(this.pathStore);
-				if(fPathStore.exists()){
-					isStore = new FileInputStream(fPathStore);
-				}else{
-					isStore = MerlinKeystore.class.getResourceAsStream(this.pathStore);
-					if(isStore==null){
-						isStore = MerlinKeystore.class.getResourceAsStream("/"+this.pathStore);
-					}
-					if(isStore==null){
-						throw new Exception("Keystore ["+this.pathStore+"] not found");
-					}
-				}
-				this.ksBytes = Utilities.getAsByteArray(isStore);
-			}finally{
+			if(this.ksBytes==null) {
+				InputStream isStore = null;
 				try{
-					if(isStore!=null){
-						isStore.close();
+					File fPathStore = new File(this.pathStore);
+					if(fPathStore.exists()){
+						isStore = new FileInputStream(fPathStore);
+					}else{
+						isStore = MerlinKeystore.class.getResourceAsStream(this.pathStore);
+						if(isStore==null){
+							isStore = MerlinKeystore.class.getResourceAsStream("/"+this.pathStore);
+						}
+						if(isStore==null){
+							throw new Exception("Keystore ["+this.pathStore+"] not found");
+						}
 					}
-				}catch(Exception eClose){}
+					this.ksBytes = Utilities.getAsByteArray(isStore);
+				}finally{
+					try{
+						if(isStore!=null){
+							isStore.close();
+						}
+					}catch(Exception eClose){}
+				}
 			}
 
 			this.initKS();
 			
 			if(passwordPrivateKey==null && privatePasswordRequired){
-				throw new Exception("Password chiave privata non indicata per lo Store ["+this.pathStore+"] ");
+				if(this.pathStore!=null) {
+					throw new Exception("Password chiave privata non indicata per lo Store ["+this.pathStore+"] ");
+				}
+				else {
+					throw new Exception("Password chiave privata non indicata per lo Store ");
+				}
 			}
 			this.passwordPrivateKey = passwordPrivateKey;
 			
@@ -207,10 +230,9 @@ public class MerlinKeystore implements Serializable {
 	}
 	private synchronized void initKS() throws SecurityException{
 		if(this.ks==null) {
-			try(ByteArrayInputStream bin = new ByteArrayInputStream(this.ksBytes)){
-				this.ks = KeyStore.getInstance(this.tipoStore);
-				this.ks.load(bin, this.passwordStore.toCharArray());
-				FixTrustAnchorsNotEmpty.addCertificate(this.ks);
+			try{
+				this.ks = new org.openspcoop2.utils.certificate.KeyStore(this.ksBytes, this.tipoStore, this.passwordStore);
+				FixTrustAnchorsNotEmpty.addCertificate(this.ks.getKeystore());
 			}
 			catch(Exception e){
 				throw new SecurityException(e.getMessage(),e);
@@ -230,8 +252,8 @@ public class MerlinKeystore implements Serializable {
 			throw new SecurityException("Password della chiave non fornita");
 		}
 		this.checkInit(); // per ripristino da Serializable
-		try{
-			return this.ks.getKey(alias, password.toCharArray());
+		try {
+			return this.ks.getPrivateKey(alias, password);
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}
@@ -249,7 +271,7 @@ public class MerlinKeystore implements Serializable {
 		}
 	}
 
-	public KeyStore getKeyStore() throws SecurityException {
+	public org.openspcoop2.utils.certificate.KeyStore getKeyStore() throws SecurityException {
 		this.checkInit(); // per ripristino da Serializable
 		try{
 			return this.ks;

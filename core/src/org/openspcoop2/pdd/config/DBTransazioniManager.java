@@ -121,9 +121,11 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 	}
 	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws Exception {
 		if(this.dbManagerRuntimePdD!=null) {
+			//System.out.println("id ["+idTransazione+"] prendo da dbManager");
 			return this.dbManagerRuntimePdD.getResource(idPDD, modulo, idTransazione, logError);
 		}
 		else {
+			//System.out.println("id ["+idTransazione+"] negozio");
 			try {
 				StringBuilder bf = new StringBuilder();
 				if(idPDD!=null) {

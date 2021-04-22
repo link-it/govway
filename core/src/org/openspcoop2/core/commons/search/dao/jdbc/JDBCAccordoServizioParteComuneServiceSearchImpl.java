@@ -105,6 +105,9 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override
@@ -663,7 +666,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 			Long.class, searchParams_accordoServizioParteComune_soggetto);
 		
 		if(id_accordoServizioParteComune_soggetto!=null && id_accordoServizioParteComune_soggetto>0){
-			Soggetto soggetto = ((IDBSoggettoServiceSearch)this.getServiceManager().getSoggettoServiceSearch()).get(id_accordoServizioParteComune_soggetto);
+			Soggetto soggetto = ((IDBSoggettoServiceSearch)this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch()).get(id_accordoServizioParteComune_soggetto);
 			IdSoggetto idReferente = new IdSoggetto();
 			idReferente.setTipo(soggetto.getTipoSoggetto());
 			idReferente.setNome(soggetto.getNomeSoggetto());
@@ -787,7 +790,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 					
 					org.openspcoop2.core.commons.search.IdGruppo id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo = null;
 					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo = ((JDBCGruppoServiceSearch)(this.getServiceManager().getGruppoServiceSearch())).findId(idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo, false);
+						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo = ((JDBCGruppoServiceSearch)(this.getServiceManager(connection, jdbcProperties, log).getGruppoServiceSearch())).findId(idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo, false);
 					}else{
 						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_gruppo = new org.openspcoop2.core.commons.search.IdGruppo();
 					}
@@ -810,7 +813,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 					
 					org.openspcoop2.core.commons.search.IdAccordoServizioParteComune id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = null;
 					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = ((JDBCAccordoServizioParteComuneServiceSearch)(this.getServiceManager().getAccordoServizioParteComuneServiceSearch())).findId(idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune, false);
+						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = ((JDBCAccordoServizioParteComuneServiceSearch)(this.getServiceManager(connection, jdbcProperties, log).getAccordoServizioParteComuneServiceSearch())).findId(idFK_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune, false);
 					}else{
 						id_accordoServizioParteComune_accordoServizioParteComuneGruppo_accordoServizioParteComune = new org.openspcoop2.core.commons.search.IdAccordoServizioParteComune();
 					}
@@ -1210,7 +1213,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 			Long idSoggettoFK = (Long) listaFieldId_accordoServizioParteComune.get(2);
 			id_accordoServizioParteComune.setServiceBinding((String)listaFieldId_accordoServizioParteComune.get(3));
 			id_accordoServizioParteComune.
-				setIdSoggetto(((IDBSoggettoServiceSearch)this.getServiceManager().
+				setIdSoggetto(((IDBSoggettoServiceSearch)this.getServiceManager(connection, jdbcProperties, log).
 						getSoggettoServiceSearch()).findId(idSoggettoFK, true));
 		}
 		
@@ -1262,7 +1265,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 			sqlQueryObjectGet.addWhereCondition("( (id_referente is null) OR (id_referente<=0) )");
 		}else{
 			sqlQueryObjectGet.addWhereCondition("id_referente=?");
-			soggetto = this.getServiceManager().getSoggettoServiceSearch().get(id.getIdSoggetto());
+			soggetto = this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch().get(id.getIdSoggetto());
 		}
 		
 

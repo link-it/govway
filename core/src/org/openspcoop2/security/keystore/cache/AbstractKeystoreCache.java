@@ -21,9 +21,12 @@
 package org.openspcoop2.security.keystore.cache;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
@@ -78,11 +81,35 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 			return estraiKeystore(o);
 		}
 	}
+	
+	public T getKeystore(byte[] keystore) throws SecurityException{
+		String keyParam = buildKeyCacheFromBytes(keystore);
+		return getKeystore(keyParam);
+	}
+	public T getKeystoreAndCreateIfNotExists(byte[] keystore,Object ... params) throws SecurityException{
+		String keyParam = buildKeyCacheFromBytes(keystore);
+		List<Object> lArgs = new ArrayList<Object>();
+		lArgs.add(keystore);
+		if(params!=null && params.length>0) {
+			for (Object param : params) {
+				lArgs.add(param);
+			}
+		}
+		return getKeystoreAndCreateIfNotExists(keyParam, lArgs.toArray());
+	}
+	
 	public abstract T createKeystore(String key,Object ... params) throws SecurityException;
 	public abstract String getPrefixKey();
 	
 	
 	/* UTILITY */
+	
+	private String buildKeyCacheFromBytes(byte[] keystore) throws SecurityException {
+		if(keystore==null) {
+			throw new SecurityException("Keystore undefined");
+		}
+		return DigestUtils.sha1Hex(keystore);
+	}
 	
 	@SuppressWarnings("unchecked")
 	private KeystoreCacheEntry<T> getObjectFromCache(String keyParam) {

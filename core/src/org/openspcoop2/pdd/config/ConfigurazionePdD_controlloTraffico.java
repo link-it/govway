@@ -160,10 +160,10 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 					
 					ConfigurazionePolicy confPolicy = null;
 					try {
-						confPolicy = this.getConfigurazionePolicy(connectionPdD, idActivePolicy.getIdPolicy());
+						confPolicy = this.getConfigurazionePolicy(cr, idActivePolicy.getIdPolicy());
 					}
 					catch(DriverConfigurazioneNotFound e) {
-						this.log.error("Configurazione Policy '' non esistente ? ",e);
+						this.log.error("Configurazione Policy '"+idActivePolicy.getIdPolicy()+"' non esistente ? ",e);
 					}
 					
 					ElencoIdPolicyAttive elencoIdPolicy = null;
@@ -290,10 +290,31 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 		ConfigurazionePdDConnectionResource cr = null;
 		try{
 			cr = this.getConnection(connectionPdD, "ControlloTraffico.getConfigurazionePolicy_"+id);
+			return getConfigurazionePolicy(cr, id);
+		}
+		catch(DriverConfigurazioneNotFound e){
+			throw e;
+		}
+		catch(DriverConfigurazioneException e){
+			throw e;
+		}
+		catch(Exception e){
+			String errorMsg = "Errore durante la lettura della ConfigurazionePolicy del Controllo del Traffico: "+e.getMessage();
+			this.log.error(errorMsg,e);
+			throw new DriverConfigurazioneException(errorMsg,e);
+		}
+		finally {
+			this.releaseConnection(cr);
+		}
+
+	}
+	private ConfigurazionePolicy getConfigurazionePolicy(ConfigurazionePdDConnectionResource crParam, String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		try{
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
 					(org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(this.log).
 					getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
-							cr.connectionDB,this.smp,this.log);
+							crParam.connectionDB,this.smp,this.log);
 			
 			IConfigurazionePolicyServiceSearch search =  sm.getConfigurazionePolicyServiceSearch();
 			IdPolicy policyId = new IdPolicy();
@@ -310,9 +331,6 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 			String errorMsg = "Errore durante la lettura della ConfigurazionePolicy del Controllo del Traffico: "+e.getMessage();
 			this.log.error(errorMsg,e);
 			throw new DriverConfigurazioneException(errorMsg,e);
-		}
-		finally {
-			this.releaseConnection(cr);
 		}
 
 	}

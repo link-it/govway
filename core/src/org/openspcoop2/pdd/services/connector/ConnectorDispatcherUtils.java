@@ -461,6 +461,9 @@ public class ConnectorDispatcherUtils {
 				// rilancio eccezione originale
 				throw new ConnectorException(e.getMessage(),e);
 			}
+		}finally {
+			res.flush(false);
+			res.close(false);
 		}
 		
 		return errorInfo;
@@ -558,6 +561,9 @@ public class ConnectorDispatcherUtils {
 				// rilancio eccezione originale
 				throw new ConnectorException(error.getMessage(),error);
 			}
+		}finally {
+			res.flush(false);
+			res.close(false);
 		}
 		
 	}

@@ -20,9 +20,7 @@
 
 package org.openspcoop2.protocol.modipa.builder;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -34,6 +32,7 @@ import java.util.Map;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.parser.Claims;
@@ -46,7 +45,6 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
-import org.openspcoop2.security.keystore.FixTrustAnchorsNotEmpty;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -602,7 +600,7 @@ public class ModIImbustamentoRest {
 		}
 		
 		String jsonPayload = jsonUtils.toString(payloadToken);
-		OpenSPCoop2Message payload = msg.getFactory().createMessage(MessageType.JSON, msg.getMessageRole(), 
+		OpenSPCoop2Message payload = msg.getFactory().createMessage(MessageType.JSON, MessageRole.NONE, 
 				HttpConstants.CONTENT_TYPE_JSON, jsonPayload.getBytes(), null, null).getMessage_throwParseException();
 		
 		
@@ -660,7 +658,7 @@ public class ModIImbustamentoRest {
 //		}
 //		else {
 		SignatureBean signatureBean = new SignatureBean();
-		KeyStore ks = null;
+		org.openspcoop2.utils.certificate.KeyStore ks = null;
 		if(keystoreConfig.getSecurityMessageKeystorePath()!=null) {
 			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
 					keystoreConfig.getSecurityMessageKeystorePassword());
@@ -670,11 +668,12 @@ public class ModIImbustamentoRest {
 			ks = merlinKs.getKeyStore();
 		}
 		else {
-			ks = KeyStore.getInstance(keystoreConfig.getSecurityMessageKeystoreType());
-			try(ByteArrayInputStream bin = new ByteArrayInputStream(keystoreConfig.getSecurityMessageKeystoreArchive())){
-				ks.load(bin, keystoreConfig.getSecurityMessageKeystorePassword().toCharArray());
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreConfig.getSecurityMessageKeystoreArchive(), keystoreConfig.getSecurityMessageKeystoreType(), 
+					keystoreConfig.getSecurityMessageKeystorePassword());
+			if(merlinKs==null) {
+				throw new Exception("Accesso al keystore non riuscito");
 			}
-			FixTrustAnchorsNotEmpty.addCertificate(ks);
+			ks = merlinKs.getKeyStore();
 		}
 		signatureBean.setKeystore(ks);
 		signatureBean.setUser(keystoreConfig.getSecurityMessageKeyAlias());

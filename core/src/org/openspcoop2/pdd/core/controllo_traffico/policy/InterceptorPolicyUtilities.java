@@ -234,6 +234,8 @@ public class InterceptorPolicyUtilities {
 					AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
 					datiTransazione.setIdAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 				}catch(Exception e) {
+					//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
+					//e.printStackTrace(System.out);
 					context.getLogCore().debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
 				}				
 			}
@@ -248,6 +250,8 @@ public class InterceptorPolicyUtilities {
 						datiTransazione.setTagsAccordoServizioParteComune(tags);
 					}
 				}catch(Exception e) {
+					//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
+					//e.printStackTrace(System.out);
 					context.getLogCore().debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
 				}	
 			}

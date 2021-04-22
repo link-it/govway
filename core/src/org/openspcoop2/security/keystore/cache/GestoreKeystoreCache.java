@@ -90,6 +90,12 @@ public class GestoreKeystoreCache {
 		else
 			return new MerlinTruststore(pathStore, tipoStore, passwordStore);
 	}
+	public static MerlinTruststore getMerlinTruststore(byte[] bytesStore,String tipoStore,String passwordStore) throws SecurityException{
+		if(GestoreKeystoreCache.cacheEnabled)
+			return GestoreKeystoreCache.merlinTruststoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore);
+		else
+			return new MerlinTruststore(bytesStore, tipoStore, passwordStore);
+	}
 	
 	
 	public static MerlinKeystore getMerlinKeystore(String propertyFilePath) throws SecurityException{
@@ -116,6 +122,18 @@ public class GestoreKeystoreCache {
 		else
 			return new MerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey);
 	}
+	public static MerlinKeystore getMerlinKeystore(byte[] bytesStore,String tipoStore,String passwordStore) throws SecurityException{
+		if(GestoreKeystoreCache.cacheEnabled)
+			return GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore);
+		else
+			return new MerlinKeystore(bytesStore, tipoStore, passwordStore);
+	}
+	public static MerlinKeystore getMerlinKeystore(byte[] bytesStore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
+		if(GestoreKeystoreCache.cacheEnabled)
+			return GestoreKeystoreCache.merlinKeystoreCache.getKeystoreAndCreateIfNotExists(bytesStore, tipoStore, passwordStore, passwordPrivateKey);
+		else
+			return new MerlinKeystore(bytesStore, tipoStore, passwordStore, passwordPrivateKey);
+	}
 	
 	
 	public static SymmetricKeystore getSymmetricKeystore(String alias,String key,String algoritmo) throws SecurityException{
@@ -139,6 +157,12 @@ public class GestoreKeystoreCache {
 			return GestoreKeystoreCache.jwkSetStoreCache.getKeystoreAndCreateIfNotExists(propertyFilePath);
 		else
 			return new JWKSetStore(propertyFilePath);
+	}
+	public static JWKSetStore getJwkSetStore(byte[] archive) throws SecurityException{
+		if(GestoreKeystoreCache.cacheEnabled)
+			return GestoreKeystoreCache.jwkSetStoreCache.getKeystoreAndCreateIfNotExists(archive);
+		else
+			return new JWKSetStore(archive);
 	}
 	
 	

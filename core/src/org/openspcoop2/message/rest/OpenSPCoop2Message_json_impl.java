@@ -20,6 +20,7 @@
 
 package org.openspcoop2.message.rest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -29,7 +30,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.JsonPathReturnType;
@@ -60,7 +61,12 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 	@Override
 	protected String buildContent() throws MessageException{
 		try{
-			return Utilities.getAsString(this.countingInputStream, this.contentTypeCharsetName);
+			//return org.openspcoop2.utils.Utilities.getAsString(this.countingInputStream, this.contentTypeCharsetName);
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			CopyStream.copy(this.countingInputStream, bout);
+			bout.flush();
+			bout.close();
+			return bout.toString(this.contentTypeCharsetName);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}finally {

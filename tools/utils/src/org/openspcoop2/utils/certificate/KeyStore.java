@@ -21,13 +21,17 @@
 
 package org.openspcoop2.utils.certificate;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.SecretKey;
 
@@ -66,10 +70,8 @@ public class KeyStore {
 		
 		InputStream fin = null;
 		try{
-			java.security.KeyStore keystore = java.security.KeyStore.getInstance(tipoKeystore);
 			fin = new FileInputStream(keystorePath);
-			keystore.load(fin, passwordKeystore.toCharArray());
-			this.keystore = keystore;
+			_init(fin, tipoKeystore, passwordKeystore);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -82,21 +84,82 @@ public class KeyStore {
 		}
 		
 	}
+	
+	public KeyStore(byte[] keystore,String passwordKeystore) throws UtilsException{
+		this(keystore,"JKS",passwordKeystore);
+	}
+	public KeyStore(byte[] keystore,String tipoKeystore, String passwordKeystore) throws UtilsException{
+		
+		if(keystore==null){
+			throw new UtilsException("Keystore undefined");
+		}
+		
+		InputStream fin = null;
+		try{
+			fin = new ByteArrayInputStream(keystore);
+			_init(fin, tipoKeystore, passwordKeystore);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				if(fin!=null){
+					fin.close();
+				}
+			}catch(Exception eClose){}
+		}
+		
+	}
+	
+	private void _init(InputStream is, String tipoKeystore, String passwordKeystore) throws UtilsException{
+		try{
+			java.security.KeyStore keystore = java.security.KeyStore.getInstance(tipoKeystore);
+			keystore.load(is, passwordKeystore.toCharArray());
+			this.keystore = keystore;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 	public KeyStore(java.security.KeyStore keystore) {
 		this.keystore = keystore;
 	}
 	
+	private Map<String, Key> keys = new HashMap<String, Key>(); // effettuo il cache delle chiavi essendo costoso accederci tutte le volte
+	private synchronized void initKey(String alias, String password) throws UtilsException {
+		if(!this.keys.containsKey(alias)) {
+			try{
+				//System.out.println("******** AGGIUNGO CHIAVE '"+alias+"' IN CACHE!!!!!!!!");
+				Key key = this.keystore.getKey(alias, password.toCharArray());
+				if(key==null) {
+					throw new Exception("Not found");
+				}
+				this.keys.put(alias, key);
+			}catch(Exception e){
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+	}
+	
 	public PrivateKey getPrivateKey(String alias,String passwordPrivateKey) throws UtilsException{
 		try{
-			return (PrivateKey) this.keystore.getKey(alias, passwordPrivateKey.toCharArray());
+			if(!this.keys.containsKey(alias)) {
+				initKey(alias, passwordPrivateKey);
+			}
+//			else {
+//				System.out.println("GET KEY '"+alias+"' FROM CACHE");
+//			}
+			return (PrivateKey) this.keys.get(alias);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}	
 	}
-	
 	public SecretKey getSecretKey(String alias,String passwordPrivateKey) throws UtilsException{
 		try{
-			return (SecretKey) this.keystore.getKey(alias, passwordPrivateKey.toCharArray());
+			if(!this.keys.containsKey(alias)) {
+				initKey(alias, passwordPrivateKey);
+			}
+			return (SecretKey) this.keys.get(alias);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}	

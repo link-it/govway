@@ -103,6 +103,9 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override
@@ -663,7 +666,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		// Recupero SoggettoReferente accordo
 		Soggetto accordo_id_referente_soggetto = null;
 		if(accordo_id_referente!=null && accordo_id_referente>0){
-			ISoggettoServiceSearch soggettoServiceSearch = this.getServiceManager().getSoggettoServiceSearch();
+			ISoggettoServiceSearch soggettoServiceSearch = this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch();
 			accordo_id_referente_soggetto = ((IDBSoggettoServiceSearch)soggettoServiceSearch).get(accordo_id_referente);
 		}
 		
@@ -900,7 +903,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 			id_accordoServizioParteSpecifica.setVersione((Integer)listaFieldId_accordoServizioParteSpecifica.get(2));
 			Long idSoggettoFK = (Long) listaFieldId_accordoServizioParteSpecifica.get(3);
 			id_accordoServizioParteSpecifica.
-				setIdErogatore(((IDBSoggettoServiceSearch)this.getServiceManager().
+				setIdErogatore(((IDBSoggettoServiceSearch)this.getServiceManager(connection, jdbcProperties, log).
 						getSoggettoServiceSearch()).findId(idSoggettoFK, true));
 		}
 		
@@ -937,7 +940,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		}
 		
 		// Recupero id soggetto
-		ISoggettoServiceSearch soggettoServiceSearch = this.getServiceManager().getSoggettoServiceSearch();
+		ISoggettoServiceSearch soggettoServiceSearch = this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch();
 		Soggetto accordo_id_referente_soggetto = ((IDBSoggettoServiceSearch)soggettoServiceSearch).get(id.getIdErogatore());
 			
 		// Object _accordoServizioParteSpecifica

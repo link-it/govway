@@ -77,7 +77,7 @@ public class SSLSocketFactory implements Serializable {
 					if(this.sslConfig.getKeyStoreLocation()!=null) {
 						try {
 							this.sslConfig.setKeyStore(GestoreKeystoreCache.getMerlinKeystore(this.sslConfig.getKeyStoreLocation(), 
-									this.sslConfig.getKeyStoreType(), this.sslConfig.getKeyStorePassword()).getKeyStore());
+									this.sslConfig.getKeyStoreType(), this.sslConfig.getKeyStorePassword()).getKeyStore().getKeystore());
 						}catch(Exception e) {
 							String msgError = "Lettura keystore '"+this.sslConfig.getKeyStoreLocation()+"' dalla cache fallita: "+e.getMessage();
 							logError(msgError, e);
@@ -86,7 +86,7 @@ public class SSLSocketFactory implements Serializable {
 					if(this.sslConfig.getTrustStoreLocation()!=null) {
 						try {
 							this.sslConfig.setTrustStore(GestoreKeystoreCache.getMerlinTruststore(this.sslConfig.getTrustStoreLocation(), 
-									this.sslConfig.getTrustStoreType(), this.sslConfig.getTrustStorePassword()).getTrustStore());
+									this.sslConfig.getTrustStoreType(), this.sslConfig.getTrustStorePassword()).getTrustStore().getKeystore());
 						}catch(Exception e) {
 							String msgError = "Lettura truststore '"+this.sslConfig.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
 							logError(msgError, e);

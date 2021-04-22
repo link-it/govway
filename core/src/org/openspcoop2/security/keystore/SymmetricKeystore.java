@@ -22,12 +22,12 @@ package org.openspcoop2.security.keystore;
 
 import java.io.Serializable;
 import java.security.Key;
-import java.security.KeyStore;
 
 import javax.crypto.spec.SecretKeySpec;
 
 import org.openspcoop2.security.Constants;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.certificate.KeyStore;
 
 /**
  * SymmetricKeystore
@@ -85,10 +85,11 @@ public class SymmetricKeystore implements Serializable {
 	private synchronized void initKS() throws SecurityException{
 		if(this.keyStore==null) {
 			try {
-				this.keyStore = KeyStore.getInstance("JCEKS");
-				this.keyStore.load(null);
-				this.keyStore.setKeyEntry(this.alias, this.key,this.passwordKey.toCharArray(), null);
-				FixTrustAnchorsNotEmpty.addCertificate(this.keyStore);			
+				java.security.KeyStore keyStore = java.security.KeyStore.getInstance("JCEKS");
+				keyStore.load(null);
+				keyStore.setKeyEntry(this.alias, this.key,this.passwordKey.toCharArray(), null);
+				this.keyStore = new KeyStore(keyStore);
+				FixTrustAnchorsNotEmpty.addCertificate(this.keyStore.getKeystore());			
 			}
 			catch(Exception e){
 				throw new SecurityException(e.getMessage(),e);

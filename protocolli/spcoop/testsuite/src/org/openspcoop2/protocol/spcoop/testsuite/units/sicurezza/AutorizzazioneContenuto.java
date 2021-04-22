@@ -265,7 +265,7 @@ public class AutorizzazioneContenuto extends GestioneViaJmx {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_AUTORIZZAZIONE_CONTENUTO_OK, checkServizioApplicativo,
 							null);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {

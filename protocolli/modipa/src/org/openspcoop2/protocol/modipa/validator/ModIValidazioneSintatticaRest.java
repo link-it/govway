@@ -32,6 +32,7 @@ import java.util.Map;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.TokenUtils;
@@ -459,7 +460,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		 * == signature ==
 		 */
 		
-		OpenSPCoop2Message msgToken = msg.getFactory().createMessage(MessageType.JSON, msg.getMessageRole(), 
+		OpenSPCoop2Message msgToken = msg.getFactory().createMessage(MessageType.JSON, MessageRole.NONE, 
 				HttpConstants.CONTENT_TYPE_JSON, token.getBytes(), null, null).getMessage_throwParseException();
 		String payloadToken = null;
 		X509Certificate x509 = null;
@@ -810,6 +811,8 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			String claimSignedHeader = this.modiProperties.getRestSecurityTokenClaimSignedHeaders();
 			if(objectNode.has(claimSignedHeader)) {
 				
+				boolean findDigestInClaimSignedHeader = false;
+				
 				Map<String, List<String>> headerHttpAttesi = new HashMap<String, List<String>>();
 				
 				Object signedHeaders = objectNode.get(claimSignedHeader);
@@ -868,9 +871,10 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						List<String> hrdValues = headerHttpAttesi.get(hdrName);
 						for (String hdrValue : hrdValues) {
 							boolean valid = false;
-							if(digestHeader.toLowerCase().equals(hdrName)) {
+							if(digestHeader.toLowerCase().equalsIgnoreCase(hdrName)) {
 								valid = hdrValue.equals(digestValueInHeaderHTTP); 
 								//System.out.println("VALID DIGEST: "+valid);
+								findDigestInClaimSignedHeader = true;
 							}
 							else {
 								List<String> hdrFound = null;
@@ -895,6 +899,13 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 										"Header HTTP '"+hdrName+"' possiede un valore differente rispetto a quello presente negli header firmati"));
 							}
 						}
+					}
+				}
+				
+				if(integrita && msg.castAsRest().hasContent()) {
+					if(!findDigestInClaimSignedHeader) {
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_PRESENTE, 
+								"Header HTTP '"+digestHeader+"' non presente nella lista degli header firmati (token claim '"+claimSignedHeader+"')"));
 					}
 				}
 			}

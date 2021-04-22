@@ -342,7 +342,9 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							if(token!=null) {
 								
 								if(securityConfig.getAudience()!=null) {
-									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, securityConfig.getAudience());
+									if(request || (securityConfig.isCheckAudience())) {
+										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, securityConfig.getAudience());
+									}
 								}
 								
 								rawContent = new ModIBustaRawContent(token);
@@ -358,7 +360,9 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							if(token!=null) {
 								
 								if(securityConfig.getAudience()!=null) {
-									msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, securityConfig.getAudience());
+									if(request || (securityConfig.isCheckAudience())) {
+										msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK, securityConfig.getAudience());
+									}
 								}
 								
 								rawContent = new ModIBustaRawContent(token);

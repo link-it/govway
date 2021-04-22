@@ -37,9 +37,16 @@ public class JWKSetStoreCache extends AbstractKeystoreCache<JWKSetStore> {
 		if(params==null){
 			throw new SecurityException("Params is null");
 		}
-		String endpoint = key;
+		String path = key;
 		if(params.length==0){
-			return new JWKSetStore(endpoint);
+			return new JWKSetStore(path);
+		}
+		else if(params.length==1){
+			if( ! (params[0] instanceof byte[]) ){
+				throw new SecurityException("Param[0] must be byte[] (store)");
+			}
+			byte [] store = (byte[]) params[0];
+			return new JWKSetStore(store);
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");

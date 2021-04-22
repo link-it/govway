@@ -259,7 +259,7 @@ public class SOAPWithAttachments {
 							checkServizioApplicativo,null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -334,7 +334,7 @@ public class SOAPWithAttachments {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -369,7 +369,7 @@ public class SOAPWithAttachments {
 							null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -450,7 +450,7 @@ public class SOAPWithAttachments {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO,null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -486,7 +486,7 @@ public class SOAPWithAttachments {
 							null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -557,7 +557,7 @@ public class SOAPWithAttachments {
 							null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -596,7 +596,7 @@ public class SOAPWithAttachments {
 							null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -669,7 +669,7 @@ public class SOAPWithAttachments {
 							null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -709,7 +709,7 @@ public class SOAPWithAttachments {
 							null, 
 							SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {

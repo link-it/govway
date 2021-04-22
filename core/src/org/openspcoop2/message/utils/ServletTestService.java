@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -138,6 +139,25 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		return value;
+	}
+	private static List<String> getParameters_checkWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
+		List<String> l = new ArrayList<String>();
+		String [] values = request.getParameterValues(parameter);
+		if(values!=null && values.length>0) {
+			
+			if(whitePropertiesList!=null) {
+				if(whitePropertiesList.contains(parameter)==false) {
+					return null;
+				}
+			}
+			
+			for (String value : values) {
+				value = value.trim();
+				value = UriUtils.decode(value, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
+				l.add(value);
+			}
+		}
+		return l;
 	}
 	
 	public static void checkHttpServletRequestParameter(HttpServletRequest request) throws ServletException{
@@ -788,54 +808,56 @@ public class ServletTestService extends HttpServlet {
 			
 			// opzione returnHttpHeader
 			Map<String, List<String>> headers = new HashMap<>();
-			String returnHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeader");
-			if(returnHeaderString!=null){
-				returnHeaderString = returnHeaderString.trim();
-				if(returnHeaderString.contains(":")==false){
-					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore)");
-				}
-				String [] split = returnHeaderString.split(":");
-				if(split==null){
-					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split null)");
-				}
-				if(split.length<2){
-					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split:"+split.length+")");
-				}
-				String returnHeaderKey = null; 
-				String returnHeaderValue = null;
-				returnHeaderKey = split[0];
-				for (int j = 1; j < split.length; j++) {
-					if(j==1) {
-						returnHeaderValue = split[1];
+			List<String> returnHeadersString = getParameters_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeader");
+			if(returnHeadersString!=null && !returnHeadersString.isEmpty()){
+				for (String returnHeaderString : returnHeadersString) {
+					returnHeaderString = returnHeaderString.trim();
+					if(returnHeaderString.contains(":")==false){
+						throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore)");
 					}
-					else {
-						returnHeaderValue = returnHeaderValue + ":"+ split[j];
+					String [] split = returnHeaderString.split(":");
+					if(split==null){
+						throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split null)");
 					}
-				}
-				
-				boolean checkMultiValue = true;
-				String returnHttpHeaderSingleValue = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeaderSingleValue");
-				if(returnHttpHeaderSingleValue!=null) {
-					boolean b = Boolean.valueOf(returnHttpHeaderSingleValue);
-					if(b) {
-						checkMultiValue = false;
+					if(split.length<2){
+						throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split:"+split.length+")");
 					}
-				}
-				if(checkMultiValue) {
-					if(!returnHeaderValue.contains(",")) {
-						TransportUtils.addHeader(headers, returnHeaderKey, returnHeaderValue);
+					String returnHeaderKey = null; 
+					String returnHeaderValue = null;
+					returnHeaderKey = split[0];
+					for (int j = 1; j < split.length; j++) {
+						if(j==1) {
+							returnHeaderValue = split[1];
+						}
+						else {
+							returnHeaderValue = returnHeaderValue + ":"+ split[j];
+						}
 					}
-					else {
-						String [] splitMultiHeaders = returnHeaderValue.split(",");
-						if(splitMultiHeaders!=null && splitMultiHeaders.length>0) {
-							for (String hdrValue : splitMultiHeaders) {
-								TransportUtils.addHeader(headers, returnHeaderKey, hdrValue);
+					
+					boolean checkMultiValue = true;
+					String returnHttpHeaderSingleValue = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeaderSingleValue");
+					if(returnHttpHeaderSingleValue!=null) {
+						boolean b = Boolean.valueOf(returnHttpHeaderSingleValue);
+						if(b) {
+							checkMultiValue = false;
+						}
+					}
+					if(checkMultiValue) {
+						if(!returnHeaderValue.contains(",")) {
+							TransportUtils.addHeader(headers, returnHeaderKey, returnHeaderValue);
+						}
+						else {
+							String [] splitMultiHeaders = returnHeaderValue.split(",");
+							if(splitMultiHeaders!=null && splitMultiHeaders.length>0) {
+								for (String hdrValue : splitMultiHeaders) {
+									TransportUtils.addHeader(headers, returnHeaderKey, hdrValue);
+								}
 							}
 						}
 					}
-				}
-				else {
-					TransportUtils.addHeader(headers, returnHeaderKey, returnHeaderValue);
+					else {
+						TransportUtils.addHeader(headers, returnHeaderKey, returnHeaderValue);
+					}
 				}
 			}
 			

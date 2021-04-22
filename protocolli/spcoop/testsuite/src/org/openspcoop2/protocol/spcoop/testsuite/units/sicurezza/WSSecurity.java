@@ -2453,7 +2453,7 @@ public class WSSecurity extends GestioneViaJmx {
 	@DataProvider (name="SincronoWSSAnnidamento")
 	public Object[][]testSincronoWSSAnnidamento()throws Exception{
 		String id=this.repositoryAnnidamento.getNext();
-		org.openspcoop2.utils.Utilities.sleep(10000);
+		org.openspcoop2.utils.Utilities.sleep(2000);
 		return new Object[][]{
 				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
 				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
@@ -2461,13 +2461,23 @@ public class WSSecurity extends GestioneViaJmx {
 	}
 	@Test(groups={CostantiSicurezza.ID_GRUPPO_SICUREZZA,WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".Annidamento"},dataProvider="SincronoWSSAnnidamento",dependsOnMethods={"annidamento"})
 	public void testSincronoWSSAnnidamento(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-		this.collaborazioneSPCoopBase.testSincrono(data, id, 
-				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-				CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ANNIDAMENTO, checkServizioApplicativo,null);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ANNIDAMENTO, checkServizioApplicativo,null);
+				}catch(Throwable e){
+					if(i==9) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -2745,7 +2755,7 @@ public class WSSecurity extends GestioneViaJmx {
 						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 						azione, false,null);
 			}catch(Throwable e){
-				if(i==4) {
+				if(i==9) {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
@@ -2764,7 +2774,7 @@ public class WSSecurity extends GestioneViaJmx {
 						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 						azione, true,null);
 			}catch(Throwable e){
-				if(i==4) {
+				if(i==9) {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
@@ -2822,7 +2832,7 @@ public class WSSecurity extends GestioneViaJmx {
 						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 						azione, false,null);
 			}catch(Throwable e){
-				if(i==4) {
+				if(i==9) {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
@@ -2841,7 +2851,7 @@ public class WSSecurity extends GestioneViaJmx {
 						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 						azione, true,null);
 			}catch(Throwable e){
-				if(i==4) {
+				if(i==9) {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
@@ -2941,7 +2951,7 @@ public class WSSecurity extends GestioneViaJmx {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 							azione, false,null);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -2960,7 +2970,7 @@ public class WSSecurity extends GestioneViaJmx {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 							azione, true,null);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -3084,7 +3094,7 @@ public class WSSecurity extends GestioneViaJmx {
 						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 						azione, false,null);
 			}catch(Throwable e){
-				if(i==4) {
+				if(i==9) {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {
@@ -3103,7 +3113,7 @@ public class WSSecurity extends GestioneViaJmx {
 						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
 						azione, true,null);
 			}catch(Throwable e){
-				if(i==4) {
+				if(i==9) {
 					throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 				}
 				else {

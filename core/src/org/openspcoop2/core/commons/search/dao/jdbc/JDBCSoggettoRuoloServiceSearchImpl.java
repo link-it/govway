@@ -99,6 +99,9 @@ public class JDBCSoggettoRuoloServiceSearchImpl implements IJDBCServiceSearchWit
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override
@@ -498,7 +501,7 @@ public class JDBCSoggettoRuoloServiceSearchImpl implements IJDBCServiceSearchWit
 			
 			org.openspcoop2.core.commons.search.IdRuolo id_soggettoRuolo_ruolo = null;
 			if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-				id_soggettoRuolo_ruolo = ((JDBCRuoloServiceSearch)(this.getServiceManager().getRuoloServiceSearch())).findId(idFK_soggettoRuolo_ruolo, false);
+				id_soggettoRuolo_ruolo = ((JDBCRuoloServiceSearch)(this.getServiceManager(connection, jdbcProperties, log).getRuoloServiceSearch())).findId(idFK_soggettoRuolo_ruolo, false);
 			}else{
 				id_soggettoRuolo_ruolo = new org.openspcoop2.core.commons.search.IdRuolo();
 			}
@@ -520,7 +523,7 @@ public class JDBCSoggettoRuoloServiceSearchImpl implements IJDBCServiceSearchWit
 			
 			org.openspcoop2.core.commons.search.IdSoggetto id_soggettoRuolo_soggetto = null;
 			if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-				id_soggettoRuolo_soggetto = ((JDBCSoggettoServiceSearch)(this.getServiceManager().getSoggettoServiceSearch())).findId(idFK_soggettoRuolo_soggetto, false);
+				id_soggettoRuolo_soggetto = ((JDBCSoggettoServiceSearch)(this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch())).findId(idFK_soggettoRuolo_soggetto, false);
 			}else{
 				id_soggettoRuolo_soggetto = new org.openspcoop2.core.commons.search.IdSoggetto();
 			}
@@ -720,14 +723,14 @@ public class JDBCSoggettoRuoloServiceSearchImpl implements IJDBCServiceSearchWit
 			
 			IdSoggetto idSoggetto = new IdSoggetto();
 			idSoggetto.setId((Long) listaFieldId_soggettoRuolo.get(0));
-			Soggetto soggetto = ((IDBSoggettoServiceSearch)this.getServiceManager().getSoggettoServiceSearch()).get(idSoggetto.getId());
+			Soggetto soggetto = ((IDBSoggettoServiceSearch)this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch()).get(idSoggetto.getId());
 			idSoggetto.setTipo(soggetto.getTipoSoggetto());
 			idSoggetto.setNome(soggetto.getNomeSoggetto());
 			id_soggettoRuolo.setIdSoggetto(idSoggetto);
 			
 			IdRuolo idRuolo = new IdRuolo();
 			idRuolo.setId((Long) listaFieldId_soggettoRuolo.get(1));
-			Ruolo ruolo = ((IDBRuoloServiceSearch)this.getServiceManager().getRuoloServiceSearch()).get(idRuolo.getId());
+			Ruolo ruolo = ((IDBRuoloServiceSearch)this.getServiceManager(connection, jdbcProperties, log).getRuoloServiceSearch()).get(idRuolo.getId());
 			idRuolo.setNome(ruolo.getNome());
 			id_soggettoRuolo.setIdRuolo(idRuolo);
 			
@@ -771,8 +774,8 @@ public class JDBCSoggettoRuoloServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet.addWhereCondition("id_soggetto=?");
 		sqlQueryObjectGet.addWhereCondition("id_ruolo=?");
 
-		long idSoggetto = ((IDBSoggettoServiceSearch)this.getServiceManager().getSoggettoServiceSearch()).findTableId(id.getIdSoggetto(), true);
-		long idRuolo = ((IDBRuoloServiceSearch)this.getServiceManager().getRuoloServiceSearch()).findTableId(id.getIdRuolo(), true);
+		long idSoggetto = ((IDBSoggettoServiceSearch)this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch()).findTableId(id.getIdSoggetto(), true);
+		long idRuolo = ((IDBRuoloServiceSearch)this.getServiceManager(connection, jdbcProperties, log).getRuoloServiceSearch()).findTableId(id.getIdRuolo(), true);
 		
 		// Recupero _soggettoRuolo
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_soggettoRuolo = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 

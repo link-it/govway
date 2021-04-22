@@ -1060,8 +1060,11 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			String location = "...";
 			try{
 				IConnettore c = null;
-				if(context!=null && context.getIdMessage()!=null){
-					c = RepositoryConnettori.removeConnettorePD(context.getIdMessage());
+				//if(context!=null && context.getIdMessage()!=null){
+				if(idTransazione!=null) {
+					c = RepositoryConnettori.removeConnettorePD(
+							//context.getIdMessage()
+							idTransazione);
 				}
 				if(c!=null){
 					location = c.getLocation();

@@ -40,9 +40,9 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
-import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.security.keystore.MerlinKeystore;
+import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.certificate.ArchiveType;
-import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.slf4j.Logger;
 
@@ -142,10 +142,15 @@ public class AbstractModIValidazioneSintatticaCommons {
 									else {
 										archiveType = ArchiveType.PKCS12;
 									}
-									Certificate certificatoCheck = ArchiveLoader.load(archiveType, keystoreBytes, keyAlias, keystorePassword);
-									if(certificate.equals(certificatoCheck.getCertificate(),true)) {
-										idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
-										break;
+									MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreBytes, archiveType.name(), 
+											keystorePassword);
+									java.security.cert.Certificate certificatoCheck = merlinKs.getCertificate(keyAlias);
+									//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
+									if(certificatoCheck instanceof java.security.cert.X509Certificate) {
+										if(certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
+											idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
+											break;
+										}
 									}
 								}
 

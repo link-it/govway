@@ -1,3 +1,18 @@
+2021-04-22  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA, GovWayCore, Utils]
+	Aggiunta funzionalità OP-1183
+	Migliorate le performance di firma dei token di sicurezza ModI; le chiavi private accedute vengono adesso salvate in cache insieme ai keystore.
+	Risolto problema di sicurezza relativo alla validazione di un token JWT Modi per API REST: 
+	con pattern INTEGRITY_REST_01 non veniva verificato che tra gli header firmati vi fosse obbligatoriamente l'header HTTP 'Digest', se la richiesta presenta un payload.
+	La funzionalità 'Verifica Audience', della sezione Sicurezza Messaggio Risposta di una fruizione, veniva ignorata e la validazione veniva effettuata anche se l'opzione era disabilitata. 
+	È stato rivisto il diagnostico relativa ad una richiesta duplicata al fine di fornire un messaggio più generico; attualmente era focalizzato sul protocollo SPCoop.
+	Inoltre sono stati corretti alcuni problemi che causavano situazioni di deadlock poichè richiedevano più di una connessione al database; 
+	i problemi sono stati risolti sia nelle console di gestione e monitoraggio che nel runtime per quanto concerne le funzionalità di Controllo del Traffico e Preloading delle configurazioni.
+	Infine è stato risolto un problema di rilascio dell'input stream della risposta che avveniva se la richiesta presentava il medesimo identificativo; 
+	l'errore generato riportava il messaggio 'stream is closed'.
+	Nel servizio 'IntegrationManager/MessageBox' sono stati ottimizzati i tempi di prelevamento degli identificati disponibili tramite le operazioni getAllMessageIds e getNextMessageIds.
+
 2021-04-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -103,6 +103,9 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override
@@ -758,7 +761,7 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 			
 			Long idSoggettoFK = (Long) listaFieldId_servizioApplicativo.get(1);
 			id_servizioApplicativo.
-				setIdSoggetto(((IDBSoggettoServiceSearch)this.getServiceManager().
+				setIdSoggetto(((IDBSoggettoServiceSearch)this.getServiceManager(connection, jdbcProperties, log).
 						getSoggettoServiceSearch()).findId(idSoggettoFK, true));
 		}
 		
@@ -795,7 +798,7 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		}
 		
 		// Recupero id soggetto
-		ISoggettoServiceSearch soggettoServiceSearch = this.getServiceManager().getSoggettoServiceSearch();
+		ISoggettoServiceSearch soggettoServiceSearch = this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch();
 		Soggetto sa_id_soggetto = ((IDBSoggettoServiceSearch)soggettoServiceSearch).get(id.getIdSoggetto());
 		
 		// Object _servizioApplicativo

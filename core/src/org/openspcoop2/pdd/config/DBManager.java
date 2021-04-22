@@ -236,9 +236,11 @@ public class DBManager implements IMonitoraggioRisorsa {
 	}
 
 	public static Resource buildResource(DataSource dataSource, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+		//System.out.println("### buildResource modulo:"+modulo+" idTransazione:"+idTransazione+" ...");
 		Connection connectionDB = dataSource.getConnection();
 		if(connectionDB==null)
 			throw new Exception("is null");
+		//System.out.println("### buildResource modulo:"+modulo+" idTransazione:"+idTransazione+" OK");
 		return buildResource(connectionDB, idPDD, modulo, idTransazione);
 	}
 	public static Resource buildResource(Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {

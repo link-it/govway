@@ -62,20 +62,53 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 			return new MerlinKeystore(pathStore, tipoStore, passwordStore);
 		}
 		else if(params.length==3){
-			if( ! (params[0] instanceof String) ){
-				throw new SecurityException("Param[0] must be String (tipoStore)");
+			if(params[0] instanceof String) {
+				if( ! (params[1] instanceof String) ){
+					throw new SecurityException("Param[1] must be String (passwordStore)");
+				}
+				if( ! (params[2] instanceof String) ){
+					throw new SecurityException("Param[2] must be String (passwordPrivateKey)");
+				}
+				String pathStore = key;
+				String tipoStore = (String) params[0];
+				String passwordStore = (String) params[1];
+				String passwordPrivateKey = (String) params[2];
+				return new MerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey);
+			}
+			else if(params[0] instanceof byte[]) {
+				if( ! (params[1] instanceof String) ){
+					throw new SecurityException("Param[1] must be String (tipoStore)");
+				}
+				if( ! (params[2] instanceof String) ){
+					throw new SecurityException("Param[2] must be String (passwordStore)");
+				}
+				byte [] store = (byte[]) params[0];
+				String tipoStore = (String) params[1];
+				String passwordStore = (String) params[2];
+				return new MerlinKeystore(store, tipoStore, passwordStore);
+			}
+			else {
+				throw new SecurityException("Param[0] must be String (tipoStore) or byte[] (store)");
+			}
+		}
+		else if(params.length==4){
+			if( ! (params[0] instanceof byte[]) ){
+				throw new SecurityException("Param[0] must be byte[] (store)");
 			}
 			if( ! (params[1] instanceof String) ){
-				throw new SecurityException("Param[1] must be String (passwordStore)");
+				throw new SecurityException("Param[1] must be String (tipoStore)");
 			}
 			if( ! (params[2] instanceof String) ){
-				throw new SecurityException("Param[2] must be String (passwordPrivateKey)");
+				throw new SecurityException("Param[2] must be String (passwordStore)");
 			}
-			String pathStore = key;
-			String tipoStore = (String) params[0];
-			String passwordStore = (String) params[1];
-			String passwordPrivateKey = (String) params[2];
-			return new MerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey);
+			if( ! (params[3] instanceof String) ){
+				throw new SecurityException("Param[3] must be String (passwordPrivateKey)");
+			}
+			byte [] store = (byte[]) params[0];
+			String tipoStore = (String) params[1];
+			String passwordStore = (String) params[2];
+			String passwordPrivateKey = (String) params[3];
+			return new MerlinKeystore(store, tipoStore, passwordStore, passwordPrivateKey);
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");

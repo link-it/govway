@@ -658,7 +658,8 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	
 	public String getThreadPoolStatus(String queue) {
 		try{
-			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
+					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
 				throw new Exception("Coda '"+queue+"' non esistente");
 			}
 			return OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.get(queue).getThreadsImage();
@@ -670,7 +671,8 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	
 	public String getQueueConfig(String queue) {
 		try{
-			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
+					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
 				throw new Exception("Coda '"+queue+"' non esistente");
 			}
 			return OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.get(queue).getQueueConfig();
@@ -682,7 +684,8 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	
 	public String getApplicativiPrioritari(String queue) {
 		try{
-			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
+					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
 				throw new Exception("Coda '"+queue+"' non esistente");
 			}
 			List<IDConnettore> list = ConfigurazionePdDManager.getInstance().getConnettoriConsegnaNotifichePrioritarie(queue);
@@ -707,7 +710,8 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	
 	public String getConnettoriPrioritari(String queue) {
 		try{
-			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
+					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
 				throw new Exception("Coda '"+queue+"' non esistente");
 			}
 			List<IDConnettore> list = ConfigurazionePdDManager.getInstance().getConnettoriConsegnaNotifichePrioritarie(queue);
@@ -732,7 +736,8 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 	
 	public String updateConnettoriPrioritari(String queue) {
 		try{
-			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
+					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
 				throw new Exception("Coda '"+queue+"' non esistente");
 			}
 			
@@ -747,7 +752,8 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 
 	public String resetConnettoriPrioritari(String queue) {
 		try{
-			if(!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
+			if(OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap==null ||
+					!OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRefMap.containsKey(queue)) {
 				throw new Exception("Coda '"+queue+"' non esistente");
 			}
 			

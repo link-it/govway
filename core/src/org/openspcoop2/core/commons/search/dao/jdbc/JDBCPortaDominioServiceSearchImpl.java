@@ -97,6 +97,9 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override

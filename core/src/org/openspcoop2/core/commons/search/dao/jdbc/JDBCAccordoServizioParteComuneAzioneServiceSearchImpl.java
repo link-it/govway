@@ -100,6 +100,9 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override
@@ -501,7 +504,7 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 			(Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune.createSQLQuery(), jdbcProperties.isShowSql(),
 			Long.class, searchParams_accordoServizioParteComune);
 		
-		IDBAccordoServizioParteComuneServiceSearch search = ((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager().getAccordoServizioParteComuneServiceSearch());
+		IDBAccordoServizioParteComuneServiceSearch search = ((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager(connection, jdbcProperties, log).getAccordoServizioParteComuneServiceSearch());
 		AccordoServizioParteComune as = search.get(id_accordoServizioParteComune);
 		IdAccordoServizioParteComune idAccordo = search.convertToId(as);
 		accordoServizioParteComuneAzione.setIdAccordoServizioParteComune(idAccordo);
@@ -706,7 +709,7 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 			id_accordoServizioParteComuneAzione.setNome((String)listaFieldId_accordoServizioParteComuneAzione.get(0));
 			Long idAccordoFK = (Long) listaFieldId_accordoServizioParteComuneAzione.get(1);
 			id_accordoServizioParteComuneAzione.
-				setIdAccordoServizioParteComune(((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager().
+				setIdAccordoServizioParteComune(((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager(connection, jdbcProperties, log).
 						getAccordoServizioParteComuneServiceSearch()).findId(idAccordoFK, true));
 		}
 		
@@ -746,7 +749,7 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 		}
 		
 		// Recupero idAccordo
-		AccordoServizioParteComune as = this.getServiceManager().getAccordoServizioParteComuneServiceSearch().get(id.getIdAccordoServizioParteComune());
+		AccordoServizioParteComune as = this.getServiceManager(connection, jdbcProperties, log).getAccordoServizioParteComuneServiceSearch().get(id.getIdAccordoServizioParteComune());
 		
              
 		// Object _accordoServizioParteComuneAzione

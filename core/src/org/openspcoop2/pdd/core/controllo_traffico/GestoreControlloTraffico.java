@@ -65,13 +65,14 @@ public class GestoreControlloTraffico {
 	private Long activeThreads = 0l;
 	private Boolean pddCongestionata = false;
 	private boolean erroreGenerico;
-	public StatoTraffico getStatoControlloTraffico() {
-		synchronized (this.semaphore) {	
-			StatoTraffico stato = new StatoTraffico();
-			stato.setActiveThreads(Long.valueOf(this.activeThreads));
-			stato.setPddCongestionata(Boolean.valueOf(this.pddCongestionata));
-			return stato;
-		}
+	public StatoTraffico getStatoControlloTraffico(String idTransazione) {
+		//synchronized (this.semaphore) {	Risolve problema di deadlock che scaturiva utilizzando solamente 1 connessione e facendo un test in cui più thread invocavano con più messaggi, senza avere alcuna informazione in cache
+		// Si perde un pochino in precisione, ma risolve il problema del deadlock
+		StatoTraffico stato = new StatoTraffico();
+		stato.setActiveThreads(Long.valueOf(this.activeThreads));
+		stato.setPddCongestionata(Boolean.valueOf(this.pddCongestionata));
+		return stato;
+		//}
 	}
 	public void addThread(ServiceBinding serviceBinding, Long maxThreads, Integer threshold, Boolean warningOnly, PdDContext pddContext, MsgDiagnostico msgDiag, 
 			TipoErrore tipoErrore, boolean includiDescrizioneErrore,Logger log) throws Exception{

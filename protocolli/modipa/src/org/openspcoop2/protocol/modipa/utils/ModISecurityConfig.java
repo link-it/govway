@@ -701,4 +701,8 @@ public class ModISecurityConfig {
 	public List<String> getCorniceSicurezzaCodiceEnteRule() {
 		return this.corniceSicurezzaCodiceEnteRule;
 	}
+	
+	public boolean isCheckAudience() {
+		return this.checkAudience;
+	}
 }

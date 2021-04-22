@@ -20,8 +20,6 @@
 
 package org.openspcoop2.protocol.modipa.builder;
 
-import java.io.ByteArrayInputStream;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -55,7 +53,6 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
-import org.openspcoop2.security.keystore.FixTrustAnchorsNotEmpty;
 import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -66,6 +63,7 @@ import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecuritySender_wss4j;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
@@ -511,11 +509,12 @@ public class ModIImbustamentoSoap {
 			ks = merlinKs.getKeyStore();
 		}
 		else {
-			ks = KeyStore.getInstance(keystoreConfig.getSecurityMessageKeystoreType());
-			try(ByteArrayInputStream bin = new ByteArrayInputStream(keystoreConfig.getSecurityMessageKeystoreArchive())){
-				ks.load(bin, keystoreConfig.getSecurityMessageKeystorePassword().toCharArray());
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreConfig.getSecurityMessageKeystoreArchive(), keystoreConfig.getSecurityMessageKeystoreType(), 
+					keystoreConfig.getSecurityMessageKeystorePassword());
+			if(merlinKs==null) {
+				throw new Exception("Accesso al keystore non riuscito");
 			}
-			FixTrustAnchorsNotEmpty.addCertificate(ks);
+			ks = merlinKs.getKeyStore();
 		}
 		Certificate certificate = ks.getCertificate(keystoreConfig.getSecurityMessageKeyAlias());
 		if(certificate!=null && certificate instanceof X509Certificate) {

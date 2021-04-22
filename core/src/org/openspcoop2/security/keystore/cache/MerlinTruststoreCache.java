@@ -53,6 +53,21 @@ public class MerlinTruststoreCache extends AbstractKeystoreCache<MerlinTruststor
 			String passwordStore = (String) params[1];
 			return new MerlinTruststore(pathStore, tipoStore, passwordStore);
 		}
+		else if(params.length==3){
+			if( ! (params[0] instanceof byte[]) ){
+				throw new SecurityException("Param[0] must be byte[] (store)");
+			}
+			if( ! (params[1] instanceof String) ){
+				throw new SecurityException("Param[1] must be String (tipoStore)");
+			}
+			if( ! (params[2] instanceof String) ){
+				throw new SecurityException("Param[2] must be String (passwordStore)");
+			}
+			byte [] store = (byte[]) params[0];
+			String tipoStore = (String) params[1];
+			String passwordStore = (String) params[2];
+			return new MerlinTruststore(store, tipoStore, passwordStore);
+		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");
 		}

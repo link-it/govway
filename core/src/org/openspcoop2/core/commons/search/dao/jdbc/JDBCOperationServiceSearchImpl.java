@@ -100,6 +100,9 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override
@@ -506,7 +509,7 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 			(Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune_pt.createSQLQuery(), jdbcProperties.isShowSql(),
 			Long.class, searchParams_accordoServizioParteComune_pt);
 		
-		IDBPortTypeServiceSearch search = ((IDBPortTypeServiceSearch)this.getServiceManager().getPortTypeServiceSearch());
+		IDBPortTypeServiceSearch search = ((IDBPortTypeServiceSearch)this.getServiceManager(connection, jdbcProperties, log).getPortTypeServiceSearch());
 		PortType pt = search.get(id_accordoServizioParteComune_pt);
 		IdPortType idPt = search.convertToId(pt);
 		operation.setIdPortType(idPt);
@@ -729,7 +732,7 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 			
 			Long idPortTypeFK = (Long) listaFieldId_operation.get(1);
 			id_operation.
-				setIdPortType(((IDBPortTypeServiceSearch)this.getServiceManager().
+				setIdPortType(((IDBPortTypeServiceSearch)this.getServiceManager(connection, jdbcProperties, log).
 						getPortTypeServiceSearch()).findId(idPortTypeFK, true));
 		}
 		
@@ -773,7 +776,7 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 		
 		
 		// Recupero idPortType
-		PortType pt = this.getServiceManager().getPortTypeServiceSearch().get(id.getIdPortType());
+		PortType pt = this.getServiceManager(connection, jdbcProperties, log).getPortTypeServiceSearch().get(id.getIdPortType());
 		
 		
 		// Object _operation

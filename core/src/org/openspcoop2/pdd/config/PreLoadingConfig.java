@@ -239,10 +239,10 @@ public class PreLoadingConfig  {
 						}
 					}
 					
-					Connection con = null;
+					//Connection con = null;
 					try {
 						String superUser = null;
-						con = driverRegistroServizi.getConnection("preLoading["+name+"]");
+						//con = driverRegistroServizi.getConnection("preLoading["+name+"]"); // viene gestita automaticamente dentro il driver
 						
 						org.openspcoop2.core.registry.driver.utils.XMLDataConverter xmlDataConverter = 
 								new org.openspcoop2.core.registry.driver.utils.XMLDataConverter(registry,driverRegistroServizi,CostantiConfigurazione.REGISTRO_DB.getValue(),
@@ -253,10 +253,11 @@ public class PreLoadingConfig  {
 						boolean aggiornamentoSoggetti = false;
 						boolean updateEnabled = false; // per non modificare eventuali configurazioni gia' caricate, che possono essere state modificate
 						xmlDataConverter.convertXML(reset, mantieniFruitoriEsistenti,aggiornamentoSoggetti,StatiAccordo.operativo, updateEnabled);
-					}finally {
-						try {
-							driverRegistroServizi.releaseConnection(con);
-						}catch(Exception eClose) {}
+					}
+					finally {
+						//try {
+						//	driverRegistroServizi.releaseConnection(con);
+						//}catch(Exception eClose) {}
 					}
 					
 					this.log.info("PreLoading Registry ["+name+"] effettuato con successo");
@@ -296,7 +297,7 @@ public class PreLoadingConfig  {
 					}
 					
 					if(op2.sizeSoggettoList()>0) {
-						Connection con = null;
+						//Connection con = null;
 						try {
 							byte [] contentXml = content;
 
@@ -340,7 +341,7 @@ public class PreLoadingConfig  {
 							boolean udpateConfigurazioneDisabled = false;
 							boolean tabellaSoggettiCondivisaPddRegserv = true;
 							String superUser = null;
-							con = driverConfigurazione.getConnection("preLoading["+name+"]");
+							//con = driverConfigurazione.getConnection("preLoading["+name+"]");  // viene gestita automaticamente dentro il driver
 							org.openspcoop2.core.config.driver.utils.XMLDataConverter xmlDataConverter = 
 									new org.openspcoop2.core.config.driver.utils.XMLDataConverter(contentXml,driverConfigurazione,CostantiConfigurazione.CONFIGURAZIONE_DB,
 											udpateConfigurazioneDisabled,tabellaSoggettiCondivisaPddRegserv,superUser,this.protocolloDefault,
@@ -351,9 +352,9 @@ public class PreLoadingConfig  {
 							boolean updateEnabled = false; // per non modificare eventuali configurazioni gia' caricate, che possono essere state modificate
 							xmlDataConverter.convertXML(reset, aggiornamentoSoggetti, createMappingErogazioneFruizione, updateEnabled);
 						}finally {
-							try {
-								driverConfigurazione.releaseConnection(con);
-							}catch(Exception eClose) {}
+							//try {
+							//	driverConfigurazione.releaseConnection(con);
+							//}catch(Exception eClose) {}
 						}
 					}
 					

@@ -268,6 +268,18 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
+	public long getIdAccordoServizioParteSpecifica(Connection con, IDServizio idAccordo) throws DriverRegistroServiziException {
+		String nomeMetodo = "getIdAccordoServizioParteSpecifica";
+		try {
+			// prendo una connessione
+			return DBUtils.getIdServizio(idAccordo.getNome(), idAccordo.getTipo(), idAccordo.getVersione(),
+					idAccordo.getSoggettoErogatore().getNome(), idAccordo.getSoggettoErogatore().getTipo(),
+					con, this.tipoDB);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		}
+	}
 	
 	public long getIdFruizioneAccordoServizioParteSpecifica(IDSoggetto idFruitore, IDServizio idAccordo) throws DriverRegistroServiziException {
 		Connection con = null;
@@ -1229,6 +1241,19 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<Fruitore> serviziFruitoriList(Connection con, long idServizi, ISearch ricerca) throws DriverRegistroServiziException {
+		String nomeMetodo = "serviziFruitoriList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			return driver.getDriverRegistroServiziDB().serviziFruitoriList(idServizi, ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
 

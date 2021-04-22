@@ -40,6 +40,7 @@ import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
+import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -568,7 +569,7 @@ public class JOSEUtils {
 				}
 				keystorePassword = keystorePassword.trim();
 				
-				keystore = new KeyStore(GestoreKeystoreCache.getMerlinTruststore(keystoreFile, keystoreType, keystorePassword).getTrustStore());
+				keystore = GestoreKeystoreCache.getMerlinTruststore(keystoreFile, keystoreType, keystorePassword).getTrustStore();
 			}
 		}
 		
@@ -705,7 +706,15 @@ public class JOSEUtils {
 					else {
 						java.security.KeyStore keystore = null;
 						try {
-							keystore = GestoreKeystoreCache.getMerlinKeystore(file, type, password).getKeyStore();
+							MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(file, type, password);
+							if(merlinKeystore==null) {
+								throw new Exception("Keystore '"+file+"' undefined");
+							}
+							KeyStore keystoreUtils = merlinKeystore.getKeyStore();
+							if(keystoreUtils==null) {
+								throw new Exception("Keystore '"+file+"' undefined");
+							}
+							keystore = keystoreUtils.getKeystore();
 						}catch(Throwable e) {
 							log.error("Errore durante l'accesso al keystore '"+file+"': "+e.getMessage(),e);
 						}

@@ -20,13 +20,18 @@
 
 package org.openspcoop2.security.keystore;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 import java.util.Properties;
+
+import javax.security.auth.callback.CallbackHandler;
 
 import org.apache.wss4j.common.crypto.PasswordEncryptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 
 /**
@@ -47,6 +52,9 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 		super(properties, loader, passwordEncryptor);
 	}
 
+	private org.openspcoop2.utils.certificate.KeyStore op2KeyStore;
+	private org.openspcoop2.utils.certificate.KeyStore op2TrustStore;
+	
 	@Override
 	public void loadProperties(Properties properties, ClassLoader loader, PasswordEncryptor passwordEncryptor)
 			throws WSSecurityException, IOException {
@@ -115,7 +123,11 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 				if(merlinKs==null) {
 					throw new Exception("Accesso al keystore '"+keyStoreLocation+"' non riuscito");
 				}
-				this.keystore = merlinKs.getKeyStore();
+				if(merlinKs.getKeyStore()==null) {
+					throw new Exception("Accesso al keystore '"+keyStoreLocation+"' non riuscito");
+				}
+				this.op2KeyStore = merlinKs.getKeyStore();
+				this.keystore = this.op2KeyStore.getKeystore();
 			}catch(Exception e) {
 				throw new IOException("[Keystore-File] '"+keyStoreLocation+"' "+e.getMessage(),e);
 			}
@@ -123,11 +135,16 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 		}
 		else if (keyStoreArchive != null) {
 			try {
-				this.keystore = KeyStore.getInstance(keyStoreType);
-				try(ByteArrayInputStream bin = new ByteArrayInputStream(keyStoreArchive)){
-					this.keystore.load(bin, keyStorePassword.toCharArray());
+				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keyStoreArchive, keyStoreType, 
+						keyStorePassword);
+				if(merlinKs==null) {
+					throw new Exception("Accesso al keystore non riuscito");
 				}
-				FixTrustAnchorsNotEmpty.addCertificate(this.keystore);
+				if(merlinKs.getKeyStore()==null) {
+					throw new Exception("Accesso al keystore non riuscito");
+				}
+				this.op2KeyStore = merlinKs.getKeyStore();
+				this.keystore = this.op2KeyStore.getKeystore();
 			}catch(Exception e) {
 				throw new IOException("[Keystore-Archive] "+e.getMessage(),e);
 			}
@@ -171,7 +188,11 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 				if(merlinTs==null) {
 					throw new Exception("Accesso al truststore '"+trustStoreLocation+"' non riuscito");
 				}
-				this.truststore = merlinTs.getTrustStore();
+				if(merlinTs.getTrustStore()==null) {
+					throw new Exception("Accesso al truststore '"+keyStoreLocation+"' non riuscito");
+				}
+				this.op2TrustStore = merlinTs.getTrustStore();
+				this.truststore = this.op2TrustStore.getKeystore();
 			}catch(Exception e) {
 				throw new IOException("[Truststore-File] '"+trustStoreLocation+"' "+e.getMessage(),e);
 			}
@@ -179,11 +200,16 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 		}
 		else if (trustStoreArchive != null) {
 			try {
-				this.truststore = KeyStore.getInstance(trustStoreType);
-				try(ByteArrayInputStream bin = new ByteArrayInputStream(trustStoreArchive)){
-					this.truststore.load(bin, trustStorePassword.toCharArray());
+				MerlinTruststore merlinTs = GestoreKeystoreCache.getMerlinTruststore(trustStoreArchive, trustStoreType, 
+						trustStorePassword);
+				if(merlinTs==null) {
+					throw new Exception("Accesso al truststore non riuscito");
 				}
-				FixTrustAnchorsNotEmpty.addCertificate(this.truststore);
+				if(merlinTs.getTrustStore()==null) {
+					throw new Exception("Accesso al truststore non riuscito");
+				}
+				this.op2TrustStore = merlinTs.getTrustStore();
+				this.truststore = this.op2TrustStore.getKeystore();
 			}catch(Exception e) {
 				throw new IOException("[Truststore-Archive] "+e.getMessage(),e);
 			}
@@ -229,4 +255,28 @@ public class Merlin extends org.apache.wss4j.common.crypto.Merlin {
 		super.loadProperties(properties, loader, passwordEncryptor);
 	}
 
+	@Override
+	public PrivateKey getPrivateKey(PublicKey publicKey, CallbackHandler callbackHandler) throws WSSecurityException {
+		//System.out.println("@@@ getPrivateKey PUBLIC KEY, CALLBACK");
+		return super.getPrivateKey(publicKey, callbackHandler);
+	}
+
+	@Override
+	public PrivateKey getPrivateKey(String alias, String password) throws WSSecurityException {
+		//System.out.println("@@@ getPrivateKey arg0["+alias+"] arg1["+password+"]");
+		if(this.op2KeyStore!=null) {
+			try {
+				return this.op2KeyStore.getPrivateKey(alias, password);
+			}catch(Exception e) {
+				throw new WSSecurityException(ErrorCode.SECURITY_ERROR,e);
+			}
+		}
+		return super.getPrivateKey(alias, password);
+	}
+
+	@Override
+	public PrivateKey getPrivateKey(X509Certificate x509, CallbackHandler callbackHandler) throws WSSecurityException {
+		//System.out.println("@@@ getPrivateKey X509Certificatw, CALLBACK");
+		return super.getPrivateKey(x509, callbackHandler);
+	}
 }

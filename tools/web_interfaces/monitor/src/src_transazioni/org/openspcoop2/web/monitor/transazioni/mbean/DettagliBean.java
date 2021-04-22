@@ -764,6 +764,10 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	public static boolean isVisualizzaContenutiMultipartButton(TipoMessaggio tipoMessaggio, String contentType, Long contentLength, Integer multipartThreshold, Logger log) {
 		
+		if(contentType==null) {
+			return false;
+		}
+		
 		switch (tipoMessaggio) {
 		case RICHIESTA_INGRESSO_DUMP_BINARIO:
 		case RICHIESTA_USCITA_DUMP_BINARIO:

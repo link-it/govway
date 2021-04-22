@@ -2349,11 +2349,17 @@ public class InoltroBuste extends GenericLib{
 					}			
 					// gestione connessione connettore
 					if(functionAsRouter){
-						RepositoryConnettori.salvaConnettorePA(idMessageRequest, connectorSender);
+						RepositoryConnettori.salvaConnettorePA(
+								//idMessageRequest, 
+								idTransazione,
+								connectorSender);
 					}
 					else{
 						if(sendRispostaApplicativa ) {
-							RepositoryConnettori.salvaConnettorePD(idMessageRequest, connectorSender);
+							RepositoryConnettori.salvaConnettorePD(
+									//idMessageRequest, 
+									idTransazione,
+									connectorSender);
 						}
 						else{
 							// Sono nella casistica di messaggio preso in carico.

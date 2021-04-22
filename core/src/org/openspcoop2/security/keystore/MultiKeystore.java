@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.Key;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -33,6 +32,7 @@ import java.util.Properties;
 
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.KeyStore;
 
 /**
  * MultiKeystore

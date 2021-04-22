@@ -1386,8 +1386,16 @@ public class RicezioneBusteService  {
 		String location = "...";
 		try{
 			IConnettore c = null;
-			if(context.getIdMessage()!=null){
-				c = RepositoryConnettori.removeConnettorePA(context.getIdMessage());
+			String idTransazione = null;
+			if(context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+				idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			}
+			if(idTransazione!=null) {
+			//if(context.getIdMessage()!=null){
+				c = RepositoryConnettori.removeConnettorePA(
+						//context.getIdMessage()
+						idTransazione
+						);
 			}
 			if(c!=null){
 				location = c.getLocation();

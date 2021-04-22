@@ -119,7 +119,7 @@ public class HttpStore implements Serializable {
 			else {
 				//System.out.println("https");
 				httpResponse = HttpUtilities.getHTTPSResponse(this.endpoint, this.readTimeout, this.connectionTimeout, 
-						this.trustStoreSsl.getTrustStore(), 
+						this.trustStoreSsl.getTrustStore().getKeystore(), 
 						this.crlTrustStoreSsl!=null ? this.crlTrustStoreSsl.getCertStore() : null);
 			}
 			if(httpResponse==null || httpResponse.getContent()==null) {

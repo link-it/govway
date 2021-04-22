@@ -3929,193 +3929,58 @@ public class GestoreMessaggi  {
 			List<IdentificativoIM> ids = new ArrayList<IdentificativoIM>();
 			String queryString = null;
 			try{	
-				// Effettuo ricerca ID DEL SERVIZIO APPLICATIVO
-
-
-				if(Configurazione.getSqlQueryObjectType()==null){
-
-					if(offset>=0){
-						throw new GestoreMessaggiException("La funzione di ricerca tramite offset e limit non e' utilizzabile se nella configurazione della PdD non viene specificato il tipo di database");
-					}
-
-					StringBuilder query = new StringBuilder();
-					query.append("SELECT ");
-
-					// Select
-					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					query.append(".ID_MESSAGGIO as IdMsgServizioApplicativo, ");
-					query.append(GestoreMessaggi.MESSAGGI);
-					query.append(".ORA_REGISTRAZIONE as OraMessaggio ");
-					query.append(" FROM ");
-
-					// FROM
-					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					query.append(",");
-					query.append(GestoreMessaggi.MESSAGGI);
-					if(tipoServizio!=null || servizio!=null || azione!=null){
-						query.append(",");
-						query.append(Costanti.REPOSITORY);
-					}
-					query.append(" WHERE ");
-
-					// join MSG_SERVIZI_APPLICATIVI con MESSAGGI
-					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					query.append(".ID_MESSAGGIO=");
-					query.append(GestoreMessaggi.MESSAGGI);
-					query.append(".ID_MESSAGGIO AND ");
-
-					if(tipoServizio!=null || servizio!=null || azione!=null){
-						// join REPOSITORY_BUSTE con MESSAGGI
-						query.append(Costanti.REPOSITORY);
-						query.append(".ID_MESSAGGIO=");
-						query.append(GestoreMessaggi.MESSAGGI);
-						query.append(".ID_MESSAGGIO AND ");
-						query.append(Costanti.REPOSITORY);
-						query.append(".TIPO=");
-						query.append(GestoreMessaggi.MESSAGGI);
-						query.append(".TIPO AND ");
-					}
-
-					// Selezione messaggio del servizio applicativo
-					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					query.append(".SERVIZIO_APPLICATIVO=? AND ");
-					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					query.append(".INTEGRATION_MANAGER=1 AND ");
-					query.append(GestoreMessaggi.MESSAGGI);
-					query.append(".TIPO=? AND ");
-					query.append(GestoreMessaggi.MESSAGGI);
-					query.append(".PROPRIETARIO=? ");
-
-					// Filtro busta
-					if(tipoServizio!=null){
-						query.append("AND ");
-						query.append(Costanti.REPOSITORY);
-						query.append(".TIPO_SERVIZIO=? ");
-					}
-					if(servizio!=null){
-						query.append("AND ");
-						query.append(Costanti.REPOSITORY);
-						query.append(".SERVIZIO=? ");
-					}
-					if(azione!=null){
-						query.append("AND ");
-						query.append(Costanti.REPOSITORY);
-						query.append(".AZIONE=? ");
-					}
-
-					// Ordine risultato
-					query.append("ORDER BY ");
-					query.append(GestoreMessaggi.MESSAGGI);
-					query.append(".ORA_REGISTRAZIONE,");
-					query.append(GestoreMessaggi.MESSAGGI);
-					query.append(".ID_MESSAGGIO");
-					queryString = query.toString();
-				}else{
-					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
-					//	FROM
-					sqlQueryObject.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
-					if(tipoServizio!=null || servizio!=null || azione!=null){
-						sqlQueryObject.addFromTable(Costanti.REPOSITORY);
-					}
-					// Select
-					sqlQueryObject.addSelectAliasField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"ID_MESSAGGIO","IdMsgServizioApplicativo");
-					sqlQueryObject.addSelectAliasField(GestoreMessaggi.MESSAGGI,"ID_MESSAGGIO","IdBustaMessaggio");
-					sqlQueryObject.addSelectAliasField(GestoreMessaggi.MESSAGGI,"TIPO","TipoMessaggio");
-					sqlQueryObject.addSelectAliasField(GestoreMessaggi.MESSAGGI,"ORA_REGISTRAZIONE","OraMessaggio");
-					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"PROPRIETARIO");
-					sqlQueryObject.addSelectField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"SERVIZIO_APPLICATIVO");
-					sqlQueryObject.addSelectField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"INTEGRATION_MANAGER");
-
-					// join MSG_SERVIZI_APPLICATIVI con MESSAGGI
-					sqlQueryObject.addWhereCondition(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".ID_MESSAGGIO="+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO");
-
-					if(tipoServizio!=null || servizio!=null || azione!=null){
-						// join REPOSITORY_BUSTE con MESSAGGI
-						sqlQueryObject.addSelectAliasField(Costanti.REPOSITORY,"ID_MESSAGGIO","IdBustaRepositoryBuste");
-						sqlQueryObject.addSelectAliasField(Costanti.REPOSITORY,"TIPO","TipoBustaRepositoryBuste");
-						sqlQueryObject.addSelectAliasField(Costanti.REPOSITORY,"ORA_REGISTRAZIONE","OraRepositoryBuste"); // per risolvere ambiguita oracle con OraRegistrazione dei messaggi
-						sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".ID_MESSAGGIO="+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO");
-						sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO="+GestoreMessaggi.MESSAGGI+".TIPO");
-					}
-
-					//	Selezione messaggio del servizio applicativo
-					sqlQueryObject.addWhereCondition(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SERVIZIO_APPLICATIVO=?");
-					sqlQueryObject.addWhereCondition(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".INTEGRATION_MANAGER=1");
-					sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".TIPO=?");
-					sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO=?");
-
-					// Filtro busta
-					if(tipoServizio!=null){
-						sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO_SERVIZIO");
-						sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO_SERVIZIO=?");
-					}
-					if(servizio!=null){
-						sqlQueryObject.addSelectField(Costanti.REPOSITORY,"SERVIZIO");
-						sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".SERVIZIO=?");
-					}
-					if(azione!=null){
-						sqlQueryObject.addSelectField(Costanti.REPOSITORY,"AZIONE");
-						sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".AZIONE=?");
-					}
-
-					//	Ordine risultato
-					sqlQueryObject.setANDLogicOperator(true);
-					sqlQueryObject.addOrderBy("OraMessaggio");
-					sqlQueryObject.addOrderBy("IdBustaMessaggio");
-					sqlQueryObject.setSortType(true);
-
-					// Limit
-					if(counter>=0)
-						sqlQueryObject.setLimit(counter);
-
-					// Offset
-					if(offset>=0)
-						sqlQueryObject.setOffset(offset);
-
-					queryString = sqlQueryObject.createSQLQuery();
-				}
-
-				//System.out.println("QUERY ID MESSAGGI IS: ["+queryString+"]");
-
-
+				// Calcolo data minima
+				queryString = getQueryStringGetAllMessagesId(servizioApplicativo,
+						counter, offset, tipoServizio, servizio, azione,
+						true);
 				pstmt = connectionDB.prepareStatement(queryString);
-				pstmt.setString(1,servizioApplicativo);
-				pstmt.setString(2,Costanti.INBOX);
-				pstmt.setString(3,ConsegnaContenutiApplicativi.ID_MODULO);
-
-				int indexPstmt = 4;
-				if(tipoServizio!=null){
-					pstmt.setString(indexPstmt,tipoServizio);
-					indexPstmt++;
-				}
-				if(servizio!=null){
-					pstmt.setString(indexPstmt,servizio);
-					indexPstmt++;
-				}
-				if(azione!=null){
-					pstmt.setString(indexPstmt,azione);
-					indexPstmt++;
-				}
-
+				setPreparedStatementGetAllMessagesId(pstmt,
+						servizioApplicativo,
+						tipoServizio,servizio,azione,
+						null);
+				//System.out.println("QUERY MIN DATE ID MESSAGGI IS: ["+queryString+"]");
 				rs = pstmt.executeQuery();
-
-
-				int countLimit = 0;
-				while(rs.next()){
-					
-					IdentificativoIM idIM = new IdentificativoIM(rs.getString("IdMsgServizioApplicativo"), rs.getTimestamp("OraMessaggio"));
-					ids.add(idIM);
-					
-					// LIMIT Applicativo
-					if(counter>=0 && Configurazione.getSqlQueryObjectType()==null){
-						countLimit++;
-						if(countLimit==counter)
-							break;
-					}
+				Timestamp minDate = null;
+				if(rs.next()) {
+					minDate = rs.getTimestamp("MinOraRegistrazione");
 				}
 				rs.close();
 				pstmt.close();
+				
+				if(minDate!=null) {
+				
+					// Effettuo ricerca ID DEL SERVIZIO APPLICATIVO
+	
+					queryString = getQueryStringGetAllMessagesId(servizioApplicativo,
+							counter, offset, tipoServizio, servizio, azione,
+							false);
+					//System.out.println("QUERY ID MESSAGGI IS: ["+queryString+"]");
+	
+					pstmt = connectionDB.prepareStatement(queryString);
+					setPreparedStatementGetAllMessagesId(pstmt,
+							servizioApplicativo,
+							tipoServizio,servizio,azione,
+							minDate);
+					rs = pstmt.executeQuery();
+	
+	
+					int countLimit = 0;
+					while(rs.next()){
+						
+						IdentificativoIM idIM = new IdentificativoIM(rs.getString("IdMsgServizioApplicativo"), rs.getTimestamp("OraMessaggio"));
+						ids.add(idIM);
+						
+						// LIMIT Applicativo
+						if(counter>=0 && Configurazione.getSqlQueryObjectType()==null){
+							countLimit++;
+							if(countLimit==counter)
+								break;
+						}
+					}
+					rs.close();
+					pstmt.close();
+					
+				}
 
 			} catch(Exception e) {
 				String errorMsg = "[GestoreMessaggi.getIDMessaggi_ServizioApplicativo_engine] errore, queryString["+queryString+"]: "+e.getMessage();		
@@ -4138,6 +4003,218 @@ public class GestoreMessaggi  {
 			// do the right thing
 		}else{
 			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
+		}
+	}
+	
+	private String getQueryStringGetAllMessagesId(String servizioApplicativo,
+			int counter,int offset,String tipoServizio,String servizio,String azione,
+			boolean findMinDate) throws Exception {
+		String queryString = null;
+		if(Configurazione.getSqlQueryObjectType()==null){
+
+			if(offset>=0){
+				throw new GestoreMessaggiException("La funzione di ricerca tramite offset e limit non e' utilizzabile se nella configurazione della PdD non viene specificato il tipo di database");
+			}
+
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT ");
+
+			// Select
+			if(findMinDate) {
+				query.append("MIN(");
+				query.append(GestoreMessaggi.MESSAGGI);
+				query.append(".ORA_REGISTRAZIONE) as MinOraRegistrazione ");
+			}
+			else {
+				query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+				query.append(".ID_MESSAGGIO as IdMsgServizioApplicativo, ");
+				query.append(GestoreMessaggi.MESSAGGI);
+				query.append(".ORA_REGISTRAZIONE as OraMessaggio ");
+			}
+			
+			query.append(" FROM ");
+
+			// FROM
+			query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+			query.append(",");
+			query.append(GestoreMessaggi.MESSAGGI);
+			if(tipoServizio!=null || servizio!=null || azione!=null){
+				query.append(",");
+				query.append(Costanti.REPOSITORY);
+			}
+			query.append(" WHERE ");
+
+			// join MSG_SERVIZI_APPLICATIVI con MESSAGGI
+			query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+			query.append(".ID_MESSAGGIO=");
+			query.append(GestoreMessaggi.MESSAGGI);
+			query.append(".ID_MESSAGGIO AND ");
+
+			if(tipoServizio!=null || servizio!=null || azione!=null){
+				// join REPOSITORY_BUSTE con MESSAGGI
+				query.append(Costanti.REPOSITORY);
+				query.append(".ID_MESSAGGIO=");
+				query.append(GestoreMessaggi.MESSAGGI);
+				query.append(".ID_MESSAGGIO AND ");
+				query.append(Costanti.REPOSITORY);
+				query.append(".TIPO=");
+				query.append(GestoreMessaggi.MESSAGGI);
+				query.append(".TIPO AND ");
+			}
+
+			// Selezione messaggio del servizio applicativo
+			query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+			query.append(".SERVIZIO_APPLICATIVO=? AND ");
+			query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+			query.append(".INTEGRATION_MANAGER=1 AND ");
+			query.append(GestoreMessaggi.MESSAGGI);
+			query.append(".TIPO=? AND ");
+			query.append(GestoreMessaggi.MESSAGGI);
+			query.append(".PROPRIETARIO=? ");
+			if(!findMinDate) {
+				query.append("AND ");
+				query.append(GestoreMessaggi.MESSAGGI);
+				query.append(".ORA_REGISTRAZIONE>=? ");
+			}
+
+			// Filtro busta
+			if(tipoServizio!=null){
+				query.append("AND ");
+				query.append(Costanti.REPOSITORY);
+				query.append(".TIPO_SERVIZIO=? ");
+			}
+			if(servizio!=null){
+				query.append("AND ");
+				query.append(Costanti.REPOSITORY);
+				query.append(".SERVIZIO=? ");
+			}
+			if(azione!=null){
+				query.append("AND ");
+				query.append(Costanti.REPOSITORY);
+				query.append(".AZIONE=? ");
+			}
+
+			// Ordine risultato
+			if(!findMinDate) {
+				query.append("ORDER BY ");
+				query.append(GestoreMessaggi.MESSAGGI);
+				query.append(".ORA_REGISTRAZIONE,");
+				query.append(GestoreMessaggi.MESSAGGI);
+				query.append(".ID_MESSAGGIO");
+			}
+			queryString = query.toString();
+		}else{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());	
+			//	FROM
+			sqlQueryObject.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+			sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
+			if(tipoServizio!=null || servizio!=null || azione!=null){
+				sqlQueryObject.addFromTable(Costanti.REPOSITORY);
+			}
+			
+			// Select
+			if(findMinDate) {
+				sqlQueryObject.addSelectMinField(GestoreMessaggi.MESSAGGI+".ORA_REGISTRAZIONE", "MinOraRegistrazione");
+			}
+			else {
+				sqlQueryObject.addSelectAliasField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"ID_MESSAGGIO","IdMsgServizioApplicativo");
+				sqlQueryObject.addSelectAliasField(GestoreMessaggi.MESSAGGI,"ID_MESSAGGIO","IdBustaMessaggio");
+				sqlQueryObject.addSelectAliasField(GestoreMessaggi.MESSAGGI,"TIPO","TipoMessaggio");
+				sqlQueryObject.addSelectAliasField(GestoreMessaggi.MESSAGGI,"ORA_REGISTRAZIONE","OraMessaggio");
+				sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,"PROPRIETARIO");
+				sqlQueryObject.addSelectField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"SERVIZIO_APPLICATIVO");
+				sqlQueryObject.addSelectField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"INTEGRATION_MANAGER");
+			}
+
+			sqlQueryObject.setANDLogicOperator(true);
+						
+			// join MSG_SERVIZI_APPLICATIVI con MESSAGGI
+			sqlQueryObject.addWhereCondition(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".ID_MESSAGGIO="+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO");
+
+			if(tipoServizio!=null || servizio!=null || azione!=null){
+				// join REPOSITORY_BUSTE con MESSAGGI
+				if(!findMinDate) {
+					sqlQueryObject.addSelectAliasField(Costanti.REPOSITORY,"ID_MESSAGGIO","IdBustaRepositoryBuste");
+					sqlQueryObject.addSelectAliasField(Costanti.REPOSITORY,"TIPO","TipoBustaRepositoryBuste");
+					sqlQueryObject.addSelectAliasField(Costanti.REPOSITORY,"ORA_REGISTRAZIONE","OraRepositoryBuste"); // per risolvere ambiguita oracle con OraRegistrazione dei messaggi
+				}
+				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".ID_MESSAGGIO="+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO");
+				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO="+GestoreMessaggi.MESSAGGI+".TIPO");
+			}
+
+			//	Selezione messaggio del servizio applicativo
+			sqlQueryObject.addWhereCondition(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SERVIZIO_APPLICATIVO=?");
+			sqlQueryObject.addWhereCondition(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".INTEGRATION_MANAGER=1");
+			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".TIPO=?");
+			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO=?");
+			if(!findMinDate) {
+				sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".ORA_REGISTRAZIONE>=?");
+			}
+
+			// Filtro busta
+			if(tipoServizio!=null){
+				if(!findMinDate) {
+					sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO_SERVIZIO");
+				}
+				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO_SERVIZIO=?");
+			}
+			if(servizio!=null){
+				if(!findMinDate) {
+					sqlQueryObject.addSelectField(Costanti.REPOSITORY,"SERVIZIO");
+				}
+				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".SERVIZIO=?");
+			}
+			if(azione!=null){
+				if(!findMinDate) {
+					sqlQueryObject.addSelectField(Costanti.REPOSITORY,"AZIONE");
+				}
+				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".AZIONE=?");
+			}
+
+			if(!findMinDate) {
+				// Ordine risultato
+				sqlQueryObject.addOrderBy("OraMessaggio");
+				sqlQueryObject.addOrderBy("IdBustaMessaggio");
+				sqlQueryObject.setSortType(true);
+
+				// Limit
+				if(counter>=0)
+					sqlQueryObject.setLimit(counter);
+
+				// Offset
+				if(offset>=0)
+					sqlQueryObject.setOffset(offset);
+			}
+
+			queryString = sqlQueryObject.createSQLQuery();
+		}
+		return queryString;
+	}
+	
+	private void setPreparedStatementGetAllMessagesId(PreparedStatement pstmt,
+			String servizioApplicativo,
+			String tipoServizio,String servizio,String azione,
+			Timestamp minDate) throws Exception {
+		pstmt.setString(1,servizioApplicativo);
+		pstmt.setString(2,Costanti.INBOX);
+		pstmt.setString(3,ConsegnaContenutiApplicativi.ID_MODULO);
+
+		int indexPstmt = 4;
+		if(minDate!=null) {
+			pstmt.setTimestamp(indexPstmt,minDate);
+			indexPstmt++;
+		}
+		if(tipoServizio!=null){
+			pstmt.setString(indexPstmt,tipoServizio);
+			indexPstmt++;
+		}
+		if(servizio!=null){
+			pstmt.setString(indexPstmt,servizio);
+			indexPstmt++;
+		}
+		if(azione!=null){
+			pstmt.setString(indexPstmt,azione);
+			indexPstmt++;
 		}
 	}
 

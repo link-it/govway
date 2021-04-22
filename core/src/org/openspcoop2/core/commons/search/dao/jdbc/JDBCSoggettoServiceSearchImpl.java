@@ -98,6 +98,9 @@ public class JDBCSoggettoServiceSearchImpl implements IJDBCServiceSearchWithId<S
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override
@@ -539,7 +542,7 @@ public class JDBCSoggettoServiceSearchImpl implements IJDBCServiceSearchWithId<S
 					
 					org.openspcoop2.core.commons.search.IdRuolo id_soggetto_soggettoRuolo_ruolo = null;
 					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-						id_soggetto_soggettoRuolo_ruolo = ((JDBCRuoloServiceSearch)(this.getServiceManager().getRuoloServiceSearch())).findId(idFK_soggetto_soggettoRuolo_ruolo, false);
+						id_soggetto_soggettoRuolo_ruolo = ((JDBCRuoloServiceSearch)(this.getServiceManager(connection, jdbcProperties, log).getRuoloServiceSearch())).findId(idFK_soggetto_soggettoRuolo_ruolo, false);
 					}else{
 						id_soggetto_soggettoRuolo_ruolo = new org.openspcoop2.core.commons.search.IdRuolo();
 					}
@@ -561,7 +564,7 @@ public class JDBCSoggettoServiceSearchImpl implements IJDBCServiceSearchWithId<S
 //					
 //					org.openspcoop2.core.commons.search.IdSoggetto id_soggetto_soggettoRuolo_soggetto = null;
 //					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-//						id_soggetto_soggettoRuolo_soggetto = ((JDBCSoggettoServiceSearch)(this.getServiceManager().getSoggettoServiceSearch())).findId(idFK_soggetto_soggettoRuolo_soggetto, false);
+//						id_soggetto_soggettoRuolo_soggetto = ((JDBCSoggettoServiceSearch)(this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch())).findId(idFK_soggetto_soggettoRuolo_soggetto, false);
 //					}else{
 //						id_soggetto_soggettoRuolo_soggetto = new org.openspcoop2.core.commons.search.IdSoggetto();
 //					}

@@ -966,12 +966,22 @@ public class Integrazione extends GestioneViaJmx {
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_WSADDRESSING"},dataProvider="OneWayWithWSA",dependsOnMethods={"oneWayWithWSA"})
 	public void testOneWayWithWSA(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING, checkServizioApplicativo,null);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING, checkServizioApplicativo,null);
+				}catch(Throwable e){
+					if(i==9) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -1062,13 +1072,23 @@ public class Integrazione extends GestioneViaJmx {
 	}
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SINCRONO"},dataProvider="Sincrono",dependsOnMethods={"sincrono"})
 	public void testSincrono(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
-					null);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+							null);
+				}catch(Throwable e){
+					if(i==9) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -1537,12 +1557,22 @@ public class Integrazione extends GestioneViaJmx {
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".ONEWAY_ATTACHMENTS_WSADDRESSING"},
 			dataProvider="OneWayWithAttachmentsAndWSAddressing",dependsOnMethods={"oneWayWithAttachmentsAndWSAddressing"})
 	public void testOneWayWithAttachmentsAndWSAddressing(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
-					CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING, checkServizioApplicativo,null);
-		}catch(Exception e){
-			throw e;
+		try {
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,
+							CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING, checkServizioApplicativo,null);
+				}catch(Throwable e){
+					if(i==9) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
+			}
 		}finally{
 			data.close();
 		}
@@ -2231,7 +2261,7 @@ public class Integrazione extends GestioneViaJmx {
 							CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
 							null);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -2475,7 +2505,7 @@ public class Integrazione extends GestioneViaJmx {
 							CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_CONCAT, checkServizioApplicativo,
 							null);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {
@@ -2630,7 +2660,7 @@ public class Integrazione extends GestioneViaJmx {
 					Reporter.log("Controllo tracciamento richiesta non effettuato con id: " +id);
 					Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 				}catch(Throwable e){
-					if(i==4) {
+					if(i==9) {
 						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
 					}
 					else {

@@ -188,7 +188,12 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			profiloSicurezzaMessaggioAudienceItem.setRows(2);
 			profiloSicurezzaMessaggioAudienceItem.setNote(ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_NOTE);
 			ConsoleItemInfo infoAud = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL);
-			infoAud.setHeaderBody(ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO);
+			if(esterno) {
+				infoAud.setHeaderBody(ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO);
+			}
+			else {
+				infoAud.setHeaderBody(ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO);
+			}
 			profiloSicurezzaMessaggioAudienceItem.setInfo(infoAud);
 			profiloSicurezzaMessaggioAudienceItem.setRequired(false);
 			configuration.addConsoleItem(profiloSicurezzaMessaggioAudienceItem);

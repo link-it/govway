@@ -101,6 +101,9 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	public JDBCServiceManager getServiceManager() throws ServiceException{
 		return this.jdbcServiceManager;
 	}
+	public JDBCServiceManager getServiceManager(Connection connection, JDBCServiceManagerProperties jdbcProperties, Logger log) throws ServiceException{
+		return new JDBCServiceManager(connection, jdbcProperties, log);
+	}
 	
 
 	@Override
@@ -800,12 +803,12 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 			
 			Long idSoggettoFK = (Long) listaFieldId_fruitore.get(0);
 			id_fruitore.
-				setIdFruitore(((IDBSoggettoServiceSearch)this.getServiceManager().
+				setIdFruitore(((IDBSoggettoServiceSearch)this.getServiceManager(connection, jdbcProperties, log).
 						getSoggettoServiceSearch()).findId(idSoggettoFK, true));
 			
 			Long idParteSpecificaFK = (Long) listaFieldId_fruitore.get(1);
 			id_fruitore.
-				setIdAccordoServizioParteSpecifica(((IDBAccordoServizioParteSpecificaServiceSearch)this.getServiceManager().
+				setIdAccordoServizioParteSpecifica(((IDBAccordoServizioParteSpecificaServiceSearch)this.getServiceManager(connection, jdbcProperties, log).
 						getAccordoServizioParteSpecificaServiceSearch()).findId(idParteSpecificaFK, true));
 		}
 		
@@ -837,10 +840,10 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		IDBSoggettoServiceSearch soggettoServiceSearch = (IDBSoggettoServiceSearch) this.getServiceManager().getSoggettoServiceSearch();
+		IDBSoggettoServiceSearch soggettoServiceSearch = (IDBSoggettoServiceSearch) this.getServiceManager(connection, jdbcProperties, log).getSoggettoServiceSearch();
 		Long idSoggettoFruitore = soggettoServiceSearch.get(id.getIdFruitore()).getId();
 		
-		IDBAccordoServizioParteSpecificaServiceSearch accordoServizioParteSpecificaServiceSearch = (IDBAccordoServizioParteSpecificaServiceSearch) this.getServiceManager().getAccordoServizioParteSpecificaServiceSearch();
+		IDBAccordoServizioParteSpecificaServiceSearch accordoServizioParteSpecificaServiceSearch = (IDBAccordoServizioParteSpecificaServiceSearch) this.getServiceManager(connection, jdbcProperties, log).getAccordoServizioParteSpecificaServiceSearch();
 		Long idAccordoServizioParteSpecifica = accordoServizioParteSpecificaServiceSearch.get(id.getIdAccordoServizioParteSpecifica()).getId();
 		
 		// Object _fruitore
