@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.openspcoop2.core.config.rs.server.api.impl.ProtocolPropertiesHelper;
 import org.openspcoop2.core.config.rs.server.model.Api;
 import org.openspcoop2.core.config.rs.server.model.ApiAzione;
 import org.openspcoop2.core.config.rs.server.model.ApiModI;
@@ -70,12 +71,10 @@ import org.openspcoop2.protocol.modipa.properties.ModIProfiliInterazioneRESTConf
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
-import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -120,18 +119,18 @@ public class ModiApiApiHelper {
 
 			ApiModIPatternInterazioneSoap interazione = new ApiModIPatternInterazioneSoap();
 
-			if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
+			if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
 				interazione.setPattern(ModIPatternInterazioneEnum.CRUD);
-			} else if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
+			} else if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
 				interazione.setPattern(ModIPatternInterazioneEnum.BLOCCANTE);
-			} else if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
+			} else if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
 
-				ModIPatternInterazioneTipoEnum tipo = getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
+				ModIPatternInterazioneTipoEnum tipo = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
 						ModIPatternInterazioneTipoEnum.PULL : ModIPatternInterazioneTipoEnum.PUSH;
 				
 				interazione.setTipo(tipo);
 
-				ModIPatternInterazioneFunzioneEnum funzione = getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
+				ModIPatternInterazioneFunzioneEnum funzione = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
 						ModIPatternInterazioneFunzioneEnum.RICHIESTA: ModIPatternInterazioneFunzioneEnum.RISPOSTA;
 				
 				interazione.setFunzione(funzione);
@@ -146,7 +145,7 @@ public class ModiApiApiHelper {
 			apimodi.setInterazione(interazione);
 
 
-			if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+			if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
 				ApiModISicurezzaMessaggioOperazione op = new ApiModISicurezzaMessaggioOperazione();
 				op.setStato(ModISicurezzaMessaggioOperazioneEnum.API);
 				apimodi.setSicurezzaMessaggio(op);
@@ -188,18 +187,18 @@ public class ModiApiApiHelper {
 
 			ApiModIPatternInterazioneRest interazione = new ApiModIPatternInterazioneRest();
 
-			if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
+			if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
 				interazione.setPattern(ModIPatternInterazioneEnum.CRUD);
-			} else if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
+			} else if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
 				interazione.setPattern(ModIPatternInterazioneEnum.BLOCCANTE);
-			} else if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
+			} else if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
 
-				ModIPatternInterazioneTipoEnum tipo = getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
+				ModIPatternInterazioneTipoEnum tipo = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
 						ModIPatternInterazioneTipoEnum.PULL : ModIPatternInterazioneTipoEnum.PUSH;
 				
 				interazione.setTipo(tipo);
 
-				ModIPatternInterazioneFunzioneEnum funzione = getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
+				ModIPatternInterazioneFunzioneEnum funzione = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
 						ModIPatternInterazioneFunzioneEnum.RICHIESTA: ModIPatternInterazioneFunzioneEnum.RISPOSTA;
 				
 				interazione.setFunzione(funzione);
@@ -214,7 +213,7 @@ public class ModiApiApiHelper {
 			apimodi.setInterazione(interazione);
 
 
-			if(getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+			if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
 				ApiModISicurezzaMessaggioOperazione op = new ApiModISicurezzaMessaggioOperazione();
 				op.setStato(ModISicurezzaMessaggioOperazioneEnum.API);
 				apimodi.setSicurezzaMessaggio(op);
@@ -234,10 +233,10 @@ public class ModiApiApiHelper {
 	}
 
 	private static ApiModIPatternInterazioneCorrelazioneRest getRisorsaCorrelata(Map<String, AbstractProperty<?>> p, ApiEnv env) throws Exception {
-		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
 		IDResource id = new IDResource();
 		id.setIdAccordo(idAccordoFromAccordo);
-		id.setNome(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
+		id.setNome(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
 		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory);
 		Resource resource = registryReader.getResourceAccordo(id);
 
@@ -279,14 +278,14 @@ public class ModiApiApiHelper {
 
 	private static ApiModIPatternInterazioneCorrelazioneSoap getAzioneCorrelata(Map<String, AbstractProperty<?>> p, ApiEnv env) throws Exception {
 
-		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
 
 		ApiModIPatternInterazioneCorrelazioneSoap risorsaCorrelata = new ApiModIPatternInterazioneCorrelazioneSoap();
 		risorsaCorrelata.setApiNome(idAccordoFromAccordo.getNome());
 		risorsaCorrelata.setApiVersione(idAccordoFromAccordo.getVersione());
 		
-		risorsaCorrelata.setServizio(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, true));
-		risorsaCorrelata.setAzione(getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
+		risorsaCorrelata.setServizio(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, true));
+		risorsaCorrelata.setAzione(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
 		
 		return risorsaCorrelata;
 	}
@@ -313,7 +312,7 @@ public class ModiApiApiHelper {
 		if(p!= null) {
 			ApiModISicurezzaCanale sicurezzaCanale = new ApiModISicurezzaCanale();
 
-			String sicurezzaCanalePatternString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE, true);
+			String sicurezzaCanalePatternString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE, true);
 
 			sicurezzaCanale.setPattern(sicurezzaCanalePatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01) ? ModISicurezzaCanaleEnum.AUTH01:ModISicurezzaCanaleEnum.AUTH02);
 			apimodi.setSicurezzaCanale(sicurezzaCanale);
@@ -328,7 +327,7 @@ public class ModiApiApiHelper {
 	private static ApiModISicurezzaMessaggio getSicurezzaMessaggio(Map<String, AbstractProperty<?>> p, boolean isSOAP) throws Exception {
 		ApiModISicurezzaMessaggio sicurezzaMessaggio = new ApiModISicurezzaMessaggio();
 
-		String sicurezzaMessaggioPatternString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, true);
+		String sicurezzaMessaggioPatternString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, true);
 
 		ModISicurezzaMessaggioEnum profiloSicurezzaMessaggioPattern = null;
 		if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01)) {
@@ -352,8 +351,8 @@ public class ModiApiApiHelper {
 				populateSicurezzaMessaggioREST(p, sicurezzaMessaggio);
 			}
 
-			sicurezzaMessaggio.setDigestRichiesta(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, true));
-			sicurezzaMessaggio.setInformazioniUtente(getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, true));
+			sicurezzaMessaggio.setDigestRichiesta(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, true));
+			sicurezzaMessaggio.setInformazioniUtente(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, true));
 
 		} else {
 			sicurezzaMessaggio.setInformazioniUtente(false);
@@ -368,7 +367,7 @@ public class ModiApiApiHelper {
 	private static void populateSicurezzaMessaggioSOAP(Map<String, AbstractProperty<?>> p, ApiModISicurezzaMessaggio sicurezzaMessaggio) throws Exception {
 		ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
 
-		String sicurezzaMessaggioApplicabilitaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
+		String sicurezzaMessaggioApplicabilitaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
 
 		if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
@@ -392,7 +391,7 @@ public class ModiApiApiHelper {
 
 	private static void populateSicurezzaMessaggioREST(Map<String, AbstractProperty<?>> p, ApiModISicurezzaMessaggio sicurezzaMessaggio) throws Exception {
 		ModISicurezzaMessaggioRestHeaderEnum restHeader = null;
-		String restHeaderString = getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, true);
+		String restHeaderString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, true);
 
 		if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID;
@@ -403,7 +402,7 @@ public class ModiApiApiHelper {
 
 		ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
 
-		String sicurezzaMessaggioApplicabilitaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
+		String sicurezzaMessaggioApplicabilitaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
 
 		if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
@@ -416,7 +415,7 @@ public class ModiApiApiHelper {
 
 			ApiModISicurezzaMessaggioApplicabilitaCustom appCustom = new ApiModISicurezzaMessaggioApplicabilitaCustom();
 			appCustom.setApplicabilita(applicabilita);
-			String applicabilitaCustomRichiestaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE, true);
+			String applicabilitaCustomRichiestaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE, true);
 			ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRichiesta = null;
 
 			if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO)) {
@@ -425,13 +424,13 @@ public class ModiApiApiHelper {
 				applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
 			} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO)) {
 				applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
-				appCustom.setRichiestaContentType(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID, true));
+				appCustom.setRichiestaContentType(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID, true));
 			} 
 
 			appCustom.setRichiesta(applicabilitaCustomRichiesta);
 
 
-			String applicabilitaCustomRispostaString = getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE, true);
+			String applicabilitaCustomRispostaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE, true);
 			ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRisposta = null;
 
 			if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO)) {
@@ -441,8 +440,8 @@ public class ModiApiApiHelper {
 			} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO)) {
 				applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
 
-				appCustom.setRispostaContentType(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID, true));
-				appCustom.setRispostaCodice(getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID, true));
+				appCustom.setRispostaContentType(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID, true));
+				appCustom.setRispostaCodice(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID, true));
 			} 
 
 			appCustom.setRisposta(applicabilitaCustomRisposta);
@@ -453,38 +452,6 @@ public class ModiApiApiHelper {
 		sicurezzaMessaggio.setApplicabilita(applicabilita);
 
 
-	}
-
-	private static Boolean getBooleanProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
-		AbstractProperty<?> prop = getProperty(p, key, required);
-		if(prop instanceof BooleanProperty) {
-			return ((BooleanProperty)prop).getValue();
-		} else {
-			throw new Exception("Property "+key+" non e' una Boolean:" + prop.getClass().getName());
-		}
-	}
-
-
-	private static String getStringProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
-
-		AbstractProperty<?> prop = getProperty(p, key, required);
-		if(prop instanceof StringProperty) {
-			return ((StringProperty)prop).getValue();
-		} else {
-			throw new Exception("Property "+key+" non e' una StringProperty:" + prop.getClass().getName());
-		}
-	}
-
-	private static AbstractProperty<?> getProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws Exception {
-		if(p.containsKey(key)) {
-			return p.get(key);
-		} else {
-			if(required) {
-				throw new Exception("Property "+key+" non trovata");
-			} else {
-				return null;
-			}
-		}
 	}
 
 	public static ProtocolProperties getProtocolProperties(ApiAzione body, AccordoServizioParteComune as, Operation op, ApiEnv env) throws Exception {
@@ -881,6 +848,10 @@ public class ModiApiApiHelper {
 			String applicabilita = "";
 
 
+			if(sicurezzaMessaggio.getApplicabilita() == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("sicurezza_messaggio.applicabilita deve essere specificato");
+			}
+			
 			if(sicurezzaMessaggio.getApplicabilita().equals(ModISicurezzaMessaggioApplicabilitaEnum.CUSTOM)) {
 
 				p.addProperty(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO);

@@ -69,6 +69,9 @@ import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -164,6 +167,16 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			if (alreadyExists) {
 				asps = env.apsCore.getServizio(idAps);
 			}
+
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env);
+	
+				if(protocolProperties != null) {
+					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+			
 
 			ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
@@ -659,7 +672,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 
-			ErogazioneModI ret = null; // TODO
+			ErogazioneModI ret = ModiErogazioniApiHelper.getErogazioneModi(asps, env, profilo, ErogazioniApiHelper.getProtocolPropertiesMap(asps, env));
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -984,7 +997,23 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			
-			// TODO
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(asps, profilo, body.getModi(), env);
+	
+				if(protocolProperties != null) {
+					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+
+			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
+
+//			ErogazioniApiHelper.serviziUpdateCheckData(as, asps, true, env);
+
+			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
+					env.apsCore);
+
+			env.apsCore.performUpdateOperation(env.userLogin, false, oggettiDaAggiornare.toArray());
 
 			context.getLogger().info("Invocazione completata con successo");
 		}

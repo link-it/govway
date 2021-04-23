@@ -25,6 +25,7 @@ import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -138,10 +139,17 @@ import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -184,6 +192,60 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public class ErogazioniApiHelper {
 		
 	
+	public static ProtocolProperties getProtocolProperties(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+    	IDServizio oldIdAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
+		oldIdAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+		oldIdAps.setPortType(asps.getPortType());
+
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		ConsoleConfiguration consoleConf = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, 
+				registryReader, configRegistryReader, oldIdAps);
+
+		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, asps.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		
+		return prop;
+	}
+	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+
+		ProtocolProperties prop = getProtocolProperties(asps, env);
+		Map<String, AbstractProperty<?>> p = new HashMap<>();
+
+		for(int i =0; i < prop.sizeProperties(); i++) {
+			p.put(prop.getIdProperty(i), prop.getProperty(i));
+		}
+		
+		return p;
+	}
+	
+	public static ProtocolProperties getProtocolProperties(Erogazione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+
+
+		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non conforme con il profilo '"+profilo+"' indicato");
+		}
+
+		switch(profilo) {
+		case APIGATEWAY:
+			return null;// trasparente 
+		case EDELIVERY:
+			return EDeliveryErogazioniApiHelper.getProtocolProperties(body);
+		case FATTURAPA:
+			return FatturaPAErogazioniApiHelper.getProtocolProperties(body);
+		case MODI:
+		case MODIPA:
+			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env);
+		case SPCOOP:
+			return SPCoopErogazioniApiHelper.getProtocolProperties(body);
+		}
+		return null;
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public static final <T> T deserializeModalitaConfGruppo(ModalitaConfigurazioneGruppoEnum discr, Object body) throws UtilsException, InstantiationException, IllegalAccessException {
 		
@@ -1799,6 +1861,8 @@ public class ErogazioniApiHelper {
 			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
 		}
         
+		ProtocolProperties p = getProtocolProperties(asps, env);
+		
         AccordiServizioParteSpecificaUtilities.create(
         		asps,
         		alreadyExists, 
@@ -1839,7 +1903,7 @@ public class ErogazioniApiHelper {
 				null,	// autenticazioneTokenSubject, 
 				null,	// autenticazioneTokenUsername, 
 				null,	// autenticazioneTokenEMail, 
-				new ProtocolProperties(), // this.protocolProperties, 
+				p, 
 				ConsoleOperationType.ADD, 
 				env.apsCore, 
 				env.erogazioniHelper,
