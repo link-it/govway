@@ -1777,6 +1777,51 @@ components:
           type: boolean
           default: true
 
+    # ModI Applicativo
+
+    ModIApplicativoEsterno:
+      type: object      
+      required:
+        - dominio
+      properties:
+        dominio:
+          $ref: '#/components/schemas/DominioEnum'
+        reply_audience:
+           type: string
+           maxLength: 4000         
+    
+    ModIApplicativoInterno:
+      type: object      
+      required:
+        - dominio
+        - sicurezza_messaggio
+      properties:
+        dominio:
+          $ref: '#/components/schemas/DominioEnum'
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/ModIApplicativoSicurezzaMessaggio'
+    ModIApplicativoSicurezzaMessaggio:
+      type: object      
+      required:
+        - keystore
+      properties:     
+        keystore:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/ModIKeyStoreArchive'
+          - $ref: '#/components/schemas/ModIKeyStoreFile'
+          discriminator:
+            propertyName: tipologia
+            mapping:
+              'archivio': '#/components/schemas/ModIKeyStoreArchive'
+              'filesystem': '#/components/schemas/ModIKeyStoreFile'
+        reply_audience:
+           type: string
+           maxLength: 4000
+        url_x5u:
+          type: string
+          maxLength: 4000 
+
     # ModI Store
 
     ModITrustStoreDefault:

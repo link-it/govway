@@ -114,6 +114,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			idSA.setIdSoggettoProprietario(idSoggetto);
 			idSA.setNome(applicativo.getNome());
 			
+			//env.isDominioInterno(idSoggetto)
+			
 			ApiKeyInfo keyInfo = ApplicativiApiHelper.createApiKey(applicativo.getCredenziali(), idSA, env.saCore, protocollo);
 			boolean updateKey = false;
 			

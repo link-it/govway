@@ -7628,6 +7628,16 @@ components:
             - "ruolo2"
             items:
               $ref: "#/components/schemas/NCName"
+          modi:
+            type: "object"
+            discriminator:
+              propertyName: "dominio"
+              mapping:
+                interno: "#/components/schemas/ModIApplicativoInterno"
+                esterno: "#/components/schemas/ModIApplicativoEsterno"
+            oneOf:
+            - $ref: "#/components/schemas/ModIApplicativoInterno"
+            - $ref: "#/components/schemas/ModIApplicativoEsterno"
     ApplicativoItem:
       type: "object"
       allOf:
@@ -9396,6 +9406,47 @@ components:
         verifica_audience:
           type: "boolean"
           default: true
+    ModIApplicativoEsterno:
+      required:
+      - "dominio"
+      type: "object"
+      properties:
+        dominio:
+          $ref: "#/components/schemas/DominioEnum"
+        reply_audience:
+          maxLength: 4000
+          type: "string"
+    ModIApplicativoInterno:
+      required:
+      - "dominio"
+      - "sicurezza_messaggio"
+      type: "object"
+      properties:
+        dominio:
+          $ref: "#/components/schemas/DominioEnum"
+        sicurezza_messaggio:
+          $ref: "#/components/schemas/ModIApplicativoSicurezzaMessaggio"
+    ModIApplicativoSicurezzaMessaggio:
+      required:
+      - "keystore"
+      type: "object"
+      properties:
+        keystore:
+          type: "object"
+          discriminator:
+            propertyName: "tipologia"
+            mapping:
+              archivio: "#/components/schemas/ModIKeyStoreArchive"
+              filesystem: "#/components/schemas/ModIKeyStoreFile"
+          oneOf:
+          - $ref: "#/components/schemas/ModIKeyStoreArchive"
+          - $ref: "#/components/schemas/ModIKeyStoreFile"
+        reply_audience:
+          maxLength: 4000
+          type: "string"
+        url_x5u:
+          maxLength: 4000
+          type: "string"
     ModITrustStoreDefault:
       required:
       - "modalita"
