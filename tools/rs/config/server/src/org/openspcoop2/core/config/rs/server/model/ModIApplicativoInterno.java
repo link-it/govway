@@ -25,51 +25,51 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIApplicativoSicurezzaMessaggioKeystore, OneOfModIKeyStoreRidefinitoDatiKeystore {
+public class ModIApplicativoInterno  implements OneOfApplicativoModi {
   
   @Schema(required = true, description = "")
-  private ModIKeystoreTipologiaEnum tipologia = null;
+  private DominioEnum dominio = null;
   
   @Schema(required = true, description = "")
-  private ModIKeystoreEnum keystoreTipo = null;
+  private ModIApplicativoSicurezzaMessaggio sicurezzaMessaggio = null;
  /**
-   * Get tipologia
-   * @return tipologia
+   * Get dominio
+   * @return dominio
   **/
   @Override
-@JsonProperty("tipologia")
+@JsonProperty("dominio")
   @NotNull
   @Valid
-  public ModIKeystoreTipologiaEnum getTipologia() {
-    return this.tipologia;
+  public DominioEnum getDominio() {
+    return this.dominio;
   }
 
-  public void setTipologia(ModIKeystoreTipologiaEnum tipologia) {
-    this.tipologia = tipologia;
+  public void setDominio(DominioEnum dominio) {
+    this.dominio = dominio;
   }
 
-  public ModIKeyStoreFile tipologia(ModIKeystoreTipologiaEnum tipologia) {
-    this.tipologia = tipologia;
+  public ModIApplicativoInterno dominio(DominioEnum dominio) {
+    this.dominio = dominio;
     return this;
   }
 
  /**
-   * Get keystoreTipo
-   * @return keystoreTipo
+   * Get sicurezzaMessaggio
+   * @return sicurezzaMessaggio
   **/
-  @JsonProperty("keystore_tipo")
+  @JsonProperty("sicurezza_messaggio")
   @NotNull
   @Valid
-  public ModIKeystoreEnum getKeystoreTipo() {
-    return this.keystoreTipo;
+  public ModIApplicativoSicurezzaMessaggio getSicurezzaMessaggio() {
+    return this.sicurezzaMessaggio;
   }
 
-  public void setKeystoreTipo(ModIKeystoreEnum keystoreTipo) {
-    this.keystoreTipo = keystoreTipo;
+  public void setSicurezzaMessaggio(ModIApplicativoSicurezzaMessaggio sicurezzaMessaggio) {
+    this.sicurezzaMessaggio = sicurezzaMessaggio;
   }
 
-  public ModIKeyStoreFile keystoreTipo(ModIKeystoreEnum keystoreTipo) {
-    this.keystoreTipo = keystoreTipo;
+  public ModIApplicativoInterno sicurezzaMessaggio(ModIApplicativoSicurezzaMessaggio sicurezzaMessaggio) {
+    this.sicurezzaMessaggio = sicurezzaMessaggio;
     return this;
   }
 
@@ -77,10 +77,10 @@ public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIAppli
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModIKeyStoreFile {\n");
-    sb.append("    ").append(ModIKeyStoreFile.toIndentedString(super.toString())).append("\n");
-    sb.append("    tipologia: ").append(ModIKeyStoreFile.toIndentedString(this.tipologia)).append("\n");
-    sb.append("    keystoreTipo: ").append(ModIKeyStoreFile.toIndentedString(this.keystoreTipo)).append("\n");
+    sb.append("class ModIApplicativoInterno {\n");
+    
+    sb.append("    dominio: ").append(ModIApplicativoInterno.toIndentedString(this.dominio)).append("\n");
+    sb.append("    sicurezzaMessaggio: ").append(ModIApplicativoInterno.toIndentedString(this.sicurezzaMessaggio)).append("\n");
     sb.append("}");
     return sb.toString();
   }

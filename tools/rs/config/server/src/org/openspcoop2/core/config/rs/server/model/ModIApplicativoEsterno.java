@@ -25,51 +25,50 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIApplicativoSicurezzaMessaggioKeystore, OneOfModIKeyStoreRidefinitoDatiKeystore {
+public class ModIApplicativoEsterno  implements OneOfApplicativoModi {
   
   @Schema(required = true, description = "")
-  private ModIKeystoreTipologiaEnum tipologia = null;
+  private DominioEnum dominio = null;
   
-  @Schema(required = true, description = "")
-  private ModIKeystoreEnum keystoreTipo = null;
+  @Schema(description = "")
+  private String replyAudience = null;
  /**
-   * Get tipologia
-   * @return tipologia
+   * Get dominio
+   * @return dominio
   **/
   @Override
-@JsonProperty("tipologia")
+@JsonProperty("dominio")
   @NotNull
   @Valid
-  public ModIKeystoreTipologiaEnum getTipologia() {
-    return this.tipologia;
+  public DominioEnum getDominio() {
+    return this.dominio;
   }
 
-  public void setTipologia(ModIKeystoreTipologiaEnum tipologia) {
-    this.tipologia = tipologia;
+  public void setDominio(DominioEnum dominio) {
+    this.dominio = dominio;
   }
 
-  public ModIKeyStoreFile tipologia(ModIKeystoreTipologiaEnum tipologia) {
-    this.tipologia = tipologia;
+  public ModIApplicativoEsterno dominio(DominioEnum dominio) {
+    this.dominio = dominio;
     return this;
   }
 
  /**
-   * Get keystoreTipo
-   * @return keystoreTipo
+   * Get replyAudience
+   * @return replyAudience
   **/
-  @JsonProperty("keystore_tipo")
-  @NotNull
+  @JsonProperty("reply_audience")
   @Valid
-  public ModIKeystoreEnum getKeystoreTipo() {
-    return this.keystoreTipo;
+ @Size(max=4000)  public String getReplyAudience() {
+    return this.replyAudience;
   }
 
-  public void setKeystoreTipo(ModIKeystoreEnum keystoreTipo) {
-    this.keystoreTipo = keystoreTipo;
+  public void setReplyAudience(String replyAudience) {
+    this.replyAudience = replyAudience;
   }
 
-  public ModIKeyStoreFile keystoreTipo(ModIKeystoreEnum keystoreTipo) {
-    this.keystoreTipo = keystoreTipo;
+  public ModIApplicativoEsterno replyAudience(String replyAudience) {
+    this.replyAudience = replyAudience;
     return this;
   }
 
@@ -77,10 +76,10 @@ public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIAppli
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModIKeyStoreFile {\n");
-    sb.append("    ").append(ModIKeyStoreFile.toIndentedString(super.toString())).append("\n");
-    sb.append("    tipologia: ").append(ModIKeyStoreFile.toIndentedString(this.tipologia)).append("\n");
-    sb.append("    keystoreTipo: ").append(ModIKeyStoreFile.toIndentedString(this.keystoreTipo)).append("\n");
+    sb.append("class ModIApplicativoEsterno {\n");
+    
+    sb.append("    dominio: ").append(ModIApplicativoEsterno.toIndentedString(this.dominio)).append("\n");
+    sb.append("    replyAudience: ").append(ModIApplicativoEsterno.toIndentedString(this.replyAudience)).append("\n");
     sb.append("}");
     return sb.toString();
   }

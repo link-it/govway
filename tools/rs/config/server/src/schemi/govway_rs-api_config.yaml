@@ -7489,7 +7489,17 @@ components:
               type: array
               items:
                 $ref: 'govway_core.yaml#/components/schemas/NCName'
-              example: ['ruolo1', 'ruolo2'] 
+              example: ['ruolo1', 'ruolo2']
+            modi:
+              type: object
+              oneOf:
+                - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ModIApplicativoInterno'
+                - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ModIApplicativoEsterno'
+              discriminator:
+                propertyName: dominio
+                mapping:
+                  'interno': 'govway_rs-api_config-commons.yaml#/components/schemas/ModIApplicativoInterno'
+                  'esterno': 'govway_rs-api_config-commons.yaml#/components/schemas/ModIApplicativoEsterno'
     ApplicativoItem:
       type: object
       allOf:
