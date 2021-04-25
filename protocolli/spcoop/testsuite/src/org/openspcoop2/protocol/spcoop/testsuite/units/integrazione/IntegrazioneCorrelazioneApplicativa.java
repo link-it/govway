@@ -2835,37 +2835,48 @@ public class IntegrazioneCorrelazioneApplicativa extends GestioneViaJmx {
 	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO,IntegrazioneCorrelazioneApplicativa.ID_GRUPPO+".CORRELAZIONE_APPLICATIVA_INPUT_BASED_SOAP_HEADER"},
 			dataProvider="SincronoCorrelazioneApplicativaInputBasedSoapHeaderSenzaRiusoIDEGov",dependsOnMethods={"sincronoCorrelazioneApplicativaInputBasedSoapHeaderSenzaRiusoIDEGov"})
 	public void testSincronoCorrelazioneApplicativaInputBasedSoapHeaderSenzaRiusoIDEGov(String idUnivoco,DatabaseMsgDiagnosticiComponent dataMsgDiag,DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		
 		try{
-			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
-					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
-					null);
-			Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
-			
-			if(dataMsgDiag!=null){
-				//fruitore
-				
-				String msgInizioCorrelazione = MSG_INIZIO_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
-				msgInizioCorrelazione = msgInizioCorrelazione.replace("@IDEGOV@", id);
-				Reporter.log("Check inizio correlazione ["+msgInizioCorrelazione+"] non esistente");
-				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgInizioCorrelazione)==false);
-				
-				String msgCorrelazioneAvvenuta = MSG_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
-				msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
-				Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
-				Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
-
+			for (int i = 0; i < 10; i++) {
+				try{
+					this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+							CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE, checkServizioApplicativo,
+							null);
+					Reporter.log("Numero messaggi arrivati al servizio applicativo: "+data.getVerificatoreTracciaRichiesta().isArrivedCount(id));
+					Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isArrivedCount(id)==1);
+					
+					if(dataMsgDiag!=null){
+						//fruitore
+						
+						String msgInizioCorrelazione = MSG_INIZIO_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+						msgInizioCorrelazione = msgInizioCorrelazione.replace("@IDEGOV@", id);
+						Reporter.log("Check inizio correlazione ["+msgInizioCorrelazione+"] non esistente");
+						Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgInizioCorrelazione)==false);
+						
+						String msgCorrelazioneAvvenuta = MSG_CORRELAZIONE.replace("@IDAPPLICATIVO@", idUnivoco);
+						msgCorrelazioneAvvenuta = msgCorrelazioneAvvenuta.replace("@IDEGOV@", id);
+						Reporter.log("Check correlazione ["+msgCorrelazioneAvvenuta+"] non esistente");
+						Assert.assertTrue(dataMsgDiag.isTracedMessaggio(msgCorrelazioneAvvenuta)==false);
+		
+					}
+					
+					// Check correlazione in tracciamento
+					Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
+					Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco));
+					Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella risposta");
+					Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco));
+					
+				}catch(Throwable e){
+					if(i==9) {
+						throw new Exception("Attesa("+i+"); "+e.getMessage(),e);
+					}
+					else {
+						org.openspcoop2.utils.Utilities.sleep(2000+(i*1000));
+						continue;
+					}
+				}
 			}
-			
-			// Check correlazione in tracciamento
-			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella richiesta");
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco));
-			Reporter.log("Check correlazione ["+idUnivoco+"] in tracciamento nella risposta");
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedCorrelazioneApplicativaRichiesta(id, this.collaborazioneSPCoopBase.getMittente(), idUnivoco));
-			
-		}catch(Exception e){
-			throw e;
 		}finally{
 			data.close();
 			if(dataMsgDiag!=null)

@@ -1499,7 +1499,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 							&& StringUtils.isEmpty(tipoCredenzialiSSLAliasCertificatoSubject);
 					visualizzaDownload = tipoCredenzialiSSLStatoElaborazioneCertificato.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD);
 				}
-				
+				if(!add && visualizzaDownload) {
+					de = new DataElement();
+					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
+					de.setValue(tipoCredenzialiSSLStatoElaborazioneCertificato);
+					de.setType(DataElementType.HIDDEN);
+					dati.add(de);
+				}
 				
 
 				/*
@@ -1710,6 +1716,28 @@ public class ConnettoriHelper extends ConsoleHelper {
 						dati.addElement(de);
 					}
 					
+					
+					// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
+					de = new DataElement();
+					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+					boolean verificaCompleta = false;
+					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
+						de.setType(DataElementType.CHECKBOX);
+						verificaCompleta = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
+						de.setSelected(verificaCompleta);
+						if(!verificaCompleta) {
+							de.setNote(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_SOLO_SUBJECT_ISSUER);
+						}
+						de.setSize(this.getSize());
+						de.setLabelAffiancata(true);
+						de.setPostBack(true);
+					}else { 
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
+					}
+					dati.add(de);
+					
 //						Subject:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
@@ -1765,7 +1793,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER);
 					de.setValue(tipoCredenzialiSSLAliasCertificatoSerialNumber);
-					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSerialNumber)) {
+					if(verificaCompleta && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSerialNumber)) {
 						de.setType(DataElementType.TEXT);
 					}else {
 						de.setType(DataElementType.HIDDEN);
@@ -1789,7 +1817,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
 					de.setValue(tipoCredenzialiSSLAliasCertificatoNotBefore);
-					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotBefore)) {
+					if(verificaCompleta && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotBefore)) {
 						de.setType(DataElementType.TEXT);
 						// Rendi bold la data NotBefore se è una data successiva ad adesso.
 						if(this.getSdfCredenziali().parse(tipoCredenzialiSSLAliasCertificatoNotBefore).after(new Date())) {
@@ -1807,7 +1835,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER);
 					de.setValue(tipoCredenzialiSSLAliasCertificatoNotAfter);
-					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotAfter)) {
+					if(verificaCompleta && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotAfter)) {
 						de.setType(DataElementType.TEXT);
 						// Rendi bold e colora di Rosso la data visualizzata Not After se risulta scaduta.
 						if(this.getSdfCredenziali().parse(tipoCredenzialiSSLAliasCertificatoNotAfter).before(new Date())) {
@@ -1819,24 +1847,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						de.setType(DataElementType.HIDDEN);
 					}
 					de.setSize(this.getSize());
-					dati.add(de);
-					
-					// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
-					de = new DataElement();
-					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
-						de.setType(DataElementType.CHECKBOX);
-						de.setNote(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-						de.setSelected(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi));
-						de.setSize(this.getSize());
-						de.setLabelAffiancata(true);
-					}else { 
-						de.setType(DataElementType.HIDDEN);
-						de.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
-					}
-					dati.add(de);
-					
+					dati.add(de);					
 					
 					// data element per pilotare la label del  tasto carica
 					de = new DataElement();
@@ -5011,7 +5022,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 						&& StringUtils.isEmpty(tipoCredenzialiSSLAliasCertificatoSubject);
 				visualizzaDownload = tipoCredenzialiSSLStatoElaborazioneCertificato.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD);
 			}
-			
+			if(!add && visualizzaDownload) {
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);
+				de.setValue(tipoCredenzialiSSLStatoElaborazioneCertificato);
+				de.setType(DataElementType.HIDDEN);
+				dati.add(de);
+			}
 			
 
 			/*
@@ -5209,7 +5226,28 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setDisabilitaAjaxStatus();
 					dati.addElement(de);
 				}
-				
+								
+				// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+				boolean verificaCompleta = false;
+				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
+					de.setType(DataElementType.CHECKBOX);
+					verificaCompleta = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
+					de.setSelected(verificaCompleta);
+					if(!verificaCompleta) {
+						de.setNote(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_SOLO_SUBJECT_ISSUER);
+					}
+					de.setSize(this.getSize());
+					de.setLabelAffiancata(true);
+					de.setPostBack(true);
+				}else { 
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
+				}
+				dati.add(de);
+								
 //						Subject:
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
@@ -5265,7 +5303,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER);
 				de.setValue(tipoCredenzialiSSLAliasCertificatoSerialNumber);
-				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSerialNumber)) {
+				if(verificaCompleta && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSerialNumber)) {
 					de.setType(DataElementType.TEXT);
 				}else {
 					de.setType(DataElementType.HIDDEN);
@@ -5289,7 +5327,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_BEFORE);
 				de.setValue(tipoCredenzialiSSLAliasCertificatoNotBefore);
-				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotBefore)) {
+				if(verificaCompleta && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotBefore)) {
 					de.setType(DataElementType.TEXT);
 					// Rendi bold la data NotBefore se è una data successiva ad adesso.
 					if(this.getSdfCredenziali().parse(tipoCredenzialiSSLAliasCertificatoNotBefore).after(new Date())) {
@@ -5307,7 +5345,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_NOT_AFTER);
 				de.setValue(tipoCredenzialiSSLAliasCertificatoNotAfter);
-				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotAfter)) {
+				if(verificaCompleta && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoNotAfter)) {
 					de.setType(DataElementType.TEXT);
 					// Rendi bold e colora di Rosso la data visualizzata Not After se risulta scaduta.
 					if(this.getSdfCredenziali().parse(tipoCredenzialiSSLAliasCertificatoNotAfter).before(new Date())) {
@@ -5320,23 +5358,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				de.setSize(this.getSize());
 				dati.add(de);
-				
-				// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
-				de = new DataElement();
-				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
-					de.setType(DataElementType.CHECKBOX);
-					de.setNote(ConnettoriCostanti.NOTE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-					de.setSelected(ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi));
-					de.setSize(this.getSize());
-					de.setLabelAffiancata(true);
-				}else { 
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
-				}
-				dati.add(de);
-				
+
 				// checkbox promuovi certificato
 				if(!visualizzaFieldCert) {
 					if(visualizzaPromuoviCertificato) {
@@ -5352,7 +5374,6 @@ public class ConnettoriHelper extends ConsoleHelper {
 						}
 					}
 				}
-				
 				
 				// data element per pilotare la label del  tasto carica
 				de = new DataElement();
@@ -5481,6 +5502,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 				// 1a. Pannello Recap info certificato.
 
+				// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
+				dati.add(de);
+				
 				//						Subject:
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
@@ -5545,15 +5574,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 				de.setSize(this.getSize());
 				dati.add(de);
-				
-				// 1a. Checkbox 'Verifica tutti i campi' + nota: attenzione questa opzione richiede l'aggiornamento del certificato a scadenza
-				de = new DataElement();
-				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(tipoCredenzialiSSLVerificaTuttiICampi);
-				dati.add(de);
-				
+								
 				// data element per pilotare la label del  tasto carica
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP);

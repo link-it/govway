@@ -1,3 +1,17 @@
+2021-04-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Il semaforo che visualizza lo stato di una erogazione o fruizione considerava lo stato del gruppo 'Predefinito' anche se tutte le azioni o risorse erano state riassegnate in altri gruppi.
+	Il problema è stato risolto.
+	È stata rivista inoltre la gestione delle credenziali 'https' associate ad un applicativo o ad un soggetto. Il certificato caricato, per default adesso viene confrontato con il certificato fornito durante l'autenticazione;
+	è sempre disponibile anche la modalità in cui verranno controllati solamente che i DN del Subject e dell'Issuer siano identici.
+
+2021-04-23  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	È stato abilitato per default il controllo che rifiuta token creati da troppo tempo (default 5 minuti). 
+	La verifica viene effettuata verificando la data presente nel claim 'iat' del JWT per API REST o nell'elemento 'Create' del WSSecurity Timestamp per API SOAP.
+
 2021-04-22  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA, GovWayCore, Utils]

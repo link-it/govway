@@ -310,6 +310,41 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 			secProperties.put(SecurityConstants.IS_BSP_COMPLIANT, SecurityConstants.TRUE);
 			
+			
+			//  ** Timestamp **
+			Integer timeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds(); // viene usato per vedere la data di creazione quanto si discosta da adesso
+			boolean set_TimeToLive = false;
+			if(timeToLive!=null) {
+				// Non imposto il valore qua, ma inseriro un valoro alto (3650 giorni) in modo che la libreria non effettui il controllo, che invece avviene nella validazione semantica
+				// In modo da uniformare l'errore rispetto anche a REST
+				/*
+				int value = timeToLive.intValue();
+				if(value>=1000) {
+					value = value / 1000; // riporto in secondi
+					secProperties.put(SecurityConstants.TIMESTAMP_TTL, value+"");
+					set_TimeToLive = true;
+				}*/
+			}
+			if(!set_TimeToLive) {
+				// devo impostare un valore alto, altrimenti il default di wss4j e' 60 secondi
+				// 3650 giorni (60s * 60m * 24h * 3650 giorni = 315360000)
+				secProperties.put(SecurityConstants.TIMESTAMP_TTL, 315360000+"");
+			}
+			
+			Integer futureTimeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds();
+			if(futureTimeToLive!=null) {
+				int value = futureTimeToLive.intValue();
+				if(value>=1000) {
+					value = value / 1000; // riporto in secondi
+					secProperties.put(SecurityConstants.TIMESTAMP_FUTURE_TTL, value+"");
+				}
+			}
+			
+			// disabilito qua la validazione, in modo da implementarla sulla validazione semantica
+			// In modo da uniformare l'errore rispetto anche a REST
+			secProperties.put(SecurityConstants.TIMESTAMP_STRICT, false+"");
+			
+			
 			// setProperties
 			messageSecurityContext.setIncomingProperties(secProperties, false);
 			if(signAttachments) {

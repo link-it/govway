@@ -230,6 +230,7 @@ public class ModIProperties {
 			isSoapSecurityTokenMustUnderstand();
 			getSoapSecurityTokenActor();
 			getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds();
+			getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds();
 			isSoapSecurityTokenFaultProcessEnabled();
 			
 			isSoapWSAddressingMustUnderstand();
@@ -2065,6 +2066,32 @@ public class ModIProperties {
 		}
 
 		return ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds;
+	}
+	
+	private static Boolean getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds_read = null;
+	private static Integer getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds = null;
+	public Integer getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds() throws Exception{
+
+		if(ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds_read==null){
+			
+			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.futureTimeToLive.minutes";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds = Integer.valueOf(value); // minuti
+					ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds = ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds * 60 * 1000;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprietà '"+name+"' non impostata, errore:"+e.getMessage(),e);
+				throw e;
+			}
+			
+			ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds_read = true;
+		}
+
+		return ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds;
 	}
 	
 	private static Boolean getSoapSecurityTokenFaultProcessEnabled_read= null;

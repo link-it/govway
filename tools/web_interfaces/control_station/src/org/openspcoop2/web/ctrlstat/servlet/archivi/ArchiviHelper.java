@@ -2674,7 +2674,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			tipoCredenzialiSSLConfigurazioneManualeSelfSigned = Costanti.CHECK_BOX_DISABLED;
 		}
 		if (tipoCredenzialiSSLVerificaTuttiICampi == null) {
-			tipoCredenzialiSSLVerificaTuttiICampi = Costanti.CHECK_BOX_DISABLED;
+			tipoCredenzialiSSLVerificaTuttiICampi = ConnettoriCostanti.DEFAULT_VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI;
 		}
 		if (tipoCredenzialiSSLAliasCertificato == null) {
 			tipoCredenzialiSSLAliasCertificato = "";

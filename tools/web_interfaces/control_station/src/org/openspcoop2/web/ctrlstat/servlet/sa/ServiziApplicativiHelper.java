@@ -3659,18 +3659,24 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					// verifica tutti i campi
 					de = new DataElement();
 					de.setType(DataElementType.TEXT);
-					de.setValue(verificaTuttiCampi ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
+					de.setValue(verificaTuttiCampi ? ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI_ENABLE : 
+						ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI_DISABLE);
 					de.allineaTdAlCentro();
 					de.setWidthPx(70);
 					e.addElement(de);
 					
 					// not before
 					de = new DataElement();
+					if(verificaTuttiCampi) {
+						de.setValue(tipoCredenzialiSSLAliasCertificatoNotBefore);
+					}
+					else {
+						de.setValue("-");
+					}
 					de.setType(DataElementType.TEXT);
-					de.setValue(tipoCredenzialiSSLAliasCertificatoNotBefore);
 					de.allineaTdAlCentro();
 					de.setWidthPx(140);
-					if(notBefore.after(new Date())) {
+					if(verificaTuttiCampi && notBefore.after(new Date())) {
 						// bold
 						de.setLabelStyleClass(Costanti.INPUT_TEXT_BOLD_CSS_CLASS);
 						de.setWidthPx(150);
@@ -3679,11 +3685,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					
 					// not after
 					de = new DataElement();
+					if(verificaTuttiCampi) {
+						de.setValue(tipoCredenzialiSSLAliasCertificatoNotAfter);
+					}
+					else {
+						de.setValue("-");
+					}
 					de.setType(DataElementType.TEXT);
-					de.setValue(tipoCredenzialiSSLAliasCertificatoNotAfter);
 					de.allineaTdAlCentro();
 					de.setWidthPx(140);
-					if(notAfter.before(new Date())) {
+					if(verificaTuttiCampi && notAfter.before(new Date())) {
 						// bold e rosso
 						de.setLabelStyleClass(Costanti.INPUT_TEXT_BOLD_RED_CSS_CLASS);
 						de.setWidthPx(150);

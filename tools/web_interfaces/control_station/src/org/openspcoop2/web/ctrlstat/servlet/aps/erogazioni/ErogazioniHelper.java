@@ -213,6 +213,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 			}
 			
+			if(allActionRedefined && paAssociata.getNome().equals(nomePortaDefault)) {
+				// se tutte le azioni sono state ridefinite non devo controllare la porta di default
+				continue;
+			}
+			
 			if(StatoFunzionalita.ABILITATO.equals(paAssociata.getStato()) && msgControlloAccessiMalConfigurato==null){
 				if(TipoAutorizzazione.isAuthenticationRequired(paAssociata.getAutorizzazione())) {
 					if( 
@@ -297,6 +302,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				if(!allActionRedefined || !pdAssociata.getNome().equals(nomePortaDefault)) {
 					numeroAbilitate ++;
 				}
+			}
+			
+			if(allActionRedefined && pdAssociata.getNome().equals(nomePortaDefault)) {
+				// se tutte le azioni sono state ridefinite non devo controllare la porta di default
+				continue;
 			}
 			
 			if(StatoFunzionalita.ABILITATO.equals(pdAssociata.getStato()) && msgControlloAccessiMalConfigurato==null){

@@ -30,14 +30,32 @@ Per la configurazione si procede selezionando dall'elemento *Modalità* una tra 
 
     Credenziali di tipo HTTPS (upload archivio 1/2)
 
-   Una volta caricato l'archivio verranno mostrati a video i dettagli del certficato selezionato (:numref:`authSSLFig3`), al fine di poterli verificare prima di confermare l'inserimento. Verrà richiesto anche di indicare se abilitare o meno la *Verifica di tutti i campi* che comporta il confronto di tutti i campi del certificato fornito durante l'autenticazione con quelli presenti nel certiicato fornito come campione in configurazione. Il fallimento di tale verifica (ad esempio anche il caso di superamento della data di scadenza) causeranno il fallimento dell'autenticazione.
+   Una volta caricato l'archivio verranno mostrati a video i dettagli del certficato selezionato (:numref:`authSSLFig3`), al fine di poterli verificare prima di confermare l'inserimento. Il certficato caricato verrà confrontato con il certificato fornito durante l'autenticazione se la voce *Verifica* è abilitata, altrimenti verranno controllati solamente che i DN del Subject e dell'Issuer siano identici. Un confronto fallito causeranno il fallimento dell'autenticazione.
 
    .. figure:: ../../../_figure_console/AuthSSL3.png
-    :scale: 80%
+    :scale: 100%
     :align: center
     :name: authSSLFig3
 
     Credenziali di tipo HTTPS (upload archivio 2/2)
+
+   Dopo aver creato un applicativo o un soggetto con associato un certificato, visualizzandone i dati è possibile effettuare il download del certificato o aggiungerne di ulteriori.
+
+   .. figure:: ../../../_figure_console/AuthSSL4.png
+    :scale: 100%
+    :align: center
+    :name: authSSLFig4
+
+    Credenziali di tipo HTTPS (consultazione)
+
+   La funzionalità di aggiunta di un certificato può essere utilizzata per gestire preventivamente la scadenza di un certificato caricando anche la versione aggiornata in modo da poter essere in grado di autenticare l'applicativo non appena inizia ad utilizzare il nuovo certificato. Sia in fase di aggiunta che successivamente sarà possibile promuovere a 'principale' la versione aggiornata del certificato ed eliminare successivamente la versione scaduta.
+
+   .. figure:: ../../../_figure_console/AuthSSL5.png
+    :scale: 80%
+    :align: center
+    :name: authSSLFig5
+
+    Credenziali di tipo HTTPS (certificati aggiuntivi)
 
 - **Configurazione Manuale** (:numref:`authSSLFig2`): con questa modalità di configurazione si procede con l'inserimento dei seguenti dati:
 

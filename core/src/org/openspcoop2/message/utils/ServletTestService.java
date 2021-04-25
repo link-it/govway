@@ -972,6 +972,16 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			
+			// opzioni debug
+			String debugTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "debug");
+			boolean debug = true;
+			if(debugTmp!=null){
+				debugTmp = debugTmp.trim();
+				if("false".equals(debugTmp))
+					debug = false;
+			}
+			
+			
 			
 			
 			// opzioni save msg
@@ -979,7 +989,7 @@ public class ServletTestService extends HttpServlet {
 			boolean logMessage = false;
 			if(logMessageTmp!=null){
 				logMessageTmp = logMessageTmp.trim();
-				if("true".equals(logMessage))
+				if("true".equals(logMessageTmp))
 					logMessage = true;
 			}
 			String saveMessageDir = getParameter_checkWhiteList(req, this.whitePropertiesList, "saveMessageDir");
@@ -1047,7 +1057,9 @@ public class ServletTestService extends HttpServlet {
 			
 			String contentTypeRichiesta = req.getContentType();
 			StringBuilder sb = new StringBuilder();
-			sb.append("--------  Messaggio ricevuto il : "+(new Date()).toString()+" [ct:"+contentTypeRichiesta+"] -------------\n\n");
+			if(debug || logMessage || saveMessageDir!=null ) {
+				sb.append("--------  Messaggio ricevuto il : "+(new Date()).toString()+" [ct:"+contentTypeRichiesta+"] -------------\n\n");
+			}
 			if(logMessage){
 				if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {
 					sb.append(new String(contenutoRichiesta));
@@ -1340,7 +1352,9 @@ public class ServletTestService extends HttpServlet {
 				// modalita'
 				if(chunked){
 					res.setHeader("Transfer-Encoding","chunked");
-					this.log.info("Response send with Transfer-Encoding: chunked");
+					if(debug) {
+						this.log.info("Response send with Transfer-Encoding: chunked");
+					}
 				}
 				else{
 					if(boutStaticFile!=null){
