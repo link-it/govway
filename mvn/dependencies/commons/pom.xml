@@ -30,7 +30,7 @@
 		<commons.discovery.version>0.5</commons.discovery.version>
 		<commons.email.version>1.5</commons.email.version>
 		<commons.fileupload.version>1.4</commons.fileupload.version>
-		<commons.io.version>2.6</commons.io.version>
+		<commons.io.version>2.7</commons.io.version>
 		<commons.lang.version>2.6</commons.lang.version>
 		<commons.lang3.version>3.9</commons.lang3.version>
 		<commons.logging.version>1.2</commons.logging.version>
