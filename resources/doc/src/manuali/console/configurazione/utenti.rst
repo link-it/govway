@@ -147,6 +147,13 @@ Le informazioni da inserire sono:
           # Tutti i caratteri utilizzati devono essere differenti
           #passwordVerifier.allDistinctCharacters=true
 
+          # La password dovrà essere aggiornata ogni 90 giorni
+          # Impostare un valore <=0 per disabilitare la verifica
+          passwordVerifier.expireDays=90
+
+          # Abilita lo storico delle password non consentendo di aggiornare la password corrente con una precedentemente già impostata.
+          passwordVerifier.history=true
+
 
 La pagina indice della sezione Utenti visualizza gli utenti già presenti
 nel sistema con i relativi permessi e i link per modificarli o assumerne

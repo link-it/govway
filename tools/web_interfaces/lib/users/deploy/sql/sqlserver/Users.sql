@@ -4,6 +4,8 @@ CREATE TABLE users
 (
 	login VARCHAR(255) NOT NULL,
 	password VARCHAR(255) NOT NULL,
+	data_password DATETIME2 NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	check_data_password INT NOT NULL DEFAULT 1,
 	tipo_interfaccia VARCHAR(255) NOT NULL,
 	interfaccia_completa INT,
 	permessi VARCHAR(255) NOT NULL,
@@ -35,6 +37,21 @@ CREATE TABLE users_stati
 	-- fk/pk keys constraints
 	CONSTRAINT fk_users_stati_1 FOREIGN KEY (id_utente) REFERENCES users(id),
 	CONSTRAINT pk_users_stati PRIMARY KEY (id)
+);
+
+
+
+
+CREATE TABLE users_password
+(
+	password VARCHAR(255) NOT NULL,
+	data_password DATETIME2 NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	id_utente BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_users_password_1 FOREIGN KEY (id_utente) REFERENCES users(id),
+	CONSTRAINT pk_users_password PRIMARY KEY (id)
 );
 
 
