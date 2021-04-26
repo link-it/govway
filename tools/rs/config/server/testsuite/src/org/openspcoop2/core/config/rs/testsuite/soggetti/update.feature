@@ -218,6 +218,7 @@ Scenario: Soggetti Aggiornamento Proprieta
     # UPDATE 1
 
     * eval soggetto_proprieta.proprieta[0].nome='pModificata'
+    * eval soggetto_proprieta.proprieta[1].valore='vModificato'
 
     Given url configUrl
     And path 'soggetti/' + soggetto_proprieta.nome
@@ -236,6 +237,10 @@ Scenario: Soggetti Aggiornamento Proprieta
     And params query_params
     When method get
     Then status 200
+    And assert response.proprieta.length == 2
+    And match response.proprieta[*] contains { 'nome': 'pModificata', 'valore': 'ValoreProprieta1' }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'vModificato' }
+
     And match response.proprieta == soggetto_proprieta.proprieta
 
     # UPDATE 2

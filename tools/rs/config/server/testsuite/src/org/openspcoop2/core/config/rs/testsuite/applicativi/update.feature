@@ -219,6 +219,7 @@ Scenario: Applicativi Aggiornamento Proprieta
     # UPDATE 1
 
     * eval applicativo_proprieta.proprieta[0].nome='pModificata'
+    * eval applicativo_proprieta.proprieta[1].valore='vModificato'
 
     Given url configUrl
     And path 'applicativi/' + applicativo_proprieta.nome
@@ -237,7 +238,9 @@ Scenario: Applicativi Aggiornamento Proprieta
     And params query_params
     When method get
     Then status 200
-    And match response.proprieta == applicativo_proprieta.proprieta
+    And assert response.proprieta.length == 2
+    And match response.proprieta[*] contains { 'nome': 'pModificata', 'valore': 'ValoreProprieta1' }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'vModificato' }
 
     # UPDATE 2
 

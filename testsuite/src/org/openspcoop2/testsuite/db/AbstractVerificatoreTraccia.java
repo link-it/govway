@@ -1106,11 +1106,13 @@ public abstract class AbstractVerificatoreTraccia {
 				if(value==null){
 					if(nome!=null) {
 						sb.append("; è presente un null value");
+						Reporter.log("Azione '"+nome+"' non trovata; "+sb.toString());
 						return false;
 					}
 				}
 				else if (!(value.equals(nome))) {
 					sb.append("; è presente un valore differente da quello atteso");
+					Reporter.log("Azione '"+nome+"' non trovata; "+sb.toString());
 					return false;
 				}
 			}

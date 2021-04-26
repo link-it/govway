@@ -51,7 +51,9 @@ Scenario: Soggetti Get 200 OK (presenza di proprieta')
     And params query_params
     When method get
     Then status 200
-    And match response.proprieta == soggetto_proprieta.proprieta
+    And assert response.proprieta.length == 2
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta1', 'valore': 'ValoreProprieta1' }
+    And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'ValoreProprieta2' }
 
     # DELETE
 
