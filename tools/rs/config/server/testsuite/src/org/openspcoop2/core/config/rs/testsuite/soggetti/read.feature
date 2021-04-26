@@ -8,6 +8,9 @@ Background:
 * eval randomize(soggetto, ["nome", "credenziali.certificato.issuer", "credenziali.certificato.subject"])
 * eval soggetto.ruoli = []
 
+* def soggetto_proprieta = read('classpath:bodies/soggetto-esterno-proprieta.json') 
+* eval randomize(soggetto_proprieta, ["nome", "credenziali.userid" ])
+* eval soggetto_proprieta.ruoli = []
 
 @FindAll200
 Scenario: Soggetti FindAll 200 OK
@@ -28,3 +31,34 @@ Scenario: Soggetti Get 200 OK
 Scenario: Soggetti Get 404
 
     * call get_404 ( { resourcePath: "soggetti/" + soggetto.nome } )
+
+@Get200_proprieta
+Scenario: Soggetti Get 200 OK (presenza di proprieta')
+
+    Given url configUrl
+    And path 'soggetti'
+    And  header Authorization = govwayConfAuth
+    And request soggetto_proprieta
+    And params query_params
+    When method post
+    Then assert responseStatus == 201
+
+    # READ
+
+    Given url configUrl
+    And path 'soggetti' , soggetto_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.proprieta == soggetto_proprieta.proprieta
+
+    # DELETE
+
+    Given url configUrl
+    And path 'soggetti' , soggetto_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method delete
+    Then status 204
+

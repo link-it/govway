@@ -413,7 +413,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	private MimeMultipart mimeMultipart = null;
 	private Map<String, List<InputStream>> mapParametri = null;
 	private Map<String, Object> mapParametriReaded = null;
-	private Map<String, String> mapNomiFileParametri = null;
+	private Map<String, List<String>> mapNomiFileParametri = null;
 	private List<String> idBinaryParameterRicevuti = null;
 	
 	/** Logger utilizzato per debug. */
@@ -561,7 +561,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				this.mimeMultipart = new MimeMultipart(request.getInputStream(), this.contentType);
 				this.mapParametri = new HashMap<String, List<InputStream>>();
 				this.mapParametriReaded = new HashMap<>();
-				this.mapNomiFileParametri = new HashMap<String,String>();
+				this.mapNomiFileParametri = new HashMap<String,List<String>>();
 
 				for(int i = 0 ; i < this.mimeMultipart.countBodyParts() ;  i ++) {
 					BodyPart bodyPart = this.mimeMultipart.getBodyPart(i);
@@ -584,7 +584,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					list.add(bodyPart.getInputStream());
 					String fileName = getBodyPartFileName(bodyPart);
 					if(fileName != null)
-						this.mapNomiFileParametri.put(partName, fileName);
+						this.mapNomiFileParametri.put(partName, Arrays.asList(fileName)); // TODO controllare il contenuto di una post/get multipart con file multipli
 
 					//}
 					//else throw new Exception("Parametro ["+partName+"] Duplicato.");
@@ -843,38 +843,87 @@ public class ConsoleHelper implements IConsoleHelper {
 	@Override
 	public byte[] getBinaryParameterContent(String parameterName) throws Exception {
 		
+//		this.checkErrorInit();
+//		
+//		
+//		if(this.multipart){
+//			if(this.mapParametriReaded.containsKey(parameterName)) {
+//				return (byte[]) this.mapParametriReaded.get(parameterName);
+//			}
+//			else {
+//				// La lista dovrebbe al massimo avere sempre un solo valore
+//				List<InputStream> list = this.mapParametri.get(parameterName);
+//				if(list != null && !list.isEmpty()){
+//					
+//					if(list.size()>1) {
+//						throw new Exception("Parametro ["+parameterName+"] Duplicato.");
+//					}
+//					InputStream inputStream = list.get(0);
+//					if(inputStream != null){
+//						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//						IOUtils.copy(inputStream, baos);
+//						byte[] b = baos.toByteArray();
+//						this.mapParametriReaded.put(parameterName, b);
+//						return b;
+//					}
+//				}
+//			}
+//		}else{
+//			String paramAsString = this.request.getParameter(parameterName);
+//			if(paramAsString != null)
+//				return paramAsString.getBytes();
+//		}
+//
+//		return null;
+		
+		List<byte[]> bpContents = this._getBinaryParameterContent(parameterName);
+		
+		if(bpContents != null && bpContents.size() > 0)
+			return bpContents.get(0);
+		
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<byte[]> _getBinaryParameterContent(String parameterName) throws Exception {
+		
 		this.checkErrorInit();
 		
-		
+		List<byte[]> bpContents = null;
 		if(this.multipart){
 			if(this.mapParametriReaded.containsKey(parameterName)) {
-				return (byte[]) this.mapParametriReaded.get(parameterName);
+				return (List<byte[]>) this.mapParametriReaded.get(parameterName);
 			}
 			else {
 				// La lista dovrebbe al massimo avere sempre un solo valore
 				List<InputStream> list = this.mapParametri.get(parameterName);
 				if(list != null && !list.isEmpty()){
 					
-					if(list.size()>1) {
-						throw new Exception("Parametro ["+parameterName+"] Duplicato.");
+					bpContents = new ArrayList<byte[]>();
+					for (InputStream inputStream : list) {
+						if(inputStream != null){
+							ByteArrayOutputStream baosInner = new ByteArrayOutputStream();
+							IOUtils.copy(inputStream, baosInner);
+							byte[] b = baosInner.toByteArray();
+							bpContents.add(b);
+						}
 					}
-					InputStream inputStream = list.get(0);
-					if(inputStream != null){
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						IOUtils.copy(inputStream, baos);
-						byte[] b = baos.toByteArray();
-						this.mapParametriReaded.put(parameterName, b);
-						return b;
+					if(bpContents.size() > 0) {
+						this.mapParametriReaded.put(parameterName, bpContents);
+						return bpContents;
 					}
 				}
 			}
 		}else{
-			String paramAsString = this.request.getParameter(parameterName);
-			if(paramAsString != null)
-				return paramAsString.getBytes();
+			// caso che non dovrebbe mai succedere
+			String[] paramAsString = this.request.getParameterValues(parameterName);
+			if(paramAsString != null) {
+				List<String> tmpStrings = Arrays.asList(paramAsString);
+				bpContents = tmpStrings.stream().map(e -> e.getBytes()).collect(Collectors.toList());
+			}
 		}
 
-		return null;
+		return bpContents;
 	}
 
 	@Override
@@ -883,9 +932,24 @@ public class ConsoleHelper implements IConsoleHelper {
 		this.checkErrorInit();
 				
 		if(this.multipart){
-			return this.mapNomiFileParametri.get(parameterName);
+			List<String> tmp = this.mapNomiFileParametri.get(parameterName);
+			return (tmp != null && tmp.size() > 0) ? tmp.get(0) : null; 
 		} else 
 			return this.request.getParameter(parameterName);
+
+	}
+	
+	public List<String> getFileNamesParameter(String parameterName) throws Exception {
+		
+		this.checkErrorInit();
+				
+		if(this.multipart){
+			List<String> tmp = this.mapNomiFileParametri.get(parameterName);
+			return tmp;
+		} else {
+			String[] tmp = this.request.getParameterValues(parameterName);
+			return (tmp != null && tmp.length > 0) ? Arrays.asList(tmp): null; 
+		}
 
 	}
 	
@@ -990,6 +1054,148 @@ public class ConsoleHelper implements IConsoleHelper {
 		bp.setFilename(filename); 
 		bp.setId(fileId);  
 		return bp;
+	}
+	
+	
+	public List<BinaryParameter> getBinaryParameters(String parameterName) throws Exception {
+		
+		this.checkErrorInit();
+				
+//		BinaryParameter bp = newBinaryParameter(parameterName);
+		String filename = null;
+		String fileId = null;
+		File file = null;
+		FileOutputStream fos =  null;
+		FileInputStream fis =  null;
+		ByteArrayInputStream bais = null;
+		ByteArrayOutputStream baos = null;
+		
+		byte [] bpContent = null;
+		
+		List<byte[]> bpContents = this._getBinaryParameterContent(parameterName);
+//		// 0. provo a prelevarlo dai custom parameters (servizio rs)
+//		if(this.customBinaryParameters.containsKey(parameterName)) {
+//			bpContent = this.customBinaryParameters.get(parameterName);
+//		}
+//		else {
+//			// 1. provo a prelevare il valore dalla request
+//			bpContent = this.getBinaryParameterContent(parameterName);
+//		}
+		
+		List<BinaryParameter> toRet = new ArrayList<BinaryParameter>();
+		
+		// in questa fase dopo la submit successiva alla scelta del file tramite una postback ricevo un array di contenuti vuoti
+		// che devo ignorare per prelevare i valori dai file temporanei
+		boolean ricevutoContenuto = bpContents != null && bpContents.size() >0;
+		if(ricevutoContenuto) {
+			for (int i = 0; i < bpContents.size() ; i++ ) {
+				bpContent = bpContents.get(i);
+				// come nel caso singolo, ma questa volta sull'array dei file
+				if(!(bpContent != null && bpContent.length > 0)) {
+					ricevutoContenuto = false;
+					break;
+				}
+			}
+		}
+		
+		if(ricevutoContenuto) {
+			String fileNames = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILENAME_PREFIX + parameterName);
+			String fileIds = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILEID_PREFIX+ parameterName);
+			if(StringUtils.isNotBlank(fileIds) && StringUtils.isNotBlank(fileNames)){
+				String[] ids = fileIds.split(",");
+				for (String id : ids) {
+					file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  id + CostantiControlStation.TEMP_FILE_SUFFIX);
+					if(file.exists())
+						file.delete();
+				}
+			}
+			
+			List<String> fileNamesParameter = this.getFileNamesParameter(parameterName);
+			//salvataggio nuovo contenuto
+			for (int i = 0; i < bpContents.size() ; i++ ) {
+				bpContent = bpContents.get(i);
+				filename = fileNamesParameter.get(i);
+				file = File.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+				fileId = file.getName().substring(0, file.getName().indexOf(CostantiControlStation.TEMP_FILE_SUFFIX));
+				fileId = fileId.substring(fileId.indexOf(CostantiControlStation.TEMP_FILE_PREFIX) + CostantiControlStation.TEMP_FILE_PREFIX.length());
+				
+				try{
+					bais = new ByteArrayInputStream(bpContent);
+					fos = new FileOutputStream(file);
+					
+					IOUtils.copy(bais, fos);
+				}
+				finally {
+					bais.close();
+					fos.close();
+				}
+				
+				BinaryParameter bp = newBinaryParameter(parameterName);
+				bp.setValue(bpContent);
+				bp.setFilename(filename); 
+				bp.setId(fileId);  
+				
+				toRet.add(bp);
+			}
+		} else {
+			// provo a ricostruire il valore dai campi hidden
+			String fileNames = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILENAME_PREFIX + parameterName);
+			String fileIds = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILEID_PREFIX+ parameterName);
+			
+			if(StringUtils.isNotBlank(fileIds) && StringUtils.isNotBlank(fileNames)){
+				List<String> ids = Arrays.asList(fileIds.split(","));
+				List<String> fileNamesParameter = Arrays.asList(fileNames.split(","));
+				
+				for (int i = 0; i < ids.size() ; i++ ) {
+					fileId = ids.get(i);
+					filename = fileNamesParameter.get(i);
+					file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX + fileId + CostantiControlStation.TEMP_FILE_SUFFIX);
+					
+					// puo' non esistere allora il valore e' vuoto
+					if(file.exists()){
+						try{
+							fis = new FileInputStream(file);
+							baos = new ByteArrayOutputStream();
+							
+							IOUtils.copy(fis, baos);
+							
+							baos.flush();
+							bpContent = baos.toByteArray();
+							
+						}
+						finally {
+							fis.close();
+							baos.close();
+						}
+					} else {
+						bpContent = null;
+					}
+					
+					BinaryParameter bp = newBinaryParameter(parameterName);
+					bp.setValue(bpContent);
+					bp.setFilename(filename); 
+					bp.setId(fileId);  
+					
+					toRet.add(bp);
+				}
+				
+			}else {
+				// serve per creare il caso del primo accesso
+				bpContent = null;
+				filename = null;
+				fileId = null;
+				
+				BinaryParameter bp = newBinaryParameter(parameterName);
+				bp.setValue(bpContent);
+				bp.setFilename(filename); 
+				bp.setId(fileId);  
+				
+				toRet.add(bp);
+			}
+			
+		}
+		
+		return toRet;
 	}
 	
 	/***

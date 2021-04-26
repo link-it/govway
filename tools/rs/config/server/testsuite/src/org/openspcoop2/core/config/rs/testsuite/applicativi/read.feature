@@ -7,6 +7,9 @@ Background:
 * def applicativo = read('classpath:bodies/applicativo_http.json') 
 * eval randomize(applicativo, ["nome", "credenziali.username"])
 
+* def applicativo_proprieta = read('classpath:bodies/applicativo_proprieta.json') 
+* eval randomize(applicativo_proprieta, ["nome", "credenziali.userid" ])
+
 @FindAll200
 Scenario: Applicativi FindAll 200 OK
 
@@ -26,5 +29,35 @@ Scenario: Applicativi Get 200 OK
 Scenario: Applicativi Get 404
 
     * call get_404 { resourcePath: '#("applicativi/" + applicativo.nome)' }
+
+@Get200_proprieta
+Scenario: Applicativi Get 200 OK (presenza di proprieta')
+
+    Given url configUrl
+    And path 'applicativi'
+    And  header Authorization = govwayConfAuth
+    And request applicativo_proprieta
+    And params query_params
+    When method post
+    Then assert responseStatus == 201
+
+    # READ
+
+    Given url configUrl
+    And path 'applicativi' , applicativo_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.proprieta == applicativo_proprieta.proprieta
+
+    # DELETE
+
+    Given url configUrl
+    And path 'applicativi' , applicativo_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method delete
+    Then status 204
 
 

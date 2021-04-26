@@ -7359,6 +7359,10 @@ components:
             - "ruolo2"
             items:
               $ref: "#/components/schemas/NCName"
+          proprieta:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/Proprieta4000"
     SoggettoItem:
       type: "object"
       allOf:
@@ -7406,6 +7410,10 @@ components:
             - "ruolo2"
             items:
               $ref: "#/components/schemas/NCName"
+          proprieta:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/Proprieta4000"
     ApplicativoItem:
       type: "object"
       allOf:
@@ -9434,6 +9442,18 @@ components:
           type: "array"
           items:
             $ref: "#/components/schemas/Proprieta"
+    Proprieta4000:
+      required:
+      - "nome"
+      - "valore"
+      type: "object"
+      properties:
+        nome:
+          maxLength: 255
+          type: "string"
+        valore:
+          maxLength: 4000
+          type: "string"
     FormatoSoapEnum:
       type: "string"
       default: "Wsdl1.1"

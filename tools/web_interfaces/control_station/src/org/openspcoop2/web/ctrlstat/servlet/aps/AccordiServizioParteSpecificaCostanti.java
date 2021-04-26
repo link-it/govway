@@ -320,6 +320,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_RIPRISTINA_STATO_OPERATIVO = "Ripristina Stato Operativo";
 	public final static String LABEL_PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING;
 	
+	public final static String LABEL_DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO = "-";	
+	
 	/* DEFAULT VALUE PARAMETRI */
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_WSDL_IMPL_FRUITORE = "wsdlimplfru";
@@ -336,16 +338,22 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String DEFAULT_VALUE_PRIVATA = "privata";
 	public final static String DEFAULT_VALUE_PUBBLICA = "pubblica";	
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO = "";	
+	
 	/* DEFAULT VALUE ATTRIBUTI SESSIONE */
 	
 
 	/* MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTORIZZAZIONE_XX = "Indicare un nome per l''autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTENTICAZIONE_XX = "Indicare un nome per l''autenticazione ''{0}''";
-	public static final String MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO = "La {0} con nome {1} (tipo: {2}) &egrave; gi&agrave; presente nel servizio.";
-	public static final String MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_SENZA_TIPO = "La {0} con nome {1} &egrave; gi&agrave; presente nel servizio.";
-	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI = "L''allegato con nome {0} (tipo: {1}) &egrave; gi&agrave; presente nel servizio.";
-	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI_SENZA_TIPO = "L''allegato con nome {0} &egrave; gi&agrave; presente nel servizio.";
+	public static final String MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO = "La {0} con nome ''{1}'' (tipo: {2}) &egrave; gi&agrave; presente {3}.";
+	public static final String MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_SENZA_TIPO = "La {0} con nome ''{1}'' &egrave; gi&agrave; presente {2}.";
+	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI = "L''allegato con nome ''{0}'' (tipo: {1}) &egrave; gi&agrave; presente {2}.";
+	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI_SENZA_TIPO = "L''allegato con nome ''{0}'' &egrave; gi&agrave; presente {1}.";
+	public static final String MESSAGGIO_ERRORE_ALLEGATO_LABEL_SERVIZIO = "nel servizio";
+	public static final String MESSAGGIO_ERRORE_ALLEGATO_LABEL_EROGAZIONE = "nell'erogazione";
+	public static final String MESSAGGIO_ERRORE_ALLEGATO_LABEL_FRUIZIONE = "nella fruizione";
+	
 	public static final String MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA_DIMENSIONE_ESTENSIONE_TROPPO_LUNGA = "L'estensione del documento non &egrave; valida. La dimensione dell'estensione &egrave; troppo lunga.";
 	public static final String MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA = "L'estensione del documento non &egrave; valida.";
 	public static final String MESSAGGIO_ERRORE_DOCUMENTO_SELEZIONATO_NON_PUO_ESSERE_VUOTO = "Il documento selezionato non pu&ograve; essere vuoto.";
@@ -398,7 +406,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_NON_COMPATIBILE_CON_FRUIZIONE = MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA+"Nella fruizione {0} non è possibile assegnare il soggetto selezionato come erogatore dell'API fruita.";
 	public static final String MESSAGGIO_ERRORE_CAMBIO_EROGATORE_MULTI_API_INFLUENZATE_MODIFICA_VERSIONE = "La modifica richiesta impatta su altre configurazioni, oltre a quella selezionata.<BR/><BR/>";
 	public static final String MESSAGGIO_ERRORE_CAMBIO_VERSIONE_ACCORDO = "La nuova versione dell''API indicata non è utilizzabile poichè l''attuale configurazione riferisce operazioni non presenti nella nuova versione. Le operazioni non individuate nella nuova versione dell''API sono riferite: <BR/><BR/>{0}";
-
+	public static final String MESSAGGIO_ERRORE_API_NON_INDICATA = "Dati incompleti. &Egrave; necessario selezionare un'API";
+	
 	// Il cambio verso un accordo già esistente succede quando si modifica il nome, la versione o il soggetto erogatore in una erogazione o fruizione e la modifica di questi parametri
 	// identificano un accordo di servizio parte specifica già esistente e usato in una fruizione o erogazione (check incrociato).
 	//

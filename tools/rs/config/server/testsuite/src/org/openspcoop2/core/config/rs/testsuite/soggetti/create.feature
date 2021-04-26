@@ -9,18 +9,22 @@ Background:
 * def soggetto_apikey = read('classpath:bodies/soggetto-esterno-apikey.json')
 * def soggetto_multipleapikey = read('classpath:bodies/soggetto-esterno-multipleapikey.json')
 * def soggetto_https_multipleCertificate = read('classpath:bodies/soggetto-esterno-https_multipleCertificate.json')
+* def soggetto_proprieta = read('classpath:bodies/soggetto-esterno-proprieta.json') 
 * def ruolo = read('classpath:bodies/ruolo.json')
 
 * eval randomize(soggetto_http, ["nome", "credenziali.username"])
 * eval randomize(soggetto_principal, ["nome", "credenziali.userid"])
+* eval randomize(soggetto_https_multipleCertificate, ["nome"])
+* eval randomize(soggetto_proprieta, ["nome", "credenziali.userid" ])
+
 * eval randomize(ruolo, ["nome"])
+
 * eval soggetto_http.ruoli = [ ruolo.nome ]
 * eval soggetto_principal.ruoli = [ ruolo.nome ]
 * eval soggetto_apikey.ruoli = [ ruolo.nome ]
 * eval soggetto_multipleapikey.ruoli = [ ruolo.nome ]
-
-* eval randomize(soggetto_https_multipleCertificate, ["nome"])
 * eval soggetto_https_multipleCertificate.ruoli = [ ruolo.nome ]
+* eval soggetto_proprieta.ruoli = [ ruolo.nome ]
 
 @CreateCredHttp
 Scenario: Creazione Soggetti 204 OK
@@ -83,3 +87,11 @@ Scenario: Creazione Soggetti 400 Ruolo Inesistente
     And request soggetto_http
     When method post
     Then status 400
+
+@Create204_proprieta
+Scenario: Soggetti Creazione 204 OK (presenza di proprieta')
+    
+    * call create { resourcePath: 'ruoli', body: '#(ruolo)' }
+    * call create_201 { resourcePath: 'soggetti', body: '#(soggetto_proprieta)', key: '#(soggetto_proprieta.nome)' }
+    * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
+

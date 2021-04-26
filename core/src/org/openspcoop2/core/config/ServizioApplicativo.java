@@ -42,6 +42,7 @@ import java.util.List;
  * 			&lt;element name="invocazione-porta" type="{http://www.openspcoop2.org/core/config}invocazione-porta" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="invocazione-servizio" type="{http://www.openspcoop2.org/core/config}invocazione-servizio" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="risposta-asincrona" type="{http://www.openspcoop2.org/core/config}risposta-asincrona" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/config}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
@@ -69,6 +70,7 @@ import java.util.List;
   	"invocazionePorta",
   	"invocazioneServizio",
   	"rispostaAsincrona",
+  	"proprieta",
   	"protocolProperty"
   }
 )
@@ -123,6 +125,30 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   public void setRispostaAsincrona(RispostaAsincrona rispostaAsincrona) {
     this.rispostaAsincrona = rispostaAsincrona;
+  }
+
+  public void addProprieta(Proprieta proprieta) {
+    this.proprieta.add(proprieta);
+  }
+
+  public Proprieta getProprieta(int index) {
+    return this.proprieta.get( index );
+  }
+
+  public Proprieta removeProprieta(int index) {
+    return this.proprieta.remove( index );
+  }
+
+  public List<Proprieta> getProprietaList() {
+    return this.proprieta;
+  }
+
+  public void setProprietaList(List<Proprieta> proprieta) {
+    this.proprieta=proprieta;
+  }
+
+  public int sizeProprietaList() {
+    return this.proprieta.size();
   }
 
   public void addProtocolProperty(ProtocolProperty protocolProperty) {
@@ -263,6 +289,36 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   @XmlElement(name="risposta-asincrona",required=false,nillable=false)
   protected RispostaAsincrona rispostaAsincrona;
+
+  @XmlElement(name="proprieta",required=true,nillable=false)
+  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
+
+  /**
+   * @deprecated Use method getProprietaList
+   * @return List&lt;Proprieta&gt;
+  */
+  @Deprecated
+  public List<Proprieta> getProprieta() {
+  	return this.proprieta;
+  }
+
+  /**
+   * @deprecated Use method setProprietaList
+   * @param proprieta List&lt;Proprieta&gt;
+  */
+  @Deprecated
+  public void setProprieta(List<Proprieta> proprieta) {
+  	this.proprieta=proprieta;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprieta() {
+  	return this.proprieta.size();
+  }
 
   @XmlElement(name="protocol-property",required=true,nillable=false)
   protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();

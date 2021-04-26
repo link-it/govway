@@ -9,7 +9,7 @@
                 </env:Subcode>
             </env:Code>
             <env:Reason>
-                <env:Text xml:lang="en-US">A security error was encountered when verifying the message ; Invalid timestamp: The message timestamp has expired ; Invalid timestamp: The message timestamp has expired</env:Text>
+                <env:Text xml:lang="en-US">#regex ^Token scaduto in data '.+'$</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -17,7 +17,7 @@
                     <type>https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html</type>
                     <title>InteroperabilityInvalidRequest</title>
                     <status>400</status>
-                    <detail>A security error was encountered when verifying the message ; Invalid timestamp: The message timestamp has expired ; Invalid timestamp: The message timestamp has expired</detail>
+                    <detail>#regex ^Token scaduto in data '.+'$</detail>
                     <govway_id>#string</govway_id>
                 </problem>
             </env:Detail>

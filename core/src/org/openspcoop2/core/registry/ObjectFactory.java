@@ -178,6 +178,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Proprieta }
+     */
+    public Proprieta createProprieta() {
+        return new Proprieta();
+    }
+
+    /**
      * Create an instance of {@link AccordoCooperazionePartecipanti }
      */
     public AccordoCooperazionePartecipanti createAccordoCooperazionePartecipanti() {

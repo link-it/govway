@@ -112,5 +112,55 @@ public class BinaryParameter {
 		
 		return de;
 	}
+	
+	public static List<DataElement> getFileNameDataElement(List<BinaryParameter> listaParametri) {
+		List<DataElement> dati = new ArrayList<DataElement>();
+		
+		BinaryParameter bp0 = listaParametri.get(0);
+		
+		List<String> fileNames = new ArrayList<String>();
+		
+		for (BinaryParameter bp : listaParametri) {
+			fileNames.add(bp.getFilename() != null ? bp.getFilename() : "");
+		}
+		
+		DataElement de1 = new DataElement();
+		DataElement de2 = null;
+		de1.setName(Costanti.PARAMETER_FILENAME_PREFIX + bp0.getName());
+		de1.setValue(StringUtils.join(fileNames, ","));
+		de1.setType(DataElementType.HIDDEN);
+		
+		dati.add(de1);
+		
+		for (String fileName : fileNames) {
+			if(StringUtils.isNotBlank(fileName)){
+				de2 = new DataElement();
+				de2.setName("_" + Costanti.PARAMETER_FILENAME_PREFIX + bp0.getName());
+				de2.setValue("<I>" + fileName + "</I>");
+				de2.setLabel("");
+				de2.setType(DataElementType.TEXT);
+				dati.add(de2);
+			} 
+		}
+		
+		return dati;
+	}
 
+	public static DataElement getFileIdDataElement(List<BinaryParameter> listaParametri){
+		DataElement de = new DataElement();
+		
+		BinaryParameter bp0 = listaParametri.get(0);
+		
+		List<String> ids = new ArrayList<String>();
+		
+		for (BinaryParameter bp : listaParametri) {
+			ids.add(bp.getId());
+		}
+		
+		de.setType(DataElementType.HIDDEN);
+		de.setName(Costanti.PARAMETER_FILEID_PREFIX + bp0.getName());
+		de.setValue(StringUtils.join(ids, ",")); 
+		
+		return de;
+	}
 }

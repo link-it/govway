@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -744,6 +745,33 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 		}// fine !modalitàCompleta
+		
+		// Link Proprieta
+		
+		if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			
+			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
+			parametersServletSAChange.add(pIdSA);
+			int idProv = sa.getIdSoggetto().intValue();
+			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProv+"");
+			parametersServletSAChange.add(pIdSoggettoSA);
+			if(dominio != null) {
+				Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
+				parametersServletSAChange.add(pDominio);
+			}
+			
+			de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_PROPRIETA_LIST, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
+			if (contaListe) {
+				de.setValue(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROPRIETA+"(" + sa.sizeProprietaList() + ")");
+			} else {
+				de.setValue(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROPRIETA);
+			}
+			
+			dati.add(de);
+		}
 		
 		
 		boolean showFruitore = false;
@@ -3550,9 +3578,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 
-			if(!useIdSogg) {
-			}
-			
 			this.pd.setIndex(0);
 			this.pd.setPageSize(sa.getInvocazionePorta().sizeCredenzialiList());
 			this.pd.setNumEntries(sa.getInvocazionePorta().sizeCredenzialiList());
@@ -3899,6 +3924,261 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			return true;
 	
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public  Vector<DataElement> addProprietaToDati(TipoOperazione tipoOp, int size, String nome, String valore, Vector<DataElement> dati) {
+
+		DataElement de = new DataElement();
+		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROPRIETA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
+		de.setValue(nome);
+		if(TipoOperazione.ADD.equals(tipoOp)){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.TEXT);
+		}
+		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
+		de.setSize(size);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_VALORE);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true);
+		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);
+		de.setValue(valore);
+		de.setSize(size);
+		dati.addElement(de);
+
+		return dati;
+	}
+	
+	public boolean serviziApplicativiProprietaCheckData(TipoOperazione tipoOp) throws Exception {
+		try {
+			String id = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
+			int idServizioApplicativo = Integer.parseInt(id);
+			String nome = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME);
+			String valore = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE);
+
+			// Campi obbligatori
+			if (nome.equals("") || valore.equals("")) {
+				String tmpElenco = "";
+				if (nome.equals("")) {
+					tmpElenco = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME;
+				}
+				if (valore.equals("")) {
+					if (tmpElenco.equals("")) {
+						tmpElenco = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE;
+					} else {
+						tmpElenco = tmpElenco + ", " + ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE;
+					}
+				}
+				this.pd.setMessage(MessageFormat.format(ServiziApplicativiCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				return false;
+			}
+
+			// Controllo che non ci siano spazi nei campi di testo
+			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
+				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				return false;
+			}
+			
+			// Check Lunghezza
+			if(this.checkLength255(nome, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength4000(valore, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE)==false) {
+				return false;
+			}
+
+			// Se tipoOp = add, controllo che la property non sia gia'
+			// stata
+			// registrata per l'applicativo
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = false;
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
+				String nomeporta = sa.getNome();
+
+				for (int i = 0; i < sa.sizeProprietaList(); i++) {
+					Proprieta tmpProp = sa.getProprieta(i);
+					if (nome.equals(tmpProp.getNome())) {
+						giaRegistrato = true;
+						break;
+					}
+				}
+
+				if (giaRegistrato) {
+					this.pd.setMessage(MessageFormat.format(
+							ServiziApplicativiCostanti.MESSAGGIO_ERRORE_LA_PROPRIETA_XX_E_GIA_STATO_ASSOCIATA_AL_SA_YY, nome,
+							nomeporta));
+					return false;
+				}
+			}
+
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void prepareServiziApplicativiProprietaList(ServizioApplicativo sa, Search ricerca, List<Proprieta> lista) throws Exception{
+		try {
+			boolean modalitaCompleta = this.isModalitaCompleta();
+			
+			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
+			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+
+			IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
+			Soggetto soggettoProprietario = this.soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
+			String dominio = this.pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
+		
+			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
+			parametersServletSAChange.add(pIdSA);
+			Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
+			parametersServletSAChange.add(pIdSoggettoSA);
+			if(dominio != null) {
+				Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
+				parametersServletSAChange.add(pDominio);
+			}
+			
+			if(useIdSogg){
+				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
+				List<Parameter> parametersServletSAChangeProvider = new ArrayList<Parameter>();
+				parametersServletSAChangeProvider.add(pProvider);
+				parametersServletSAChangeProvider.addAll(parametersServletSAChange);
+				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
+			}else 
+				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
+
+			int idLista = Liste.SERVIZI_APPLICATIVI_PROP;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			// Prendo il soggetto
+			String tmpTitle = null;
+			String protocolloSoggetto = null;
+			boolean supportAsincroni = true;
+			if(useIdSogg){
+				if(this.core.isRegistroServiziLocale()){
+					Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idProvider));
+					protocolloSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tmpTitle = this.getLabelNomeSoggetto(protocolloSoggetto, tmpSogg.getTipo() , tmpSogg.getNome());
+				}else{
+					org.openspcoop2.core.config.Soggetto tmpSogg = this.soggettiCore.getSoggetto(Integer.parseInt(idProvider));
+					protocolloSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tmpSogg.getTipo());
+					tmpTitle = this.getLabelNomeSoggetto(protocolloSoggetto, tmpSogg.getTipo() , tmpSogg.getNome());
+				}
+				
+				List<ServiceBinding> serviceBindingListProtocollo = this.core.getServiceBindingListProtocollo(protocolloSoggetto);
+				for (ServiceBinding serviceBinding : serviceBindingListProtocollo) {
+					supportAsincroni = this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto,serviceBinding, ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+							|| this.core.isProfiloDiCollaborazioneSupportatoDalProtocollo(protocolloSoggetto, serviceBinding, ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+				}
+				
+				if(supportAsincroni==false){
+					if (this.isModalitaAvanzata()){
+						supportAsincroni = this.core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
+					}
+				}
+			}
+			
+			// setto la barra del titolo
+			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
+			if(modalitaCompleta==false) {
+				labelApplicativi = ServiziApplicativiCostanti.LABEL_APPLICATIVI;
+				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
+			}
+			
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+			if(!useIdSogg){
+				lstParam.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
+				lstParam.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
+			} else {
+				String provider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+				lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+				lstParam.add(new Parameter(labelApplicativiDi + tmpTitle, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
+				lstParam.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
+			}
+
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROPRIETA, null));
+			}else{
+				lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROPRIETA,
+						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_PROPRIETA_LIST, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
+			}
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROPRIETA, search);
+			}
+
+			// setto le label delle colonne
+			String valueLabel = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_VALORE;
+			String[] labels = { ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME, valueLabel };
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<Proprieta> it = lista.iterator();
+				while (it.hasNext()) {
+					Proprieta ssp = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					Parameter pNomeProprieta = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROP_NOME, ssp.getNome());
+					List<Parameter> parametersServletProprietaChange = new ArrayList<Parameter>();
+					parametersServletProprietaChange.add(pNomeProprieta);
+					parametersServletProprietaChange.addAll(parametersServletSAChange);
+				
+					DataElement de = new DataElement();
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_PROPRIETA_CHANGE, 
+							parametersServletProprietaChange.toArray(new Parameter[parametersServletProprietaChange.size()]));
+					de.setValue(ssp.getNome());
+					de.setIdToRemove(ssp.getNome());
+					e.addElement(de);
+
+					de = new DataElement();
+					if(ssp.getValore()!=null)
+						de.setValue(ssp.getValore().toString());
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);

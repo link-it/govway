@@ -32,6 +32,9 @@ Background:
     
     * def credenziali_https_multipleCertificate = read('classpath:bodies/credenziali_https_multipleCertificate.json')
 
+    * def applicativo_proprieta = read('classpath:bodies/applicativo_proprieta.json') 
+    * eval randomize(applicativo_proprieta, ["nome", "credenziali.userid" ])
+
 @Update204
 Scenario: Applicativi Aggiornamento 204 OK
 
@@ -207,3 +210,56 @@ Scenario: Applicativi Aggiornamento Credenziali Https Certificati Multipli
     And match response.credenziali contains options
 
     * call delete ( { resourcePath: 'applicativi/' + applicativo_https_multipleCertificate.nome } )
+
+@UpdateProprieta
+Scenario: Applicativi Aggiornamento Proprieta
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo_proprieta)' }
+
+    # UPDATE 1
+
+    * eval applicativo_proprieta.proprieta[0].nome='pModificata'
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And request applicativo_proprieta
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    # READ 1
+
+    Given url configUrl
+    And path 'applicativi' , applicativo_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.proprieta == applicativo_proprieta.proprieta
+
+    # UPDATE 2
+
+    * remove applicativo_proprieta.proprieta
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And request applicativo_proprieta
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    # READ 2
+
+    Given url configUrl
+    And path 'applicativi' , applicativo_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response contains { 'proprieta': '#notpresent' }
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo_proprieta.nome } )

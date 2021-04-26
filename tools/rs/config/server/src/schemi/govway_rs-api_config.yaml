@@ -7223,7 +7223,11 @@ components:
               type: array
               items:
                 $ref: 'govway_core.yaml#/components/schemas/NCName'
-              example: ['ruolo1', 'ruolo2'] 
+              example: ['ruolo1', 'ruolo2']
+            proprieta:
+              type: array
+              items:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000'
     SoggettoItem:
       type: object
       allOf:
@@ -7270,7 +7274,11 @@ components:
               type: array
               items:
                 $ref: 'govway_core.yaml#/components/schemas/NCName'
-              example: ['ruolo1', 'ruolo2'] 
+              example: ['ruolo1', 'ruolo2']
+            proprieta:
+              type: array
+              items:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000'
     ApplicativoItem:
       type: object
       allOf:

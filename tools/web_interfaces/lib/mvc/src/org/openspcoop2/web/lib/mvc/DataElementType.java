@@ -37,7 +37,7 @@ public enum DataElementType {
 	CRYPT("crypt"),
 	CHECKBOX("checkbox"),
 	LINK("link"),
-	FILE("file"),
+	FILE("file"), MULTI_FILE("multi-file"),
 	NOTE("note"),
 	RADIO("radio"),
 	IMAGE("image"), BUTTON("button"),

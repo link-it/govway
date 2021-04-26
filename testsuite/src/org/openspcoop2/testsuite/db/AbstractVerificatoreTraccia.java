@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.testng.Reporter;
 
 /**
  * Verifica le tracce
@@ -74,12 +75,19 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	// Traccia
 	protected PreparedStatement prepareStatement(String idMessaggio) throws TestSuiteException{
+		return prepareStatement(idMessaggio, false);
+	}
+	protected PreparedStatement prepareStatement(String idMessaggio, boolean debug) throws TestSuiteException{
 		try{
+			String query = "select * from "+CostantiDB.TRACCE+" where "+this.getColumnId()+"=? AND "+
+					CostantiDB.TRACCE_COLUMN_PROTOCOLLO+"=?";
 			PreparedStatement pstmt = this.con
-					.prepareStatement("select * from "+CostantiDB.TRACCE+" where "+this.getColumnId()+"=? AND "+
-							CostantiDB.TRACCE_COLUMN_PROTOCOLLO+"=?");
+					.prepareStatement(query);
 			pstmt.setString(1, idMessaggio);
 			pstmt.setString(2, this.protocollo);
+			if(debug) {
+				Reporter.log("Select per controllo valore Azione Busta con id '"+idMessaggio+"': [protocollo-2-param:"+this.protocollo+"] "+query);
+			}
 			return pstmt;
 		}catch(SQLException e){
 			throw new TestSuiteException(e,e.getMessage());
@@ -1069,7 +1077,7 @@ public abstract class AbstractVerificatoreTraccia {
 
 	public boolean isTracedAzione(String idMessaggio, String nome)
 			throws TestSuiteException {
-		return _isTracedAzione(this.prepareStatement(idMessaggio),nome);
+		return _isTracedAzione(this.prepareStatement(idMessaggio, true),nome);
 	}
 	public boolean isTracedAzione(String idMessaggio,IDSoggetto idPortaMessaggio, String nome)
 			throws TestSuiteException {
@@ -1086,20 +1094,36 @@ public abstract class AbstractVerificatoreTraccia {
 		try {
 			res = pstmt.executeQuery();
 
+			StringBuilder sb = new StringBuilder();
+			
 			boolean presente = false;
 			while (res.next()) {
 				presente = true;
 
 				String value = res.getString(CostantiDB.TRACCE_COLUMN_AZIONE);
+				sb.append("entry sul db '"+value+"'");
 				//System.out.println("AZIONE TROVATA["+value+"] ATTESA["+nome+"]");
 				if(value==null){
-					if(nome!=null)
+					if(nome!=null) {
+						sb.append("; è presente un null value");
 						return false;
+					}
 				}
-				else if (!(value.equals(nome)))
+				else if (!(value.equals(nome))) {
+					sb.append("; è presente un valore differente da quello atteso");
 					return false;
+				}
 			}
 
+			if(!presente) {
+				if(sb.length()==0) {
+					Reporter.log("Azione '"+nome+"' non trovata; entry nel db non esistente dell'intera traccia");
+				}
+				else {
+					Reporter.log("Azione '"+nome+"' non trovata; "+sb.toString());
+				}
+			}
+			
 			return presente;
 
 		} catch (SQLException e) {

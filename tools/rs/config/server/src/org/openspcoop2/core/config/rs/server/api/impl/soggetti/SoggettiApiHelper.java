@@ -20,6 +20,7 @@
 package org.openspcoop2.core.config.rs.server.api.impl.soggetti;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.commons.Liste;
@@ -31,6 +32,7 @@ import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
+import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
 import org.openspcoop2.core.config.rs.server.model.Soggetto;
 import org.openspcoop2.core.config.rs.server.model.SoggettoItem;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -178,6 +180,15 @@ public class SoggettiApiHelper {
 			}
 		}
 	
+		ret.getProprietaList().clear();
+		if(body.getProprieta()!=null && !body.getProprieta().isEmpty()) {
+			for (Proprieta4000 proprieta : body.getProprieta()) {
+				org.openspcoop2.core.registry.Proprieta pRegistry = new org.openspcoop2.core.registry.Proprieta();
+				pRegistry.setNome(proprieta.getNome());
+				pRegistry.setValore(proprieta.getValore());
+				ret.addProprieta(pRegistry);
+			}
+		}
 	}
 	
 	public static final org.openspcoop2.core.registry.Soggetto soggettoApiToRegistro(Soggetto body, SoggettiEnv env, ApiKeyInfo keyInfo) 
@@ -222,7 +233,7 @@ public class SoggettiApiHelper {
 		final Connettore connettore = new Connettore();
 		connettore.setTipo(CostantiDB.CONNETTORE_TIPO_DISABILITATO);
 		ret.setConnettore(connettore);
-						
+		
 		return ret;
 	}
 	
@@ -251,6 +262,18 @@ public class SoggettiApiHelper {
 		
 		ret.setRuoli(soggettiCore.soggettiRuoliList(s.getId(), new Search()));
 	
+		if(s.sizeProprietaList()>0) {
+			for (org.openspcoop2.core.registry.Proprieta proprieta : s.getProprietaList()) {
+				Proprieta4000 p = new Proprieta4000();
+				p.setNome(proprieta.getNome());
+				p.setValore(proprieta.getValore());
+				if(ret.getProprieta()==null) {
+					ret.setProprieta(new ArrayList<Proprieta4000>());
+				}
+				ret.addProprietaItem(p);
+			}
+		}
+		
 		return ret;
 	}
 	

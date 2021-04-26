@@ -24,6 +24,9 @@ Background:
 * def applicativo_https_multipleCertificate = read('classpath:bodies/applicativo_https_multipleCertificate.json') 
 * eval randomize(applicativo_https_multipleCertificate, ["nome" ])
 
+* def applicativo_proprieta = read('classpath:bodies/applicativo_proprieta.json') 
+* eval randomize(applicativo_proprieta, ["nome", "credenziali.userid" ])
+
 @Create204
 Scenario: Applicativi Creazione 204 OK
 
@@ -75,4 +78,9 @@ Scenario: Applicativi Creazione 204 OK (credenziali apikey)
 Scenario: Applicativi Creazione 204 OK (credenziali multipleApikey)
     
     * call create_201_multipleapikey { resourcePath: 'applicativi', body: '#(applicativo_multipleApikey)', key: '#(applicativo_multipleApikey.nome)' }
+
+@Create204_proprieta
+Scenario: Applicativi Creazione 204 OK (presenza di proprieta')
+    
+    * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_proprieta)', key: '#(applicativo_proprieta.nome)' }
 

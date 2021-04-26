@@ -57,6 +57,7 @@ import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
+import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -204,6 +205,16 @@ public class ApplicativiApiHelper {
 
 		sa.setInvocazionePorta(invocazionePorta);
 		
+		// *** proprieta ***
+		if(applicativo.getProprieta()!=null && !applicativo.getProprieta().isEmpty()) {
+			for (Proprieta4000 proprieta : applicativo.getProprieta()) {
+				org.openspcoop2.core.config.Proprieta pConfig = new org.openspcoop2.core.config.Proprieta();
+				pConfig.setNome(proprieta.getNome());
+				pConfig.setValore(proprieta.getValore());
+				sa.addProprieta(pConfig);
+			}
+		}
+		
 	    return sa;
 	}
 	
@@ -224,6 +235,18 @@ public class ApplicativiApiHelper {
 	
 		ret.setCredenziali(authFromCredenziali(invPorta.getCredenzialiList()));
 			
+		if(sa.sizeProprietaList()>0) {
+			for (org.openspcoop2.core.config.Proprieta proprieta : sa.getProprietaList()) {
+				Proprieta4000 p = new Proprieta4000();
+				p.setNome(proprieta.getNome());
+				p.setValore(proprieta.getValore());
+				if(ret.getProprieta()==null) {
+					ret.setProprieta(new ArrayList<Proprieta4000>());
+				}
+				ret.addProprietaItem(p);
+			}
+		}
+		
 		return ret;
 	}
 	

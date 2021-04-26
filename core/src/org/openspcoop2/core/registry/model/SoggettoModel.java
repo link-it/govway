@@ -41,6 +41,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		super();
 	
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.registry.Connettore.class,"soggetto",Soggetto.class));
+		this.PROPRIETA = new org.openspcoop2.core.registry.model.ProprietaModel(new Field("proprieta",org.openspcoop2.core.registry.Proprieta.class,"soggetto",Soggetto.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"soggetto",Soggetto.class));
 		this.CREDENZIALI = new org.openspcoop2.core.registry.model.CredenzialiSoggettoModel(new Field("credenziali",org.openspcoop2.core.registry.CredenzialiSoggetto.class,"soggetto",Soggetto.class));
 		this.RUOLI = new org.openspcoop2.core.registry.model.RuoliSoggettoModel(new Field("ruoli",org.openspcoop2.core.registry.RuoliSoggetto.class,"soggetto",Soggetto.class));
@@ -63,6 +64,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		super(father);
 	
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.registry.Connettore.class,"soggetto",Soggetto.class));
+		this.PROPRIETA = new org.openspcoop2.core.registry.model.ProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.core.registry.Proprieta.class,"soggetto",Soggetto.class));
 		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"soggetto",Soggetto.class));
 		this.CREDENZIALI = new org.openspcoop2.core.registry.model.CredenzialiSoggettoModel(new ComplexField(father,"credenziali",org.openspcoop2.core.registry.CredenzialiSoggetto.class,"soggetto",Soggetto.class));
 		this.RUOLI = new org.openspcoop2.core.registry.model.RuoliSoggettoModel(new ComplexField(father,"ruoli",org.openspcoop2.core.registry.RuoliSoggetto.class,"soggetto",Soggetto.class));
@@ -83,6 +85,8 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	
 
 	public org.openspcoop2.core.registry.model.ConnettoreModel CONNETTORE = null;
+	 
+	public org.openspcoop2.core.registry.model.ProprietaModel PROPRIETA = null;
 	 
 	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
 	 

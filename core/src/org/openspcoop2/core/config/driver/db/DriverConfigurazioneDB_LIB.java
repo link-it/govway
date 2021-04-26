@@ -3707,6 +3707,7 @@ public class DriverConfigurazioneDB_LIB {
 			InvocazionePorta invPorta = aSA.getInvocazionePorta();
 			InvocazioneServizio invServizio = aSA.getInvocazioneServizio();
 			RispostaAsincrona ricezione = aSA.getRispostaAsincrona();
+			List<Proprieta> proprieta = aSA.getProprietaList();
 
 			Connettore connettoreRisp = null;
 			Connettore connettoreInv = null;
@@ -4050,7 +4051,30 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " credenziali al servizioApplicativo "+idServizioApplicativo);
 				
 				
-
+				// Proprieta
+				n=0;
+				if(proprieta!=null && proprieta.size()>0){
+					for (int i = 0; i < proprieta.size(); i++) {
+						Proprieta prop = proprieta.get(i);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("valore", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aSA.getId());
+						stm.setString(2, prop.getNome());
+						stm.setString(3, prop.getValore());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta proprieta' [" + prop.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " proprieta' al servizioApplicativo "+idServizioApplicativo);
 				
 				
 				// ProtocolProperties
@@ -4443,6 +4467,44 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				// Proprieta
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, aSA.getId());
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" proprieta' associate al servizioApplicativo "+idServizioApplicativo);
+				
+				n=0;
+				if(proprieta!=null && proprieta.size()>0){
+					for (int i = 0; i < proprieta.size(); i++) {
+						Proprieta prop = proprieta.get(i);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("valore", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aSA.getId());
+						stm.setString(2, prop.getNome());
+						stm.setString(3, prop.getValore());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta proprieta' [" + prop.getNome() + "] al servizioApplicativo "+idServizioApplicativo);
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " proprieta' al servizioApplicativo "+idServizioApplicativo);
+				
+				
+				
 				
 				// ProtocolProperties
 				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, aSA.getProtocolPropertyList(), 
@@ -4463,6 +4525,18 @@ public class DriverConfigurazioneDB_LIB {
 				// ProtocolProperties
 				DriverConfigurazioneDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
 						idServizioApplicativo, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, con, DriverConfigurazioneDB_LIB.tipoDB);
+				
+				// proprieta'
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idServizioApplicativo);
+				n=stm.executeUpdate();
+				stm.close();
+				if (n > 0)
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " proprieta' associate al ServizioApplicativo[" + idServizioApplicativo + "]");
 				
 				// credenziali
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);

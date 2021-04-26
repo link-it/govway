@@ -22,6 +22,7 @@
                                 <linkit:sql-table object-name="soggetti" object-type="soggetti"/>
                                 <linkit:sql-table object-name="soggetti-ruoli" object-type="soggetti-ruoli"/>
                                 <linkit:sql-table object-name="soggetti-credenziali" object-type="soggetti-credenziali"/>
+                                <linkit:sql-table object-name="soggetti-prop" object-type="soggetti-prop"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -497,7 +498,71 @@
         </xsd:complexType>
     </xsd:element>
     
-    
+ 
+ 
+    <xsd:element name="soggetti-prop">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="soggetti_properties" 
+                        comment="Elenco di proprieta associate al soggetto">
+                        <linkit:sql-table-constraint unique="uniq_soggetti_props" index="idx_soggetti_props"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="soggetti"
+                            reference-object-type="soggetti"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_soggetto"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_soggetto"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_SOGGETTI_PROP">
+                            <linkit:sql-table-index-field name="id_soggetto"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_soggetto" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="valore" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="valore" varchar="4000"/>
+                                <linkit:sql-ddl-column-comment>Valore associato alla proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
  
     
     

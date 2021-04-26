@@ -72,6 +72,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceParameter;
@@ -2026,6 +2027,37 @@ public class DriverRegistroServiziDB_LIB {
 				
 				DriverRegistroServiziDB_LIB.log.debug("Aggiunte " + n + " credenziali al soggetto "+idSoggetto);
 				
+				
+				// properties
+				
+				n = 0;
+				if(soggetto.sizeProprietaList()>0){
+					for (int i = 0; i < soggetto.sizeProprietaList(); i++) {
+						
+						Proprieta proprieta = soggetto.getProprieta(i);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SOGGETTI_PROPS);
+						sqlQueryObject.addInsertField("id_soggetto", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("valore", "?");
+						updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						
+						updateStmt.setLong(1, idSoggetto);
+						updateStmt.setString(2, proprieta.getNome());
+						updateStmt.setString(3, proprieta.getValore());
+						
+						int r= updateStmt.executeUpdate();
+						n++;
+						updateStmt.close();
+						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + r+" create property ["+proprieta.getNome()+"]");
+					}
+				}
+				
+				DriverRegistroServiziDB_LIB.log.debug("Aggiunti " + n + " proprietà al soggetto "+idSoggetto);
+				
+				
 				break;
 
 			case UPDATE:
@@ -2269,6 +2301,46 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.log.debug("Aggiunte " + n + " credenziali al soggetto "+idSoggetto);
 				
 				
+				// properties
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_PROPS);
+				sqlQueryObject.addWhereCondition("id_soggetto=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idSoggetto);
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete properties");
+				
+				n = 0;
+				if(soggetto.sizeProprietaList()>0){
+					for (int i = 0; i < soggetto.sizeProprietaList(); i++) {
+						
+						Proprieta proprieta = soggetto.getProprieta(i);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SOGGETTI_PROPS);
+						sqlQueryObject.addInsertField("id_soggetto", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("valore", "?");
+						updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						
+						updateStmt.setLong(1, idSoggetto);
+						updateStmt.setString(2, proprieta.getNome());
+						updateStmt.setString(3, proprieta.getValore());
+						
+						int r= updateStmt.executeUpdate();
+						n++;
+						updateStmt.close();
+						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + r+" create property ["+proprieta.getNome()+"]");
+					}
+				}
+				
+				DriverRegistroServiziDB_LIB.log.debug("Aggiunti " + n + " proprietà al soggetto "+idSoggetto);
+				
+				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, soggetto.getProtocolPropertyList(), 
 						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
@@ -2288,6 +2360,17 @@ public class DriverRegistroServiziDB_LIB {
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
 						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+				
+				// elimino le proprieta' del soggetto
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_PROPS);
+				sqlQueryObject.addWhereCondition("id_soggetto=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idSoggetto);
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete properties");
 				
 				// elimino le credenziali del soggetto
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);

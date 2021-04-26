@@ -33,6 +33,9 @@ public class Applicativo extends BaseCredenziali {
   
   @Schema(example = "[\"ruolo1\",\"ruolo2\"]", description = "")
   private List<String> ruoli = null;
+  
+  @Schema(description = "")
+  private List<Proprieta4000> proprieta = null;
  /**
    * Get nome
    * @return nome
@@ -77,6 +80,30 @@ public class Applicativo extends BaseCredenziali {
     return this;
   }
 
+ /**
+   * Get proprieta
+   * @return proprieta
+  **/
+  @JsonProperty("proprieta")
+  @Valid
+  public List<Proprieta4000> getProprieta() {
+    return this.proprieta;
+  }
+
+  public void setProprieta(List<Proprieta4000> proprieta) {
+    this.proprieta = proprieta;
+  }
+
+  public Applicativo proprieta(List<Proprieta4000> proprieta) {
+    this.proprieta = proprieta;
+    return this;
+  }
+
+  public Applicativo addProprietaItem(Proprieta4000 proprietaItem) {
+    this.proprieta.add(proprietaItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -85,6 +112,7 @@ public class Applicativo extends BaseCredenziali {
     sb.append("    ").append(Applicativo.toIndentedString(super.toString())).append("\n");
     sb.append("    nome: ").append(Applicativo.toIndentedString(this.nome)).append("\n");
     sb.append("    ruoli: ").append(Applicativo.toIndentedString(this.ruoli)).append("\n");
+    sb.append("    proprieta: ").append(Applicativo.toIndentedString(this.proprieta)).append("\n");
     sb.append("}");
     return sb.toString();
   }

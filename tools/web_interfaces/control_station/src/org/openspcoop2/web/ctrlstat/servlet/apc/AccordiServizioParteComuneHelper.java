@@ -583,7 +583,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public Vector<Object> addAccordiAllegatiToDati(Vector<Object> dati,TipoOperazione tipoOperazione,String idAccordo,
 			String ruolo,String [] ruoli,String []tipiAmmessi,String []tipiAmmessiLabel,String tipoAccordo,
-			String idAllegato, Documento doc, AccordoServizioParteComune as, String errore,StringBuilder contenutoAllegato) throws Exception {
+			String idAllegato, Documento doc, AccordoServizioParteComune as, String errore,StringBuilder contenutoAllegato, List<BinaryParameter> binaryParameterDocumenti) throws Exception {
 		try{
 
 
@@ -653,13 +653,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			if(TipoOperazione.ADD.equals(tipoOperazione)){
-				de = new DataElement();
-				de.setValue(idAccordo);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);
-				de.setType(DataElementType.FILE);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO);
-				de.setSize(this.getSize());
-				dati.addElement(de);
+				// dal parametro in posizione 0 leggiamo i dati per creare l'elemento grafico
+				BinaryParameter allegato0 = binaryParameterDocumenti.get(0);
+				
+				DataElement fileDataElement = allegato0.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO, "", getSize());
+				fileDataElement.setType(DataElementType.MULTI_FILE);
+				fileDataElement.setRequired(true);
+				
+				dati.add(fileDataElement);
+				dati.addAll(BinaryParameter.getFileNameDataElement(binaryParameterDocumenti));
+				dati.add(BinaryParameter.getFileIdDataElement(binaryParameterDocumenti));
 			}
 
 			if(TipoOperazione.ADD.equals(tipoOperazione)==false){

@@ -2028,6 +2028,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Proprieta'
+
+    Proprieta4000:
+      type: object
+      required:
+        - nome
+        - valore
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+        valore:
+          type: string
+          maxLength: 4000
           
     # Base: Enumeration
     FormatoSoapEnum:

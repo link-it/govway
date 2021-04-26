@@ -1,0 +1,17 @@
+{
+	"nome": "TestSuiteApplicativo",
+	"credenziali": {
+		"modalita_accesso": "principal",
+		"userid": "principalIdApplicativo"   
+	},
+	"proprieta": [
+		{
+    			"nome": "NomeProprieta1",
+			"valore": "ValoreProprieta1"
+		},
+		{
+    			"nome": "NomeProprieta2",
+			"valore": "ValoreProprieta2"
+		}
+	]
+}

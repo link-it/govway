@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.ListaApplicativi;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
+import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -410,6 +411,16 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			newSa.getInvocazionePorta().setCredenzialiList(tmpSa.getInvocazionePorta().getCredenzialiList());
 			newSa.getInvocazionePorta().setRuoli(tmpSa.getInvocazionePorta().getRuoli());
 
+			newSa.getProprietaList().clear();
+			if(applicativo.getProprieta()!=null && !applicativo.getProprieta().isEmpty()) {
+				for (Proprieta4000 proprieta : applicativo.getProprieta()) {
+					org.openspcoop2.core.config.Proprieta pConfig = new org.openspcoop2.core.config.Proprieta();
+					pConfig.setNome(proprieta.getNome());
+					pConfig.setValore(proprieta.getValore());
+					newSa.addProprieta(pConfig);
+				}
+			}
+			
 			// Vincolo rilasciato in 3.3.1
 //			if (!oldSa.getNome().equals(newSa.getNome())) {
 //				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile modificare il nome del servizio applicativo");

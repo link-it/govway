@@ -39,6 +39,9 @@ public class Soggetto extends BaseCredenziali {
   
   @Schema(example = "[\"ruolo1\",\"ruolo2\"]", description = "")
   private List<String> ruoli = null;
+  
+  @Schema(description = "")
+  private List<Proprieta4000> proprieta = null;
  /**
    * Get nome
    * @return nome
@@ -121,6 +124,30 @@ public class Soggetto extends BaseCredenziali {
     return this;
   }
 
+ /**
+   * Get proprieta
+   * @return proprieta
+  **/
+  @JsonProperty("proprieta")
+  @Valid
+  public List<Proprieta4000> getProprieta() {
+    return this.proprieta;
+  }
+
+  public void setProprieta(List<Proprieta4000> proprieta) {
+    this.proprieta = proprieta;
+  }
+
+  public Soggetto proprieta(List<Proprieta4000> proprieta) {
+    this.proprieta = proprieta;
+    return this;
+  }
+
+  public Soggetto addProprietaItem(Proprieta4000 proprietaItem) {
+    this.proprieta.add(proprietaItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -131,6 +158,7 @@ public class Soggetto extends BaseCredenziali {
     sb.append("    dominio: ").append(Soggetto.toIndentedString(this.dominio)).append("\n");
     sb.append("    descrizione: ").append(Soggetto.toIndentedString(this.descrizione)).append("\n");
     sb.append("    ruoli: ").append(Soggetto.toIndentedString(this.ruoli)).append("\n");
+    sb.append("    proprieta: ").append(Soggetto.toIndentedString(this.proprieta)).append("\n");
     sb.append("}");
     return sb.toString();
   }

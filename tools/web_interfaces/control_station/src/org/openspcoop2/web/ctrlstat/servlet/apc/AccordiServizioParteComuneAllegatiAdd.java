@@ -32,7 +32,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.Documento;
@@ -46,10 +45,10 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
-import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviHelper;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -89,7 +88,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 		try {
 			Boolean isShowAccordiCooperazione = (Boolean)session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 			
-			FileUploadForm fileUpload = (FileUploadForm) form;
+//			FileUploadForm fileUpload = (FileUploadForm) form;
 			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
@@ -103,7 +102,9 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 
-			FormFile ff = fileUpload.getTheFile();
+//			FormFile ff = fileUpload.getTheFile();
+			
+			List<BinaryParameter> binaryParameterDocumenti = apcHelper.getBinaryParameters(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_DOCUMENTO);
 			
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
@@ -178,7 +179,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.ADD,idAccordo,
 						ruolo,ruoli,tipiAmmessi,tipiAmmessiLabel,tipoAccordo,
-						null,null,as,null,null);
+						null,null,as,null,null, binaryParameterDocumenti);
 				
 				pd.setDati(dati);
 
@@ -187,27 +188,8 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_ALLEGATI, ForwardParams.ADD());
 			}
 
-			
-			Documento documento = new Documento();
-			documento.setRuolo(RuoliDocumento.valueOf(ruolo).toString());
-			documento.setByteContenuto(ff.getFileData());
-			documento.setFile(ff.getFileName());
-
-			switch (RuoliDocumento.valueOf(ruolo)) {
-				case allegato:
-					documento.setTipo(ff.getFileName().substring(ff.getFileName().lastIndexOf('.')+1, ff.getFileName().length()));
-					break;
-				case specificaSemiformale:
-					documento.setTipo(TipiDocumentoSemiformale.valueOf(tipoFile).getNome());
-					break;
-				case specificaCoordinamento:
-					documento.setTipo(TipiDocumentoCoordinamento.valueOf(tipoFile).getNome());
-					break;
-			}
-			documento.setIdProprietarioDocumento(as.getId());
-		
 			// Controlli sui campi immessi
-			boolean isOk = archiviHelper.accordiAllegatiCheckData(TipoOperazione.ADD,ff,documento,ProprietariDocumento.accordoServizio, pf);
+			boolean isOk = archiviHelper.accordiAllegatiCheckData(TipoOperazione.ADD,binaryParameterDocumenti,as.getId(),ProprietariDocumento.accordoServizio, pf);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -220,7 +202,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.ADD,idAccordo,
 						ruolo,ruoli,tipiAmmessi,tipiAmmessiLabel,tipoAccordo,
-						null,null,as,null,null);
+						null,null,as,null,null, binaryParameterDocumenti);
 				
 				pd.setDati(dati);
 
@@ -229,25 +211,34 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_ALLEGATI, ForwardParams.ADD());
 			}
 
-			//inserimento documento in accordo
-			
-			switch (RuoliDocumento.valueOf(ruolo)) {
-				case allegato:
-					as.addAllegato(documento);
-					break;
-				case specificaSemiformale:
-					as.addSpecificaSemiformale(documento);
-					break;
-				case specificaCoordinamento:
-					AccordoServizioParteComuneServizioComposto assc = as.getServizioComposto();
-					if(assc==null)
-						assc=new AccordoServizioParteComuneServizioComposto();
-					assc.addSpecificaCoordinamento(documento);
-					as.setServizioComposto(assc);
-					break;
-				default:
-					break;
+			//inserimento documenti in accordo
+			for (BinaryParameter binaryParameter : binaryParameterDocumenti) {
+				Documento documento = new Documento();
+				documento.setRuolo(RuoliDocumento.valueOf(ruolo).toString());
+				documento.setByteContenuto(binaryParameter.getValue());
+				documento.setFile(binaryParameter.getFilename());
+				documento.setIdProprietarioDocumento(as.getId());
+
+				switch (RuoliDocumento.valueOf(ruolo)) {
+					case allegato:
+						documento.setTipo(binaryParameter.getFilename().substring(binaryParameter.getFilename().lastIndexOf('.')+1, binaryParameter.getFilename().length()));
+						as.addAllegato(documento);
+						break;
+					case specificaSemiformale:
+						documento.setTipo(TipiDocumentoSemiformale.valueOf(tipoFile).getNome());
+						as.addSpecificaSemiformale(documento);
+						break;
+					case specificaCoordinamento:
+						documento.setTipo(TipiDocumentoCoordinamento.valueOf(tipoFile).getNome());
+						AccordoServizioParteComuneServizioComposto assc = as.getServizioComposto();
+						if(assc==null)
+							assc=new AccordoServizioParteComuneServizioComposto();
+						assc.addSpecificaCoordinamento(documento);
+						as.setServizioComposto(assc);
+						break;
+				}
 			}
+			
 			
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);

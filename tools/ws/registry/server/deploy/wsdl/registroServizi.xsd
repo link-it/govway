@@ -544,6 +544,8 @@
 		<xsd:sequence>
 			<!-- Connettore -->
 			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<!-- Proprieta -->
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta" type="proprieta"/>
 			<!-- Protocol Properties -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
 			<!-- Accordi Servizio Parte Specifica -->
@@ -792,6 +794,13 @@
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			
 		</xsd:attribute>
+	</xsd:complexType>
+	
+	
+	<!-- Proprieta -->
+	<xsd:complexType name="proprieta">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="valore" type="xsd:string" use="required"/> 
 	</xsd:complexType>
 	
 	

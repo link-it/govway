@@ -147,7 +147,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.CHANGE,idAccordo,
 						null,null,null,null,tipoAccordo,
-						idAllegato,doc,as,null,null);
+						idAllegato,doc,as,null,null,null);
 							
 				pd.setDati(dati);
 
@@ -189,7 +189,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.CHANGE,idAccordo,
 						null,null,null,null,tipoAccordo,
-						idAllegato,doc,as,null,null);
+						idAllegato,doc,as,null,null,null);
 								
 				pd.setDati(dati);
 

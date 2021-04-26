@@ -33,7 +33,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
@@ -45,9 +44,9 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -86,8 +85,6 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 
 		try {
 
-			FileUploadForm fileUpload = (FileUploadForm) form;
-
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 
 			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
@@ -97,7 +94,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 
 			String modificaAPI = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API);
 					
-			FormFile ff = fileUpload.getTheFile();
+			List<BinaryParameter> binaryParameterDocumenti = apsHelper.getBinaryParameters(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_THE_FILE);
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 
@@ -225,7 +222,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, null, null, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 
 				dati = apsHelper. addTipiAllegatiToDati(TipoOperazione.ADD, idServizio, ruolo, ruoli, tipiAmmessi,
-						tipiAmmessiLabel, dati, modificaAPI);
+						tipiAmmessiLabel, dati, modificaAPI, binaryParameterDocumenti);
 
 				pd.setDati(dati);
 
@@ -235,29 +232,8 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 						ForwardParams.ADD());
 			}
 
-
-			Documento documento = new Documento();
-			documento.setRuolo(RuoliDocumento.valueOf(ruolo).toString());
-			documento.setByteContenuto(ff.getFileData());
-			documento.setFile(ff.getFileName());
-			switch (RuoliDocumento.valueOf(ruolo)) {
-			case allegato:
-				documento.setTipo(ff.getFileName().substring(ff.getFileName().lastIndexOf('.')+1, ff.getFileName().length()));
-				break;
-			case specificaSemiformale:
-				documento.setTipo(TipiDocumentoSemiformale.valueOf(tipoFile).getNome());
-				break;
-			case specificaSicurezza:
-				documento.setTipo(TipiDocumentoSicurezza.valueOf(tipoFile).getNome());
-				break;
-			case specificaLivelloServizio:
-				documento.setTipo(TipiDocumentoLivelloServizio.valueOf(tipoFile).getNome());
-				break;
-			}
-			documento.setIdProprietarioDocumento(asps.getId());
-
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.serviziAllegatiCheckData(TipoOperazione.ADD,ff,documento,pf);
+			boolean isOk = apsHelper.serviziAllegatiCheckData(TipoOperazione.ADD,binaryParameterDocumenti,asps.getId(),pf);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam );
@@ -270,7 +246,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, dati);
 
 				dati = apsHelper. addTipiAllegatiToDati(TipoOperazione.ADD, idServizio, ruolo, ruoli, tipiAmmessi,
-						tipiAmmessiLabel, dati, modificaAPI);
+						tipiAmmessiLabel, dati, modificaAPI, binaryParameterDocumenti);
 
 				pd.setDati(dati);
 
@@ -281,22 +257,32 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			}
 
 			//inserimento documento in accordo
+			for (BinaryParameter binaryParameter : binaryParameterDocumenti) {
+				Documento documento = new Documento();
+				documento.setRuolo(RuoliDocumento.valueOf(ruolo).toString());
+				documento.setByteContenuto(binaryParameter.getValue());
+				documento.setFile(binaryParameter.getFilename());
+				documento.setIdProprietarioDocumento(asps.getId());
 
-			switch (RuoliDocumento.valueOf(ruolo)) {
-			case allegato:
-				asps.addAllegato(documento);
-				break;
-			case specificaSemiformale:
-				asps.addSpecificaSemiformale(documento);
-				break;
-			case specificaSicurezza:
-				asps.addSpecificaSicurezza(documento);
-				break;
-			case specificaLivelloServizio:
-				asps.addSpecificaLivelloServizio(documento);
-				break;
+				switch (RuoliDocumento.valueOf(ruolo)) {
+					case allegato:
+						documento.setTipo(binaryParameter.getFilename().substring(binaryParameter.getFilename().lastIndexOf('.')+1, binaryParameter.getFilename().length()));
+						asps.addAllegato(documento);
+						break;
+					case specificaSemiformale:
+						documento.setTipo(TipiDocumentoSemiformale.valueOf(tipoFile).getNome());
+						asps.addSpecificaSemiformale(documento);
+						break;
+					case specificaSicurezza:
+						documento.setTipo(TipiDocumentoSicurezza.valueOf(tipoFile).getNome());
+						asps.addSpecificaSicurezza(documento);
+						break;
+					case specificaLivelloServizio:
+						documento.setTipo(TipiDocumentoLivelloServizio.valueOf(tipoFile).getNome());
+						asps.addSpecificaLivelloServizio(documento);
+						break;
+				}
 			}
-
 
 			// effettuo le operazioni
 			apsCore.performUpdateOperation(userLogin, apsHelper.smista(), asps);

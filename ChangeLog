@@ -1,3 +1,12 @@
+2021-04-26  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1179
+	Aggiunta la possibilità di registrare proprietà generiche sui soggetti e sugli applicativi.
+	Inoltre nella creazione di una Erogazione o Fruizione e' stata aggiunta la voce '-' alla select per la selezione dell'API; 
+	la maschera di creazione ora nasconde le sezioni 'Controllo Accessi' e 'Connettore' se non viene selezionata un'API.
+	Aggiunto infine supporto per il caricamento di file multipli nelle schermate di aggiunta degli allegati nelle API e nelle Erogazioni e Fruizioni.
+
 2021-04-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

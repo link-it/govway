@@ -32,6 +32,10 @@ Background:
 
 * def credenziali_https_multipleCertificate = read('classpath:bodies/credenziali_https_multipleCertificate.json')
 
+* def soggetto_proprieta = read('classpath:bodies/soggetto-esterno-proprieta.json') 
+* eval randomize(soggetto_proprieta, ["nome", "credenziali.userid" ])
+* eval soggetto_proprieta.ruoli = []
+
 @Update204
 Scenario: Aggiornamento Soggetto 204
 
@@ -205,3 +209,56 @@ Scenario: Soggetti Aggiornamento Credenziali Https Certificati Multipli
 
     * call delete ( { resourcePath: 'soggetti/' + soggetto_https_multipleCertificate.nome } )
     * call delete ( { resourcePath: 'ruoli' + '/' + ruolo.nome } )
+
+@UpdateProprieta
+Scenario: Soggetti Aggiornamento Proprieta
+
+    * call create { resourcePath: 'soggetti', body: '#(soggetto_proprieta)' }
+
+    # UPDATE 1
+
+    * eval soggetto_proprieta.proprieta[0].nome='pModificata'
+
+    Given url configUrl
+    And path 'soggetti/' + soggetto_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And request soggetto_proprieta
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    # READ 1
+
+    Given url configUrl
+    And path 'soggetti' , soggetto_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.proprieta == soggetto_proprieta.proprieta
+
+    # UPDATE 2
+
+    * remove soggetto_proprieta.proprieta
+
+    Given url configUrl
+    And path 'soggetti/' + soggetto_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And request soggetto_proprieta
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    # READ 2
+
+    Given url configUrl
+    And path 'soggetti' , soggetto_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response contains { 'proprieta': '#notpresent' }
+
+    * call delete ( { resourcePath: 'soggetti/' + soggetto_proprieta.nome } )

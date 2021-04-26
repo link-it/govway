@@ -9,8 +9,7 @@
                 </env:Subcode>
             </env:Code>
             <env:Reason>
-                <env:Text xml:lang="en-US">modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
-A security error was encountered when verifying the message ; Invalid timestamp: The message timestamp has expired ; Invalid timestamp: The message timestamp has expired</env:Text>
+                <env:Text xml:lang="en-US">#regex ^modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:\sToken scaduto in data '.+'$</env:Text>
             </env:Reason>
             <env:Role>http://govway.org/integration</env:Role>
             <env:Detail>
@@ -18,8 +17,8 @@ A security error was encountered when verifying the message ; Invalid timestamp:
                     <type>https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html</type>
                     <title>InteroperabilityInvalidResponse</title>
                     <status>502</status>
-                    <detail>modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:
-A security error was encountered when verifying the message ; Invalid timestamp: The message timestamp has expired ; Invalid timestamp: The message timestamp has expired</detail>
+                    <detail>
+#regex ^modipa/DemoSoggettoFruitore ha rilevato le seguenti eccezioni:\sToken scaduto in data '.+'$</detail>
                     <govway_id>#string</govway_id>
                 </problem>
             </env:Detail>
