@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.util.Strings;
 import org.openspcoop2.core.config.rs.server.api.impl.ProtocolPropertiesHelper;
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModI;
@@ -39,6 +38,7 @@ import org.openspcoop2.core.config.rs.server.model.StatoDefaultRidefinitoEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
@@ -67,6 +67,25 @@ public class ModiErogazioniApiHelper {
 		}
 		
 		return erogazionemodi;
+	}
+	
+	private static boolean isSicurezzaMessaggioAPIAbilitata(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(asps.getIdAccordo());
+		if(aspc.getProtocolPropertyList()==null) {
+			return false;
+		}
+		String sicurezzaMessaggioValue = null;
+		for(ProtocolProperty p: aspc.getProtocolPropertyList()) {
+			if(p.getName().equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO)) {
+				sicurezzaMessaggioValue = p.getValue();	
+			}
+		}
+		
+		if(sicurezzaMessaggioValue == null) {
+			return false;
+		}
+		
+		return !sicurezzaMessaggioValue.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED);
 	}
 	
 	private static TipoApiEnum getTipoApi(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
@@ -196,15 +215,15 @@ public class ModiErogazioniApiHelper {
 
 				if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
 					keystoreTipo = ModIKeystoreEnum.JKS;
-				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
 					keystoreTipo = ModIKeystoreEnum.PKCS12;
 				}
 
 				datiKeystore.setKeystoreTipo(keystoreTipo);
 				datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
+				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
+				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
+				datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
 
 				ks.setDatiKeystore(datiKeystore);
 			} else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE)) {
@@ -216,15 +235,15 @@ public class ModiErogazioniApiHelper {
 
 				if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
 					keystoreTipo = ModIKeystoreEnum.JKS;
-				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
 					keystoreTipo = ModIKeystoreEnum.PKCS12;
 				}
 
 				datiKeystore.setKeystoreTipo(keystoreTipo);
 				datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeystoreArchivio(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
+				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
+				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
+				datiKeystore.setKeystoreArchivio(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_KEYSTORE_ARCHIVE, true));
 
 				ks.setDatiKeystore(datiKeystore);
 			}
@@ -369,15 +388,15 @@ public class ModiErogazioniApiHelper {
 
 				if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
 					keystoreTipo = ModIKeystoreEnum.JKS;
-				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
 					keystoreTipo = ModIKeystoreEnum.PKCS12;
 				}
 
 				datiKeystore.setKeystoreTipo(keystoreTipo);
 				datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
+				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
+				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
+				datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
 
 				ks.setDatiKeystore(datiKeystore);
 			} else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE)) {
@@ -389,15 +408,15 @@ public class ModiErogazioniApiHelper {
 
 				if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
 					keystoreTipo = ModIKeystoreEnum.JKS;
-				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
+				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
 					keystoreTipo = ModIKeystoreEnum.PKCS12;
 				}
 
 				datiKeystore.setKeystoreTipo(keystoreTipo);
 				datiKeystore.setKeyAlias(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
-				datiKeystore.setKeystoreArchivio(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_KEY_ALIAS, true));
+				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
+				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
+				datiKeystore.setKeystoreArchivio(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_KEYSTORE_ARCHIVE, true));
 
 				ks.setDatiKeystore(datiKeystore);
 			}
@@ -426,7 +445,7 @@ public class ModiErogazioniApiHelper {
 	}
 
 	public static ProtocolProperties getProtocolProperties(Erogazione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
-		return getModiProtocolProperties(body.getModi(), getTipoApi(asps, env));
+		return getModiProtocolProperties(body.getModi(), getTipoApi(asps, env), isSicurezzaMessaggioAPIAbilitata(asps, env));
 	}
 
 	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfErogazioneModIModi modi, ErogazioniEnv env) throws Exception {
@@ -435,49 +454,52 @@ public class ModiErogazioniApiHelper {
 		}
 
 		TipoApiEnum protocollo = getTipoApi(asps, env);
-		return getModiProtocolProperties(modi, protocollo);
+		boolean sicurezzaMessaggioAPIAbilitata = isSicurezzaMessaggioAPIAbilitata(asps, env);
+		return getModiProtocolProperties(modi, protocollo, sicurezzaMessaggioAPIAbilitata);
 
 	}
 
-	private static ProtocolProperties getModiProtocolProperties(OneOfErogazioneModIModi modi, TipoApiEnum protocollo) {
+	private static ProtocolProperties getModiProtocolProperties(OneOfErogazioneModIModi modi, TipoApiEnum protocollo, boolean sicurezzaMessaggioAPIAbilitata) {
 
 		if(modi == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
 		}
 
-		//TODO recuperare AS e vedere se c'e' sicurezza messaggio abilitata
 		ProtocolProperties p = new ProtocolProperties();
 
 		if(protocollo.equals(TipoApiEnum.SOAP)) {
-			getSOAPProperties((ErogazioneModISoap)modi, p);
+			getSOAPProperties((ErogazioneModISoap)modi, p, sicurezzaMessaggioAPIAbilitata);
 		} else if(protocollo.equals(TipoApiEnum.REST)) {
-			getRESTProperties((ErogazioneModIRest)modi, p);
+			getRESTProperties((ErogazioneModIRest)modi, p, sicurezzaMessaggioAPIAbilitata);
 		}
 
 
 		return p;
 	}
 
-	private static ProtocolProperties getModiProtocolProperties(OneOfErogazioneModi modi, TipoApiEnum protocollo) {
+	private static ProtocolProperties getModiProtocolProperties(OneOfErogazioneModi modi, TipoApiEnum protocollo, boolean sicurezzaMessaggioAPIAbilitata) {
 
 		if(modi == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
 		}
 
-		//TODO recuperare AS e vedere se c'e' sicurezza messaggio abilitata
 		ProtocolProperties p = new ProtocolProperties();
 
 		if(protocollo.equals(TipoApiEnum.SOAP)) {
-			getSOAPProperties((ErogazioneModISoap)modi, p);
+			getSOAPProperties((ErogazioneModISoap)modi, p, sicurezzaMessaggioAPIAbilitata);
 		} else if(protocollo.equals(TipoApiEnum.REST)) {
-			getRESTProperties((ErogazioneModIRest)modi, p);
+			getRESTProperties((ErogazioneModIRest)modi, p, sicurezzaMessaggioAPIAbilitata);
 		}
 
 
 		return p;
 	}
 
-	private static void getRESTProperties(ErogazioneModIRest modi, ProtocolProperties p) {
+	private static void getRESTProperties(ErogazioneModIRest modi, ProtocolProperties p, boolean sicurezzaMessaggioAPIAbilitata) {
+
+		if(!sicurezzaMessaggioAPIAbilitata) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata");
+		}
 
 		if(modi.getRichiesta().getSicurezzaMessaggio().getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 			
@@ -611,7 +633,8 @@ public class ModiErogazioniApiHelper {
 		}
 
 		if(modi.getRisposta().getSicurezzaMessaggio().getHeaderHttpFirmare()!=null) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, Strings.join(modi.getRisposta().getSicurezzaMessaggio().getHeaderHttpFirmare(), ',')); //TODO verificare condizioni
+			String httpHeaders = String.join(",", modi.getRisposta().getSicurezzaMessaggio().getHeaderHttpFirmare());
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders); //TODO verificare condizioni
 		}
 		
 		if(modi.getRisposta().getSicurezzaMessaggio().getRiferimentoX509() == null || modi.getRisposta().getSicurezzaMessaggio().getRiferimentoX509().equals(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA)) {
@@ -628,8 +651,6 @@ public class ModiErogazioniApiHelper {
 
 		if(modi.getRisposta().getSicurezzaMessaggio().getTimeToLive()!=null) {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED, modi.getRisposta().getSicurezzaMessaggio().getTimeToLive());
-//		} else {
-//			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED, 300);
 		}
 
 		String algo = null;
@@ -672,12 +693,15 @@ public class ModiErogazioniApiHelper {
 			sX509.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RIFERIMENTO_X509_VALUE_X5U);
 		}
 		
-		String value = Strings.join(sX509, ',');
+		String value = String.join(",", sX509);
 		return value;
 	}
 
-	private static void getSOAPProperties(ErogazioneModISoap modi, ProtocolProperties p) {
+	private static void getSOAPProperties(ErogazioneModISoap modi, ProtocolProperties p, boolean sicurezzaMessaggioAPIAbilitata) {
 
+		if(!sicurezzaMessaggioAPIAbilitata) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata");
+		}
 		if(modi.getRichiesta().getSicurezzaMessaggio().getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 			
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);

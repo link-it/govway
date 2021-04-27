@@ -183,6 +183,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 
 			ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.empty(), body);
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps);
 
 			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env,
 					body.getConnettore());
@@ -1008,7 +1009,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
 
-//			ErogazioniApiHelper.serviziUpdateCheckData(as, asps, true, env);
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps);
 
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
 					env.apsCore);

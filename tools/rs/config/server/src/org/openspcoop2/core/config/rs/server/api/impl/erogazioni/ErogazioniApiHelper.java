@@ -192,7 +192,22 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public class ErogazioniApiHelper {
 		
 	
-	public static ProtocolProperties getProtocolProperties(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, AccordoServizioParteSpecifica asps)
+			throws Exception {
+		if(protocolProperties!=null) {
+			try{
+
+				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, asps);
+
+				env.apsHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+			}catch(ProtocolException e){
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+			}
+		}
+	}
+
+
+	public static ConsoleConfiguration getConsoleConfiguration(ErogazioniEnv env, AccordoServizioParteSpecifica asps) throws Exception {
     	IDServizio oldIdAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
 		oldIdAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
 		oldIdAps.setPortType(asps.getPortType());
@@ -202,8 +217,14 @@ public class ErogazioniApiHelper {
 		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
 		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
 
-		ConsoleConfiguration consoleConf = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, 
+		return consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, 
 				registryReader, configRegistryReader, oldIdAps);
+
+	}
+
+
+	public static ProtocolProperties getProtocolProperties(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+		ConsoleConfiguration consoleConf = getConsoleConfiguration(env, asps);
 
 		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
 		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, asps.getProtocolPropertyList(), ConsoleOperationType.CHANGE);

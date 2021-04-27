@@ -15,9 +15,10 @@
 			"pattern": "auth02"
 		},
 		"sicurezza_messaggio": {
-			"pattern": "auth01",
+			"pattern": "integrity01-auth01",
 			"rest_header": "agid",
-			"applicabilita": "qualsiasi"
+			"applicabilita": "qualsiasi",
+			"informazioni_utente": "true"
 		}
 	}
 }

@@ -1,0 +1,33 @@
+{
+	"connettore": {
+		"endpoint": "https://ginovadifretta.it/petstore"
+	},
+	"autenticazione": {
+		"tipo": "https",
+		"opzionale": false
+	},
+	"api_nome": "PetStore",
+	"api_soap_servizio": "EsempioServizioComposto",
+	"api_versione": 1,
+	"modi": {
+		"protocollo": "soap",
+		"richiesta": {
+			"sicurezza_messaggio": {
+				"truststore": {
+					"modalita": "ridefinito",
+					"truststore_path" : "/path/to/truststore",
+					"truststore_password" : "123456",
+					"truststore_crl": "crl",
+					"truststore_tipo": "jks"
+				}
+			}
+		},
+		"risposta": {
+			"sicurezza_messaggio": {
+				"keystore": {
+					"modalita": "default"
+				}
+			}
+		}
+	}
+}

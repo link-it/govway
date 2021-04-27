@@ -35,7 +35,7 @@ var expected = modi;
 expected.risposta.sicurezza_messaggio.riferimento_x509 = expected.risposta.sicurezza_messaggio.riferimento_x509 != null ? expected.risposta.sicurezza_messaggio.riferimento_x509 : 'richiesta'
 expected.risposta.sicurezza_messaggio.time_to_live = expected.risposta.sicurezza_messaggio.time_to_live != null ? expected.risposta.sicurezza_messaggio.time_to_live: 300
 expected.risposta.sicurezza_messaggio.algoritmo = expected.risposta.sicurezza_messaggio.algoritmo != null ? expected.risposta.sicurezza_messaggio.algoritmo: 'RS256'
-expected.risposta.sicurezza_messaggio.certificate_chain = expected.risposta.sicurezza_messaggio.certificate_chain != null ? expected.risposta.sicurezza_messaggio.certificate_chain: false
+expected.risposta.sicurezza_messaggio.certificate_chain = expected.risposta.sicurezza_messaggio.certificate_chain != null ? expected.risposta.sicurezza_messaggio.certificate_chain == 'true': false
 
 return expected;
 } 
@@ -64,6 +64,26 @@ Examples:
 |nome|
 |erogazione_modi_soap.json|
 |erogazione_modi_soap_wsa.json|
+|erogazione_modi_soap_truststore_ridefinito.json|
+|erogazione_modi_soap_keystore_ridefinito_file.json|
+|erogazione_modi_soap_keystore_ridefinito_path.json|
+|erogazione_modi_soap_algoritmo_RSA-SHA-512.json|
+|erogazione_modi_soap_algoritmo_DSA-SHA-256.json|
+|erogazione_modi_soap_algoritmo_ECDSA-SHA-384.json|
+|erogazione_modi_soap_algoritmo_ECDSA-SHA-512.json|
+|erogazione_modi_soap_algoritmo_RSA-SHA-256.json|
+|erogazione_modi_soap_algoritmo_RSA-SHA-384.json|
+|erogazione_modi_soap_canonica_exc_xml10.json|
+|erogazione_modi_soap_canonica_xml10.json|
+|erogazione_modi_soap_canonica_xml11.json|
+|erogazione_modi_soap_certificate_chain.json|
+|erogazione_modi_soap_includi_signature_token.json|
+|erogazione_modi_soap_rif_x509_binary_security_token.json|
+|erogazione_modi_soap_rif_x509_issuer_serial.json|
+|erogazione_modi_soap_rif_x509_ski-key-identifier.json|
+|erogazione_modi_soap_rif_x509_thumbprint-key-identifier.json|
+|erogazione_modi_soap_rif_x509_x509-key-identifier.json|
+
 
 @CreatePetstore204_modi_REST
 Scenario Outline: Erogazioni Creazione Petstore 204 REST <nome>
@@ -89,3 +109,17 @@ Examples:
 |nome|
 |erogazione_modi_rest.json|
 |erogazione_modi_rest_audience.json|
+|erogazione_modi_rest_algoritmo_ES256.json|
+|erogazione_modi_rest_algoritmo_ES384.json|
+|erogazione_modi_rest_algoritmo_ES512.json|
+|erogazione_modi_rest_algoritmo_RS256.json|
+|erogazione_modi_rest_algoritmo_RS384.json|
+|erogazione_modi_rest_algoritmo_RS512.json|
+|erogazione_modi_rest_certificate_chain.json|
+|erogazione_modi_rest_header_firmare.json|
+|erogazione_modi_rest_header_rif_509_risp.json|
+|erogazione_modi_rest_keystore_ridefinito_file.json|
+|erogazione_modi_rest_keystore_ridefinito_path.json|
+|erogazione_modi_rest_rif_multipli.json|
+|erogazione_modi_rest_truststore_ridefinito.json|
+|erogazione_modi_rest_ttl.json|
