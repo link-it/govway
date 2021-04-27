@@ -24,7 +24,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.6.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.8.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.3.5-gov4j-1.jar"/>
@@ -776,7 +776,7 @@
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.4.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-io-2.6.jar"/>
+				<include name="commons-io-2.8.0.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.6.jar"/>
 				<include name="commons-validator-1.6.jar"/>

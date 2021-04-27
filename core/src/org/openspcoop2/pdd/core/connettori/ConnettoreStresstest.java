@@ -124,7 +124,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			
 			// SIMULAZIONE WRITE_TO
 			
-			org.apache.commons.io.output.NullOutputStream nullOutputStream = new org.apache.commons.io.output.NullOutputStream();
+			org.apache.commons.io.output.NullOutputStream nullOutputStream = org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 			this.requestMsg.writeTo(nullOutputStream,true);
 			nullOutputStream.flush();
 			nullOutputStream.close();

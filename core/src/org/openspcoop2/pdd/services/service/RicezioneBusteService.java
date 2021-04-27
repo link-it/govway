@@ -1446,7 +1446,7 @@ public class RicezioneBusteService  {
 							//System.out.println("FLUSH");
 							// forzo la lettura del messaggio per impostare la dimensione della richiesta
 							try{
-								requestMessage.writeTo(new NullOutputStream(), true);
+								requestMessage.writeTo(NullOutputStream.NULL_OUTPUT_STREAM, true);
 							}catch(Exception eFlush){}
 							incomingRequestMessageContentLength = requestMessage.getIncomingMessageContentLength();
 						}
