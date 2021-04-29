@@ -58,6 +58,7 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
+import org.openspcoop2.pdd.core.handlers.PreInAcceptRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -139,6 +140,21 @@ public class RicezioneContenutiApplicativiService {
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null)
 			logCore = LoggerWrapperFactory.getLogger(idModulo);
+
+		
+
+		/* ------------  PreInHandler (PreInAcceptRequestContext) ------------- */
+		
+		// build context
+		PreInAcceptRequestContext preInAcceptRequestContext = new PreInAcceptRequestContext();
+		preInAcceptRequestContext.setTipoPorta(TipoPdD.DELEGATA);
+		preInAcceptRequestContext.setIdModulo(idModulo);
+		preInAcceptRequestContext.setRequestInfo(requestInfo);	
+		preInAcceptRequestContext.setLogCore(logCore);
+		// invocazione handler
+		GestoreHandlers.preInRequest(preInAcceptRequestContext, logCore, logCore);
+		
+		
 		
 		// GeneratoreErrore
 		try{

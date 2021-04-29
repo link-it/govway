@@ -388,6 +388,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			List<WSDataRef> signatureRefs = wss4jSignature.getSignatureRefs();	
 			if(signatureRefs!=null && !signatureRefs.isEmpty()) {
 				for (WSDataRef wsDataRef : signatureRefs) {
+					
+					if(wsDataRef.getName()!=null && wsDataRef.getName().getLocalPart()!=null && wsDataRef.getName().getNamespaceURI()!=null) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX+wsDataRef.getName().getLocalPart(), wsDataRef.getName().getNamespaceURI());
+					}
+					
 					if(wsDataRef.getName()!=null && 
 							"Timestamp".equals(wsDataRef.getName().getLocalPart()) &&
 							"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd".equals(wsDataRef.getName().getNamespaceURI())) {

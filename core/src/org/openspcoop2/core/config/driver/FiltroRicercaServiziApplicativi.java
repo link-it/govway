@@ -25,6 +25,7 @@ package org.openspcoop2.core.config.driver;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.id.IDRuolo;
 
@@ -74,6 +75,15 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 		this.protocolProperties.add(filtro);
 	}
 	
+	/** Proprieta */
+	private Map<String, String> proprieta;
+	public Map<String, String> getProprieta() {
+		return this.proprieta;
+	}
+	public void setProprieta(Map<String, String> proprieta) {
+		this.proprieta = proprieta;
+	}
+	
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
@@ -89,6 +99,14 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 			for (int i = 0; i < this.protocolProperties.size(); i++) {
 				bf.append(" [protocol-properties["+i+"]:");
 				this.protocolProperties.get(i).addDetails(bf);
+				bf.append("]");
+			}
+		}
+		if(this.proprieta!=null && !this.proprieta.isEmpty()) {
+			bf.append(" [proprieta:"+this.proprieta.size()+"]");
+			for (String key : this.proprieta.keySet()) {
+				bf.append(" [proprieta["+key+"]:");
+				bf.append(this.proprieta.get(key)!=null ? this.proprieta.get(key):"");
 				bf.append("]");
 			}
 		}

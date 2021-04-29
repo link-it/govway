@@ -29165,6 +29165,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo = ?");
 				if(filtroRicerca.getTipo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
+				DBUtils.setPropertiesForSearch(sqlQueryObject, filtroRicerca.getProprieta(), CostantiDB.SERVIZI_APPLICATIVI, CostantiDB.SERVIZI_APPLICATIVI_PROPS, "nome", "valore", "id_servizio_applicativo");
 				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.SERVIZI_APPLICATIVI);
 			}
 
@@ -29209,6 +29210,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					stm.setString(indexStmt, filtroRicerca.getTipo());
 					indexStmt++;
 				}
+				DBUtils.setPropertiesForSearch(stm, indexStmt, filtroRicerca.getProprieta(), this.tipoDB, this.log);
 				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO);
 			}
 			rs = stm.executeQuery();

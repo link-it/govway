@@ -83,6 +83,7 @@ public class ModISecurityConfig {
 	private String issuer;
 	private String subject;
 	private List<String> httpHeaders = new ArrayList<String>();
+	private List<SOAPHeader> soapHeaders = new ArrayList<SOAPHeader>();
 	
 	private List<String> corniceSicurezzaCodiceEnteRule = null;
 	private List<String> corniceSicurezzaUserRule = null;
@@ -136,6 +137,11 @@ public class ModISecurityConfig {
 		}
 		else {
 			this.initSharedSoap(listProtocolProperties,fruizione,request);
+			
+			String soapHeaders = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP);
+			if(soapHeaders!=null && soapHeaders.length()>0) {
+				this.soapHeaders = SOAPHeader.parse(soapHeaders);
+			}
 		}
 				
 		if(fruizione) {
@@ -688,6 +694,10 @@ public class ModISecurityConfig {
 	
 	public List<String> getHttpHeaders() {
 		return this.httpHeaders;
+	}
+	
+	public List<SOAPHeader> getSoapHeaders() {
+		return this.soapHeaders;
 	}
 	
 	public List<String> getCorniceSicurezzaUserRule() {

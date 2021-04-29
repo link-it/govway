@@ -241,8 +241,6 @@ Scenario: Soggetti Aggiornamento Proprieta
     And match response.proprieta[*] contains { 'nome': 'pModificata', 'valore': 'ValoreProprieta1' }
     And match response.proprieta[*] contains { 'nome': 'NomeProprieta2', 'valore': 'vModificato' }
 
-    And match response.proprieta == soggetto_proprieta.proprieta
-
     # UPDATE 2
 
     * remove soggetto_proprieta.proprieta

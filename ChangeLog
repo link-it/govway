@@ -1,3 +1,20 @@
+2021-04-29  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta la possibilità, su API SOAP, di configurare ulteriori header soap da aggiungere agli elementi inclusi nella firma.
+	La configurazione è disponibile utilizzando la console in modalità avanzata.
+	Inoltre tra le informazioni ModI presenti nella traccia vengono adesso riportati anche gli header soap firmati.
+
+2021-04-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovwayConsole, GovwayMonitor]
+	Risolti problemi vari:
+	- su API SOAP, in alcuni casi di errore, non veniva individuato correttamente l'esito della transazione associando un errato esito 'SOAPFault';
+	- risolti problemi di serializzazione del corretto 'details', per le fruizioni, in caso di errore generato tramite handler di ingresso;
+	- la console di monitoraggio non visualizzava il contenuto del messaggio, anche se salvato dal gateway, in presenza di header http con valore stringa vuota;
+	- i driver che consentono di ottenere gli oggetti del registro, sono stati adeguati per permettere la ricerca di soggetti e applicativi anche tramite eventuali proprietà associate;
+	- aggiunto all'handler 'PreInRequest' un ulteriore metodo che viene invocato non appena viene ricevuta la richiesta, prima ancora di indentificare l'API invocata e generare un identificativo di transazione.
+
 2021-04-26  Giuliano Pintori <pintori@link.it>
 
 	* [GovwayConsole, ApiRsConfigurazione]
@@ -39,7 +56,7 @@
 2021-04-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
-	Risolto Bug 
+	Risolto Bug OP-1181
 	La validazione di strutture che utilizzano il discriminator, e gli oggetti sono definiti tramite strutture allOf, falliva erroneamente.
 	L'errore si presentava se uno degli oggetti indicati nel oneOf del discriminator viene dichiarato tramite costrutto 'allOf' e 
 	quindi il required claim discriminator è presente solamente in uno degli oggetti riferiti.

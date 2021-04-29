@@ -24,6 +24,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -48,6 +49,7 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
+import org.openspcoop2.protocol.modipa.utils.SOAPHeader;
 import org.openspcoop2.protocol.modipa.validator.ModISOAPSecurity;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
@@ -386,73 +388,55 @@ public class ModIImbustamentoSoap {
 		secProperties.put(SecurityConstants.ACTION, bfAction.toString());
 		
 		// parti da firmare
+		List<SOAPHeader> soapHeaderAggiuntiviDaFirmare = securityConfig.getSoapHeaders();
 		StringBuilder bf = new StringBuilder();
-		bf.append("{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp");
+		
+		// -- Timestamp
+		addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd", "Timestamp");
+		
+		// -- WSAddressing
 		if(wsAddressingHeaders.getTo()!=null) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(wsAddressingHeaders.getTo().getNamespaceURI()).append("}").append(wsAddressingHeaders.getTo().getLocalName());
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, wsAddressingHeaders.getTo().getNamespaceURI(), wsAddressingHeaders.getTo().getLocalName());
 		}
 		if(wsAddressingHeaders.getFrom()!=null) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(wsAddressingHeaders.getFrom().getNamespaceURI()).append("}").append(wsAddressingHeaders.getFrom().getLocalName());
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, wsAddressingHeaders.getFrom().getNamespaceURI(), wsAddressingHeaders.getFrom().getLocalName());
 		}
 		if(wsAddressingHeaders.getAction()!=null) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(wsAddressingHeaders.getAction().getNamespaceURI()).append("}").append(wsAddressingHeaders.getAction().getLocalName());
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, wsAddressingHeaders.getAction().getNamespaceURI(), wsAddressingHeaders.getAction().getLocalName());
 		}
 		if(wsAddressingHeaders.getId()!=null) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(wsAddressingHeaders.getId().getNamespaceURI()).append("}").append(wsAddressingHeaders.getId().getLocalName());
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, wsAddressingHeaders.getId().getNamespaceURI(), wsAddressingHeaders.getId().getLocalName());
 		}
 		if(wsAddressingHeaders.getRelatesTo()!=null) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(wsAddressingHeaders.getRelatesTo().getNamespaceURI()).append("}").append(wsAddressingHeaders.getRelatesTo().getLocalName());
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, wsAddressingHeaders.getRelatesTo().getNamespaceURI(), wsAddressingHeaders.getRelatesTo().getLocalName());
 		}
 		if(wsAddressingHeaders.getReplyTo()!=null) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(wsAddressingHeaders.getReplyTo().getNamespaceURI()).append("}").append(wsAddressingHeaders.getReplyTo().getLocalName());
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, wsAddressingHeaders.getReplyTo().getNamespaceURI(), wsAddressingHeaders.getReplyTo().getLocalName());
 		}
 		if(wsAddressingHeaders.getFaultTo()!=null) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(wsAddressingHeaders.getFaultTo().getNamespaceURI()).append("}").append(wsAddressingHeaders.getFaultTo().getLocalName());
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, wsAddressingHeaders.getFaultTo().getNamespaceURI(), wsAddressingHeaders.getFaultTo().getLocalName());
 		}
 		if(integrita) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(soapEnvelope.getNamespaceURI()).append("}Body");
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, soapEnvelope.getNamespaceURI(), "Body");
 			if(signAttachments) {
 				if(bf.length()>0) {
 					bf.append(";");
 				}
 				bf.append("{}"+SecurityConstants.CID_ATTACH_WSS4j);
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX+"Attachments", "tutti");
 			}
 		}
 		if(corniceSicurezza) {
-			if(bf.length()>0) {
-				bf.append(";");
-			}
-			bf.append("{Element}{").append(Costanti.SAML_20_NAMESPACE).append("}Assertion");
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, Costanti.SAML_20_NAMESPACE, "Assertion");
 		}
 		if(requestDigest!=null) {
-			if(bf.length()>0) {
-				bf.append(";");
+			addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, requestDigest.getNamespaceURI(), requestDigest.getLocalName());
+		}
+		if(soapHeaderAggiuntiviDaFirmare!=null && !soapHeaderAggiuntiviDaFirmare.isEmpty()) {
+			while(soapHeaderAggiuntiviDaFirmare.size()>0) {
+				SOAPHeader soapHeader = soapHeaderAggiuntiviDaFirmare.get(0);
+				addSignaturePart(soapHeaderAggiuntiviDaFirmare, busta, bf, soapHeader.getNamespace(), soapHeader.getLocalName());
 			}
-			bf.append("{Element}{").append(requestDigest.getNamespaceURI()).append("}").append(requestDigest.getLocalName());
 		}
 		secProperties.put(SecurityConstants.SIGNATURE_PARTS, bf.toString());
 		
@@ -594,6 +578,15 @@ public class ModIImbustamentoSoap {
 		}
 		
 		return soapSecurity.buildTraccia(msg.getMessageType());
+	}
+	
+	private void addSignaturePart(List<SOAPHeader> soapHeaderAggiuntiviDaFirmare, Busta busta, StringBuilder bf, String namespace, String localName) {
+		if(bf.length()>0) {
+			bf.append(";");
+		}
+		bf.append("{Element}{").append(namespace).append("}").append(localName);
+		SOAPHeader.remove(soapHeaderAggiuntiviDaFirmare, namespace, localName);
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX+localName, namespace);
 	}
 	
 	private void addCorniceSicurezza(Hashtable<String,Object> secProperties, 

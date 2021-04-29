@@ -24,12 +24,9 @@ package org.openspcoop2.pdd.core.handlers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
-import org.slf4j.Logger;
 
 /**
  * PreInRequestContext
@@ -38,7 +35,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PreInRequestContext {
+public class PreInRequestContext extends PreInAcceptRequestContext {
 
 	public final static String SERVLET_REQUEST = "SERVLET_REQUEST";
 	public final static String SERVLET_RESPONSE = "SERVLET_RESPONSE";
@@ -46,15 +43,6 @@ public class PreInRequestContext {
 	
 	/** Trasporto */
 	private Map<String, Object> transportContext = new HashMap<String, Object>();
-
-	/** Tipo porta di dominio */
-	private TipoPdD tipoPorta;
-	
-	/** IDModulo */
-	private String idModulo;
-	
-	/** Logger */
-	private Logger logCore;
 
 	/** PdDContext */
 	private PdDContext pddContext = null;
@@ -64,10 +52,6 @@ public class PreInRequestContext {
 	
 	/** NotifierInputStreamParameter */
 	private NotifierInputStreamParams notifierInputStreamParams;
-	
-	/** RequestInfo */
-	RequestInfo requestInfo;
-	
 	
 	public PreInRequestContext(PdDContext pddContext){
 		this.pddContext = pddContext;
@@ -85,22 +69,6 @@ public class PreInRequestContext {
 		this.transportContext = transportContext;
 	}
 
-	public TipoPdD getTipoPorta() {
-		return this.tipoPorta;
-	}
-
-	public void setTipoPorta(TipoPdD tipoPorta) {
-		this.tipoPorta = tipoPorta;
-	}
-
-	public Logger getLogCore() {
-		return this.logCore;
-	}
-
-	public void setLogCore(Logger logCore) {
-		this.logCore = logCore;
-	}
-	
 	public NotifierInputStreamParams getNotifierInputStreamParams() {
 		return this.notifierInputStreamParams;
 	}
@@ -110,14 +78,6 @@ public class PreInRequestContext {
 		this.notifierInputStreamParams = notifierInputStreamParams;
 	}
 
-	public String getIdModulo() {
-		return this.idModulo;
-	}
-
-	public void setIdModulo(String idModulo) {
-		this.idModulo = idModulo;
-	}
-	
 	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
@@ -126,11 +86,4 @@ public class PreInRequestContext {
 		this.protocolFactory = protocolFactory;
 	}
 	
-	public RequestInfo getRequestInfo() {
-		return this.requestInfo;
-	}
-
-	public void setRequestInfo(RequestInfo requestInfo) {
-		this.requestInfo = requestInfo;
-	}
 }

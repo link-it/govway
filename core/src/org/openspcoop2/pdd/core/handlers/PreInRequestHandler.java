@@ -31,6 +31,10 @@ package org.openspcoop2.pdd.core.handlers;
  */
 public interface PreInRequestHandler {
 
+	public default void invoke(PreInAcceptRequestContext context) {
+		// non deve lanciare eccezioni
+	}
+	
 	public void invoke(PreInRequestContext context) throws HandlerException ; 
 	
 }

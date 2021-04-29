@@ -11123,6 +11123,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addSelectField("certificate");
 					}
 				}
+				DBUtils.setPropertiesForSearch(sqlQueryObject, filtroRicerca.getProprieta(), CostantiDB.SOGGETTI, CostantiDB.SOGGETTI_PROPS, "nome", "valore", "id_soggetto");
 				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.SOGGETTI);
 			}
 
@@ -11157,7 +11158,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 					stm.setString(indexStmt, filtroRicerca.getNomePdd());
 					indexStmt++;
 				}
-				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.SOGGETTO);
 				if(filtroRicerca.getIdRuolo()!=null){
 					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
@@ -11208,6 +11208,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 						}
 					}
 				}
+				DBUtils.setPropertiesForSearch(stm, indexStmt, filtroRicerca.getProprieta(), this.tipoDB, this.log);
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.SOGGETTO);
 			}
 			rs = stm.executeQuery();
 			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();

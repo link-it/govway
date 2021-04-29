@@ -134,7 +134,12 @@ public class SPCoopImbustamento {
 	private static int prefixLenght = 0;
 
 	// Usato in qualsiasi tipo di identificativo
-	private static synchronized void initSerialCounter(int prefixSeriale){
+	private void initSerialCounter(int prefixSeriale){
+		if(SPCoopImbustamento.maxSeriale==0){
+			_initSerialCounter(prefixSeriale);
+		}
+	}
+	private static synchronized void _initSerialCounter(int prefixSeriale){
 		// Imposto il MAX_SERIAL_VALUE
 		if(SPCoopImbustamento.maxSeriale==0){
 			if(prefixSeriale==-1){
@@ -217,7 +222,13 @@ public class SPCoopImbustamento {
 		try{
 		
 			long counter = -1;
-		
+			
+			Date now=DateManager.getDate();
+			// Date nel formato yyyy-MM-dd_hh:mm
+			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMinute();
+			String dataIdentificativo = dateformat.format(now);
+			
+			
 			StringBuilder bf = new StringBuilder();
 			bf.append(codAmm);
 			bf.append('_');
@@ -233,7 +244,7 @@ public class SPCoopImbustamento {
 					||
 					SPCoopCostanti.IDENTIFICATIVO_EGOV_SERIALE_DYNAMIC.equals(this.spcoopProperties.getTipoSeriale_IdentificativoBusta())){
 	
-				counter = SPCoopStaticCounter.getNextSerialCounter(codAmm, idPD);
+				counter = SPCoopStaticCounter.getNextSerialCounter(now, dataIdentificativo, codAmm, idPD);
 					
 			} else {
 	
@@ -254,10 +265,7 @@ public class SPCoopImbustamento {
 		
 			bf.append('_');
 	
-			// Date nel formato yyyy-MM-dd_hh:mm
-			Date now=DateManager.getDate();
-			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMinute();
-			bf.append(dateformat.format(now));
+			bf.append(dataIdentificativo);
 	
 			return bf.toString();
 		

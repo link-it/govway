@@ -374,7 +374,10 @@ public class RegistryReader implements IRegistryReader {
 			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolProperties(listPP);
-			}	
+			}
+			if(filtro.getProprieta()!=null && !filtro.getProprieta().isEmpty()) {
+				filtroDriver.setProprieta(filtro.getProprieta());
+			}
 			return this.driverRegistroServiziGET.getAllIdSoggetti(filtroDriver);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);

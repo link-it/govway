@@ -57,6 +57,7 @@ import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
+import org.openspcoop2.pdd.core.handlers.PreInAcceptRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
@@ -150,6 +151,25 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					get5XX_ErroreProcessamento(msgError),
 					IntegrationFunctionError.INTERNAL_REQUEST_ERROR, erroriProperties);
 		}
+		
+		
+		
+		
+		
+
+		/* ------------  PreInHandler (PreInAcceptRequestContext) ------------- */
+		
+		// build context
+		PreInAcceptRequestContext preInAcceptRequestContext = new PreInAcceptRequestContext();
+		preInAcceptRequestContext.setTipoPorta(TipoPdD.DELEGATA);
+		preInAcceptRequestContext.setIdModulo(idModulo);
+		preInAcceptRequestContext.setRequestInfo(requestInfo);	
+		preInAcceptRequestContext.setLogCore(logCore);
+		// invocazione handler
+		GestoreHandlers.preInRequest(preInAcceptRequestContext, logCore, logCore);
+		
+		
+		
 		
 		// Configurazione Reader
 		ConfigurazionePdDManager configPdDManager = null;

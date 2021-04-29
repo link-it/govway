@@ -34,6 +34,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -502,6 +503,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 		}
 		
+		Object erroreGovwayObject = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY);
+		String erroreGovway = null;
+		if(erroreGovwayObject!=null && erroreGovwayObject instanceof String) {
+			erroreGovway = (String) erroreGovwayObject;
+		}
+		
 		boolean faultActorOpenSPCoopV2 = (erroreApplicativo!=null &&
 				erroreApplicativo.getFaultActor()!=null &&
 				erroreApplicativo.getFaultActor().equals(actor));
@@ -516,6 +523,38 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			// msg di errore 5xx
 			// msg dovuto alla ricezione di una busta.
 
+			if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway) && MessageRole.FAULT.equals(message.getMessageRole())) {
+				if(fault.getDetail()!=null) {
+					List<Node> list = SoapUtils.getNotEmptyChildNodes(message.getFactory(), fault.getDetail(), false);
+					if(list!=null && !list.isEmpty()) {
+						for (Node node : list) {
+							XmlDeserializer xmlDeserializer = new XmlDeserializer();
+							if(xmlDeserializer.isProblemRFC7807(node) && node instanceof Element) {
+								try{
+									ProblemRFC7807 problem = xmlDeserializer.fromNode((Element) node, false);
+									Integer status = problem.getStatus();
+									if(status!=null) {
+										int valueInt = status.intValue();
+										if(valueInt>=400 && valueInt<=499){
+											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+										}else if(valueInt>=500 && valueInt<=599){
+											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+										}else{
+											return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+										}
+									}
+									else {
+										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
+									}
+								}catch(Exception e) {
+									this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+								}
+							}			
+						}
+					}
+				}
+			}
+			
 			if(codice==null){
 				// CASO NON PREVISTO ???
 				return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);

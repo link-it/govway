@@ -76,6 +76,11 @@ public class ModITracciaSerializer extends TracciaSerializer {
 		sicurezzaMessaggioSignedHeaders.setLabel(ModIConsoleCostanti.MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADERS_LABEL);
 		list.add(sicurezzaMessaggioSignedHeaders);
 		
+		TracciaExtInfoDefinition sicurezzaMessaggioSignedSoapParts = new TracciaExtInfoDefinition();
+		sicurezzaMessaggioSignedSoapParts.setPrefixId(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_PREFIX);
+		sicurezzaMessaggioSignedSoapParts.setLabel(ModIConsoleCostanti.MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_LABEL);
+		list.add(sicurezzaMessaggioSignedSoapParts);
+		
 		return list;
 	}
 	@Override

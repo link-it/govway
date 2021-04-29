@@ -88,8 +88,14 @@ public class PropertiesSerializator {
 			for (int i = 0; i < split.length; i++) {
 				String keyValueTmp = split[i].trim();
 				String [] keyValue = keyValueTmp.split("=");
+				if(keyValue.length==1 && keyValueTmp.endsWith("=")) {
+					String key = keyValue[0];
+					String value = "";
+					TransportUtils.addHeader(map, key, value);
+					continue;
+				}
 				if(keyValue.length<2){
-					throw new Exception("Valore ["+keyValueTmp+"] non contiene il carattere una coppia key=value");
+					throw new Exception("Valore ["+keyValueTmp+"] non contiene una coppia key=value");
 				}
 				String key = keyValue[0];
 				String value = keyValueTmp.substring((key+"=").length());

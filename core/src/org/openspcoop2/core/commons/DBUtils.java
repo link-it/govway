@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
@@ -42,8 +43,11 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCParameterUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCSqlLogger;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 
@@ -1290,6 +1294,108 @@ public class DBUtils {
 	}
 	
 	
+
+	public static void setPropertiesForSearch(ISQLQueryObject sqlQueryObject, Map<String, String> properties, String tabellaPadre, 
+			String tabellaProprieta, String columnName, String columnValue, String columnFK) throws SQLQueryObjectException{
+		if(properties!=null && properties.size()>0){
+			String [] conditions = new String[properties.size()];
+			int i = 0;
+			for (String nome : properties.keySet()) {
+
+				String aliasTabella = "pp"+i+tabellaPadre;
+				sqlQueryObject.addFromTable(tabellaProprieta, aliasTabella);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(aliasTabella+"."+columnFK+"="+tabellaPadre+".id");
+				String valore = properties.get(nome);
+								
+				if(conditions[i]!=null){
+					conditions[i] = conditions[i] + " AND ";
+				}
+				else {
+					conditions[i] = "";
+				}
+				conditions[i] = conditions[i] + " " + aliasTabella+"."+columnName+"=?";
+				
+				if(valore!=null){
+					if(conditions[i]!=null){
+						conditions[i] = conditions[i] + " AND ";
+					}
+					else {
+						conditions[i] = "";
+					}
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+columnValue+"=?";
+				}
+				else {
+					if(conditions[i]!=null){
+						conditions[i] = conditions[i] + " AND ";
+					}
+					else {
+						conditions[i] = "";
+					}
+					conditions[i] = conditions[i] + " " + aliasTabella+"."+columnValue+" is null";
+				}
+				
+				// casoSpecialeValoreNull
+				ISQLQueryObject sqlQueryObjectPropertyNotExists = null;
+				// in un caso dove il valore non e' definito nel database ci possono essere due casistiche:
+				// 1) Passando via govwayConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
+				// 2) Passando via govwayLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
+				if(valore==null){
+					
+					ISQLQueryObject sqlQueryObjectPropertyNotExistsInternal = sqlQueryObject.newSQLQueryObject();
+					String aliasTabellaNotExists =  "not_exists_"+aliasTabella;
+					sqlQueryObjectPropertyNotExistsInternal.addFromTable(tabellaProprieta, aliasTabellaNotExists);
+					sqlQueryObjectPropertyNotExistsInternal.addSelectField(aliasTabellaNotExists, "id");
+					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+"."+columnFK+"="+aliasTabella+"."+columnFK);
+					sqlQueryObjectPropertyNotExistsInternal.addWhereCondition(aliasTabellaNotExists+"."+columnName+"=?");
+					sqlQueryObjectPropertyNotExistsInternal.setANDLogicOperator(true);
+					
+					sqlQueryObjectPropertyNotExists = sqlQueryObject.newSQLQueryObject();
+					sqlQueryObjectPropertyNotExists.addWhereExistsCondition(true, sqlQueryObjectPropertyNotExistsInternal);
+
+					conditions[i] = "( " + conditions[i] + " ) OR ( " + sqlQueryObjectPropertyNotExists.createSQLConditions() + " )";
+				}
+				i++;
+			}
+			sqlQueryObject.addWhereCondition(true, conditions);
+		}
+	}
+	
+	public static void setPropertiesForSearch(PreparedStatement stmt, int index, 
+			Map<String, String> properties,
+			String tipoDatabase, Logger log) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
+		
+		JDBCParameterUtilities jdbcParameterUtilities = new JDBCParameterUtilities(TipiDatabase.toEnumConstant(tipoDatabase));
+		
+		if(properties!=null && properties.size()>0){
+			int i = 0;
+			for (String nome : properties.keySet()) {
+				
+				String valore = properties.get(nome);
+				
+				log.debug("Proprieta["+i+"] nome stmt.setString("+nome+")");
+				stmt.setString(index++, nome);
+								
+				if(valore!=null){
+					log.debug("Proprieta["+i+"] valore stmt.setString("+valore+")");
+					jdbcParameterUtilities.setParameter(stmt, index++, valore, String.class);
+				}
+				
+				// casoSpecialeValoreNull
+				// in un caso dove il valore non e' definito nel database ci possono essere due casistiche:
+				// 1) Passando via govwayConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
+				// 2) Passando via govwayLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
+				if(valore==null){
+					log.debug("Proprieta["+i+"] nome stmt.setString("+nome+")");
+					stmt.setString(index++, nome);
+				}
+				
+				i++;
+			}
+		}
+	}
+
+
 
 	/**
 	 * Utility per formattare la string sql con i parametri passati, e stamparla per debug

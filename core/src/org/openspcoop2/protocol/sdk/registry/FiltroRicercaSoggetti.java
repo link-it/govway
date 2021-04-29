@@ -20,6 +20,8 @@
 
 package org.openspcoop2.protocol.sdk.registry;
 
+import java.util.Map;
+
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
 /**
@@ -35,7 +37,8 @@ public class FiltroRicercaSoggetti {
 	private String nome;
 	private String nomePdd;
 	private ProtocolProperties protocolProperties;
-
+	private Map<String, String> proprieta;
+	
 	public String getTipo() {
 		return this.tipo;
 	}
@@ -59,5 +62,11 @@ public class FiltroRicercaSoggetti {
 	}
 	public void setProtocolProperties(ProtocolProperties protocolProperties) {
 		this.protocolProperties = protocolProperties;
+	}
+	public Map<String, String> getProprieta() {
+		return this.proprieta;
+	}
+	public void setProprieta(Map<String, String> proprieta) {
+		this.proprieta = proprieta;
 	}
 }

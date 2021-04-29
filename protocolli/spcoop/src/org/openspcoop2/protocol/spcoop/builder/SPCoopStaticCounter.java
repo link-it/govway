@@ -1,10 +1,10 @@
 package org.openspcoop2.protocol.spcoop.builder;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.utils.date.DateManager;
 
 /**
  * Classe che contiene l'informazione sul contatore
@@ -16,48 +16,67 @@ import org.openspcoop2.utils.date.DateManager;
 public class SPCoopStaticCounter {
 
 	private static Map<String, SPCoopStaticCounter> mapCounter = new HashMap<String, SPCoopStaticCounter>();
-	private static synchronized void initCounter(String key) {
+	private static synchronized void initCounter(Date now, String formatLastDate, String key) {
 		if(!mapCounter.containsKey(key)) {
-			mapCounter.put(key, new SPCoopStaticCounter());
+			mapCounter.put(key, new SPCoopStaticCounter(now, formatLastDate, key));
 		}
 	}
-	public static int getNextSerialCounter(String codAmm, String idPdd) throws ProtocolException {
+	public static int getNextSerialCounter(Date now, String formatLastDate, String codAmm, String idPdd) throws ProtocolException {
 		String key = codAmm+"_"+idPdd;
 		if(!mapCounter.containsKey(key)) {
-			initCounter(key);
+			initCounter(now, formatLastDate, key);
 		}
-		return mapCounter.get(key).getNextSerialCounter();
+		return mapCounter.get(key).getNextSerialCounter(now, formatLastDate);
 	}
 	
 	// Usato nel tipo di identificativo static
 	/** Contatore seriale */
+	@SuppressWarnings("unused")
+	private String identificativo;
 	private int serialCounter;
-	private long lastDate; // serve per azzerare il contatore ogni minuto
+	@SuppressWarnings("unused")
+	private Date lastDate; // serve per azzerare il contatore ogni minuto
+	private String formatLastDate;
 	
-	public SPCoopStaticCounter() {
+	public SPCoopStaticCounter(Date now, String formatLastDate, String identificativo) {
+		this.identificativo = identificativo;
 		this.serialCounter = 0;
-		this.lastDate = DateManager.getTimeMillis();
+		this.lastDate = now;
+		this.formatLastDate = formatLastDate;
 	}
 	
-	public synchronized int getNextSerialCounter() throws ProtocolException{
+	public synchronized int getNextSerialCounter(Date now, String formatNow) throws ProtocolException{
 
-		long millisecondiTrascorsi = DateManager.getTimeMillis() - this.lastDate;
-		long secondiTrascorsi = 0;
-		if(millisecondiTrascorsi>999) {
-			secondiTrascorsi = millisecondiTrascorsi/1000;
-		}
-		if(secondiTrascorsi>60) {
-			//System.out.println("AZZERO PER 60 SECONDI PASSATI!");
-			this.serialCounter = 0;
-			this.lastDate = DateManager.getTimeMillis();
-		}
-				
-		if((this.serialCounter+1) > SPCoopImbustamento.maxSeriale){
-			throw new ProtocolException("Numero massimo del seriale ("+SPCoopImbustamento.maxSeriale+") associabile all'identificato nel minuto raggiunto");
-		} 
+		//System.out.println("["+this.identificativo+"] getNextSerialCounter ...");
 		
-		this.serialCounter++;
-		return this.serialCounter;
+		try {
+			
+			/*
+			long millisecondiTrascorsi = now.getTime() - this.lastDate.getTime();
+			long secondiTrascorsi = 0;
+			if(millisecondiTrascorsi>999) {
+				secondiTrascorsi = millisecondiTrascorsi/1000;
+			}
+			if(secondiTrascorsi>60) {
+				//System.out.println("AZZERO PER 60 SECONDI PASSATI! ["+this.identificativo+"]");
+			*/
+			// FIX: il controllo precedente creava identificativi uguali
+			if(!this.formatLastDate.equals(formatNow)) {
+				//System.out.println("AZZERO PERCHE SIAMO NEL PROSSIMO MINUTO ["+this.identificativo+"]");
+				this.serialCounter = 0;
+				this.lastDate = now;
+				this.formatLastDate = formatNow;
+			}
+					
+			if((this.serialCounter+1) > SPCoopImbustamento.maxSeriale){
+				throw new ProtocolException("Numero massimo del seriale ("+SPCoopImbustamento.maxSeriale+") associabile all'identificato nel minuto raggiunto");
+			} 
+			
+			this.serialCounter=this.serialCounter+1;
+			return this.serialCounter;
+		}finally {
+			//System.out.println("["+this.identificativo+"] getNextSerialCounter: "+this.serialCounter);
+		}
 	}
 	
 }

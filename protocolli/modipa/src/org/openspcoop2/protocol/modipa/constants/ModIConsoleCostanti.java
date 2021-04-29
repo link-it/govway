@@ -51,6 +51,7 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_API_TRACCIA_EXT_INFO_PROFILO_INTERAZIONE_NON_BLOCCANTE_LABEL = "Interazione Non Bloccante";
     public static final String MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Sicurezza Messaggio";
 	public static final String MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADERS_LABEL = "Headers HTTP Firmati";
+	public static final String MODIPA_API_TRACCIA_EXT_INFO_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_SOAP_LABEL = "Elementi SOAP Firmati";
 	
     
     
@@ -488,6 +489,12 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_NOTE = "Elenco di Header http da firmare";
 	//public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_DEFAULT_VALUE = HttpConstants.DIGEST+","+HttpConstants.CONTENT_TYPE+","+HttpConstants.CONTENT_ENCODING;
 	
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP_LABEL = "SOAP Headers da firmare";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP;
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_NOTE = "Indicare per riga gli header da firmare; visualizzare 'info' per maggiori dettagli";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_INFO = "Tramite questa configurazione è possibile firmare ulteriori header soap rispetto a quelli previsti dalla specifica ModI (Timestamp, WSAddressing, Body).<BR/>"+
+			"Gli ulteriori header devono essere indicati su ogni riga tramite la sintassi: {namespace}localName<BR/>Ad esempio:<BR/>- {http://example.govway.org}NomeHeader1<BR/>- {http://example.govway.org}NomeHeader2";
+		
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_MODE_LABEL_DEFAULT = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_DEFAULT;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_MODE_LABEL_RIDEFINISCI = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_RIDEFINISCI;
 	

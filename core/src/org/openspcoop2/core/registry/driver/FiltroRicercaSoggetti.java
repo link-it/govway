@@ -23,6 +23,7 @@
 package org.openspcoop2.core.registry.driver;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
@@ -84,6 +85,15 @@ public class FiltroRicercaSoggetti extends FiltroRicerca implements Serializable
 		this.cryptConfig = cryptConfig;
 	}
 
+	/** Proprieta */
+	private Map<String, String> proprieta;
+	public Map<String, String> getProprieta() {
+		return this.proprieta;
+	}
+	public void setProprieta(Map<String, String> proprieta) {
+		this.proprieta = proprieta;
+	}
+
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
@@ -103,6 +113,14 @@ public class FiltroRicercaSoggetti extends FiltroRicerca implements Serializable
 			}
 			if(this.credenzialiSoggetto.getSubject()!=null){
 				bf.append(" [credenziali-subject:"+this.credenzialiSoggetto.getSubject()+"]");
+			}
+		}
+		if(this.proprieta!=null && !this.proprieta.isEmpty()) {
+			bf.append(" [proprieta:"+this.proprieta.size()+"]");
+			for (String key : this.proprieta.keySet()) {
+				bf.append(" [proprieta["+key+"]:");
+				bf.append(this.proprieta.get(key)!=null ? this.proprieta.get(key):"");
+				bf.append("]");
 			}
 		}
 		if(bf.length()=="Filtro:".length())

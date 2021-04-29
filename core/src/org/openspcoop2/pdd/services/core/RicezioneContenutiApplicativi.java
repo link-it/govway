@@ -727,11 +727,18 @@ public class RicezioneContenutiApplicativi {
 		if(he!=null && he.getIntegrationFunctionError()!=null) {
 			ifError = he.getIntegrationFunctionError();
 		}
+		ErroreIntegrazione erroreIntegrazioneGenerato = null;
+		if(he!=null){
+			erroreIntegrazioneGenerato = he.convertToErroreIntegrazione();
+		}
 		
 		if (this.msgContext.isGestioneRisposta()) {
 			String posizioneFault = posizione+": "+e.getMessage();
+			if(erroreIntegrazioneGenerato==null) {
+				erroreIntegrazioneGenerato = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneFault);
+			}
 			OpenSPCoop2Message messageFault = this.generatoreErrore.build(this.msgContext.getPddContext(), ifError, 
-					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneFault),
+					erroreIntegrazioneGenerato,
 					e, null);
 			this.msgContext.setMessageResponse(messageFault);
 		}
