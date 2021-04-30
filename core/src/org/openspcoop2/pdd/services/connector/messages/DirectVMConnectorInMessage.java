@@ -279,15 +279,19 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			throw new ConnectorException(e.getMessage(),e);
 		}	
 	}
-	
+
 	@Override
 	public DumpByteArrayOutputStream getRequest() throws ConnectorException{
+		return this.getRequest(true);
+	}
+	@Override
+	public DumpByteArrayOutputStream getRequest(boolean consume) throws ConnectorException{
 		try{
 			this.dataIngressoRichiesta = DateManager.getDate();
 			
 			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
 					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
-			this.message.writeTo(bout, true);
+			this.message.writeTo(bout, consume);
 			bout.flush();
 			bout.close();
 			return bout;

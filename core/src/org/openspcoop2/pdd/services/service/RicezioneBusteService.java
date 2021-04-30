@@ -142,18 +142,35 @@ public class RicezioneBusteService  {
 		if(logCore==null)
 			logCore = LoggerWrapperFactory.getLogger(idModulo);
 		
+		OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
 		
 		
 		/* ------------  PreInHandler (PreInAcceptRequestContext) ------------- */
 		
-		// build context
-		PreInAcceptRequestContext preInAcceptRequestContext = new PreInAcceptRequestContext();
-		preInAcceptRequestContext.setTipoPorta(TipoPdD.APPLICATIVA);
-		preInAcceptRequestContext.setIdModulo(idModulo);
-		preInAcceptRequestContext.setRequestInfo(requestInfo);	
-		preInAcceptRequestContext.setLogCore(logCore);
-		// invocazione handler
-		GestoreHandlers.preInRequest(preInAcceptRequestContext, logCore, logCore);
+		PreInAcceptRequestContext preInAcceptRequestContext = null;
+		if (openSPCoopProperties != null) {
+			// build context
+			preInAcceptRequestContext = new PreInAcceptRequestContext();
+			preInAcceptRequestContext.setTipoPorta(TipoPdD.APPLICATIVA);
+			preInAcceptRequestContext.setIdModulo(idModulo);
+			preInAcceptRequestContext.setRequestInfo(requestInfo);	
+			preInAcceptRequestContext.setLogCore(logCore);
+			
+			// valori che verranno aggiornati dopo
+			try {
+				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
+					req.setRequestReadTimeout(openSPCoopProperties.getReadConnectionTimeout_ricezioneBuste());
+				}
+				req.setThresholdContext(null, 
+					openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+			}catch(Throwable t) {
+				logCore.error(t.getMessage(),t);
+			}
+			preInAcceptRequestContext.setReq(req);
+			
+			// invocazione handler
+			GestoreHandlers.preInRequest(preInAcceptRequestContext, logCore, logCore);
+		}
 		
 		
 		
@@ -176,7 +193,6 @@ public class RicezioneBusteService  {
 		}
 		
 		//	Proprieta' OpenSPCoop
-		OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
 		if (openSPCoopProperties == null) {
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: OpenSPCoopProperties";
 			logCore.error(msg);
@@ -407,6 +423,9 @@ public class RicezioneBusteService  {
 			
 			if(context==null) {
 				context = new RicezioneBusteContext(idModuloAsService, dataAccettazioneRichiesta,requestInfo);
+			}
+			if(preInAcceptRequestContext!=null && preInAcceptRequestContext.getPreContext()!=null && !preInAcceptRequestContext.getPreContext().isEmpty()) {
+				context.getPddContext().addAll(preInAcceptRequestContext.getPreContext(), false);
 			}
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, req.getRequestInfo());

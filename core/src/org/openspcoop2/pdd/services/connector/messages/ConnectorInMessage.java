@@ -72,6 +72,7 @@ public interface ConnectorInMessage {
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException;
 	
 	public DumpByteArrayOutputStream getRequest() throws ConnectorException;
+	public DumpByteArrayOutputStream getRequest(boolean consume) throws ConnectorException;
 	
 	public Date getDataIngressoRichiesta();
 	

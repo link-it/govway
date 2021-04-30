@@ -69,6 +69,8 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	protected OpenSPCoop2Properties openspcoopProperties;
 	protected OpenSPCoop2Message message;
 	protected InputStream is;
+	protected DumpByteArrayOutputStream buffer;
+	protected boolean buffered = false;
 	protected Logger log;
 	protected String idModulo;
 	private IDService idModuloAsIDService;
@@ -125,6 +127,13 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		this.requestReadTimeout = timeout;
 	}
 	private InputStream buildTimeoutInputStream() throws IOException {
+		
+		if(this.buffered) {
+			if(this.buffer!=null && this.buffer.size()>0) {
+				return new ByteArrayInputStream(this.buffer.toByteArray());
+			}
+		}
+		
 		if(this.is!=null && this.requestReadTimeout>0) {
 			this.is = new TimeoutInputStream(this.is, this.requestReadTimeout,
 					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
@@ -216,6 +225,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			throw new ConnectorException(e.getMessage(),e);
 		}	
 	}
+
 	// Metodo utile per il dump
 	public OpenSPCoop2MessageParseResult getRequest(DumpByteArrayOutputStream buffer,NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException{
 		try{
@@ -248,13 +258,22 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			return result;
 		}	
 	}
-	
+
 	@Override
 	public DumpByteArrayOutputStream getRequest() throws ConnectorException{
+		return getRequest(true);
+	}
+	
+	@Override
+	public DumpByteArrayOutputStream getRequest(boolean consume) throws ConnectorException{
+		if(this.buffered) {
+			return this.buffer;
+		}
+		DumpByteArrayOutputStream bout = null; 
 		try{
 			this.dataIngressoRichiesta = DateManager.getDate();
 			
-			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
+			bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
 					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
 			Utilities.writeAsByteArrayOuputStream(bout, this.buildTimeoutInputStream(),false); // se l'input stream is empty ritorna null grazie al parametro false
 			bout.flush();
@@ -262,6 +281,11 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			return bout;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
+		}finally {
+			if(!consume) {
+				this.buffer = bout;
+				this.buffered = true;
+			}
 		}
 	}
 	

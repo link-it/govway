@@ -195,12 +195,17 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 
 	@Override
 	public DumpByteArrayOutputStream getRequest() throws ConnectorException {
+		return this.getRequest(true);
+	}
+	
+	@Override
+	public DumpByteArrayOutputStream getRequest(boolean consume) throws ConnectorException {
 		if(this.bout!=null){
 			return this.bout;
 		}
 		
 		try{
-			DumpByteArrayOutputStream tmp = this.connectorInMessage.getRequest();
+			DumpByteArrayOutputStream tmp = this.connectorInMessage.getRequest(consume);
 			if(tmp!=null){
 				this.bout = tmp;
 			}

@@ -165,6 +165,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		preInAcceptRequestContext.setIdModulo(idModulo);
 		preInAcceptRequestContext.setRequestInfo(requestInfo);	
 		preInAcceptRequestContext.setLogCore(logCore);
+		preInAcceptRequestContext.setReq(null);
+		
 		// invocazione handler
 		GestoreHandlers.preInRequest(preInAcceptRequestContext, logCore, logCore);
 		
@@ -321,6 +323,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			// viene generato l'UUID
 			if(context==null) {
 				context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
+			}
+			if(preInAcceptRequestContext!=null && preInAcceptRequestContext.getPreContext()!=null && !preInAcceptRequestContext.getPreContext().isEmpty()) {
+				context.getPddContext().addAll(preInAcceptRequestContext.getPreContext(), false);
 			}
 			context.setDataIngressoRichiesta(dataIngressoRichiesta);
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());

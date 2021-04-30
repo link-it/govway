@@ -261,6 +261,10 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	
 	@Override
 	public DumpByteArrayOutputStream getRequest() throws ConnectorException{
+		return getRequest(true);
+	}
+	@Override
+	public DumpByteArrayOutputStream getRequest(boolean consume) throws ConnectorException{
 		try{
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return null;

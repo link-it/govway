@@ -1907,7 +1907,7 @@ public class ConfigurazionePdDReader {
 		List<String> list = new ArrayList<String>();
 		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
 			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
-			if(confPorta.getRequest()!=null) {
+			if(confPorta.getResponse()!=null) {
 				fillListHandlers(confPorta.getResponse().getPreInList(), list);
 			}
 		}
@@ -1917,7 +1917,7 @@ public class ConfigurazionePdDReader {
 		List<String> list = new ArrayList<String>();
 		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
 			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
-			if(confPorta.getRequest()!=null) {
+			if(confPorta.getResponse()!=null) {
 				fillListHandlers(confPorta.getResponse().getInList(), list);
 			}
 		}
@@ -1927,7 +1927,7 @@ public class ConfigurazionePdDReader {
 		List<String> list = new ArrayList<String>();
 		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
 			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
-			if(confPorta.getRequest()!=null) {
+			if(confPorta.getResponse()!=null) {
 				fillListHandlers(confPorta.getResponse().getOutList(), list);
 			}
 		}
@@ -1937,7 +1937,7 @@ public class ConfigurazionePdDReader {
 		List<String> list = new ArrayList<String>();
 		if(pd!=null && pd.getConfigurazioneHandler()!=null) {
 			ConfigurazionePortaHandler confPorta = pd.getConfigurazioneHandler();
-			if(confPorta.getRequest()!=null) {
+			if(confPorta.getResponse()!=null) {
 				fillListHandlers(confPorta.getResponse().getPostOutList(), list);
 			}
 		}
@@ -2961,7 +2961,7 @@ public class ConfigurazionePdDReader {
 		List<String> list = new ArrayList<String>();
 		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
 			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
-			if(confPorta.getRequest()!=null) {
+			if(confPorta.getResponse()!=null) {
 				fillListHandlers(confPorta.getResponse().getPreInList(), list);
 			}
 		}
@@ -2971,7 +2971,7 @@ public class ConfigurazionePdDReader {
 		List<String> list = new ArrayList<String>();
 		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
 			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
-			if(confPorta.getRequest()!=null) {
+			if(confPorta.getResponse()!=null) {
 				fillListHandlers(confPorta.getResponse().getInList(), list);
 			}
 		}
@@ -2981,7 +2981,7 @@ public class ConfigurazionePdDReader {
 		List<String> list = new ArrayList<String>();
 		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
 			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
-			if(confPorta.getRequest()!=null) {
+			if(confPorta.getResponse()!=null) {
 				fillListHandlers(confPorta.getResponse().getOutList(), list);
 			}
 		}
@@ -2991,7 +2991,7 @@ public class ConfigurazionePdDReader {
 		List<String> list = new ArrayList<String>();
 		if(pa!=null && pa.getConfigurazioneHandler()!=null) {
 			ConfigurazionePortaHandler confPorta = pa.getConfigurazioneHandler();
-			if(confPorta.getRequest()!=null) {
+			if(confPorta.getResponse()!=null) {
 				fillListHandlers(confPorta.getResponse().getPostOutList(), list);
 			}
 		}

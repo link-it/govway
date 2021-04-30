@@ -141,18 +141,37 @@ public class RicezioneContenutiApplicativiService {
 		if(logCore==null)
 			logCore = LoggerWrapperFactory.getLogger(idModulo);
 
+		OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
 		
 
 		/* ------------  PreInHandler (PreInAcceptRequestContext) ------------- */
 		
-		// build context
-		PreInAcceptRequestContext preInAcceptRequestContext = new PreInAcceptRequestContext();
-		preInAcceptRequestContext.setTipoPorta(TipoPdD.DELEGATA);
-		preInAcceptRequestContext.setIdModulo(idModulo);
-		preInAcceptRequestContext.setRequestInfo(requestInfo);	
-		preInAcceptRequestContext.setLogCore(logCore);
-		// invocazione handler
-		GestoreHandlers.preInRequest(preInAcceptRequestContext, logCore, logCore);
+		PreInAcceptRequestContext preInAcceptRequestContext = null;
+		if (openSPCoopProperties != null) {
+		
+			// build context
+			preInAcceptRequestContext = new PreInAcceptRequestContext();
+			preInAcceptRequestContext.setTipoPorta(TipoPdD.DELEGATA);
+			preInAcceptRequestContext.setIdModulo(idModulo);
+			preInAcceptRequestContext.setRequestInfo(requestInfo);	
+			preInAcceptRequestContext.setLogCore(logCore);
+			
+			// valori che verranno aggiornati dopo
+			try {
+				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
+					req.setRequestReadTimeout(openSPCoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi());
+				}
+				req.setThresholdContext(null, 
+					openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+			}catch(Throwable t) {
+				logCore.error(t.getMessage(),t);
+			}
+			preInAcceptRequestContext.setReq(req);
+			
+			// invocazione handler
+			GestoreHandlers.preInRequest(preInAcceptRequestContext, logCore, logCore);
+			
+		}
 		
 		
 		
@@ -174,7 +193,6 @@ public class RicezioneContenutiApplicativiService {
 		}
 		
 		// Proprieta' OpenSPCoop
-		OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
 		if (openSPCoopProperties == null) {
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: OpenSPCoopProperties";
 			logCore.error(msg);
@@ -390,6 +408,9 @@ public class RicezioneContenutiApplicativiService {
 			
 			if(context==null) {
 				context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
+			}
+			if(preInAcceptRequestContext!=null && preInAcceptRequestContext.getPreContext()!=null && !preInAcceptRequestContext.getPreContext().isEmpty()) {
+				context.getPddContext().addAll(preInAcceptRequestContext.getPreContext(), false);
 			}
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setIdModulo(idModulo);

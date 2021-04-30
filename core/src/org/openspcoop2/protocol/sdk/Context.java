@@ -46,6 +46,10 @@ public class Context implements Serializable {
 		return this.ctx;
 	}
 
+	public boolean isEmpty() {
+		return this.ctx.isEmpty();
+	}
+	
 	public void addObject(String key,Object o){
 		if(key!=null && o!=null)
 			this.ctx.put(key, o);

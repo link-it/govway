@@ -22,7 +22,9 @@
 package org.openspcoop2.pdd.core.handlers;
 
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.Context;
 import org.slf4j.Logger;
 
 /**
@@ -46,6 +48,11 @@ public class PreInAcceptRequestContext {
 	/** RequestInfo */
 	RequestInfo requestInfo;
 	
+	/** ConnectorInMessage */
+	private ConnectorInMessage req;
+
+	/** PreContext */
+	private Context preContext;
 
 	public TipoPdD getTipoPorta() {
 		return this.tipoPorta;
@@ -78,4 +85,21 @@ public class PreInAcceptRequestContext {
 	public void setRequestInfo(RequestInfo requestInfo) {
 		this.requestInfo = requestInfo;
 	}
+	
+	public ConnectorInMessage getReq() {
+		return this.req;
+	}
+
+	public void setReq(ConnectorInMessage req) {
+		this.req = req;
+	}
+	
+	public Context getPreContext() {
+		return this.preContext;
+	}
+
+	public void setPreContext(Context preContext) {
+		this.preContext = preContext;
+	}
+
 }

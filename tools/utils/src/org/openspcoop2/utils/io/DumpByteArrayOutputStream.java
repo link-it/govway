@@ -59,7 +59,7 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 	public DumpByteArrayOutputStream(int soglia, File repositoryFile, String idTransazione, String tipoMessaggio) {
 		this.soglia = soglia;
 		this.repositoryFile = repositoryFile;
-		this.idTransazione = idTransazione!=null ? idTransazione : (getUniqueSerialNumber()+"");
+		this.idTransazione = idTransazione!=null ? idTransazione : getUniqueSerial();
 		this.tipoMessaggio = tipoMessaggio;
 	}
 
@@ -75,12 +75,16 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 	}
 	
 	private static long uniqueSerialNumber = 0;
-	public static synchronized long getUniqueSerialNumber(){
+	private static synchronized long getUniqueSerialNumber(){
 		if((uniqueSerialNumber+1) > Long.MAX_VALUE){
 			uniqueSerialNumber = 0;
 		} 
 		uniqueSerialNumber++;
 		return uniqueSerialNumber;
+	}
+	private static final String SIMPLE_DATE_FORMAT_MINUTE = "yyyyMMddHHmm";
+	private static String getUniqueSerial() {
+		return getUniqueSerialNumber()+""+DateUtils.getSimpleDateFormat(SIMPLE_DATE_FORMAT_MINUTE).format(DateManager.getDate());
 	}
 	
 	private static final String formatDir = "yyyyMMdd"; // compatibile con windows S.O.
