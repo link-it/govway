@@ -80,6 +80,7 @@ public class LoginCostanti {
 	public final static String LABEL_LOGIN_ERRORE = "L'ultima operazione effettuata ha provocato un errore che ha reso l'interfaccia non utilizzabile.<BR><BR>Effettuare nuovamente il login";
 	public final static String LABEL_ERRORE = "Errore";
 	public final static String LABEL_CONSOLE_RIPRISTINATA = "Console ripristinata con successo.";
+	public final static String LABEL_LOGIN_PASSWORD_AGGIORNATA_CON_SUCCESSO = "Password aggiornata con successo";
 	
 	/* LABEL MENU' AZIONI UTENTE */
 	
@@ -99,6 +100,8 @@ public class LoginCostanti {
 	public final static String PARAMETRO_LOGIN_LOGIN = "login";
 	public final static String PARAMETRO_LOGIN_PASSWORD = "password";
 	
+	/* ATTRIBUTI */
+	public final static String ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA = "changePwdScaduta";
 	
 	
 	/* OTHER */

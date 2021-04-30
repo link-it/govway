@@ -757,6 +757,7 @@ for (int i = 0; i < dati.size(); i++) {
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
 								    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 								    									String controlSetClass = deInfo != null ? "controlset-cb-info" : "controlset";
+								    									String styleClass = de.getStyleClass();
 								    									if(deInfo == null) {
 								    										if(!deNote.equals("") && de.isLabelAffiancata()){
 								    											controlSetClass = "controlset-cb-note-affiancate";
@@ -777,7 +778,7 @@ for (int i = 0; i < dati.size(); i++) {
 																			      			String idDivIconInfo = "divIconInfo_"+i;
 																			      			String idIconInfo = "iconInfo_"+i; 
 																			      	%> <td>	
-																			      			<p class="note-checkbox-affiancata <%= labelStyleClass %>"><%=deNote %></p>
+																			      			<p class="note-checkbox-affiancata <%= styleClass %>"><%=deNote %></p>
 																						</td>
 																			      	<% } 
 																			      	%>

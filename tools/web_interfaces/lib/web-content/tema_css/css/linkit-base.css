@@ -1279,7 +1279,7 @@ p.note-checkbox-affiancata {
 
 .spanNoEdit-bold-red {
 	font-weight: bold;
-	color: ${p.legend.color};
+	color: ${p.legend.color} !important;
 }
 
 .divNoEdit {

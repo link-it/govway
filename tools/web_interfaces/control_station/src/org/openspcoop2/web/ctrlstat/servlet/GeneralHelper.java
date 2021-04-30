@@ -133,7 +133,8 @@ public class GeneralHelper {
 		boolean displayUtente = false;
 		boolean displayLogin = true;
 		boolean displayLogout = true;
-		if ((baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) != -1 && userLogin == null) || (baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGOUT) != -1)) {
+		if ((baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) != -1 && userLogin == null) || (baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGOUT) != -1)
+				|| (baseUrl.indexOf("/"+UtentiCostanti.SERVLET_NAME_UTENTE_PASSWORD_CHANGE) != -1 && userLogin == null)) {
 			displayLogin = false;
 			displayLogout = false;
 		}

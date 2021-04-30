@@ -19,8 +19,12 @@
  */
 package org.openspcoop2.web.monitor.core.dao;
 
+import java.util.Date;
+import java.util.List;
+
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.lib.users.dao.UserPassword;
 
 /**
  * IUserService
@@ -36,6 +40,7 @@ public interface IUserService extends IService<User, String>{
 
 	public void saveTableState(String nomeTabella, User user, Stato stato);
 	
-	public void savePassword(String login, String newPassword);
+	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws Exception;
 	
+	public void savePasswordStorico(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws Exception;
 }

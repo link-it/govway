@@ -469,13 +469,13 @@ public class PasswordVerifier {
 		StringBuilder bf = new StringBuilder();
 		return this.isPasswordExpire(lastUpdatePassword,bf);
 	}
-	boolean isPasswordExpire(Date lastUpdatePassword, StringBuilder bfMotivazioneErrore) {
+	public boolean isPasswordExpire(Date lastUpdatePassword, StringBuilder bfMotivazioneErrore) {
 		if(this.checkPasswordExpire) {
 			Date now = DateManager.getDate();
-			int expireMs = this.expireDays * 24 * 60 * 60 * 1000;
+			long expireMs = ((long) this.expireDays * 24 * 60 * 60 * 1000);
 			Date expireDate = new Date(lastUpdatePassword.getTime() + expireMs );
-			if(expireDate.after(now)) {
-				bfMotivazioneErrore.append("La password attuale risulta impostata da più di "+this.expireDays+" giorni");
+			if(expireDate.before(now)) {
+				bfMotivazioneErrore.append("Password impostata da più di "+this.expireDays+" giorni");
 				return true;
 			}
 		}
@@ -483,17 +483,28 @@ public class PasswordVerifier {
 	}
 	
 	public boolean existsRestriction(){
-		String s = this.help("", "", false);
+		String s = this.help("", "", false, false);
 		return s != null && !"".equals(s);
 	}
 	
 	public String help(){
-		return this.help("\n", "- ", true);
+		return this.help("\n", "- ", true, false);
 	}
 	public String help(String separator){
-		return this.help(separator, "- ", true);
+		return this.help(separator, "- ", true, false);
 	}
-	public String help(String separator, String elenco, boolean premessa){
+	public boolean existsRestrictionUpdate(){
+		String s = this.help("", "", false, true);
+		return s != null && !"".equals(s);
+	}
+	
+	public String helpUpdate(){
+		return this.help("\n", "- ", true, true);
+	}
+	public String helpUpdate(String separator){
+		return this.help(separator, "- ", true, true);
+	}
+	public String help(String separator, String elenco, boolean premessa, boolean update){
 		StringBuilder bf = new StringBuilder();
 		if(premessa){
 			bf.append("La password deve rispettare i seguenti vincoli: ");
@@ -539,6 +550,12 @@ public class PasswordVerifier {
 		if(this.allDistinctCharacters){
 			bf.append(separator);
 			bf.append(elenco).append("tutti i caratteri utilizzati devono essere differenti");
+		}
+		if(this.history){
+			if(update) {
+				bf.append(separator);
+				bf.append(elenco).append("non deve corrispondere ad una precedente password");
+			}
 		}
 		return bf.toString();
 	}

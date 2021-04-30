@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -2271,7 +2272,11 @@ public class DriverUsersDB {
 	}
 	
 	
-	public void savePassword(String login, String password) throws DriverUsersDBException {
+	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws DriverUsersDBException {
+		this.savePassword(idUser, login, newPassword, dataAggiornamentoPassword, null);
+	}
+	
+	public void savePassword(Long idUser, String login, String password, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws DriverUsersDBException {
 		if (login == null || password==null)
 			throw new DriverUsersDBException("[savePassword] Parametri Non Validi");
 
@@ -2290,14 +2295,83 @@ public class DriverUsersDB {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
 			sqlQueryObject.addUpdateField("password", "?");
+			if(dataAggiornamentoPassword!=null) {
+				sqlQueryObject.addUpdateField("data_password", "?");
+			}
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = connectionDB.prepareStatement(sqlQuery);
-			stm.setString(1, password);
-			stm.setString(2, login);
+			int index = 1;
+			stm.setString(index++, password);
+			if(dataAggiornamentoPassword!=null) {
+				stm.setTimestamp(index++, new Timestamp(dataAggiornamentoPassword.getTime()));
+			}
+			stm.setString(index++, login);
 			stm.executeUpdate();
 			stm.close();
+			
+			// salvataggio dello storico password
+			if(storicoPassword != null) {
+				try {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+					sqlQueryObject.addDeleteTable(CostantiDB.USERS_PASSWORD);
+					sqlQueryObject.addWhereCondition("id_utente = ?");
+					sqlQuery = sqlQueryObject.createSQLDelete();
+					stm = connectionDB.prepareStatement(sqlQuery);
+					stm.setLong(1, idUser);
+					stm.executeUpdate();
+					stm.close();
+				} finally {
+
+					//Chiudo statement and resultset
+					try {
+						if (stm != null)
+							stm.close();
+					} catch (Exception e) {
+						//ignore
+					}
+				}
+				
+				if(storicoPassword.size()>0) {
+					stm = null;
+					ResultSet rs = null;
+					try {
+						for (UserPassword userPassword : storicoPassword) {
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+							sqlQueryObject.addInsertTable(CostantiDB.USERS_PASSWORD);
+							sqlQueryObject.addInsertField("id_utente", "?");
+							sqlQueryObject.addInsertField("password", "?");
+							sqlQueryObject.addInsertField("data_password", "?");
+							sqlQuery = sqlQueryObject.createSQLInsert();
+							stm = connectionDB.prepareStatement(sqlQuery);
+							index = 1;
+							stm.setLong(index++, idUser);
+							stm.setString(index++, userPassword.getPassword());
+							stm.setTimestamp(index++, new Timestamp(userPassword.getDatePassword().getTime()));
+							stm.executeUpdate();
+							stm.close();
+						}
+					} finally {
+
+						//Chiudo statement and resultset
+						try {
+							if (rs != null)
+								rs.close();
+						} catch (Exception e) {
+							//ignore
+						}
+						try {
+							if (stm != null)
+								stm.close();
+						} catch (Exception e) {
+							//ignore
+						}
+						
+					}
+				}
+			}
 
 		} catch (SQLException se) {
 			throw new DriverUsersDBException("[DriverUsersDB::savePassword] SqlException: " + se.getMessage(),se);

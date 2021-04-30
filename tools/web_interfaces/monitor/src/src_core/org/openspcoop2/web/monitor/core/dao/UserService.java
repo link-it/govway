@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.monitor.core.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -26,6 +27,7 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.lib.users.dao.UserPassword;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
@@ -131,12 +133,22 @@ public class UserService implements IUserService {
 	}
 	
 	@Override
-	public void savePassword(String login, String newPassword) {
+	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws Exception {
 		try {
-			this.utenteDAO.savePassword(login, newPassword);
+			this.utenteDAO.savePassword(idUser, login, newPassword, dataAggiornamentoPassword);
 		} catch (DriverUsersDBException e) {
 			UserService.log.error(e.getMessage(), e);
+			throw e;
 		}
 	}
 	
+	@Override
+	public void savePasswordStorico(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws Exception {
+		try {
+			this.utenteDAO.savePassword(idUser, login, newPassword, dataAggiornamentoPassword, storicoPassword);
+		} catch (DriverUsersDBException e) {
+			UserService.log.error(e.getMessage(), e);
+			throw e;
+		}
+	}
 }

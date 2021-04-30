@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
@@ -109,6 +110,9 @@ public class LoginBean extends AbstractLoginBean {
 	private List<Soggetto> listaSoggettiDisponibiliUtente = null;
 	private Boolean showFiltroSoggettoLocale = null;
 	
+	private PasswordVerifier passwordVerifier = null;
+	private String userToUpdate = null;
+	
 	public LoginBean(boolean initDao){
 		super(initDao);
 		this.caricaProperties();
@@ -134,6 +138,16 @@ public class LoginBean extends AbstractLoginBean {
 			this.setLogoHeaderTitolo(PddMonitorProperties.getInstance(this.log).getLogoHeaderTitolo()); 
 			this.setTitle(PddMonitorProperties.getInstance(this.log).getPddMonitorTitle());
 			this.setShowExtendedInfo(PddMonitorProperties.getInstance(this.log).visualizzaPaginaAboutExtendedInfo());
+			
+			String utentiPasswordConfig = PddMonitorProperties.getInstance(this.log).getUtentiPassword();
+			
+			if(utentiPasswordConfig!=null){
+				this.passwordVerifier = new PasswordVerifier(utentiPasswordConfig);
+				if(this.passwordVerifier.existsRestrictionUpdate()==false){
+					this.passwordVerifier = null;
+				}
+			}
+			
 
 		} catch (Exception e) {
 			this.log.error("Errore durante la configurazione del logout: " + e.getMessage(),e);
@@ -152,6 +166,7 @@ public class LoginBean extends AbstractLoginBean {
 	@Override
 	public String login() {
 		if(this.isApplicationLogin()){
+			this.userToUpdate = null;
 
 			if(null == this.getUsername() && this.getPwd() == null){		
 				return "login";
@@ -164,8 +179,23 @@ public class LoginBean extends AbstractLoginBean {
 					//			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 					//			HttpSession session = (HttpSession) ec.getSession(true);
 					//			session.setAttribute("logged", true);
+					
+					// controllo validita' password
+					UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());
+					if(this.passwordVerifier != null && this.passwordVerifier.isCheckPasswordExpire()) {
+						User user = loadUserByUsername.getUtente();
+						if(user.isCheckLastUpdatePassword()) {
+							StringBuilder bfMotivazioneErrore = new StringBuilder(); 
+							if(this.passwordVerifier.isPasswordExpire(user.getLastUpdatePassword(), bfMotivazioneErrore)) {
+								MessageUtils.addErrorMsg(bfMotivazioneErrore.toString());
+								this.userToUpdate = this.getUsername();
+								return "utentePasswordChange";
+							}
+						}
+					}
+					
 					this.setLoggedIn(true);
-					this.setLoggedUser(this.getLoginDao().loadUserByUsername(this.getUsername()));
+					this.setLoggedUser(loadUserByUsername);
 					this.setDettaglioUtente(this.getLoggedUser().getUtente());
 					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor());
 					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
@@ -1056,5 +1086,45 @@ public class LoginBean extends AbstractLoginBean {
 	
 	public boolean isAmministratore() {
 		return this.getLoggedUser().isAdmin();
+	}
+	
+	public String ricaricaUtenteDopoCambioPasswordScaduta() {
+	
+		this.log.info("Ricarico Profilo per l'utente ["+this.getUsername()+"]");
+		this.loginErrorMessage = null;
+		this.userToUpdate = null;
+		try{
+			this.setLoggedUser(this.getLoginDao().loadUserByUsername(this.getUsername()));
+			if(this.getLoggedUser() != null){
+				this.setDettaglioUtente(this.getLoggedUser().getUtente());
+				this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor()); 
+				this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
+				this.setLoggedIn(true);
+				this.setvInfo(this.getLoginDao().readVersionInfo());
+				this.log.info("Profilo Utente ["+this.getUsername()+"] caricato con successo");
+				return "loginSuccess";
+			}
+			return "login";
+		} catch (ServiceException e) {
+			this.loginErrorMessage = "Si e' verificato un errore durante il caricamento del profilo utente, impossibile autenticare l'utente "+this.getUsername()+"."; 
+			this.log.error(this.loginErrorMessage);
+			return "loginError";
+		} catch (NotFoundException e) {
+			this.loginErrorMessage = "Il sistema non riesce a caricare il profilo utente "+this.getUsername()+": Utente non registrato.";
+			this.log.debug(this.loginErrorMessage);
+			return "login";
+		} catch (UserInvalidException e) {
+			this.loginErrorMessage = "Si e' verificato un errore durante il caricamento del profilo utente, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage();
+			this.log.debug(this.loginErrorMessage);
+			return "loginUserInvalid";
+		}
+	}
+
+	public String getUserToUpdate() {
+		return this.userToUpdate;
+	}
+
+	public void resetUserToUpdate() {
+		this.userToUpdate = null;
 	}
 }

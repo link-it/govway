@@ -53,6 +53,18 @@ p.legend em {
 	font-style: normal;
 }
 
+.campiObbligatori {
+	display: block;
+	text-align: left;
+	color: ${label.color};
+	padding: 5px;
+	margin: 3px 5px;
+}
+
+.campiObbligatori p{
+	color: ${label.color} !important;
+}
+
 div.errorsSpacer {
 	height: 4px;
 }
@@ -195,7 +207,7 @@ div.form-container form p,div.form-container .display-form p{
 div.form-container form p.note, div.form-container .display-form p.note, div.prop p.note {
 	margin-left: 232px;
 	color: ${p.note.color};
-	line-height: 100%;
+/* 	line-height: 100%; */
 }
 
 div.form-container form div.prop ,div.form-container .display-form div.prop, div.form-container div.prop{

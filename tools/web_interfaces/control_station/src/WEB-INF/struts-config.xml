@@ -29,6 +29,7 @@
             <forward name="loginOk" path="/jsplib/info.jsp"/>
             <forward name="loginCheckError" path="/jsplib/login.jsp"/>
             <forward name="loginError" path="/jsplib/info.jsp"/>
+            <forward name="utentePasswordChange" path="/utentePasswordChange.do" redirect="true"/> 
         </action>
 
         <action path="/logout" type="org.openspcoop2.web.ctrlstat.servlet.login.Logout" 
@@ -88,6 +89,14 @@
             <forward name="utenteChangeOk" path="/jsplib/addElement.jsp"/>
             <forward name="utenteChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="utenteError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <action path="/utentePasswordChange" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentePasswordChange"
+            scope="request" validate="true">
+            <forward name="utentePasswordChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="utentePasswordChangeOk" path="/jsplib/info.jsp"/>
+            <forward name="utentePasswordChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="utentePasswordError" path="/jsplib/info.jsp"/>
         </action>
         
        	<!--  Utenti Servizi-->

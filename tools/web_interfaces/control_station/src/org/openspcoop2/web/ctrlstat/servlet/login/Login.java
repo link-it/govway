@@ -33,6 +33,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -99,6 +100,16 @@ public final class Login extends Action {
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
+
+			}
+			
+			// controllo scadenza password
+			isOk = loginHelper.loginScadenzaPasswordCheckData(LoginTipologia.WITH_PASSWORD);
+			if (!isOk) {
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				
+				return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTE_PASSWORD, ForwardParams.CHANGE());
 
 			}
 	
