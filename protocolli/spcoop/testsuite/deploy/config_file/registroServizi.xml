@@ -338,7 +338,7 @@
             <azione nome="testOneWay"/>
         </port-type>
         <port-type nome="PortTypeSincrono" profilo-collaborazione="sincrono">
-            <azione nome="testSincrono"/>
+            <azione nome="testSincrono" soap-action="http://govway.org/testSincrono" />
         </port-type>
         <port-type nome="PortTypeAsincronoSimmetricoRichiesta"
             profilo-collaborazione="asincronoSimmetrico" id-collaborazione="abilitato">

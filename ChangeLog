@@ -1,3 +1,10 @@
+2021-05-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	La modalità di identificazione dell'azione di una API 'SOAPAction' è stata rivista:
+	- viene prima ricercata un'azione, all'interno dell'API invocata, che contiene la SOAPAction presente nella richiesta (nuova feature);
+	- se la prima ricerca non va a buon fine viene verificato se il valore presente nella SOAPAction della richiesta corrisponde ad un'azione registrata sull'API (precedente comportamento).
+
 2021-04-29  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

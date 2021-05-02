@@ -3416,6 +3416,11 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="soapActionBased"/>
         </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneSOAPActionBased2" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="PortTypeSincrono" />
+            <azione identificazione="soapActionBased"/>
+        </porta-delegata>
         
         <!-- Correlazione Applicativa tra IDApplicativo e IDeGov -->
         <porta-delegata gestione-manifest="abilitato" nome="CorrelazioneApplicativaUrlBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">

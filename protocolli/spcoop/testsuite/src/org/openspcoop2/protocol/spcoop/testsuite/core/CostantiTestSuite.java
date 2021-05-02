@@ -98,6 +98,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_INPUT_BASED="IntegrazioneInputBased";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione soap action based */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_SOAP_ACTION_BASED="IntegrazioneSOAPActionBased";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione soap action based */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_SOAP_ACTION_BASED_2="IntegrazioneSOAPActionBased2";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con correlazione applicativa url based */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_CORRELAZIONE_APPLICATIVA_URL_BASED="CorrelazioneApplicativaUrlBased";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con correlazione applicativa url based senza riuso id egov */

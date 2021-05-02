@@ -3555,6 +3555,81 @@ public class Integrazione extends GestioneViaJmx {
 		}
 	}
 	
+	/***
+	 * Test SOAP Action Based 2
+	 */
+	Repository repositorySincronoSoapActionBased2=new Repository();
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED2"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoSoapActionBased2() throws TestSuiteException, IOException, Exception{
+		java.io.FileInputStream fin = null;
+		DatabaseComponent dbComponentFruitore = null;
+		try{
+			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getSoap11FileName()));
+
+			Message msg=new Message(fin);
+			msg.getSOAPPartAsBytes();
+			
+			ClientHttpGenerico client=new ClientHttpGenerico(this.repositorySincronoSoapActionBased2);
+			String soapAction = "http://govway.org/testSincrono";
+			client.setSoapAction("\""+soapAction+"\"");
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_SOAP_ACTION_BASED_2);
+			client.connectToSoapEngine();
+			client.setMessage(msg);
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore= DatabaseProperties.getDatabaseComponentFruitore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+			}
+			try {
+				client.run();
+			} catch (AxisFault error) {
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				throw error;
+			}finally{
+				dbComponentFruitore.close();
+			}
+			
+			checkMessaggioRisposta(this.collaborazioneSPCoopBase,
+		    		client.getResponseMessage(),CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO_PORT_TYPE,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_PORT_TYPE_AZIONE_TEST,client.getIdMessaggio());
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				fin.close();
+			}catch(Exception e){}
+			try{
+				dbComponentFruitore.close();
+			}catch(Exception e){}
+		}
+	}
+	@DataProvider (name="SincronoSoapActionBased2")
+	public Object[][]testSincronoSoapActionBased2()throws Exception{
+		String id=this.repositorySincronoSoapActionBased2.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
+		};
+	}
+	@Test(groups={CostantiIntegrazione.ID_GRUPPO_INTEGRAZIONE,Integrazione.ID_GRUPPO,Integrazione.ID_GRUPPO+".SOAP_ACTION_BASED2"},dataProvider="SincronoSoapActionBased2",dependsOnMethods={"sincronoSoapActionBased2"})
+	public void testSincronoSoapActionBased2(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO_PORT_TYPE,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_PORT_TYPE_AZIONE_TEST, checkServizioApplicativo,
+					null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}	
 	
 	
 	

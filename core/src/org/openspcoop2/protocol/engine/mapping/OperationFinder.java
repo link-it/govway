@@ -23,6 +23,8 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -187,6 +189,7 @@ public class OperationFinder {
 									}catch(Exception e){}	
 								}
 							}
+							String azioneNonRipulita = azione;
 							if(azione!=null){
 								azione = azione.trim();
 								// Nota: la soap action potrebbe essere quotata con "" 
@@ -196,12 +199,44 @@ public class OperationFinder {
 								if(azione.endsWith("\"")){
 									azione = azione.substring(0,(azione.length()-1));
 								}	
+							}
+							
+							// Provo a fare la traduzione tramite soapAction registrata nell'accordo
+							if(azioneNonRipulita!=null || azione!=null) {
+								org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper wrapper = registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false);
+								if(wrapper!=null){
+									for (int i = 0; i < wrapper.sizePortTypeList(); i++) {
+										PortType pt = wrapper.getPortType(i);
+										if(wrapper.getNomePortType()!=null){
+											if(pt.getNome().equals(wrapper.getNomePortType())==false){
+												continue;
+											}
+										}
+										for (int j = 0; j < pt.sizeAzioneList(); j++) {
+											Operation op = pt.getAzione(j);
+											if(azioneNonRipulita!=null && azioneNonRipulita.equals(op.getSoapAction())) {
+												//System.out.println("RESOLVE 1 ["+azioneNonRipulita+"]");
+												azione = op.getNome();
+												break;
+											}
+											if(azione!=null && azione.equals(op.getSoapAction())) {
+												//System.out.println("RESOLVE 2 ["+azione+"]");
+												azione = op.getNome();
+												break;
+											}
+										}
+									}
+								}
+							}
+							
+							if(azione!=null) {
 								if("".equals(azione)){
 									azione = null;
 									throw new DriverConfigurazioneNotFound("SoapAction vuota ("+message.castAsSoap().getSoapAction()+") non è utilizzabile con una identificazione '"+
 											ModalitaIdentificazioneAzione.SOAP_ACTION_BASED.getValue()+"'");
 								}
 							}
+							
 						}
 						else if(ModalitaIdentificazioneAzione.INTERFACE_BASED.equals(modalitaIdentificazione)){
 							// INTERFACE-BASED
