@@ -148,7 +148,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				// FASE 1 PREPARAZIONE
 				
 				RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopstateGestore.getStatoRichiesta(), true,null);
-				Busta bustaToSend = repositoryBuste.getBustaFromInBox(idMsgDaInoltrare);
+				Busta bustaToSend = repositoryBuste.getBustaFromInBox(idMsgDaInoltrare, true);
 				msgDiag.addKeywords(bustaToSend, true);
 	
 				IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(bustaToSend.getProtocollo());
@@ -196,6 +196,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				IDPortaApplicativa idPA = this.configurazionePdDReader.getIDPortaApplicativa(this.messaggioServizioApplicativo.getNomePorta(), protocolFactory);
 				RichiestaApplicativa richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore, identitaPdD, idPA);
 				richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
+				richiestaApplicativa.setIdentitaServizioApplicativoFruitore(bustaToSend.getServizioApplicativoFruitore());
 	
 				ConsegnaContenutiApplicativiMessage consegnaMSG = new ConsegnaContenutiApplicativiMessage();
 				consegnaMSG.setBusta(bustaToSend);

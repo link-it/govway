@@ -2385,14 +2385,14 @@ public class EJBUtils {
 		gestoreMessaggi.registraMessaggio_statelessEngine(message, !consumeMessage, oraRegistrazioneT); // senno il dump poi successivo non funziona
 		String key = "INSERT RegistrazioneBustaForHistory"+Costanti.INBOX+"_"+busta.getID();
 		if(repositoryBuste.isRegistrataIntoInBox(busta.getID())){
-			repositoryBuste.aggiornaBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+			repositoryBuste.aggiornaBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),true);
 			repositoryBuste.impostaUtilizzoPdD(busta.getID(), Costanti.INBOX);
 		}
 		else if(((StateMessage)state.getStatoRichiesta()).getPreparedStatement().containsKey(key)){
-			repositoryBuste.aggiornaBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+			repositoryBuste.aggiornaBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),true);
 			repositoryBuste.impostaUtilizzoPdD(busta.getID(), Costanti.INBOX);
 		}else{
-			repositoryBuste.registraBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+			repositoryBuste.registraBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(), true);
 			if(!(state instanceof OpenSPCoopStateful)){
 				if(busta.sizeProperties()>0){
 					Hashtable<String, String> bustaProperties = new Hashtable<String, String>();

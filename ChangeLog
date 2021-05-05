@@ -1,3 +1,8 @@
+2021-05-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	La consegna con notifiche non propagava l'identità del servizio applicativo fruitore. Il problema è stato risolto.
+
 2021-05-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

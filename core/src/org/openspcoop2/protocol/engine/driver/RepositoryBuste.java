@@ -498,6 +498,9 @@ public class RepositoryBuste  {
 	public void registraBustaIntoInBox(Busta busta,long scadenza) throws ProtocolException{
 		registraBusta(busta,Costanti.INBOX,null,scadenza);
 	}
+	public void registraBustaIntoInBox(Busta busta,long scadenza, boolean saveServizioApplicativoFruitore) throws ProtocolException{
+		registraBusta(busta,Costanti.INBOX,null,scadenza, saveServizioApplicativoFruitore);
+	}
 	/**
 	 * Metodo che si occupa di registrare una busta in uscita con errori.
 	 *
@@ -595,6 +598,9 @@ public class RepositoryBuste  {
 	public void aggiornaBustaIntoInBox(Busta busta,long scadenza) throws ProtocolException{
 		aggiornaBusta(busta,Costanti.INBOX,scadenza,null);
 	}
+	public void aggiornaBustaIntoInBox(Busta busta,long scadenza, boolean saveServizioApplicativoFruitore) throws ProtocolException{
+		aggiornaBusta(busta,Costanti.INBOX,scadenza,null,saveServizioApplicativoFruitore);
+	}
 	/**
 	 * Metodo che si occupa di aggiornare i dati di una busta in entrata precedentemente inviata.
 	 *
@@ -681,6 +687,9 @@ public class RepositoryBuste  {
 	 */
 	public Busta getBustaFromInBox(String id) throws ProtocolException{
 		return getBusta(id,Costanti.INBOX);
+	}
+	public Busta getBustaFromInBox(String id, boolean readServizioApplicativoFruitore) throws ProtocolException{
+		return getBusta(id,Costanti.INBOX, readServizioApplicativoFruitore);
 	}
 
 	/**
@@ -961,6 +970,9 @@ public class RepositoryBuste  {
 	 *
 	 */
 	public void registraBusta(Busta busta,String tipoBusta,List<Eccezione> errors,long scadenza) throws ProtocolException{
+		registraBusta(busta,tipoBusta,errors,scadenza,false);
+	}
+	public void registraBusta(Busta busta,String tipoBusta,List<Eccezione> errors,long scadenza, boolean saveServizioApplicativoFruitore) throws ProtocolException{
 		
 		if (!this.isRichiesta && this.state instanceof StatelessMessage) {
 			((StatelessMessage)this.state).setBusta(busta);
@@ -1047,7 +1059,12 @@ public class RepositoryBuste  {
 			pstmtBusta.setTimestamp(index++,scadenzaT);
 			pstmtBusta.setInt(index++,0);
 			pstmtBusta.setString(index++,null); // locationPD
-			pstmtBusta.setString(index++,null); // servizioApplicativo
+			if(saveServizioApplicativoFruitore) { // servizioApplicativo
+				pstmtBusta.setString(index++,busta.getServizioApplicativoFruitore()); 
+			}
+			else {
+				pstmtBusta.setString(index++,null);
+			}
 			pstmtBusta.setString(index++,null); // moduloInAttesa
 			pstmtBusta.setString(index++,null); // scenario
 			if(busta.getProtocollo()!=null)
@@ -1353,6 +1370,9 @@ public class RepositoryBuste  {
 	 *
 	 */
 	public void aggiornaBusta(Busta busta,String tipoBusta,long scadenza,List<Eccezione> errors) throws ProtocolException{
+		aggiornaBusta(busta, tipoBusta, scadenza, errors, false);
+	}
+	public void aggiornaBusta(Busta busta,String tipoBusta,long scadenza,List<Eccezione> errors, boolean saveServizioApplicativoFruitore) throws ProtocolException{
 		
 		if (!this.isRichiesta && this.state instanceof StatelessMessage) {
 			((StatelessMessage)this.state).setBusta(busta);
@@ -1415,6 +1435,9 @@ public class RepositoryBuste  {
 			query.append("RIFERIMENTO_MESSAGGIO = ? ,");
 			query.append("SCADENZA_BUSTA = ? ,");
 			query.append("DATA_REGISTRAZIONE = ? ");
+			if(saveServizioApplicativoFruitore) {
+				query.append("SERVIZIO_APPLICATIVO = ? ");
+			}
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
 			pstmtBusta = connectionDB.prepareStatement(query.toString());
 			int index = 1;
@@ -1454,6 +1477,9 @@ public class RepositoryBuste  {
 			pstmtBusta.setString(index++,busta.getRiferimentoMessaggio());
 			pstmtBusta.setTimestamp(index++,scadenzaT);
 			pstmtBusta.setTimestamp(index++,dataRegistrazione);
+			if(saveServizioApplicativoFruitore) {
+				pstmtBusta.setString(index++,busta.getServizioApplicativoFruitore());
+			}
 			
 			pstmtBusta.setString(index++,busta.getID());
 			pstmtBusta.setString(index++,tipoBusta);
@@ -2089,6 +2115,9 @@ public class RepositoryBuste  {
 	 *
 	 */
 	private Busta getBusta(String id, String tipoBusta) throws ProtocolException{
+		return getBusta(id, tipoBusta, false);
+	}
+	private Busta getBusta(String id, String tipoBusta, boolean readServizioApplicativoFruitore) throws ProtocolException{
 
 		if(this.state instanceof StatefulMessage) {
 
@@ -2170,6 +2199,10 @@ public class RepositoryBuste  {
 				busta.setTipoOraRegistrazione(tipoOraRegistrazione,this.protocolFactory.createTraduttore().toString(tipoOraRegistrazione));
 				busta.setRiferimentoMessaggio(rs.getString("RIFERIMENTO_MESSAGGIO"));
 				busta.setScadenza(rs.getTimestamp("SCADENZA_BUSTA"));
+				
+				if(readServizioApplicativoFruitore) {
+					busta.setServizioApplicativoFruitore(rs.getString("SERVIZIO_APPLICATIVO"));
+				}
 
 				rs.close();
 				pstmt.close();
