@@ -61,7 +61,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 	// SERVIZI APPLICATIVI
 	
 	@Override
-	public boolean inUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException{
+	public boolean inUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException{
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
 			Connection connection = null;
@@ -71,7 +71,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				
 				boolean normalizeObjectIds = true;
-				return DBOggettiInUsoUtils.isServizioApplicativoInUso(connection, driverDB.getTipoDB(), idServizioApplicativo, whereIsInUso, true, normalizeObjectIds);
+				return DBOggettiInUsoUtils.isServizioApplicativoInUso(connection, driverDB.getTipoDB(), idServizioApplicativo, whereIsInUso, true, normalizeObjectIds, verificaRuoli);
 				
 			}
 			catch(Exception e) {
@@ -87,7 +87,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 	}
 	
 	@Override
-	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException{
+	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException{
 		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
 			DriverConfigurazioneDB driverDB = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
 			Connection connection = null;
@@ -97,7 +97,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				
 				boolean normalizeObjectIds = true;
-				boolean inUso = DBOggettiInUsoUtils.isServizioApplicativoInUso(connection, driverDB.getTipoDB(), idServizioApplicativo, whereIsInUso, true, normalizeObjectIds);
+				boolean inUso = DBOggettiInUsoUtils.isServizioApplicativoInUso(connection, driverDB.getTipoDB(), idServizioApplicativo, whereIsInUso, true, normalizeObjectIds, verificaRuoli);
 				if(inUso) {
 					return DBOggettiInUsoUtils.toString(idServizioApplicativo , whereIsInUso, false, "\n", normalizeObjectIds);
 				}

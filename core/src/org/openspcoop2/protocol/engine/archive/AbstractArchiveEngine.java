@@ -385,11 +385,11 @@ public abstract class AbstractArchiveEngine {
 		this.driverRegistroServizi.deleteSoggetto(soggetto);
 	}
 	
-	public boolean isSoggettoRegistroInUso(IDSoggetto idSoggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+	public boolean isSoggettoRegistroInUso(IDSoggetto idSoggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds, boolean verificaRuoli) throws DriverRegistroServiziException {
 		Connection con = null;
 		try{
 			con = this.driverRegistroServizi.getConnection("archive.isSoggettoRegistroInUso");
-			return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.driverRegistroServizi.getTipoDB(), idSoggetto, true, whereIsInUso, normalizeObjectIds);
+			return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.driverRegistroServizi.getTipoDB(), idSoggetto, true, whereIsInUso, normalizeObjectIds, verificaRuoli);
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
@@ -463,11 +463,11 @@ public abstract class AbstractArchiveEngine {
 		this.driverConfigurazione.deleteSoggetto(soggetto);
 	}
 	
-	public boolean isSoggettoConfigurazioneInUso(IDSoggetto idSoggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+	public boolean isSoggettoConfigurazioneInUso(IDSoggetto idSoggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds, boolean verificaRuoli) throws DriverConfigurazioneException {
 		Connection con = null;
 		try{
 			con = this.driverConfigurazione.getConnection("archive.isSoggettoConfigurazioneInUso");
-			return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.driverConfigurazione.getTipoDB(), idSoggetto, true, whereIsInUso, normalizeObjectIds);
+			return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.driverConfigurazione.getTipoDB(), idSoggetto, true, whereIsInUso, normalizeObjectIds, verificaRuoli);
 		}
 		catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
@@ -508,11 +508,11 @@ public abstract class AbstractArchiveEngine {
 	}
 	
 	public boolean isServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo, 
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds, boolean verificaRuoli) throws DriverConfigurazioneException {
 		Connection con = null;
 		try{
 			con = this.driverConfigurazione.getConnection("archive.isServizioApplicativoInUso");
-			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.driverConfigurazione.getTipoDB(), idServizioApplicativo, whereIsInUso, true, normalizeObjectIds);
+			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.driverConfigurazione.getTipoDB(), idServizioApplicativo, whereIsInUso, true, normalizeObjectIds, verificaRuoli);
 		}
 		catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);

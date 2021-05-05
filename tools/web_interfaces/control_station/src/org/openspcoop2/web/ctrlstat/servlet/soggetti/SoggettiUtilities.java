@@ -120,10 +120,11 @@ public class SoggettiUtilities {
 		boolean soggettoInUso = false;
 		boolean normalizeObjectIds = !soggettiHelper.isModalitaCompleta();
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean verificaRuoli = false;
 		if(soggettiCore.isRegistroServiziLocale()){
-			soggettoInUso = soggettiCore.isSoggettoInUso(soggettoRegistro, whereIsInUso, normalizeObjectIds);
+			soggettoInUso = soggettiCore.isSoggettoInUso(soggettoRegistro, whereIsInUso, normalizeObjectIds, verificaRuoli);
 		}else{
-			soggettoInUso = soggettiCore.isSoggettoInUso(soggettoConfig, whereIsInUso, normalizeObjectIds);
+			soggettoInUso = soggettiCore.isSoggettoInUso(soggettoConfig, whereIsInUso, normalizeObjectIds, verificaRuoli);
 		}
 
 

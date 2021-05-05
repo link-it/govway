@@ -64,7 +64,7 @@ public class RegistryReaderInUso implements IRegistryReaderInUso {
 	// SOGGETTI
 	
 	@Override
-	public boolean inUso(IDSoggetto idSoggetto) throws RegistryException{
+	public boolean inUso(IDSoggetto idSoggetto, boolean verificaRuoli) throws RegistryException{
 		if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB) {
 			DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) this.driverRegistroServiziGET;
 			Connection connection = null;
@@ -74,7 +74,7 @@ public class RegistryReaderInUso implements IRegistryReaderInUso {
 				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				
 				boolean normalizeObjectIds = true;
-				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(connection, driverDB.getTipoDB(), idSoggetto, true, whereIsInUso, normalizeObjectIds);
+				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(connection, driverDB.getTipoDB(), idSoggetto, true, whereIsInUso, normalizeObjectIds, verificaRuoli);
 				
 			}
 			catch(Exception e) {
@@ -89,7 +89,7 @@ public class RegistryReaderInUso implements IRegistryReaderInUso {
 		}
 	}
 	@Override
-	public String getDettagliInUso(IDSoggetto idSoggetto) throws RegistryException{
+	public String getDettagliInUso(IDSoggetto idSoggetto, boolean verificaRuoli) throws RegistryException{
 		if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB) {
 			DriverRegistroServiziDB driverDB = (DriverRegistroServiziDB) this.driverRegistroServiziGET;
 			Connection connection = null;
@@ -99,7 +99,7 @@ public class RegistryReaderInUso implements IRegistryReaderInUso {
 				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				
 				boolean normalizeObjectIds = true;
-				boolean inUso = DBOggettiInUsoUtils.isSoggettoRegistryInUso(connection, driverDB.getTipoDB(), idSoggetto, true, whereIsInUso, normalizeObjectIds);
+				boolean inUso = DBOggettiInUsoUtils.isSoggettoRegistryInUso(connection, driverDB.getTipoDB(), idSoggetto, true, whereIsInUso, normalizeObjectIds, verificaRuoli);
 				if(inUso) {
 					return DBOggettiInUsoUtils.toString(idSoggetto , whereIsInUso, false, "\n", normalizeObjectIds);
 				}

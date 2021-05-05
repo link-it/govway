@@ -1217,7 +1217,8 @@ public class DeleterArchiveUtils {
 					// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 					
 					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-					if (this.importerEngine.isSoggettoRegistroInUso(idSoggetto, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+					boolean verificaRuoli = false;
+					if (this.importerEngine.isSoggettoRegistroInUso(idSoggetto, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO, verificaRuoli)){
 						throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso,false,NEW_LINE, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 					}
 					
@@ -1245,7 +1246,8 @@ public class DeleterArchiveUtils {
 					// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 					
 					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-					if (this.importerEngine.isSoggettoConfigurazioneInUso(idSoggetto, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+					boolean verificaRuoli = false;
+					if (this.importerEngine.isSoggettoConfigurazioneInUso(idSoggetto, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO, verificaRuoli)){
 						throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso,false,NEW_LINE, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 					}
 					
@@ -1305,7 +1307,8 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+			boolean verificaRuoli = false;
+			if (this.importerEngine.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO, verificaRuoli)){
 				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idServizioApplicativo, whereIsInUso,false,NEW_LINE,NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 			}
 			

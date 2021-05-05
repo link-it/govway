@@ -528,7 +528,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	}
 	
 	public boolean isServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo,
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale, boolean normalizeObjectIds) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale, boolean normalizeObjectIds, boolean verificaRuoli) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "isServizioApplicativoInUso";
 		
@@ -536,7 +536,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 
-			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.tipoDB, idServizioApplicativo, whereIsInUso, isRegistroServiziLocale, normalizeObjectIds);
+			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.tipoDB, idServizioApplicativo, whereIsInUso, isRegistroServiziLocale, normalizeObjectIds, verificaRuoli);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -655,10 +655,10 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 	
-	public String getDettagliServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public String getDettagliServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = true;
-		boolean saInUso  = this.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, this.isRegistroServiziLocale(), normalizeObjectIds );
+		boolean saInUso  = this.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, this.isRegistroServiziLocale(), normalizeObjectIds, verificaRuoli );
 		
 		StringBuilder inUsoMessage = new StringBuilder();
 		if(saInUso) {

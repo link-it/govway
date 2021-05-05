@@ -1947,13 +1947,16 @@ public class DriverControlStationDB  {
 		}
 	}
 
-	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
-		return isSoggettoInUso(soggettoConfig,null,whereIsInUso, normalizeObjectIds);
+	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, 
+			boolean normalizeObjectIds, boolean verificaRuoli) throws DriverControlStationException {
+		return isSoggettoInUso(soggettoConfig,null,whereIsInUso, normalizeObjectIds, verificaRuoli);
 	}
-	public boolean isSoggettoInUso(Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
-		return isSoggettoInUso(null,soggettoRegistro,whereIsInUso, normalizeObjectIds);
+	public boolean isSoggettoInUso(Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, 
+			boolean normalizeObjectIds, boolean verificaRuoli) throws DriverControlStationException {
+		return isSoggettoInUso(null,soggettoRegistro,whereIsInUso, normalizeObjectIds, verificaRuoli);
 	}
-	private boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+	private boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, 
+			boolean normalizeObjectIds, boolean verificaRuoli) throws DriverControlStationException {
 		String nomeMetodo = "isSoggettoInUso";
 
 		Connection con = null;
@@ -1987,12 +1990,12 @@ public class DriverControlStationDB  {
 			
 			if(soggettoRegistro!=null){
 				
-				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso, normalizeObjectIds);
+				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso, normalizeObjectIds, verificaRuoli);
 			
 			}
 			else{
 				
-				return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso, normalizeObjectIds);
+				return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso, normalizeObjectIds, verificaRuoli);
 				
 			}
 

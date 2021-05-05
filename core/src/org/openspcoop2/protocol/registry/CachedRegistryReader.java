@@ -301,12 +301,12 @@ public class CachedRegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public boolean inUso(IDSoggetto idSoggetto) throws RegistryException{
+	public boolean inUso(IDSoggetto idSoggetto, boolean verificaRuoli) throws RegistryException{
 		throw new RuntimeException("Not Implemented");
 	}
 	
 	@Override
-	public String getDettagliInUso(IDSoggetto idSoggetto) throws RegistryException {
+	public String getDettagliInUso(IDSoggetto idSoggetto, boolean verificaRuoli) throws RegistryException {
 		throw new RuntimeException("Not Implemented");
 	}
 	

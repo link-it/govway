@@ -37,6 +37,7 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
@@ -1595,15 +1596,18 @@ public class DBOggettiInUsoUtils  {
 	// ***** SOGGETTI ******
 
 	public static boolean isSoggettoConfigInUso(Connection con, String tipoDB, IDSoggetto idSoggettoConfig, boolean checkControlloTraffico, 
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
-		return isSoggettoInUso(con,tipoDB,idSoggettoConfig,null,checkControlloTraffico, whereIsInUso, normalizeObjectIds);
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds,
+			boolean verificaRuoli) throws UtilsException {
+		return isSoggettoInUso(con,tipoDB,idSoggettoConfig,null,checkControlloTraffico, whereIsInUso, normalizeObjectIds, verificaRuoli);
 	}
 	public static boolean isSoggettoRegistryInUso(Connection con, String tipoDB, IDSoggetto idSoggettoRegistro, boolean checkControlloTraffico, 
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
-		return isSoggettoInUso(con,tipoDB,null,idSoggettoRegistro,checkControlloTraffico, whereIsInUso, normalizeObjectIds);
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds,
+			boolean verificaRuoli) throws UtilsException {
+		return isSoggettoInUso(con,tipoDB,null,idSoggettoRegistro,checkControlloTraffico, whereIsInUso, normalizeObjectIds, verificaRuoli);
 	}
 	private static boolean isSoggettoInUso(Connection con, String tipoDB, IDSoggetto idSoggettoConfig, IDSoggetto idSoggettoRegistro, boolean checkControlloTraffico, 
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds,
+			boolean verificaRuoli) throws UtilsException {
 		String nomeMetodo = "isSoggettoInUso";
 
 		PreparedStatement stmt = null;
@@ -1643,6 +1647,8 @@ public class DBOggettiInUsoUtils  {
 			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			List<String> autorizzazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING);
 			List<String> autorizzazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE);
+			List<String> ruoliPA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.RUOLI_MAPPING);
+			List<String> ruoliPA_list = whereIsInUso.get(ErrorsHandlerCostant.RUOLI);
 			List<String> trasformazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
 			List<String> trasformazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
 			List<String> configurazioniProxyPass_list = whereIsInUso.get(ErrorsHandlerCostant.CONFIGURAZIONE_REGOLE_PROXY_PASS);
@@ -1706,6 +1712,14 @@ public class DBOggettiInUsoUtils  {
 			if (autorizzazionePA_list == null) {
 				autorizzazionePA_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE, autorizzazionePA_list);
+			}
+			if (ruoliPA_mapping_list == null) {
+				ruoliPA_mapping_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_MAPPING, ruoliPA_mapping_list);
+			}
+			if (ruoliPA_list == null) {
+				ruoliPA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.RUOLI, ruoliPA_list);
 			}
 			if (trasformazionePA_mapping_list == null) {
 				trasformazionePA_mapping_list = new ArrayList<String>();
@@ -2157,6 +2171,136 @@ public class DBOggettiInUsoUtils  {
 			}
 			risultato.close();
 			stmt.close();
+			
+			
+			if(verificaRuoli) {
+				// Raccolgo prima i ruoli
+				List<String> listRuoliSoggetti = new ArrayList<>();
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_RUOLI);
+				sqlQueryObject.addFromTable(CostantiDB.RUOLI);
+				sqlQueryObject.addSelectAliasField(CostantiDB.RUOLI,"nome","nomeRuolo");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI_RUOLI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI_RUOLI+".id_ruolo="+CostantiDB.RUOLI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setLong(1, idSoggetto);
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					String ruolo = risultato.getString("nomeRuolo");
+					listRuoliSoggetti.add(ruolo);
+				}
+				risultato.close();
+				stmt.close();
+				
+				if(!listRuoliSoggetti.isEmpty()) {
+				
+					List<String> distinctPorteApplicative = new ArrayList<String>();
+					List<String> verificaPorteApplicativeAll = new ArrayList<String>();
+					
+					for (String ruolo : listRuoliSoggetti) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+						sqlQueryObject.addSelectField("nome_porta");
+						sqlQueryObject.addSelectField("ruoli_match");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo=?");
+						queryString = sqlQueryObject.createSQLQuery();
+						stmt = con.prepareStatement(queryString);
+						stmt.setString(1, ruolo);
+						risultato = stmt.executeQuery();
+						while (risultato.next()){
+							String nome = risultato.getString("nome_porta");
+							String ruolo_match = risultato.getString("ruoli_match");
+							if(RuoloTipoMatch.ANY.getValue().equals(ruolo_match)) {
+								if(distinctPorteApplicative.contains(nome)) {
+									continue;
+								}
+								else {
+									distinctPorteApplicative.add(nome);
+								}
+								ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									ruoliPA_mapping_list.add(resultPorta.label);
+								}
+								else {
+									ruoliPA_list.add(resultPorta.label);
+								}
+								isInUso = true;
+							}
+							else {
+								// devo verificare tutti i ruoli richiesti
+								if(verificaPorteApplicativeAll.contains(nome)) {
+									continue;
+								}
+								else {
+									verificaPorteApplicativeAll.add(nome);
+								}
+							}
+						}
+						risultato.close();
+						stmt.close();	
+					}
+					
+					// autorizzazione 'all'
+					if(!verificaPorteApplicativeAll.isEmpty()) {
+						for (String nome : verificaPorteApplicativeAll) {
+							
+							// Raccolgo prima i ruoli della porta
+							List<String> listRuoliPorta = new ArrayList<>();
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+							sqlQueryObject.addSelectField("ruolo");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+							queryString = sqlQueryObject.createSQLQuery();
+							stmt = con.prepareStatement(queryString);
+							stmt.setString(1, nome);
+							risultato = stmt.executeQuery();
+							while (risultato.next()){
+								String ruolo = risultato.getString("ruolo");
+								listRuoliPorta.add(ruolo);
+							}
+							risultato.close();
+							stmt.close();
+							
+							if(!listRuoliPorta.isEmpty()) {
+								boolean match = true;
+								for (String ruoloPorta : listRuoliPorta) {
+									if(!listRuoliSoggetti.contains(ruoloPorta)) {
+										match = false;
+										break;
+									}
+								}
+								if(match) {
+									if(distinctPorteApplicative.contains(nome)) {
+										continue;
+									}
+									else {
+										distinctPorteApplicative.add(nome);
+									}
+									ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										ruoliPA_mapping_list.add(resultPorta.label);
+									}
+									else {
+										ruoliPA_list.add(resultPorta.label);
+									}
+									isInUso = true;
+								}
+							}
+							
+						}
+					}
+				}
+			}
 
 			
 			// controllo se in uso in porte applicative nella trasformazione
@@ -2327,6 +2471,16 @@ public class DBOggettiInUsoUtils  {
 			case AUTORIZZAZIONE:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Soggetti Autenticati): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case RUOLI_MAPPING:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "compatibile con l'Autorizzazione per Ruoli indicata nel Controllo degli Accessi delle Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case RUOLI:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "compatibile con l'Autorizzazione per Ruoli indicata nel Controllo degli Accessi delle Porte Inbound: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case TRASFORMAZIONE_MAPPING_PA:
@@ -6264,7 +6418,8 @@ public class DBOggettiInUsoUtils  {
 	// ***** SERVIZI APPLICATIVI ******
 
 	public static boolean isServizioApplicativoInUso(Connection con, String tipoDB, IDServizioApplicativo idServizioApplicativo, 
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale, boolean normalizeObjectIds) throws UtilsException {
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale, boolean normalizeObjectIds,
+			boolean verificaRuoli) throws UtilsException {
 
 		String nomeMetodo = "isServizioApplicativoInUso";
 
@@ -6289,6 +6444,10 @@ public class DBOggettiInUsoUtils  {
 			List<String> autorizzazionePD_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE);
 			List<String> autorizzazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING_PA);
 			List<String> autorizzazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE_PA);
+			List<String> ruoliPD_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.RUOLI_MAPPING);
+			List<String> ruoliPD_list = whereIsInUso.get(ErrorsHandlerCostant.RUOLI);
+			List<String> ruoliPA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.RUOLI_MAPPING_PA);
+			List<String> ruoliPA_list = whereIsInUso.get(ErrorsHandlerCostant.RUOLI_PA);
 			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
 			List<String> porte_applicative_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
@@ -6313,6 +6472,22 @@ public class DBOggettiInUsoUtils  {
 			if (autorizzazionePA_list == null) {
 				autorizzazionePA_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.AUTORIZZAZIONE_PA, autorizzazionePA_list);
+			}
+			if (ruoliPD_mapping_list == null) {
+				ruoliPD_mapping_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_MAPPING, ruoliPD_mapping_list);
+			}
+			if (ruoliPD_list == null) {
+				ruoliPD_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.RUOLI, ruoliPD_list);
+			}
+			if (ruoliPA_mapping_list == null) {
+				ruoliPA_mapping_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_MAPPING_PA, ruoliPA_mapping_list);
+			}
+			if (ruoliPA_list == null) {
+				ruoliPA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.RUOLI_PA, ruoliPA_list);
 			}
 			if (porte_applicative_list == null) {
 				porte_applicative_list = new ArrayList<String>();
@@ -6400,6 +6575,241 @@ public class DBOggettiInUsoUtils  {
 			risultato.close();
 			stmt.close();
 
+			
+			
+			if(verificaRuoli) {
+				
+				// Raccolgo prima i ruoli
+				List<String> listRuoliSA = new ArrayList<>();
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+				sqlQueryObject.addSelectField("ruolo");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setLong(1, idServizioApplicativoLong);
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					String ruolo = risultato.getString("ruolo");
+					listRuoliSA.add(ruolo);
+				}
+				risultato.close();
+				stmt.close();
+				
+				if(!listRuoliSA.isEmpty()) {
+				
+					List<String> distinctPorteDelegate = new ArrayList<String>();
+					List<String> verificaPorteDelegateAll = new ArrayList<String>();
+					
+					for (String ruolo : listRuoliSA) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+						sqlQueryObject.addSelectField("nome_porta");
+						sqlQueryObject.addSelectField("ruoli_match");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo=?");
+						queryString = sqlQueryObject.createSQLQuery();
+						stmt = con.prepareStatement(queryString);
+						stmt.setString(1, ruolo);
+						risultato = stmt.executeQuery();
+						while (risultato.next()){
+							String nome = risultato.getString("nome_porta");
+							String ruolo_match = risultato.getString("ruoli_match");
+							if(RuoloTipoMatch.ANY.getValue().equals(ruolo_match)) {
+								if(distinctPorteDelegate.contains(nome)) {
+									continue;
+								}
+								else {
+									distinctPorteDelegate.add(nome);
+								}
+								ResultPorta resultPorta = formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									ruoliPD_mapping_list.add(resultPorta.label);
+								}
+								else {
+									ruoliPD_list.add(resultPorta.label);
+								}
+								isInUso = true;
+							}
+							else {
+								// devo verificare tutti i ruoli richiesti
+								if(verificaPorteDelegateAll.contains(nome)) {
+									continue;
+								}
+								else {
+									verificaPorteDelegateAll.add(nome);
+								}
+							}
+						}
+						risultato.close();
+						stmt.close();	
+					}
+					
+					// autorizzazione 'all'
+					if(!verificaPorteDelegateAll.isEmpty()) {
+						for (String nome : verificaPorteDelegateAll) {
+							
+							// Raccolgo prima i ruoli della porta
+							List<String> listRuoliPorta = new ArrayList<>();
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+							sqlQueryObject.addSelectField("ruolo");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+							queryString = sqlQueryObject.createSQLQuery();
+							stmt = con.prepareStatement(queryString);
+							stmt.setString(1, nome);
+							risultato = stmt.executeQuery();
+							while (risultato.next()){
+								String ruolo = risultato.getString("ruolo");
+								listRuoliPorta.add(ruolo);
+							}
+							risultato.close();
+							stmt.close();
+							
+							if(!listRuoliPorta.isEmpty()) {
+								boolean match = true;
+								for (String ruoloPorta : listRuoliPorta) {
+									if(!listRuoliSA.contains(ruoloPorta)) {
+										match = false;
+										break;
+									}
+								}
+								if(match) {
+									if(distinctPorteDelegate.contains(nome)) {
+										continue;
+									}
+									else {
+										distinctPorteDelegate.add(nome);
+									}
+									ResultPorta resultPorta = formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										ruoliPD_mapping_list.add(resultPorta.label);
+									}
+									else {
+										ruoliPD_list.add(resultPorta.label);
+									}
+									isInUso = true;
+								}
+							}
+							
+						}
+					}
+									
+					
+					
+					List<String> distinctPorteApplicative = new ArrayList<String>();
+					List<String> verificaPorteApplicativeAll = new ArrayList<String>();
+					
+					for (String ruolo : listRuoliSA) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+						sqlQueryObject.addSelectField("nome_porta");
+						sqlQueryObject.addSelectField("ruoli_match");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo=?");
+						queryString = sqlQueryObject.createSQLQuery();
+						stmt = con.prepareStatement(queryString);
+						stmt.setString(1, ruolo);
+						risultato = stmt.executeQuery();
+						while (risultato.next()){
+							String nome = risultato.getString("nome_porta");
+							String ruolo_match = risultato.getString("ruoli_match");
+							if(RuoloTipoMatch.ANY.getValue().equals(ruolo_match)) {
+								if(distinctPorteApplicative.contains(nome)) {
+									continue;
+								}
+								else {
+									distinctPorteApplicative.add(nome);
+								}
+								ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									ruoliPA_mapping_list.add(resultPorta.label);
+								}
+								else {
+									ruoliPA_list.add(resultPorta.label);
+								}
+								isInUso = true;
+							}
+							else {
+								// devo verificare tutti i ruoli richiesti
+								if(verificaPorteApplicativeAll.contains(nome)) {
+									continue;
+								}
+								else {
+									verificaPorteApplicativeAll.add(nome);
+								}
+							}
+						}
+						risultato.close();
+						stmt.close();	
+					}
+					
+					// autorizzazione 'all'
+					if(!verificaPorteApplicativeAll.isEmpty()) {
+						for (String nome : verificaPorteApplicativeAll) {
+							
+							// Raccolgo prima i ruoli della porta
+							List<String> listRuoliPorta = new ArrayList<>();
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+							sqlQueryObject.addSelectField("ruolo");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+							queryString = sqlQueryObject.createSQLQuery();
+							stmt = con.prepareStatement(queryString);
+							stmt.setString(1, nome);
+							risultato = stmt.executeQuery();
+							while (risultato.next()){
+								String ruolo = risultato.getString("ruolo");
+								listRuoliPorta.add(ruolo);
+							}
+							risultato.close();
+							stmt.close();
+							
+							if(!listRuoliPorta.isEmpty()) {
+								boolean match = true;
+								for (String ruoloPorta : listRuoliPorta) {
+									if(!listRuoliSA.contains(ruoloPorta)) {
+										match = false;
+										break;
+									}
+								}
+								if(match) {
+									if(distinctPorteApplicative.contains(nome)) {
+										continue;
+									}
+									else {
+										distinctPorteApplicative.add(nome);
+									}
+									ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										ruoliPA_mapping_list.add(resultPorta.label);
+									}
+									else {
+										ruoliPA_list.add(resultPorta.label);
+									}
+									isInUso = true;
+								}
+							}
+							
+						}
+					}
+					
+				}
+			}
+			
 
 
 			// Porte applicative
@@ -6678,6 +7088,26 @@ public class DBOggettiInUsoUtils  {
 			case AUTORIZZAZIONE_PA:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Richiedenti Autorizzati): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case RUOLI_MAPPING:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "compatibile con l'Autorizzazione per Ruoli indicata nel Controllo degli Accessi delle Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case RUOLI:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "compatibile con l'Autorizzazione per Ruoli indicata nel Controllo degli Accessi delle Porte Outbound: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case RUOLI_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "compatibile con l'Autorizzazione per Ruoli indicata nel Controllo degli Accessi delle Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case RUOLI_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "compatibile con l'Autorizzazione per Ruoli indicata nel Controllo degli Accessi delle Porte Inbound: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case IN_USO_IN_MAPPING_EROGAZIONE_PA:

@@ -191,12 +191,12 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public boolean inUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException{
+	public boolean inUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException{
 		throw new RuntimeException("Not Implemented");
 	}
 	
 	@Override
-	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException{
+	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException{
 		throw new RuntimeException("Not Implemented");
 	}
 	

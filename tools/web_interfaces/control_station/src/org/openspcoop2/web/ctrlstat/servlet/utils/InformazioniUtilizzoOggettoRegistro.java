@@ -155,7 +155,8 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 				identificativi = exporterUtils.getIdsServiziApplicativi(identificativoOggetto);
 				for (Object object : identificativi) {
 					IDServizioApplicativo idServizioApplicativo = (IDServizioApplicativo)object;
-					risultatiRicerca.add(saCore.getDettagliServizioApplicativoInUso(idServizioApplicativo));
+					boolean verificaRuoli = true;
+					risultatiRicerca.add(saCore.getDettagliServizioApplicativoInUso(idServizioApplicativo, verificaRuoli));
 				}
 				break;
 			case SOGGETTO:
@@ -166,7 +167,8 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 					soggetto.setTipo(idSoggetto.getTipo());
 					soggetto.setNome(idSoggetto.getNome());
 					soggetto.setIdentificativoPorta(idSoggetto.getCodicePorta());
-					risultatiRicerca.add(soggettiCore.getDettagliSoggettoInUso(soggetto));
+					boolean verificaRuoli = true;
+					risultatiRicerca.add(soggettiCore.getDettagliSoggettoInUso(soggetto, verificaRuoli));
 				}
 				break;
 			case RUOLO:

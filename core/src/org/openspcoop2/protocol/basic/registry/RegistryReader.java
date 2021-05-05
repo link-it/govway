@@ -387,12 +387,12 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public boolean inUso(IDSoggetto idSoggetto) throws RegistryException{
-		return this.inUsoDriver.inUso(idSoggetto);
+	public boolean inUso(IDSoggetto idSoggetto, boolean verificaRuoli) throws RegistryException{
+		return this.inUsoDriver.inUso(idSoggetto, verificaRuoli);
 	}
 	@Override
-	public String getDettagliInUso(IDSoggetto idSoggetto) throws RegistryException{
-		return this.inUsoDriver.getDettagliInUso(idSoggetto);
+	public String getDettagliInUso(IDSoggetto idSoggetto, boolean verificaRuoli) throws RegistryException{
+		return this.inUsoDriver.getDettagliInUso(idSoggetto, verificaRuoli);
 	}
 	
 	

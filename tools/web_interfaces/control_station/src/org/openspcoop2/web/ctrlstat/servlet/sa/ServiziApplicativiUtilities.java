@@ -84,7 +84,8 @@ public class ServiziApplicativiUtilities {
 		// Controllo che il sil non sia in uso
 		Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new Hashtable<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = !saHelper.isModalitaCompleta();
-		boolean saInUso  = saCore.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, saCore.isRegistroServiziLocale(), normalizeObjectIds);
+		boolean verificaRuoli = false;
+		boolean saInUso  = saCore.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, saCore.isRegistroServiziLocale(), normalizeObjectIds, verificaRuoli);
 		
 		if (saInUso) {
 			

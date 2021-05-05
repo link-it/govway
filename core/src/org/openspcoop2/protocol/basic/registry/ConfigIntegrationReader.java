@@ -204,13 +204,13 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public boolean inUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException{
-		return this.inUsoDriver.inUso(idServizioApplicativo);
+	public boolean inUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException{
+		return this.inUsoDriver.inUso(idServizioApplicativo, verificaRuoli);
 	}
 	
 	@Override
-	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException{
-		return this.inUsoDriver.getDettagliInUso(idServizioApplicativo);
+	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException{
+		return this.inUsoDriver.getDettagliInUso(idServizioApplicativo, verificaRuoli);
 	}
 	
 	

@@ -1,5 +1,10 @@
 2021-05-05  Andrea Poli <apoli@link.it>
 
+	* [GovwayConsole]
+	La funzionalità 'In uso' per gli applicativi e per i soggetti mostra adesso anche per quali fruizioni e erogazioni di API sono compatibili rispetto al criterio di autorizzazione per ruoli impostato nel controllo degli accessi.
+
+2021-05-05  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	La consegna con notifiche non propagava l'identità del servizio applicativo fruitore. Il problema è stato risolto.
 

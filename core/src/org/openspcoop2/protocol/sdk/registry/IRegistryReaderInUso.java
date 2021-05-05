@@ -40,8 +40,8 @@ public interface IRegistryReaderInUso {
 	
 	// SOGGETTI
 		
-	public boolean inUso(IDSoggetto idSoggetto) throws RegistryException;
-	public String getDettagliInUso(IDSoggetto idSoggetto) throws RegistryException;
+	public boolean inUso(IDSoggetto idSoggetto, boolean verificaRuoli) throws RegistryException;
+	public String getDettagliInUso(IDSoggetto idSoggetto, boolean verificaRuoli) throws RegistryException;
 		
 	
 	// ACCORDI PARTE COMUNE

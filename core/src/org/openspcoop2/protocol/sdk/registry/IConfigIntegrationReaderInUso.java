@@ -36,7 +36,7 @@ public interface IConfigIntegrationReaderInUso {
 	
 	// SERVIZI APPLICATIVI
 	
-	public boolean inUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException;
-	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo) throws RegistryException;
+	public boolean inUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException;
+	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException;
 	
 }

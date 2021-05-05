@@ -524,7 +524,8 @@ public class SoggettiCore extends ControlStationCore {
 	}
 	
 	
-	public boolean isSoggettoInUso(org.openspcoop2.core.registry.Soggetto soggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+	public boolean isSoggettoInUso(org.openspcoop2.core.registry.Soggetto soggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, 
+			boolean normalizeObjectIds, boolean verificaRuoli) throws DriverControlStationException {
 
 		Connection con = null;
 		String nomeMetodo = "isSoggettoInUso(Registro)";
@@ -536,7 +537,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds);
+			return driver.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds, verificaRuoli);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -547,7 +548,8 @@ public class SoggettiCore extends ControlStationCore {
 
 	}
 	
-	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, 
+			boolean normalizeObjectIds, boolean verificaRuoli) throws DriverControlStationException {
 
 		Connection con = null;
 		String nomeMetodo = "isSoggettoInUso(Config)";
@@ -559,7 +561,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds);
+			return driver.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds, verificaRuoli);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1077,10 +1079,10 @@ public class SoggettiCore extends ControlStationCore {
 	}
 	
 	
-	public String getDettagliSoggettoInUso(org.openspcoop2.core.registry.Soggetto soggetto) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverControlStationException {
+	public String getDettagliSoggettoInUso(org.openspcoop2.core.registry.Soggetto soggetto, boolean verificaRuoli) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverControlStationException {
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = true;
-		boolean saInUso  = this.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds );
+		boolean saInUso  = this.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds, verificaRuoli );
 		
 		StringBuilder inUsoMessage = new StringBuilder();
 		if(saInUso) {
