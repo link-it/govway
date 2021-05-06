@@ -96,6 +96,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -206,6 +207,20 @@ public class ErogazioniApiHelper {
 		}
 	}
 
+	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, IDFruizione id)
+			throws Exception {
+		if(protocolProperties!=null) {
+			try{
+
+				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, id);
+
+				env.apsHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+			}catch(ProtocolException e){
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+			}
+		}
+	}
+
 
 	public static ConsoleConfiguration getConsoleConfiguration(ErogazioniEnv env, AccordoServizioParteSpecifica asps) throws Exception {
     	IDServizio oldIdAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
@@ -222,6 +237,16 @@ public class ErogazioniApiHelper {
 
 	}
 
+	public static ConsoleConfiguration getConsoleConfiguration(ErogazioniEnv env, IDFruizione id) throws Exception {
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		return consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, registryReader, configRegistryReader, id);
+				
+	}
+
 
 	public static ProtocolProperties getProtocolProperties(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
 		ConsoleConfiguration consoleConf = getConsoleConfiguration(env, asps);
@@ -231,9 +256,29 @@ public class ErogazioniApiHelper {
 		
 		return prop;
 	}
+	public static ProtocolProperties getProtocolProperties(IDFruizione id, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+		ConsoleConfiguration consoleConf = getConsoleConfiguration(env, id);
+
+		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, asps.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		
+		return prop;
+	}
 	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
 
 		ProtocolProperties prop = getProtocolProperties(asps, env);
+		Map<String, AbstractProperty<?>> p = new HashMap<>();
+
+		for(int i =0; i < prop.sizeProperties(); i++) {
+			p.put(prop.getIdProperty(i), prop.getProperty(i));
+		}
+		
+		return p;
+	}
+	
+	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(IDFruizione id, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+
+		ProtocolProperties prop = getProtocolProperties(id, asps, env);
 		Map<String, AbstractProperty<?>> p = new HashMap<>();
 
 		for(int i =0; i < prop.sizeProperties(); i++) {
@@ -262,6 +307,29 @@ public class ErogazioniApiHelper {
 			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env);
 		case SPCOOP:
 			return SPCoopErogazioniApiHelper.getProtocolProperties(body);
+		}
+		return null;
+	}
+
+	public static ProtocolProperties getProtocolProperties(Fruizione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+
+
+		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non conforme con il profilo '"+profilo+"' indicato");
+		}
+
+		switch(profilo) {
+		case APIGATEWAY:
+			return null;// trasparente 
+		case EDELIVERY:
+//			return EDeliveryErogazioniApiHelper.getProtocolProperties(body);
+		case FATTURAPA:
+//			return FatturaPAErogazioniApiHelper.getProtocolProperties(body);
+		case MODI:
+		case MODIPA:
+			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env);
+		case SPCOOP:
+//			return SPCoopErogazioniApiHelper.getProtocolProperties(body); //TODO 
 		}
 		return null;
 	}
