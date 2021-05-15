@@ -49,18 +49,17 @@ Scenario Outline: Fruizioni Creazione 204 SOAP <nome>
 		
 		* def fruizione_petstore = read('<nome>')
 		* eval fruizione_petstore.api_nome = api_petstore_soap.nome
+		* eval fruizione_petstore.fruizione_nome = api_petstore_soap.nome
 		* eval fruizione_petstore.api_versione = api_petstore_soap.versione
 		* eval fruizione_petstore.erogatore = erogatore.nome
 		* eval fruizione_petstore.api_referente = api_petstore_soap.referente
 		
-		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.api_nome + '/' + fruizione_petstore.api_versione
-
-		* def petstore_key = erogazione_petstore.api_soap_servizio + '/' + erogazione_petstore.api_versione
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
 		* def api_petstore_path = 'api/' + api_petstore_soap.nome + '/' + api_petstore_soap.versione
 
     * call create ({ resourcePath: 'api', body: api_petstore_soap, query_params: query_param_profilo_modi })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
-    * call create ( { resourcePath: 'fruizioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
 		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
 		* def expected = getExpectedSOAP(erogazione_petstore.modi)
     * match response.modi == expected
@@ -97,20 +96,27 @@ Examples:
 @CreateFruizione_204_modi_REST
 Scenario Outline: Fruizioni Creazione 204 REST <nome>
 
-		* def erogazione_petstore = read('<nome>')
-		* eval erogazione_petstore.erogazione_nome = api_petstore_rest.nome
-		* eval erogazione_petstore.api_nome = api_petstore_rest.nome
-		* eval erogazione_petstore.api_versione = api_petstore_rest.versione
+		* def erogatore = read('soggetto_erogatore.json')
+		* eval randomize (erogatore, ["nome", "credenziali.username"])
 		
-		* def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
+		* def fruizione_petstore = read('<nome>')
+		* eval fruizione_petstore.api_nome = api_petstore_rest.nome
+		* eval fruizione_petstore.fruizione_nome = api_petstore_rest.nome
+		* eval fruizione_petstore.api_versione = api_petstore_rest.versione
+		* eval fruizione_petstore.erogatore = erogatore.nome
+		* eval fruizione_petstore.api_referente = api_petstore_rest.referente
+		
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
 		* def api_petstore_path = 'api/' + api_petstore_rest.nome + '/' + api_petstore_rest.versione
 
     * call create ({ resourcePath: 'api', body: api_petstore_rest, query_params: query_param_profilo_modi })
-    * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
-		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
-		* def expected = getExpectedRest(erogazione_petstore.modi)
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+		* def expected = getExpectedRest(fruizione_petstore.modi)
     * match response.modi == expected
-    * call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
 
 
