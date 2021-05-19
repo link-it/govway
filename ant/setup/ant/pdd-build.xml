@@ -230,6 +230,43 @@
 			<param name="value" value="${work_dir}/https/erogazioni"/>
 		</antcall>
 
+		<!-- ApacheXMLDSig, BouncyCastle e SecureRandom -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.security.addApacheXMLDSigProvider"/>
+			<param name="value" value="true"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.security.addBouncyCastleProvider"/>
+			<param name="value" value="true"/>
+		</antcall>		
+		<if>
+			<not>
+				<or>
+					<os family="windows"/>
+					<os family="dos"/>
+				</or>
+			</not>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.security.bouncyCastleProvider.secureRandomAlgorithm"/>
+					<param name="value" value="NativePRNGNonBlocking"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.security.egd"/>
+					<param name="value" value="file:/dev/urandom"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.messageSecurity.wsuId.secureRandomAlgorithm"/>
+					<param name="value" value="NativePRNGNonBlocking"/>
+				</antcall>
+			</then>
+		</if>
+
 		<!-- Attachments -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

@@ -134,6 +134,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
@@ -586,6 +587,10 @@ public class ConfigurazionePdDReader {
 	 */
 	protected boolean isSoggettoVirtuale(Connection connectionPdD, IDSoggetto idSoggetto) throws DriverConfigurazioneException { 
 
+		if(!this.openspcoopProperties.isSoggettiVirtualiEnabled()) {
+			return false;
+		}
+		
 		// il soggetto virtuale e' stato registrato come tale?
 
 		if(idSoggetto == null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null)
@@ -1184,7 +1189,7 @@ public class ConfigurazionePdDReader {
 	}
 
 	protected String getAzione(RegistroServiziManager registroServiziManager,PortaDelegata pd,URLProtocolContext urlProtocolContext,
-			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
+			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
 			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 
 		try{
@@ -1215,7 +1220,7 @@ public class ConfigurazionePdDReader {
 				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pd.getAzione().getForceInterfaceBased());
 			}
 
-			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
+			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.log, false);
 
@@ -2076,7 +2081,7 @@ public class ConfigurazionePdDReader {
 	}
 
 	protected String getAzione(RegistroServiziManager registroServiziManager,PortaApplicativa pa,URLProtocolContext urlProtocolContext,
-			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
+			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
 			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 
 		try{
@@ -2106,7 +2111,7 @@ public class ConfigurazionePdDReader {
 				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pa.getAzione().getForceInterfaceBased());
 			}
 
-			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
+			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.log, true);
 

@@ -380,11 +380,11 @@ public class RestTest extends ConfigLoader {
 		else {
 			if(operazione.equals("sendCorrelazioneApplicativa")) {
 				if(throttlingSend) {
-					esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_CORRELAZIONE_APPLICATIVA_RICHIESTA);
+					esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
 					verifyKo(response, REQUEST_TIMED_OUT, 400, REQUEST_TIMED_OUT_MESSAGE);
 				}
 				else {
-					esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_CORRELAZIONE_APPLICATIVA_RISPOSTA);	
+					esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);	
 					verifyKo(response, ENDPOINT_READ_TIMEOUT, 504, ENDPOINT_READ_TIMEOUT_MESSAGE);
 				}
 			}

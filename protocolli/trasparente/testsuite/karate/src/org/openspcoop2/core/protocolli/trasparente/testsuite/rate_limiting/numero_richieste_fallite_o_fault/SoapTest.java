@@ -217,10 +217,19 @@ public class SoapTest extends ConfigLoader {
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, first_batch);
 		
 		for (var r : responses) {
+			String idTransazione = r.getHeaderFirstValue(Headers.TransactionId);
+			String content = null;
+			if(r.getContent()!=null) {
+				content = new String(r.getContent());
+			}
+			logRateLimiting.debug("Verifico risposta della transazione '"+idTransazione+"' ("+content+") ...");
+			
 			assertEquals(500, r.getResultHTTPOperation());
 			
 			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchApiUnavaliableSoap(element);			
+			Utils.matchApiUnavaliableSoap(idTransazione, element);
+			
+			logRateLimiting.debug("Verifico dati della transazione '"+idTransazione+"' ok");	
 		}
 		
 		request.setContentType("application/soap+xml");		
@@ -232,10 +241,19 @@ public class SoapTest extends ConfigLoader {
 		responses.addAll(faultedResponses);
 		
 		for (var r : faultedResponses) {
+			String idTransazione = r.getHeaderFirstValue(Headers.TransactionId);
+			String content = null;
+			if(r.getContent()!=null) {
+				content = new String(r.getContent());
+			}
+			logRateLimiting.debug("Verifico risposta della transazione '"+idTransazione+"' ("+content+") ...");
+						
 			assertEquals(500, r.getResultHTTPOperation());
 			
 			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchEchoFaultResponseSoap(element);			
+			Utils.matchEchoFaultResponseSoap(idTransazione, element);	
+			
+			logRateLimiting.debug("Verifico dati della transazione '"+idTransazione+"' ok");	
 		}
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
@@ -277,10 +295,19 @@ public class SoapTest extends ConfigLoader {
 		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, first_batch);
 		
 		for (var r : responses) {
+			String idTransazione = r.getHeaderFirstValue(Headers.TransactionId);
+			String content = null;
+			if(r.getContent()!=null) {
+				content = new String(r.getContent());
+			}
+			logRateLimiting.debug("Verifico risposta della transazione '"+idTransazione+"' ("+content+") ...");
+						
 			assertEquals(500, r.getResultHTTPOperation());
 			
 			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchApiUnavaliableSoap(element);			
+			Utils.matchApiUnavaliableSoap(idTransazione, element);
+			
+			logRateLimiting.debug("Verifico dati della transazione '"+idTransazione+"' ok");		
 		}
 		
 		request.setContentType("application/soap+xml");		
@@ -292,10 +319,19 @@ public class SoapTest extends ConfigLoader {
 		responses.addAll(faultedResponses);
 		
 		for (var r : faultedResponses) {
+			String idTransazione = r.getHeaderFirstValue(Headers.TransactionId);
+			String content = null;
+			if(r.getContent()!=null) {
+				content = new String(r.getContent());
+			}
+			logRateLimiting.debug("Verifico risposta della transazione '"+idTransazione+"' ("+content+") ...");
+						
 			assertEquals(500, r.getResultHTTPOperation());
 			
 			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchEchoFaultResponseSoap(element);			
+			Utils.matchEchoFaultResponseSoap(idTransazione, element);	
+			
+			logRateLimiting.debug("Verifico dati della transazione '"+idTransazione+"' ok");		
 		}
 
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
@@ -390,8 +426,8 @@ public class SoapTest extends ConfigLoader {
 			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.FailedOrFaultReset)) <= windowSize);			
 			assertEquals(429, r.getResultHTTPOperation());
 			
-			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchLimitExceededSoap(element);
+			//Element element = Utils.buildXmlElement(r.getContent());
+			Utils.matchLimitExceededSoap(r.getContent());
 			
 			assertEquals("0", r.getHeaderFirstValue(Headers.FailedOrFaultRemaining));
 			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));

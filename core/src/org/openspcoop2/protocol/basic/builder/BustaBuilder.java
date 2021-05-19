@@ -277,11 +277,10 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 			
 			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				soapMessage = msg.castAsSoap();
-				if(soapMessage.getSOAPBody()!=null){
-					if(soapMessage.getSOAPBody().hasFault()==false){
-						return;
+				if(soapMessage.hasSOAPFault()) {
+					if(soapMessage.getSOAPBody()!=null){
+						f = soapMessage.getSOAPBody().getFault();
 					}
-					f = soapMessage.getSOAPBody().getFault();
 				}
 			}
 					

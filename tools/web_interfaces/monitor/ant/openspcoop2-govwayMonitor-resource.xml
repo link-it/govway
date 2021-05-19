@@ -288,9 +288,22 @@
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
-					<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.wildfly"/>
-				</concat>
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly22"/>
+						<matches string="${as}" pattern="wildfly23"/>
+					</or>
+					<then>
+						<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
+							<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.wildfly2"/>
+						</concat>
+					</then>
+					<else>
+						<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
+							<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.wildfly"/>
+						</concat>
+					</else>
+				</if>
 				<if>
 					<and>
 				    		<equals arg1="${buildJsfAsModule}" arg2="true"/>

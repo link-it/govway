@@ -1,0 +1,45 @@
+<jboss-deployment-structure>
+        <deployment>
+                <!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+                <exclude-subsystems>
+                        <subsystem name="webservices" />
+                        <subsystem name="jaxrs" />
+			<!-- Start SenzaModulo JSF -->
+			<subsystem name="jsf" />
+			<!-- End SenzaModulo JSF -->
+			<!-- se si elimina, spuntano i warning <subsystem name="weld" /> -->
+			<subsystem name="logging"/>
+                </exclude-subsystems>   
+                <exclusions>
+                	<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
+			<module name="org.slf4j" />
+                        <module name="org.apache.log4j" />
+			<module name="org.apache.commons.logging"/>
+			<module name="org.apache.logging.log4j.api"/>
+			-->
+                        <!-- non caricato in wf18 e java 11
+			<module name="com.sun.jsf-impl"/>
+                	<module name="org.jboss.as.webservices" />
+                        <module name="org.apache.cxf" />
+                        <module name="org.springframework.spring" />
+			<module name="javax.faces.api"/>
+                        <module name="org.jboss.ws" />
+                        <module name="org.jboss.ws.*" />
+			-->
+                </exclusions>
+                <dependencies>
+			<!-- Start Modulo JSF
+			<module name="com.sun.jsf-impl" slot="mojarra-1.2_15" />
+			<module name="javax.faces.api" slot="mojarra-1.2_15" />
+			End Modulo JSF -->
+			<!-- 
+				In wildfly deve essere utilizzato il jar xerces a bordo dell'a.s.
+				altrimenti non funziona il re-deploy dell'applicazione.
+				Si ottiene un errore simile al seguente: 
+				com.sun.faces.config.ConfigurationException: CONFIGURATION FAILED! DTD factory class 
+					com.sun.org.apache.xerces.internal.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory.
+			--> 
+			<module name="org.apache.xerces" />
+		</dependencies>
+        </deployment>
+</jboss-deployment-structure>

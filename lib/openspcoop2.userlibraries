@@ -184,14 +184,14 @@
 	<archive path="/op2_3.3.dev/lib/reports/jdtcore-3.2.0.v_658.jar"/>
 	<!-- saaj -->
 	<archive path="/op2_3.3.dev/lib/saaj/javax.xml.soap-api-1.4.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/saaj/saaj-impl-1.5.1-gov4j-2.jar"/>
+	<archive path="/op2_3.3.dev/lib/saaj/saaj-impl-1.5.1-gov4j-3.jar"/>
 	<archive path="/op2_3.3.dev/lib/saaj/stax-ex-1.8.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/saaj/mimepull-1.9.12.jar"/>
 	<!-- security -->
         <archive path="/op2_3.3.dev/lib/security/xmlsec-2.1.4.jar"/>
         <archive path="/op2_3.3.dev/lib/security/neethi-3.1.1.jar"/>
-        <archive path="/op2_3.3.dev/lib/security/bcprov-ext-jdk15on-1.64.jar"/>
-	<archive path="/op2_3.3.dev/lib/security/bcpkix-jdk15on-1.64.jar"/>
+        <archive path="/op2_3.3.dev/lib/security/bcprov-ext-jdk15on-1.68.jar"/>
+	<archive path="/op2_3.3.dev/lib/security/bcpkix-jdk15on-1.68.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/herasaf-xacml-core-1.0.4.RELEASE.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/nimbus-jose-jwt-8.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/jasypt-1.9.3.jar"/>

@@ -230,8 +230,20 @@
 		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.wildfly.xml" 
-					todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly22"/>
+						<matches string="${as}" pattern="wildfly23"/>
+					</or>
+					<then>
+						<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.wildfly2.xml" 
+							todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
+					</then>
+					<else>
+						<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.wildfly.xml" 
+							todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
+					</else>
+				</if>
 			</then>
 		</if>
 		

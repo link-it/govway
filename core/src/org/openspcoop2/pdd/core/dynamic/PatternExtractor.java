@@ -22,10 +22,15 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.util.List;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.json.JsonPathNotFoundException;
 import org.openspcoop2.utils.json.JsonPathNotValidException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
@@ -46,6 +51,29 @@ import org.w3c.dom.NodeList;
  */
 public class PatternExtractor {
 
+	public static PatternExtractor getJsonPatternExtractor(String json, Logger log, boolean bufferMessage_readOnly, Context context) throws DynamicException {
+		try {
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			OpenSPCoop2Message jsonMessageVerifica = messageFactory.createMessage(MessageType.JSON, MessageRole.NONE, 
+					HttpConstants.CONTENT_TYPE_JSON, json.getBytes()).getMessage();
+			MessageContent messageContent = new MessageContent(jsonMessageVerifica.castAsRestJson(), bufferMessage_readOnly, context);
+			return new PatternExtractor(messageFactory, messageContent, log);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	public static PatternExtractor getXmlPatternExtractor(Element element, Logger log, boolean bufferMessage_readOnly, Context context) throws DynamicException {
+		try {
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			OpenSPCoop2Message jsonMessageVerifica = messageFactory.createMessage(MessageType.XML, MessageRole.NONE, 
+					HttpConstants.CONTENT_TYPE_XML, XMLUtils.getInstance(messageFactory).toByteArray(element, true)).getMessage();
+			MessageContent messageContent = new MessageContent(jsonMessageVerifica.castAsRestXml(), bufferMessage_readOnly, context);
+			return new PatternExtractor(messageFactory, messageContent, log);
+		}catch(Exception e) {
+			throw new DynamicException(e.getMessage(),e);
+		}
+	}
+	
 	private Logger log;
 	
 	private OpenSPCoop2MessageFactory messageFactory;
@@ -55,17 +83,66 @@ public class PatternExtractor {
 	
 	private String elementJson = null;
 	
-	public PatternExtractor(OpenSPCoop2MessageFactory messageFactory, Element element, Logger log) {
+	private MessageContent messageContent = null;
+	private boolean messageContent_initialized = false;
+	
+	public PatternExtractor(OpenSPCoop2MessageFactory messageFactory, MessageContent messageContent, Logger log) {
 		this.messageFactory = messageFactory;
-		this.element = element; 
-		this.dnc = new DynamicNamespaceContext();
-		this.dnc.findPrefixNamespace(element);
+		this.messageContent = messageContent;
 		this.log = log;
 	}
+	
+	// I seguenti costruttori li lascio per backward compatibility se usati dentro delle trasformazioni
+	@Deprecated
+	public PatternExtractor(OpenSPCoop2MessageFactory messageFactory, Element element, Logger log) {
+		try {
+			PatternExtractor pe = getXmlPatternExtractor(element, log, false, null);
+			this.messageFactory = pe.messageFactory;
+			this.messageContent = pe.messageContent;
+			this.log = pe.log;
+		}catch(Exception e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
+	}
+	@Deprecated
 	public PatternExtractor(String elementJson, Logger log) {
-		this.elementJson = elementJson;
-		this.log = log;
+		try {
+			PatternExtractor pe = getJsonPatternExtractor(elementJson, log, false, null);
+			this.messageFactory = pe.messageFactory;
+			this.messageContent = pe.messageContent;
+			this.log = pe.log;
+		}catch(Exception e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
 	}
+	
+	
+	private void init() throws DynamicException {
+		if(!this.messageContent_initialized) {
+			_init();
+		}
+	}
+	private synchronized void _init() throws DynamicException {
+		if(!this.messageContent_initialized) {
+			if(this.messageContent!=null) {
+				try {
+					//this.messageFactory = this.messageContent.getMessageFactory();
+					if(this.messageContent.isJson()) {
+						this.elementJson = this.messageContent.getElementJson();
+					}
+					else {
+						this.element = this.messageContent.getElement();
+						this.dnc = new DynamicNamespaceContext();
+						this.dnc.findPrefixNamespace(this.element);
+					}
+				}catch(Exception e) {
+					throw new DynamicException(e.getMessage(),e);
+				}
+			}
+			this.messageContent_initialized = true;
+		}
+	}
+	
 	
 	public void refreshContent() {
 		if(this.element!=null && this.refresh==null) {
@@ -86,11 +163,15 @@ public class PatternExtractor {
 	}
 	
 	public boolean match(String pattern) throws DynamicException {
+		init();
+		
 		String v = read(pattern);
 		return v!=null && !"".equals(v);
 	}
 	
 	public String read(String pattern) throws DynamicException {
+		init();
+		
 		String valore = null;
 		try {
 			if(this.element!=null) {
@@ -147,6 +228,8 @@ public class PatternExtractor {
 	}
 	
 	public List<String> readList(String pattern) throws DynamicException {
+		init();
+		
 		List<String> valore = null;
 		try {
 			if(this.element!=null) {
@@ -204,7 +287,11 @@ public class PatternExtractor {
 	}
 	
 	public void remove(String pattern) throws DynamicException {
+		init();
+		
 		try {
+			this.messageContent.setUpdatable();
+			
 			if(this.element!=null) {
 				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.messageFactory);
 				Node n = (Node) xPathEngine.getMatchPattern(this.element, this.dnc, pattern, XPathReturnType.NODE);
@@ -265,7 +352,11 @@ public class PatternExtractor {
 	}
 	
 	public void removeList(String pattern) throws DynamicException {
+		init();
+		
 		try {
+			this.messageContent.setUpdatable();
+			
 			if(this.element!=null) {
 				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.messageFactory);
 				NodeList nList = (NodeList) xPathEngine.getMatchPattern(this.element, this.dnc, pattern, XPathReturnType.NODESET);

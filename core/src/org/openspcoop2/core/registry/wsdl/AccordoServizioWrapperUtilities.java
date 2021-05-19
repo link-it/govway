@@ -43,11 +43,13 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.AccordoServizioUtils;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -690,23 +692,128 @@ public class AccordoServizioWrapperUtilities {
 	
 	/** Search action  */
 	
-	public String searchOperationName(boolean isRichiesta, OpenSPCoop2Message message) throws DriverRegistroServiziException{
-		return searchOperationName(isRichiesta, null, message);
-	}
-	public String searchOperationName(boolean isRichiesta, String portType, OpenSPCoop2Message messageParam) throws DriverRegistroServiziException{
+	public String searchOperationName(boolean isRichiesta, String portType, OpenSPCoop2Message messageParam, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam) throws DriverRegistroServiziException{
 		
 		try{
 			if(this.accordoServizioWrapper==null){
 				throw new DriverRegistroServiziException("Accordo Servizio Wrapper non definito");
 			}
-			if(messageParam==null){
+			if(messageParam==null && soapStreamReaderParam==null){
 				throw new DriverRegistroServiziException("Messaggio non fornito");
 			}
 		
-			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())){
+			if(messageParam!=null && !ServiceBinding.SOAP.equals(messageParam.getServiceBinding())){
+				throw new DriverRegistroServiziException("Tipologia REST non supportata");
+			}
 				
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader = null;
+			if(soapStreamReaderParam!=null) {
+				soapStreamReader = soapStreamReaderParam;
+			}
+			else {
+				soapStreamReader = messageParam.castAsSoap().getSoapReader();
+			}
+			if(soapStreamReader!=null && !soapStreamReader.isParsingComplete()) {
+				soapStreamReader = null;
+			}
+			//Element rootElement = null;
+			String rootElementLocalName = null;
+			String rootElementNamespace = null;
+			if(soapStreamReader!=null) {
+				//rootElement = soapStreamReader.getRootElement();
+				rootElementLocalName = soapStreamReader.getRootElementLocalName();
+				rootElementNamespace = soapStreamReader.getRootElementNamespace();
+			}
+			
+			
+			// Se disponibile il rootElement viene utilizzato per comprendere l'operazione
+			// Altrimenti utilizzero' il validatore wsdl
+			if(rootElementLocalName!=null) {
+				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
+					PortType pt = this.accordoServizioWrapper.getPortType(i);
+					if(portType!=null){
+						if(pt.getNome().equals(portType)==false){
+							continue;
+						}
+					}
+					
+					BindingStyle style = CostantiRegistroServizi.WSDL_STYLE_DOCUMENT;
+					BindingUse use = CostantiRegistroServizi.WSDL_USE_LITERAL;
+					if(pt.getStyle()!=null && ("".equals(pt.getStyle())==false) && 
+							CostantiRegistroServizi.WSDL_STYLE_RPC.equals(pt.getStyle()))
+						style = CostantiRegistroServizi.WSDL_STYLE_RPC;
+											
+					for (int j = 0; j < pt.sizeAzioneList(); j++) {
+						Operation op = pt.getAzione(j);
+						try{
+							// Analizzo stile e uso nell'operazione
+							Message argumentsOperation = isRichiesta ? op.getMessageInput() : op.getMessageOutput();
+							if(op.getStyle()!=null && ("".equals(op.getStyle())==false)){
+								if(CostantiRegistroServizi.WSDL_STYLE_RPC.equals(op.getStyle()))
+									style = CostantiRegistroServizi.WSDL_STYLE_RPC;
+								else if(CostantiRegistroServizi.WSDL_STYLE_DOCUMENT.equals(op.getStyle()))
+									style = CostantiRegistroServizi.WSDL_STYLE_DOCUMENT;
+							}
+							if(argumentsOperation!=null && argumentsOperation.getUse()!=null &&
+									("".equals(argumentsOperation.getUse())==false) &&
+									CostantiRegistroServizi.WSDL_USE_ENCODED.equals(argumentsOperation.getUse())) {
+								use = CostantiRegistroServizi.WSDL_USE_ENCODED; 
+							}
+							
+							// Se Document/Literal provo a verificare rootElementName solo se sono in WrappedDocumentLiteral (1 child)
+							if(CostantiRegistroServizi.WSDL_STYLE_DOCUMENT.equals(style) &&
+									CostantiRegistroServizi.WSDL_USE_LITERAL.equals(use) &&
+									argumentsOperation!=null &&
+									argumentsOperation.sizePartList()==1){
+								MessagePart part = argumentsOperation.getPart(0);
+								if(part!=null) {
+									if(part.getElementName()!=null) {
+										
+//												System.out.println("WRAPPED DOCUMENT LITERAL");
+//												
+//												System.out.println("ROOT ELEMENT NAME:"+rootElement.getLocalName());
+//												System.out.println("ROOT ELEMENT NAMESPACE:"+rootElement.getNamespaceURI());
+//												
+//												System.out.println("SOAP NAMESPACE: "+argumentsOperation.getSoapNamespace());
+//												System.out.println("ELEMENT NAME: "+part.getElementName());
+//												System.out.println("ELEMENT NAMESPACE: "+part.getElementNamespace());
+//												System.out.println("TYPE NAME: "+part.getTypeName());
+//												System.out.println("TYPE NAMESPACE: "+part.getTypeNamespace());
+//												System.out.println("NAME: "+part.getName());
+										
+										boolean match = part.getElementName().equals(rootElementLocalName);
+										if(match) {
+											if(part.getElementNamespace()==null) {
+												if(rootElementNamespace!=null) {
+													match=false;
+												}
+											}
+											else {
+												if(!part.getElementNamespace().equals(rootElementNamespace)) {
+													match=false;
+												}
+											}
+										}
+										if(match) {
+											//System.out.println("FIND OP!!! ["+op.getNome()+"]");
+											return op.getNome();
+										}
+									}
+								}
+							}
+						}catch(Exception e){
+							this.logger.debug("@@@searchOperationName Azione ["+op.getNome()+"] mismatch rootElement["+rootElementLocalName+"]: "+e.getMessage());
+							//e.printStackTrace(SyOstem.out);
+						}
+					}
+				}
+			}
+			
+			// Altrimenti utilizzero' il validatore wsdl
+			if(messageParam!=null) {
 				boolean addPrefixError = true;
-				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, false, addPrefixError);
+				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, false, addPrefixError,
+						false, null);
 				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
 					PortType pt = this.accordoServizioWrapper.getPortType(i);
 					if(portType!=null){
@@ -727,9 +834,6 @@ public class AccordoServizioWrapperUtilities {
 					}
 					
 				}
-			}
-			else{
-				throw new DriverRegistroServiziException("Tipologia REST non supportata");
 			}
 			
 			return null;

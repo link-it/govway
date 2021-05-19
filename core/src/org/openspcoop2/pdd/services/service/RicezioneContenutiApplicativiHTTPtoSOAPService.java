@@ -279,7 +279,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}
 		
 		// Aggiorno RequestInfo
-		ConnectorDispatcherInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
+		ConnectorDispatcherInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, req, res,
 				this.generatoreErrore, serviceIdentificationReader, msgDiag, 
 				context!=null ? context.getPddContext(): null);
 		if(cInfo!=null){
@@ -306,6 +306,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				if(timeout>0) {
 					req.setRequestReadTimeout(timeout);
 				}
+				else {
+					req.disableReadTimeout();
+				}
+			}
+			else {
+				req.disableReadTimeout();
 			}
 			
 			// DumpRaw

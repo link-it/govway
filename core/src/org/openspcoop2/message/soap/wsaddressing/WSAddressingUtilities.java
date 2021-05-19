@@ -277,10 +277,20 @@ public class WSAddressingUtilities {
 		return this.read(message, actor, false);
 	}
 	public WSAddressingHeader read(OpenSPCoop2SoapMessage message, String actor, boolean validate) throws MessageException{
-
+		SOAPHeader header = null;
+		try{
+			header = message.getSOAPHeader();
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+		return this.read(message, header, actor, validate);
+	}
+	public WSAddressingHeader read(OpenSPCoop2SoapMessage message, SOAPHeader header, String actor) throws MessageException{
+		return this.read(message, header, actor, false);
+	}
+	public WSAddressingHeader read(OpenSPCoop2SoapMessage message, SOAPHeader header, String actor, boolean validate) throws MessageException{
 		try{
 
-			SOAPHeader header = message.getSOAPHeader();
 			if(header==null){
 				return null;
 			}

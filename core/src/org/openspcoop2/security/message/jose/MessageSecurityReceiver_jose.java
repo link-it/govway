@@ -72,6 +72,11 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 
 	@Override
 	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta) throws SecurityException{
+		process(messageSecurityContext, messageParam, busta,
+				false, null);
+	}
+	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta,
+			boolean bufferMessage_readOnly, String idTransazione) throws SecurityException{
 		
 		boolean signatureProcess = false;
 		boolean encryptProcess = false;
@@ -239,9 +244,9 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				boolean verify = false;
 				try {
 					if(this.detached) {
-						verify = this.jsonVerifierSignature.verifyDetached(detachedSignature, restJsonMessage.getContent());
+						verify = this.jsonVerifierSignature.verifyDetached(detachedSignature, restJsonMessage.getContent(bufferMessage_readOnly, idTransazione));
 					}else {
-						verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent());
+						verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent(bufferMessage_readOnly, idTransazione));
 					}
 				}catch(Exception e) {
 					throw new Exception("Signature verification failed: "+e.getMessage(),e);
@@ -390,7 +395,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 							
 				encryptProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
 				try {
-					this.jsonDecrypt.decrypt(restJsonMessage.getContent());
+					this.jsonDecrypt.decrypt(restJsonMessage.getContent(bufferMessage_readOnly, idTransazione));
 				}catch(Exception e) {
 					throw new Exception("Decrypt failed: "+e.getMessage(),e);
 				}

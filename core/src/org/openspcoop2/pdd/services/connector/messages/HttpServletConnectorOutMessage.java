@@ -108,7 +108,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				hasContent = true;
 				OpenSPCoop2SoapMessage soap = msg.castAsSoap();
-				if(soap.getSOAPBody()!=null && soap.getSOAPBody().hasFault()){
+				if(soap.hasSOAPFault()){
 					soap.saveChanges();
 				}
 			}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://services.samples/xsd">
+
+   <soapenv:Header>
+    <!-- TEST -->
+<xsd:skcotSyub>
+<redro&gt;<lobmys&gt;IBM</lobmys&gt;<DIreyub&gt;asankha</DIreyub&gt;<ecirp&gt;140.34</ecirp&gt;<emulov&gt;2000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;MSFT</lobmys&gt;<DIreyub&gt;ruwan</DIreyub&gt;<ecirp&gt;23.56</ecirp&gt;<emulov&gt;8030</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;SUN</lobmys&gt;<DIreyub&gt;indika</DIreyub&gt;<ecirp&gt;14.56</ecirp&gt;<emulov&gt;500</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;GOOG</lobmys&gt;<DIreyub&gt;chathura</DIreyub&gt;<ecirp&gt;60.24</ecirp&gt;<emulov&gt;40000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;IBM</lobmys&gt;<DIreyub&gt;asankha</DIreyub&gt;<ecirp&gt;140.34</ecirp&gt;<emulov&gt;2000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;MSFT</lobmys&gt;<DIreyub&gt;ruwan</DIreyub&gt;<ecirp&gt;23.56</ecirp&gt;<emulov&gt;8030</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;SUN</lobmys&gt;<DIreyub&gt;indika</DIreyub&gt;<ecirp&gt;14.56</ecirp&gt;<emulov&gt;500</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;GOOG</lobmys&gt;<DIreyub&gt;chathura</DIreyub&gt;<ecirp&gt;60.24</ecirp&gt;<emulov&gt;40000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;IBM</lobmys&gt;<DIreyub&gt;asankha</DIreyub&gt;<ecirp&gt;140.34</ecirp&gt;<emulov&gt;2000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;MSFT</lobmys&gt;<DIreyub&gt;ruwan</DIreyub&gt;<ecirp&gt;23.56</ecirp&gt;<emulov&gt;8030</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;SUN</lobmys&gt;<DIreyub&gt;indika</DIreyub&gt;<ecirp&gt;14.56</ecirp&gt;<emulov&gt;500</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;GOOG</lobmys&gt;<DIreyub&gt;chathura</DIreyub&gt;<ecirp&gt;60.24</ecirp&gt;<emulov&gt;40000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;IBM</lobmys&gt;<DIreyub&gt;asankha</DIreyub&gt;<ecirp&gt;140.34</ecirp&gt;<emulov&gt;2000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;MSFT</lobmys&gt;<DIreyub&gt;ruwan</DIreyub&gt;<ecirp&gt;23.56</ecirp&gt;<emulov&gt;8030</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;SUN</lobmys&gt;<DIreyub&gt;indika</DIreyub&gt;<ecirp&gt;14.56</ecirp&gt;<emulov&gt;500</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;GOOG</lobmys&gt;<DIreyub&gt;chathura</DIreyub&gt;<ecirp&gt;60.24</ecirp&gt;<emulov&gt;40000</emulov&gt;</redro&gt;
+</xsd:skcotSyub>
+</soapenv:Header>     
+    
+    <!-- TEST -->
+    
+<soapenv:Body>
+    <!-- TEST -->
+<xsd:skcotSyub>
+<redro&gt;<lobmys&gt;IBM</lobmys&gt;<DIreyub&gt;asankha</DIreyub&gt;<ecirp&gt;140.34</ecirp&gt;<emulov&gt;2000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;MSFT</lobmys&gt;<DIreyub&gt;ruwan</DIreyub&gt;<ecirp&gt;23.56</ecirp&gt;<emulov&gt;8030</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;SUN</lobmys&gt;<DIreyub&gt;indika</DIreyub&gt;<ecirp&gt;14.56</ecirp&gt;<emulov&gt;500</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;GOOG</lobmys&gt;<DIreyub&gt;chathura</DIreyub&gt;<ecirp&gt;60.24</ecirp&gt;<emulov&gt;40000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;IBM</lobmys&gt;<DIreyub&gt;asankha</DIreyub&gt;<ecirp&gt;140.34</ecirp&gt;<emulov&gt;2000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;MSFT</lobmys&gt;<DIreyub&gt;ruwan</DIreyub&gt;<ecirp&gt;23.56</ecirp&gt;<emulov&gt;8030</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;SUN</lobmys&gt;<DIreyub&gt;indika</DIreyub&gt;<ecirp&gt;14.56</ecirp&gt;<emulov&gt;500</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;GOOG</lobmys&gt;<DIreyub&gt;chathura</DIreyub&gt;<ecirp&gt;60.24</ecirp&gt;<emulov&gt;40000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;IBM</lobmys&gt;<DIreyub&gt;asankha</DIreyub&gt;<ecirp&gt;140.34</ecirp&gt;<emulov&gt;2000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;MSFT</lobmys&gt;<DIreyub&gt;ruwan</DIreyub&gt;<ecirp&gt;23.56</ecirp&gt;<emulov&gt;8030</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;SUN</lobmys&gt;<DIreyub&gt;indika</DIreyub&gt;<ecirp&gt;14.56</ecirp&gt;<emulov&gt;500</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;GOOG</lobmys&gt;<DIreyub&gt;chathura</DIreyub&gt;<ecirp&gt;60.24</ecirp&gt;<emulov&gt;40000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;IBM</lobmys&gt;<DIreyub&gt;asankha</DIreyub&gt;<ecirp&gt;140.34</ecirp&gt;<emulov&gt;2000</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;MSFT</lobmys&gt;<DIreyub&gt;ruwan</DIreyub&gt;<ecirp&gt;23.56</ecirp&gt;<emulov&gt;8030</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;SUN</lobmys&gt;<DIreyub&gt;indika</DIreyub&gt;<ecirp&gt;14.56</ecirp&gt;<emulov&gt;500</emulov&gt;</redro&gt;
+<redro&gt;<lobmys&gt;GOOG</lobmys&gt;<DIreyub&gt;chathura</DIreyub&gt;<ecirp&gt;60.24</ecirp&gt;<emulov&gt;40000</emulov&gt;</redro&gt;
+</xsd:skcotSyub>
+</soapenv:Body>
+</soapenv:Envelope>

@@ -52,6 +52,7 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.soap.reference.AttachmentReference;
 import org.openspcoop2.message.soap.reference.ElementReference;
 import org.openspcoop2.message.soap.reference.Reference;
@@ -90,6 +91,16 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	}
 	
 	
+	/* Informazioni SOAP (senza costruire il DOM) */
+	
+	@Override
+	public OpenSPCoop2MessageSoapStreamReader getSoapReader() throws MessageException,MessageNotSupportedException {
+		//throw new MessageException("NotImplemented; use soap impl");
+		return null;
+	}
+	
+	
+	
 	/* Metodi SOAP */
 	
 	@Override
@@ -109,6 +120,22 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public boolean hasSOAPFault() throws MessageException,MessageNotSupportedException{
+		SOAPBody body = getSOAPBody();
+		return body!=null && body.hasFault();
+	}
+	
+	@Override
+	public boolean isSOAPBodyEmpty() throws MessageException,MessageNotSupportedException{
+		SOAPBody body = getSOAPBody();
+		boolean hasContent = body!=null;
+		if(hasContent){
+			hasContent = SoapUtils.getFirstNotEmptyChildNode(this.messageFactory, body, false)!=null;
+		}
+		return !hasContent;
 	}
 	
 	@Override
@@ -138,6 +165,11 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	@Override
 	public AttachmentPart createAttachmentPart() throws MessageException,MessageNotSupportedException{
 		return this.soapMessage.createAttachmentPart();
+	}
+	
+	@Override
+	public boolean hasAttachments() throws MessageException,MessageNotSupportedException{
+		return this.soapMessage.countAttachments()>0;
 	}
 	
 	@Override
@@ -239,6 +271,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public String createContentID(String ns) throws MessageException,MessageNotSupportedException{
+		return _createContentID(ns);
+	}
+	protected static String _createContentID(String ns) throws MessageException,MessageNotSupportedException{
 		try{
 			return "<" + org.apache.cxf.attachment.AttachmentUtil.createContentID(ns) + ">";
 		}catch(Exception e){
@@ -340,7 +375,12 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 
 	
 	/* WriteTo e Save */
-		
+	
+	@Override
+	public boolean isContentBuilded() {
+		return true; // e' insito nel costruttore
+	}
+	
 	@Override
 	public void writeTo(OutputStream os, boolean consume) throws MessageException{
 		try{
@@ -372,6 +412,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public Element getFirstChildElement(SOAPElement element) throws MessageException,MessageNotSupportedException {
+		return _getFirstChildElement(element);
+	}
+	protected static Element _getFirstChildElement(SOAPElement element) throws MessageException,MessageNotSupportedException {
 		Element firstElement = null;
 		Iterator<?> it = element.getChildElements();
 		while (it.hasNext() && firstElement==null){
@@ -383,18 +426,21 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public SOAPElement createSOAPElement(byte[] bytes) throws MessageException,MessageNotSupportedException {
+		return _createSOAPElement(bytes, this.getMessageType(), this.messageFactory);
+	}
+	protected static SOAPElement _createSOAPElement(byte[] bytes, MessageType messageType, OpenSPCoop2MessageFactory messageFactory) throws MessageException,MessageNotSupportedException {
 		try{
 			SOAPFactory soapFactory = null;
-			if(MessageType.SOAP_11.equals(this.getMessageType())){
-				soapFactory = this.messageFactory.getSoapFactory11();
+			if(MessageType.SOAP_11.equals(messageType)){
+				soapFactory = messageFactory.getSoapFactory11();
 			}
-			else if(MessageType.SOAP_12.equals(this.getMessageType())){
-				soapFactory = this.messageFactory.getSoapFactory12();
+			else if(MessageType.SOAP_12.equals(messageType)){
+				soapFactory = messageFactory.getSoapFactory12();
 			}
 			else{
-				throw new MessageException("MessageType ["+this.getMessageType()+"] not supported");
+				throw new MessageException("MessageType ["+messageType+"] not supported");
 			}
-			return soapFactory.createElement(XMLUtils.getInstance(this.messageFactory).newElement(bytes));
+			return soapFactory.createElement(XMLUtils.getInstance(messageFactory).newElement(bytes));
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
@@ -402,6 +448,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public SOAPHeaderElement newSOAPHeaderElement(SOAPHeader hdr,QName name) throws MessageException,MessageNotSupportedException {
+		return _newSOAPHeaderElement(hdr,name);
+	}
+	protected static SOAPHeaderElement _newSOAPHeaderElement(SOAPHeader hdr,QName name) throws MessageException,MessageNotSupportedException {
 		try{
 			SOAPHeaderElement newHeader = 	hdr.addHeaderElement(name);
 			return newHeader;
@@ -412,6 +461,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public void addHeaderElement(SOAPHeader hdr,SOAPHeaderElement hdrElement) throws MessageException,MessageNotSupportedException{
+		_addHeaderElement(hdr, hdrElement);
+	}
+	protected static void _addHeaderElement(SOAPHeader hdr,SOAPHeaderElement hdrElement) throws MessageException,MessageNotSupportedException{
 		try{
 			hdr.addChildElement(hdrElement);
 		}catch(Exception e){
@@ -421,6 +473,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public void removeHeaderElement(SOAPHeader hdr,SOAPHeaderElement hdrElement) throws MessageException,MessageNotSupportedException{
+		_removeHeaderElement(hdr, hdrElement);
+	}
+	protected static void _removeHeaderElement(SOAPHeader hdr,SOAPHeaderElement hdrElement) throws MessageException,MessageNotSupportedException{
 		try{
 			hdr.removeChild(hdrElement);
 		}catch(Exception e){
@@ -431,6 +486,10 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	@Override
 	public void setFaultCode(SOAPFault fault, SOAPFaultCode code,
 			QName eccezioneName) throws MessageException,MessageNotSupportedException {
+		_setFaultCode(fault, code, eccezioneName);
+	}
+	protected static void _setFaultCode(SOAPFault fault, SOAPFaultCode code,
+			QName eccezioneName) throws MessageException,MessageNotSupportedException {
 		try{
 			fault.setFaultCode(eccezioneName);
 		}catch(Exception e){
@@ -440,6 +499,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public void setFaultString(SOAPFault fault, String message) throws MessageException,MessageNotSupportedException{
+		_setFaultString(fault, message);
+	}
+	protected static void _setFaultString(SOAPFault fault, String message) throws MessageException,MessageNotSupportedException{
 		try{
 			SoapUtils.setFaultString(fault, message, null);
 		}catch(Exception e){
@@ -448,6 +510,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	}
 	@Override
 	public void setFaultString(SOAPFault fault, String message, Locale locale) throws MessageException,MessageNotSupportedException{
+		_setFaultString(fault, message, locale);
+	}
+	protected static void _setFaultString(SOAPFault fault, String message, Locale locale) throws MessageException,MessageNotSupportedException{
 		try{
 			SoapUtils.setFaultString(fault, message, locale);
 		}catch(Exception e){
@@ -794,16 +859,25 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public String getEncryptedDataHeaderBlockClass() {
+		return _getEncryptedDataHeaderBlockClass();
+	}
+	protected static String _getEncryptedDataHeaderBlockClass() {
 		return com.sun.xml.wss.core.EncryptedDataHeaderBlock.class.getName();
 	}
 
 	@Override
 	public String getProcessPartialEncryptedMessageClass() {
+		return _getProcessPartialEncryptedMessageClass();
+	}
+	protected static String _getProcessPartialEncryptedMessageClass() {
 		return "org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage";
 	}
 
 	@Override
 	public String getSignPartialMessageProcessorClass() {
+		return _getSignPartialMessageProcessorClass();
+	}
+	protected static String _getSignPartialMessageProcessorClass() {
 		return "org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor";
 	}
 	

@@ -270,7 +270,7 @@ public abstract class AbstractXPathExpressionEngine {
 	
 	public abstract Element readXPathElement(Element contenutoAsElement);
 	
-	private static Integer synchronizedObjectForBugFWK005ParseXerces = Integer.valueOf(1);
+	private static Integer synchronizedObjectForBugFWK005ParseXerces = Integer.valueOf(1); // vedi test TestBugFWK005ParseXerces 
 	private Object _engine_getMatchPattern(
 			Element contenutoAsElement, String contenutoAsString, 
 			DynamicNamespaceContext dncPrivate,String pattern, XPathReturnType returnType) 
@@ -412,11 +412,13 @@ public abstract class AbstractXPathExpressionEngine {
 						// 6. Evaluate the XPath expression on an input document
 						String result = null;
 						try{
-							synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) {
-								if(reader!=null)
+							if(reader!=null) {
+								synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces 
 									result = expression.evaluate(new org.xml.sax.InputSource(reader));
-								else 
-									result = expression.evaluate(this.readXPathElement(contenutoAsElement));
+								}
+							}
+							else { 
+								result = expression.evaluate(this.readXPathElement(contenutoAsElement));
 							}
 						}catch(Exception e){
 							if(Utilities.existsInnerException(e,"com.sun.org.apache.xpath.internal.XPathException")){
@@ -506,12 +508,12 @@ public abstract class AbstractXPathExpressionEngine {
 				// 6. Evaluate the XPath expression on an input document
 				Object result = null;
 				try{
-					synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) {
-						if(reader!=null)
+					if(reader!=null)
+						synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces
 							result = expression.evaluate(new org.xml.sax.InputSource(reader),returnType.getValore());
-						else{
-							result = expression.evaluate(this.readXPathElement(contenutoAsElement),returnType.getValore());
 						}
+					else{
+						result = expression.evaluate(this.readXPathElement(contenutoAsElement),returnType.getValore());
 					}
 				}catch(Exception e){
 					if(Utilities.existsInnerException(e,"com.sun.org.apache.xpath.internal.XPathException")){

@@ -32,6 +32,8 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
@@ -183,6 +185,10 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	public void setRequestReadTimeout(int timeout) {
 		this.requestReadTimeout = timeout;
 	}
+	@Override
+	public void disableReadTimeout() {
+		// nop
+	}
 	
 	public DirectVMProtocolInfo getDirectVMProtocolInfo() {
 		return this.directVMProtocolInfo;
@@ -266,6 +272,18 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public OpenSPCoop2MessageSoapStreamReader getSoapReader() throws ConnectorException{
+		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+			try{
+				return this.message.castAsSoap().getSoapReader();
+			}catch(Exception e){
+				throw new ConnectorException(e.getMessage(),e);
+			}	
+		}
+		return null;
 	}
 	
 	@Override

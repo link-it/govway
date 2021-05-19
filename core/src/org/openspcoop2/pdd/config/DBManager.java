@@ -61,6 +61,8 @@ public class DBManager implements IMonitoraggioRisorsa {
 	/** TransactionIsolation level */
 	private static int transactionIsolationLevel = -1;
 
+	/** NomeJNDIC DataSource dove attingere connessioni */
+	private String dataSourceJndiName = null;
 	/** DataSource dove attingere connessioni */
 	private DataSource dataSource = null;
 	/** MsgDiagnostico */
@@ -113,6 +115,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 			throw new Exception("Lookup jndiResource ["+jndiName+"] not found");
 		}
 		try{
+			this.dataSourceJndiName = jndiName;
 			this.dataSource = (DataSource) oSearch;
 		}catch(Throwable t){
 			StringBuilder bf = new StringBuilder();
@@ -214,7 +217,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 
 		Resource risorsa = null;
 		try {
-			risorsa = DBManager.buildResource(this.dataSource, idPDD, modulo, idTransazione);
+			risorsa = DBManager.buildResource(this.dataSourceJndiName, this.dataSource, idPDD, modulo, idTransazione);
 				
 			DBManager.risorseInGestione.put(risorsa.getId(), risorsa);
 			
@@ -235,12 +238,12 @@ public class DBManager implements IMonitoraggioRisorsa {
 		return risorsa;
 	}
 
-	public static Resource buildResource(DataSource dataSource, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
-		//System.out.println("### buildResource modulo:"+modulo+" idTransazione:"+idTransazione+" ...");
+	public static Resource buildResource(String dataSourceJndiName, DataSource dataSource, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+		//System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" ...");
 		Connection connectionDB = dataSource.getConnection();
 		if(connectionDB==null)
 			throw new Exception("is null");
-		//System.out.println("### buildResource modulo:"+modulo+" idTransazione:"+idTransazione+" OK");
+		//System.out.println("### buildResource ["+dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+idTransazione+" OK");
 		return buildResource(connectionDB, idPDD, modulo, idTransazione);
 	}
 	public static Resource buildResource(Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
@@ -286,6 +289,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 				if(DBManager.risorseInGestione.containsKey(resource.getId()))
 					DBManager.risorseInGestione.remove(resource.getId());
 				
+				//System.out.println("### releaseResource ["+this.dataSourceJndiName+"] modulo:"+modulo+" idTransazione:"+resource.getId()+" OK");
 				//if(this.dataSource instanceof SharedPoolDataSource)
 				//	System.out.println("CLOSE IDLE["+((SharedPoolDataSource)this.dataSource).getNumIdle()+"] ACTIVE["+((SharedPoolDataSource)this.dataSource).getNumActive()+"]");
 									

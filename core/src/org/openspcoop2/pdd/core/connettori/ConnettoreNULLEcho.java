@@ -569,7 +569,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 					// rimuovo il FAULT.
 					if(this.responseMsg instanceof OpenSPCoop2SoapMessage){
 						OpenSPCoop2SoapMessage soapMessage = this.responseMsg.castAsSoap();
-						if(soapMessage.getSOAPBody()!=null && soapMessage.getSOAPBody().hasFault()){
+						if(soapMessage.hasSOAPFault()){
 							soapMessage.getSOAPBody().removeChild(soapMessage.getSOAPBody().getFault());
 						}
 					}

@@ -81,7 +81,7 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 			if(context.getMessaggio()!=null){
 				if(ServiceBinding.SOAP.equals(context.getMessaggio().getServiceBinding())) {
 					OpenSPCoop2SoapMessage soapMsg = context.getMessaggio().castAsSoap();
-					if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()){
+					if(soapMsg.hasSOAPFault()){
 						
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						bout.write(context.getMessaggio().getAsByte(soapMsg.getSOAPPart().getEnvelope(), false));

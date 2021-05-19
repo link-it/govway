@@ -60,3 +60,4 @@ una volta completato il processo di validazione.
    richiestaRisposta
    configurazioneAvanzataSoap
    configurazioneAvanzataRest
+   avanzate

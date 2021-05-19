@@ -147,10 +147,37 @@
 			</then>
 		</if>
 
+		<!-- jboss-deployment-structure -->
+		<if>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<copy file="${src}/WEB-INF/jboss-deployment-structure.xml" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+			</then>
+		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly22"/>
+						<matches string="${as}" pattern="wildfly23"/>
+					</or>
+					<then>
+						<copy file="${src}/WEB-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+					</then>
+					<else>
+						<copy file="${src}/WEB-INF/jboss-deployment-structure.xml" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+					</else>
+				</if>
+			</then>
+		</if>
+
 		<war destfile="${dist}/ValidazioneContenutiWS.war" webxml="${src}/WEB-INF/web.xml">
 			<webinf dir="${src}/WEB-INF">
 				<include name="**/server-config.wsdd"/>
-				<include name="${jboss_deployment_structure}"/>
+			</webinf>
+			<webinf dir="${build}/tmp">
+				<include name="${jboss_deployment_structure}" />
 			</webinf>
 			<classes dir="${build}">
 				<include name="**/*"/>

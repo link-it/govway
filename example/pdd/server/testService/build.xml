@@ -161,8 +161,20 @@
 		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly" 
-						tofile="${build}/example/${jboss_deployment_structure}" />
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly22"/>
+						<matches string="${as}" pattern="wildfly23"/>
+					</or>
+					<then>
+						<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly2" 
+								tofile="${build}/example/${jboss_deployment_structure}" />
+					</then>
+					<else>
+						<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly" 
+								tofile="${build}/example/${jboss_deployment_structure}" />
+					</else>
+				</if>
 			</then>
  		</if>
 		

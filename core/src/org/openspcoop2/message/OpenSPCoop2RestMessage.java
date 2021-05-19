@@ -22,6 +22,7 @@ package org.openspcoop2.message;
 
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -37,19 +38,22 @@ import org.openspcoop2.message.exception.MessageNotSupportedException;
 public interface OpenSPCoop2RestMessage<T> extends OpenSPCoop2Message {
 	
 	/* Elementi REST */
-	
-	public boolean isContentBuilded();
-	
+		
 	public InputStream getInputStream();
 	
 	public boolean hasContent() throws MessageException,MessageNotSupportedException;
 	
 	public T getContent() throws MessageException,MessageNotSupportedException;
+	public T getContent(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException;
 	
 	public String getContentAsString() throws MessageException,MessageNotSupportedException;
+	public String getContentAsString(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException;
 	
 	public void updateContent(T content) throws MessageException,MessageNotSupportedException;
+	public void setContentUpdatable() throws MessageException,MessageNotSupportedException;
 
+	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione) throws MessageException;
+	
 	public boolean isProblemDetailsForHttpApis_RFC7807() throws MessageException,MessageNotSupportedException;
 	
 }

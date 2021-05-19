@@ -30,6 +30,7 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -76,6 +77,10 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public void setThresholdContext(Context context,
 			int soglia, File repositoryFile) {
+		// nop
+	}
+	@Override
+	public void disableReadTimeout() {
 		// nop
 	}
 	
@@ -127,6 +132,11 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		return null;
 	}
 	
+	@Override
+	public OpenSPCoop2MessageSoapStreamReader getSoapReader() throws ConnectorException{
+		// wrapped method
+		return this.connectorInMessage.getSoapReader();
+	}
 	
 	@Override
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException {

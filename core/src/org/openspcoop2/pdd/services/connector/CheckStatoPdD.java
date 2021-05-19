@@ -194,7 +194,7 @@ public class CheckStatoPdD extends HttpServlet {
 		
 						
 		if( OpenSPCoop2Startup.initialize == false){
-			String msg = "Porta di dominio OpenSPCoop non inzializzata";
+			String msg = "API Gateway GovWay non inzializzato";
 			log.error("[CheckStatoPdD] "+msg);
 			res.setStatus(500);
 			res.getOutputStream().write(msg.getBytes());	

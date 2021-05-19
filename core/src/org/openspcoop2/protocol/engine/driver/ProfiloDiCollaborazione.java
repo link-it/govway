@@ -127,6 +127,10 @@ public class ProfiloDiCollaborazione {
 	}
 
 
+	public void updateState(IState state){
+		this.state = state;
+	}
+	
 
 	/* ********  PROFILO GENERICO  ******** */
 

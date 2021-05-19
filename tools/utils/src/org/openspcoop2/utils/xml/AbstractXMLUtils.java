@@ -80,7 +80,7 @@ public abstract class AbstractXMLUtils {
 	// XERCES
 	protected abstract DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException;
 	protected abstract DatatypeFactory newDatatypeFactory() throws XMLException;
-//	protected abstract javax.xml.parsers.SAXParserFactory newSAXParserFactory() throws XMLException;
+	protected abstract javax.xml.parsers.SAXParserFactory newSAXParserFactory() throws XMLException;
 //	protected abstract javax.xml.stream.XMLEventFactory newXMLEventFactory() throws XMLException;
 	protected abstract SchemaFactory newSchemaFactory() throws XMLException;
 	
@@ -92,7 +92,7 @@ public abstract class AbstractXMLUtils {
 	// XERCES
 	private DocumentBuilderFactory documentFactory = null;
 	private DatatypeFactory datatypeFactory = null;
-//	private javax.xml.parsers.SAXParserFactory saxParserFactory = null;
+	private javax.xml.parsers.SAXParserFactory saxParserFactory = null;
 //	private javax.xml.stream.XMLEventFactory xmlEventFactory = null;
 	private SchemaFactory schemaFactory = null;
 	
@@ -128,15 +128,15 @@ public abstract class AbstractXMLUtils {
 		}
 	}
 	
-//	public synchronized void initSAXParserFactory() throws XMLException {
-//		if(this.saxParserFactory==null){
-//			try {
-//				this.saxParserFactory = newSAXParserFactory();
-//			} catch (Exception e) {
-//				throw new XMLException(e.getMessage(),e);
-//			}
-//		}
-//	}
+	public synchronized void initSAXParserFactory() throws XMLException {
+		if(this.saxParserFactory==null){
+			try {
+				this.saxParserFactory = newSAXParserFactory();
+			} catch (Exception e) {
+				throw new XMLException(e.getMessage(),e);
+			}
+		}
+	}
 //	
 //	public synchronized void initXMLEventFactory() throws XMLException {
 //		if(this.xmlEventFactory==null){
@@ -201,12 +201,12 @@ public abstract class AbstractXMLUtils {
 		return this.datatypeFactory;
 	}
 	
-//	public javax.xml.parsers.SAXParserFactory getSAXParserFactory() throws XMLException {
-//		if(this.saxParserFactory==null){
-//			this.initSAXParserFactory();
-//		}
-//		return this.saxParserFactory;
-//	}
+	public javax.xml.parsers.SAXParserFactory getSAXParserFactory() throws XMLException {
+		if(this.saxParserFactory==null){
+			this.initSAXParserFactory();
+		}
+		return this.saxParserFactory;
+	}
 //	
 //	public javax.xml.stream.XMLEventFactory getXMLEventFactory() throws XMLException {
 //		if(this.xmlEventFactory==null){

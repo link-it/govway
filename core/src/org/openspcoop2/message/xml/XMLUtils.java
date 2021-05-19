@@ -23,6 +23,7 @@ package org.openspcoop2.message.xml;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.utils.resources.Loader;
@@ -66,6 +67,15 @@ public class XMLUtils extends org.openspcoop2.utils.xml.XMLUtils {
 	protected DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException {
 		try{
 			return (DocumentBuilderFactory) Loader.getInstance().newInstance(this.messageFactory.getDocumentBuilderFactoryClass());
+		}catch(Exception e){
+			throw new XMLException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	protected SAXParserFactory newSAXParserFactory() throws XMLException {
+		try{
+			return (SAXParserFactory) Loader.getInstance().newInstance(this.messageFactory.getSAXParserFactoryClass());
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}

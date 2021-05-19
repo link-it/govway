@@ -109,7 +109,7 @@ public class ModIImbustamentoSoap {
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO, replyTo);
 					}
 					else {
-						String replyToFound = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage);
+						String replyToFound = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage.getMessageType(), soapMessage.getSOAPHeader(), soapMessage.getSOAPBody());
 						if(replyToFound!=null && !"".equals(replyToFound)) {
 							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_REPLY_TO, replyToFound);
 						}
@@ -199,7 +199,7 @@ public class ModIImbustamentoSoap {
 	}
 	
 	private boolean processCorrelationId(OpenSPCoop2SoapMessage soapMessage, Busta busta, boolean notFoundException, String profilo, boolean useAlternativeMethod) throws Exception {
-		String correlationIdFound = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage); 
+		String correlationIdFound = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage.getMessageType(), soapMessage.getSOAPHeader(), soapMessage.getSOAPBody()); 
 		if(correlationIdFound!=null && !"".equals(correlationIdFound)) {
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_ID_CORRELAZIONE, correlationIdFound);
 			if(correlationIdFound.length()<=255) {
@@ -595,7 +595,8 @@ public class ModIImbustamentoSoap {
 		
 		String nomeSoggettoMittente = busta.getMittente();
 		
-		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log);
+		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
+		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessage_readOnly);
 		
 		String attributeNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_codice_ente();
 		String codiceEnte = null;

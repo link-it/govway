@@ -64,7 +64,7 @@ public class ValidatoreErrori extends BasicStateComponentFactory implements org.
 		try{
 			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
-				if(soapMessage.getSOAPBody()!=null && soapMessage.getSOAPBody().hasFault()){
+				if(soapMessage.hasSOAPFault()){
 					SOAPFault soapFault = soapMessage.getSOAPBody().getFault();
 					String faultS = soapFault.getFaultString();
 					if(faultS!=null)
@@ -112,7 +112,7 @@ public class ValidatoreErrori extends BasicStateComponentFactory implements org.
 		try{
 			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
-				if(soapMessage.getSOAPBody()!=null && soapMessage.getSOAPBody().hasFault()){
+				if(soapMessage.hasSOAPFault()){
 					SOAPFault soapFault = soapMessage.getSOAPBody().getFault();
 					String faultS = soapFault.getFaultString();
 					if(faultS!=null)
@@ -137,7 +137,7 @@ public class ValidatoreErrori extends BasicStateComponentFactory implements org.
 		try{
 			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
-				if(soapMessage.getSOAPBody()!=null && soapMessage.getSOAPBody().hasFault()){
+				if(soapMessage.hasSOAPFault()){
 					SOAPFault soapFault = soapMessage.getSOAPBody().getFault();
 					String faultS = soapFault.getFaultString();
 					if(faultS!=null)

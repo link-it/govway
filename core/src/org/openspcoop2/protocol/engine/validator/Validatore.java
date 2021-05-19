@@ -200,7 +200,10 @@ public class Validatore  {
 		this(aMsg,ctx,null,state,alog,false, protocolFactory);
 	}
 
-	
+
+	public void updateState(IState state){
+		this.state = state;
+	}
 	
 	/**
 	 * Avvia il processo di lettura di una busta ricevuta.
@@ -543,7 +546,7 @@ public class Validatore  {
 			// Controllo se il messaggio ha attachments
 			boolean hasAttachments = false;
 			if(ServiceBinding.SOAP.equals(this.msg.getServiceBinding())){
-				hasAttachments = this.msg.castAsSoap().countAttachments()>0;
+				hasAttachments = this.msg.castAsSoap().hasAttachments();
 			}
 			else if(MessageType.MIME_MULTIPART.equals(this.msg.getMessageType())){
 				hasAttachments = true;

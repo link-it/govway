@@ -102,6 +102,10 @@ public class Riscontri  {
 			this.log = LoggerWrapperFactory.getLogger(Riscontri.class.getName());
 		}
 	}
+
+	public void updateState(IState state) {
+		this.state = state;
+	}
 	
 	/* ********  R I S C O N T R I    D A    R I C E V E R E  ******** */
 

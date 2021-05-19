@@ -33,6 +33,8 @@ public class IntegrazioneUtils {
 	public static Object[][] getContentTypesOk(){
 		return new Object[][]{
 			{"text/xml"},
+			{"text/xml;"},
+			{"text/xml ;"},
 			{"application/soap+xml; charset=UTF-8"},
 			{"application/soap+xml;charset=UTF-8"},
 			{"text/xml; altro=AAA; charset=UTF-8"},
@@ -48,6 +50,25 @@ public class IntegrazioneUtils {
 			{"/xml","In Content-Type string </xml>, expected MIME type, got /"},
 			{"text/xml, charset=UTF-8","In parameter list <, charset=UTF-8>, expected ';', got \",\""},
 			{"text/xml;charsetUTF-8","In parameter list <;charsetUTF-8>, expected '=', got \"null\""}
+		};	
+	}
+	
+	public static Object[][] getAlternativeSoap12ContentTypesSupported(){
+		return new Object[][]{
+			{"application/soap"},
+			{"application/soap; charset=UTF-8"},
+			{"application/soap;charset=UTF-8"},
+			{"text/soap; altro=AAA; charset=UTF-8"},
+			{"altro/test;charset=\"UTF-8\""},
+			{"altro/test"},
+		};	
+	}
+	public static Object[][] getAlternativeSoap12ContentTypesUnsupported(){
+		return new Object[][]{
+			{"application/soap2; charset=UTF-8"},
+			{"application/soap2;charset=UTF-8"},
+			{"text/soap2; altro=AAA; charset=UTF-8"},
+			{"altro/test2;charset=\"UTF-8\""},
 		};	
 	}
 	

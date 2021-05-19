@@ -23,8 +23,20 @@
 		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly" 
-						tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly22"/>
+						<matches string="${as}" pattern="wildfly23"/>
+					</or>
+					<then>
+						<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly2" 
+							tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+					</then>
+					<else>
+						<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly" 
+							tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+					</else>
+				</if>
 			</then>
  		</if>
 	
@@ -133,14 +145,14 @@
 			</lib>
 
 			<lib dir="${openspcoop2.lib}/saaj">
-				<include name="saaj-impl-1.5.1-gov4j-2.jar"/>
+				<include name="saaj-impl-1.5.1-gov4j-3.jar"/>
 				<include name="${javax_xml_soap-api_jar}"/>
 			</lib>
 
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
-				<include name="bcpkix-jdk15on-1.64.jar"/>
-				<include name="bcprov-ext-jdk15on-1.64.jar"/>
+				<include name="bcpkix-jdk15on-1.68.jar"/>
+				<include name="bcprov-ext-jdk15on-1.68.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			

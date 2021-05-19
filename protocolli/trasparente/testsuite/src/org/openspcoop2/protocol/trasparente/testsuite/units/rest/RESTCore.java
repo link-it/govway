@@ -800,12 +800,15 @@ public class RESTCore {
 					Assert.assertEquals(ctRisp.getParameter("type"), ctAttesoRisp.getParameter("type"), "Content-Type del file di risposta ["+ctRisp.getParameter("type")+"] diverso da quello atteso ["+ctAttesoRisp.getParameter("type")+"]");
 						
 				} else {
-					// viene appiattio, e' uguale
+					// viene appiattito, e' uguale
 					if(contentTypeAttesoRisposta.contains("; charset=")) {
 						contentTypeAttesoRisposta = contentTypeAttesoRisposta.replace("; charset=", ";charset=");
 					}
 					if(contentTypeAttesoRisposta.contains("\"UTF-8\"")) {
 						contentTypeAttesoRisposta = contentTypeAttesoRisposta.replace("\"UTF-8\"", "UTF-8");
+					}
+					if(contentTypeAttesoRisposta.equals("text/xml;") || contentTypeAttesoRisposta.equals("text/xml ;")) {
+						contentTypeAttesoRisposta = "text/xml";
 					}
 					Assert.assertEquals(contentTypeRisposta, contentTypeAttesoRisposta, "Content-Type del file di risposta ["+contentTypeRisposta+"] diverso da quello atteso ["+contentTypeAttesoRisposta+"]");
 				}

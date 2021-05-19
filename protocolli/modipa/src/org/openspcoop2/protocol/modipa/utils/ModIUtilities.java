@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
@@ -47,6 +48,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -406,37 +408,36 @@ public class ModIUtilities {
 		return Utilities.buildUrl(prefixGatewayUrl, contesto);
 	}
 	
-	public static String getSOAPHeaderReplyToValue(OpenSPCoop2SoapMessage msg) throws Exception {
-		SOAPHeaderElement hdrElement = getSOAPHeaderReplyTo(msg);
+	public static String getSOAPHeaderReplyToValue(MessageType messageType, SOAPHeader header, SOAPBody body) throws Exception {
+		SOAPHeaderElement hdrElement = getSOAPHeaderReplyTo(messageType, header, body);
 		return hdrElement!=null ? hdrElement.getValue() : null;
 	}
-	public static SOAPHeaderElement getSOAPHeaderReplyTo(OpenSPCoop2SoapMessage msg) throws Exception {
+	public static SOAPHeaderElement getSOAPHeaderReplyTo(MessageType messageType, SOAPHeader header, SOAPBody body) throws Exception {
 		ModIProperties modIProperties = ModIProperties.getInstance();
-		return getSOAPHeaderElement(msg, modIProperties.getSoapReplyToName(), 
-				modIProperties.useSoapBodyReplyToNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapReplyToNamespace(),
+		return getSOAPHeaderElement(messageType, header, modIProperties.getSoapReplyToName(), 
+				modIProperties.useSoapBodyReplyToNamespace() ? getSOAPChildBodyNamespace(body) : modIProperties.getSoapReplyToNamespace(),
 				modIProperties.getSoapReplyToActor());
 	}
-	public static String getSOAPHeaderCorrelationIdValue(OpenSPCoop2SoapMessage msg) throws Exception {
-		SOAPHeaderElement hdrElement = getSOAPHeaderCorrelationId(msg);
+	public static String getSOAPHeaderCorrelationIdValue(MessageType messageType, SOAPHeader header, SOAPBody body) throws Exception {
+		SOAPHeaderElement hdrElement = getSOAPHeaderCorrelationId(messageType, header, body);
 		return hdrElement!=null ? hdrElement.getValue() : null;
 	}
-	public static SOAPHeaderElement getSOAPHeaderCorrelationId(OpenSPCoop2SoapMessage msg) throws Exception {
+	public static SOAPHeaderElement getSOAPHeaderCorrelationId(MessageType messageType, SOAPHeader header, SOAPBody body) throws Exception {
 		ModIProperties modIProperties = ModIProperties.getInstance();
-		return getSOAPHeaderElement(msg, modIProperties.getSoapCorrelationIdName(), 
-				modIProperties.useSoapBodyCorrelationIdNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapCorrelationIdNamespace(),
+		return getSOAPHeaderElement(messageType, header, modIProperties.getSoapCorrelationIdName(), 
+				modIProperties.useSoapBodyCorrelationIdNamespace() ? getSOAPChildBodyNamespace(body) : modIProperties.getSoapCorrelationIdNamespace(),
 				modIProperties.getSoapCorrelationIdActor());
 	}
 	
-	public static SOAPHeaderElement getSOAPHeaderRequestDigest(OpenSPCoop2SoapMessage msg) throws Exception {
+	public static SOAPHeaderElement getSOAPHeaderRequestDigest(MessageType messageType, SOAPHeader header, SOAPBody body) throws Exception {
 		ModIProperties modIProperties = ModIProperties.getInstance();
-		return getSOAPHeaderElement(msg, modIProperties.getSoapRequestDigestName(), 
-				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapRequestDigestNamespace(),
+		return getSOAPHeaderElement(messageType, header, modIProperties.getSoapRequestDigestName(), 
+				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyNamespace(body) : modIProperties.getSoapRequestDigestNamespace(),
 				modIProperties.getSoapRequestDigestActor());
 	}
 	
-	public static SOAPHeaderElement getSOAPHeaderElement(OpenSPCoop2SoapMessage msg, String localName, String namespace, String actor) throws Exception {
-		
-		SOAPHeader header = msg.getSOAPHeader();
+	public static SOAPHeaderElement getSOAPHeaderElement(MessageType messageType, SOAPHeader header, String localName, String namespace, String actor) throws Exception {
+	
 		if(header==null){
 			return null;
 		}
@@ -453,7 +454,7 @@ public class ModIUtilities {
 			}
 			
 			//Controllo Actor
-			String actorCheck = SoapUtils.getSoapActor(headerElementCheck, msg.getMessageType());
+			String actorCheck = SoapUtils.getSoapActor(headerElementCheck, messageType);
 			if(actor==null) {
 				if(actorCheck==null) {
 					return headerElementCheck;
@@ -472,8 +473,8 @@ public class ModIUtilities {
 	public static void addSOAPHeaderReplyTo(OpenSPCoop2SoapMessage msg, String value) throws Exception {
 		ModIProperties modIProperties = ModIProperties.getInstance();
 		addSOAPHeaderElement(msg, modIProperties.getSoapReplyToName(), 
-				modIProperties.useSoapBodyReplyToNamespace() ? getSOAPChildBodyPrefix(msg) : modIProperties.getSoapReplyToPrefix(),
-				modIProperties.useSoapBodyReplyToNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapReplyToNamespace(),
+				modIProperties.useSoapBodyReplyToNamespace() ? getSOAPChildBodyPrefix(msg.getSOAPBody()) : modIProperties.getSoapReplyToPrefix(),
+				modIProperties.useSoapBodyReplyToNamespace() ? getSOAPChildBodyNamespace(msg.getSOAPBody()) : modIProperties.getSoapReplyToNamespace(),
 				modIProperties.getSoapReplyToActor(),
 				modIProperties.isSoapReplyToMustUnderstand(),
 				value);
@@ -481,8 +482,8 @@ public class ModIUtilities {
 	public static void addSOAPHeaderCorrelationId(OpenSPCoop2SoapMessage msg, String value) throws Exception {
 		ModIProperties modIProperties = ModIProperties.getInstance();
 		addSOAPHeaderElement(msg, modIProperties.getSoapCorrelationIdName(), 
-				modIProperties.useSoapBodyCorrelationIdNamespace() ? getSOAPChildBodyPrefix(msg) : modIProperties.getSoapCorrelationIdPrefix(),
-				modIProperties.useSoapBodyCorrelationIdNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapCorrelationIdNamespace(),
+				modIProperties.useSoapBodyCorrelationIdNamespace() ? getSOAPChildBodyPrefix(msg.getSOAPBody()) : modIProperties.getSoapCorrelationIdPrefix(),
+				modIProperties.useSoapBodyCorrelationIdNamespace() ? getSOAPChildBodyNamespace(msg.getSOAPBody()) : modIProperties.getSoapCorrelationIdNamespace(),
 				modIProperties.getSoapCorrelationIdActor(),
 				modIProperties.isSoapCorrelationIdMustUnderstand(),
 				value);
@@ -491,8 +492,8 @@ public class ModIUtilities {
 	public static SOAPHeaderElement addSOAPHeaderRequestDigest(OpenSPCoop2SoapMessage msg, NodeList value) throws Exception {
 		ModIProperties modIProperties = ModIProperties.getInstance();
 		return addSOAPHeaderElement(msg, modIProperties.getSoapRequestDigestName(), 
-				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyPrefix(msg) : modIProperties.getSoapRequestDigestPrefix(),
-				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyNamespace(msg) : modIProperties.getSoapRequestDigestNamespace(),
+				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyPrefix(msg.getSOAPBody()) : modIProperties.getSoapRequestDigestPrefix(),
+				modIProperties.useSoapBodyRequestDigestNamespace() ? getSOAPChildBodyNamespace(msg.getSOAPBody()) : modIProperties.getSoapRequestDigestNamespace(),
 				modIProperties.getSoapRequestDigestActor(),
 				modIProperties.isSoapRequestDigestMustUnderstand(),
 				value);
@@ -501,7 +502,7 @@ public class ModIUtilities {
 	public static SOAPHeaderElement addSOAPHeaderElement(OpenSPCoop2SoapMessage msg, String localName, String prefix, String namespace, String actor, boolean mustUnderstand, Object value) throws Exception {
 		
 		// se gia esiste aggiorno il valore
-		SOAPHeaderElement hdrElement = getSOAPHeaderElement(msg, localName, namespace, actor);
+		SOAPHeaderElement hdrElement = getSOAPHeaderElement(msg.getMessageType(), msg.getSOAPHeader(), localName, namespace, actor);
 		
 		if(hdrElement==null) {
 			SOAPHeader header = msg.getSOAPHeader();
@@ -533,24 +534,24 @@ public class ModIUtilities {
 		return hdrElement;
 	}
 	
-	private static String getSOAPChildBodyNamespace(OpenSPCoop2SoapMessage msg) throws Exception {
+	private static String getSOAPChildBodyNamespace(SOAPBody soapBody) throws Exception {
 		
-		if(msg.getSOAPBody()==null) {
+		if(soapBody==null) {
 			throw new Exception("Messaggio senza Body");
 		}
-		SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(msg.getSOAPBody());
+		SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
 		if(child==null) {
 			throw new Exception("Messaggio senza un contenuto nel Body");
 		}
 		return child.getNamespaceURI();
 	}
 	
-	private static String getSOAPChildBodyPrefix(OpenSPCoop2SoapMessage msg) throws Exception {
+	private static String getSOAPChildBodyPrefix(SOAPBody soapBody) throws Exception {
 		
-		if(msg.getSOAPBody()==null) {
+		if(soapBody==null) {
 			throw new Exception("Messaggio senza Body");
 		}
-		SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(msg.getSOAPBody());
+		SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
 		if(child==null) {
 			throw new Exception("Messaggio senza un contenuto nel Body");
 		}

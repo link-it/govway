@@ -31,11 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -69,8 +71,10 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	protected OpenSPCoop2Properties openspcoopProperties;
 	protected OpenSPCoop2Message message;
 	protected InputStream is;
+	protected TimeoutInputStream _timeoutIS;
 	protected DumpByteArrayOutputStream buffer;
 	protected boolean buffered = false;
+	protected OpenSPCoop2MessageSoapStreamReader soapReader;
 	protected Logger log;
 	protected String idModulo;
 	private IDService idModuloAsIDService;
@@ -120,11 +124,28 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}
 		this.soglia = soglia;
 		this.repositoryFile = repositoryFile;
+		
+		if(this._timeoutIS!=null && this.context!=null) {
+			this._timeoutIS.updateContext(this.context.getContext());
+		}
 	}
 	
 	@Override
 	public void setRequestReadTimeout(int timeout) {
 		this.requestReadTimeout = timeout;
+		if(this._timeoutIS!=null) {
+			try {
+				this._timeoutIS.updateThreshold(this.requestReadTimeout);
+			}catch(Exception e) {
+				throw new RuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se timeout e' maggiore di 0
+			}
+		}
+	}
+	@Override
+	public void disableReadTimeout() {
+		if(this._timeoutIS!=null) {
+			this._timeoutIS.disableCheckTimeout();
+		}
 	}
 	private InputStream buildTimeoutInputStream() throws IOException {
 		
@@ -134,10 +155,15 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			}
 		}
 		
+		if(this.is!=null && this.soapReader!=null) {
+			return this.is; // stream timeout gia' utilizzato per il soapReader
+		}
+		
 		if(this.is!=null && this.requestReadTimeout>0) {
-			this.is = new TimeoutInputStream(this.is, this.requestReadTimeout,
+			this._timeoutIS = new TimeoutInputStream(this.is, this.requestReadTimeout,
 					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
 					this.context!=null ? this.context.getContext() : null);
+			this.is = this._timeoutIS;
 		}
 		return this.is;
 	}
@@ -211,13 +237,34 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			throw new ConnectorException(e.getMessage(),e);
 		}
 	}
-		
+	
+	@Override
+	public OpenSPCoop2MessageSoapStreamReader getSoapReader() throws ConnectorException{
+		try{
+			if(this.openspcoopProperties.useSoapMessageReader()) {
+				if(this.buffered) {
+					return null; // deve essere chiamato prima
+				}
+				String contentType = getContentType();
+				if(contentType!=null) {
+					this.soapReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), contentType, 
+							this.buildTimeoutInputStream(), this.openspcoopProperties.getSoapMessageReaderBufferThresholdKb());
+					this.is = this.soapReader.read();
+				}
+				return this.soapReader;
+			}
+			return null;
+		}catch(Exception e){
+			throw new ConnectorException(e.getMessage(),e);
+		}
+	}
+	
 	@Override
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException{
 		try{
 			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
-					this.buildTimeoutInputStream(),notifierInputStreamParams,
+					this.buildTimeoutInputStream(),notifierInputStreamParams, this.soapReader,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return pr;
@@ -247,7 +294,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			}
 			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
-					in,notifierInputStreamParams,
+					in,notifierInputStreamParams,this.soapReader,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return pr;

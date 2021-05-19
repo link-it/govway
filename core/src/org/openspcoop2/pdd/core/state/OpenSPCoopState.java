@@ -96,11 +96,15 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 		stateless.connessioneInizializzata = stateful.connessioneInizializzata;
 		
 		StatelessMessage tempRichiesta = new StatelessMessage(stateful.getConnectionDB(),stateful.logger);
-		tempRichiesta.setPreparedStatement(((StateMessage) stateful.getStatoRichiesta()).getPreparedStatement());
+		if(stateful.getStatoRichiesta()!=null) {
+			tempRichiesta.setPreparedStatement(((StateMessage) stateful.getStatoRichiesta()).getPreparedStatement());
+		}
 		stateless.setStatoRichiesta(new StatelessMessage(tempRichiesta));
 		
 		StatelessMessage tempRisposta = new StatelessMessage(stateful.getConnectionDB(),stateful.logger);
-		tempRisposta.setPreparedStatement(((StateMessage) stateful.getStatoRisposta()).getPreparedStatement());
+		if(stateful.getStatoRisposta()!=null) {
+			tempRisposta.setPreparedStatement(((StateMessage) stateful.getStatoRisposta()).getPreparedStatement());
+		}
 		stateless.setStatoRisposta(new StatelessMessage(tempRisposta));
 		
 		return stateless;
@@ -349,6 +353,14 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 	}
 	public void setConnectionDB(Connection connectionDB) {
 		this.connectionDB = connectionDB;
+	}
+	
+	public boolean isUseConnection() {
+		return this.useConnection;
+	}
+
+	public void setUseConnection(boolean useConnection) {
+		this.useConnection = useConnection;
 	}
 
 }

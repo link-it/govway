@@ -30,6 +30,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -228,11 +229,6 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 		this.attuale=this.attuale+b.length;
 		super.writeBytes(b);
 	}
-	
-	@Override
-	public synchronized void writeTo(OutputStream out) throws IOException {
-		throw new IOException("NotImplemented");
-	}
 
 	@Override
 	public synchronized void reset() {
@@ -275,6 +271,26 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 	}
 	
 	
+	
+	@Override
+	public synchronized void writeTo(OutputStream out) throws IOException {
+		try {
+			this.close();
+		}catch(Throwable e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		if(this.f!=null) {
+			try {
+				CopyStream.copy(this.f, out);
+			}catch(Throwable e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+		else {
+			super.writeTo(out);
+		}
+	}
+
 	
 	@Override
 	public synchronized byte[] toByteArray() {

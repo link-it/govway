@@ -1142,6 +1142,7 @@ public class CostantiTestSuite {
 	public static final String ERROR_TYPE_BAD_REQUEST = "BadRequest";
 	public static final String ERROR_TYPE_INVALID_RESPONSE = "InvalidResponse";
 	public static final String ERROR_TYPE_APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED = "ApplicationCorrelationIdentificationRequestFailed";
+	public static final String ERROR_TYPE_UNPROCESSABLE_REQUEST_CONTENT = "UnprocessableRequestContent";
 
 	public static final String ID_CORRELAZIONE_MESSAGGI_JSON = "223242424_32323_ABDKD_233";
 }

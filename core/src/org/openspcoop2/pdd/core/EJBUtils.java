@@ -76,6 +76,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUti
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.node.INodeSender;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
+import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.core.transazioni.GestoreConsegnaMultipla;
@@ -119,6 +120,7 @@ import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -1821,7 +1823,8 @@ public class EJBUtils {
 								Costanti.INBOX,this.msgDiag,this.pddContext);
 						RepositoryBuste repositoryBusteNewMessaggio = new RepositoryBuste(stateNuoviMessaggi.getStatoRichiesta(),true, this.protocolFactory);
 						Timestamp oraRegistrazione = _forceSaveMessage(this.propertiesReader, gestoreNewMessaggio, null, bustaNewMessaggio, richiestaApplicativa, repositoryBusteNewMessaggio,
-								behaviourForwardTo.getMessage(),stateNuoviMessaggi); // per eventuale thread riconsegna in caso di errore
+								behaviourForwardTo.getMessage(),stateNuoviMessaggi,
+								this.pddContext, this.identitaPdD); // per eventuale thread riconsegna in caso di errore
 	//					if(stateless){
 	//						((OpenSPCoopStateless)this.openSPCoopState).setRichiestaMsg(behaviourForwardTo.getMessage());
 	//					}
@@ -2182,7 +2185,8 @@ public class EJBUtils {
 			EJBUtilsMessaggioInConsegnaEsito esito = sendMessages(this.log, this.msgDiag, state, this.idSessione, 
 					repositoryBuste, gestoreMessaggi, this.nodeSender, 
 					this.protocolFactory, this.identitaPdD, nomePorta, messaggiInConsegna,
-					spedizioneConsegnaContenuti);
+					spedizioneConsegnaContenuti,
+					this.pddContext);
 		
 			this.gestioneSolamenteConIntegrationManager = esito.isGestioneSolamenteConIntegrationManager();
 			this.gestioneStatelessConIntegrationManager = esito.isGestioneStatelessConIntegrationManager();
@@ -2194,7 +2198,8 @@ public class EJBUtils {
 			RepositoryBuste repositoryBuste, GestoreMessaggi gestoreMessaggi, INodeSender nodeSender, 
 			IProtocolFactory<?> protocolFactory,IDSoggetto identitaPdD, String idModulo,
 			EJBUtilsMessaggioInConsegna message,
-			boolean spedizioneConsegnaContenuti) throws Exception {
+			boolean spedizioneConsegnaContenuti,
+			PdDContext pddContext) throws Exception {
 		
 		EJBUtilsMessaggioInConsegnaEsito esito = new EJBUtilsMessaggioInConsegnaEsito();
 		
@@ -2350,7 +2355,8 @@ public class EJBUtils {
 					if(idBustaPreBehaviourNewMessage==null && registrazioneMessaggioPerStatelessEffettuata==false){
 						//  Memorizzazione Stateless
 						_forceSaveMessage(propertiesReader, gestoreMessaggi, gestoreMessaggi.getOraRegistrazioneMessaggio(), busta, richiestaApplicativa, repositoryBuste,
-								((OpenSPCoopStateless)state).getRichiestaMsg(),state);
+								((OpenSPCoopStateless)state).getRichiestaMsg(),state,
+								pddContext, identitaPdD);
 						registrazioneMessaggioPerStatelessEffettuata=true;
 					}
 					// Forzo oneway1.1 per farlo registrare anche se siamo in stateless puro
@@ -2377,7 +2383,17 @@ public class EJBUtils {
 
 	private static java.sql.Timestamp _forceSaveMessage(OpenSPCoop2Properties propertiesReader, GestoreMessaggi gestoreMessaggi, Timestamp oraRegistrazione,
 			Busta busta,RichiestaApplicativa richiestaApplicativa,RepositoryBuste repositoryBuste,
-			OpenSPCoop2Message message,IOpenSPCoopState state) throws Exception{
+			OpenSPCoop2Message message,IOpenSPCoopState state,
+			PdDContext pddContext, IDSoggetto identitaPdD) throws Exception{
+		
+		if( state.resourceReleased()) {
+			((OpenSPCoopState)state).setUseConnection(true);
+			String idTransazione = (String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			((OpenSPCoopState)state).initResource(identitaPdD, "EJBUtils.saveMessage", idTransazione);
+			gestoreMessaggi.updateOpenSPCoopState(state);
+			repositoryBuste.updateState(state.getStatoRichiesta());
+		}
+		
 		java.sql.Timestamp oraRegistrazioneT = gestoreMessaggi.registraInformazioniMessaggio_statelessEngine(oraRegistrazione, 
 				ConsegnaContenutiApplicativi.ID_MODULO,busta.getRiferimentoMessaggio(),
 				richiestaApplicativa.getIdCorrelazioneApplicativa(),null);
@@ -2660,7 +2676,14 @@ public class EJBUtils {
 	 */
 	public void sendAsRispostaBustaErrore_inoltroSegnalazioneErrore(Busta busta,List<Eccezione> eccezioni)throws EJBUtilsException,ProtocolException{ 
 		
-		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		//String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		// Fix devo utilizzare un id di transazione differente
+		String idTransazione = null;
+		try {
+			idTransazione = UniqueIdentifierManager.newUniqueIdentifier().getAsString();
+		}catch(Exception e) {
+			throw new EJBUtilsException(e.getMessage(),e);
+		}
 
 		//Costruisco busta Errore 
 		Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory,this.openSPCoopState.getStatoRichiesta());

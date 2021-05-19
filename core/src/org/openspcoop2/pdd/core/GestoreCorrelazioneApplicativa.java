@@ -43,10 +43,8 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
-import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
-import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -126,6 +124,8 @@ public class GestoreCorrelazioneApplicativa {
 	private IProtocolFactory<?> protocolFactory = null;
 	/** Transaction */
 	private Transaction transaction;
+	/** PddContext */
+	private PdDContext pddContext;
 	
 	private int maxLengthCorrelazioneApplicativa = 255;
 
@@ -140,7 +140,7 @@ public class GestoreCorrelazioneApplicativa {
 	 */
 	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
-			Transaction transaction){
+			Transaction transaction, PdDContext pddContext){
 		this.state = state;
 		if(alog!=null){
 			this.log = alog;
@@ -153,6 +153,7 @@ public class GestoreCorrelazioneApplicativa {
 		this.protocolFactory = protocolFactory;
 		this.maxLengthCorrelazioneApplicativa = OpenSPCoop2Properties.getInstance().getMaxLengthCorrelazioneApplicativa();
 		this.transaction = transaction;
+		this.pddContext = pddContext;
 	}
 	/**
 	 * Costruttore. 
@@ -161,10 +162,12 @@ public class GestoreCorrelazioneApplicativa {
 	public GestoreCorrelazioneApplicativa(IState state,Logger alog,
 			IProtocolFactory<?> protocolFactory,
 			Transaction transaction){
-		this(state,alog,null,null,null,protocolFactory,transaction);
+		this(state,alog,null,null,null,protocolFactory,transaction, null);
 	}
 
-
+	public void updateState(IState state){
+		this.state = state;
+	}
 	
 	
 	
@@ -172,13 +175,13 @@ public class GestoreCorrelazioneApplicativa {
 	
 	/* *********** GESTIONE CORRELAZIONE APPLICATIVA (RICHIESTA) ************ */
 
-	public boolean verificaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,
+	public void verificaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,
 			URLProtocolContext urlProtocolContext,OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
 		if(this.transaction!=null) {
 			this.transaction.getTempiElaborazione().startCorrelazioneApplicativaRichiesta();
 		}
 		try {
-			return this._verificaCorrelazione(correlazioneApplicativa, urlProtocolContext, message, headerIntegrazione, readFirstHeaderIntegrazione);
+			this._verificaCorrelazione(correlazioneApplicativa, urlProtocolContext, message, headerIntegrazione, readFirstHeaderIntegrazione);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -186,7 +189,17 @@ public class GestoreCorrelazioneApplicativa {
 			}
 		}
 	}
-	private boolean _verificaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,
+	public boolean verificaCorrelazioneIdentificativoRichiesta() throws GestoreMessaggiException, ProtocolException{
+		try {
+			return this._verificaCorrelazioneIdentificativoRichiesta();
+		}
+		finally {
+			if(this.transaction!=null) {
+				this.transaction.getTempiElaborazione().endCorrelazioneApplicativaRichiesta(); // sovrascrivo precedente data
+			}
+		}
+	}
+	private void _verificaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,
 			URLProtocolContext urlProtocolContext,OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
 
 		if(correlazioneApplicativa==null){
@@ -198,20 +211,14 @@ public class GestoreCorrelazioneApplicativa {
 		Element element = null;
 		String elementJson = null;
 		try{
-			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
-				element = soapMessage.getSOAPPart().getEnvelope();
+			String idTransazione = null;
+			if(this.pddContext!=null) {
+				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			}
-			else{
-				if(MessageType.XML.equals(message.getMessageType())){
-					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
-					element = xml.getContent();	
-				}
-				else if(MessageType.JSON.equals(message.getMessageType())){
-					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
-					elementJson = json.getContent();
-				}
-			}
+			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
+			element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessage_readOnly, idTransazione);
+			elementJson = MessageUtils.getContentString(message, bufferMessage_readOnly, idTransazione);
 		}catch(Exception e){
 			throw new GestoreMessaggiException(e.getMessage(),e);
 		}
@@ -570,13 +577,19 @@ public class GestoreCorrelazioneApplicativa {
 						getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa non identificato; nessun elemento tra quelli di correlazione definiti, sono presenti nel body");
 				throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 			}else{
-				return false;
+				return;
 			}
 		}else{			
 			this.idCorrelazione = idCorrelazioneApplicativa;
 		}
 
+		return;
+	}
+	
+	private boolean _verificaCorrelazioneIdentificativoRichiesta() throws GestoreMessaggiException, ProtocolException{
+		
 		/** Fase di verifica dell'id di correlazione con l'id */
+		
 		if(this.riusoIdentificativo){
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -597,7 +610,7 @@ public class GestoreCorrelazioneApplicativa {
 						" TIPO_MITTENTE=? AND MITTENTE=? AND TIPO_DESTINATARIO=? AND DESTINATARIO=? AND TIPO_SERVIZIO=? AND SERVIZIO=? AND VERSIONE_SERVIZIO=? AND "+valoreAzione);
 				pstmt = connectionDB.prepareStatement(query.toString());
 				int index = 1;
-				pstmt.setString(index++,idCorrelazioneApplicativa);
+				pstmt.setString(index++,this.idCorrelazione);
 				pstmt.setString(index++,this.servizioApplicativo);
 				pstmt.setString(index++,this.soggettoFruitore.getTipo());
 				pstmt.setString(index++,this.soggettoFruitore.getNome());
@@ -673,20 +686,14 @@ public class GestoreCorrelazioneApplicativa {
 		Element element = null;
 		String elementJson = null;
 		try{
-			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
-				element = soapMessage.getSOAPPart().getEnvelope();
+			String idTransazione = null;
+			if(this.pddContext!=null) {
+				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			}
-			else{
-				if(MessageType.XML.equals(message.getMessageType())){
-					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
-					element = xml.getContent();	
-				}
-				else if(MessageType.JSON.equals(message.getMessageType())){
-					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
-					elementJson = json.getContent();
-				}
-			}
+			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
+			element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessage_readOnly, idTransazione);
+			elementJson = MessageUtils.getContentString(message, bufferMessage_readOnly, idTransazione);
 		}catch(Exception e){
 			throw new GestoreMessaggiException(e.getMessage(),e);
 		}

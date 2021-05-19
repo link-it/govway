@@ -33,6 +33,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -548,7 +549,15 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				}
 				try{
 					if(this.responseMsg!=null){
-						this.responseMsg.castAsSoap().getSOAPPart().getEnvelope();
+						if(this.responseMsg instanceof AbstractOpenSPCoop2Message_soap_impl) {
+							AbstractOpenSPCoop2Message_soap_impl<?> soap = (AbstractOpenSPCoop2Message_soap_impl<?>) this.responseMsg;
+							if(!soap.hasContent()) {
+								this.responseMsg = null;
+							}
+						}
+						else {
+							this.responseMsg.castAsSoap().getSOAPPart().getEnvelope();
+						}
 					}
 				}
 				catch(Exception e){
@@ -585,8 +594,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				if(this.responseMsg!=null){
 					// save changes.
 					// N.B. il countAttachments serve per il msg con attachments come saveMessage!
-					if(this.responseMsg.castAsSoap().countAttachments()==0){
-						this.responseMsg.castAsSoap().getSOAPPart();
+					if(this.responseMsg.castAsSoap().hasAttachments()) {
+						if(this.responseMsg.castAsSoap().countAttachments()==0){
+							this.responseMsg.castAsSoap().getSOAPPart();
+						}
 					}
 				}
 			}catch(Exception e){

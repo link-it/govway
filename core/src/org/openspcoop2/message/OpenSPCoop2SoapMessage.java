@@ -42,6 +42,7 @@ import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.soap.reference.Reference;
 import org.w3c.dom.Element;
 
@@ -59,11 +60,18 @@ import org.w3c.dom.Element;
 
 public interface OpenSPCoop2SoapMessage extends OpenSPCoop2Message {
 	
+	/* Informazioni SOAP (senza costruire il DOM) */
+	
+	public OpenSPCoop2MessageSoapStreamReader getSoapReader() throws MessageException,MessageNotSupportedException;
+	
+	
 	/* Elementi SOAP */
 	
 	public SOAPMessage getSOAPMessage() throws MessageException,MessageNotSupportedException;
 	public SOAPPart getSOAPPart() throws MessageException,MessageNotSupportedException;
 	public SOAPBody getSOAPBody() throws MessageException,MessageNotSupportedException;
+	public boolean hasSOAPFault() throws MessageException,MessageNotSupportedException;
+	public boolean isSOAPBodyEmpty() throws MessageException,MessageNotSupportedException;
 	public SOAPHeader getSOAPHeader() throws MessageException,MessageNotSupportedException;
 	
 	
@@ -72,6 +80,7 @@ public interface OpenSPCoop2SoapMessage extends OpenSPCoop2Message {
 	public void addAttachmentPart(AttachmentPart attachmentPart) throws MessageException,MessageNotSupportedException;
 	public AttachmentPart createAttachmentPart(DataHandler dataHandler) throws MessageException,MessageNotSupportedException;
 	public AttachmentPart createAttachmentPart() throws MessageException,MessageNotSupportedException;
+	public boolean hasAttachments() throws MessageException,MessageNotSupportedException;
 	public int countAttachments() throws MessageException,MessageNotSupportedException;
 	public Iterator<?> getAttachments() throws MessageException,MessageNotSupportedException;
 	public Iterator<?> getAttachments(MimeHeaders headers) throws MessageException,MessageNotSupportedException;
@@ -114,6 +123,10 @@ public interface OpenSPCoop2SoapMessage extends OpenSPCoop2Message {
 	public List<Reference> getWSSDirtyElements(String actor, boolean mustUnderstand) throws MessageException,MessageNotSupportedException;
 	
 	public void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> elementsToClean, boolean detachHeaderWSSecurity, boolean removeAllIdRef) throws MessageException,MessageNotSupportedException;
+	
+	public boolean isThrowExceptionIfFoundMoreSecurityHeader();
+	public void setThrowExceptionIfFoundMoreSecurityHeader(boolean throwExceptionIfFoundMoreSecurityHeader);
+
 	
 	
 	/* Ws Security (SoapBox) */

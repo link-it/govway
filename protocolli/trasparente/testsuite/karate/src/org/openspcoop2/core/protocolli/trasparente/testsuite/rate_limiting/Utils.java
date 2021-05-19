@@ -42,7 +42,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste.NumeroRichiestePolicyInfo;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -52,6 +51,8 @@ import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.xml.XMLUtils;
+import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -229,25 +230,81 @@ public class Utils {
 
 
 	
-	
+	/*
+	 * Usare il metodo con i bytes, viene lasciato se servisse, ma la creazione di un XML a partire da un HTML produce un <META non chiuso
 	public static void matchLimitExceededSoap(Element element) {
+		_matchLimitSoap(element, "Limit Exceeded", "Limit exceeded detected");
+	}
+	public static void matchTooManyRequestsSoap(Element element) {
+		_matchLimitSoap(element, "Too Many Requests", "Too many requests detected");
+	}
+	*/
+	@SuppressWarnings("unused")
+	private static void _matchLimitSoap(Element element,String code, String details) {
+		
+		String forSearch = null;
 		try {
-			PatternExtractor matcher = new PatternExtractor(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), element, logRateLimiting);
-			assertEquals("Limit Exceeded", matcher.read("/html/head/title/text()"));
-			assertEquals("Limit Exceeded", matcher.read("/html/body/h1/text()"));
-			assertEquals("Limit exceeded detected", matcher.read("/html/body/p/text()"));
-		} catch (DynamicException e) {
-			throw new RuntimeException(e);
+			
+			try {
+				String s = XMLUtils.getInstance().toString(element);
+				if(s.contains("<META") && !s.contains("</META")) {
+					int fromIndex = s.indexOf("<META");
+					int endIndex = s.indexOf(">", fromIndex+"<META".length());
+					String meta = s.substring(fromIndex, endIndex+1);
+					//System.out.println("META ["+meta+"]");
+					forSearch = s.replace(meta, "");
+					//System.out.println("S FINALE ["+forSearch+"]");
+				}
+				else {
+					forSearch = s;
+				}
+			}catch(Throwable t) {
+				System.out.println("Errore: "+t.getMessage());
+				throw new Exception(t.getMessage(),t);
+			}
+			
+			XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
+			assertEquals(code, xpathEngine.getStringMatchPattern(forSearch, null, "/html/head/title/text()"));
+			assertEquals(code, xpathEngine.getStringMatchPattern(forSearch, null, "/html/body/h1/text()"));
+			assertEquals(details, xpathEngine.getStringMatchPattern(forSearch, null, "/html/body/p/text()"));
+		} catch (Exception e) {
+			String errore = "MESSAGGIO ERRATO '"+forSearch+"': ";
+			throw new RuntimeException(errore+e.getMessage(),e);
 		}
 	}
 	
 	
-	public static void matchApiUnavaliableSoap(Element element) throws DynamicException {
-		PatternExtractor matcher = new PatternExtractor(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), element, logRateLimiting);
-		assertEquals("env:Receiver", matcher.read("/Envelope/Body/Fault/Code/Value/text()"));
-		assertEquals("integration:APIUnavailable", matcher.read("/Envelope/Body/Fault/Code/Subcode/Value/text()"));
-		assertEquals("The API Implementation is temporary unavailable", matcher.read("/Envelope/Body/Fault/Reason/Text/text()"));
-		assertEquals("http://govway.org/integration", matcher.read("/Envelope/Body/Fault/Role/text()"));		
+	public static void matchLimitExceededSoap(byte[] element) {
+		_matchLimitSoap(element, "Limit Exceeded", "Limit exceeded detected");
+	}
+	public static void matchTooManyRequestsSoap(byte[] element) {
+		_matchLimitSoap(element, "Too Many Requests", "Too many requests detected");
+	}
+	private static void _matchLimitSoap(byte[] element,String code, String details) {
+		
+		String forSearch = null;
+		try {
+			
+			forSearch = new String(element);
+			
+			XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
+			assertEquals(code, xpathEngine.getStringMatchPattern(forSearch, null, "/html/head/title/text()"));
+			assertEquals(code, xpathEngine.getStringMatchPattern(forSearch, null, "/html/body/h1/text()"));
+			assertEquals(details, xpathEngine.getStringMatchPattern(forSearch, null, "/html/body/p/text()"));
+		} catch (Exception e) {
+			String errore = "MESSAGGIO ERRATO '"+forSearch+"': ";
+			throw new RuntimeException(errore+e.getMessage(),e);
+		}
+	}
+	
+	
+	public static void matchApiUnavaliableSoap(String idTransazione, Element element) throws DynamicException {
+		PatternExtractor matcher = PatternExtractor.getXmlPatternExtractor(element, logRateLimiting, false, null); 
+		String prefix = "env:";
+		assertEquals("idTransazione:"+idTransazione, prefix+"Receiver", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Code/"+prefix+"Value/text()"));
+		assertEquals("idTransazione:"+idTransazione, "integration:APIUnavailable", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Code/"+prefix+"Subcode/"+prefix+"Value/text()"));
+		assertEquals("idTransazione:"+idTransazione, "The API Implementation is temporary unavailable", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Reason/"+prefix+"Text/text()"));
+		assertEquals("idTransazione:"+idTransazione, "http://govway.org/integration", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Role/text()"));	
 	}
 	
 	
@@ -257,12 +314,13 @@ public class Utils {
 	 * @param element
 	 * @throws DynamicException
 	 */
-	public static void matchEchoFaultResponseSoap(Element element) throws DynamicException {
-		PatternExtractor matcher = new PatternExtractor(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), element, logRateLimiting);
-		assertEquals("env:Receiver", matcher.read("/Envelope/Body/Fault/Code/Value/text()"));
-		assertEquals("ns1:Server.OpenSPCoopExampleFault", matcher.read("/Envelope/Body/Fault/Code/Subcode/Value/text()"));
-		assertEquals("Fault ritornato dalla servlet di trace, esempio di OpenSPCoop", matcher.read("/Envelope/Body/Fault/Reason/Text/text()"));
-		assertEquals("OpenSPCoopTrace", matcher.read("/Envelope/Body/Fault/Role/text()"));
+	public static void matchEchoFaultResponseSoap(String idTransazione, Element element) throws DynamicException {
+		PatternExtractor matcher = PatternExtractor.getXmlPatternExtractor(element, logRateLimiting, false, null); 
+		String prefix = "env:";
+		assertEquals("idTransazione:"+idTransazione, prefix+"Receiver", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Code/"+prefix+"Value/text()"));
+		assertEquals("idTransazione:"+idTransazione, "ns1:Server.OpenSPCoopExampleFault", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Code/"+prefix+"Subcode/"+prefix+"Value/text()"));
+		assertEquals("idTransazione:"+idTransazione, "Fault ritornato dalla servlet di trace, esempio di OpenSPCoop", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Reason/"+prefix+"Text/text()"));
+		assertEquals("idTransazione:"+idTransazione, "OpenSPCoopTrace", matcher.read("/"+prefix+"Envelope/"+prefix+"Body/"+prefix+"Fault/"+prefix+"Role/text()"));
 	}
 	
 	

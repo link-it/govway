@@ -41,6 +41,7 @@ import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -104,31 +105,18 @@ public class WSDLValidator {
 	}
 	
 	/* ------ Costruttore -------------- */
-	private static Element _getEnvelopeCatchException(OpenSPCoop2Message msg) throws WSDLException {
+	private static Element _getEnvelopeCatchException(OpenSPCoop2Message msg, boolean bufferMessage_readOnly, String idTransazione) throws WSDLException {
 		try {
-			if(MessageType.SOAP_11.equals(msg.getMessageType()) || MessageType.SOAP_12.equals(msg.getMessageType())) {
-				if(msg.castAsSoap().getSOAPPart()==null){
-					throw new WSDLException("Messaggio (SOAPPArt) non fornito");
-				}
-				SOAPEnvelope envelope = msg.castAsSoap().getSOAPPart().getEnvelope();
-				if(envelope==null){
-					throw new WSDLException("Envelope non fornita");
-				}
-				return envelope;
-			}
-			else if (MessageType.XML.equals(msg.getMessageType())){
-				if(msg.castAsRestXml().hasContent()) {
-					return msg.castAsRestXml().getContent();
-				}
-			}
-			return null;
+			boolean checkSoapBodyEmpty = true;
+			return MessageUtils.getContentElement(msg, checkSoapBodyEmpty, bufferMessage_readOnly, idTransazione);
 		}catch(Exception e){
 			throw new WSDLException(e.getMessage(),e);
 		}
 	}
 	public WSDLValidator(OpenSPCoop2Message msg,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log,
-			boolean gestioneXsiType_rpcLiteral, boolean addPrefixError)throws WSDLException{
-		this(msg.getMessageType(), _getEnvelopeCatchException(msg), xmlUtils, accordoServizioWrapper, log, gestioneXsiType_rpcLiteral, addPrefixError);
+			boolean gestioneXsiType_rpcLiteral, boolean addPrefixError,
+			boolean bufferMessage_readOnly, String idTransazione)throws WSDLException{
+		this(msg.getMessageType(), _getEnvelopeCatchException(msg,bufferMessage_readOnly,idTransazione), xmlUtils, accordoServizioWrapper, log, gestioneXsiType_rpcLiteral, addPrefixError);
 		this.openspcoop2Message = msg;
 	}
 	// Il costruttore sottostante non puo' sfruttare la funzionalita' addNamespaceXSITypeIfNotExists

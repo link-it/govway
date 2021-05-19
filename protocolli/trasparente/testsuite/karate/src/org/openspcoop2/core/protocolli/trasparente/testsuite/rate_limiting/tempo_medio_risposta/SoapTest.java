@@ -227,7 +227,8 @@ public class SoapTest extends ConfigLoader {
 			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.AvgTimeResponseReset)) <= windowSize);
 			assertEquals(429, r.getResultHTTPOperation());
 	
-			Utils.matchLimitExceededSoap(Utils.buildXmlElement(r.getContent()));
+			//org.w3c.dom.Element element = Utils.buildXmlElement(r.getContent());
+			Utils.matchLimitExceededSoap(r.getContent());
 			
 			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 			Utils.checkHeaderTooManyRequest(r);

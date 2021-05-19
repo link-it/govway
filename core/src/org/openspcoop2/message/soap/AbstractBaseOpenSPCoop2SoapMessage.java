@@ -22,16 +22,12 @@ package org.openspcoop2.message.soap;
 
 import java.util.List;
 
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.constants.Costanti;
-import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.context.MessageContext;
-import org.openspcoop2.message.context.Soap;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.mtom.MTOMUtilities;
@@ -47,41 +43,32 @@ import org.openspcoop2.message.soap.mtom.MtomXomReference;
  */
 public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpenSPCoop2Message implements OpenSPCoop2SoapMessage {
 
-	/* SOAPAction */
-	public String soapAction;
+	/* OpenSPCoop2SoapMessageCore */
+	public OpenSPCoop2SoapMessageCore soapCore;
 	
-	/* boolean throwExceptionIfFoundMoreSecurityHeader */
-	public boolean throwExceptionIfFoundMoreSecurityHeader = true; // se esistono due header con stesso actor e role viene normalmente lanciata una eccezione
-
-
 
 	public AbstractBaseOpenSPCoop2SoapMessage(OpenSPCoop2MessageFactory messageFactory) {
 		super(messageFactory);
+		this.soapCore = new OpenSPCoop2SoapMessageCore();
 	}
 	
 	
 	/* Copy Resources to another instance */
 	
+	public void copyResourceFrom(OpenSPCoop2SoapMessageCore core) {
+		core.copyInstanceFieldValueTo(this.soapCore);
+	}
+	
 	@Override
 	public MessageContext serializeResourcesTo() throws MessageException{
 		MessageContext messageContext = super.serializeResourcesTo();
-		Soap soap = new Soap();
-		soap.setSoapAction(this.soapAction);
-		messageContext.setSoap(soap);
-		return messageContext;
+		return this.soapCore.serializeResourcesTo(messageContext);
 	}
 	
 	@Override
 	public void readResourcesFrom(MessageContext messageContext) throws MessageException{
 		super.readResourcesFrom(messageContext);
-		
-		if(messageContext.getSoap()!=null) {
-			
-			/* SOAPAction */
-			if(messageContext.getSoap().getSoapAction()!=null) {
-				this.soapAction = messageContext.getSoap().getSoapAction();
-			}
-		}
+		this.soapCore.readResourcesFrom(messageContext);
 	}
 	
 	
@@ -91,25 +78,7 @@ public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpe
 	
 	@Override
 	public SOAPMessage getSOAPMessage() throws MessageException,MessageNotSupportedException{
-		try{
-			SOAPMessage soapMessage = this._getSOAPMessage();
-			if(soapMessage!=null){
-				soapMessage.setProperty(Costanti.SOAP_MESSAGE_PROPERTY_MESSAGE_TYPE, this.getMessageType());
-				
-				if(MessageType.SOAP_11.equals(this.getMessageType())) {
-					MimeHeaders mhs = soapMessage.getMimeHeaders();
-					mhs.removeHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
-					mhs.addHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, this.getSoapAction());
-				}
-			}
-			return soapMessage;
-		}
-		catch(MessageException me){
-			throw me;
-		}
-		catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
-		}
+		return this.soapCore.getSOAPMessage(this._getSOAPMessage(), this.getMessageType());
 	}
 	
 
@@ -117,12 +86,12 @@ public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpe
 	
 	@Override
 	public String getSoapAction(){
-		return this.soapAction;
+		return this.soapCore.getSoapAction();
 	}
 	
 	@Override
 	public void setSoapAction(String soapAction){
-		this.soapAction = soapAction;
+		this.soapCore.setSoapAction(soapAction);
 	}
 	
 	
@@ -155,11 +124,13 @@ public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpe
 	
 	/* WSSecurity */
 	
+	@Override
 	public boolean isThrowExceptionIfFoundMoreSecurityHeader() {
-		return this.throwExceptionIfFoundMoreSecurityHeader;
+		return this.soapCore.isThrowExceptionIfFoundMoreSecurityHeader();
 	}
 
+	@Override
 	public void setThrowExceptionIfFoundMoreSecurityHeader(boolean throwExceptionIfFoundMoreSecurityHeader) {
-		this.throwExceptionIfFoundMoreSecurityHeader = throwExceptionIfFoundMoreSecurityHeader;
+		this.soapCore.setThrowExceptionIfFoundMoreSecurityHeader(throwExceptionIfFoundMoreSecurityHeader);
 	}
 }

@@ -70,7 +70,18 @@
 		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
+				<if>
+					<or>
+						<matches string="${as}" pattern="wildfly22"/>
+						<matches string="${as}" pattern="wildfly23"/>
+					</or>
+					<then>
+						<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
+					</then>
+					<else>
+						<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
+					</else>
+				</if>
 			</then>
 		</if>
 
@@ -134,7 +145,7 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.64.jar"/>
+				<include name="bcprov-ext-jdk15on-1.68.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>

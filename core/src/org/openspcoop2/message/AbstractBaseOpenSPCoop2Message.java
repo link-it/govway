@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.soap.SOAPBody;
+
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -47,9 +49,11 @@ import org.openspcoop2.message.context.SerializedParameter;
 import org.openspcoop2.message.context.StringParameter;
 import org.openspcoop2.message.context.UrlParameters;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.TransportUtilities;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -898,21 +902,42 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		this.messageRole = messageRole;
 	}
 	
+	protected SOAPBody _getSOAPBody_internalAnalyze()throws MessageException, MessageNotSupportedException {
+		OpenSPCoop2SoapMessage soapMsg = this.castAsSoap();
+		return soapMsg.getSOAPBody();
+	}
 	@Override
 	public boolean isFault() throws MessageException {
 		try {
 			boolean isFault = false;
 			if(ServiceBinding.SOAP.equals(this.getServiceBinding())){
-				OpenSPCoop2SoapMessage soapMsg = this.castAsSoap();
-				boolean hasContent = soapMsg.getSOAPBody()!=null;
-				if(hasContent){
-					hasContent = SoapUtils.getFirstNotEmptyChildNode(this.messageFactory, soapMsg.getSOAPBody(), false)!=null;
+				if(MessageRole.FAULT.equals(this.getMessageRole())){
+					isFault =  true;
 				}
-				isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(this.getMessageRole());
+				else {				
+					OpenSPCoop2SoapMessage soapMsg = this.castAsSoap();		
+					OpenSPCoop2MessageSoapStreamReader soapReader = soapMsg.getSoapReader();
+					if(soapReader!=null && soapReader.isParsingComplete()) {
+						isFault = soapReader.isFault();
+					}
+					else {
+						SOAPBody soapBody = this._getSOAPBody_internalAnalyze();
+						boolean hasContent = soapBody!=null;
+						if(hasContent){
+							hasContent = SoapUtils.getFirstNotEmptyChildNode(this.messageFactory, soapBody, false)!=null;
+						}
+						isFault = (hasContent && soapBody.hasFault());
+					}
+				}
 			}
 			else{
-				OpenSPCoop2RestMessage<?> restMsg = this.castAsRest();
-				isFault = restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(this.getMessageRole());
+				if(MessageRole.FAULT.equals(this.getMessageRole())){
+					isFault =  true;
+				}
+				else {
+					OpenSPCoop2RestMessage<?> restMsg = this.castAsRest();
+					isFault = restMsg.isProblemDetailsForHttpApis_RFC7807();
+				}
 			}
 			return isFault;
 		}catch(Exception e) {

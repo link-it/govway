@@ -42,6 +42,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -275,7 +276,7 @@ public class RicezioneBusteService  {
 		}
 		
 		// Aggiorno RequestInfo
-		ConnectorDispatcherInfo cInfo = RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
+		ConnectorDispatcherInfo cInfo = RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, req, res,
 				this.generatoreErrore, serviceIdentificationReader,msgDiag, 
 				context!=null ? context.getPddContext(): null);
 		if(cInfo!=null){
@@ -303,6 +304,12 @@ public class RicezioneBusteService  {
 				if(timeout>0) {
 					req.setRequestReadTimeout(timeout);
 				}
+				else {
+					req.disableReadTimeout();
+				}
+			}
+			else {
+				req.disableReadTimeout();
 			}
 			
 			// DumpRaw
@@ -610,18 +617,7 @@ public class RicezioneBusteService  {
 				if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
 					requestMessage.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, (String) nomePortaInvocataObject );
 				}				
-				
-				/* ------------ Controllo MustUnderstand -------------------- */
-				String mustUnderstandError = null;
-				try{
-					if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
-						mustUnderstandError = ServicesUtils.checkMustUnderstand(requestMessage.castAsSoap(),protocolFactory);
-					}
-				}catch(Exception e){
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
-					throw e;
-				}
-				
+							
 				/* ------------ Controllo Soap namespace -------------------- */
 				String soapEnvelopeNamespaceVersionMismatch = null;
 				try{
@@ -633,6 +629,19 @@ public class RicezioneBusteService  {
 					throw e;
 				}
 	
+				/* ------------ Controllo MustUnderstand -------------------- */
+				String mustUnderstandError = null;
+				if(soapEnvelopeNamespaceVersionMismatch==null) {
+					try{
+						if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
+							mustUnderstandError = ServicesUtils.checkMustUnderstand(requestMessage.castAsSoap(),protocolFactory);
+						}
+					}catch(Exception e){
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+						throw e;
+					}
+				}
+				
 				/* ------------  SoapAction check 2 ------------- */
 				if(soapAction!=null){
 					if(openSPCoopProperties.checkSoapActionQuotedString_ricezioneBuste()){
@@ -1063,15 +1072,16 @@ public class RicezioneBusteService  {
 				// http status
 				boolean consume = true;
 				if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding()) ){
-					SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
-					if(body!=null && body.hasFault()){
+					//SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
+					OpenSPCoop2SoapMessage soapMessage = responseMessage.castAsSoap();
+					if(soapMessage.hasSOAPFault()){
 						consume = false; // può essere usato nel post out response handler
 						statoServletResponse = 500;
-						descrizioneSoapFault = " ("+SoapUtils.toString(responseMessage.getFactory(), body.getFault(), false)+")";
+						descrizioneSoapFault = " ("+SoapUtils.toString(responseMessage.getFactory(), soapMessage.getSOAPBody().getFault(), false)+")";
 					}
 					else if(statoServletResponse==500) {
 						// in SOAP 500 deve essere associato con un fault
-						if(body!=null && SoapUtils.getFirstNotEmptyChildNode(responseMessage.getFactory(), body, false)!=null) {
+						if(!soapMessage.isSOAPBodyEmpty()) {
 							statoServletResponse = 200;
 						}
 						else {

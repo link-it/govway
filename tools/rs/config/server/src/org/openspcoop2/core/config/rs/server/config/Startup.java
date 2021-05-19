@@ -146,15 +146,7 @@ public class Startup implements ServletContextListener {
 				throw new RuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
-			
-			Startup.log.info("Inizializzazione Connettori in corso...");
-			try{
-				Connettori.initialize(log, true, confDir, ServerProperties.getInstance().getProtocolloDefault());
-			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
-			}
-			Startup.log.info("Inizializzazione Connettori effettuata con successo");
-			
+						
 			Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
 			try {
 				ServerProperties serverProperties = ServerProperties.getInstance();
@@ -177,6 +169,14 @@ public class Startup implements ServletContextListener {
 				throw new RuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
+			
+			Startup.log.info("Inizializzazione Connettori in corso...");
+			try{
+				Connettori.initialize(log, true, confDir, ServerProperties.getInstance().getProtocolloDefault());
+			}catch(Exception e){
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione Connettori effettuata con successo");
 			
 			Startup.initializedResources = true;
 			

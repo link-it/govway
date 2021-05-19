@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -51,6 +52,7 @@ public interface ConnectorInMessage {
 	public void setThresholdContext(Context context, int soglia, File repositoryFile);
 	
 	public void setRequestReadTimeout(int timeout);
+	public void disableReadTimeout();
 	
 	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException;
 	public RequestInfo getRequestInfo();
@@ -68,6 +70,8 @@ public interface ConnectorInMessage {
 	public String getContentType() throws ConnectorException;
 	
 	public String getSOAPAction() throws ConnectorException;
+	
+	public OpenSPCoop2MessageSoapStreamReader getSoapReader() throws ConnectorException;
 	
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException;
 	

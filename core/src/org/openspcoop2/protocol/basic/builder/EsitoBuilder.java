@@ -32,6 +32,7 @@ import org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione
 import org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -208,10 +209,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		try{
 			
 					
-			SOAPBody soapBody = null;
+			//SOAPBody soapBody = null;
+			OpenSPCoop2SoapMessage soapMessage = null;
 			if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())
 					&& !message.isForcedEmptyResponse() && message.getForcedResponse()==null){
-				soapBody = message.castAsSoap().getSOAPBody();
+				//soapBody = message.castAsSoap().getSOAPBody();
+				soapMessage = message.castAsSoap();
 			}
 						
 			if(informazioniErroriInfrastrutturali==null){
@@ -246,6 +249,14 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			
 			// Esito 5xx
 			EsitoTransazione esitoErrore5xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+			
+			// Una richiesta o risposta malformata deve essere immediatamente riconosciuta prima di analizzare il contesto
+			if(informazioniErroriInfrastrutturali.isContenutoRichiestaNonRiconosciuto()){
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, tipoContext);
+			}
+			else if(informazioniErroriInfrastrutturali.isContenutoRispostaNonRiconosciuto()){
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, tipoContext);
+			}
 			
 			// Devo riconoscere eventuali codifiche custom inserite nel contesto
 			if(context!=null){
@@ -301,16 +312,18 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			}
 			
 			
-			if(informazioniErroriInfrastrutturali.isContenutoRichiestaNonRiconosciuto()){
-				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, tipoContext);
-			}
-			else if(informazioniErroriInfrastrutturali.isContenutoRispostaNonRiconosciuto()){
-				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, tipoContext);
-			}
-			else if(informazioniErroriInfrastrutturali.isErroreUtilizzoConnettore()){
+			// viene verificato prima del contesto, poiche' una richiesta o risposta malformata deve essere segnalata anche se avviene all'interno delle altre funzionalità
+//			if(informazioniErroriInfrastrutturali.isContenutoRichiestaNonRiconosciuto()){
+//				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, tipoContext);
+//			}
+//			else if(informazioniErroriInfrastrutturali.isContenutoRispostaNonRiconosciuto()){
+//				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, tipoContext);
+//			}
+//			else 
+			if(informazioniErroriInfrastrutturali.isErroreUtilizzoConnettore()){
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_INVOCAZIONE, tipoContext);
 			}
-			else if(soapBody!=null && soapBody.hasFault()){
+			else if(soapMessage!=null && soapMessage.hasSOAPFault()){
 				
 				Object erroreGovwayObject = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY);
 				String erroreGovway = null;
@@ -337,7 +350,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					}
 				}
 				
-				return getEsitoSoapFault(message, soapBody, erroreApplicativo, informazioniErroriInfrastrutturali, tipoContext);
+				return getEsitoSoapFault(message, soapMessage.getSOAPBody(), erroreApplicativo, informazioniErroriInfrastrutturali, tipoContext);
 			}
 			else if(message!=null) {
 				
@@ -383,9 +396,9 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					// body letto precedentemente
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
 						if(checkElementSeContieneFaultPdD) {
-							if(soapBody!=null) {
+							if(soapMessage!=null) {
 								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
-										erroreApplicativo, soapBody, tipoContext, erroreGovway, internalErrorCodeGovWay);
+										erroreApplicativo, soapMessage.getSOAPBody(), tipoContext, erroreGovway, internalErrorCodeGovWay);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}

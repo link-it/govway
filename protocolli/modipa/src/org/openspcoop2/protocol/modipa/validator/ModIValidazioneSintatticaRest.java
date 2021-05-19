@@ -370,6 +370,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
 			boolean buildSecurityTokenInRequest) throws Exception {
 		
+		boolean bufferMessage_readOnly = this.modiProperties.isValidazioneBufferEnabled();
+		String idTransazione = null;
+		if(this.context!=null) {
+			idTransazione = (String)this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
+		
 		String securityTokenHeader = headerTokenRest;
 		List<String> securityTokens = null;
 		if(msg!=null) {
@@ -780,7 +786,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				
 				// Produco Digest Headers
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				msg.writeTo(bout, false);
+				msg.castAsRest().writeTo(bout, false, bufferMessage_readOnly, idTransazione);
 				bout.flush();
 				bout.close();
 				

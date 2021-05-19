@@ -50,6 +50,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
@@ -201,8 +202,7 @@ public class GestoreTrasformazioni {
 		
 		// *** Lettura Contenuto Richiesta ****
 		
-		Element element = null;
-		String elementJson = null;
+		MessageContent messageContent = null;
 		boolean contenutoNonNavigabile = false;
 		Map<String, List<String>> parametriTrasporto = null;
 		Map<String, List<String>> parametriUrl = null;
@@ -210,18 +210,19 @@ public class GestoreTrasformazioni {
 		String urlInvocazione = null;
 		
 		try{
+			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
-				element = soapMessage.getSOAPPart().getEnvelope();
+				messageContent = new MessageContent(soapMessage, bufferMessage_readOnly, this.pddContext);
 			}
 			else{
 				if(MessageType.XML.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
-					element = xml.getContent();	
+					messageContent = new MessageContent(xml, bufferMessage_readOnly, this.pddContext);
 				}
 				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
-					elementJson = json.getContent();
+					messageContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
 				}
 				else {
 					contenutoNonNavigabile = true;
@@ -335,6 +336,14 @@ public class GestoreTrasformazioni {
 							continue; // no match
 						}
 						
+						String elementJson = null;
+						Element element = null;
+						if(messageContent.isJson()) {
+							elementJson = messageContent.getElementJson();
+						}
+						else {
+							element = messageContent.getElement();
+						}
 						if(element==null && elementJson==null){
 							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+message.getMessageType()+") senza contenuto");
 							continue; // no match
@@ -424,7 +433,7 @@ public class GestoreTrasformazioni {
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
 				message,
-				element, elementJson, 
+				messageContent,
 				busta, 
 				parametriTrasporto, 
 				parametriUrl,
@@ -448,7 +457,7 @@ public class GestoreTrasformazioni {
 			else {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
-								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", dynamicMap, message, element, this.pddContext);
+								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", dynamicMap, message, messageContent, this.pddContext);
 				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
 					trasformazioneContenuto = false;
 					this.log.debug("Trasformazione contenuto della richiesta disabilitato (Context Injection)");
@@ -538,7 +547,7 @@ public class GestoreTrasformazioni {
 				trasformazioneSoap_templateConversione = richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate();
 			}
 			
-			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, message, element, 
+			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, message, messageContent, 
 					this.requestInfo, dynamicMap, this.pddContext, this.op2Properties, 
 					trasporto, forceAddTrasporto,
 					url, forceAddUrl,
@@ -581,24 +590,24 @@ public class GestoreTrasformazioni {
 		
 		// *** Lettura Contenuto Risposta ****
 		
-		Element element = null;
-		String elementJson = null;
+		MessageContent messageContent = null;
 		boolean contenutoNonNavigabile = false;
 		Map<String, List<String>> parametriTrasporto = null;
 		int httpStatus = -1;
 		try{
+			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
-				element = soapMessage.getSOAPPart().getEnvelope();
+				messageContent = new MessageContent(soapMessage, bufferMessage_readOnly, this.pddContext);
 			}
 			else{
 				if(MessageType.XML.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
-					element = xml.getContent();	
+					messageContent = new MessageContent(xml, bufferMessage_readOnly, this.pddContext);
 				}
 				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
-					elementJson = json.getContent();
+					messageContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
 				}
 				else {
 					contenutoNonNavigabile = true;
@@ -690,6 +699,14 @@ public class GestoreTrasformazioni {
 							continue; // no match
 						}
 						
+						String elementJson = null;
+						Element element = null;
+						if(messageContent.isJson()) {
+							elementJson = messageContent.getElementJson();
+						}
+						else {
+							element = messageContent.getElement();
+						}
 						if(element==null && elementJson==null){
 							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+message.getMessageType()+") senza contenuto");
 							continue; // no match
@@ -760,7 +777,7 @@ public class GestoreTrasformazioni {
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapResponse(this.log, dynamicMap, this.dynamicMapRequest, this.pddContext, 
 				message,
-				element, elementJson, busta, parametriTrasporto,
+				messageContent, busta, parametriTrasporto,
 				errorHandler);
 		this.log.debug("Costruzione dynamic map completata");
 		
@@ -779,7 +796,7 @@ public class GestoreTrasformazioni {
 			else {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
-								trasformazioneRisposta.getConversioneTipo(), trasformazioneRisposta.getConversioneTemplate(), "risposta", dynamicMap, message, element, this.pddContext);
+								trasformazioneRisposta.getConversioneTipo(), trasformazioneRisposta.getConversioneTemplate(), "risposta", dynamicMap, message, messageContent, this.pddContext);
 				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
 					trasformazioneContenuto = false;
 					this.log.debug("Trasformazione contenuto della risposta disabilitato (Context Injection)");
@@ -874,7 +891,7 @@ public class GestoreTrasformazioni {
 				}
 			}
 			
-			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, message, element, 
+			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, message, messageContent, 
 					this.requestInfo, dynamicMap, this.pddContext, this.op2Properties, 
 					trasporto, forceAddTrasporto, 
 					null, null,

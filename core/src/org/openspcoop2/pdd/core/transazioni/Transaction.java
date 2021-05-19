@@ -60,8 +60,13 @@ public class Transaction {
 	private final Integer semaphore = 1;
 	private Boolean deleted = false;
 	public void setDeleted() {
-		synchronized (this.semaphore) {
-			this.deleted = true;	
+		if(this.gestioneStateful) {
+			synchronized (this.semaphore) {
+				this.deleted = true;	
+			}
+		}
+		else {
+			this.deleted = true;
 		}
 	}
 	

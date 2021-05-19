@@ -28,6 +28,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
+import java.security.Provider;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -46,7 +48,9 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.xpath.XPathFactory;
 
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
@@ -71,6 +75,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
+import org.openspcoop2.message.AbstractBaseOpenSPCoop2MessageDynamicContent;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -172,6 +177,7 @@ import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.security.message.WsuIdAllocator;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.security.utils.ExternalPWCallback;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -194,6 +200,8 @@ import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.slf4j.Logger;
+
+import com.sun.xml.messaging.saaj.soap.MessageImpl;
 
 
 
@@ -475,13 +483,36 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/*
+			 * Nella classe ./src/main/java/com/sun/xml/messaging/saaj/soap/EnvelopeFactory.java 
+			 * viene inizializzato un pool di sax parser che vengono usati per parsare il messaggio.
+			 * Questo poichè ogni parser non può essere utilizzato simultaneamente da thread diversi, altrimenti si ottiene l'errore "org.xml.sax.SAXException: FWK005 parse may not be called while parsing"
+			 * Per default viene inizializzato con un pool di 5
+			 * public class EnvelopeFactory {
+			 *    private static final String SAX_PARSER_POOL_SIZE_PROP_NAME = "com.sun.xml.messaging.saaj.soap.saxParserPoolSize";
+			 *	  private static final int DEFAULT_SAX_PARSER_POOL_SIZE = 5;
+			 **/
+			System.setProperty("com.sun.xml.messaging.saaj.soap.saxParserPoolSize", propertiesReader.getSoapMessageSaajSaxParserPoolSize()+"");
+			OpenSPCoop2Startup.log.info("saaj.soap.saxParserPoolSize="+propertiesReader.getSoapMessageSaajSaxParserPoolSize());
 			
-			
+			/*
+			 * ApacheXMLDSig: usato da wssecurity come XMLSignatureFactory, come si può vedere nella classe 'WSSecSignature'
+			 **/
+			if(propertiesReader.isLoadApacheXMLDSig()) {
+				String providerName_ApacheXMLDSig = "ApacheXMLDSig";
+				Provider currentProvider = Security.getProvider(providerName_ApacheXMLDSig);
+				if (currentProvider != null) {
+					Security.removeProvider(providerName_ApacheXMLDSig);
+				}
+				Security.insertProviderAt(new org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI(),2); // lasciare alla posizione 1 il provider 'SUN'
+				OpenSPCoop2Startup.log.info("Aggiunto Security Provider ApacheXMLDSig");
+			}
+	        			
 			/*
 			 * 	Necessario in jboss7 per evitare errore 'error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
 			 *  se vengono utilizzati keystore P12.
 			 *  Il codice  
-			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.64.jar" use-physical-code-source="true"/>
+			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.68.jar" use-physical-code-source="true"/>
 			 *  all'interno del file jboss-deployment-structure.xml non è più sufficiente da quanto è stato necessario
 			 *  introdurre il codice sottostante 'org.apache.wss4j.dom.engine.WSSConfig.init' 
 			 *  e di conseguenza tutta la configurazione del modulo 'deployment.custom.javaee.api'
@@ -489,10 +520,41 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 */
 			// NOTA: il caricamento di BouncyCastleProvider DEVE essere effettuato prima dell'inizializzazione 'org.apache.wss4j.dom.engine.WSSConfig.init' 
 			if(propertiesReader.isLoadBouncyCastle()){ 
-				Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+				//Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+				Security.insertProviderAt(new org.bouncycastle.jce.provider.BouncyCastleProvider(), 2); // lasciare alla posizione 1 il provider 'SUN'
 				OpenSPCoop2Startup.log.info("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+				
+				if(propertiesReader.getBouncyCastleSecureRandomAlgorithm()!=null) {
+			        try{
+				        SecureRandom secureRandom = SecureRandom.getInstance(propertiesReader.getBouncyCastleSecureRandomAlgorithm());
+				        CryptoServicesRegistrar.setSecureRandom(secureRandom);
+				        OpenSPCoop2Startup.log.info("Aggiunto default SecureRandom '"+secureRandom.getAlgorithm()+"' in CryptoServicesRegistrar di Bouncycastle");
+			        }catch(Exception e){
+						this.logError("Inizializzazione SecureRandom in BouncyCastle fallita",e);
+						return;
+					}
+				}
+				else {
+					SecureRandom secureRandom = CryptoServicesRegistrar.getSecureRandom();
+					if(secureRandom!=null) {
+						OpenSPCoop2Startup.log.info("SecureRandom used in CryptoServicesRegistrar di Bouncycastle: '"+secureRandom.getAlgorithm()+"'");
+					}
+				}
 			}
-			
+						
+			StringBuilder sb = new StringBuilder();
+			Provider[] providerList = Security.getProviders();
+	        sb.append("Security Providers disponibili sono "+providerList.length+":\n");
+	        for (int i = 0; i < providerList.length; i++) {
+	        	sb.append("[" + (i + 1) + "] - Name:"+ providerList[i].getName()+"\n");
+	        }
+	        OpenSPCoop2Startup.log.info(sb.toString());
+	        
+	        if(propertiesReader.getSecurityEgd()!=null) {
+	        	System.setProperty("java.security.egd", propertiesReader.getSecurityEgd());
+	        	OpenSPCoop2Startup.log.info("Aggiunta proprietà java.security.egd="+propertiesReader.getSecurityEgd());
+	        }
+	        			
 			/* ------------ 
 			 * Inizializzazione Resource Bundle:
 			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.1.2.jar)
@@ -519,6 +581,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}catch(Exception e){
 				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
 				return;
+			}
+			if(propertiesReader.getWsuIdSecureRandomAlgorithm()!=null) {
+				WsuIdAllocator.setSecureRandomAlgorithm(propertiesReader.getWsuIdSecureRandomAlgorithm());
+				OpenSPCoop2Startup.log.info("SecureRandom used in WsuIdAllocator per WS-Security: '"+propertiesReader.getWsuIdSecureRandomAlgorithm()+"'");
 			}
 			
 			/* ------------ 
@@ -690,12 +756,44 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// MessageFactory
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
 				OpenSPCoop2MessageFactory.initDefaultMessageFactory(true);
+				
+				// Buffer
+				OpenSPCoop2Startup.log.info("DumpBinario set buffer threshold: "+propertiesReader.getDumpBinario_inMemoryThreshold());
+				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoglia(propertiesReader.getDumpBinario_inMemoryThreshold());
+				OpenSPCoop2Startup.log.info("DumpBinario set buffer repository: "+propertiesReader.getDumpBinario_repository());
+				AbstractBaseOpenSPCoop2MessageDynamicContent.setRepositoryFile(propertiesReader.getDumpBinario_repository());
+				
+				// SoapBuffer
+				boolean soapReader = propertiesReader.useSoapMessageReader();
+				OpenSPCoop2Startup.log.info("SOAPMessageReader enabled="+soapReader);
+				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoapReader(soapReader);
+				OpenSPCoop2Startup.log.info("SOAPMessageReader set buffer threshold (kb): "+propertiesReader.getSoapMessageReaderBufferThresholdKb());
+				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoapReaderBufferThresholdKb(propertiesReader.getSoapMessageReaderBufferThresholdKb());
+				
+				// SoapPassthrough
+				boolean soapPassthroughImpl = propertiesReader.useSoapMessagePassthrough();
+				OpenSPCoop2Startup.log.info("OpenSPCoop2MessageFactory_impl soapPassthroughImpl="+soapPassthroughImpl);
+				OpenSPCoop2MessageFactory_impl.setSoapPassthroughImpl(soapPassthroughImpl);
 								
 				// Locale SOAPFault String
 				Locale localeSoapFaultString = propertiesReader.getLocaleSOAPFaultString();
 				if(localeSoapFaultString!=null) {
 					OpenSPCoop2Startup.log.info("Locale SOAPFault String: "+localeSoapFaultString);
 					SoapUtils.setSoapFaultStringLocale(localeSoapFaultString);
+				}
+				
+				// ContentType per SOAP 1.2 (ulteriori Content-Type oltre a application/soap+xml e application/soap+fastinfoset)
+				MessageImpl.alternativeAcceptedContentType1_2 = propertiesReader.getAlternativeContentTypeSoap12();
+				if(MessageImpl.alternativeAcceptedContentType1_2!=null && !MessageImpl.alternativeAcceptedContentType1_2.isEmpty()) {
+					StringBuilder sbCT = new StringBuilder();
+					for (String alternativeContentType : MessageImpl.alternativeAcceptedContentType1_2) {
+						if(sbCT.length()>0) {
+							sbCT.append(", ");
+						}
+						sbCT.append(alternativeContentType);
+					}
+					OpenSPCoop2Startup.log.info("Registrati ulteriori '"+MessageImpl.alternativeAcceptedContentType1_2.size()+"' content-type associabili ai messaggi SOAP 1.2: "+sbCT.toString());
+					
 				}
 				
 				// MessageSecurity
@@ -743,7 +841,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						// XML - XERCES
 						xmlUtils.initDocumentBuilderFactory();
 						xmlUtils.initDatatypeFactory();
-//						xmlUtils.initSAXParserFactory();
+						xmlUtils.initSAXParserFactory();
 //						xmlUtils.initXMLEventFactory();
 						xmlUtils.initSchemaFactory();
 						// XML - XALAN
@@ -756,6 +854,37 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						factory.getSoapFactory11();
 						factory.getSoapFactory12();
 						factory.getSoapMessageFactory();
+						
+						/*
+						 * Le seguenti inizializzazione servono alle varie factory per evitare di scorrere il classloader a cercare i jar che contengono l'implementazione da utilizzare.
+						 * Lo scan del classloader comporta l'apertura dei vari file jar e quindi il decadimento delle performance poichè i thread risultano bloccati sulla chiamata di apertura del jar
+						 * 
+						 * Esempio di stack che riporta il problema:
+						 * java.util.zip.ZipFile.open(Native Method)
+						 * java.util.zip.ZipFile.(ZipFile.java:219)
+						 * ...
+						 * org.apache.catalina.webresources.AbstractArchiveResourceSet.openJarFile(AbstractArchiveResourceSet.java:308)
+						 * org.apache.catalina.webresources.AbstractSingleArchiveResourceSet.getArchiveEntry(AbstractSingleArchiveResourceSet.java:93)
+						 * ....
+						 * org.apache.catalina.webresources.Cache.getResource(Cache.java:69)
+						 * org.apache.catalina.webresources.StandardRoot.getResource(StandardRoot.java:216)
+						 * org.apache.catalina.webresources.StandardRoot.getClassLoaderResource(StandardRoot.java:225)
+						 * org.apache.catalina.loader.WebappClassLoaderBase.getResourceAsStream(WebappClassLoaderBase.java:1067)
+						 * ...
+						 * org.apache.xerces.parsers.SecuritySupport.getResourceAsStream(Unknown Source)
+						 * org.apache.xerces.parsers.ObjectFactory.findJarServiceProvider(Unknown Source)
+						 * org.apache.xerces.parsers.ObjectFactory.createObject(Unknown Source)
+						 * org.apache.xerces.parsers.DOMParser.(Unknown Source)
+						 * org.apache.xerces.jaxp.DocumentBuilderImpl.(Unknown Source)
+						 * org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.newDocumentBuilder(Unknown Source)
+						 * 
+						 * Ogni factory prima di avviare la ricerca dei jar del service provider, dispone di una proprietà java che se valorizzata
+						 * viene usata per istanziare immediatamente il provider con la classe indicata.
+						 **/
+						System.setProperty("org.apache.xerces.xni.parser.XMLParserConfiguration",org.apache.xerces.parsers.XIncludeAwareParserConfiguration.class.getName());
+						System.setProperty("javax.xml.transform.TransformerFactory",org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
+						System.setProperty("javax.xml.xpath.XPathFactory:"+XPathFactory.DEFAULT_OBJECT_MODEL_URI,org.apache.xpath.jaxp.XPathFactoryImpl.class.getName());
+						System.setProperty("org.apache.xml.dtm.DTMManager",org.apache.xml.dtm.ref.DTMManagerDefault.class.getName());
 						
 						// Log
 						// stampo comunque saaj factory
@@ -779,7 +908,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							// XML - XERCES
 							OpenSPCoop2Startup.log.info("XERCES - DocumentFactory: "+xmlUtils.getDocumentBuilderFactory().getClass().getName());
 							OpenSPCoop2Startup.log.info("XERCES - DatatypeFactory: "+xmlUtils.getDatatypeFactory().getClass().getName());
-//							OpenSPCoop2Startup.log.info("XERCES - SAXParserFactory: "+xmlUtils.getSAXParserFactory().getClass().getName());
+							OpenSPCoop2Startup.log.info("XERCES - SAXParserFactory: "+xmlUtils.getSAXParserFactory().getClass().getName());
 //							OpenSPCoop2Startup.log.info("XERCES - XMLEventFactory: "+xmlUtils.getXMLEventFactory().getClass().getName());
 							OpenSPCoop2Startup.log.info("XERCES - SchemaFactory: "+xmlUtils.getSchemaFactory().getClass().getName());
 							

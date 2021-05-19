@@ -187,7 +187,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 			if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				hasContent = true;
 				OpenSPCoop2SoapMessage soap = message.castAsSoap();
-				if(soap.getSOAPBody()!=null && soap.getSOAPBody().hasFault()){
+				if(soap.hasSOAPFault()){
 					soap.saveChanges();
 				}
 			} 

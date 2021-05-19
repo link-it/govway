@@ -39,6 +39,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -813,7 +814,8 @@ public class GestoreAutorizzazione {
 	    		else {
 	    				    			
 	    			/* Costruisco dynamic Map */
-	    			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(message, pddContext, log);
+	    			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+	    			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(message, pddContext, log, bufferMessage_readOnly);
 	    				    			
 	    			/* Analisi claims di autorizzazione */
 	    			

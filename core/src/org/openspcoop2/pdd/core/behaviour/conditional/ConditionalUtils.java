@@ -32,11 +32,12 @@ import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
-import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
@@ -44,6 +45,7 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
@@ -56,7 +58,6 @@ import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
 
 /**
  * ConditionalUtils
@@ -145,18 +146,18 @@ public class ConditionalUtils  {
 						}
 					}
 				}
-				Element element = null;
-				String elementJson = null;
+				MessageContent messageContent = null;
+				boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 				if(TipoSelettore.CONTENT_BASED.equals(tipoSelettore) || tipoSelettore.isTemplate()) {
 					if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-						element =message.castAsSoap().getSOAPPart().getEnvelope();
+						messageContent = new MessageContent(message.castAsSoap(), bufferMessage_readOnly, pddContext);
 					}
 					else{
 						if(MessageType.XML.equals(message.getMessageType())){
-							element = message.castAsRestXml().getContent();
+							messageContent = new MessageContent(message.castAsRestXml(), bufferMessage_readOnly, pddContext);
 						}
 						else if(MessageType.JSON.equals(message.getMessageType())){
-							elementJson = message.castAsRestJson().getContent();
+							messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, pddContext);
 						}
 						else{
 							throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
@@ -194,16 +195,16 @@ public class ConditionalUtils  {
 					
 				case CONTENT_BASED:
 					AbstractXPathExpressionEngine xPathEngine = null;
-					if(element!=null) {
+					if(messageContent!=null && messageContent.isXml()) {
 						pattern = " (xPath: "+patternSelettore+")";
 						msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 						xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
-						condition = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, patternSelettore,  log);
+						condition = AbstractXPathExpressionEngine.extractAndConvertResultAsString(messageContent.getElement(), xPathEngine, patternSelettore,  log);
 					}
 					else {
 						pattern = " (jsonPath: "+patternSelettore+")";
 						msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-						condition = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, patternSelettore, log);
+						condition = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(messageContent.getElementJson(), patternSelettore, log);
 					}
 					break;
 					
@@ -246,7 +247,7 @@ public class ConditionalUtils  {
 					ErrorHandler errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,
-							element, elementJson, 
+							messageContent, 
 							busta, 
 							pTrasporto, 
 							pQuery,
@@ -267,7 +268,7 @@ public class ConditionalUtils  {
 					errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,
-							element, elementJson, 
+							messageContent, 
 							busta, 
 							pTrasporto, 
 							pQuery,
@@ -292,7 +293,7 @@ public class ConditionalUtils  {
 					errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,
-							element, elementJson, 
+							messageContent, 
 							busta, 
 							pTrasporto, 
 							pQuery,

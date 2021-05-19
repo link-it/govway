@@ -379,7 +379,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				OpenSPCoop2SoapMessage soapMessageResponse = this.responseMsg.castAsSoap();
 				soapResponse = soapMessageResponse.getSOAPMessage();
 				if(soapMessageResponse.getSOAPBody()!=null){
-					if(soapMessageResponse.getSOAPBody().hasFault() ){
+					if(soapMessageResponse.hasSOAPFault() ){
 						if(soapMessageResponse.getSOAPBody().getFault().getFaultString().indexOf("Premature end of file") != -1){
 							// L'errore 'premature end of file' consiste solo nel fatto che una risposta non e' stata ricevuta.
 							this.responseMsg = null;

@@ -185,6 +185,7 @@
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
+				<include name="woodstox-core-5.3.0.jar" />
 				<include name="${geronimo_jaxws_spec_jar}" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/saaj">
@@ -220,7 +221,7 @@
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-2.1.4.jar"/>
 				<include name="neethi-3.1.1.jar" />
-				<include name="bcprov-ext-jdk15on-1.64.jar" />
+				<include name="bcprov-ext-jdk15on-1.68.jar" />
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">

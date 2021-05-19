@@ -13,7 +13,7 @@ software Domibus
 
 Il processo di configurazione rimane strutturalmente analogo a quanto
 già descritto per la modalità API Gateway. Sono però presenti proprietà
-specifiche del contesto eDelivery i cui valori devono essere foriniti
+specifiche del contesto eDelivery i cui valori devono essere forniti
 affinché il dialogo con l'access point Domibus possa essere realizzato
 correttamente.
 

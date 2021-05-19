@@ -1,0 +1,27 @@
+<Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <Body>
+    <Fault>
+       <Code>
+          <Value>Sender</Value>
+          <Subcode>
+            <Value xmlns:integration="http://govway.org/integration/fault">
+               integration:InvalidRequestContent
+            </Value>
+          </Subcode>
+       </Code>
+       <Reason>
+          <Text xml:lang="en-US">Operation undefined in the API specification</Text>
+       </Reason>
+       <Role>http://govway.org/integration</Role>
+       <Detail>
+         <problem xmlns="urn:ietf:rfc:7807">
+            <type>https://govway.org/handling-errors/400/InvalidRequestContent.html</type>
+            <title>InvalidRequestContent</title>
+            <status>400</status>
+            <detail>Request content not conform to API specification</detail>
+            <govway_id>9876b03e-0377-4a02-9fb8-07094b0cdf06</govway_id>
+         </problem>
+      </Detail>
+    </Fault>
+  </Body>
+</Envelope>

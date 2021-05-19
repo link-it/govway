@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+   <soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://services.samples/xsd">
+
+   <soapenv:Header>
+    <!-- TEST -->
+<xsd:skcotSyub>
+&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>
+</xsd:skcotSyub>
+</soapenv:Header>     
+    
+    <!-- TEST -->
+    
+<soapenv:Body>
+    <!-- TEST -->
+<xsd:skcotSyub>
+&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>IBM&lt;/lobmys>&lt;DIreyub>asankha&lt;/DIreyub>&lt;ecirp>140.34&lt;/ecirp>&lt;emulov>2000&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>MSFT&lt;/lobmys>&lt;DIreyub>ruwan&lt;/DIreyub>&lt;ecirp>23.56&lt;/ecirp>&lt;emulov>8030&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>SUN&lt;/lobmys>&lt;DIreyub>indika&lt;/DIreyub>&lt;ecirp>14.56&lt;/ecirp>&lt;emulov>500&lt;/emulov>&lt;/redro>
+&lt;redro>&lt;lobmys>GOOG&lt;/lobmys>&lt;DIreyub>chathura&lt;/DIreyub>&lt;ecirp>60.24&lt;/ecirp>&lt;emulov>40000&lt;/emulov>&lt;/redro>
+</xsd:skcotSyub>
+</soapenv:Body>
+</soapenv:Envelope>

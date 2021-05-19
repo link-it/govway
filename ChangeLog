@@ -1,3 +1,20 @@
+2021-05-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1191
+	Aggiunto supporto per wildfly 22.
+
+2021-05-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1188
+	La gestione dei messaggi di API SOAP è adesso equivalente a quella delle API REST: se non sono attive funzionalità che richiedono l'accesso al messaggio la gestione dei contenuti avviene in 'Passthrough'.
+	Per le API SOAP, anche se viene richiesta la costruzione in memoria dell'oggetto DOM che rappresenta il messaggio, 
+	al backend verrà inoltrata esattamente la richiesta originale ricevuta dal client, preventivamente bufferizzata, 
+	se le funzionalità che hanno avuto bisogno di accedere all'oggetto DOM non lo hanno modificato.
+	La connessione verso il database 'runtime' viene adesso negoziata solamente se richiesta da funzionalità che ne necessitano.
+	Aggiunta la possibilità di configurare ulteriori Content-Type associabili a richieste SOAP 1.2 (per default viene accettato solo 'application/soap+xml').
+
 2021-05-05  Andrea Poli <apoli@link.it>
 
 	* [GovwayConsole]
@@ -103,7 +120,7 @@
 
 	* [GovWayCore, GovWayConsole]
 	L'aggiornamento dell'interfaccia di una API sovrascriveva eventuali impostazioni 'ModI' definite a livello della singola operazione aggiornata. Il problema è stato risolto.
-	Sono inotre stati corretti i problemi che causavano una errata validazione delle interfacce OpenAPI 3.0.x contenenti il cliam 'allowEmptyValue' o security schema vuoti ("security": [ {} ]).
+	Sono inotre stati corretti i problemi che causavano una errata validazione delle interfacce OpenAPI 3.0.x contenenti il claim 'allowEmptyValue' o security schema vuoti ("security": [ {} ]).
 
 2021-04-07  Giuliano Pintori <pintori@link.it>
 
@@ -311,7 +328,7 @@
 	Aggiunta funzionalità di export/import per quanto concerne le seguenti configurazioni:
 	- Token Policy
 	- Policy di Rate Limiting del Controllo del Traffico
-	- Token Policy
+	- Regole di Proxy Pass
 
 2021-02-19  Giuliano Pintori <pintori@link.it>
 
@@ -425,7 +442,7 @@
 	Risolto Bug OP-1123
 	Sono stati risolti i seguenti problemi:
 	- In una API, creata tramite una interfaccia OpenAPI, la descrizione viene troncata ai 255 caratteri. 
-	  Provano a modificare i dati dell'API (nome, tag, descrizione stessa, ...) veniva visualizzato il messaggio di errore: 'La descrizione supera i 255 caratteri ammessi'.
+	  Provando a modificare i dati dell'API (nome, tag, descrizione stessa, ...) veniva visualizzato il messaggio di errore: 'La descrizione supera i 255 caratteri ammessi'.
 	  Il problema derivava dall'aggiunta dei caratteri '\r' dove erano presenti i caratteri '\n' nella descrizione.
 	  La risoluzione è stata effettuata per tutti gli elementi della console che vengono gestiti con lo stesso tipo di elemento html: 'text-area'.
 	- In presenza di una policy di RateLimiting con raggruppamento per risorsa/azione, se veniva abilitato un filtro sulla policy, l'impostazione del raggruppamento spariva.

@@ -34,9 +34,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Heade
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.SoapBodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils.PolicyAlias;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
-import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -407,8 +405,8 @@ public class SoapTest extends ConfigLoader {
 			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.FailedReset)) <= windowSize);			
 			assertEquals(429, r.getResultHTTPOperation());
 			
-			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchLimitExceededSoap(element);
+			//Element element = Utils.buildXmlElement(r.getContent());
+			Utils.matchLimitExceededSoap(r.getContent());
 			
 			assertEquals("0", r.getHeaderFirstValue(Headers.FailedRemaining));
 			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
@@ -425,6 +423,13 @@ public class SoapTest extends ConfigLoader {
 		// sia effettivamente un fault.
 		for (var r: responses){
 			
+			String idTransazione = r.getHeaderFirstValue(Headers.TransactionId);
+			String content = null;
+			if(r.getContent()!=null) {
+				content = new String(r.getContent());
+			}
+			logRateLimiting.debug("Verifico risposta della transazione '"+idTransazione+"' ("+content+") ...");
+			
 			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedLimit, r.getHeaderFirstValue(Headers.FailedLimit), maxRequests);			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
@@ -436,11 +441,9 @@ public class SoapTest extends ConfigLoader {
 			assertEquals(500, r.getResultHTTPOperation());
 			
 			Element element = Utils.buildXmlElement(r.getContent());
-			PatternExtractor matcher = new PatternExtractor(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), element, logRateLimiting);
-			assertEquals("env:Receiver", matcher.read("/Envelope/Body/Fault/Code/Value/text()"));
-			assertEquals("integration:APIUnavailable", matcher.read("/Envelope/Body/Fault/Code/Subcode/Value/text()"));
-			assertEquals("The API Implementation is temporary unavailable", matcher.read("/Envelope/Body/Fault/Reason/Text/text()"));
-			assertEquals("http://govway.org/integration", matcher.read("/Envelope/Body/Fault/Role/text()"));			
+			Utils.matchApiUnavaliableSoap(idTransazione, element);
+			
+			logRateLimiting.debug("Verifico dati della transazione '"+idTransazione+"' ok");
 		}
 		
 	}

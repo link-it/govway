@@ -584,6 +584,10 @@ public class Dump {
 					}
 				}
 			}
+			
+			if(!dumpHeaders && !dumpBody && !dumpAttachments && !onlyLogFileTrace_headers && !onlyLogFileTrace_body) {
+				return; // disabilitato
+			}
 		}
 		boolean dumpMultipartHeaders = dumpHeaders;
 		
@@ -898,7 +902,9 @@ public class Dump {
 							}
 						}
 						
-						out.append(dumpMessaggio.toString(dumpMessaggioConfig,this.properties.isDumpAllAttachments()));
+						if(dumpMessaggio!=null) {
+							out.append(dumpMessaggio.toString(dumpMessaggioConfig,this.properties.isDumpAllAttachments()));
+						}
 	
 					}else{
 						if(msgBytes!=null && msgBytes.size()>0) {

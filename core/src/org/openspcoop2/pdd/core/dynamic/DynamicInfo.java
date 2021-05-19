@@ -28,7 +28,6 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
-import org.w3c.dom.Element;
 
 /**
  * DynamicInfo
@@ -47,8 +46,7 @@ public class DynamicInfo {
 	
 	// non disponibili nel connettore
 	private String url;
-	private Element xml;
-	private String json;
+	private MessageContent messageContent;
 	private OpenSPCoop2Message message;
 	private ErrorHandler errorHandler;
 	
@@ -106,17 +104,11 @@ public class DynamicInfo {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public Element getXml() {
-		return this.xml;
+	public MessageContent getMessageContent() {
+		return this.messageContent;
 	}
-	public void setXml(Element xml) {
-		this.xml = xml;
-	}
-	public String getJson() {
-		return this.json;
-	}
-	public void setJson(String json) {
-		this.json = json;
+	public void setMessageContent(MessageContent messageContent) {
+		this.messageContent = messageContent;
 	}
 	public OpenSPCoop2Message getMessage() {
 		return this.message;

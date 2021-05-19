@@ -36,7 +36,6 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
-import org.w3c.dom.Element;
 
 /**
 * SoapTest
@@ -379,8 +378,8 @@ public class SoapTest extends ConfigLoader {
 		String body = new String(failedResponse.getContent());
 		logRateLimiting.info(body);
 		
-		Element element = Utils.buildXmlElement(failedResponse.getContent());
-		Utils.matchLimitExceededSoap(element);
+		//org.w3c.dom.Element element = Utils.buildXmlElement(failedResponse.getContent());
+		Utils.matchLimitExceededSoap(failedResponse.getContent());
 		
 		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.BandWidthQuotaRemaining));
 		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));

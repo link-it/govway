@@ -54,6 +54,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
@@ -202,7 +203,7 @@ public class GestoreTrasformazioniUtilities {
 	}
 	
 	public static RisultatoTrasformazioneContenuto trasformazioneContenuto(Logger log, String tipoConversioneContenuto, 
-			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, Element element, PdDContext pddContext) throws Exception {
+			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, MessageContent messageContent, PdDContext pddContext) throws Exception {
 		TipoTrasformazione tipoTrasformazione = null;
 		if(tipoConversioneContenuto!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(tipoConversioneContenuto, true);
@@ -306,6 +307,10 @@ public class GestoreTrasformazioniUtilities {
 			if(contenuto==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
+			Element element = null;
+			if(messageContent!=null && messageContent.isXml()) {
+				element = messageContent.getElement();
+			}
 			if(element==null) {
 				if(MessageType.XML.equals(msg.getMessageType()) ||
 						MessageType.SOAP_11.equals(msg.getMessageType()) ||
@@ -363,7 +368,7 @@ public class GestoreTrasformazioniUtilities {
 	}
 	
 	
-	public static OpenSPCoop2Message trasformaMessaggio(Logger log, OpenSPCoop2Message message, Element element, 
+	public static OpenSPCoop2Message trasformaMessaggio(Logger log, OpenSPCoop2Message message, MessageContent messageContent, 
 			RequestInfo requestInfo, Map<String, Object> dynamicMap, PdDContext pddContext, OpenSPCoop2Properties op2Properties,
 			Map<String, List<String>> trasporto, Map<String, List<String>> forceAddTrasporto, 
 			Map<String, List<String>> url, Map<String, List<String>> forceAddUrl,
@@ -517,7 +522,11 @@ public class GestoreTrasformazioniUtilities {
 							}
 							else {
 								SOAPElement newElement = soapMessage.createSOAPElement(risultato.getContenuto());
-								if(element.getLocalName().equals(newElement.getLocalName()) && element.getNamespaceURI().equals(newElement.getNamespaceURI())) {
+								Element element = null;
+								if(messageContent!=null && messageContent.isXml()) {
+									element = messageContent.getElement();
+								}
+								if(element!=null && element.getLocalName().equals(newElement.getLocalName()) && element.getNamespaceURI().equals(newElement.getNamespaceURI())) {
 									// il nuovo elemento è una busta soap
 									soapMessage.getSOAPPart().getEnvelope().detachNode();
 									soapMessage.getSOAPPart().setContent(new DOMSource(newElement));
@@ -600,7 +609,7 @@ public class GestoreTrasformazioniUtilities {
 									GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
 											trasformazioneSoap_tipoConversione, 
 											trasformazioneSoap_templateConversione, 
-											"envelope-body", dynamicMap, message, element, pddContext);
+											"envelope-body", dynamicMap, message, messageContent, pddContext);
 							try {
 								if(risultatoEnvelopeBody.isEmpty()) {
 									if(transportRequestContext!=null) {

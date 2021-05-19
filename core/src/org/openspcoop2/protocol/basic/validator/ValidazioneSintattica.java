@@ -134,7 +134,7 @@ public class ValidazioneSintattica<BustaRawType> extends BasicStateComponentFact
 		boolean hasFault = false;
 		try {
 			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-				hasFault = msg.castAsSoap().getSOAPBody().hasFault();
+				hasFault = msg.castAsSoap().hasSOAPFault();
 			}
 		} catch (Exception e) {
 			throw new ProtocolException(e); 

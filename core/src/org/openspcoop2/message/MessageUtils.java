@@ -20,6 +20,15 @@
 
 package org.openspcoop2.message;
 
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
+import org.w3c.dom.Element;
+
 /**
  * MessageUtils
  *
@@ -46,6 +55,107 @@ public class MessageUtils {
 				}
 			}
 			
+		}
+	}
+	
+	public static SOAPMessage getSOAPMessage(OpenSPCoop2SoapMessage soapMessage, boolean bufferMessage_readOnly, String idTransazione) throws MessageException {
+		try {
+			if(soapMessage instanceof AbstractOpenSPCoop2Message_soap_impl<?>) {
+				AbstractOpenSPCoop2Message_soap_impl<?> soap = (AbstractOpenSPCoop2Message_soap_impl<?>)soapMessage;
+				return soap.getContent(bufferMessage_readOnly, idTransazione).getSOAPMessage();
+			}
+			else {
+				return soapMessage.getSOAPMessage();
+			}
+		}catch(MessageException me) {
+			throw me;
+		}
+		catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	public static SOAPPart getSOAPPart(OpenSPCoop2SoapMessage soapMessage, boolean bufferMessage_readOnly, String idTransazione) throws MessageException {
+		try {
+			if(soapMessage instanceof AbstractOpenSPCoop2Message_soap_impl<?>) {
+				AbstractOpenSPCoop2Message_soap_impl<?> soap = (AbstractOpenSPCoop2Message_soap_impl<?>)soapMessage;
+				return soap.getContent(bufferMessage_readOnly, idTransazione).getSOAPPart();
+			}
+			else {
+				return soapMessage.getSOAPPart();
+			}
+		}catch(MessageException me) {
+			throw me;
+		}
+		catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	public static Element getContentElement(OpenSPCoop2Message msg, boolean checkSoapBodyEmpty, boolean bufferMessage_readOnly, String idTransazione) throws MessageException {
+		try {
+			if(MessageType.SOAP_11.equals(msg.getMessageType()) || MessageType.SOAP_12.equals(msg.getMessageType())) {
+				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+				if(!soapMessage.isSOAPBodyEmpty() || !checkSoapBodyEmpty) {
+					SOAPPart soapPart = getSOAPPart(soapMessage, bufferMessage_readOnly, idTransazione);
+					if(soapPart==null){
+						throw new MessageException("Messaggio (SOAPPart) non fornito");
+					}
+					SOAPEnvelope envelope = soapPart.getEnvelope();
+					if(envelope==null){
+						throw new MessageException("Envelope non fornita");
+					}
+					return envelope;
+				}
+			}
+			else if (MessageType.XML.equals(msg.getMessageType())){
+				OpenSPCoop2RestXmlMessage xmlMsg = msg.castAsRestXml();
+				if(xmlMsg.hasContent()) {
+					return (Element) xmlMsg.getContent(bufferMessage_readOnly, idTransazione);
+				}
+			}
+			return null;
+		}
+		catch(MessageException me) {
+			throw me;
+		}
+		catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	public static String getContentString(OpenSPCoop2Message msg, boolean bufferMessage_readOnly, String idTransazione) throws MessageException {
+		try {
+			if(MessageType.JSON.equals(msg.getMessageType())){
+				OpenSPCoop2RestJsonMessage json = msg.castAsRestJson();
+				return json.getContent(bufferMessage_readOnly, idTransazione);
+			}
+			return null;
+		}
+		catch(MessageException me) {
+			throw me;
+		}
+		catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	public static void setUpdatable(OpenSPCoop2Message msg) throws MessageException {
+		try {
+			if(MessageType.SOAP_11.equals(msg.getMessageType()) || MessageType.SOAP_12.equals(msg.getMessageType())) {
+				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+				if(soapMessage instanceof AbstractOpenSPCoop2Message_soap_impl<?>) {
+					AbstractOpenSPCoop2Message_soap_impl<?> soap = (AbstractOpenSPCoop2Message_soap_impl<?>)soapMessage;
+					soap.setContentUpdatable();
+				}
+			}
+			else {
+				msg.castAsRest().setContentUpdatable();
+			}
+		}
+		catch(MessageException me) {
+			throw me;
+		}
+		catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
 		}
 	}
 	

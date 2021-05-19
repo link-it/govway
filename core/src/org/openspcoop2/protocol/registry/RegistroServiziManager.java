@@ -118,9 +118,11 @@ public class RegistroServiziManager {
 		if(this.stati.size()>0){
 			for (StateMessage state : this.stati) {
 				boolean validConnection = false;
-				try{
-					validConnection = !state.getConnectionDB().isClosed();
-				}catch(Exception e){}
+				if(state.getConnectionDB()!=null) {
+					try{
+						validConnection = !state.getConnectionDB().isClosed();
+					}catch(Exception e){}
+				}
 				if(validConnection)
 					return state.getConnectionDB();
 			}

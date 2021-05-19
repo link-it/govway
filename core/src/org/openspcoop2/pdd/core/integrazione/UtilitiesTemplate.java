@@ -205,7 +205,9 @@ public class UtilitiesTemplate {
 				return;
 			}
 			
-			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(this.msg, this.context, this.busta, this.log);
+			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(this.msg, this.context, this.busta, this.log,
+					bufferMessage_readOnly);
 			
 			if(this.tipoTrasformazione==null) {
 				throw new Exception("Tipo di trasformazione non definita");

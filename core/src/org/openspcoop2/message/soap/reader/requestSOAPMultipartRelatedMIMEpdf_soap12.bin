@@ -1,0 +1,45 @@
+
+------=_Part_0_6330713.1171639717331
+Content-Type: application/pdf; charset=UTF-8
+Content-Transfer-Encoding: binary
+Content-Id: <D559E7E9E29638A15AD37B90FCAEAD53>
+
+%PDF-1.3
+%�쏢
+5 0 obj
+<</Length 6 0 R/Filter /FlateDecode>>
+stream
+x�}��
+�@��}�-w�;o����b@TÁ�Xb!W�\M
++��`fFg�Gk�6C�������r�m�~
+��'� �Y\c��-:�P,,o�]����18�*�p�=��z6�N,�ؙM"��	Z�HR���˙���
+
+------=_Part_0_6330713.1171639717331
+Content-Type: text/xml; charset=UTF-8
+Content-Transfer-Encoding: binary
+Content-Id: <56D2051AED8F9598BB61721D8C95BA6F>
+
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Header xmlns:prova="http://prova.openspcoop2.org">
+        <a:example1 xmlns:a="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova</a:example1>
+        <b:example2 xmlns:b="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova2</b:example2>
+        </soapenv:Header>
+        <soapenv:Body><skcotSyub xmlns="http://services.samples/xsd"><Richiesta>&lt;persona nome=&quot;mario&quot; cognome=&quot;rossi&quot;/&gt;</Richiesta><attachInZIP1 href="cid:D559E7E9E29638A15AD37B90FCAEAD53" xmlns=""/><attachInZIP2 href="cid:FF5ED4B1298A2E36CF986C32638C5257" xmlns=""/></skcotSyub>
+</soapenv:Body></soapenv:Envelope>
+
+------=_Part_0_6330713.1171639717331
+Content-Type: text/plain
+Content-Transfer-Encoding: binary
+Content-Id: <FF5ED4B1298A2E36CF986C32638C5257>
+
+HELLO WORLD 2
+
+------=_Part_0_6330713.1171639717331
+Content-Type: text/xml
+Content-Transfer-Encoding: binary
+Content-Id: <FF5ED4B1298A2E36CF986C32638C5255>
+
+<eseguiServizio xmlns="http://openspcoop.org/example"><Richiesta>&lt;persona nome=&quot;mario&quot; cognome=&quot;rossi&quot;/&gt;</Richiesta><attachInZIP1 href="cid:D559E7E9E29638A15AD37B90FCAEAD53" xmlns=""/><attachInZIP2 href="cid:FF5ED4B1298A2E36CF986C32638C5257" xmlns=""/></eseguiServizio>
+</soapenv:Body>
+
+------=_Part_0_6330713.1171639717331--

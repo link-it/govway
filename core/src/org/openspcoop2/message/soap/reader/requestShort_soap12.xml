@@ -1,0 +1,3 @@
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://services.samples/xsd"><soapenv:Body><xsd:skcotSyub>
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>
+</xsd:skcotSyub></soapenv:Body></soapenv:Envelope>

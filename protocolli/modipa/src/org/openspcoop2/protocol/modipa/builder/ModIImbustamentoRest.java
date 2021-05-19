@@ -463,7 +463,8 @@ public class ModIImbustamentoRest {
 		
 		if(corniceSicurezza) {
 			
-			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log);
+			boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
+			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessage_readOnly);
 			
 			String claimNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
 			if(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER.equals(claimNameCodiceEnte)) {

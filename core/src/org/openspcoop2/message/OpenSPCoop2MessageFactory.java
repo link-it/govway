@@ -41,6 +41,8 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
@@ -221,11 +223,14 @@ public abstract class OpenSPCoop2MessageFactory {
 	protected abstract OpenSPCoop2Message _createEmptyMessage(MessageType messageType) throws MessageException;
 	
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, TransportRequestContext requestContext, 
-			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException;	
+			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException;	
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, TransportResponseContext responseContext, 
-			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException;	
+			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException;	
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, String contentType, 
-			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException;
+			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException;
 	
 	
 	
@@ -283,7 +288,8 @@ public abstract class OpenSPCoop2MessageFactory {
     
     private OpenSPCoop2MessageParseResult _internalCreateMessage(MessageType messageType, MessageRole messageRole, Object context, 
 			Object msgParam, NotifierInputStreamParams notifierInputStreamParams,
-			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) {	
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) {	
 		
 		OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
 		try{
@@ -343,7 +349,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			
 			OpenSPCoop2Message op2Msg = null;
 			if(transportRequestContext!=null){
-				op2Msg = this._createMessage(messageType, transportRequestContext, nis, attachmentsProcessingMode, overhead);
+				op2Msg = this._createMessage(messageType, transportRequestContext, nis, attachmentsProcessingMode, overhead, soapStreamReader);
 				
 				if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
 					String soapAction = null;
@@ -374,10 +380,10 @@ public abstract class OpenSPCoop2MessageFactory {
 				}
 			}
 			else if(transportResponseContext!=null){
-				op2Msg = this._createMessage(messageType, transportResponseContext, nis, attachmentsProcessingMode, overhead);
+				op2Msg = this._createMessage(messageType, transportResponseContext, nis, attachmentsProcessingMode, overhead, soapStreamReader);
 			}
 			else{
-				op2Msg = this._createMessage(messageType, contentType, nis, attachmentsProcessingMode, overhead);
+				op2Msg = this._createMessage(messageType, contentType, nis, attachmentsProcessingMode, overhead, soapStreamReader);
 			}
 			if(op2Msg==null){
 				throw new Exception("Create message failed");
@@ -400,7 +406,12 @@ public abstract class OpenSPCoop2MessageFactory {
 			op2Msg.setMessageType(messageType);
 			
 			if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
-				op2Msg.castAsSoap().getSOAPHeader(); // Verifica struttura
+				if(! (op2Msg instanceof AbstractOpenSPCoop2Message_soap_impl)) {
+					op2Msg.castAsSoap().getSOAPHeader(); // Verifica struttura
+				}
+				else {
+					// la verifica verra' fatta quando viene costruito il contenuto saaj
+				}
 			}
 			
 			result.setMessage(op2Msg);
@@ -558,14 +569,14 @@ public abstract class OpenSPCoop2MessageFactory {
 						
 			OpenSPCoop2MessageParseResult result = null;
 			if(context==null){
-				result = _internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
+				result = _internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, null);
 			}
 			else if(context instanceof TransportRequestContext){
 				TransportRequestContext trc = (TransportRequestContext) context;
 				TransportUtils.removeObject(trc.getHeaders(), HttpConstants.CONTENT_TYPE);
 				TransportUtils.addHeader(trc.getHeaders(), HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
-				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
+				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, null);
 				
 			}
 			else if(context instanceof TransportResponseContext){
@@ -573,7 +584,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				TransportUtils.removeObject(trc.getHeaders(), HttpConstants.CONTENT_TYPE);
 				TransportUtils.addHeader(trc.getHeaders(), HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
-				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
+				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, null);
 			}
 			else{
 				throw new MessageException("Unsupported Context ["+context.getClass().getName()+"]");
@@ -665,7 +676,20 @@ public abstract class OpenSPCoop2MessageFactory {
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
 		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
-				attachmentsProcessingMode, 0);
+				attachmentsProcessingMode, 0, null);
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) {	
+		return this.createMessage(messageType, requestContext, messageInput, notifierInputStreamParams, soapStreamReader, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
+				attachmentsProcessingMode, 0, soapStreamReader);
 	}
 	
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
@@ -688,7 +712,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
 		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
-				attachmentsProcessingMode, 0);
+				attachmentsProcessingMode, 0, null);
 	}
 	
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
@@ -700,7 +724,21 @@ public abstract class OpenSPCoop2MessageFactory {
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
 		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
-				attachmentsProcessingMode, 0);
+				attachmentsProcessingMode, 0, null);
+	}
+	
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) {	
+		return this.createMessage(messageType, responseContext, messageInput, notifierInputStreamParams, soapStreamReader,
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
+				attachmentsProcessingMode, 0, soapStreamReader);
 	}
 	
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
@@ -723,7 +761,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
 		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
-				attachmentsProcessingMode, 0);
+				attachmentsProcessingMode, 0, null);
 	}
 	
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
@@ -735,7 +773,21 @@ public abstract class OpenSPCoop2MessageFactory {
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
 		return _internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
-				attachmentsProcessingMode, 0);
+				attachmentsProcessingMode, 0, null);
+	}
+	
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) {	
+		return this.createMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, soapStreamReader,
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
+				attachmentsProcessingMode, 0, soapStreamReader);
 	}
 	
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
@@ -758,7 +810,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
 		return _internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
-				attachmentsProcessingMode, 0);
+				attachmentsProcessingMode, 0, null);
 	}
 	
 	

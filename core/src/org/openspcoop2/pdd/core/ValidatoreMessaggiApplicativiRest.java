@@ -41,7 +41,11 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.rest.AccordoServizioWrapper;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestBinaryMessage;
+import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
+import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -89,6 +93,7 @@ import org.openspcoop2.utils.wsdl.WSDLException;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.slf4j.Logger;
+import org.w3c.dom.Element;
 
 
 /**
@@ -122,6 +127,8 @@ public class ValidatoreMessaggiApplicativiRest {
 	private OpenapiApi4jValidatorConfig configOpenApi4j;
 	/** OpenSPCoop2Properties */
 	private OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+	/** Buffer */
+	private boolean bufferMessage_readOnly = true;
 	
 	
 
@@ -175,6 +182,12 @@ public class ValidatoreMessaggiApplicativiRest {
 				if(this.configOpenApi4j.isUseOpenApi4J()) {
 					processIncludeForOpenApi = false;
 				}
+			}
+			
+			this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_bufferContentRead();
+			if(proprieta!=null && !proprieta.isEmpty()) {
+				boolean defaultBehaviour = this.bufferMessage_readOnly;
+				this.bufferMessage_readOnly = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_BUFFER_ENABLED, defaultBehaviour);
 			}
 			
 			if(readInterfaceAccordoServizio){
@@ -281,7 +294,15 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 		
 		try {
-			validatoreBodyApplicativo.valida(this.message.castAsRestXml().getContent());	
+			String idTransazione = null;
+			if(this.pddContext!=null) {
+				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			}
+			
+			OpenSPCoop2RestXmlMessage xmlMsg = this.message.castAsRestXml();
+			Element content = xmlMsg.getContent(this.bufferMessage_readOnly, idTransazione);						
+			validatoreBodyApplicativo.valida(content);
+			
 		}catch(Exception e){ 
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
@@ -410,12 +431,22 @@ public class ValidatoreMessaggiApplicativiRest {
 			String path = RestUtilities.getUrlWithoutInterface(transportContext, normalizedInterfaceName);
 			HttpRequestMethod httpMethod = HttpRequestMethod.valueOf(transportContext.getRequestType());
 			
+			String idTransazione = null;
+			if(this.pddContext!=null) {
+				idTransazione = (String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			}
+			
 			if(isRichiesta) {
 				HttpBaseRequestEntity<?> httpRequest = null;
 				switch (this.message.getMessageType()) {
 				case XML:
 					httpRequest = new ElementHttpRequestEntity();
 					if(this.message.castAsRest().hasContent()) {
+						
+						// serve anche in opeanpi4j per bufferizzare la richiesta
+						OpenSPCoop2RestXmlMessage xmlMsg = this.message.castAsRestXml();
+						Element contentXml = xmlMsg.getContent(this.bufferMessage_readOnly, idTransazione);
+						
 						if(openapi4j) {
 							httpRequest = new BinaryHttpRequestEntity();
 							ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -425,25 +456,34 @@ public class ValidatoreMessaggiApplicativiRest {
 							((BinaryHttpRequestEntity)httpRequest).setContent(bout.toByteArray());
 						}
 						else {
-							((ElementHttpRequestEntity)httpRequest).setContent(this.message.castAsRestXml().getContent());
+							((ElementHttpRequestEntity)httpRequest).setContent(contentXml);
 						}
 					}
 					break;
 				case JSON:
 					httpRequest = new TextHttpRequestEntity();
 					if(this.message.castAsRest().hasContent()) {
-						((TextHttpRequestEntity)httpRequest).setContent(this.message.castAsRestJson().getContent());
+						OpenSPCoop2RestJsonMessage jsonMsg = this.message.castAsRestJson();
+						String contentString = jsonMsg.getContent(this.bufferMessage_readOnly, idTransazione);						
+						((TextHttpRequestEntity)httpRequest).setContent(contentString);
 					}
 					break;
 				case BINARY:
 					httpRequest = new BinaryHttpRequestEntity();
 					if(this.message.castAsRest().hasContent()) {
-						((BinaryHttpRequestEntity)httpRequest).setContent(this.message.castAsRestBinary().getContent());
+						OpenSPCoop2RestBinaryMessage binaryMsg = this.message.castAsRestBinary();
+						byte[] contentBinary = binaryMsg.getContent(this.bufferMessage_readOnly, idTransazione);						
+						((BinaryHttpRequestEntity)httpRequest).setContent(contentBinary);
 					}
 					break;
 				case MIME_MULTIPART:
 					httpRequest = new BinaryHttpRequestEntity();
 					if(this.message.castAsRest().hasContent()) {
+						
+						// serve per bufferizzare la richiesta
+						OpenSPCoop2RestMimeMultipartMessage mimeMsg = this.message.castAsRestMimeMultipart();
+						mimeMsg.getContent(this.bufferMessage_readOnly, idTransazione);
+						
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						this.message.writeTo(bout, false);
 						bout.flush();
@@ -478,6 +518,11 @@ public class ValidatoreMessaggiApplicativiRest {
 				case XML:
 					httpResponse = new ElementHttpResponseEntity();
 					if(this.message.castAsRest().hasContent()) {
+
+						// serve anche in opeanpi4j per bufferizzare la richiesta
+						OpenSPCoop2RestXmlMessage xmlMsg = this.message.castAsRestXml();
+						Element contentXml = xmlMsg.getContent(this.bufferMessage_readOnly, idTransazione);
+						
 						if(openapi4j) {
 							httpResponse = new BinaryHttpResponseEntity();
 							ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -487,25 +532,34 @@ public class ValidatoreMessaggiApplicativiRest {
 							((BinaryHttpResponseEntity)httpResponse).setContent(bout.toByteArray());
 						}
 						else {
-							((ElementHttpResponseEntity)httpResponse).setContent(this.message.castAsRestXml().getContent());
+							((ElementHttpResponseEntity)httpResponse).setContent(contentXml);
 						}
 					}
 					break;
 				case JSON:
 					httpResponse = new TextHttpResponseEntity();
 					if(this.message.castAsRest().hasContent()) {
-						((TextHttpResponseEntity)httpResponse).setContent(this.message.castAsRestJson().getContent());
+						OpenSPCoop2RestJsonMessage jsonMsg = this.message.castAsRestJson();
+						String contentString = jsonMsg.getContent(this.bufferMessage_readOnly, idTransazione);						
+						((TextHttpResponseEntity)httpResponse).setContent(contentString);
 					}
 					break;
 				case BINARY:
 					httpResponse = new BinaryHttpResponseEntity();
 					if(this.message.castAsRest().hasContent()) {
-						((BinaryHttpResponseEntity)httpResponse).setContent(this.message.castAsRestBinary().getContent());
+						OpenSPCoop2RestBinaryMessage binaryMsg = this.message.castAsRestBinary();
+						byte[] contentBinary = binaryMsg.getContent(this.bufferMessage_readOnly, idTransazione);						
+						((BinaryHttpResponseEntity)httpResponse).setContent(contentBinary);
 					}
 					break;
 				case MIME_MULTIPART:
 					httpResponse = new BinaryHttpResponseEntity();
 					if(this.message.castAsRest().hasContent()) {
+
+						// serve per bufferizzare la richiesta
+						OpenSPCoop2RestMimeMultipartMessage mimeMsg = this.message.castAsRestMimeMultipart();
+						mimeMsg.getContent(this.bufferMessage_readOnly, idTransazione);
+						
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						this.message.writeTo(bout, false);
 						bout.flush();

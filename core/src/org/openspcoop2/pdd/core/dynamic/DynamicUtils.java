@@ -90,8 +90,7 @@ public class DynamicUtils {
 	
 	public static void fillDynamicMapRequest(Logger log, Map<String, Object> dynamicMap, Context pddContext, String urlInvocazione,
 			OpenSPCoop2Message message,
-			Element element,
-			String elementJson,
+			MessageContent messageContent,
 			Busta busta, 
 			Map<String, List<String>> trasporto, 
 			Map<String, List<String>> url, 
@@ -99,8 +98,7 @@ public class DynamicUtils {
 			ErrorHandler errorHandler) {
 		_fillDynamicMap(log, dynamicMap, pddContext, urlInvocazione, 
 				message,
-				element, 
-				elementJson, 
+				messageContent,
 				busta, 
 				trasporto, 
 				url,
@@ -109,15 +107,13 @@ public class DynamicUtils {
     }
 	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, Context pddContext,
 			OpenSPCoop2Message message,
-			Element element,
-			String elementJson,
+			MessageContent messageContent,
 			Busta busta, Map<String, List<String>> trasporto,
 			ErrorHandler errorHandler) {
 		Map<String, Object> dynamicMapResponse = new HashMap<>();
 		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
 				message,
-				element, 
-				elementJson, 
+				messageContent,
 				busta, 
 				trasporto, 
 				null, 
@@ -165,8 +161,7 @@ public class DynamicUtils {
 	}
 	public static void _fillDynamicMap(Logger log, Map<String, Object> dynamicMap, Context pddContext, String urlInvocazione,
 			OpenSPCoop2Message message,
-			Element element,
-			String elementJson,
+			MessageContent messageContent,
 			Busta busta, 
 			Map<String, List<String>> trasporto, 
 			Map<String, List<String>> url,
@@ -202,11 +197,8 @@ public class DynamicUtils {
 		if(urlInvocazione!=null) {
 			dInfo.setUrl(urlInvocazione);
 		}
-		if(element!=null) {
-			dInfo.setXml(element);
-		}
-		else if(elementJson!=null) {
-			dInfo.setJson(elementJson);
+		if(messageContent!=null) {
+			dInfo.setMessageContent(messageContent);
 		}
 		if(message!=null) {
 			dInfo.setMessage(message);
@@ -343,14 +335,15 @@ public class DynamicUtils {
 			dynamicMap.put(Costanti.MAP_ELEMENT_URL_REGEXP, urle);
 			dynamicMap.put(Costanti.MAP_ELEMENT_URL_REGEXP.toLowerCase(), urle);
 		}
-		if(dynamicInfo!=null && dynamicInfo.getXml()!=null) {
+		if(dynamicInfo!=null && dynamicInfo.getMessageContent()!=null && dynamicInfo.getMessageContent().isXml()) {
 			OpenSPCoop2MessageFactory messageFactory = dynamicInfo.getMessage()!=null ? dynamicInfo.getMessage().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
-			PatternExtractor pe = new PatternExtractor(messageFactory,dynamicInfo.getXml(), log);
+			PatternExtractor pe = new PatternExtractor(messageFactory, dynamicInfo.getMessageContent(), log);
 			dynamicMap.put(Costanti.MAP_ELEMENT_XML_XPATH, pe);
 			dynamicMap.put(Costanti.MAP_ELEMENT_XML_XPATH.toLowerCase(), pe);
 		}
-		if(dynamicInfo!=null && dynamicInfo.getJson()!=null) {
-			PatternExtractor pe = new PatternExtractor(dynamicInfo.getJson(), log);
+		if(dynamicInfo!=null && dynamicInfo.getMessageContent()!=null && dynamicInfo.getMessageContent().isJson()) {
+			OpenSPCoop2MessageFactory messageFactory = dynamicInfo.getMessage()!=null ? dynamicInfo.getMessage().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			PatternExtractor pe = new PatternExtractor(messageFactory, dynamicInfo.getMessageContent(), log);
 			dynamicMap.put(Costanti.MAP_ELEMENT_JSON_PATH, pe);
 			dynamicMap.put(Costanti.MAP_ELEMENT_JSON_PATH.toLowerCase(), pe);
 		}
@@ -374,16 +367,19 @@ public class DynamicUtils {
 	// DYNAMIC MAP
 	// Mappa che non contiene 'response' field
 	
-	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Logger log) throws DynamicException {
-		return buildDynamicMap(msg, context, null, log);
+	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Logger log, 
+			boolean bufferMessage_readOnly) throws DynamicException {
+		return buildDynamicMap(msg, context, null, log, 
+				bufferMessage_readOnly);
 	}
-	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log) throws DynamicException {
+	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
+			boolean bufferMessage_readOnly) throws DynamicException {
 		
 		/* Costruisco dynamic Map */
 		
-		DynamicInfo dInfo = DynamicUtils.readDynamicInfo(msg);
-		Element element = dInfo.getXml();
-		String elementJson = dInfo.getJson();
+		DynamicInfo dInfo = DynamicUtils.readDynamicInfo(msg, 
+				bufferMessage_readOnly, context);
+		MessageContent messageContent = dInfo.getMessageContent();
 		Map<String, List<String>> parametriTrasporto = dInfo.getHeaders();
 		Map<String, List<String>> parametriUrl = dInfo.getParameters();
 		Map<String, List<String>> parametriForm = dInfo.getFormParameters();
@@ -392,7 +388,7 @@ public class DynamicUtils {
 		ErrorHandler errorHandler = new ErrorHandler();
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, context, urlInvocazione,
 				msg,
-				element, elementJson, 
+				messageContent,
 				busta, 
 				parametriTrasporto, 
 				parametriUrl,
@@ -409,9 +405,8 @@ public class DynamicUtils {
 	
 	// READ DYNAMIC INFO
 	
-	public static DynamicInfo readDynamicInfo(OpenSPCoop2Message message) throws DynamicException {
-		Element element = null;
-		String elementJson = null;
+	public static DynamicInfo readDynamicInfo(OpenSPCoop2Message message, boolean bufferMessage_readOnly, Context context) throws DynamicException {
+		MessageContent content = null;
 		Map<String, List<String>> parametriTrasporto = null;
 		Map<String, List<String>> parametriUrl = null;
 		Map<String, List<String>> parametriForm = null;
@@ -420,16 +415,16 @@ public class DynamicUtils {
 		try{
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
-				element = soapMessage.getSOAPPart().getEnvelope();
+				content = new MessageContent(soapMessage, bufferMessage_readOnly, context);
 			}
 			else{
 				if(MessageType.XML.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
-					element = xml.getContent();	
+					content = new MessageContent(xml, bufferMessage_readOnly, context);
 				}
 				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
-					elementJson = json.getContent();
+					content = new MessageContent(json, bufferMessage_readOnly, context);
 				}
 			}
 			
@@ -468,8 +463,8 @@ public class DynamicUtils {
 		}
 		
 		DynamicInfo dInfo = new DynamicInfo();
-		dInfo.setJson(elementJson);
-		dInfo.setXml(element);
+		dInfo.setMessage(message);
+		dInfo.setMessageContent(content);
 		dInfo.setHeaders(parametriTrasporto);
 		dInfo.setParameters(parametriUrl);
 		dInfo.setFormParameters(parametriForm);
@@ -481,9 +476,8 @@ public class DynamicUtils {
 	
 	
 	// *** TEMPLATE GOVWAY ***
-
-	public static String convertDynamicPropertyValue(String name,String tmpParam,Map<String,Object> dynamicMap,Context pddContext, boolean forceStartWithDollaro) throws DynamicException{
-		
+	
+	private static String initTemplateValue(String tmpParam, boolean forceStartWithDollaro,Context pddContext) {
 		String tmp = tmpParam;
 		if(!forceStartWithDollaro) {
 			// per retrocompatibilità nel connettore file gestisco entrambi
@@ -502,34 +496,32 @@ public class DynamicUtils {
 				tmp = tmp.replace(transactionIdConstant, idTransazione);
 			}
 		}
+		return tmp;
+	}
+	
+	public static void validate(String name,String tmpParam, boolean forceStartWithDollaro, boolean addPrefixError) throws DynamicException{
+		Context pddContext = new Context();
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, "fakeId");
+		String tmp = initTemplateValue(tmpParam, forceStartWithDollaro, pddContext);
 		
-		boolean request = false;
-		boolean response = true;
+		boolean onlyValidate = true;
+		tmp = processTemplateValue_url_xpath_jsonpath(tmp, onlyValidate, null, forceStartWithDollaro);
 		
-		// conversione url
-		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				false, false, true, 
-				forceStartWithDollaro, request);
-		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				false, false, true, 
-				forceStartWithDollaro, response);
+		try{
+			DynamicStringReplace.validate(tmp, forceStartWithDollaro);
+		}catch(Exception e){
+			String prefix = addPrefixError ? "Proprieta' '"+name+"' contiene un valore non corretto: " : "";
+			throw new DynamicException(prefix+e.getMessage(),e);
+		}
+	}
+	
+	public static String convertDynamicPropertyValue(String name,String tmpParam,Map<String,Object> dynamicMap,Context pddContext, boolean forceStartWithDollaro) throws DynamicException{
 		
-		// conversione xpath
-		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				true, false, false, 
-				forceStartWithDollaro, request);
-		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				true, false, false, 
-				forceStartWithDollaro, response);
-		
-		// conversione jsonpath
-		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				false, true, false, 
-				forceStartWithDollaro, request);
-		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
-				false, true, false, 
-				forceStartWithDollaro, response);
-		
+		String tmp = initTemplateValue(tmpParam, forceStartWithDollaro, pddContext);
+				
+		boolean onlyValidate = false;
+		tmp = processTemplateValue_url_xpath_jsonpath(tmp, onlyValidate, dynamicMap, forceStartWithDollaro);
+				
 		try{
 			tmp = DynamicStringReplace.replace(tmp, dynamicMap, forceStartWithDollaro);
 		}catch(Exception e){
@@ -538,9 +530,50 @@ public class DynamicUtils {
 		return tmp;
 	}
 	
+	private static String processTemplateValue_url_xpath_jsonpath(String tmpParam, boolean onlyValidate, Map<String,Object> dynamicMap,
+			boolean forceStartWithDollaro) throws DynamicException {
+		
+		String tmp = tmpParam;
+		boolean request = false;
+		boolean response = true;
+		
+		// conversione url
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				false, false, true, 
+				forceStartWithDollaro, request,
+				onlyValidate);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				false, false, true, 
+				forceStartWithDollaro, response,
+				onlyValidate);
+		
+		// conversione xpath
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				true, false, false, 
+				forceStartWithDollaro, request,
+				onlyValidate);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				true, false, false, 
+				forceStartWithDollaro, response,
+				onlyValidate);
+		
+		// conversione jsonpath
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				false, true, false, 
+				forceStartWithDollaro, request,
+				onlyValidate);
+		tmp = convertDynamicPropertyContent(tmp, dynamicMap, 
+				false, true, false, 
+				forceStartWithDollaro, response,
+				onlyValidate);
+		
+		return tmp;
+	}
+	
 	private static String convertDynamicPropertyContent(String tmp, Map<String,Object> dynamicMap, 
 			boolean xml, boolean json, boolean url, 
-			boolean forceStartWithDollaro, boolean response) throws DynamicException {
+			boolean forceStartWithDollaro, boolean response,
+			boolean onlyValidate) throws DynamicException {
 		
 		String istruzione = Costanti.MAP_ELEMENT_XML_XPATH;
 		String prefix = Costanti.MAP_ELEMENT_XML_XPATH_PREFIX;
@@ -598,24 +631,26 @@ public class DynamicUtils {
 				pattern = pattern.substring(0,positionChiusura);
 				
 				String complete = tmp.substring(indexOfStart, positionChiusura+indexOfStart+prefix.length()+1);
-				Object o = dynamicMap.get(istruzione);
-				if(o==null) {
-					throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto");
-				}
 				String value = null;
-				if(json || xml) {
-					if( !(o instanceof PatternExtractor) ) {
-						throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (extractor wrong class: "+o.getClass().getName()+")");
+				if(!onlyValidate) {
+					Object o = dynamicMap.get(istruzione);
+					if(o==null) {
+						throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto");
 					}
-					PatternExtractor patternExtractor = (PatternExtractor) o;
-					value = patternExtractor.read(pattern);
-				}
-				else {
-					if( !(o instanceof URLRegExpExtractor) ) {
-						throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (extractor wrong class: "+o.getClass().getName()+")");
+					if(json || xml) {
+						if( !(o instanceof PatternExtractor) ) {
+							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (extractor wrong class: "+o.getClass().getName()+")");
+						}
+						PatternExtractor patternExtractor = (PatternExtractor) o;
+						value = patternExtractor.read(pattern);
 					}
-					URLRegExpExtractor urlExtractor = (URLRegExpExtractor) o;
-					value = urlExtractor.read(pattern);
+					else {
+						if( !(o instanceof URLRegExpExtractor) ) {
+							throw new DynamicException("Trovata istruzione '"+istruzione+"' non utilizzabile in questo contesto (extractor wrong class: "+o.getClass().getName()+")");
+						}
+						URLRegExpExtractor urlExtractor = (URLRegExpExtractor) o;
+						value = urlExtractor.read(pattern);
+					}
 				}
 				if(value==null) {
 					value = "";

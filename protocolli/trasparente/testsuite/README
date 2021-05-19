@@ -128,7 +128,7 @@ Requisiti globali:
 ** Porta Delegata (SOAP) **
 
 (NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
-(NOTA2: Provarlo anche con MultipartParsing abilitato)
+(NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile)
 
 Batterie di test che verificano la normale gestione del servizio Porta Delegata
 - 'PortaDelegata':  vengono eseguiti tutti i test riguardanti la PortaDelegata
@@ -143,7 +143,7 @@ ault con codice di trasporto 500
 ** Porta Applicativa (SOAP) **
 
 (NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
-(NOTA2: Provarlo anche con MultipartParsing abilitato)
+(NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile)
 
 Batterie di test che verificano la normale gestione del servizio Porta Delegata
 - 'PortaApplicativa':  vengono eseguiti tutti i test riguardanti la PortaApplicativa
@@ -164,7 +164,7 @@ Per farlo su tomcat aggiungere l'attributo allowTrace="true" nel'elemento Connec
   <Connector port="8080" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" allowTrace="true" />
 
 (NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
-(NOTA2: Provarlo anche con MultipartParsing abilitato)
+(NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile)
 
 Batterie di test che verificano la normale gestione del servizio REST:
 - 'REST.PD': vengono eseguiti tutti i test riguardanti la PortaDelegata
@@ -188,7 +188,7 @@ Vengono verificate le richieste che contengono particolarità:
 - ContentType strutturalmente errati
 
 (NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
-(NOTA2: Provarlo anche con MultipartParsing abilitato)
+(NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile)
 
 Tutti i test sono avviabili con il gruppo 'Integrazione'.
 In alternativa sono eseguibili singolarmente con i seguenti gruppi:
@@ -233,7 +233,7 @@ copiare tutti gli xsd e wsdl presenti in ./protocolli/trasparente/example/server
 nella directory /etc/govway/mtom/
 
 (NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
-(NOTA2: Provarlo anche con MultipartParsing abilitato)
+(NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile)
 
 Batterie di test che verificano la gestione di MTOM all'interno della PdD
 - 'MTOMPortaDelegata':  vengono eseguiti tutti i test riguardanti la PortaDelegata

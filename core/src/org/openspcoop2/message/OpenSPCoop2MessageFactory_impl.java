@@ -35,6 +35,9 @@ import org.openspcoop2.message.rest.OpenSPCoop2Message_mimeMultipart_impl;
 import org.openspcoop2.message.rest.OpenSPCoop2Message_xml_impl;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_11_impl;
 import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl;
+import org.openspcoop2.message.soap.OpenSPCoop2Message_soap11_impl;
+import org.openspcoop2.message.soap.OpenSPCoop2Message_soap12_impl;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -52,6 +55,11 @@ import org.w3c.dom.Element;
  */
 
 public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
+
+	private static boolean soapPassthroughImpl = true;
+	public static void setSoapPassthroughImpl(boolean soapPassthroughImpl) {
+		OpenSPCoop2MessageFactory_impl.soapPassthroughImpl = soapPassthroughImpl;
+	}
 
 	
 	// ********** SOAP - FACTORY *************
@@ -155,27 +163,31 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 
 	@Override
 	protected OpenSPCoop2Message _createMessage(MessageType messageType, TransportRequestContext requestContext, InputStream is, 
-			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException {
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException {
 		
-		return this._createMessageEngine(messageType, requestContext, is, attachmentsProcessingMode, overhead);
+		return this._createMessageEngine(messageType, requestContext, is, attachmentsProcessingMode, overhead, soapStreamReader);
 	}
 	
 	@Override
 	protected OpenSPCoop2Message _createMessage(MessageType messageType, TransportResponseContext responseContext, InputStream is, 
-			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException {
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException {
 		
-		return this._createMessageEngine(messageType, responseContext, is, attachmentsProcessingMode, overhead);
+		return this._createMessageEngine(messageType, responseContext, is, attachmentsProcessingMode, overhead, soapStreamReader);
 	}
 	
 	@Override
 	protected OpenSPCoop2Message _createMessage(MessageType messageType, String contentType, InputStream is,  
-			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException{
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException{
 		
-		return this._createMessageEngine(messageType, contentType, is, attachmentsProcessingMode, overhead);
+		return this._createMessageEngine(messageType, contentType, is, attachmentsProcessingMode, overhead, soapStreamReader);
 	}
 	
 	private OpenSPCoop2Message _createMessageEngine(MessageType messageType, Object context, InputStream is, 
-			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException {
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException {
 		
 		try{
 		
@@ -214,13 +226,23 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 					if(contentType!=null){
 						mhs.setHeader(HttpConstants.CONTENT_TYPE, contentType);
 					}
-					if(MessageType.SOAP_11.equals(messageType)){
-						msg = new OpenSPCoop2Message_saaj_11_impl(this, mhs, is);
-						((OpenSPCoop2Message_saaj_11_impl)msg).initialize(overhead);
+					if(OpenSPCoop2MessageFactory_impl.soapPassthroughImpl) {
+						if(MessageType.SOAP_11.equals(messageType)){
+							msg = new OpenSPCoop2Message_soap11_impl(this, mhs, is, overhead, soapStreamReader);
+						}
+						else{
+							msg = new OpenSPCoop2Message_soap12_impl(this, mhs, is, overhead, soapStreamReader);
+						}
 					}
-					else{
-						msg = new OpenSPCoop2Message_saaj_12_impl(this, mhs, is);
-						((OpenSPCoop2Message_saaj_12_impl)msg).initialize(overhead);
+					else {
+						if(MessageType.SOAP_11.equals(messageType)){
+							msg = new OpenSPCoop2Message_saaj_11_impl(this, mhs, is);
+							((OpenSPCoop2Message_saaj_11_impl)msg).initialize(overhead);
+						}
+						else{
+							msg = new OpenSPCoop2Message_saaj_12_impl(this, mhs, is);
+							((OpenSPCoop2Message_saaj_12_impl)msg).initialize(overhead);
+						}
 					}
 					break;
 				case XML:

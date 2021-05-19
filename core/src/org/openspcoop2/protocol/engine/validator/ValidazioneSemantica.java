@@ -404,6 +404,19 @@ public class ValidazioneSemantica  {
 	 * 
 	 */
 	private void validazioneRiferimentoMessaggio(RuoloBusta tipoBusta)throws ProtocolException{
+		if(this.state==null &&
+				RuoloBusta.RICHIESTA.equals(tipoBusta) &&
+				this.busta!=null
+				&&
+				(
+						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(this.busta.getProfiloDiCollaborazione())
+						||
+						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.busta.getProfiloDiCollaborazione())
+				)
+				) {
+			return; // per supportare il rilascio della connessione
+		}
+		
 		if(this.state instanceof StatefulMessage) {
 			StatefulMessage stateful = (StatefulMessage)this.state;
 
@@ -521,6 +534,21 @@ public class ValidazioneSemantica  {
 			}
 		}
 		
+		boolean validaIdCollaborazioneProfiliNonOneway = false;
+		boolean validaIdCollaborazioneConsegnaInOrdine = false;
+		if(!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(this.busta.getProfiloDiCollaborazione())){
+			validaIdCollaborazioneProfiliNonOneway = (tipoBusta.equals(RuoloBusta.RICHIESTA) == false);
+		}
+		else {
+			if(this.busta.getSequenza()!=-1 && this.busta.getCollaborazione()!=null) {
+				validaIdCollaborazioneConsegnaInOrdine = true;
+			}
+		}
+		
+		if(!validaIdCollaborazioneProfiliNonOneway && !validaIdCollaborazioneConsegnaInOrdine) {
+			return;
+		}
+		
 		if(this.state instanceof StatefulMessage) {
 			StatefulMessage stateful = (StatefulMessage)this.state;
 			if(this.busta.getCollaborazione()!=null){
@@ -535,7 +563,7 @@ public class ValidazioneSemantica  {
 				if(!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(this.busta.getProfiloDiCollaborazione())){
 
 					//	Sulla busta di richiesta non posso effettuare alcun controllo.
-					if(tipoBusta.equals("Richiesta") == false){
+					if(tipoBusta.equals(RuoloBusta.RICHIESTA) == false){
 
 						// buste di risposta/ricevuta
 						//	Sincrono
@@ -577,12 +605,14 @@ public class ValidazioneSemantica  {
 
 				// check per profilo oneway
 				else{
-
-					org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine consegna = new org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine(stateful,this.log,this.protocolFactory);
-					Eccezione ecc = consegna.validazioneDatiConsegnaInOrdine(this.busta, this.protocolFactory);
-					if(ecc!=null){
-						this.erroriValidazione.add(ecc);
-						return;
+					
+					if(validaIdCollaborazioneConsegnaInOrdine) {
+						org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine consegna = new org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine(stateful,this.log,this.protocolFactory);
+						Eccezione ecc = consegna.validazioneDatiConsegnaInOrdine(this.busta, this.protocolFactory);
+						if(ecc!=null){
+							this.erroriValidazione.add(ecc);
+							return;
+						}
 					}
 
 				}
@@ -604,11 +634,13 @@ public class ValidazioneSemantica  {
 			// Check per profili oneway
 			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(this.busta.getProfiloDiCollaborazione())){
 			
-				org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine consegna = new org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine(stateless,this.log,this.protocolFactory);
-				Eccezione ecc = consegna.validazioneDatiConsegnaInOrdine(this.busta, this.protocolFactory);
-				if(ecc!=null){
-					this.erroriValidazione.add(ecc);
-					return;
+				if(validaIdCollaborazioneConsegnaInOrdine) {
+					org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine consegna = new org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine(stateless,this.log,this.protocolFactory);
+					Eccezione ecc = consegna.validazioneDatiConsegnaInOrdine(this.busta, this.protocolFactory);
+					if(ecc!=null){
+						this.erroriValidazione.add(ecc);
+						return;
+					}
 				}
 				
 			}

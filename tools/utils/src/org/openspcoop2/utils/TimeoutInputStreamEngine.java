@@ -40,7 +40,8 @@ public class TimeoutInputStreamEngine extends InputStream {
 	private InputStream isWrapped = null;
 	private String prefixError = "";
 	private Hashtable<String, Object> ctx;
-		
+	private boolean checkDisabled = false;
+	
 	protected TimeoutInputStreamEngine(InputStream is, int timeoutMs, String prefixError, Hashtable<String, Object> ctx) throws IOException {
 		this.createDateMs = System.currentTimeMillis();
 		this.timeoutMs = timeoutMs;
@@ -58,7 +59,23 @@ public class TimeoutInputStreamEngine extends InputStream {
 		return this.isWrapped;
 	}
 	
+	protected void disableCheckTimeout() {
+		this.checkDisabled = true;
+	}
+	protected void updateThreshold(int timeoutMs) throws IOException {
+		if(this.timeoutMs<=0) {
+			throw new IOException("Invalid timeout");
+		}
+		this.timeoutMs = timeoutMs;
+	}
+	protected void updateContext(Hashtable<String, Object> ctx) {
+		this.ctx = ctx;
+	}
+	
 	private void checkTimeout() throws IOException {
+		if(this.checkDisabled) {
+			return; // e' stato disabilitato dopo averlo creato
+		}
 		long now = System.currentTimeMillis() - this.createDateMs;
 		if(now>this.timeoutMs) {
 			String errorMsg = this.prefixError+TimeoutInputStream.ERROR_MSG;

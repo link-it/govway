@@ -250,7 +250,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		// Aggiorno RequestInfo
 		ConnectorDispatcherInfo cInfo = null;
 		try{
-			cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null,
+			cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null, null,
 					generatoreErrore, serviceIdentificationReader, msgDiag, 
 					context!=null ? context.getPddContext(): null);
 			if(cInfo!=null){
@@ -855,7 +855,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				try{
 					if(ServiceBinding.SOAP.equals(msgResponse.getServiceBinding())){
 						OpenSPCoop2SoapMessage soapMessage = msgResponse.castAsSoap();
-						if(soapMessage.getSOAPBody().hasFault()){
+						if(soapMessage.hasSOAPFault()){
 	
 							descrizioneSoapFault = " ("+SoapUtils.toString(soapMessage.getFactory(), soapMessage.getSOAPBody().getFault(), false)+")";
 							

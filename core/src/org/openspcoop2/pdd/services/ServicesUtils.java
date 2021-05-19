@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 
@@ -62,6 +61,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -129,6 +129,12 @@ public class ServicesUtils {
 		}
 		else if(Utilities.existsInnerException(t, java.net.SocketException.class)){
 			return true;
+		}
+		else if(Utilities.existsInnerException(t, java.io.IOException.class)){
+			Throwable tInner = Utilities.getInnerException(t, java.io.IOException.class);
+			if(tInner!=null && tInner.getMessage()!=null && tInner.getMessage().contains("Broken pipe")) {
+				return true;
+			}
 		}
 		
 		return false;
@@ -207,18 +213,19 @@ public class ServicesUtils {
 		SOAPEnvelope envelope = null;
 		SOAPHeader header = null;
 		try {
-			envelope = message.getSOAPPart().getEnvelope();
-			header = envelope.getHeader();
-			
-			//Se non c'e' l'header il controllo e' inutile
-			if(header == null) return null;
-			
 			OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
 
 			if(openspcoopProperties!=null){
 				if(openspcoopProperties.isBypassFilterMustUnderstandEnabledForAllHeaders()){
 					return null;
 				}else{
+					
+					envelope = message.getSOAPPart().getEnvelope();
+					header = envelope.getHeader();
+					
+					//Se non c'e' l'header il controllo e' inutile
+					if(header == null) return null;
+					
 					List<NameValue> filtri = openspcoopProperties.getBypassFilterMustUnderstandProperties(protocolFactory.getProtocol());
 					if(filtri!=null && filtri.size()>0){
 						return ServicesUtils.checkMustUnderstandHeaderElement(message.getMessageType(),header,filtri);
@@ -263,7 +270,19 @@ public class ServicesUtils {
 	public static String checkSOAPEnvelopeNamespace(OpenSPCoop2SoapMessage message, MessageType messageType) throws MessageException{
 		try {
 			if(SoapUtils.checkSOAPEnvelopeNamespace(message, messageType)==false){
-				return message.getSOAPPart().getEnvelope().getNamespaceURI();
+				
+				OpenSPCoop2MessageSoapStreamReader reader = message.getSoapReader();
+				String envelopeNamespace = null;
+				if(reader!=null) {
+					envelopeNamespace = reader.getNamespace();
+				}
+				if(envelopeNamespace==null) {
+					return message.getSOAPPart().getEnvelope().getNamespaceURI();
+				}
+				else {
+					return envelopeNamespace;
+				}
+				
 			}
 			return null;
 		} catch (Exception ex) {
@@ -287,19 +306,18 @@ public class ServicesUtils {
 			if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
 				OpenSPCoop2SoapMessage soap = responseMessage.castAsSoap();
 				
-				if(soap.countAttachments()>0) {
+				if(soap.hasAttachments()) {
 					rispostaPresente = true;
 				}
 				else {
-					Object b = soap.getSOAPBody();
-					SOAPBody body = null;
-					if(b != null){
-						body = (SOAPBody) b;
+					if(!soap.isSOAPBodyEmpty()) {
+						rispostaPresente = true;
 					}
-					Object h = null;
-					SOAPHeader header = null;
-					if(b==null || body==null || SoapUtils.getFirstNotEmptyChildNode(responseMessage.getFactory(), body, false)==null ){
+					else {
+					
 						//potenziale msg inutile.
+						Object h = null;
+						SOAPHeader header = null;
 						h = soap.getSOAPHeader();
 						if(h!=null){
 							header = (SOAPHeader) h;
@@ -315,14 +333,13 @@ public class ServicesUtils {
 								}
 							}
 						}
+
+						
+						// *** GB ***
+						header = null;
+						h = null;
+						// *** GB ***
 					}
-					
-					// *** GB ***
-					body = null;
-					b = null;
-					header = null;
-					h = null;
-					// *** GB ***
 				}
 			}
 			else{

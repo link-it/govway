@@ -402,8 +402,8 @@ public class SoapTest extends ConfigLoader {
 			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.FaultReset)) <= windowSize);			
 			assertEquals(429, r.getResultHTTPOperation());
 			
-			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchLimitExceededSoap(element);
+			//Element element = Utils.buildXmlElement(r.getContent());
+			Utils.matchLimitExceededSoap(r.getContent());
 			
 			assertEquals("0", r.getHeaderFirstValue(Headers.FaultRemaining));
 			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
@@ -420,6 +420,13 @@ public class SoapTest extends ConfigLoader {
 		// sia effettivamente un fault.
 		for (var r: responses){
 			
+			String idTransazione = r.getHeaderFirstValue(Headers.TransactionId);
+			String content = null;
+			if(r.getContent()!=null) {
+				content = new String(r.getContent());
+			}
+			logRateLimiting.debug("Verifico risposta della transazione '"+idTransazione+"' ("+content+") ...");
+						
 			Utils.checkXLimitHeader(logRateLimiting, Headers.FaultLimit, r.getHeaderFirstValue(Headers.FaultLimit), maxRequests);			
 			if ("true".equals(prop.getProperty("rl_check_limit_windows"))) {
 				Map<Integer,Integer> windowMap = Map.of(windowSize,maxRequests);							
@@ -431,7 +438,9 @@ public class SoapTest extends ConfigLoader {
 			assertEquals(500, r.getResultHTTPOperation());
 						
 			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchEchoFaultResponseSoap(element);
+			Utils.matchEchoFaultResponseSoap(idTransazione, element);	
+			
+			logRateLimiting.debug("Verifico dati della transazione '"+idTransazione+"' ok");
 		}
 	}
 	

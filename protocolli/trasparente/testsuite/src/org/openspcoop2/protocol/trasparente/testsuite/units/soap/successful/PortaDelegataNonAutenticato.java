@@ -127,7 +127,8 @@ public class PortaDelegataNonAutenticato extends PortaImpl {
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP12",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP12.STATELESS"},dataProvider=PortaDelegata.ID_GRUPPO+"OneWaySOAP12Stateless",dependsOnMethods={"oneWay_pdSOAP12Stateless"})
 	public void testOneWay_pdSOAP12Stateless(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		Porta._testOneWay(this.pdSOAP12Stateless, data, msgDiagData, id, checkServizioApplicativo);
-	}	
+	}
+	
 	
 	@Test(groups={PortaDelegata.ID_GRUPPO,PortaDelegata.ID_GRUPPO+"NonAutenticato",PortaDelegata.ID_GRUPPO+".ATTACHMENTS",PortaDelegata.ID_GRUPPO+".ONEWAY",PortaDelegata.ID_GRUPPO+".SOAP11",PortaDelegata.ID_GRUPPO+".ONEWAY.SOAP11.STATEFUL.ATTACHMENTS"})
 	public void oneWay_pdSOAP11WithAttachmentsStateful() throws TestSuiteException, Exception{

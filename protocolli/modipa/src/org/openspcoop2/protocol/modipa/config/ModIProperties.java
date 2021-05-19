@@ -270,6 +270,8 @@ public class ModIProperties {
 			
 			/* **** CONFIGURAZIONE **** */
 			
+			isReadByPathBufferEnabled();
+			isValidazioneBufferEnabled();
 			isRiferimentoIDRichiesta_PD_Required();
 			isRiferimentoIDRichiesta_PA_Required();
 			
@@ -2177,7 +2179,33 @@ public class ModIProperties {
     	return ModIProperties.getSoapWSAddressingActor;
 	}
 	
-	
+	private static Boolean getSoapWSAddressingSchemaValidation_read= null;
+	private static Boolean getSoapWSAddressingSchemaValidation= null;
+	public boolean isSoapWSAddressingSchemaValidation() throws Exception{
+    	if(ModIProperties.getSoapWSAddressingSchemaValidation_read==null){
+	    	String name = "org.openspcoop2.protocol.modipa.soap.wsaddressing.schemaValidation";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getSoapWSAddressingSchemaValidation = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    		
+    		ModIProperties.getSoapWSAddressingSchemaValidation_read = true;
+    	}
+    	
+    	return ModIProperties.getSoapWSAddressingSchemaValidation;
+	}	
 	
 	
 	private static String getSoapCorrelationIdName= null;
@@ -2769,6 +2797,54 @@ public class ModIProperties {
 	
 	
 	/* **** CONFIGURAZIONE **** */
+	
+	private static Boolean isReadByPathBufferEnabled = null;
+	public Boolean isReadByPathBufferEnabled(){
+    	if(ModIProperties.isReadByPathBufferEnabled==null){
+    		String pName = "org.openspcoop2.protocol.modipa.readByPath.buffer";
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.isReadByPathBufferEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprietà '"+pName+"' non impostata, viene utilizzato il default 'true'");
+					ModIProperties.isReadByPathBufferEnabled = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprietà '"+pName+"' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				ModIProperties.isReadByPathBufferEnabled = true;
+			}
+    	}
+    	
+    	return ModIProperties.isReadByPathBufferEnabled;
+	}
+	
+	private static Boolean isValidazioneBufferEnabled = null;
+	public Boolean isValidazioneBufferEnabled(){
+    	if(ModIProperties.isValidazioneBufferEnabled==null){
+    		String pName = "org.openspcoop2.protocol.modipa.validazione.buffer";
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.isValidazioneBufferEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprietà '"+pName+"' non impostata, viene utilizzato il default 'true'");
+					ModIProperties.isValidazioneBufferEnabled = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprietà '"+pName+"' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				ModIProperties.isValidazioneBufferEnabled = true;
+			}
+    	}
+    	
+    	return ModIProperties.isValidazioneBufferEnabled;
+	}
 	
     /**
      * Restituisce l'indicazione se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione

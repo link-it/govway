@@ -40,6 +40,7 @@ import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -109,7 +110,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 	}
 	
 	public static ConnectorDispatcherInfo updatePortaDelegataRequestInfo(RequestInfo requestInfo, Logger logCore, 
-			ConnectorOutMessage res, RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore,
+			ConnectorInMessage req, ConnectorOutMessage res, RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore,
 			ServiceIdentificationReader serviceIdentificationReader,
 			MsgDiagnostico msgDiag, PdDContext pddContextNullable) throws ConnectorException{
 		
@@ -180,10 +181,48 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			
 			if(idServizio!=null){
 				
+				// Aggiorno service binding rispetto al servizio localizzato
+				try{
+					
+					integrationServiceBinding = pf.createProtocolConfiguration().getIntegrationServiceBinding(idServizio, registryReader);
+					requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
+					
+					protocolServiceBinding = pf.createProtocolConfiguration().getProtocolServiceBinding(integrationServiceBinding, protocolContext);
+					requestInfo.setProtocolServiceBinding(protocolServiceBinding);
+					
+					generatoreErrore.updateServiceBinding(integrationServiceBinding);
+				}catch(RegistryNotFound notFound){
+					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
+					msgDiag.addKeywordErroreProcessamento(notFound);
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
+					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
+							ErroriIntegrazione.ERRORE_405_SERVIZIO_NON_TROVATO.getErroreIntegrazione(),
+							IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+				}catch(Exception error){
+					logCore.error("Lettura ServiceBinding fallita: "+error.getMessage(),error);
+					msgDiag.addKeywordErroreProcessamento(error);
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
+					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Lettura ServiceBinding fallita"),
+							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+				}
+				
+				// Provo ad ottenere il reader soap
+				OpenSPCoop2MessageSoapStreamReader soapStreamReader = null;
+				if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
+					try{
+						if(req!=null) {
+							soapStreamReader = req.getSoapReader();
+						}
+					}catch(Exception e){
+						logCore.debug("SOAPStream lettura non riuscita: "+e.getMessage(),e);
+					}
+				}
+				
 				// provo a leggere anche l'azione
 				// l'eventuale errore lo genero dopo
 				try{
-					idServizio.setAzione(configIntegrationReader.getAzione(configIntegrationReader.getPortaDelegata(idPD), protocolContext, requestInfo.getProtocolFactory()));
+					idServizio.setAzione(configIntegrationReader.getAzione(configIntegrationReader.getPortaDelegata(idPD), protocolContext, requestInfo.getProtocolFactory(),soapStreamReader));
 				}catch(Exception e){
 					logCore.debug("Azione non trovata: "+e.getMessage(),e);
 				}
@@ -239,33 +278,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				if(generatoreErrore!=null){
 					generatoreErrore.updateInformazioniCooperazione(idSoggettoFruitore, idServizio);
 				}
-				
-				// Aggiorno service binding rispetto al servizio localizzato
-				try{
-					
-					integrationServiceBinding = pf.createProtocolConfiguration().getIntegrationServiceBinding(idServizio, registryReader);
-					requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
-					
-					protocolServiceBinding = pf.createProtocolConfiguration().getProtocolServiceBinding(integrationServiceBinding, protocolContext);
-					requestInfo.setProtocolServiceBinding(protocolServiceBinding);
-					
-					generatoreErrore.updateServiceBinding(integrationServiceBinding);
-				}catch(RegistryNotFound notFound){
-					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
-					msgDiag.addKeywordErroreProcessamento(notFound);
-					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
-					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
-							ErroriIntegrazione.ERRORE_405_SERVIZIO_NON_TROVATO.getErroreIntegrazione(),
-							IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
-				}catch(Exception error){
-					logCore.error("Lettura ServiceBinding fallita: "+error.getMessage(),error);
-					msgDiag.addKeywordErroreProcessamento(error);
-					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
-					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
-							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Lettura ServiceBinding fallita"),
-							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-				}
-				
+								
 				// Aggiorno service binding configuration rispetto al servizio localizzato
 				try{
 					bindingConfig = pf.createProtocolConfiguration().getServiceBindingConfiguration(protocolContext, integrationServiceBinding, idServizio, registryReader);

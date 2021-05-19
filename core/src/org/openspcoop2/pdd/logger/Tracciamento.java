@@ -867,8 +867,8 @@ public class Tracciamento {
 			if(RuoloMessaggio.RISPOSTA.equals(tipoTraccia) && msg!=null){
 				boolean found = false;
 				if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-					SOAPBody body = msg.castAsSoap().getSOAPBody();
-					if(body!=null && body.hasFault()){
+					if(msg.castAsSoap().hasSOAPFault()){
+						SOAPBody body = msg.castAsSoap().getSOAPBody();
 						found = true;
 						StringBuilder bf = new StringBuilder();
 						if(esito.getDettaglio()!=null){
@@ -945,53 +945,59 @@ public class Tracciamento {
 		if(msg!=null){
 			try{
 				if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-					java.util.Iterator<?> it = msg.castAsSoap().getAttachments();
-				    while(it.hasNext()){
-				    	AttachmentPart ap = 
-				    		(AttachmentPart) it.next();
-				    	Allegato allegato = new Allegato();
-				    	allegato.setContentId(ap.getContentId());
-				    	allegato.setContentLocation(ap.getContentLocation());
-				    	allegato.setContentType(ap.getContentType());
-				    	
-				    	if(securityInfo!=null && ap.getContentId()!=null){
-					    	for (int i = 0; i < securityInfo.sizeListaAllegati(); i++) {
-								Allegato a = securityInfo.getAllegato(i);
-								if(a.getContentId()!=null && a.getContentId().equals(ap.getContentId())){
-									allegato.setDigest(a.getDigest());
-								}
-							}
-				    	}
-				    	
-				    	traccia.addAllegato(allegato);
-				    }
-				}
-				else if(MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
-					MimeMultipart mime = msg.castAsRestMimeMultipart().getContent();
-					if(mime!=null){
-						for (int i = 0; i < mime.countBodyParts(); i++) {
-							BodyPart bodyPart = mime.getBodyPart(i);
-							String contentId = mime.getContentID(bodyPart);
-							if(contentId==null){
-								// provo a vedere se c'e' un disposition
-								contentId = mime.getContentDisposition(bodyPart);
-							}
-							
-							Allegato allegato = new Allegato();
-					    	allegato.setContentId(contentId);
-					    	allegato.setContentLocation(mime.getContentLocation(bodyPart));
-					    	allegato.setContentType(bodyPart.getContentType());
+					// per motivi di streaming, se non e' costruito non lo tracciamo
+					if(msg.isContentBuilded() && msg.castAsSoap().hasAttachments()) {
+						java.util.Iterator<?> it = msg.castAsSoap().getAttachments();
+					    while(it.hasNext()){
+					    	AttachmentPart ap = 
+					    		(AttachmentPart) it.next();
+					    	Allegato allegato = new Allegato();
+					    	allegato.setContentId(ap.getContentId());
+					    	allegato.setContentLocation(ap.getContentLocation());
+					    	allegato.setContentType(ap.getContentType());
 					    	
-					    	if(securityInfo!=null && contentId!=null){
-						    	for (int j = 0; j < securityInfo.sizeListaAllegati(); j++) {
-									Allegato a = securityInfo.getAllegato(j);
-									if(a.getContentId()!=null && a.getContentId().equals(contentId)){
+					    	if(securityInfo!=null && ap.getContentId()!=null){
+						    	for (int i = 0; i < securityInfo.sizeListaAllegati(); i++) {
+									Allegato a = securityInfo.getAllegato(i);
+									if(a.getContentId()!=null && a.getContentId().equals(ap.getContentId())){
 										allegato.setDigest(a.getDigest());
 									}
 								}
 					    	}
 					    	
 					    	traccia.addAllegato(allegato);
+					    }
+					}
+				}
+				else if(MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
+					// per motivi di streaming, se non e' costruito non lo tracciamo
+					if(msg.isContentBuilded()){
+						MimeMultipart mime = msg.castAsRestMimeMultipart().getContent();
+						if(mime!=null){
+							for (int i = 0; i < mime.countBodyParts(); i++) {
+								BodyPart bodyPart = mime.getBodyPart(i);
+								String contentId = mime.getContentID(bodyPart);
+								if(contentId==null){
+									// provo a vedere se c'e' un disposition
+									contentId = mime.getContentDisposition(bodyPart);
+								}
+								
+								Allegato allegato = new Allegato();
+						    	allegato.setContentId(contentId);
+						    	allegato.setContentLocation(mime.getContentLocation(bodyPart));
+						    	allegato.setContentType(bodyPart.getContentType());
+						    	
+						    	if(securityInfo!=null && contentId!=null){
+							    	for (int j = 0; j < securityInfo.sizeListaAllegati(); j++) {
+										Allegato a = securityInfo.getAllegato(j);
+										if(a.getContentId()!=null && a.getContentId().equals(contentId)){
+											allegato.setDigest(a.getDigest());
+										}
+									}
+						    	}
+						    	
+						    	traccia.addAllegato(allegato);
+							}
 						}
 					}
 				}

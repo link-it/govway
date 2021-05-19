@@ -31,9 +31,9 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.DumpRestMessageUtils;
-import org.openspcoop2.message.soap.AbstractBaseOpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.DumpSoapMessageUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.utils.DumpMessaggioConfig;
 import org.slf4j.Logger;
@@ -104,9 +104,10 @@ public class ContentExtractor {
 
 	public void disableExceptionIfFoundMoreSecurityHeader() {
 		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
-			if(this.message instanceof AbstractBaseOpenSPCoop2SoapMessage) {
-				AbstractBaseOpenSPCoop2SoapMessage soapMsg = (AbstractBaseOpenSPCoop2SoapMessage) this.message;
-				soapMsg.setThrowExceptionIfFoundMoreSecurityHeader(false);
+			try {
+				this.message.castAsSoap().setThrowExceptionIfFoundMoreSecurityHeader(false);
+			}catch(Throwable t) {
+				throw new RuntimeException(t.getMessage(),t); // non dovrebbe mai avvenire
 			}
 		}
 	}
@@ -259,6 +260,56 @@ public class ContentExtractor {
 			throw new DynamicException(t.getMessage(),t);
 		}
 	}
+	
+	public boolean isSoapFault() throws DynamicException {
+		try {
+			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+				return this.message.castAsSoap().hasSOAPFault();
+			}
+			else {
+				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
+			}
+		}catch(Throwable t) {
+			throw new DynamicException(t.getMessage(),t);
+		}
+	}
+	public boolean isSoapBodyEmpty() throws DynamicException {
+		try {
+			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+				return this.message.castAsSoap().isSOAPBodyEmpty();
+			}
+			else {
+				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
+			}
+		}catch(Throwable t) {
+			throw new DynamicException(t.getMessage(),t);
+		}
+	}
+	public boolean isSoapWithAttachments() throws DynamicException {
+		try {
+			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+				return this.message.castAsSoap().hasAttachments();
+			}
+			else {
+				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
+			}
+		}catch(Throwable t) {
+			throw new DynamicException(t.getMessage(),t);
+		}
+	}
+	public OpenSPCoop2MessageSoapStreamReader getSoapReader() throws DynamicException {
+		try {
+			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+				return this.message.castAsSoap().getSoapReader();
+			}
+			else {
+				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");
+			}
+		}catch(Throwable t) {
+			throw new DynamicException(t.getMessage(),t);
+		}
+	}
+	
 	
 	public DumpMessaggio dumpMessage() throws DynamicException {
 		if(this.dumpMessaggioInit==null) {

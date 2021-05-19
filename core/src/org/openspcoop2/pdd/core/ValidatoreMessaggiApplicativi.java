@@ -25,8 +25,6 @@ package org.openspcoop2.pdd.core;
 
 import java.util.List;
 
-import javax.xml.soap.SOAPEnvelope;
-
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -52,7 +50,6 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
 
 
 /**
@@ -73,8 +70,6 @@ public class ValidatoreMessaggiApplicativi {
 	private IDServizio idServizio;
 	/** OpenSPCoop2Message */
 	private OpenSPCoop2Message message;
-	/** SOAPEnvelope */
-	private Element element;
 	/** WSDL Associato al servizio */
 	private AccordoServizioWrapper accordoServizioWrapper = null;
 	/** Logger */
@@ -85,6 +80,8 @@ public class ValidatoreMessaggiApplicativi {
 	private WSDLValidator wsdlValidator = null;
 	/** Validate SOAPAction */
 	private boolean validateSoapAction = true;
+	/** Buffer */
+	private boolean bufferMessage_readOnly = true;
 	
 	
 	
@@ -121,7 +118,7 @@ public class ValidatoreMessaggiApplicativi {
 	/* ------ Costruttore -------------- */
 	public ValidatoreMessaggiApplicativi(RegistroServiziManager registro,IDServizio idServizio,
 			OpenSPCoop2Message message,boolean readWSDLAccordoServizio, boolean gestioneXsiType_rpcLiteral,
-			List<Proprieta> proprieta)throws ValidatoreMessaggiApplicativiException{
+			List<Proprieta> proprieta, PdDContext pddContext)throws ValidatoreMessaggiApplicativiException{
 		
 		if(registro==null){
 			ValidatoreMessaggiApplicativiException ex 
@@ -137,28 +134,16 @@ public class ValidatoreMessaggiApplicativi {
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
-		
+				
 		this.message = message;
+		boolean hasContent = false;
 		try{
 			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = this.message.castAsSoap();
-				try{
-					this.element = soapMessage.getSOAPPart().getEnvelope();
-					SOAPEnvelope envelope = (SOAPEnvelope) this.element;
-					if(envelope.getBody()==null || (envelope.getBody().hasChildNodes()==false)){
-						ValidatoreMessaggiApplicativiException ex 
-							= new ValidatoreMessaggiApplicativiException("SOAPBody non esistente");
-						ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
-						throw ex;
-					}
-				}
-				catch(ValidatoreMessaggiApplicativiException e){
-					throw e;
-				}
-				catch(Exception e){
-					this.logger.error("Read failed: "+e.getMessage(),e);
+				hasContent = !soapMessage.isSOAPBodyEmpty();
+				if(!hasContent) {
 					ValidatoreMessaggiApplicativiException ex 
-						= new ValidatoreMessaggiApplicativiException("Lettura SOAPEnvelope fallita",e);
+						= new ValidatoreMessaggiApplicativiException("SOAPBody non esistente");
 					ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 					throw ex;
 				}
@@ -166,7 +151,7 @@ public class ValidatoreMessaggiApplicativi {
 			else{
 				if(MessageType.XML.equals(this.message.getMessageType())){
 					OpenSPCoop2RestXmlMessage xml = this.message.castAsRestXml();
-					this.element = xml.getContent();	
+					hasContent = xml.hasContent();
 				}
 				else{
 					throw new Exception("Funzionalità non supportata con ServiceBinding REST e tipologia di messaggio ["+this.message.getMessageType()+"]");
@@ -182,7 +167,7 @@ public class ValidatoreMessaggiApplicativi {
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
-		if(this.element==null){
+		if(!hasContent){
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException("Contenuto da validare non esistente");
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
@@ -226,9 +211,21 @@ public class ValidatoreMessaggiApplicativi {
 			}
 		}
 		
+		this.bufferMessage_readOnly = OpenSPCoop2Properties.getInstance().isValidazioneContenutiApplicativi_bufferContentRead();
+		if(proprieta!=null && !proprieta.isEmpty()) {
+			boolean defaultBehaviour = this.bufferMessage_readOnly;
+			this.bufferMessage_readOnly = ValidatoreMessaggiApplicativiRest.readBooleanValueWithDefault(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_BUFFER_ENABLED, defaultBehaviour);
+		}
+		
 		try{
+			String idTransazione = null;
+			if(pddContext!=null) {
+				idTransazione = (String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			}
 			boolean addPrefixError = false; // utilizzo il prefisso indicato in error.properties
-			this.wsdlValidator = new WSDLValidator(this.message, this.xmlUtils, this.accordoServizioWrapper, this.logger, gestioneXsiType_rpcLiteral, addPrefixError);
+			this.wsdlValidator = new WSDLValidator(this.message, this.xmlUtils, this.accordoServizioWrapper, this.logger, 
+					gestioneXsiType_rpcLiteral, addPrefixError,
+					this.bufferMessage_readOnly, idTransazione);
 		}catch(Exception e){
 			this.logger.error("WSDLValidator initialized failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 

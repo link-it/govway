@@ -20,6 +20,8 @@
 
 package org.openspcoop2.message.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -29,6 +31,7 @@ import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Element;
@@ -52,10 +55,40 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 	
 	@Override
 	protected Element buildContent() throws MessageException{
+		try{
+			return buildContent(this.countingInputStream);
+		}finally{
+			try{
+				this.countingInputStream.close();
+			}catch(Exception eClose){}
+		}
+	}
+	@Override
+	protected Element buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException{
+		try{
+			if(contentBuffer.isSerializedOnFileSystem()) {
+				try(InputStream is = new FileInputStream(contentBuffer.getSerializedFile())){
+					return buildContent(is);
+				}
+			}
+			else {
+				try(InputStream is = new ByteArrayInputStream(contentBuffer.toByteArray())){
+					return buildContent(is);
+				}
+			}
+		}
+		catch(MessageException me) {
+			throw me;
+		}
+		catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	protected Element buildContent(InputStream is) throws MessageException{
 		InputStreamReader isr = null;
 		InputSource isSax = null;
 		try{
-			isr = new InputStreamReader(this.countingInputStream,this.contentTypeCharsetName);
+			isr = new InputStreamReader(is,this.contentTypeCharsetName);
 			isSax = new InputSource(isr);
 			return XMLUtils.getInstance(this.messageFactory).newElement(isSax);
 		}catch(Exception e){
@@ -65,9 +98,6 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 				if(isr!=null){
 					isr.close();
 				}
-			}catch(Exception eClose){}
-			try{
-				this.countingInputStream.close();
 			}catch(Exception eClose){}
 		}
 	}

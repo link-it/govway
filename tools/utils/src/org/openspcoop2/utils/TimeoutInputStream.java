@@ -55,5 +55,24 @@ public class TimeoutInputStream extends FilterInputStream {
 		}
 		return is;
 	}
+	
+	public void disableCheckTimeout() {
+		InputStream is = super.in;
+		if(is instanceof TimeoutInputStreamEngine) {
+			((TimeoutInputStreamEngine)is).disableCheckTimeout();
+		}
+	}
+	public void updateThreshold(int timeoutMs) throws IOException {
+		InputStream is = super.in;
+		if(is instanceof TimeoutInputStreamEngine) {
+			((TimeoutInputStreamEngine)is).updateThreshold(timeoutMs);
+		}
+	}
+	public void updateContext(Hashtable<String, Object> ctx) {
+		InputStream is = super.in;
+		if(is instanceof TimeoutInputStreamEngine) {
+			((TimeoutInputStreamEngine)is).updateContext(ctx);
+		}
+	}
 
 }

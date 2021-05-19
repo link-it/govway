@@ -38,13 +38,10 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Heade
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.SoapBodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils.PolicyAlias;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
-import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
-import org.w3c.dom.Element;
 
 /**
 * SoapTest
@@ -135,11 +132,8 @@ public class SoapTest extends ConfigLoader {
 		String bodyResp = new String(failedResponse.getContent());
 		logRateLimiting.info(bodyResp);
 		
-		Element element = Utils.buildXmlElement(failedResponse.getContent());
-		PatternExtractor matcher = new PatternExtractor(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), element, logRateLimiting);
-		assertEquals("Too Many Requests", matcher.read("/html/head/title/text()"));
-		assertEquals("Too Many Requests", matcher.read("/html/body/h1/text()"));
-		assertEquals("Too many requests detected", matcher.read("/html/body/p/text()"));
+		//org.w3c.dom.Element element = Utils.buildXmlElement(failedResponse.getContent());
+		Utils.matchTooManyRequestsSoap(failedResponse.getContent());
 		
 		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
 		Utils.checkHeaderTooManyRequest(failedResponse);
@@ -475,12 +469,9 @@ public class SoapTest extends ConfigLoader {
 		String body = new String(failedResponse.getContent());
 		logRateLimiting.info(body);
 		
-		Element element = Utils.buildXmlElement(failedResponse.getContent());
+		//org.w3c.dom.Element element = Utils.buildXmlElement(failedResponse.getContent());
 		
-		PatternExtractor matcher = new PatternExtractor(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), element, logRateLimiting);
-		assertEquals("Limit Exceeded", matcher.read("/html/head/title/text()"));
-		assertEquals("Limit Exceeded", matcher.read("/html/body/h1/text()"));
-		assertEquals("Limit exceeded detected", matcher.read("/html/body/p/text()"));		
+		Utils.matchLimitExceededSoap(failedResponse.getContent());	
 		
 		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.RateLimitRemaining));
 		assertEquals(HeaderValues.LIMIT_EXCEEDED, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));
@@ -518,11 +509,8 @@ public class SoapTest extends ConfigLoader {
 		String body = new String(failedResponse.getContent());
 		logRateLimiting.info(body);
 		
-		Element element = Utils.buildXmlElement(failedResponse.getContent());
-		PatternExtractor matcher = new PatternExtractor(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), element, logRateLimiting);
-		assertEquals("Too Many Requests", matcher.read("/html/head/title/text()"));
-		assertEquals("Too Many Requests", matcher.read("/html/body/h1/text()"));
-		assertEquals("Too many requests detected", matcher.read("/html/body/p/text()"));
+		//org.w3c.dom.Element element = Utils.buildXmlElement(failedResponse.getContent());
+		Utils.matchTooManyRequestsSoap(failedResponse.getContent());
 		
 		assertEquals("0", failedResponse.getHeaderFirstValue(Headers.ConcurrentRequestsRemaining));
 		assertEquals(HeaderValues.TOO_MANY_REQUESTS, failedResponse.getHeaderFirstValue(Headers.GovWayTransactionErrorType));

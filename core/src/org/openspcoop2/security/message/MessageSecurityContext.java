@@ -39,6 +39,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPPart;
 
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
@@ -47,9 +48,12 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reference.Reference;
@@ -709,37 +713,14 @@ public abstract class MessageSecurityContext{
     
     /** Utility per verificare l'esistenza di un header di sicurezza */
     public boolean existsSecurityHeader(OpenSPCoop2Message msg,String actor){
+    	SOAPHeader header = null;
     	try{
 	    	if(msg==null){
 	    		return false;
 	    	}
 	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-		    	SOAPHeader header = msg.castAsSoap().getSOAPHeader();
-		    	if(header==null || (SoapUtils.getNotEmptyChildNodes(msg.getFactory(), header).size()==0) ){
-		    		return false;
-		    	}
-		       	java.util.Iterator<?> it = header.examineAllHeaderElements();
-				while( it.hasNext()  ){
-					
-					// Test Header Element
-					SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
-					if(   SecurityConstants.WSS_HEADER_ELEMENT.equals(headerElement.getLocalName()) &&
-							SecurityConstants.WSS_HEADER_ELEMENT_NAMESPACE.equals(headerElement.getNamespaceURI()) ){
-							// potenziale header, verifico l'actor
-						String actorCheck = SoapUtils.getSoapActor(headerElement, msg.getMessageType());
-						if(actor==null){
-							if(actorCheck==null) {
-								return true;
-							}
-						}else{
-							if(actor.equals(actorCheck)) {
-								return true;
-							}
-						}
-					}
-					
-				}
-				return false;
+	    		OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+	    		header = soapMsg.getSOAPHeader();
 	    	}
 	    	else{
 	    		// TODO
@@ -750,51 +731,181 @@ public abstract class MessageSecurityContext{
     			this.log.error("existsHeaderMessageSecurity error con actor["+actor+"]",e);
     		return false;
     	}
+    	return existsSecurityHeader(msg.getFactory(), msg.getMessageType(), 
+    			header, actor);
     }
+    public boolean existsSecurityHeader(OpenSPCoop2Message msg,String actor, 
+    		boolean bufferMessage_readOnly, String idTransazione){
+    	SOAPEnvelope soapEnvelope = null;
+    	try{
+    		if(msg==null){
+	    		return false;
+	    	}
+	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+	    		OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+	    		SOAPPart soapPart = MessageUtils.getSOAPPart(soapMsg, bufferMessage_readOnly, idTransazione);
+	    		if(soapPart!=null) {
+	    			soapEnvelope = soapPart.getEnvelope();
+	    		}
+	    	}
+	    	else{
+	    		// TODO
+	    		return true;
+	    	}
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("existsHeaderMessageSecurity error con actor["+actor+"]",e);
+    		return false;
+    	}
+    	return existsSecurityHeader(msg.getFactory(), msg.getMessageType(), 
+    			soapEnvelope, actor);
+    }
+    public boolean existsSecurityHeader(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, 
+    		SOAPEnvelope soapEnvelope,String actor){
+    	SOAPHeader header = null;
+    	try{
+    		header = soapEnvelope.getHeader();
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("existsHeaderMessageSecurity error con actor["+actor+"]",e);
+    		return false;
+    	}
+    	return existsSecurityHeader(messageFactory, messageType, 
+    			header, actor);
+    }
+    public boolean existsSecurityHeader(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, 
+    		SOAPHeader header,String actor){
+    	try{
+	    	if(header==null || (SoapUtils.getNotEmptyChildNodes(messageFactory, header).size()==0) ){
+	    		return false;
+	    	}
+	       	java.util.Iterator<?> it = header.examineAllHeaderElements();
+			while( it.hasNext()  ){
+				
+				// Test Header Element
+				SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
+				if(   SecurityConstants.WSS_HEADER_ELEMENT.equals(headerElement.getLocalName()) &&
+						SecurityConstants.WSS_HEADER_ELEMENT_NAMESPACE.equals(headerElement.getNamespaceURI()) ){
+						// potenziale header, verifico l'actor
+					String actorCheck = SoapUtils.getSoapActor(headerElement, messageType);
+					if(actor==null){
+						if(actorCheck==null) {
+							return true;
+						}
+					}else{
+						if(actor.equals(actorCheck)) {
+							return true;
+						}
+					}
+				}
+				
+			}
+			return false;
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("existsHeaderMessageSecurity error con actor["+actor+"]",e);
+    		return false;
+    	}
+    }
+    
+    
 
     public SOAPHeaderElement getSecurityHeader(OpenSPCoop2Message msg,String actor){
+    	SOAPHeader header = null;
     	try{
 	    	if(msg==null){
 	    		return null;
 	    	}
 	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-	    		SOAPEnvelope envelope = msg.castAsSoap().getSOAPPart().getEnvelope();
-		    	SOAPHeader header = envelope.getHeader();
-		    	if(header==null || (SoapUtils.getNotEmptyChildNodes(msg.getFactory(), header).size()==0) ){
-		    		return null;
-		    	}
-		       	java.util.Iterator<?> it = header.examineAllHeaderElements();
-				while( it.hasNext()  ){
-					
-					// Test Header Element
-					SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
-					if(   SecurityConstants.WSS_HEADER_ELEMENT.equals(headerElement.getLocalName()) &&
-							SecurityConstants.WSS_HEADER_ELEMENT_NAMESPACE.equals(headerElement.getNamespaceURI()) ){
-							// potenziale header, verifico l'actor
-						String actorCheck = SoapUtils.getSoapActor(headerElement, msg.getMessageType());
-						if(actor==null){
-							if(actorCheck==null) {
-								return headerElement;
-							}
-						}else{
-							if(actor.equals(actorCheck)) {
-								return headerElement;
-							}
-						}
-					}
-					
-				}
-				return null;
+	    		OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+	    		header = soapMsg.getSOAPHeader();
 	    	}
 	    	else{
+	    		// TODO
 	    		return null;
 	    	}
     	}catch(Exception e){
     		if(this.log!=null)
-    			this.log.error("existsHeaderMessageSecurity error con actor["+actor+"]",e);
+    			this.log.error("getHeaderMessageSecurity error con actor["+actor+"]",e);
+    		return null;
+    	}
+    	return getSecurityHeader(msg.getFactory(), msg.getMessageType(), 
+    			header, actor);
+    }
+    public SOAPHeaderElement getSecurityHeader(OpenSPCoop2Message msg,String actor, 
+    		boolean bufferMessage_readOnly, String idTransazione){
+    	SOAPEnvelope soapEnvelope = null;
+    	try{
+    		if(msg==null){
+	    		return null;
+	    	}
+	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+	    		OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+	    		SOAPPart soapPart = MessageUtils.getSOAPPart(soapMsg, bufferMessage_readOnly, idTransazione);
+	    		if(soapPart!=null) {
+	    			soapEnvelope = soapPart.getEnvelope();
+	    		}
+	    	}
+	    	else{
+	    		// TODO
+	    		return null;
+	    	}
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("getHeaderMessageSecurity error con actor["+actor+"]",e);
+    		return null;
+    	}
+    	return getSecurityHeader(msg.getFactory(), msg.getMessageType(), 
+    			soapEnvelope, actor);
+    }
+    public SOAPHeaderElement getSecurityHeader(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, 
+    		SOAPEnvelope soapEnvelope,String actor){
+    	SOAPHeader header = null;
+    	try{
+    		header = soapEnvelope.getHeader();
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("getHeaderMessageSecurity error con actor["+actor+"]",e);
+    		return null;
+    	}
+    	return getSecurityHeader(messageFactory, messageType, 
+    			header, actor);
+    }
+    public SOAPHeaderElement getSecurityHeader(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, 
+    		SOAPHeader header,String actor){
+    	try{
+    		if(header==null || (SoapUtils.getNotEmptyChildNodes(messageFactory, header).size()==0) ){
+	    		return null;
+	    	}
+	       	java.util.Iterator<?> it = header.examineAllHeaderElements();
+			while( it.hasNext()  ){
+				
+				// Test Header Element
+				SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
+				if(   SecurityConstants.WSS_HEADER_ELEMENT.equals(headerElement.getLocalName()) &&
+						SecurityConstants.WSS_HEADER_ELEMENT_NAMESPACE.equals(headerElement.getNamespaceURI()) ){
+						// potenziale header, verifico l'actor
+					String actorCheck = SoapUtils.getSoapActor(headerElement, messageType);
+					if(actor==null){
+						if(actorCheck==null) {
+							return headerElement;
+						}
+					}else{
+						if(actor.equals(actorCheck)) {
+							return headerElement;
+						}
+					}
+				}
+				
+			}
+			return null;
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("getHeaderMessageSecurity error con actor["+actor+"]",e);
     		return null;
     	}
     }
+
     
     /** Utility per verificare l'esistenza di un header di sicurezza */
     public SOAPElement getSAMLTokenInSecurityHeader(OpenSPCoop2MessageFactory messageFactory, SOAPHeaderElement securityHeader,String samlVersion){

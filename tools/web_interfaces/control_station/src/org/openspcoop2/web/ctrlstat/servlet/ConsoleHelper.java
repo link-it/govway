@@ -183,6 +183,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLo
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -217,7 +218,6 @@ import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -14810,7 +14810,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						
 						if(trasformazioneSoapAction!=null && !"".equals(trasformazioneSoapAction)) {
 							try{
-								DynamicStringReplace.validate(trasformazioneSoapAction, true);
+								DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION, trasformazioneSoapAction, true, false);
 							}catch(Exception e){
 								this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ACTION+"' non risulta corretto: "+e.getMessage());
 								return false;
@@ -16218,7 +16218,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				try{
-					DynamicStringReplace.validate(valore, true);
+					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE, valore, true, false);
 				}catch(Exception e){
 					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE+"' non risulta corretto: "+e.getMessage());
 					return false;
@@ -16265,7 +16265,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				try{
-					DynamicStringReplace.validate(valore, true);
+					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE, valore, true, false);
 				}catch(Exception e){
 					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE+"' non risulta corretto: "+e.getMessage());
 					return false;
@@ -16312,7 +16312,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				try{
-					DynamicStringReplace.validate(valore, true);
+					DynamicUtils.validate(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE, valore, true, false);
 				}catch(Exception e){
 					this.pd.setMessage("Il valore indicato nel parametro '"+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE+"' non risulta corretto: "+e.getMessage());
 					return false;

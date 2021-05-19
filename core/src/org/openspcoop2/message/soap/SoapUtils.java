@@ -34,6 +34,8 @@ import javax.mail.internet.ContentType;
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
@@ -54,9 +56,11 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
@@ -75,6 +79,34 @@ import org.w3c.dom.Node;
  */
 
 public class SoapUtils {
+
+	// SAX - TRANSFORMER
+	
+	public static  MessageException buildMessageException(String prefix, Throwable t) {
+		MessageException meSAXParser = null;
+		String msgSAXParser = null;
+		if(Utilities.existsInnerInstanceException(t, org.xml.sax.SAXParseException.class)) {
+			Throwable tExists = Utilities.getInnerInstanceException(t, org.xml.sax.SAXParseException.class, false);
+			if(tExists!=null) {
+				msgSAXParser = tExists.getMessage();
+				meSAXParser = new MessageException(prefix+tExists.getMessage(),t);
+			}
+		}
+		
+		// cerco TransformerException che contiene SAX Parser perchè almeno c'è anche l'indicazione sulla posizione dell'errore (riga e colonna)
+		if(Utilities.existsInnerInstanceException(t, javax.xml.transform.TransformerException.class)) {
+			Throwable tExists = Utilities.getInnerInstanceException(t, javax.xml.transform.TransformerException.class, false);
+			if(tExists!=null && tExists.getMessage()!=null && tExists.getMessage().contains(msgSAXParser)) {
+				return new MessageException(prefix+tExists.getMessage(),t);
+			}
+		}
+		
+		if(meSAXParser!=null) {
+			return meSAXParser;
+		}
+		
+		return new MessageException(t.getMessage(),t);
+	}
 	
 	
 	
@@ -125,11 +157,26 @@ public class SoapUtils {
     	}
     	String[] values = msg.getMimeHeaders().getHeader(HttpConstants.CONTENT_TYPE);
     	if (values == null || values.length<=0) {
-    		return null;
+    		return getContentType(msg.getMimeHeaders());
     	}
     	else {
     		return values[0];
     	}
+	}
+	
+	public static String getContentType(MimeHeaders mhs) {
+		if(mhs!=null) {
+			Iterator<MimeHeader> itMhs = mhs.getAllHeaders();
+			if(itMhs!=null) {
+				while (itMhs.hasNext()) {
+					MimeHeader mimeHeader = (MimeHeader) itMhs.next();
+					if(mimeHeader!=null && mimeHeader.getName()!=null && HttpConstants.CONTENT_TYPE.toLowerCase().equals(mimeHeader.getName().toLowerCase())) {
+						return mimeHeader.getValue();
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	
@@ -378,12 +425,20 @@ public class SoapUtils {
 	
 	public static boolean checkSOAPEnvelopeNamespace(OpenSPCoop2SoapMessage message, MessageType messageType) throws MessageException, MessageNotSupportedException{
 		try {
-			SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
-			if(messageType.equals(MessageType.SOAP_11) &&  Costanti.SOAP_ENVELOPE_NAMESPACE.equals(envelope.getNamespaceURI())) {
+			OpenSPCoop2MessageSoapStreamReader reader = message.getSoapReader();
+			String envelopeNamespace = null;
+			if(reader!=null) {
+				envelopeNamespace = reader.getNamespace();
+			}
+			if(envelopeNamespace==null) {
+				SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+				envelopeNamespace = envelope.getNamespaceURI();
+			}
+			if(messageType.equals(MessageType.SOAP_11) &&  Costanti.SOAP_ENVELOPE_NAMESPACE.equals(envelopeNamespace)) {
 				return true;
 			}
 			
-			if(messageType.equals(MessageType.SOAP_12) &&  Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(envelope.getNamespaceURI())) {
+			if(messageType.equals(MessageType.SOAP_12) &&  Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(envelopeNamespace)) {
 				return true;
 			}
 			

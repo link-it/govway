@@ -28,6 +28,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestBinaryMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 
 /**
  * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi binari
@@ -40,9 +41,11 @@ public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestM
 
 	public OpenSPCoop2Message_binary_impl(OpenSPCoop2MessageFactory messageFactory) {
 		super(messageFactory);
+		this.supportReadOnly = false; // il contenuto e' gia un binary.
 	}
 	public OpenSPCoop2Message_binary_impl(OpenSPCoop2MessageFactory messageFactory, InputStream is,String contentType) throws MessageException {
 		super(messageFactory, is, contentType);
+		this.supportReadOnly = false; // il contenuto e' gia un binary.
 	}
 	
 	@Override
@@ -56,6 +59,10 @@ public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestM
 				this.countingInputStream.close();
 			}catch(Exception eClose) {}
 		}
+	}
+	@Override
+	protected byte[] buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException{
+		return contentBuffer.toByteArray();
 	}
 
 	@Override

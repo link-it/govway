@@ -25,12 +25,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.AttachmentsProcessingMode;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
 /**
@@ -73,6 +78,69 @@ public class Test {
 			"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
 			"	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Body><prova>${jsonpath:$.Year}</prova><prova2>${jsonPath:$.Acronym}</prova2></soapenv:Body></soapenv:Envelope>";
 	
+	private static final String EXPECTED_JSON = 
+			"{\n"+	   
+	            "\"SortAs\": \"test\",\n"+
+	            "\"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
+	            "\"Acronym\": \"test2\",\n"+
+	            "\"Abbrev\": \"ISO 8879:1986\",\n"+
+	            "\"Enabled\": true,\n"+
+	            "\"Year\": 2018,\n"+
+	            "\"Quote\": 1.45 \n"+
+			"}";
+	private static final String EXPECTED_JSON_2 = 
+			"{\n"+	   
+	            "    \"SortAs\": \"test\",\n"+
+	            "    \"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
+	            "    \"Acronym\": \"test2\",\n"+
+	            "    \"Abbrev\": \"ISO 8879:1986\",\n"+
+	            "    \"Enabled\": true,\n"+
+	            "    \"Year\": 2018,\n"+
+	            "    \"Quote\": 1.45,\n"+
+	            "    \"List\": [ \"v1\" ,\"v2\" ,\"v3\"  ]\n"+
+			"}";
+	private static final String EXPECTED_JSON_3 = 
+			"{\n"+	   
+	            "    \"SortAs\": \"test\",\n"+
+	            "    \"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
+	            "    \"Acronym\": \"test2\",\n"+
+	            "    \"Abbrev\": \"ISO 8879:1986\",\n"+
+	            "    \"Enabled\": true,\n"+
+	            "    \"Year\": 2018,\n"+
+	            "    \"Quote\": 1.45,\n"+
+	            "    \"include1\": {\n"+
+	            "		\"SortAs\": \"111_test\",\n"+
+	            "		\"GlossTerm\": \"TestPROVA1\"\n"+
+	            "    },\n"+
+	            "    \"include2\": {\n"+
+	            "		\"SortAs\": \"222_test\",\n"+
+	            "		\"GlossTerm\": \"TestPROVA2\"\n"+
+	            "    },\n"+
+	            "    \"List\": [ \"v1\" ,\"v2\" ,\"v3\"  ]\n"+
+			"}";
+			
+	private static final String EXPECTED_XML = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" 	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Body><prova>2018</prova><prova2>SGML</prova2></soapenv:Body></soapenv:Envelope>";
+	
+	private static final String EXPECTED_XML_2 = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" \n"+ 
+			"			xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"+
+			"			<soapenv:Body>\n"+
+			"			<prova>2018</prova>\n"+
+			"			<prova2>SGML</prova2>\n"+
+			"			<list>Ford</list>\n"+
+			"			<list>BMW</list>\n"+
+			"			<list>Fiat</list>\n"+
+			"		</soapenv:Body>\n"+
+			"</soapenv:Envelope>\n"+
+			"";
+	
+	private static final String EXPECTED_XML_3 = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" \n"+
+			"			xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"+
+			"			<soapenv:Body>\n"+
+			"			<prova>az2</prova>\n"+
+			"			<prova2>test</prova2>\n"+
+			"		</soapenv:Body>\n"+
+			"</soapenv:Envelope>\n";
+	
 	public static void main(String [] args) throws Exception{
 		
 		boolean forceDollaro = true;
@@ -96,6 +164,10 @@ public class Test {
 		PdDContext pddContext = new PdDContext();
 		pddContext.addObject("TEST1", "VALORE DI ESEMPIO");
 		
+		boolean bufferMessage_readOnly = true;
+		String idTransazione = "xxyy";
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
+		
 		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
 		
 		
@@ -109,27 +181,134 @@ public class Test {
 		
 		dynamicMap = new HashMap<>();
 		dInfo = new DynamicInfo(connettoreMsg, pddContext);
-		dInfo.setXml(XMLUtils.DEFAULT.newElement(ENVELOPE.getBytes()));
+		OpenSPCoop2MessageParseResult parser = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.NONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, ENVELOPE.getBytes(), AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+		MessageContent messageContent = new MessageContent(parser.getMessage().castAsSoap(), bufferMessage_readOnly, pddContext);
+		dInfo.setMessageContent(messageContent);
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
-		System.out.println("Pattern1: "+DynamicUtils.convertDynamicPropertyValue("testXml", prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova/text()}", dynamicMap, pddContext, forceDollaro));
-	
-		System.out.println("Pattern2: "+DynamicUtils.convertDynamicPropertyValue("testXml2", prefix+"{xpath://prova/text()}", dynamicMap, pddContext, forceDollaro));
+		String expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova/text()}";
+		DynamicUtils.validate("testXml", expr, forceDollaro, true);
+		String value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("Pattern1: "+value);
+		String expected = "test";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
-		System.out.println("Pattern3: "+DynamicUtils.convertDynamicPropertyValue("testXml3", "Metto un po ("+prefix+"{xPath://prova/text()}) di testo prima ("+prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()}) e dopo", dynamicMap, pddContext, forceDollaro));
+		expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}Envelope/{http://schemas.xmlsoap.org/soap/envelope/}Body/prova/text()}";
+		DynamicUtils.validate("testXml", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("Pattern1b: "+value);
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
-		System.out.println("Pattern4: "+DynamicUtils.convertDynamicPropertyValue("testXmlPatternNotFound", prefix+"{xpath://provaNonEsiste/text()}", dynamicMap, pddContext, forceDollaro));
+		expr = "{xPath://{http://schemas.xmlsoap.org/soap/envelope/}Envelope/{http://schemas.xmlsoap.org/soap/envelope/}Body/prova/text()}";
+		DynamicUtils.validate("testXml", expr, !forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext, !forceDollaro);
+		System.out.println("Pattern1c: "+value);
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
+		expr = prefix+"{xpath://prova/text()}";
+		DynamicUtils.validate("testXml2", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml2", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("Pattern2: "+value);
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "Metto un po ("+prefix+"{xPath://prova/text()}) di testo prima ("+prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()}) e dopo";
+		DynamicUtils.validate("testXml3", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml3", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("Pattern3: "+value);
+		expected = "Metto un po (test) di testo prima (test2) e dopo";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix+"{xpath://provaNonEsiste/text()}";
+		DynamicUtils.validate("testXmlPatternNotFound", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testXmlPatternNotFound", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("Pattern4: "+value);
+		expected = "";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix+"{xpath://provaNonEsiste/Text()}";
+		DynamicUtils.validate("testXmlPatternError", expr, forceDollaro, true);
 		try {
-			System.out.println("Pattern5: "+DynamicUtils.convertDynamicPropertyValue("testXmlPatternError", prefix+"{xpath://provaNonEsiste/Text()}", dynamicMap, pddContext, forceDollaro));
+			System.out.println("Pattern5: "+DynamicUtils.convertDynamicPropertyValue("testXmlPatternError", expr, dynamicMap, pddContext, forceDollaro));
 			throw new Exception("Attesa eccezione pattern malformato");
 		}catch(Exception e) {
-			System.out.println("Pattern5: attesa eccezione "+e.getMessage());
 			//e.printStackTrace(System.out);
+			if(e.getMessage().contains("Compilazione dell'espressione XPATH ha causato un errore (Unknown nodetype: Text)")) {
+				System.out.println("Pattern5: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}Envelope/{http://schemas.xmlsoap.org/soap/envelope/}Body/prova/text()";
+		try {
+			DynamicUtils.validate("testChiusuraMancante", expr, forceDollaro, true);
+			throw new Exception("Attesa eccezione expr malformata");
+		}catch(Exception e) {
+			if(e.getMessage().contains("Trovata istruzione 'xPath' non correttamente formata (chiusura '}' non trovata)")) {
+				System.out.println("PatternExprErrata1: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		try {
+			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext, forceDollaro);
+			throw new Exception("Attesa eccezione expr malformata");
+		}catch(Exception e) {
+			if(e.getMessage().contains("Trovata istruzione 'xPath' non correttamente formata (chiusura '}' non trovata)")) {
+				System.out.println("PatternExprErrata1: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}Envelope/{http://schemas.xmlsoap.org/soap/envelope/Body/prova/text()}";
+		try {
+			DynamicUtils.validate("testChiusuraInternaMancante", expr, forceDollaro, true);
+			throw new Exception("Attesa eccezione expr malformata");
+		}catch(Exception e) {
+			if(e.getMessage().contains("Trovata istruzione 'xPath' non correttamente formata (chiusura '}' non trovata)")) {
+				System.out.println("PatternExprErrata2: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		try {
+			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraInternaMancante", expr, dynamicMap, pddContext, forceDollaro);
+			throw new Exception("Attesa eccezione expr malformata");
+		}catch(Exception e) {
+			if(e.getMessage().contains("Trovata istruzione 'xPath' non correttamente formata (chiusura '}' non trovata)")) {
+				System.out.println("PatternExprErrata2: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
 		}
 		
 		if(prefix.equals("$")) {
-			System.out.println("Test conversione xml2json: \n"+DynamicUtils.convertDynamicPropertyValue("xml2json", JSON_TEMPLATE, dynamicMap, pddContext, forceDollaro));
+			expr = JSON_TEMPLATE;
+			DynamicUtils.validate("xml2json", expr, forceDollaro, true);
+			value = DynamicUtils.convertDynamicPropertyValue("xml2json", JSON_TEMPLATE, dynamicMap, pddContext, forceDollaro);
+			System.out.println("Test conversione xml2json: \n"+value);
+			expected = EXPECTED_JSON;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		if(prefix.equals("$")) {
@@ -138,7 +317,12 @@ public class Test {
 			DynamicUtils.convertFreeMarkerTemplate("xml2jsonFTL", template, dynamicMap, bout);
 			bout.flush();
 			bout.close();
-			System.out.println("Test conversione xml2json via freemarker: \n"+bout.toString());
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via freemarker: \n"+value);
+			expected = EXPECTED_JSON_2;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		if(prefix.equals("$")) {
@@ -152,7 +336,12 @@ public class Test {
 			DynamicUtils.convertFreeMarkerTemplate("xml2jsonFTL_INCLUDE_MANUALE", template, templateIncludes, dynamicMap, bout);
 			bout.flush();
 			bout.close();
-			System.out.println("Test conversione xml2json via freemarker (con include): \n"+bout.toString());
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via freemarker (con include): \n"+value);
+			expected = EXPECTED_JSON_3;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		if(prefix.equals("$")) {
@@ -161,7 +350,12 @@ public class Test {
 			DynamicUtils.convertZipFreeMarkerTemplate("xml2jsonFTL_INCLUDE_ZIP", zip, dynamicMap, bout);
 			bout.flush();
 			bout.close();
-			System.out.println("Test conversione xml2json via freemarker (con include in archivio zip): \n"+bout.toString());
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via freemarker (con include in archivio zip): \n"+value);
+			expected = EXPECTED_JSON_3+"\n";
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		if(prefix.equals("$")) {
@@ -170,30 +364,97 @@ public class Test {
 			DynamicUtils.convertZipFreeMarkerTemplate("xml2jsonFTL_INCLUDE_ZIP2", zip, dynamicMap, bout);
 			bout.flush();
 			bout.close();
-			System.out.println("Test conversione xml2json via freemarker (con include in archivio zip test2): \n"+bout.toString());
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via freemarker (con include in archivio zip test2): \n"+value);
+			expected = EXPECTED_JSON_3+"\n";
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		dynamicMap = new HashMap<>();
 		dInfo = new DynamicInfo(connettoreMsg, pddContext);
-		dInfo.setJson(JSON);
+		OpenSPCoop2MessageParseResult parserJson = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.JSON, MessageRole.NONE, HttpConstants.CONTENT_TYPE_JSON, JSON.getBytes(), AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+		MessageContent messageContentJson = new MessageContent(parserJson.getMessage().castAsRestJson(), bufferMessage_readOnly, pddContext);
+		dInfo.setMessageContent(messageContentJson);
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
-		System.out.println("Pattern1: "+DynamicUtils.convertDynamicPropertyValue("testJson", prefix+"{jsonPath:$.Year}", dynamicMap, pddContext, forceDollaro));
+		expr = prefix+"{jsonPath:$.Year}";
+		DynamicUtils.validate("testJson", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testJson", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("Pattern1: "+value);
+		expected = "2018";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
-		System.out.println("Pattern2: "+DynamicUtils.convertDynamicPropertyValue("test2Json", "Metto un po ("+prefix+"{jsonpath:$.Year}) di altro test ("+prefix+"{jsonPath:$.Acronym}) fine", dynamicMap, pddContext, forceDollaro));
+		expr = "Metto un po ("+prefix+"{jsonpath:$.Year}) di altro test ("+prefix+"{jsonPath:$.Acronym}) fine";
+		DynamicUtils.validate("test2Json", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("test2Json", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("Pattern2: "+value);
+		expected = "Metto un po (2018) di altro test (SGML) fine";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
-		System.out.println("Pattern3: "+DynamicUtils.convertDynamicPropertyValue("testJsonPatternNotFound", prefix+"{jsonPath:$.NotFound}", dynamicMap, pddContext, forceDollaro));
+		expr = prefix+"{jsonPath:$.NotFound}";
+		DynamicUtils.validate("testJsonPatternNotFound", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testJsonPatternNotFound", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("Pattern3: "+value);
+		expected = "";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
+		expr = prefix+"{jsonPath:$$$dedde}";
+		DynamicUtils.validate("testJsonPatternError", expr, forceDollaro, true);
 		try {
-			System.out.println("Pattern4: "+DynamicUtils.convertDynamicPropertyValue("testJsonPatternError", prefix+"{jsonPath:$$$dedde}", dynamicMap, pddContext, forceDollaro));
+			System.out.println("Pattern4: "+DynamicUtils.convertDynamicPropertyValue("testJsonPatternError", expr, dynamicMap, pddContext, forceDollaro));
 			throw new Exception("Attesa eccezione pattern malformato");
 		}catch(Exception e) {
-			System.out.println("Pattern4: attesa eccezione "+e.getMessage());
+			if(e.getMessage().contains("Illegal character at position 1 expected '.' or '[")) {
+				System.out.println("Pattern4: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
 			//e.printStackTrace(System.out);
 		}
 		
+		expr = prefix+"{jsonPath:$.NotFound";
+		try {
+			DynamicUtils.validate("testChiusuraMancante", expr, forceDollaro, true);
+			throw new Exception("Attesa eccezione expr malformata");
+		}catch(Exception e) {
+			if(e.getMessage().contains("Trovata istruzione 'jsonPath' non correttamente formata (chiusura '}' non trovata)")) {
+				System.out.println("PatternExprErrata1: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		try {
+			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext, forceDollaro);
+			throw new Exception("Attesa eccezione expr malformata");
+		}catch(Exception e) {
+			if(e.getMessage().contains("Trovata istruzione 'jsonPath' non correttamente formata (chiusura '}' non trovata)")) {
+				System.out.println("PatternExprErrata1: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		
 		if(prefix.equals("$")) {
-			System.out.println("Test conversione json2xml: \n"+DynamicUtils.convertDynamicPropertyValue("json2xml", XML_TEMPLATE, dynamicMap, pddContext, forceDollaro));
+			expr = XML_TEMPLATE;
+			DynamicUtils.validate("json2xml", expr, forceDollaro, true);
+			value = DynamicUtils.convertDynamicPropertyValue("json2xml", expr, dynamicMap, pddContext, forceDollaro);
+			System.out.println("Test conversione json2xml: \n"+value);
+			expected = EXPECTED_XML;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		if(prefix.equals("$")) {
@@ -202,7 +463,12 @@ public class Test {
 			DynamicUtils.convertFreeMarkerTemplate("json2xmlFTL", template,  dynamicMap, bout);
 			bout.flush();
 			bout.close();
-			System.out.println("Test conversione json2xml via freemarker: \n"+bout.toString());
+			value = bout.toString();
+			System.out.println("Test conversione json2xml via freemarker: \n"+value);
+			expected = EXPECTED_XML_2;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		
@@ -213,7 +479,38 @@ public class Test {
 		dInfo.setUrl(url);
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
-		System.out.println("PatternUrl1: "+DynamicUtils.convertDynamicPropertyValue("testUrl", prefix+"{urlRegExp:.+azione=([^&]*).*}", dynamicMap, pddContext, forceDollaro));
+		expr = prefix+"{urlRegExp:.+azione=([^&]*).*}";
+		DynamicUtils.validate("testUrl", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testUrl", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("PatternUrl1: "+value);
+		expected = "az2";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix+"{urlRegExp:.+azione=([^&]*).*";
+		try {
+			DynamicUtils.validate("testChiusuraMancante", expr, forceDollaro, true);
+			throw new Exception("Attesa eccezione expr malformata");
+		}catch(Exception e) {
+			if(e.getMessage().contains("Trovata istruzione 'urlRegExp' non correttamente formata (chiusura '}' non trovata)")) {
+				System.out.println("PatternExprErrata1: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
+		try {
+			value = DynamicUtils.convertDynamicPropertyValue("testChiusuraMancante", expr, dynamicMap, pddContext, forceDollaro);
+			throw new Exception("Attesa eccezione expr malformata");
+		}catch(Exception e) {
+			if(e.getMessage().contains("Trovata istruzione 'urlRegExp' non correttamente formata (chiusura '}' non trovata)")) {
+				System.out.println("PatternExprErrata1: attesa eccezione "+e.getMessage());
+			}
+			else {
+				throw e;
+			}
+		}
 		
 		if(prefix.equals("$")) {
 			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestUrl.ftl")).toByteArray();
@@ -221,7 +518,12 @@ public class Test {
 			DynamicUtils.convertFreeMarkerTemplate("testUrlFTL", template, dynamicMap, bout);
 			bout.flush();
 			bout.close();
-			System.out.println("Test conversione via freemarker: \n"+bout.toString());
+			value = bout.toString();
+			System.out.println("Test conversione via freemarker: \n"+value);
+			expected = EXPECTED_XML_3;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 	}
 	

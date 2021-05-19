@@ -161,8 +161,8 @@
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.64.jar"/>
-				<include name="bcpkix-jdk15on-1.64.jar"/>
+				<include name="bcprov-ext-jdk15on-1.68.jar"/>
+				<include name="bcpkix-jdk15on-1.68.jar"/>
 				<include name="neethi-3.1.1.jar"/>
 				<include name="xmlsec-2.1.4.jar"/>
 				<include name="cryptacular-1.2.4.jar"/>

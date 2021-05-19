@@ -447,7 +447,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					if(context.getMessaggio()!=null){
 						if(ServiceBinding.SOAP.equals(context.getMessaggio().getServiceBinding())) {
 							OpenSPCoop2SoapMessage soapMsg = context.getMessaggio().castAsSoap();
-							if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()){
+							if(soapMsg.hasSOAPFault()){
 								
 								ByteArrayOutputStream bout = new ByteArrayOutputStream();
 								bout.write(context.getMessaggio().getAsByte(soapMsg.getSOAPPart().getEnvelope(), false));
@@ -1220,7 +1220,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 						EJBUtils.sendMessages(this.logger, msgDiag, openspcoopState, idTransazione, 
 								repositoryBuste, msgRequest, null, 
 								context.getProtocolFactory(), idDominio, nomePorta, messaggiInConsegna,
-								spedizioneConsegnaContenuti);
+								spedizioneConsegnaContenuti,
+								context.getPddContext());
 						
 					}
 					else {

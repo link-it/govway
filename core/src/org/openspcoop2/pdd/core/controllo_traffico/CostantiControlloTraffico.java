@@ -50,7 +50,7 @@ public class CostantiControlloTraffico {
 	public final static String HTML_ERROR_MESSAGE_TEMPLATE = "MESSAGE"; 
 	public final static String HTML_ERROR = 
 		"<html>\n" + 
-		"   <head>\n" + 
+		"   <head>\n" +
 		"      <title>"+HTML_ERROR_TITLE_TEMPLATE+"</title>\n" + 
 		"   </head>\n" + 
 		"   <body>\n" + 

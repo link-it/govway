@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://services.samples/xsd">
+
+   <soapenv:Header>
+    <!-- TEST -->
+<xsd:skcotSyub>
+&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;
+</xsd:skcotSyub>
+</soapenv:Header>     
+    
+    <!-- TEST -->
+    
+<soapenv:Body>
+    <!-- TEST -->
+<xsd:skcotSyub>
+&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;IBM&lt;/lobmys&gt;&lt;DIreyub&gt;asankha&lt;/DIreyub&gt;&lt;ecirp&gt;140.34&lt;/ecirp&gt;&lt;emulov&gt;2000&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;MSFT&lt;/lobmys&gt;&lt;DIreyub&gt;ruwan&lt;/DIreyub&gt;&lt;ecirp&gt;23.56&lt;/ecirp&gt;&lt;emulov&gt;8030&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;SUN&lt;/lobmys&gt;&lt;DIreyub&gt;indika&lt;/DIreyub&gt;&lt;ecirp&gt;14.56&lt;/ecirp&gt;&lt;emulov&gt;500&lt;/emulov&gt;&lt;/redro&gt;
+&lt;redro&gt;&lt;lobmys&gt;GOOG&lt;/lobmys&gt;&lt;DIreyub&gt;chathura&lt;/DIreyub&gt;&lt;ecirp&gt;60.24&lt;/ecirp&gt;&lt;emulov&gt;40000&lt;/emulov&gt;&lt;/redro&gt;
+</xsd:skcotSyub>
+</soapenv:Body>
+</soapenv:Envelope>

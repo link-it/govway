@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -56,7 +57,8 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		
 		/* Costruisco dynamic Map */
-		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, pddContext, log);
+		boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, pddContext, log, bufferMessage_readOnly);
 		
 		
 		/* Analisi regole di autorizzazione */

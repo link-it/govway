@@ -69,6 +69,8 @@ public class CostantiProprieta {
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_HEADERS= VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_PREFIX+"validateResponseHeaders";
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_RESPONSE_BODY= VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_PREFIX+"validateResponseBody";
 	
+	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_BUFFER_ENABLED = "validation.buffer.enabled";
+	
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SOAPACTION_ENABLED = "validation.soapAction.enabled";
 	
 	public static final String VALIDAZIONE_CONTENUTI_PROPERTY_NAME_REST_FAULT_GOVWAY_ENABLED = "validation.faultGovway.enabled";

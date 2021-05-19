@@ -112,7 +112,7 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 					cType.setParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY, 
 							getMessage1_2_FIX_Impl().getMimeMultipart().getContentType().getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY));
 			}
-			if(this.soapAction!=null){
+			if(this.getSoapAction()!=null){
 				String pSoapAction = cType.getParameter(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
 				if(pSoapAction!=null){
 					cType.getParameterList().remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
@@ -120,7 +120,7 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 				if(this.contentTypeParamaters!=null && this.contentTypeParamaters.containsKey(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION)){
 					this.contentTypeParamaters.remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
 				}
-				this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, this.soapAction);
+				this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, this.getSoapAction());
 			}
 			if(includeContentTypeParameters) {
 				return ContentTypeUtilities.buildContentType(cType.toString(),this.contentTypeParamaters);

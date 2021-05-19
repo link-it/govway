@@ -134,7 +134,75 @@ public class SOAPIntegrazionePortaApplicativa {
 		try{
 			dataMsg = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
 			String diag = "Richiesta non valida: Content-Type '"+contentType+"' presente nella richiesta non valido; "+erroreAtteso;
-			Reporter.log("Cerco diagnostico "+diag+" nei log ...");
+			Reporter.log("Cerco diagnostico '"+diag+"' nei log ...");
+			Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, diag));		
+		}finally{
+			dataMsg.close();
+		}
+	}
+	
+	
+	
+	
+	
+	@DataProvider (name="alternativeSoap12ContentTypesSupported")
+	public Object[][] alternativeSoap12ContentTypesSupported(){
+		return IntegrazioneUtils.getAlternativeSoap12ContentTypesSupported();
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, SOAPIntegrazionePortaApplicativa.ID_GRUPPO,SOAPIntegrazionePortaApplicativa.ID_GRUPPO+".AlternativeSoap12ContentTypes"},dataProvider="alternativeSoap12ContentTypesSupported")
+	public void testAlternativeSoap12ContentTypesSupported(String contentType) throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		RESTCore restCore = new RESTCore(HttpRequestMethod.POST, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_BASIC_NO_INTEGRAZIONE_SOAP);
+		restCore.setCredenziali("testsuiteOp2","12345678");
+		String tipo = "soap12";
+		HashMap<String, String> headersRequest = new HashMap<String, String>();
+		restCore.invoke(tipo, 200, repository, true, true, contentType, headersRequest);
+		restCore.postInvoke(repository);
+	}
+	
+	@DataProvider (name="alternativeSoap12ContentTypesUnsupported")
+	public Object[][] alternativeSoap12ContentTypesUnsupported(){
+		return IntegrazioneUtils.getAlternativeSoap12ContentTypesUnsupported();
+	}
+	
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_INTEGRAZIONE, SOAPIntegrazionePortaApplicativa.ID_GRUPPO,SOAPIntegrazionePortaApplicativa.ID_GRUPPO+".AlternativeSoap12ContentTypesUnsupported"},dataProvider="alternativeSoap12ContentTypesUnsupported")
+	public void testAlternativeSoap12ContentTypesUnsupported(String contentType) throws TestSuiteException, Exception{
+		
+		Date dataInizioTest = DateManager.getDate();
+		
+		Repository repository=new Repository();
+		RESTCore restCore = new RESTCore(HttpRequestMethod.POST, RUOLO.PORTA_APPLICATIVA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_BASIC_NO_INTEGRAZIONE_SOAP);
+		restCore.setCredenziali("testsuiteOp2","12345678");
+		String tipo = "json";
+		boolean authenticationError = true;
+		boolean badRequest = authenticationError; // sfrutto questo if
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = restCore.invoke(tipo, 500, repository, true, true, 
+					false, contentType, false, badRequest,
+					null,null);
+			String errorType = httpResponse.getHeaderFirstValue(CostantiTestSuite.ERROR_TYPE);
+			Reporter.log(CostantiTestSuite.ERROR_TYPE+"='"+errorType+"'");
+			Assert.assertEquals(errorType, CostantiTestSuite.ERROR_TYPE_UNPROCESSABLE_REQUEST_CONTENT);
+		}catch(Exception e) {
+			if(!e.getMessage().contains("Server returned HTTP response code: 500")) {
+				throw e;
+			}
+		}
+		
+		DatabaseMsgDiagnosticiComponent dataMsg = null;
+		try{
+			String ctAtteso = contentType;
+			if(ctAtteso.contains(";")) {
+				ctAtteso = ctAtteso.substring(0, ctAtteso.indexOf(";"));
+			}
+			String erroreAtteso = "Invalid Content-Type:"+ctAtteso+". Is this an error message instead of a SOAP response?";
+			dataMsg = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
+			String diag = "Il contenuto applicativo della richiesta ricevuta non è processabile: "+erroreAtteso;
+			Reporter.log("Cerco diagnostico '"+diag+"' nei log ...");
 			Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(dataInizioTest, diag));		
 		}finally{
 			dataMsg.close();

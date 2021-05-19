@@ -31,6 +31,7 @@ import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.JsonPathReturnType;
@@ -53,9 +54,11 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 
 	public OpenSPCoop2Message_json_impl(OpenSPCoop2MessageFactory messageFactory) {
 		super(messageFactory);
+		this.supportReadOnly = false; // il contenuto e' gia una stringa.
 	}
 	public OpenSPCoop2Message_json_impl(OpenSPCoop2MessageFactory messageFactory, InputStream is,String contentType) throws MessageException {
 		super(messageFactory, is, contentType);
+		this.supportReadOnly = false; // il contenuto e' gia una stringa.
 	}
 	
 	@Override
@@ -73,6 +76,14 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 			try {
 				this.countingInputStream.close();
 			}catch(Exception eClose) {}
+		}
+	}
+	@Override
+	protected String buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException{
+		try{
+			return contentBuffer.toString(this.contentTypeCharsetName);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
 		}
 	}
 	

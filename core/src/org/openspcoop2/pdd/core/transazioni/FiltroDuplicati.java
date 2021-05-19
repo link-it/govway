@@ -268,7 +268,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 					this.openspcoop2State = (OpenSPCoopState) openspcoopstate;
 				}
 				if(this.openspcoop2State!=null && this.openspcoop2Properties.isTransazioniFiltroDuplicatiTramiteTransazioniUsePdDConnection()
-						&& DBTransazioniManager.getInstance().useRuntimePdD()){
+						&& DBTransazioniManager.getInstance().useRuntimePdD() && !this.openspcoop2State.resourceReleased()){
 					//System.out.println("[FILTRO] INIZIALIZZO CONNESSIONE");
 					this.connection = this.openspcoop2State.getConnectionDB();
 					//this.datasourceRuntime = "DirectConnection";

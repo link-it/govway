@@ -34,6 +34,8 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -236,8 +238,9 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
-	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
-		return this.configurazionePdDMangager.getAzione(pd, transportContext, null, null, false, protocolFactory);
+	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory,
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
+		return this.configurazionePdDMangager.getAzione(pd, transportContext, null, soapStreamReader, null, false, protocolFactory);
 	}
 	
 	@Override
@@ -294,8 +297,9 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
-	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
-		return this.configurazionePdDMangager.getAzione(pa, transportContext, null, null, false, protocolFactory);
+	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory,
+			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
+		return this.configurazionePdDMangager.getAzione(pa, transportContext, message, soapStreamReader, null, false, protocolFactory);
 	}
 	
 	@Override

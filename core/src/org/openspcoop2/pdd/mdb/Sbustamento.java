@@ -50,6 +50,7 @@ import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
+import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -936,15 +937,29 @@ public class Sbustamento extends GenericLib{
 							openspcoopstate, pddContext, historyBuste, repositoryBuste, oneWayVersione11);
 					
 					boolean oldGestioneConnessione = false;
-					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+					boolean rinegozia = false;
+					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck() && !openspcoopstate.resourceReleased()) {
+						rinegozia = true;
 //						System.out.println("[RICHIESTA] rilascio!!");
 						msgDiag.mediumDebug("Rilascio connessione al database prima di verificare se la richiesta è duplicata ...");
-						oldGestioneConnessione = ((OpenSPCoopStateless)openspcoopstate).isUseConnection();
-						((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
+						oldGestioneConnessione = ((OpenSPCoopState)openspcoopstate).isUseConnection();
+						((OpenSPCoopState)openspcoopstate).setUseConnection(true);
 						openspcoopstate.commit();
 						openspcoopstate.releaseResource();
 //						System.out.println("[RICHIESTA] rilasciata: "+
 //								(((org.openspcoop2.pdd.core.state.OpenSPCoopState)openspcoopstate).getConnectionDB()==null || ((OpenSPCoopState)openspcoopstate).getConnectionDB().isClosed()));
+					}
+					boolean initConnectionForDuplicate = false;
+					if(!gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck() && openspcoopstate.resourceReleased()) {
+						// il vecchio engine che verifica il filtro duplicati ha bisogno della connessione
+						// inizializzo
+						((OpenSPCoopState)openspcoopstate).setUseConnection(true);
+						openspcoopstate.initResource(identitaPdD, this.idModulo, idTransazione);
+						historyBuste.updateState(openspcoopstate.getStatoRichiesta());
+						repositoryBuste.updateState(openspcoopstate.getStatoRichiesta());
+						profiloCollaborazione.updateState(openspcoopstate.getStatoRichiesta());
+						ejbUtils.updateOpenSPCoopState(openspcoopstate);
+						initConnectionForDuplicate = true;
 					}
 					
 					boolean bustaDuplicata = gestoreFiltroDuplicati.isDuplicata(protocolFactory, bustaRichiesta.getID());
@@ -967,12 +982,12 @@ public class Sbustamento extends GenericLib{
 						
 					}  
 					
-					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck() && rinegozia) {
 //						System.out.println("[RICHIESTA] rinegozio!!");
 						msgDiag.mediumDebug("Rinegozio connessione dopo la verifica di richiesta duplicata ...");
 						try{
 							openspcoopstate.updateResource(idTransazione);
-							((OpenSPCoopStateless)openspcoopstate).setUseConnection(oldGestioneConnessione);
+							((OpenSPCoopState)openspcoopstate).setUseConnection(oldGestioneConnessione);
 //							// Aggiorno risorse
 //							ejbUtils.updateOpenSPCoopState(openspcoopstate);
 //							msgRequest.updateOpenSPCoopState(openspcoopstate);							
@@ -981,6 +996,9 @@ public class Sbustamento extends GenericLib{
 						}catch(Exception e){
 							throw new Exception("Rinegoziazione connessione dopo la verifica di richiesta duplicata fallita: "+e.getMessage(),e);
 						} 
+					}
+					if(!gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck() && initConnectionForDuplicate) {
+						openspcoopstate.commit();
 					}
 					
 					if (bustaDuplicata){
@@ -1430,6 +1448,15 @@ public class Sbustamento extends GenericLib{
 
 			}else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
 
+				if(openspcoopstate.resourceReleased()) {
+					// il vecchio engine che verifica il filtro duplicati ha bisogno della connessione
+					// inizializzo
+					((OpenSPCoopState)openspcoopstate).setUseConnection(true);
+					openspcoopstate.initResource(identitaPdD, this.idModulo, idTransazione);
+					profiloCollaborazione.updateState(openspcoopstate.getStatoRichiesta());
+					repositoryBuste.updateState(openspcoopstate.getStatoRichiesta());
+				}
+				
 				// Richiesta Asincrona
 				if(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta.toString())){
 
@@ -1632,6 +1659,16 @@ public class Sbustamento extends GenericLib{
 				}	
 
 			} else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+				
+				if(openspcoopstate.resourceReleased()) {
+					// il vecchio engine che verifica il filtro duplicati ha bisogno della connessione
+					// inizializzo
+					((OpenSPCoopState)openspcoopstate).setUseConnection(true);
+					openspcoopstate.initResource(identitaPdD, this.idModulo, idTransazione);
+					profiloCollaborazione.updateState(openspcoopstate.getStatoRichiesta());
+					repositoryBuste.updateState(openspcoopstate.getStatoRichiesta());
+				}
+				
 				//	Richiesta Asincrona
 				if(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta.toString())){
 					msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoAsimmetrico richiesta...");

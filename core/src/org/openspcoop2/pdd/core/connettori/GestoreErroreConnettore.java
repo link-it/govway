@@ -297,18 +297,20 @@ public class GestoreErroreConnettore {
 
 
 		// ESITO SOAP FAULT:
-		SOAPBody body = null;
+		SOAPBody bodyConFault = null;
 
 		if(messageResponse!=null && (messageResponse instanceof OpenSPCoop2SoapMessage) ){
 			try{
-				body = messageResponse.castAsSoap().getSOAPBody();
+				if(messageResponse.castAsSoap().hasSOAPFault()) {
+					bodyConFault = messageResponse.castAsSoap().getSOAPBody();
+				}
 			}catch(Exception e){
 				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
 		}
 
-		if(body!=null && body.hasFault()){
-			this.fault = body.getFault();
+		if(bodyConFault!=null){
+			this.fault = bodyConFault.getFault();
 			for(int i=0; i<gestioneErrore.sizeSoapFaultList();i++){
 				GestioneErroreSoapFault gestore = gestioneErrore.getSoapFault(i);
 				boolean match = true;

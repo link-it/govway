@@ -37,7 +37,7 @@ Per Jboss 7.x, WildFly 8.x e WildFly 9.x nel file standalone/configuration/stand
   </hornetq-server>
 </subsystem>
 
-Per WildFly 10.x, 11.x, 12.x, 13.x, 14.x, 15.x, 16.x, 17.x, 18.x e 19.x nel file standalone/configuration/standalone-full.xml aggiungere il ruolo ai vari permessi:
+Per WildFly 10.x, 11.x, 12.x, 13.x, 14.x, 15.x, 16.x, 17.x, 18.x, 19.x, 20.x, 21.x, 22.x e 23.x nel file standalone/configuration/standalone-full.xml aggiungere il ruolo ai vari permessi:
 
 <subsystem xmlns="urn:jboss:domain:messaging-activemq:1.x">
     <server name="default">

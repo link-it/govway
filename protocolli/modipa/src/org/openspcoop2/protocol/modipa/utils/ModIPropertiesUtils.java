@@ -474,7 +474,7 @@ public class ModIPropertiesUtils {
 		}
 		
 		if(sign) {
-			return message.castAsSoap().countAttachments()>0;
+			return message.castAsSoap().hasAttachments();
 		}
 		
 		return false;
@@ -661,7 +661,7 @@ public class ModIPropertiesUtils {
 				processFault = modiProperties.isRestSecurityTokenFaultProcessEnabled();
 			}
 			else {
-				isFault = message.isFault() || message.castAsSoap().getSOAPBody().hasFault();
+				isFault = message.isFault() || message.castAsSoap().hasSOAPFault();
 				processFault = modiProperties.isSoapSecurityTokenFaultProcessEnabled();
 			}
 			if(isFault && !processFault) {

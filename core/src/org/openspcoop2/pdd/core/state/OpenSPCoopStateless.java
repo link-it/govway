@@ -239,14 +239,6 @@ public class OpenSPCoopStateless extends OpenSPCoopState implements Serializable
 		this.dimensioneMessaggiAttraversamentoPDD = dimensioneMessaggiAttraversamentoPDD;
 	}
 	
-	public boolean isUseConnection() {
-		return this.useConnection;
-	}
-
-	public void setUseConnection(boolean useConnection) {
-		this.useConnection = useConnection;
-	}
-
 	public String getIDCorrelazioneApplicativa() {
 		return this.idCorrelazioneApplicativa;
 	}

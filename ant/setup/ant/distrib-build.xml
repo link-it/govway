@@ -81,7 +81,7 @@
 								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v8_v9" tofile="${dist}/INSTALL.txt" />
 							</then>
 							<else>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v21" tofile="${dist}/INSTALL.txt" />
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v23" tofile="${dist}/INSTALL.txt" />
 							</else>
 						</if>
 						<mkdir dir="${dist}/jms" />
@@ -1223,7 +1223,34 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 				<if>
 					<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
 					<then>
-						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+						<if>
+							<or>
+								<matches string="${as}" pattern="wildfly22"/>
+								<matches string="${as}" pattern="wildfly23"/>
+							</or>
+							<then>
+								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+<![CDATA[
+
+	<!-- Start MODULE govwayConsole -->
+	<sub-deployment name="govwayConsole.war">
+        <exclusions>
+		<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
+		<module name="org.apache.log4j"/>
+                <module name="org.slf4j" />
+                <module name="org.apache.commons.logging"/>
+                <module name="org.jboss.logging"/>
+		<module name="org.apache.logging.log4j.api"/>
+		-->
+        </exclusions>
+    </sub-deployment>
+	<!-- End MODULE govwayConsole -->
+								
+]]>
+								</concat>
+							</then>
+							<else>
+								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
 
 	<!-- Start MODULE govwayConsole -->
@@ -1238,13 +1265,42 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 	<!-- End MODULE govwayConsole -->
 								
 ]]>
-						</concat>
+								</concat>
+							</else>
+						</if>
 					</then>
 				</if>
 				<if>
 					<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
 					<then>
-						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+						<if>
+							<or>
+								<matches string="${as}" pattern="wildfly22"/>
+								<matches string="${as}" pattern="wildfly23"/>
+							</or>
+							<then>
+								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+<![CDATA[
+
+	<!-- Start MODULE govwayMonitor -->
+	<sub-deployment name="govwayMonitor.war">
+        <exclusions>
+		<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
+		<module name="org.apache.log4j"/>
+                <module name="org.slf4j" />
+                <module name="org.apache.commons.logging"/>
+                <module name="org.jboss.logging"/>
+		<module name="org.apache.logging.log4j.api"/>
+		-->
+        </exclusions>
+    </sub-deployment>
+	<!-- End MODULE govwayMonitor -->
+								
+]]>
+								</concat>
+							</then>
+							<else>
+								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
 
 	<!-- Start MODULE govwayMonitor -->
@@ -1259,7 +1315,9 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 	<!-- End MODULE govwayMonitor -->
 								
 ]]>
-						</concat>
+								</concat>
+							</else>
+						</if>
 					</then>
 				</if>
 				<if>
@@ -1268,7 +1326,34 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 						<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
 					</and>
 					<then>
-						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+						<if>
+							<or>
+								<matches string="${as}" pattern="wildfly22"/>
+								<matches string="${as}" pattern="wildfly23"/>
+							</or>
+							<then>
+								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+<![CDATA[
+
+	<!-- Start MODULE govwayLoader -->
+	<sub-deployment name="govwayLoader.war">
+        <exclusions>
+		<!-- avendo già escluso subsystem 'logging', questi moduli non sono caricati 
+		<module name="org.apache.log4j"/>
+                <module name="org.slf4j" />
+                <module name="org.apache.commons.logging"/>
+                <module name="org.jboss.logging"/>
+		<module name="org.apache.logging.log4j.api"/>
+		-->
+        </exclusions>
+    </sub-deployment>
+	<!-- End MODULE govwayLoader -->
+								
+]]>
+								</concat>
+							</then>
+							<else>
+								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
 
 	<!-- Start MODULE govwayLoader -->
@@ -1283,7 +1368,9 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 	<!-- End MODULE govwayLoader -->
 
 ]]>
-						</concat>
+								</concat>
+							</else>
+						</if>
 					</then>
 				</if>		
 				<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1309,6 +1396,10 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 			<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.war"/>
 			<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_WAR"/>
 		</antcall>
+		<antcall target="-correctManifest"> <!-- la terza volta serve a risolvere gli ulteriori RELEASE rimasti perche' inizialmente andati a capo -->
+			<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.war"/>
+			<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_WAR"/>
+		</antcall>
 
 		<!-- *** Aggiunta dell'applicazione govwaySec *** -->
 		<if>
@@ -1320,6 +1411,10 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAYSEC_WAR"/>
 				</antcall>
 				<antcall target="-correctManifest"> <!-- la seconda volta serve a risolvere i RELEASE rimasti perche' inizialmente andati a capo -->
+					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govwaySec.war"/>
+					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAYSEC_WAR"/>
+				</antcall>
+				<antcall target="-correctManifest"> <!-- la terza volta serve a risolvere gli ulteriori RELEASE rimasti perche' inizialmente andati a capo -->
 					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govwaySec.war"/>
 					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAYSEC_WAR"/>
 				</antcall>
@@ -1339,6 +1434,10 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_JAR"/>
 				</antcall>
 				<antcall target="-correctManifest"> <!-- la seconda volta serve a risolvere i RELEASE rimasti perche' inizialmente andati a capo -->
+					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.jar"/>
+					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_JAR"/>
+				</antcall>
+				<antcall target="-correctManifest"> <!-- la terza volta serve a risolvere gli ulteriori RELEASE rimasti perche' inizialmente andati a capo -->
 					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.jar"/>
 					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_JAR"/>
 				</antcall>
@@ -1371,15 +1470,101 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 	<target name="-correctManifest">
 		<unzip src="${correctManifest_archive}" dest="${correctManifest_archive_destDir}"/>
 
+		<antcall target="dos2unix">
+			<param name="dir" value="${correctManifest_archive_destDir}/META-INF"/>
+			<param name="file" value="MANIFEST.MF"/>
+		</antcall>
+
 		<!-- replace jar di openspcoop con patch version -->
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="_RELEASE." value="-${antinstaller_versione_attuale_con_p_level}."/>
 
 		<!-- replace jar in cui e' stato corretto il manifest -->
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-impl-2.3.2.jar" value="jaxb-impl-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[jaxb-impl-2.3.2.ja
+ r]]></replacetoken>
+			<replacevalue><![CDATA[jaxb-impl-2.3.2.gw.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[jaxb-impl-2.3.2.j
+ ar]]></replacetoken>
+			<replacevalue><![CDATA[jaxb-impl-2.3.2.gw.jar
+ ]]></replacevalue>
+		</replace>	
+
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-core-2.3.0.1.jar" value="jaxb-core-2.3.0.1.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[jaxb-core-2.3.0.1.ja
+ r]]></replacetoken>
+			<replacevalue><![CDATA[jaxb-core-2.3.0.1.gw.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[jaxb-core-2.3.0.1.j
+ ar]]></replacetoken>
+			<replacevalue><![CDATA[jaxb-core-2.3.0.1.gw.jar
+ ]]></replacevalue>
+		</replace>		
+
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-xjc-2.3.2.jar" value="jaxb-xjc-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[jaxb-xjc-2.3.2.ja
+ r]]></replacetoken>
+			<replacevalue><![CDATA[jaxb-xjc-2.3.2.gw.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[jaxb-xjc-2.3.2.j
+ ar]]></replacetoken>
+			<replacevalue><![CDATA[jaxb-xjc-2.3.2.gw.jar
+ ]]></replacevalue>
+		</replace>		
+
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="xalan-2.7.2.jar" value="xalan-2.7.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[xalan-2.7.2.ja
+ r]]></replacetoken>
+			<replacevalue><![CDATA[xalan-2.7.2.gw.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[xalan-2.7.2.j
+ ar]]></replacetoken>
+			<replacevalue><![CDATA[xalan-2.7.2.gw.jar
+ ]]></replacevalue>
+		</replace>		
+
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="serializer-2.7.2.jar" value="serializer-2.7.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[serializer-2.7.2.ja
+ r]]></replacetoken>
+			<replacevalue><![CDATA[serializer-2.7.2.gw.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[serializer-2.7.2.j
+ ar]]></replacetoken>
+			<replacevalue><![CDATA[serializer-2.7.2.gw.jar
+ ]]></replacevalue>
+		</replace>		
+
+		<!-- replace jar di openspcoop con patch version (eseguo anche dopo il replace dei jar, sempre per avere piu' possibilita' poiche' vanno a capo) -->
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="_RELEASE." value="-${antinstaller_versione_attuale_con_p_level}."/>
+
+		<!-- Casi speciali che rimangono -->
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[openspcoop2_security_RELEAS
+ E.jar]]></replacetoken>
+			<replacevalue><![CDATA[openspcoop2_security-INDICAREVERSIONE
+ .jar]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="INDICAREVERSIONE" value="${antinstaller_versione_attuale_con_p_level}"/>
+
+		<antcall target="dos2unix">
+			<param name="dir" value="${correctManifest_archive_destDir}/META-INF"/>
+			<param name="file" value="MANIFEST.MF"/>
+		</antcall>
 
 		<copy file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" todir="${correctManifest_archive_destDir}"/>
 		<delete file="${correctManifest_archive}"/>		

@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.core.dynamic.Costanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -54,7 +55,6 @@ import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -662,6 +662,8 @@ public class Test {
 		PdDContext pddContext = new PdDContext();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, UUIDUtilsGenerator.newUUID());
 		
+		boolean bufferMessage_readOnly = true;
+		
 		String urlInvocazione =  "/govway/out/ENTE/Erogatore/Servizio/v1/azione/test?"+
 				QUERY1+"="+QUERY1_VALORE+"&"+
 				QUERY2+"="+QUERY2_VALORE+"&"+
@@ -709,26 +711,39 @@ public class Test {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		Element elementRequest = XMLUtils.getInstance(messageFactory).newElement(XML_REQUEST.getBytes());
-		Element elementResponse = XMLUtils.getInstance(messageFactory).newElement(XML_RESPONSE.getBytes());
+//		Element elementRequest = XMLUtils.getInstance(messageFactory).newElement(XML_REQUEST.getBytes());
+//		Element elementResponse = XMLUtils.getInstance(messageFactory).newElement(XML_RESPONSE.getBytes());
 		
 		OpenSPCoop2Message jsonMessageRequest = messageFactory.createMessage(MessageType.JSON, MessageRole.REQUEST, 
 				HttpConstants.CONTENT_TYPE_JSON, JSON_REQUEST.getBytes()).getMessage();
+		MessageContent messageContentJsonRequest = new MessageContent(jsonMessageRequest.castAsRestJson(),
+				bufferMessage_readOnly, pddContext);
+		
 		OpenSPCoop2Message jsonMessageResponse = messageFactory.createMessage(MessageType.JSON, MessageRole.RESPONSE, 
 				HttpConstants.CONTENT_TYPE_JSON, JSON_RESPONSE.getBytes()).getMessage();
+		MessageContent messageContentJsonResponse = new MessageContent(jsonMessageResponse.castAsRestJson(),
+				bufferMessage_readOnly, pddContext);
+		
 		OpenSPCoop2Message jsonMessageTestAlterazioni = messageFactory.createMessage(MessageType.JSON, MessageRole.REQUEST, 
 				HttpConstants.CONTENT_TYPE_JSON, JSON_REQUEST.getBytes()).getMessage();
+		MessageContent messageContentJsonTestAlterazioni = new MessageContent(jsonMessageTestAlterazioni.castAsRestJson(),
+				bufferMessage_readOnly, pddContext);
 		
 		OpenSPCoop2Message xmlMessageRequest = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
 				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_REQUEST.getBytes()).getMessage();
+		MessageContent messageContentRequest = new MessageContent(xmlMessageRequest.castAsSoap(),
+				bufferMessage_readOnly, pddContext);
 		AttachmentPart ap1 = xmlMessageRequest.castAsSoap().createAttachmentPart();
 		ap1.setContent(JSON_REQUEST, HttpConstants.CONTENT_TYPE_JSON);
 		xmlMessageRequest.castAsSoap().addAttachmentPart(ap1);
 		AttachmentPart ap2 = xmlMessageRequest.castAsSoap().createAttachmentPart();
 		ap2.setContent(HELLO_WORLD_PLAIN, HttpConstants.CONTENT_TYPE_PLAIN);
 		xmlMessageRequest.castAsSoap().addAttachmentPart(ap2);
+		
 		OpenSPCoop2Message xmlMessageResponse = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.RESPONSE, 
 				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_RESPONSE.getBytes()).getMessage();
+		MessageContent messageContentResponse = new MessageContent(xmlMessageResponse.castAsSoap(),
+				bufferMessage_readOnly, pddContext);
 		ap1 = xmlMessageResponse.castAsSoap().createAttachmentPart();
 		ap1.setContent(JSON_REQUEST, HttpConstants.CONTENT_TYPE_JSON);
 		xmlMessageResponse.castAsSoap().addAttachmentPart(ap1);
@@ -742,7 +757,7 @@ public class Test {
 		ErrorHandler errorHandlerXmlRequest = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapXmlRequest, pddContext, urlInvocazione,
 				xmlMessageRequest,
-				elementRequest, null, 
+				messageContentRequest, 
 				busta, 
 				parametriTrasporto, 
 				parametriUrl,
@@ -753,7 +768,7 @@ public class Test {
 		ErrorHandler errorHandlerXmlResponse = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapXmlResponse, dynamicMapXmlRequest, pddContext, 
 				xmlMessageResponse,
-				elementResponse, null, 
+				messageContentResponse, 
 				busta, parametriTrasportoRisposta,
 				errorHandlerXmlResponse);
 		
@@ -761,7 +776,7 @@ public class Test {
 		ErrorHandler errorHandlerJsonRequest = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonRequest, pddContext, urlInvocazione,
 				jsonMessageRequest,
-				null, JSON_REQUEST, 
+				messageContentJsonRequest, 
 				busta, 
 				parametriTrasporto, 
 				parametriUrl,
@@ -772,7 +787,7 @@ public class Test {
 		ErrorHandler errorHandlerJsonResponse = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapResponse(log, dynamicMapJsonResponse, dynamicMapJsonRequest, pddContext, 
 				jsonMessageResponse,
-				null, JSON_RESPONSE,  
+				messageContentJsonResponse,  
 				busta, parametriTrasportoRisposta,
 				errorHandlerJsonResponse);
 		
@@ -780,7 +795,7 @@ public class Test {
 		ErrorHandler errorHandlerJsonTestAlterazioni = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMapJsonTestAlterazioni, pddContext, urlInvocazione,
 				jsonMessageTestAlterazioni,
-				null, JSON_REQUEST, 
+				messageContentJsonTestAlterazioni, 
 				busta, 
 				parametriTrasporto, 
 				parametriUrl,
@@ -817,7 +832,8 @@ public class Test {
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_FREEMARKER_REQUEST_CONTEXT.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_FREEMARKER_RESPONSE_CONTEXT.getBytes());
 			
-			elaborazioniJson(log, dynamicMapJsonTestAlterazioni);
+			elaborazioniJson(log, dynamicMapJsonTestAlterazioni,
+					bufferMessage_readOnly, pddContext);
 		}
 		
 		if(tipoTest==null || TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest)) {
@@ -870,7 +886,8 @@ public class Test {
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_VELOCITY_REQUEST_CONTEXT.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE_CONTEXT.getBytes());
 			
-			elaborazioniJson(log, dynamicMapJsonTestAlterazioni);
+			elaborazioniJson(log, dynamicMapJsonTestAlterazioni,
+					bufferMessage_readOnly, pddContext);
 			
 		}
 		
@@ -908,12 +925,19 @@ public class Test {
 		
 		if(tipoTest==null || TipoTrasformazione.XSLT.equals(tipoTest)) {
 			
-			elementRequest = XMLUtils.getInstance(messageFactory).newElement(XSLT_XML_INPUT.getBytes());
-			elementResponse = XMLUtils.getInstance(messageFactory).newElement(XSLT_XML_INPUT.getBytes());
+			OpenSPCoop2Message xsltElementRequest = messageFactory.createMessage(MessageType.XML, MessageRole.REQUEST, 
+					HttpConstants.CONTENT_TYPE_XML, XSLT_XML_INPUT.getBytes()).getMessage();
+			MessageContent messageContentXsltElementRequest = new MessageContent(xsltElementRequest.castAsRestXml(),
+					bufferMessage_readOnly, pddContext);
+			
+			OpenSPCoop2Message xsltElementResponse = messageFactory.createMessage(MessageType.XML, MessageRole.RESPONSE, 
+					HttpConstants.CONTENT_TYPE_XML, XSLT_XML_INPUT.getBytes()).getMessage();
+			MessageContent messageContentXsltElementResponse = new MessageContent(xsltElementResponse.castAsRestXml(),
+					bufferMessage_readOnly, pddContext);
 			
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.XSLT) , "xml", pddContext, 
-					null, elementRequest,  XSLT_PREFIX_REPLACE_ALL.getBytes(), 
-					null, elementResponse,  XSLT_PREFIX_REPLACE_ONLY_PREFIX.getBytes());
+					null, messageContentXsltElementRequest,  XSLT_PREFIX_REPLACE_ALL.getBytes(), 
+					null, messageContentXsltElementResponse,  XSLT_PREFIX_REPLACE_ONLY_PREFIX.getBytes());
 			
 		}
 		
@@ -957,8 +981,8 @@ public class Test {
 	
 	private static void test(Logger log, OpenSPCoop2MessageFactory messageFactory, TipoTrasformazione tipoTest, String prefix,
 			PdDContext pddContext,
-			Map<String, Object> dynamicMapRequest, Element elementRequest, byte[] templateRequest, 
-			Map<String, Object> dynamicMapResponse, Element elementResponse, byte[] templateResponse) throws Exception {
+			Map<String, Object> dynamicMapRequest, MessageContent messageContentRequest, byte[] templateRequest, 
+			Map<String, Object> dynamicMapResponse, MessageContent messageContentResponse, byte[] templateResponse) throws Exception {
 		
 		System.out.println("Test ["+tipoTest+"-"+prefix+"] in corso ...");
 		
@@ -966,7 +990,7 @@ public class Test {
 		RisultatoTrasformazioneContenuto risultato = null;
 		try {
 			risultato = GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
-					tipoTest.getValue(), templateRequest, "richiesta", dynamicMapRequest, null, elementRequest, pddContext);
+					tipoTest.getValue(), templateRequest, "richiesta", dynamicMapRequest, null, messageContentRequest, pddContext);
 		}catch(Throwable e) {
 			System.out.println("\tTemplate:\n "+new String(templateRequest));
 			Utilities.sleep(1000);
@@ -1097,7 +1121,7 @@ public class Test {
 			if(contenuto.contains(PREFIX_ORIGINALE)) {
 				
 				System.out.println("Template:\n "+new String(templateRequest));
-				System.out.println("PRIMA: "+XMLUtils.getInstance(messageFactory).toString(elementRequest));
+				System.out.println("PRIMA: "+XMLUtils.getInstance(messageFactory).toString(messageContentRequest.getElement()));
 				System.out.println("DOPO: "+contenuto);
 
 				throw new Exception("Trovato '"+PREFIX_ORIGINALE+"' non atteso");
@@ -1109,7 +1133,7 @@ public class Test {
 		risultato = null;
 		try {
 			risultato = GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
-					tipoTest.getValue(), templateResponse, "risposta", dynamicMapResponse, null, elementResponse, pddContext);
+					tipoTest.getValue(), templateResponse, "risposta", dynamicMapResponse, null, messageContentResponse, pddContext);
 		}catch(Throwable e) {
 			System.out.println("\tTemplate:\n "+new String(templateResponse));
 			Utilities.sleep(1000);
@@ -1248,7 +1272,7 @@ public class Test {
 			if(contenuto.contains(PREFIX_ORIGINALE)) {
 				
 				System.out.println("Template:\n "+new String(templateResponse));
-				System.out.println("PRIMA: "+XMLUtils.getInstance(messageFactory).toString(elementResponse));
+				System.out.println("PRIMA: "+XMLUtils.getInstance(messageFactory).toString(messageContentResponse.getElement()));
 				System.out.println("DOPO: "+contenuto);
 				
 				throw new Exception("Trovato '"+PREFIX_ORIGINALE+"' non atteso");
@@ -1407,9 +1431,11 @@ public class Test {
 		}
 	}
 	
-	private static void elaborazioniJson(Logger log, Map<String, Object> dynamicMapJsonRequest)throws Exception {
+	private static void elaborazioniJson(Logger log, Map<String, Object> dynamicMapJsonRequest,
+			boolean bufferMessage_readOnly, PdDContext pddContext)throws Exception {
 		
 		ContentExtractor ce = (ContentExtractor) dynamicMapJsonRequest.get(Costanti.MAP_REQUEST);
+		//OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			
 		List<Object> testOggetti = new ArrayList<Object>();
 		testOggetti.add("valoreElementoAggiunto");
@@ -1466,7 +1492,9 @@ public class Test {
 			else {
 				ce.addSimpleJsonElement(nomeElemento, valoreElemento);
 			}
-			PatternExtractor pe = new PatternExtractor(ce.getContentAsString(), log); 
+			
+			PatternExtractor pe = PatternExtractor.getJsonPatternExtractor(ce.getContentAsString(), log,
+					bufferMessage_readOnly, pddContext);
 			if(!pe.match("$."+nomeElemento)) {
 				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
 			}
@@ -1492,7 +1520,9 @@ public class Test {
 			
 			System.out.println("Test rimozione elemento semplice senza jsonpath '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
 			ce.removeJsonField(nomeElemento);
-			pe = new PatternExtractor(ce.getContentAsString(), log); 
+			
+			pe = PatternExtractor.getJsonPatternExtractor(ce.getContentAsString(), log,
+					bufferMessage_readOnly, pddContext);
 			if(pe.match("$."+nomeElemento)) {
 				throw new Exception("Elemento '"+nomeElemento+"' non rimosso");
 			}
@@ -1518,7 +1548,9 @@ public class Test {
 			else {
 				ce.addSimpleJsonElement("$", nomeElemento, valoreElemento);
 			}
-			PatternExtractor pe = new PatternExtractor(ce.getContentAsString(), log); 
+			
+			PatternExtractor pe = PatternExtractor.getJsonPatternExtractor(ce.getContentAsString(), log,
+					bufferMessage_readOnly, pddContext);
 			if(!pe.match("$."+nomeElemento)) {
 				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
 			}
@@ -1544,7 +1576,9 @@ public class Test {
 			
 			System.out.println("Test rimozione elemento semplice '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
 			ce.removeJsonField("$", nomeElemento);
-			pe = new PatternExtractor(ce.getContentAsString(), log); 
+			
+			pe = PatternExtractor.getJsonPatternExtractor(ce.getContentAsString(), log,
+					bufferMessage_readOnly, pddContext);
 			if(pe.match("$."+nomeElemento)) {
 				throw new Exception("Elemento '"+nomeElemento+"' non rimosso");
 			}
@@ -1570,7 +1604,9 @@ public class Test {
 			else {
 				ce.addSimpleJsonElement("$.ObjectInternal", nomeElemento, valoreElemento);
 			}
-			PatternExtractor pe = new PatternExtractor(ce.getContentAsString(), log); 
+			
+			PatternExtractor pe = PatternExtractor.getJsonPatternExtractor(ce.getContentAsString(), log,
+					bufferMessage_readOnly, pddContext);
 			if(!pe.match("$.ObjectInternal."+nomeElemento)) {
 				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
 			}
@@ -1596,7 +1632,9 @@ public class Test {
 			
 			System.out.println("Test rimozione elemento interno '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
 			ce.removeJsonField("$.ObjectInternal", nomeElemento);
-			pe = new PatternExtractor(ce.getContentAsString(), log); 
+			
+			pe = PatternExtractor.getJsonPatternExtractor(ce.getContentAsString(), log,
+					bufferMessage_readOnly, pddContext);
 			if(pe.match("$.ObjectInternal."+nomeElemento)) {
 				throw new Exception("Elemento '"+nomeElemento+"' non rimosso");
 			}
@@ -1622,7 +1660,9 @@ public class Test {
 			else {
 				ce.addSimpleJsonElement("$.ObjectList[*]", nomeElemento, valoreElemento);
 			}
-			PatternExtractor pe = new PatternExtractor(ce.getContentAsString(), log); 
+			
+			PatternExtractor pe = PatternExtractor.getJsonPatternExtractor(ce.getContentAsString(), log,
+					bufferMessage_readOnly, pddContext);
 			if(!pe.match("$.ObjectList[*]."+nomeElemento)) {
 				throw new Exception("Elemento '"+nomeElemento+"' non aggiunto");
 			}
@@ -1654,7 +1694,9 @@ public class Test {
 			
 			System.out.println("Test rimozione elemento ad array '"+nomeElemento+"' (tipo: "+valoreElemento.getClass().getName()+") alla radice dell'oggetto json ...");
 			ce.removeJsonField("$.ObjectList[*]", nomeElemento);
-			pe = new PatternExtractor(ce.getContentAsString(), log); 
+			
+			pe = PatternExtractor.getJsonPatternExtractor(ce.getContentAsString(), log,
+					bufferMessage_readOnly, pddContext);
 			if(pe.match("$.ObjectList[*]."+nomeElemento)) {
 				throw new Exception("Elemento '"+nomeElemento+"' non rimosso");
 			}

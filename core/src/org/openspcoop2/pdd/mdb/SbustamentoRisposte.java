@@ -43,6 +43,7 @@ import org.openspcoop2.pdd.core.EJBUtils;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
+import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -626,7 +627,14 @@ public class SbustamentoRisposte extends GenericLib {
 						if( configurazionePdDManager.getTipoValidazione(implementazionePdDDestinatario).equals(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO) == true) {
 
 							// Spedisco un Errore ad un mittente conosciuto...
-							if(mittenteRegistrato){
+							boolean segnalazioneErrore = false; // inviare una segnalazione su una nuova connessione non e' piu' supportato neanche da spcoop.
+							if(mittenteRegistrato && segnalazioneErrore){
+								
+								if( openspcoopstate.resourceReleased()) {
+									((OpenSPCoopState)openspcoopstate).setUseConnection(true);
+									((OpenSPCoopState)openspcoopstate).initResource(identitaPdD, "EJBUtils.segnalazioneErroreBustaRisposta", idTransazione);
+								}
+								
 								// SPEDIZIONE BUSTA ERRORE AL MITTENTE DELLA BUSTA :
 								msgDiag.mediumDebug("Invio segnalazione di errore ...");
 								ejbUtils.sendAsRispostaBustaErrore_inoltroSegnalazioneErrore(bustaRisposta,errorsClone);
@@ -710,6 +718,12 @@ public class SbustamentoRisposte extends GenericLib {
 			/* ------  Ricezione riscontri per il NAL (deve essere la prima attivita', poiche' effettua commit JDBC) -------- */
 			if(ricezioneRiscontri){
 				if(bustaRisposta.sizeListaRiscontri() > 0){
+					
+					if(openspcoopstate.resourceReleased()) {
+						((OpenSPCoopState)openspcoopstate).setUseConnection(true);
+						openspcoopstate.initResource(identitaPdD, this.idModulo, idTransazione);
+					}
+					
 					for(int i=0;i<bustaRisposta.sizeListaRiscontri();i++){
 						Riscontro r = bustaRisposta.getRiscontro(i);
 						
@@ -852,15 +866,29 @@ public class SbustamentoRisposte extends GenericLib {
 					}
 					
 					boolean oldGestioneConnessione = false;
-					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+					boolean rinegozia = false;
+					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck() && !openspcoopstate.resourceReleased()) {
+						rinegozia = true;
 //						System.out.println("[RISPOSTA] rilascio!!");
 						msgDiag.mediumDebug("Rilascio connessione al database prima di verificare se la risposta è duplicata ...");
-						oldGestioneConnessione = ((OpenSPCoopStateless)openspcoopstate).isUseConnection();
-						((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
+						oldGestioneConnessione = ((OpenSPCoopState)openspcoopstate).isUseConnection();
+						((OpenSPCoopState)openspcoopstate).setUseConnection(true);
 						openspcoopstate.commit();
 						openspcoopstate.releaseResource();
 //						System.out.println("[RISPOSTA] rilasciata: "+
 //								(((org.openspcoop2.pdd.core.state.OpenSPCoopState)openspcoopstate).getConnectionDB()==null || ((OpenSPCoopState)openspcoopstate).getConnectionDB().isClosed()));
+					}
+					boolean initConnectionForDuplicate = false;
+					if(!gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck() && openspcoopstate.resourceReleased()) {
+						// il vecchio engine che verifica il filtro duplicati ha bisogno della connessione
+						// inizializzo
+						((OpenSPCoopState)openspcoopstate).setUseConnection(true);
+						openspcoopstate.initResource(identitaPdD, this.idModulo, idTransazione);
+						historyBuste.updateState(openspcoopstate.getStatoRichiesta());
+						repositoryBuste.updateState(openspcoopstate.getStatoRichiesta());
+						profiloCollaborazione.updateState(openspcoopstate.getStatoRichiesta());
+						ejbUtils.updateOpenSPCoopState(openspcoopstate);
+						initConnectionForDuplicate = true;
 					}
 					
 					boolean bustaDuplicata = gestoreFiltroDuplicati.isDuplicata(protocolFactory, bustaRisposta.getID());
@@ -882,12 +910,12 @@ public class SbustamentoRisposte extends GenericLib {
 						msgDiag.logPersonalizzato("ricezioneBusta.registrazionePerFiltroDuplicati");
 					}
 					
-					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck()) {
+					if(gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck() && rinegozia) {
 //						System.out.println("[RISPOSTA] rinegozio!!");
 						msgDiag.mediumDebug("Rinegozio connessione dopo la verifica di risposta duplicata ...");
 						try{
 							openspcoopstate.updateResource(idTransazione);
-							((OpenSPCoopStateless)openspcoopstate).setUseConnection(oldGestioneConnessione);
+							((OpenSPCoopState)openspcoopstate).setUseConnection(oldGestioneConnessione);
 //							// Aggiorno risorse
 //							ejbUtils.updateOpenSPCoopState(openspcoopstate);
 //							msgRequest.updateOpenSPCoopState(openspcoopstate);							
@@ -896,6 +924,9 @@ public class SbustamentoRisposte extends GenericLib {
 						}catch(Exception e){
 							throw new Exception("Rinegoziazione connessione dopo la verifica di risposta duplicata fallita: "+e.getMessage(),e);
 						} 
+					}
+					if(!gestoreFiltroDuplicati.releaseRuntimeResourceBeforeCheck() && initConnectionForDuplicate) {
+						openspcoopstate.commit();
 					}
 					
 					if (bustaDuplicata){

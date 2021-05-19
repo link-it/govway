@@ -90,6 +90,9 @@ public class History  {
 		}
 	}
 
+	public void updateState(IState state){
+		this.state = state;
+	}
 
 
 

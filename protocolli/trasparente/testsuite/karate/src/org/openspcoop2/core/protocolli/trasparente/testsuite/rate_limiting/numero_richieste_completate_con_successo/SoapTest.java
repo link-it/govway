@@ -37,7 +37,6 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
-import org.w3c.dom.Element;
 
 /**
 * SoapTest
@@ -403,8 +402,8 @@ public class SoapTest extends ConfigLoader {
 			assertTrue(Integer.valueOf(r.getHeaderFirstValue(Headers.RequestSuccesfulReset)) <= windowSize);			
 			assertEquals(429, r.getResultHTTPOperation());
 			
-			Element element = Utils.buildXmlElement(r.getContent());
-			Utils.matchLimitExceededSoap(element);
+			//org.w3c.dom.Element element = Utils.buildXmlElement(r.getContent());
+			Utils.matchLimitExceededSoap(r.getContent());
 			
 			assertEquals("0", r.getHeaderFirstValue(Headers.RequestSuccesfulRemaining));
 			assertEquals(HeaderValues.LIMIT_EXCEEDED, r.getHeaderFirstValue(Headers.GovWayTransactionErrorType));

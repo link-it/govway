@@ -368,7 +368,8 @@ public class DumpRaw {
 		try {
 		
 			if(this.dumpBinario) {
-				this.serializeRequest(contentType, contentLength, credential, this.urlProtocolContext, dumpOUT.toString(),
+				this.serializeRequest(contentType, contentLength, credential, this.urlProtocolContext, 
+						dumpOUT!=null ? dumpOUT.toString() : null,
 						req.getParsingRequestErrorAsString());
 			}
 			
@@ -590,7 +591,8 @@ public class DumpRaw {
 		try {
 		
 			if(this.dumpBinario) {
-				this.serializeResponse(dumpOUT.toString(),res.getParsingResponseErrorAsString(),
+				this.serializeResponse(dumpOUT!=null ? dumpOUT.toString() : null,
+						res.getParsingResponseErrorAsString(),
 						res.getTrasporto(),res.getContentLenght(),res.getContentType(),res.getStatus());
 			}
 			

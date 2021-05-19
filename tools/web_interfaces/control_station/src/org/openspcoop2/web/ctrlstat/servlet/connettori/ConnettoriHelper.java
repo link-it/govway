@@ -52,18 +52,18 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.core.plugins.Plugin;
-import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
-import org.openspcoop2.utils.DynamicStringReplace;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -4001,7 +4001,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}else{
 						try{
-							DynamicStringReplace.validate(requestOutputFileName, false);
+							DynamicUtils.validate(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME, requestOutputFileName, false, false);
 						}catch(Exception e){
 							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME+"' ("+
 									ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
@@ -4014,7 +4014,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
 						try{
-							DynamicStringReplace.validate(requestOutputFileNameHeaders, false);
+							DynamicUtils.validate(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS, requestOutputFileNameHeaders, false, false);
 						}catch(Exception e){
 							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS+"' ("+
 									ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
@@ -4033,7 +4033,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 							return false;
 						}else{
 							try{
-								DynamicStringReplace.validate(responseInputFileName, false);
+								DynamicUtils.validate(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME, responseInputFileName, false, false);
 							}catch(Exception e){
 								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME+"' ("+
 										ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());
@@ -4046,7 +4046,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						
 						if(responseInputFileNameHeaders!=null && !"".equals(responseInputFileNameHeaders)){
 							try{
-								DynamicStringReplace.validate(responseInputFileNameHeaders, false);
+								DynamicUtils.validate(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS, responseInputFileNameHeaders, false, false);
 							}catch(Exception e){
 								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS+"' ("+
 										ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());

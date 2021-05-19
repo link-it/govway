@@ -29,11 +29,15 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPPart;
 
 import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.message.token.Timestamp;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -90,13 +94,27 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			Busta busta, List<Eccezione> erroriValidazione,
 			String replyTo) throws Exception {
 		
+		boolean bufferMessage_readOnly = this.modiProperties.isValidazioneBufferEnabled();
+		String idTransazione = null;
+		if(this.context!=null) {
+			idTransazione = (String)this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
+		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+		SOAPPart soapPart = MessageUtils.getSOAPPart(soapMessage, bufferMessage_readOnly, idTransazione);
+		SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
+		SOAPHeader header = null;
+		SOAPBody body = null;
+		if(soapEnvelope!=null) {
+			header = soapEnvelope.getHeader();
+			body = soapEnvelope.getBody();
+		}
 		
 		String correlationIdName = this.modiProperties.getSoapCorrelationIdName();
-		String correlationId = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage);
+		String correlationId = ModIUtilities.getSOAPHeaderCorrelationIdValue(soapMessage.getMessageType(), header, body);
 		
 		String replyToName = this.modiProperties.getSoapReplyToName();
-		String replyToAddress = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage);
+		String replyToAddress = ModIUtilities.getSOAPHeaderReplyToValue(soapMessage.getMessageType(), header, body);
 
 		
 		if(replyToAddress!=null) {
@@ -196,7 +214,15 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 		}
 		
-		if(messageSecurityContext.existsSecurityHeader(msg, this.modiProperties.getSoapSecurityTokenActor())==false){
+		boolean bufferMessage_readOnly = this.modiProperties.isValidazioneBufferEnabled();
+		String idTransazione = null;
+		if(this.context!=null) {
+			idTransazione = (String)this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
+		
+				
+		if(messageSecurityContext.existsSecurityHeader(msg, this.modiProperties.getSoapSecurityTokenActor(),
+				bufferMessage_readOnly, idTransazione)==false){
 			if(attesoSecurityHeader) {
 				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE, 
 						"Header Message Security non riscontrato nella SOAPEnvelope ricevuta"));
@@ -205,7 +231,14 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		}
 		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
-		SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
+		SOAPPart soapPart = MessageUtils.getSOAPPart(soapMessage, bufferMessage_readOnly, idTransazione);
+		SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
+		SOAPHeader header = null;
+		SOAPBody body = null;
+		if(soapEnvelope!=null) {
+			header = soapEnvelope.getHeader();
+			body = soapEnvelope.getBody();
+		}
 		
 		boolean filtroDuplicati = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
@@ -218,7 +251,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 		SOAPHeaderElement requestDigestHeader = null;
 		if(integrita && !request && includiRequestDigest) {
-			requestDigestHeader = ModIUtilities.getSOAPHeaderRequestDigest(soapMessage);
+			requestDigestHeader = ModIUtilities.getSOAPHeaderRequestDigest(soapMessage.getMessageType(), header, body);
 		}
 		
 		
@@ -375,7 +408,8 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			
 			// ** Applico sicurezza tramite engine **/
-			wss4jSignature.process(messageSecurityContext, soapMessage, busta);
+			wss4jSignature.process(messageSecurityContext, soapMessage, busta, 
+					bufferMessage_readOnly, idTransazione);
 			
 			
 			// ** Leggo certificato client **/
@@ -383,7 +417,8 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 			
 			// ** Leggo security header **/
-			securityHeader = messageSecurityContext.getSecurityHeader(msg, this.modiProperties.getSoapSecurityTokenActor());
+			securityHeader = messageSecurityContext.getSecurityHeader(msg, this.modiProperties.getSoapSecurityTokenActor(), 
+					bufferMessage_readOnly, idTransazione);
 			timestamp = wss4jSignature.getTimestamp();
 			List<WSDataRef> signatureRefs = wss4jSignature.getSignatureRefs();	
 			if(signatureRefs!=null && !signatureRefs.isEmpty()) {
@@ -543,7 +578,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			if(signAttachments) {
 				
 				List<String> cidAttachments = new ArrayList<String>();
-				if(msg.castAsSoap().countAttachments()>0){
+				if(msg.castAsSoap().hasAttachments()){
 					Iterator<?> itAttach = msg.castAsSoap().getAttachments();
 					while (itAttach.hasNext()) {
 						AttachmentPart ap = (AttachmentPart) itAttach.next();
@@ -608,7 +643,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		WSAddressingHeader wsAddressingHeader = null;
 		try {
 			WSAddressingUtilities wsaddressingUtilities = new WSAddressingUtilities(this.log);
-			wsAddressingHeader = wsaddressingUtilities.read(soapMessage, this.modiProperties.getSoapWSAddressingActor(), true);
+			wsAddressingHeader = wsaddressingUtilities.read(soapMessage, soapEnvelope.getHeader(), this.modiProperties.getSoapWSAddressingActor(), this.modiProperties.isSoapWSAddressingSchemaValidation());
 			if(wsAddressingHeader==null) {
 				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
 						"Header WSAddressing non presenti"));

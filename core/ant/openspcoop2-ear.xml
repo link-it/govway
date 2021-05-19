@@ -18,8 +18,8 @@
 	<target name="build_manifest" description="Crea il Manifest di OpenSPCoop2">
 		
 		<var name="tmp_prefix" value="lib" />
-		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk15on-1.64.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-1.64.jar"/>
+		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk15on-1.68.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-1.68.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.14.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
@@ -57,7 +57,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-api-3.4.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-impl-3.4.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/java-support-7.5.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.5.1-gov4j-2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.5.1-gov4j-3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.8.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.12.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.2.7.RELEASE.jar"/>
@@ -524,6 +524,8 @@
 				<matches string="${as}" pattern="wildfly19"/>
 				<matches string="${as}" pattern="wildfly20"/>
 				<matches string="${as}" pattern="wildfly21"/>
+				<matches string="${as}" pattern="wildfly22"/>
+				<matches string="${as}" pattern="wildfly23"/>
 			</or>
 			<then>
 				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build}/tmp/mailapi"/>
@@ -651,7 +653,18 @@
 				<if>
 					<matches string="${as}" pattern="wildfly.*"/>
 					<then>
-						<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+						<if>
+							<or>
+								<matches string="${as}" pattern="wildfly22"/>
+								<matches string="${as}" pattern="wildfly23"/>
+							</or>
+							<then>
+								<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly2" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+							</then>
+							<else>
+								<copy file="${src}/META-INF/jboss-deployment-structure.xml.wildfly" tofile="${build}/tmp/jboss-deployment-structure.xml" />
+							</else>
+						</if>
 					</then>
 				</if>
 				<var name="jboss_deployment_structure_xml" value="jboss-deployment-structure.xml"/>
@@ -786,8 +799,8 @@
 				<include name="commons-compress-1.20.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.64.jar"/>
-				<include name="bcpkix-jdk15on-1.64.jar"/>
+				<include name="bcprov-ext-jdk15on-1.68.jar"/>
+				<include name="bcpkix-jdk15on-1.68.jar"/>
 				<include name="neethi-3.1.1.jar"/>
 				<include name="xmlsec-2.1.4.jar"/>
 				<include name="cryptacular-1.2.4.jar"/>

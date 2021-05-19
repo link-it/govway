@@ -171,7 +171,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					isFault = msg.isFault() || msg.castAsRest().isProblemDetailsForHttpApis_RFC7807();	
 				}
 				else {
-					isFault = msg.isFault() || msg.castAsSoap().getSOAPBody().hasFault();
+					isFault = msg.isFault() || msg.castAsSoap().hasSOAPFault();
 				}
 				
 				

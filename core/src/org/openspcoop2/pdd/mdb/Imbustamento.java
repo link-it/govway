@@ -377,6 +377,7 @@ public class Imbustamento extends GenericLib{
 			}
 			
 			
+			
 						
 			/* ----------- ConsegnaAffidabile ------------- */
 			if( consegnaAffidabile )
@@ -531,7 +532,22 @@ public class Imbustamento extends GenericLib{
 				this.propertiesReader.isGestioneConsegnaInOrdine(implementazionePdDDestinatario);
 
 
-
+			/* ----------- Verifica connessione per le funzionalità che la richiedono ------------- */
+			if(consegnaAffidabile || 
+					gestioneConsegnaInOrdineAbilitata ||
+					org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(infoServizio.getProfiloDiCollaborazione())  ||
+					org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(infoServizio.getProfiloDiCollaborazione())
+				) {
+				if(openspcoopstate.resourceReleased()) {
+					// inizializzo
+					((OpenSPCoopState)openspcoopstate).setUseConnection(true);
+					openspcoopstate.initResource(identitaPdD, this.idModulo, idTransazione);
+					gestoreRiscontri.updateState(openspcoopstate.getStatoRichiesta());
+					ordineConsegna.updateState(openspcoopstate.getStatoRichiesta());
+					profiloCollaborazione.updateState(openspcoopstate.getStatoRichiesta());
+					repositoryBuste.updateState(openspcoopstate.getStatoRichiesta());
+				}
+			}
 			
 			
 			

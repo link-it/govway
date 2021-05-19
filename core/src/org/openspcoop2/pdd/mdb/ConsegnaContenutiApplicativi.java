@@ -2298,8 +2298,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						restProblem = null;
 						if(messageTypeDopoTrasformazione!=null) {
 							if(responseMessage instanceof OpenSPCoop2SoapMessage){
-								SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
-								if(body!=null && body.hasFault()){
+								if(responseMessage.castAsSoap().hasSOAPFault()){
+									SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
 									soapFault = body.getFault();
 								}
 							}
@@ -2699,7 +2699,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						OpenSPCoop2SoapMessage soapMessageResponse = responseMessage.castAsSoap();
 						if(soapMessageResponse.getSOAPPart()!=null && 
 								soapMessageResponse.getSOAPPart().getEnvelope()!=null &&
-								(soapMessageResponse.getSOAPPart().getEnvelope().getBody()==null || (!soapMessageResponse.getSOAPPart().getEnvelope().getBody().hasFault()))){
+								(soapMessageResponse.isSOAPBodyEmpty() || (!soapMessageResponse.hasSOAPFault()) )
+								) {
 							msgDiag.logPersonalizzato("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
 							if(isBlockedTransaction_responseMessageWithTransportCodeError){
 								String msgErroreSituazioneAnomale = msgDiag.getMessaggio_replaceKeywords("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
@@ -3169,11 +3170,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								boolean isFault = false;
 								if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
 									OpenSPCoop2SoapMessage soapMsg = responseMessage.castAsSoap();
-									hasContent = soapMsg.getSOAPBody()!=null;
-									if(hasContent){
-										hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getFactory(), soapMsg.getSOAPBody(), false)!=null;
-									}
-									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
+									hasContent = !soapMsg.isSOAPBodyEmpty();
+									isFault = soapMsg.isFault();
 								}
 								else{
 									//org.openspcoop2.message.OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
@@ -3216,7 +3214,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 											new ValidatoreMessaggiApplicativi(registroServiziManager,idSValidazioneXSD,
 													responseMessage,readInterface,
 													this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
-													proprietaValidazioneContenutoApplicativoApplicativo);
+													proprietaValidazioneContenutoApplicativoApplicativo,
+													pddContext);
 	
 										// Validazione WSDL 
 										if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
@@ -3431,7 +3430,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								gestoreCorrelazione = 
 										new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
 												this.log,soggettoFruitore,idServizio, servizioApplicativo,protocolFactory,
-												transactionNullable);
+												transactionNullable, pddContext);
 								
 								gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
 								

@@ -39,6 +39,19 @@ import org.w3c.dom.Node;
 
 /**
  * Interfaccia del messaggio OpenSPCoop
+ * 
+ *                        OpenSPCoop2Message    (interface)
+ *                          |                         |
+ *                          |                  OpenSPCoop2SoapMessage (interface)
+ *	  	                    |                                |                |
+ *    	      AbstractBaseOpenSPCoop2Message                 |         AbstractBaseOpenSPCoop2SoapMessage (viene implementata anche da Axiom)
+ *                          |                                |                            |            
+ *     AbstractBaseOpenSPCoop2MessageDynamicContent<T>       |               AbstractOpenSPCoop2Message_saaj_impl
+ *        |                                        |         |                                    |
+ * AbstractBaseOpenSPCoop2RestMessage<T>     AbstractOpenSPCoop2Message_soap_impl        OpenSPCoop2Message_saaj_1[1,2]_impl
+ *        |                                                  |                              |
+ * ...implREST xml,json,bin...                OpenSPCoop2Message_soap1[1,2]_impl -- wrap -- |
+ * 
  *
  * @author Lorenzo Nardi (nardi@link.it)
  * @author Andrea Poli (apoli@link.it)
@@ -141,6 +154,8 @@ public interface OpenSPCoop2Message {
 		
 	
 	/* WriteTo e Save */
+	
+	public boolean isContentBuilded();
 	
 	public void writeTo(OutputStream os, boolean consume) throws MessageException;
 	

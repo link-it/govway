@@ -49,6 +49,7 @@ import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.apache.wss4j.dom.message.token.Timestamp;
 import org.apache.wss4j.dom.str.STRParser;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -82,13 +83,18 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 
 	@Override
 	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam,Busta busta) throws SecurityException{
+		process(wssContext, messageParam, busta,
+				false, null);
+	}
+	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam,Busta busta,
+			boolean bufferMessage_readOnly, String idTransazione) throws SecurityException{
 		try{
 			
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
 				throw new SecurityException("WSS4J Engine usable only with SOAP Binding");
 			}
 			OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
-			
+			SOAPMessage soapMessage = MessageUtils.getSOAPMessage(message, bufferMessage_readOnly, idTransazione);
 			
 			// ** Inizializzo handler CXF **/
 			
@@ -96,7 +102,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			SoapMessage msgCtx = new SoapMessage(new MessageImpl());
 			Exchange ex = new ExchangeImpl();
 	        ex.setInMessage(msgCtx);
-			msgCtx.setContent(SOAPMessage.class, message.getSOAPMessage());
+			msgCtx.setContent(SOAPMessage.class, soapMessage);
 	        setIncomingProperties(wssContext,inHandler,msgCtx);
 	        
 	        

@@ -72,7 +72,6 @@ public class XMLUtils extends AbstractXMLUtils {
 			throw new XMLException(e.getMessage(),e);
 		}
 	}
-	/*
 	@Override
 	protected javax.xml.parsers.SAXParserFactory newSAXParserFactory() throws XMLException{
 		try{
@@ -84,6 +83,7 @@ public class XMLUtils extends AbstractXMLUtils {
 			throw new XMLException(e.getMessage(),e);
 		}
 	}
+	/*
 	@Override
 	protected javax.xml.stream.XMLEventFactory newXMLEventFactory() throws XMLException{
 		try{			

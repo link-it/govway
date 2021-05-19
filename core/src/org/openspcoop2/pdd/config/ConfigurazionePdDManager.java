@@ -97,6 +97,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
@@ -105,6 +106,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
@@ -124,7 +126,6 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
 
 /**
  * ConfigurazionePdDManager
@@ -144,6 +145,7 @@ public class ConfigurazionePdDManager {
 	}
 
 
+	private OpenSPCoop2Properties op2Properties = null;
 	private ConfigurazionePdDReader configurazionePdDReader = null;
 	private RegistroServiziManager registroServiziManager = null;
 	private List<StateMessage> stati = new ArrayList<StateMessage>();
@@ -162,6 +164,7 @@ public class ConfigurazionePdDManager {
 			}
 		}
 		this.registroServiziManager = RegistroServiziManager.getInstance(state);
+		this.op2Properties = OpenSPCoop2Properties.getInstance();
 	}
 
 	public void updateState(IState ... state){
@@ -273,19 +276,19 @@ public class ConfigurazionePdDManager {
 						}
 					}
 
-					Element element = null;
-					String elementJson = null;
-					if (ServiceBinding.SOAP.equals(message.getServiceBinding())) {
-						element = message.castAsSoap().getSOAPPart().getEnvelope();
+					MessageContent messageContent = null;
+					boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+	    			if (ServiceBinding.SOAP.equals(message.getServiceBinding())) {
+						messageContent = new MessageContent(message.castAsSoap(), bufferMessage_readOnly, pddContext);
 					} else if (MessageType.XML.equals(message.getMessageType())) {
-						element = (Element)message.castAsRestXml().getContent();
+						messageContent = new MessageContent(message.castAsRestXml(), bufferMessage_readOnly, pddContext);
 					} else if (MessageType.JSON.equals(message.getMessageType())) {
-						elementJson = (String)message.castAsRestJson().getContent();
+						messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, pddContext);
 					}
 
 					Map<String, Object> dynamicMap = new HashMap<String, Object>();
 					ErrorHandler errorHandler = new ErrorHandler();
-					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione, message, (Element)element, elementJson, busta, 
+					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione, message, messageContent, busta, 
 							pTrasporto, 
 							pQuery, 
 							pForm,
@@ -323,6 +326,9 @@ public class ConfigurazionePdDManager {
 	}
 
 	public boolean isSoggettoVirtuale(IDSoggetto idSoggetto) throws DriverConfigurazioneException { 
+		if(!this.op2Properties.isSoggettiVirtualiEnabled()) {
+			return false;
+		}
 		return this.configurazionePdDReader.isSoggettoVirtuale(this.getConnection(), idSoggetto);
 	}
 
@@ -331,6 +337,9 @@ public class ConfigurazionePdDManager {
 	}
 
 	public  List<IDServizio> getServizi_SoggettiVirtuali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(!this.op2Properties.isSoggettiVirtualiEnabled()) {
+			return null;
+		}
 		return this.configurazionePdDReader.getServizi_SoggettiVirtuali(this.getConnection());
 	}
 
@@ -445,10 +454,10 @@ public class ConfigurazionePdDManager {
 	}
 
 	public String getAzione(PortaDelegata pd,URLProtocolContext urlProtocolContext,
-			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
+			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
 			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
 		return this.configurazionePdDReader.getAzione(this.registroServiziManager, pd, urlProtocolContext, 
-				message, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
+				message, soapStreamReader, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
 	}
 
 	public MTOMProcessorConfig getPD_MTOMProcessorForSender(PortaDelegata pd) throws DriverConfigurazioneException{
@@ -703,10 +712,10 @@ public class ConfigurazionePdDManager {
 	}
 
 	public String getAzione(PortaApplicativa pa,URLProtocolContext urlProtocolContext,
-			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
+			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
 			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 		return this.configurazionePdDReader.getAzione(this.registroServiziManager, pa, urlProtocolContext, 
-				message, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
+				message, soapStreamReader, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
 	}
 
 	public String[] getServiziApplicativi(PortaApplicativa pa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

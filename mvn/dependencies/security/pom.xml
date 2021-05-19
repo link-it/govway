@@ -17,8 +17,8 @@
 
 		<jar.group.name>security</jar.group.name>
 		
-		<bcpkix-jdk15on.version>1.64</bcpkix-jdk15on.version>
-		<bcprov-ext-jdk15on.version>1.64</bcprov-ext-jdk15on.version>
+		<bcpkix-jdk15on.version>1.68</bcpkix-jdk15on.version>
+		<bcprov-ext-jdk15on.version>1.68</bcprov-ext-jdk15on.version>
 		<cryptacular.version>1.2.4</cryptacular.version>
 		<herasaf-xacml-core.version>1.0.4.RELEASE</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>

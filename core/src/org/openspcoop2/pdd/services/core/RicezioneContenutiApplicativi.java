@@ -1042,6 +1042,7 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.mediumDebug("Inizializzazione connessione al database...");
 		try {
 			openspcoopstate = new OpenSPCoopStateful();
+			openspcoopstate.setUseConnection(false); // gestione stateless per default
 			openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e,"openspcoopstate.initResource()");
@@ -1306,7 +1307,7 @@ public class RicezioneContenutiApplicativi {
 				}
 			}
 			else{
-				idServizio.setAzione(configurazionePdDReader.getAzione(portaDelegata, urlProtocolContext, requestMessage, 
+				idServizio.setAzione(configurazionePdDReader.getAzione(portaDelegata, urlProtocolContext, requestMessage, null,
 						headerIntegrazioneRichiesta, this.msgContext.getIdModulo().endsWith(IntegrationManager.ID_MODULO), protocolFactory));
 			}
 
@@ -2833,15 +2834,27 @@ public class RicezioneContenutiApplicativi {
 		GestoreCorrelazioneApplicativa correlazioneApplicativa = 
 			new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, richiestaDelegata.getIdSoggettoFruitore(),
 					richiestaDelegata.getIdServizio(),servizioApplicativo,protocolFactory,
-					transaction);
+					transaction, pddContext);
 		boolean correlazioneEsistente = false;
 		String idCorrelazioneApplicativa = null;
 		if (correlazionePD != null) {
 			try {
-				correlazioneEsistente = correlazioneApplicativa
+				correlazioneApplicativa
 						.verificaCorrelazione(correlazionePD, urlProtocolContext,requestMessage,headerIntegrazioneRichiesta, 
 								this.msgContext.getIdModulo().endsWith(IntegrationManager.ID_MODULO));
 				idCorrelazioneApplicativa = correlazioneApplicativa.getIdCorrelazione();
+				
+				if(correlazioneApplicativa.isRiusoIdentificativo()) {
+					
+					if(openspcoopstate.resourceReleased()) {
+						// inizializzo
+						openspcoopstate.setUseConnection(true);
+						openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
+						correlazioneApplicativa.updateState(openspcoopstate.getStatoRichiesta());
+					}
+					
+					correlazioneEsistente = correlazioneApplicativa.verificaCorrelazioneIdentificativoRichiesta();
+				}
 				
 				if (correlazioneEsistente) {
 					// Aggiornamento id richiesta
@@ -3777,7 +3790,8 @@ public class RicezioneContenutiApplicativi {
 					ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = new ValidatoreMessaggiApplicativi(
 							registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage,readInterface,
 							propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
-							proprietaValidazioneContenutoApplicativoApplicativo);
+							proprietaValidazioneContenutoApplicativoApplicativo,
+							pddContext);
 				
 					// Validazione WSDL
 					if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo())
@@ -4036,6 +4050,23 @@ public class RicezioneContenutiApplicativi {
 					this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,IntegrationFunctionError.BAD_REQUEST,
 							ErroriIntegrazione.ERRORE_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO.
 							getErroreIntegrazione(),null,null)));
+				}
+				return;
+			}
+			
+			try {
+				if(openspcoopstate.resourceReleased()) {
+					// inizializzo
+					openspcoopstate.setUseConnection(true);
+					openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
+				}
+			}catch (Exception e) {
+				msgDiag.logErroreGenerico(e,"openspcoopstate.initResource() 'invocazionePerRiferimento'");
+				openspcoopstate.releaseResource();
+				if (this.msgContext.isGestioneRisposta()) {
+					this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, 
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION), e,null)));
 				}
 				return;
 			}
@@ -4365,7 +4396,7 @@ public class RicezioneContenutiApplicativi {
 					&& !oneWayStateless;
 
 			if (oneWayStateless || sincronoStateless || asincronoStateless || oneWayVersione11) {
-				openspcoopstate = OpenSPCoopState.toStateless(((OpenSPCoopStateful)openspcoopstate), true);
+				openspcoopstate = OpenSPCoopState.toStateless(((OpenSPCoopStateful)openspcoopstate), openspcoopstate.isUseConnection());
 				portaStateless = true;
 				if(oneWayVersione11==false){
 					this.msgContext.getIntegrazione().setGestioneStateless(true);
@@ -4374,6 +4405,17 @@ public class RicezioneContenutiApplicativi {
 				}
 			}else{
 				this.msgContext.getIntegrazione().setGestioneStateless(false);
+			}
+			
+			if(!portaStateless || oneWayVersione11) {
+				if(!openspcoopstate.isUseConnection() && 
+						(openspcoopstate instanceof OpenSPCoopStateful || oneWayVersione11)) {
+					if(openspcoopstate.resourceReleased()) {
+						// inizializzo
+						openspcoopstate.setUseConnection(true);
+						openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
+					}
+				}
 			}
 
 		} catch (Exception e) {
@@ -4692,6 +4734,11 @@ public class RicezioneContenutiApplicativi {
 			}
 						
 			if(richiestaAsincronaSimmetricaStateless){
+				if(openspcoopstate.resourceReleased()) {
+					// inizializzo
+					openspcoopstate.setUseConnection(true);
+					openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
+				}
 				msgRequest.registraInformazioniMessaggio_statelessEngine(dataIngressoRichiesta, org.openspcoop2.pdd.mdb.Imbustamento.ID_MODULO,
 						idCorrelazioneApplicativa);
 			}
@@ -5119,6 +5166,7 @@ public class RicezioneContenutiApplicativi {
 		boolean localForward = parametriGestioneRisposta.isLocalForward();
 		
 		// ID Transazione
+		@SuppressWarnings("unused")
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, imbustamentoMSG.getPddContext());
 		
 		PdDContext pddContext = parametriGestioneRisposta.getPddContext();
@@ -5313,10 +5361,12 @@ public class RicezioneContenutiApplicativi {
 				sbustamentoRisposteLib = new SbustamentoRisposte(logCore);
 				/* Verifico che non abbia rilasciato la connessione, se si la riprendo */
 				if( rinegoziamentoConnessione && openspcoopstate.resourceReleased()){
+					/* per default disabilitato 
 					msgDiag.highDebug("SbustamentoRisposte stateless (initResourceDB) ...");
 					openspcoopstate.setUseConnection(true);
 					openspcoopstate.initResource(parametriGestioneRisposta.getIdentitaPdD(), SbustamentoRisposte.ID_MODULO, idTransazione);
 					openspcoopstate.setUseConnection(false);
+					 */
 					// update states
 					registroServiziReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 					configurazionePdDReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
