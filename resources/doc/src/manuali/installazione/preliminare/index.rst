@@ -23,7 +23,7 @@ mancanti.
 
    - -Dfile.encoding=UTF-8
 
-#. *Application Server WildFly* (http://wildfly.org) versione 18, 19, 20 o 21. In alternativa è possibile effettuare
+#. *Application Server WildFly* (http://wildfly.org) versione 18, 19, 20, 21, 22 e 23. In alternativa è possibile effettuare
    l'installazione su Apache Tomcat (http://tomcat.apache.org) versione 9.
 
    .. note::
@@ -48,6 +48,6 @@ sulla seguente piattaforma di riferimento:
 
 -  *Openjdk 11 (version: 11.0.2+9)*
 
--  *PostgreSQL 9 (version: 9.5.10)* e *PostgreSQL 11 (version: 11.3)*
+-  *PostgreSQL 9 (version: 9.2.24)*, *PostgreSQL 13 (version: 13.2)* e *Oracle 11g ExpressEdition (version: 11.2.0.2.0)*
 
--  *WildFly 18 (version: 18.0.1.Final)*, *WildFly 21 (version: 21.0.0.Final)* e *Tomcat 9 (version: 9.0.31)*
+-  *WildFly 18 (version: 18.0.1.Final)*, *WildFly 22 (version: 22.0.1.Final)*, *WildFly 23 (version: 23.0.2.Final)* e *Tomcat 9 (version: 9.0.31)*

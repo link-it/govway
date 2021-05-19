@@ -239,8 +239,8 @@
 	<archive path="/op2_3.3.dev/lib/spring/spring-aspects-5.2.7.RELEASE.jar"/>
         <archive path="/op2_3.3.dev/lib/spring/spring-orm-5.2.7.RELEASE.jar"/>
 	<!-- spring-security -->
-	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-core-5.3.3.RELEASE.jar"/>
-	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-web-5.3.3.RELEASE.jar"/>
+	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-core-5.3.9.RELEASE.jar"/>
+	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-web-5.3.9.RELEASE.jar"/>
 	<!-- swagger -->
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-annotations-2.1.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-2.1.1.jar"/>
