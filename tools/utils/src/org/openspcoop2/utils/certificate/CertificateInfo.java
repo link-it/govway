@@ -88,12 +88,12 @@ public class CertificateInfo implements Serializable {
 		return null;
 	}
 	
-	public long getSerialNumber() {
+	public String getSerialNumber() {
 		if(this.certificate.getSerialNumber()!=null) {
-			return this.certificate.getSerialNumber().longValue();
+			return this.certificate.getSerialNumber().toString();
 		}
 		else {
-			return -1;
+			return null;
 		}
 	}
 	

@@ -128,6 +128,8 @@ Per la console di gestione sono stati risolti i seguenti bug:
 - L'aggiornamento dell'interfaccia WSDL di una API SOAP provocava un errore inatteso della console se il WSDL possedeva i caratteri \\r\\n all'inizio del file.
 
 - In seguito alla creazione di una API REST creata attraverso il caricamento di un'interfaccia OpenAPI contenente una descrizione maggiore di 255 caratteri, una qualsiasi modifica dell'API (del nome, tag, descrizione stessa, ...) terminava con un errore: 'La descrizione supera i 255 caratteri ammessi'. Il problema derivava dall'aggiunta dei caratteri '\\r' dove erano presenti i caratteri '\\n' nella descrizione.  La risoluzione è stata effettuata per tutti gli elementi della console che vengono gestiti con lo stesso tipo di elemento html: 'text-area'.
+
+- Se ad un applicativo o soggetto veniva caricato un certificato con serial number più grande della dimensione massima di un long, la console visualizzava un numero negativo.
 	
 - Nella sezione 'Configurazione - Cache' (disponibile in modalità avanzata) sono adesso configurabili tutte le cache del prodotto (anche registry e controllo del traffico).
 	

@@ -1,5 +1,11 @@
 2021-05-19  Andrea Poli <apoli@link.it>
 
+	* [GovwayConsole]
+	Risolto Bug OP-1193
+	Se ad un applicativo o soggetto veniva caricato un certificato con serial number più grande della dimensione massima di un long, la console visualizzava un numero negativo.
+
+2021-05-19  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità OP-1191
 	Aggiunto supporto per wildfly 22.
