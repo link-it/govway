@@ -108,6 +108,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			String tracciamentoEsitiSelezionePersonalizzataFault = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
 			String tracciamentoEsitiSelezionePersonalizzataFallite = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
 			String tracciamentoEsitiSelezionePersonalizzataScartate = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
+			String tracciamentoEsitiSelezionePersonalizzataRateLimiting = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
 			String tracciamentoEsitiSelezionePersonalizzataMax = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
 			String tracciamentoEsitiSelezionePersonalizzataCors = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
 			
@@ -190,7 +191,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 					}
 					
 					boolean isFalliteSenza_MaxThreads_Scartate_Totale = false;
-					List<Integer> listFalliteSenza_MaxThreads_Scartate = confHelper.getListaEsitiFalliteSenza_MaxThreads_Scartate(esiti);
+					List<Integer> listFalliteSenza_MaxThreads_Scartate = confHelper.getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
 					if(confHelper.isCompleteEnabled(attivi, listFalliteSenza_MaxThreads_Scartate)) {
 						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
 						isFalliteSenza_MaxThreads_Scartate_Totale = true;
@@ -213,6 +214,15 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 					}
 					else {
 						tracciamentoEsitiSelezionePersonalizzataScartate = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
+					}
+					
+					boolean isRateLimiting = false;
+					if(attivi.contains((esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA)+""))) {
+						tracciamentoEsitiSelezionePersonalizzataRateLimiting = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						isRateLimiting = true;
+					}	
+					else {
+						tracciamentoEsitiSelezionePersonalizzataRateLimiting = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 					}
 					
 					boolean isMaxThreads = false;
@@ -238,8 +248,8 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 					}
 					
 					selectAll = isOkTotale && isFaultTotale && 
-							isFalliteSenza_MaxThreads_Scartate_Totale && isScartateTotale && isMaxThreads && 
-							isMaxThreads && isCorsTotale;
+							isFalliteSenza_MaxThreads_Scartate_Totale && isScartateTotale && 
+							isRateLimiting && isMaxThreads && isCorsTotale;
 				}
 				
 				// preparo i campi
@@ -250,7 +260,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 						selectAll,
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataScartate,  
-						tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
+						tracciamentoEsitiSelezionePersonalizzataRateLimiting, tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
 				
 				confHelper.addToDatiRegistrazioneTransazione(dati, tipoOperazione, 
 						transazioniTempiElaborazione, transazioniToken); 
@@ -285,7 +295,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 						selectAll,
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataScartate,  
-						tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
+						tracciamentoEsitiSelezionePersonalizzataRateLimiting, tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
 				
 				confHelper.addToDatiRegistrazioneTransazione(dati, tipoOperazione, 
 						transazioniTempiElaborazione, transazioniToken); 
@@ -395,7 +405,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 					selectAll,
 					tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataScartate,  
-					tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
+					tracciamentoEsitiSelezionePersonalizzataRateLimiting, tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
 			
 			confHelper.addToDatiRegistrazioneTransazione(dati, tipoOperazione, 
 					transazioniTempiElaborazione, transazioniToken); 

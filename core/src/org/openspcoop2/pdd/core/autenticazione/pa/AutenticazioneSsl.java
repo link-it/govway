@@ -69,9 +69,6 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	String subject = credenziali.getSubject();
     	String issuer = credenziali.getIssuer();
     	CertificateInfo certificate = null;
-    	if(credenziali.getCertificate()!=null) {
-    		certificate = credenziali.getCertificate().getCertificate();
-    	}
 
     	// Controllo credenziali fornite
     	if( subject==null || "".equals(subject) ){
@@ -83,6 +80,23 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     		}
 			return esito;
 		}
+    	if(credenziali.getCertificate()!=null) {
+    		certificate = credenziali.getCertificate().getCertificate();
+    		
+    		try {
+    			certificate.checkValid();
+    		}catch(Exception e) {
+    			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
+    					ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCredenzialiForniteNonCorrette(e.getMessage()));
+    			esito.setClientAuthenticated(false);
+    			esito.setClientIdentified(false);
+    			if(wwwAuthenticateConfig!=null) {
+    				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
+    			}
+    			return esito;
+    		}
+    		
+    	}
     	
     	// Essendoci l'identita' del chiamante, il client e' stato autenticato o da un frontend o dall'application server stesso
     	esito.setClientAuthenticated(true);

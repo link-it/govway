@@ -12175,15 +12175,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public List<Integer> getListaEsitiFalliteSenza_MaxThreads_Scartate(EsitiProperties esiti) throws ProtocolException{
+	public List<Integer> getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(EsitiProperties esiti) throws ProtocolException{
 		List<Integer> listFallite = esiti.getEsitiCodeKo_senzaFaultApplicativo();
 		
 		List<Integer> listDaScartare = new ArrayList<>();
 		listDaScartare.addAll(esiti.getEsitiCodeRichiestaScartate());
+		int esitoViolazioneRateLimiting = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
+		listDaScartare.add(esitoViolazioneRateLimiting);
 		int esitoViolazione = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS);
 		listDaScartare.add(esitoViolazione);
 		
-		List<Integer> listFalliteSenzaMax_e_scartate = new ArrayList<>(); 
+		List<Integer> listFalliteSenza_rateLimiting_e_max_e_scartate = new ArrayList<>(); 
 		int i = 0;
 		for (; i < listFallite.size(); i++) {
 			boolean findDaScartare = false;
@@ -12200,10 +12202,10 @@ public class ConsoleHelper implements IConsoleHelper {
 					continue; // non vengono gestiti in questa configurazione
 				}
 				
-				listFalliteSenzaMax_e_scartate.add(listFallite.get(i));
+				listFalliteSenza_rateLimiting_e_max_e_scartate.add(listFallite.get(i));
 			}
 		}
-		return listFalliteSenzaMax_e_scartate;
+		return listFalliteSenza_rateLimiting_e_max_e_scartate;
 	}
 	
 	public List<Integer> getListaEsitiOkSenzaCors(EsitiProperties esiti) throws ProtocolException{
@@ -12241,7 +12243,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean selectAll,
 			String tracciamentoEsitiSelezionePersonalizzataOk, String tracciamentoEsitiSelezionePersonalizzataFault, 
 			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataScartate, 
-			String tracciamentoEsitiSelezionePersonalizzataMax, String tracciamentoEsitiSelezionePersonalizzataCors) throws Exception {
+			String tracciamentoEsitiSelezionePersonalizzataRateLimiting, String tracciamentoEsitiSelezionePersonalizzataMax, String tracciamentoEsitiSelezionePersonalizzataCors) throws Exception {
 		
 	
 		DataElement de = new DataElement();
@@ -12444,7 +12446,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// fallite
 			
-			List<Integer> listFalliteSenza_MaxThreads_Scartate = getListaEsitiFalliteSenza_MaxThreads_Scartate(esiti);
+			List<Integer> listFalliteSenza_MaxThreads_Scartate = getListaEsitiFalliteSenza_RateLimiting_MaxThreads_Scartate(esiti);
 			
 			if(!selectAll) {
 				de = new DataElement();
@@ -12576,6 +12578,48 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 					
+			
+			
+			
+			// rate limiting
+			
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
+			
+			String esitoViolazioneRateLimitingAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA) + "";
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values_senza_personalizzato);
+				de.setLabels(values_senza_personalizzato);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataRateLimiting);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataRateLimiting);
+			}
+			dati.addElement(de);
+			
+			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataRateLimiting) ||
+					selectAll) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneRateLimitingAsString);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue("true");
+				dati.addElement(de);
+			}
+			
+			
 			
 			
 			

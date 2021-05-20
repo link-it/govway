@@ -52,7 +52,7 @@ set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-apache-regexp-1.10.9.jar
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\jakarta-regexp-1.5.jar
 
 del ant.install.properties
-copy installer/setup/ant.install.properties.template ant.install.properties
+copy installer\setup\ant.install.properties.template ant.install.properties
 echo. >> ant.install.properties
 
 REM # Per utilizzare lo stateful

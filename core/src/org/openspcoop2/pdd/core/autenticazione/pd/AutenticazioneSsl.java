@@ -83,6 +83,22 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     		}
 			return esito;
 		}
+    	if(credenziali.getCertificate()!=null) {
+    		certificate = credenziali.getCertificate().getCertificate();
+    		
+    		try {
+    			certificate.checkValid();
+    		}catch(Exception e) {
+    			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
+    					ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette: "+e.getMessage(),subject));
+    			esito.setClientAuthenticated(false);
+    			esito.setClientIdentified(false);
+    			if(wwwAuthenticateConfig!=null) {
+    				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
+    			}
+    			return esito;
+    		}
+    	}
     	
     	// Essendoci l'identita' del chiamante, il client e' stato autenticato o da un frontend o dall'application server stesso
     	esito.setClientAuthenticated(true);

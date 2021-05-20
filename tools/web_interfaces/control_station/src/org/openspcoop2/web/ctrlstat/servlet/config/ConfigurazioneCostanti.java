@@ -694,7 +694,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE;
 	
-	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS = "Superamento Limite Richieste";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING = "Violazione Policy Rate Limiting";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS = "Superamento Limite Richieste Complessive";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "Stato";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS = "CORS Preflight";
 	
@@ -993,6 +994,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "RecEsitiStatoFault";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "RecEsitiStatoFallite";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE = "RecEsitiStatoScartate";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RATE_LIMITING = "RecEsitiStatoRateLimit";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST = "RecEsitiStatoMaxRequests";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS = "RecEsitiStatoCORS";
 	

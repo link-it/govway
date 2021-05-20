@@ -1,3 +1,10 @@
+2021-05-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovwayConsole]
+	Aggiunta funzionalità OP-1196
+	L'autenticazione 'https', attivabile nel controllo degli accessi delle erogazioni e fruizioni, effettua adesso anche la verifica della validità temporale del certificato ricevuto.
+	Rivista la sezione di configurazione del tracciamento delle transazioni: gli esiti relativi alla violazione di policy di RateLimiting vengono adesso gestiti tramite una voce dedicata.
+
 2021-05-19  Andrea Poli <apoli@link.it>
 
 	* [GovwayConsole]

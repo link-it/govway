@@ -35,7 +35,7 @@ Vediamo il significato delle sezioni di questa pagina:
    quali transazioni memorizzare nell'archivio di monitoraggio in base
    all'esito rilevato in fase di elaborazione. Gli esiti sono suddivisi
    nei seguenti gruppi: Completate con successo, Fault applicativo,
-   Fallite e Superamento Limite Richieste. Per ciascun esito è possibile
+   Fallite, Scartate, Violazione Policy Rate Limiting e Superamento Limite Richieste Complessive. Per ciascun esito è possibile
    abilitare o disabilitare la registrazione. È possibile inoltre,
    scegliendo l'opzione *Personalizzato* specificare puntualmente quali
    esiti di dettaglio includere.

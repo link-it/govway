@@ -103,7 +103,7 @@ public abstract class AbstractGestore {
 				this.logCore.debug("connectionUrl: "+this.connectionUrl);
 				this.logCore.debug("driverJdbc: "+this.driverJdbc);
 				this.logCore.debug("connectionUsername: "+this.connectionUsername);
-				this.logCore.debug("connectionPassword: "+this.connectionPassword);
+				//this.logCore.debug("connectionPassword: "+this.connectionPassword);
 			}
 			Class.forName(this.driverJdbc);
 		}

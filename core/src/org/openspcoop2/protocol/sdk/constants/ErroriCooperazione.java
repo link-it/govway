@@ -248,4 +248,12 @@ public enum ErroriCooperazione {
 			throw new RuntimeException("Il metodo può essere utilizzato solo con il messaggio "+ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.name());
 		}
 	}
+	
+	public ErroreCooperazione getErroreCredenzialiForniteNonCorrette(String errore) {
+		if(this.equals(AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE)){
+			return newErroreCooperazione("Autenticazione fallita, credenziali fornite non corrette: "+errore, CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO);
+		}else{
+			throw new RuntimeException("Il metodo può essere utilizzato solo con il messaggio "+AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.name());
+		}
+	}
 }
