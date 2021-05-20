@@ -50,6 +50,8 @@ Infine sono stati apportati i seguenti ulteriori miglioramenti:
 
 - aggiunta la possibilità di configurare ulteriori Content-Type associabili a richieste SOAP 1.2 (per default viene accettato solo 'application/soap+xml');
 
+- l'autenticazione 'https', attivabile nel controllo degli accessi delle erogazioni e fruizioni, effettua adesso anche la verifica della validità temporale del certificato ricevuto;
+
 - la lettura delle proprietà di configurazione dai file locali (es. govway_local.properties) è stata rivista per risolvere le variabili indicate nei file anche come variabile di sistema oltre che come variabili java;
 
 - è stato rivisto il diagnostico relativo ad una richiesta duplicata al fine di fornire un messaggio più generico rispetto a quello precedente specifico per il profilo SPCoop;

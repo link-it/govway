@@ -28,6 +28,8 @@ Sono stati apportati i seguenti miglioramenti alla console di gestione:
 
 - aggiunta funzionalità di filtro per Tag nelle policy di Rate Limiting a livello di configurazione globale;
 
+- nella configurazione del tracciamento, dove è possibile indicare gli esiti delle transazioni da registrare, viene adesso gestita tramite una voce dedicata l'esito relativo alla violazione di una policy di RateLimiting;
+
 - nelle maschere di configurazione dei connettori:
 
 	- è stata aggiunta la nota "Indicazione in millisecondi (ms)" nei campo relativi alla sezione "ridefinisci tempi di risposta";
