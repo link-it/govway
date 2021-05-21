@@ -68,7 +68,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile = repositoryFile;
 	}
 	
-	private static boolean soapReader = true; 
+	private static boolean soapReader = false; // attivato sul gateway tramite il metodo sottostante; in modo che le altre applicazioni non utilizzino questa funzionalità (TestService,Console...) 
 	private static int soapReaderBufferThresholdKb = 10;
 	public static void setSoapReader(boolean soapReader) {
 		AbstractBaseOpenSPCoop2MessageDynamicContent.soapReader = soapReader;
@@ -120,7 +120,9 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						}
 						else {
 							this.soapStreamReader = soapStreamReader;
-							this.soapStreamReader.checkException();
+							if(this.soapStreamReader!=null) {
+								this.soapStreamReader.checkException();
+							}
 						}
 					}
 					
