@@ -70,6 +70,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
@@ -958,7 +959,18 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 		if(context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
 			idTransazione = (String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		}
-		StatoTraffico statoControlloCongestione = gestoreControlloCongestione.getStatoControlloTraffico(idTransazione);
+		
+		boolean sync = true;
+		if(context!=null && context.getStato()!=null) {
+			if(context.getStato() instanceof StateMessage) {
+				StateMessage state = (StateMessage) context.getStato();
+				if(state.getConnectionDB()!=null) {
+					//System.out.println("SYNC FALSE CONNECTION FOUND!");
+					sync=false;
+				}
+			}
+		}
+		StatoTraffico statoControlloCongestione = gestoreControlloCongestione.getStatoControlloTraffico(idTransazione,sync);
 		if(statoControlloCongestione.getPddCongestionata()!=isPddCongestionataInformazioneIdentificataDalThread){
 			//System.out.println("Rilevata differenza tra controllo del traffico attivo PREINHANDLER ["+controlloTrafficoAttivoThread+"] e stato attuale["+statoControlloCongestione.getControlloTraffico()+"]");
 			pddContext.removeObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA);

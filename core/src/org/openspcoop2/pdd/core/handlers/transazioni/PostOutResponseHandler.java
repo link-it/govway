@@ -596,7 +596,9 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					this.log.error("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);
 				}finally {
 					try {
-						fileTraceManager.cleanResourcesForOnlyFileTrace(transaction);
+						if(fileTraceManager!=null) {
+							fileTraceManager.cleanResourcesForOnlyFileTrace(transaction);
+						}
 					}catch(Throwable eClean) {
 						this.log.error("["+idTransazione+"] File trace 'clean' fallito: "+eClean.getMessage(),eClean);
 					}

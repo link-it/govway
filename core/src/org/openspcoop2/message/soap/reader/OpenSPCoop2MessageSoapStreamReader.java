@@ -621,26 +621,28 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		return this.rootElementLocalName;
 	}
 	
-    private static ThreadLocal<SAXParser> saxParserThreadLocal = new ThreadLocal<SAXParser>();
-    private static SAXParser getParser() {
-    	SAXParser parser = saxParserThreadLocal.get();
-    	if(parser==null) {
-    		try {
-    			SAXParserFactory saxFactory = XMLUtils.getInstance().getSAXParserFactory();
-//    	        try {
-//    	        	saxFactory.setFeature("jdk.xml.resetSymbolTable", true);
-//    	        } catch(Throwable e) {
-//    	        }
-    	        saxFactory.setNamespaceAware(true);
-    	        parser = saxFactory.newSAXParser();
-    			saxParserThreadLocal.set(parser);
-    		}catch(Throwable t) {
-    			System.out.println("Inizializzazione SAXParser fallita: "+t.getMessage());
-    			t.printStackTrace(System.out);
-    		}
-    	}
-    	return parser;
-    }
+    private static ThreadLocal<SAXParser> saxParserThreadLocal = 
+	            new ThreadLocal<SAXParser>() {
+	        @Override
+			protected SAXParser initialValue() {
+	        	try{
+	    			SAXParserFactory saxFactory = XMLUtils.getInstance().getSAXParserFactory();
+//	    	        try {
+//	    	        	saxFactory.setFeature("jdk.xml.resetSymbolTable", true);
+//	    	        } catch(Throwable e) {
+//	    	        }
+	    	        saxFactory.setNamespaceAware(true);
+	    	        SAXParser parser = saxFactory.newSAXParser();
+	    	        return parser;
+				}catch(Throwable t){
+					throw new RuntimeException("Inizializzazione SAXParser fallita: "+t.getMessage(),t);
+				}
+	        }
+	};
+	private static SAXParser getParser() {
+		return saxParserThreadLocal.get();
+	}
+    		
     private static void returnParser(SAXParser saxParser) {
         saxParser.reset();
     }
