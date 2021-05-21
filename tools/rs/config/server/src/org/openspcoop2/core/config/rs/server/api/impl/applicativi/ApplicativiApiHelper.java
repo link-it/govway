@@ -20,7 +20,9 @@
 package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openspcoop2.core.config.Credenziali;
@@ -69,6 +71,14 @@ import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -224,10 +234,88 @@ public class ApplicativiApiHelper {
 		
 		Credenziali cred = invPorta.getCredenziali(0);
 		ret.setCredenziali(authFromCredenziali(cred));
-			
+		
 		return ret;
 	}
 	
+	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(ServizioApplicativo sa, ApplicativiEnv env) throws Exception {
+
+		ProtocolProperties prop = getProtocolProperties(sa, env);
+		Map<String, AbstractProperty<?>> p = new HashMap<>();
+
+		for(int i =0; i < prop.sizeProperties(); i++) {
+			p.put(prop.getIdProperty(i), prop.getProperty(i));
+		}
+		
+		return p;
+	}
+
+	public static ProtocolProperties getProtocolProperties(ServizioApplicativo sa, ApplicativiEnv env) throws Exception {
+		ConsoleConfiguration consoleConf = getConsoleConfiguration(sa, env);
+
+		ProtocolProperties prop = env.saHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesConfig(prop, sa.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		return prop;
+	}
+
+	public static ConsoleConfiguration getConsoleConfiguration(ServizioApplicativo sa, ApplicativiEnv env) throws Exception {
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		IDServizioApplicativo idSA = new IDServizioApplicativo();
+		idSA.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+		idSA.setNome(sa.getNome());
+		
+		return consoleDynamicConfiguration.getDynamicConfigServizioApplicativo(ConsoleOperationType.ADD, env.saHelper, 
+				registryReader, configRegistryReader, idSA);
+
+	}
+
+	public static ProtocolProperties getProtocolProperties(Applicativo body, ProfiloEnum profilo, ServizioApplicativo sa, ApplicativiEnv env) throws Exception {
+
+
+		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non conforme con il profilo '"+profilo+"' indicato");
+		}
+
+		switch(profilo) {
+		case APIGATEWAY:
+			return null;// trasparente 
+		case EDELIVERY:
+			return EDeliveryApplicativiApiHelper.getProtocolProperties(body);
+		case FATTURAPA:
+			return FatturaPAApplicativiApiHelper.getProtocolProperties(body);
+		case MODI:
+		case MODIPA:
+			return ModiApplicativiApiHelper.getProtocolProperties(body, sa, env);
+		case SPCOOP:
+			return SPCoopApplicativiApiHelper.getProtocolProperties(body);
+		}
+		return null;
+	}
+
+
+	public static void populateProtocolInfo(ServizioApplicativo sa, Applicativo ret, ApplicativiEnv env, ProfiloEnum profilo) throws Exception {
+		
+		if(profilo != null) {
+			switch(profilo) {
+			case APIGATEWAY: 
+				break;
+			case EDELIVERY: EDeliveryApplicativiApiHelper.populateProtocolInfo(sa, env, ret);
+				break;
+			case FATTURAPA: FatturaPAApplicativiApiHelper.populateProtocolInfo(sa, env, ret);
+				break;
+			case MODI: 
+			case MODIPA: ModiApplicativiApiHelper.populateProtocolInfo(sa, env, ret);
+				break;
+			case SPCOOP: SPCoopApplicativiApiHelper.populateProtocolInfo(sa, env, ret);
+				break;
+			default:
+				break;}
+		}
+
+	}
 	// Rationale: Questa funzione è bene che sia unchecked. Se non esplicitamente catturata infatti, comporterà in ogni caso lato API
 	// la segnalazione di un errore interno.
 	//

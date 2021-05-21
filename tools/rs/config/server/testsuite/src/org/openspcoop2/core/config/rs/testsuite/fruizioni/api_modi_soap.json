@@ -11,8 +11,9 @@
 		"sicurezza_canale": {
 			"pattern": "auth02"
 		},
-	  "sicurezza_messaggio" : {
-    	"pattern" : "auth01"
-    	}
+		"sicurezza_messaggio": {
+			"pattern": "integrity01-auth02",
+			"informazioni_utente": "true"
+		}
 	}
 }

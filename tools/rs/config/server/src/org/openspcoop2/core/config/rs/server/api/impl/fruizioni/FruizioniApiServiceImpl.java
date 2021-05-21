@@ -175,15 +175,6 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 				asps = env.apsCore.getServizio(idAps);
 
 			
-			ProtocolProperties protocolProperties = null;
-			if(profilo != null) {
-				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env);
-	
-				if(protocolProperties != null) {
-					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
-				}
-			}
-
 			ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
@@ -191,9 +182,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			IDFruizione idFruizione = new IDFruizione();
 			
+			
 			idFruizione.setIdServizio(idAps);
 			idFruizione.setIdFruitore(new IDSoggetto(env.idSoggetto.getTipo(), env.idSoggetto.getNome()));
-			ErogazioniApiHelper.validateProperties(env, protocolProperties, idFruizione);
 
 			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env,
 					body.getConnettore());
@@ -204,6 +195,18 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			f.setStatoPackage(StatoType.FINALE.getValue());
 			f.setConnettore(regConnettore);
 			asps.addFruitore(f);
+
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env);
+	
+				if(protocolProperties != null) {
+					f.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+
+
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, idFruizione);
 
 			ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, false);
 
@@ -740,16 +743,20 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
 					"Fruizione");
 
-			final IDServizio idAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(),
-					new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione());
-
 			IDFruizione idFruizione = new IDFruizione();
-			
+			IDServizio idAps = new IDServizio();
+
+			if(asps!=null) {
+				idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			}
+			idAps.setPortType(asps.getPortType());
+
 			idFruizione.setIdServizio(idAps);
 			idFruizione.setIdFruitore(new IDSoggetto(env.idSoggetto.getTipo(), env.idSoggetto.getNome()));
 
 			
-			FruizioneModI ret = ModiErogazioniApiHelper.getFruizioneModI(asps, env, profilo, ErogazioniApiHelper.getProtocolPropertiesMap(idFruizione, asps, env));
+			Fruitore f = ErogazioniApiHelper.getFruitore(asps, env.idSoggetto.getNome());
+			FruizioneModI ret = ModiErogazioniApiHelper.getFruizioneModI(asps, env, profilo, ErogazioniApiHelper.getProtocolPropertiesMap(idFruizione, f, env));
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1077,7 +1084,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(asps, profilo, body.getModi(), env);
 	
 				if(protocolProperties != null) {
-					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+					Fruitore f = ErogazioniApiHelper.getFruitore(asps, env.idSoggetto.getNome());
+					f.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
 				}
 			}
 

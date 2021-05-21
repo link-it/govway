@@ -179,6 +179,7 @@ public class Costanti {
 	
 	public final static String CONSOLE_PARAMETRO_APS_PORT_TYPE = "port_type";
 	
+	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM = Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE+"_VIA_PARAM";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE = "tipologiaErogazione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";

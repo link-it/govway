@@ -1,0 +1,13 @@
+{
+ 	"nome": "SoggettoJson",
+   	"credenziali": {
+       	"modalita_accesso": "https",
+   		"certificato": {
+			"tipo": "configurazione-manuale",
+			"subject" : ""   		
+   		}
+	},
+	"dominio": "esterno",
+	"descrizione": "Descrizione Soggetto Json",
+	"ruoli": [ ]
+}

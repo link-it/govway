@@ -44,6 +44,9 @@ import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenzia
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -114,8 +117,6 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			idSA.setIdSoggettoProprietario(idSoggetto);
 			idSA.setNome(applicativo.getNome());
 			
-			//env.isDominioInterno(idSoggetto)
-			
 			ApiKeyInfo keyInfo = ApplicativiApiHelper.createApiKey(applicativo.getCredenziali(), idSA, env.saCore, protocollo);
 			boolean updateKey = false;
 			
@@ -126,13 +127,32 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 						"Il Servizio Applicativo " + sa.getNome() + " è già stato registrato per il soggetto scelto."
 				);
 			}
-					
+			
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ApplicativiApiHelper.getProtocolProperties(body, profilo, sa, env);
+	
+				if(protocolProperties != null) {
+					sa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+
 			ApplicativiApiHelper.overrideSAParameters(wrap, env.saHelper, sa, applicativo, keyInfo, updateKey);
 			wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
 			
 			List<String> listaTipiProtocollo = ProtocolFactoryManager.getInstance().getProtocolNamesAsList();
 			IDSoggetto soggettoMultitenantSelezionato = new IDSoggetto(env.idSoggetto.getTipo(), env.idSoggetto.getNome());
+			
+			
 			String dominio = null;
+
+			if(!env.isDominioInterno(idSoggetto)) {
+				if(profilo != null && !(profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA))) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile creare un applicativo per un soggetto esterno col profilo ["+profilo+"]");
+				}
+				dominio = "esterno";
+			}
+
 			ServiziApplicativiGeneralInfo generalInfo = ServiziApplicativiUtilities.getGeneralInfo(false, env.idSoggetto.getId().toString(), listaTipiProtocollo, 
 					env.saCore, env.saHelper, env.userLogin, true, 
 					soggettoMultitenantSelezionato.toString(), dominio);
@@ -329,7 +349,10 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			context.getLogger().info("Invocazione completata con successo");
 			
-			return ApplicativiApiHelper.servizioApplicativoToApplicativo(sa);    
+			Applicativo applicativo = ApplicativiApiHelper.servizioApplicativoToApplicativo(sa);
+			ApplicativiApiHelper.populateProtocolInfo(sa, applicativo, env, profilo);
+			return applicativo;
+
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -416,6 +439,16 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 //			if (!oldSa.getNome().equals(newSa.getNome())) {
 //				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile modificare il nome del servizio applicativo");
 //			}
+			
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ApplicativiApiHelper.getProtocolProperties(body, profilo, newSa, env);
+	
+				if(protocolProperties != null) {
+					newSa.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesConfig(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+
 					
 			IDServizioApplicativo oldID = new IDServizioApplicativo();
 			oldID.setIdSoggettoProprietario(ApplicativiApiHelper.getIDSoggetto(oldSa.getNomeSoggettoProprietario(), env.tipo_protocollo));

@@ -108,6 +108,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -137,6 +138,7 @@ import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.basic.Utilities;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -243,8 +245,9 @@ public class ErogazioniApiHelper {
 		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
 		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
 
+		env.requestWrapper.overrideParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM, Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE);
+
 		return consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, registryReader, configRegistryReader, id);
-				
 	}
 
 
@@ -256,11 +259,11 @@ public class ErogazioniApiHelper {
 		
 		return prop;
 	}
-	public static ProtocolProperties getProtocolProperties(IDFruizione id, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+	public static ProtocolProperties getProtocolProperties(IDFruizione id, Fruitore f, ErogazioniEnv env) throws Exception {
 		ConsoleConfiguration consoleConf = getConsoleConfiguration(env, id);
 
 		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
-		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, asps.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, f.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
 		
 		return prop;
 	}
@@ -276,9 +279,9 @@ public class ErogazioniApiHelper {
 		return p;
 	}
 	
-	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(IDFruizione id, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(IDFruizione id, Fruitore f, ErogazioniEnv env) throws Exception {
 
-		ProtocolProperties prop = getProtocolProperties(id, asps, env);
+		ProtocolProperties prop = getProtocolProperties(id, f, env);
 		Map<String, AbstractProperty<?>> p = new HashMap<>();
 
 		for(int i =0; i < prop.sizeProperties(); i++) {
@@ -1949,8 +1952,28 @@ public class ErogazioniApiHelper {
 		} else {
 			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
 		}
-        
-		ProtocolProperties p = getProtocolProperties(asps, env);
+
+		
+		ProtocolProperties p = null;
+		if(generaPortaApplicativa) {
+			p = getProtocolProperties(asps, env);
+		} else {
+			IDFruizione idFruizione = new IDFruizione();
+			
+			IDServizio idAps = new IDServizio();
+
+			if(asps!=null) {
+				idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			}
+			idAps.setPortType(asps.getPortType());
+
+			idFruizione.setIdServizio(idAps);
+			IDSoggetto idFruitore = new IDSoggetto(env.idSoggetto.getTipo(), env.idSoggetto.getNome());
+			idFruizione.setIdFruitore(idFruitore);
+
+			Fruitore fruitore = getFruitore(asps, env.idSoggetto.getNome());
+			p = getProtocolProperties(idFruizione, fruitore, env);
+		}
 		
         AccordiServizioParteSpecificaUtilities.create(
         		asps,
@@ -2001,6 +2024,18 @@ public class ErogazioniApiHelper {
 			);
 
 		
+	}
+	
+	public static Fruitore getFruitore(AccordoServizioParteSpecifica asps, String nome) {
+		
+		if(asps.getFruitoreList()!=null) {
+			for(Fruitore f: asps.getFruitoreList()) {
+				if(f.getNome().equals(nome)) {
+					return f;
+				}
+			}
+		}
+		return null;
 	}
 
 	/*public static final AccordoServizioParteSpecifica getServizio(String tipo, String nome, Integer versione, IDSoggetto idErogatore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
