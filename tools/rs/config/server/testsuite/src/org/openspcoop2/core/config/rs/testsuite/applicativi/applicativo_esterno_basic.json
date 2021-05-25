@@ -1,0 +1,8 @@
+{
+ 	"nome": "TestSuiteApplicativoHttpBasic",
+   	"credenziali": {
+		"modalita_accesso": "http-basic",
+   		"username": "username",
+   		"password": "password"
+	}
+}

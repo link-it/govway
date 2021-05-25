@@ -147,3 +147,40 @@ Examples:
 |fruizione_modi_rest_iu_codice_ente.json|
 |fruizione_modi_rest_iu_userid.json|
 |fruizione_modi_rest_iu_indirizzo_ip.json|
+
+@UpdateFruizione_400_modi
+Scenario Outline: Fruizioni Aggiornamento modi 400 <nome>
+
+		* def erogatore = read('soggetto_erogatore.json')
+		* eval randomize (erogatore, ["nome", "credenziali.username"])
+		
+		* def fruizione_petstore = read('<fruizione_originale>')
+		* def api = read('<api>')
+		* eval randomize(api, ["nome"])
+		* eval api.referente = soggettoDefault
+		
+		* eval fruizione_petstore.api_nome = api.nome
+		* eval fruizione_petstore.fruizione_nome = api.nome
+		* eval fruizione_petstore.api_versione = api.versione
+		* eval fruizione_petstore.erogatore = erogatore.nome
+		* eval fruizione_petstore.api_referente = api.referente
+
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api.nome + '/' + api.versione
+
+		* def fruizione_petstore_update = read('<nome>')
+
+		* call create ({ resourcePath: 'api', body: api, query_params: query_param_profilo_modi })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call update_400 ( { resourcePath: 'fruizioni/'+petstore_key+'/modi', body: {modi: fruizione_petstore_update.modi}, query_params: query_param_profilo_modi } )
+    * match response.detail == '<errore>'
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+
+Examples:
+|nome|fruizione_originale|api|errore
+|fruizione_modi_soap_iu_codice_ente.json|fruizione_modi_soap.json|api_modi_soap_no_info_utente.json|Impossibile settare info utente|
+|fruizione_modi_rest_iu_codice_ente.json|fruizione_modi_rest.json|api_modi_rest_no_info_utente.json|Impossibile settare info utente|

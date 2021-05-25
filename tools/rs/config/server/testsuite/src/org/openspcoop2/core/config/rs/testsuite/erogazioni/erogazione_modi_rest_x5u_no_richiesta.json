@@ -12,7 +12,7 @@
 		"protocollo": "rest",
 		"richiesta": {
 			"sicurezza_messaggio": {
-				"riferimento_x509": ["x5c","x5u"],
+				"riferimento_x509": ["x5c"],
 				"truststore": {
 					"modalita": "default"
 				}
@@ -23,7 +23,9 @@
 				"keystore": {
 					"modalita": "default"
 				},
-				"url": "abdc"
+				"url": "url",
+				"riferimento_x509": "ridefinito",
+				"riferimento_x509_risposta": ["x5c","x5u"]
 			}
 		}
 	}

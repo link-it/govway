@@ -41,20 +41,23 @@ return expected;
 } 
 """
 
-@CreatePetstore204_modi_SOAP
-Scenario Outline: Erogazioni Creazione Petstore 204 SOAP <nome>
+@UpdatePetstore_modi_SOAP
+Scenario Outline: Erogazioni Aggiornamento Petstore SOAP <nome>
 
-		* def erogazione_petstore = read('<nome>')
+		* def erogazione_petstore = read('erogazione_modi_soap.json')
 		* eval erogazione_petstore.api_nome = api_petstore_soap.nome
 		* eval erogazione_petstore.api_versione = api_petstore_soap.versione
 		
 		* def petstore_key = erogazione_petstore.api_soap_servizio + '/' + erogazione_petstore.api_versione
 		* def api_petstore_path = 'api/' + api_petstore_soap.nome + '/' + api_petstore_soap.versione
 
+		* def erogazione_petstore_update = read('<nome>')
+
     * call create ({ resourcePath: 'api', body: api_petstore_soap, query_params: query_param_profilo_modi })
     * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call put ( { resourcePath: 'erogazioni/'+petstore_key+'/modi', body: {modi: erogazione_petstore_update.modi}, query_params: query_param_profilo_modi } )
 		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
-		* def expected = getExpectedSOAP(erogazione_petstore.modi)
+		* def expected = getExpectedSOAP(erogazione_petstore_update.modi)
     * match response.modi == expected
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
     * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
@@ -62,7 +65,6 @@ Scenario Outline: Erogazioni Creazione Petstore 204 SOAP <nome>
 
 Examples:
 |nome|
-|erogazione_modi_soap.json|
 |erogazione_modi_soap_wsa.json|
 |erogazione_modi_soap_truststore_ridefinito.json|
 |erogazione_modi_soap_keystore_ridefinito_file.json|
@@ -84,11 +86,10 @@ Examples:
 |erogazione_modi_soap_rif_x509_thumbprint-key-identifier.json|
 |erogazione_modi_soap_rif_x509_x509-key-identifier.json|
 
+@UpdatePetstore_modi_REST
+Scenario Outline: Erogazioni Aggiornamento Petstore REST <nome>
 
-@CreatePetstore204_modi_REST
-Scenario Outline: Erogazioni Creazione Petstore 204 REST <nome>
-
-		* def erogazione_petstore = read('<nome>')
+		* def erogazione_petstore = read('erogazione_modi_rest.json')
 		* eval erogazione_petstore.erogazione_nome = api_petstore_rest.nome
 		* eval erogazione_petstore.api_nome = api_petstore_rest.nome
 		* eval erogazione_petstore.api_versione = api_petstore_rest.versione
@@ -96,10 +97,13 @@ Scenario Outline: Erogazioni Creazione Petstore 204 REST <nome>
 		* def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
 		* def api_petstore_path = 'api/' + api_petstore_rest.nome + '/' + api_petstore_rest.versione
 
+		* def erogazione_petstore_update = read('<nome>')
+
     * call create ({ resourcePath: 'api', body: api_petstore_rest, query_params: query_param_profilo_modi })
     * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call put ( { resourcePath: 'erogazioni/'+petstore_key+'/modi', body: {modi: erogazione_petstore_update.modi},  query_params: query_param_profilo_modi } )
 		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
-		* def expected = getExpectedRest(erogazione_petstore.modi)
+		* def expected = getExpectedRest(erogazione_petstore_update.modi)
     * match response.modi == expected
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
     * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
@@ -107,7 +111,6 @@ Scenario Outline: Erogazioni Creazione Petstore 204 REST <nome>
 
 Examples:
 |nome|
-|erogazione_modi_rest.json|
 |erogazione_modi_rest_audience.json|
 |erogazione_modi_rest_algoritmo_ES256.json|
 |erogazione_modi_rest_algoritmo_ES384.json|
@@ -123,3 +126,32 @@ Examples:
 |erogazione_modi_rest_rif_multipli.json|
 |erogazione_modi_rest_truststore_ridefinito.json|
 |erogazione_modi_rest_ttl.json|
+
+@UpdateErogazione_400_modi
+Scenario Outline: Erogazioni Aggiornamento Petstore 400 <nome>
+
+		* def erogazione_petstore = read('erogazione_modi_rest.json')
+		* def api = read('<api>')
+		* eval randomize(api, ["nome"])
+		* eval api.referente = soggettoDefault
+		* eval erogazione_petstore.erogazione_nome = api.nome
+		* eval erogazione_petstore.api_nome = api.nome
+		* eval erogazione_petstore.api_versione = api.versione
+		
+		* def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api.nome + '/' + api.versione
+
+		* def erogazione_petstore_update = read('<nome>')
+
+    * call create ({ resourcePath: 'api', body: api, query_params: query_param_profilo_modi })
+    * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call update_400 ( { resourcePath: 'erogazioni/'+petstore_key+'/modi', body: {modi: erogazione_petstore_update.modi},  query_params: query_param_profilo_modi } )
+    * match response.detail == '<errore>'
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ( { resourcePath: 'api/'+ api.nome + '/' + api.versione } )
+
+
+Examples:
+|nome|api|errore
+|erogazione_modi_rest_x5u_no_richiesta.json|api_modi_rest.json|Impossibile settare URL X5U con riferimento x509 [x5c]|
+|erogazione_modi_rest_no_x5u.json|api_modi_rest.json|Specificare URL X5U con riferimento x509 [x5u]|

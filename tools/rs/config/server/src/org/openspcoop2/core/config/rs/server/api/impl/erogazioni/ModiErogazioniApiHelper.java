@@ -107,7 +107,6 @@ public class ModiErogazioniApiHelper {
 	
 	class ErogazioneConf {
 		public boolean sicurezzaMessaggioAPIAbilitata;
-		public boolean headerRest;
 	}
 	
 	class FruizioneConf extends ErogazioneConf {
@@ -130,25 +129,6 @@ public class ModiErogazioniApiHelper {
 		} else {
 			return !sicurezzaMessaggioValue.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED);
 		}
-	}
-	
-	private static boolean isHeaderRestAbilitato(AccordoServizioParteComune aspc) throws Exception {
-		return true;
-//		if(aspc.getProtocolPropertyList()==null) {
-//			return false;
-//		}
-//		String sicurezzaMessaggioValue = null;
-//		for(ProtocolProperty p: aspc.getProtocolPropertyList()) {
-//			if(p.getName().equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO)) {
-//				sicurezzaMessaggioValue = p.getValue();	
-//			}
-//		}
-//		
-//		if(sicurezzaMessaggioValue == null) {
-//			return false;
-//		} else {
-//			return !sicurezzaMessaggioValue.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED);
-//		}
 	}
 	
 	private static boolean isInfoUtenteAbilitato(AccordoServizioParteComune aspc) throws Exception {
@@ -175,7 +155,6 @@ public class ModiErogazioniApiHelper {
 		
 		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(asps.getIdAccordo());
 		c.sicurezzaMessaggioAPIAbilitata = isSicurezzaMessaggioAbilitata(aspc);
-		c.headerRest= isHeaderRestAbilitato(aspc);
 		
 		return c;
 	}
@@ -186,7 +165,6 @@ public class ModiErogazioniApiHelper {
 		
 		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(asps.getIdAccordo());
 		c.sicurezzaMessaggioAPIAbilitata = isSicurezzaMessaggioAbilitata(aspc);
-		c.headerRest= isHeaderRestAbilitato(aspc);
 		c.informazioniUtenteAbilitato= isInfoUtenteAbilitato(aspc);
 
 		return c;
@@ -1053,12 +1031,8 @@ public class ModiErogazioniApiHelper {
 		}
 
 		if(modi.getRisposta().getSicurezzaMessaggio().getHeaderHttpFirmare()!=null) {
-			if(erogazioneConf.headerRest) {
-				String httpHeaders = String.join(",", modi.getRisposta().getSicurezzaMessaggio().getHeaderHttpFirmare());
-				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders);
-			} else {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile settare header HTTP da firmare");
-			}
+			String httpHeaders = String.join(",", modi.getRisposta().getSicurezzaMessaggio().getHeaderHttpFirmare());
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders);
 		}
 		
 		if(modi.getRisposta().getSicurezzaMessaggio().getRiferimentoX509() == null || modi.getRisposta().getSicurezzaMessaggio().getRiferimentoX509().equals(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA)) {
@@ -1070,7 +1044,15 @@ public class ModiErogazioniApiHelper {
 		}
 
 		if(modi.getRisposta().getSicurezzaMessaggio().getUrl()!=null) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL, modi.getRisposta().getSicurezzaMessaggio().getUrl()); //TODO verificare condizioni
+			
+			if(!modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509().contains(ModISicurezzaMessaggioRestRiferimentoX509.X5U)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile settare URL X5U con riferimento x509 "+modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509());
+			}
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_X509_VALUE_X5URL, modi.getRisposta().getSicurezzaMessaggio().getUrl());
+		} else {
+			if(modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509().contains(ModISicurezzaMessaggioRestRiferimentoX509.X5U)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare URL X5U con riferimento x509 "+modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509());
+			}
 		}
 
 		if(modi.getRisposta().getSicurezzaMessaggio().getTimeToLive()!=null) {
@@ -1110,6 +1092,52 @@ public class ModiErogazioniApiHelper {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata");
 		}
 
+		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, getX509(modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509())); 
+
+		if(modi.getRichiesta().getSicurezzaMessaggio().getAudience()!=null) {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, modi.getRichiesta().getSicurezzaMessaggio().getAudience());
+		} else {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, "");
+		}
+
+		if(modi.getRichiesta().getSicurezzaMessaggio().getHeaderHttpFirmare()!=null) {
+			String httpHeaders = String.join(",", modi.getRichiesta().getSicurezzaMessaggio().getHeaderHttpFirmare());
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders);
+		}
+		
+		if(modi.getRichiesta().getSicurezzaMessaggio().getTimeToLive()!=null) {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED, modi.getRichiesta().getSicurezzaMessaggio().getTimeToLive());
+		}
+
+		String algo = null;
+		if(modi.getRichiesta().getSicurezzaMessaggio().getAlgoritmo()!= null) {
+			switch(modi.getRichiesta().getSicurezzaMessaggio().getAlgoritmo()) {
+			case ES256: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES256;
+				break;
+			case ES384: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES384;
+				break;
+			case ES512: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES512;
+				break;
+			case RS256: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS256;
+				break;
+			case RS384: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS384;
+				break;
+			case RS512: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS512;
+				break;
+			default:
+				break;
+			}
+		} else {
+			algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS256;
+		}
+		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_ALG, algo);
+
+		p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, modi.getRichiesta().getSicurezzaMessaggio().isCertificateChain() != null ?modi.getRichiesta().getSicurezzaMessaggio().isCertificateChain() : false));
+		
+		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteCodiceEnte(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE); 
+		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteUserid(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER); 
+		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
+		
 		if(modi.getRisposta().getSicurezzaMessaggio().getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 			
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
@@ -1170,23 +1198,6 @@ public class ModiErogazioniApiHelper {
 			}
 		}
 
-		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, getX509(modi.getRichiesta().getSicurezzaMessaggio().getRiferimentoX509())); 
-
-		if(modi.getRichiesta().getSicurezzaMessaggio().getAudience()!=null) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, modi.getRichiesta().getSicurezzaMessaggio().getAudience());
-		} else {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, "");
-		}
-
-		if(modi.getRichiesta().getSicurezzaMessaggio().getHeaderHttpFirmare()!=null) {
-			if(fruizioneConf.headerRest) {
-				String httpHeaders = String.join(",", modi.getRichiesta().getSicurezzaMessaggio().getHeaderHttpFirmare());
-				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders);
-			} else {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile settare header HTTP da firmare");
-			}
-		}
-		
 		if(modi.getRisposta().getSicurezzaMessaggio().getRiferimentoX509() == null || modi.getRisposta().getSicurezzaMessaggio().getRiferimentoX509().equals(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA)) {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE);
 		} else {
@@ -1195,38 +1206,7 @@ public class ModiErogazioniApiHelper {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, getX509(modi.getRisposta().getSicurezzaMessaggio().getRiferimentoX509Risposta())); 
 		}
 
-		if(modi.getRichiesta().getSicurezzaMessaggio().getTimeToLive()!=null) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED, modi.getRichiesta().getSicurezzaMessaggio().getTimeToLive());
-		}
 
-		String algo = null;
-		if(modi.getRichiesta().getSicurezzaMessaggio().getAlgoritmo()!= null) {
-			switch(modi.getRichiesta().getSicurezzaMessaggio().getAlgoritmo()) {
-			case ES256: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES256;
-				break;
-			case ES384: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES384;
-				break;
-			case ES512: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES512;
-				break;
-			case RS256: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS256;
-				break;
-			case RS384: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS384;
-				break;
-			case RS512: algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS512;
-				break;
-			default:
-				break;
-			}
-		} else {
-			algo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_RS256;
-		}
-		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_ALG, algo);
-
-		p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, modi.getRichiesta().getSicurezzaMessaggio().isCertificateChain() != null ?modi.getRichiesta().getSicurezzaMessaggio().isCertificateChain() : false));
-		
-		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteCodiceEnte(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE); 
-		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteUserid(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER); 
-		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER); 
 
 	}
 
@@ -1454,34 +1434,6 @@ public class ModiErogazioniApiHelper {
 		}
 
 
-		if(modi.getRisposta().getSicurezzaMessaggio().getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
-			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS);
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, "");
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, "");
-			
-		} else {
-
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
-
-			ModITrustStoreRidefinito truststoreRidefinito = (ModITrustStoreRidefinito)modi.getRisposta().getSicurezzaMessaggio().getTruststore();
-			
-			String tipo = null;
-			switch(truststoreRidefinito.getTruststoreTipo()) {
-			case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
-				break;
-			default:
-				break;
-			}
-			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, tipo);
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, truststoreRidefinito.getTruststorePassword());
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, truststoreRidefinito.getTruststorePath());
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, truststoreRidefinito.getTruststoreCrl());
-			
-		}
-
 		if(modi.getRichiesta().getSicurezzaMessaggio().getTimeToLive()!=null) {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED, modi.getRichiesta().getSicurezzaMessaggio().getTimeToLive());
 		} else {
@@ -1557,7 +1509,35 @@ public class ModiErogazioniApiHelper {
 
 		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteCodiceEnte(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE); 
 		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteUserid(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER); 
-		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER); 
+		addInformazioniUtente(modi.getRichiesta().getSicurezzaMessaggio().getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
+		
+		if(modi.getRisposta().getSicurezzaMessaggio().getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
+			
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS);
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, "");
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, "");
+			
+		} else {
+
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
+
+			ModITrustStoreRidefinito truststoreRidefinito = (ModITrustStoreRidefinito)modi.getRisposta().getSicurezzaMessaggio().getTruststore();
+			
+			String tipo = null;
+			switch(truststoreRidefinito.getTruststoreTipo()) {
+			case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+				break;
+			default:
+				break;
+			}
+			
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, tipo);
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, truststoreRidefinito.getTruststorePassword());
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, truststoreRidefinito.getTruststorePath());
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, truststoreRidefinito.getTruststoreCrl());
+			
+		}
 
 	}
 

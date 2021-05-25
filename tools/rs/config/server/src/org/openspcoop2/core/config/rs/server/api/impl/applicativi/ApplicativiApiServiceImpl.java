@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.rs.server.api.ApplicativiApi;
 import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
+import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
@@ -171,6 +172,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 				
+			ApplicativiApiHelper.validateProperties(env, protocolProperties, sa);
+
 			env.saCore.performCreateOperation(env.userLogin, false, sa);
 			
 			if(keyInfo!=null) {
@@ -472,6 +475,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
+			ApplicativiApiHelper.validateProperties(env, protocolProperties, newSa);
+
 			// eseguo l'aggiornamento
 			List<Object> listOggettiDaAggiornare = ServiziApplicativiUtilities.getOggettiDaAggiornare(env.saCore, oldID, newSa);
 			env.saCore.performUpdateOperation(env.userLogin, false, listOggettiDaAggiornare.toArray());

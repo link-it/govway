@@ -14,7 +14,7 @@ Scenario: Api Create 409 con profilo ModI
 	* call create_409 ( { resourcePath: 'api', body: api_modi, key: api_modi.nome + '/' + api_modi.versione, query_params: query_param_profilo_modi } )
 
 
-@Create400_api_rest_applicabilita_risposta_abilitato_con_response_code
+@Create400_api_<nome-test>
 Scenario Outline: Api Create 400 con <nome-test>
 	* def api_modi = read('<nome-test>.json')
 	* eval randomize(api_modi, ["nome"])

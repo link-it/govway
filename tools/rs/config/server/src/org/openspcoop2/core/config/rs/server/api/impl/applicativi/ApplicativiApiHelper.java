@@ -685,5 +685,20 @@ public class ApplicativiApiHelper {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il Servizio Applicativo " + oldSa.getNome() + "è già stato associato ad alcune porte delegate e/o applicative del Soggetto " + nomeProv + ". Se si desidera modificare il Soggetto è necessario eliminare prima tutte le occorrenze del Servizio Applicativo");
 		}
 	}
+
+	public static void validateProperties(ApplicativiEnv env, ProtocolProperties protocolProperties,
+			ServizioApplicativo sa) throws Exception {
+		if(protocolProperties!=null) {
+			try{
+
+				ConsoleConfiguration consoleConf = getConsoleConfiguration(sa, env);
+
+				env.saHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+			}catch(ProtocolException e){
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+			}
+		}
+		
+	}
 	
 }
