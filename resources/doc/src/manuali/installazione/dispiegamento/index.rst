@@ -21,3 +21,4 @@ casi.
 
         nuovaInstallazione
 	aggiornamento/index
+	batch
