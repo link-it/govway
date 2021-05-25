@@ -30,6 +30,17 @@ seguenti:
 
     - *psql <hostname> <username> -f sql/GovWay_init.sql*
 
+	.. note::
+		In caso di installazione *Avanzata*:
+	
+		-	Lo script *sql/GovWay.sql* deve essere eseguito per la creazione dello schema del database dedicato al runtime di Govway. Successivamente eseguire lo script *sql/GovWay_init.sql* per inserire i dati di inizializzazione del database.
+	
+		-	Se presente lo script *sql/GovWayConfigurazione.sql*, deve essere eseguito per la creazione dello schema database dedicato alle configurazioni. Successivamente eseguire lo script *GovWayConfigurazione_init.sql* per l'inserimento dei dati di inizializzazione del database.
+	
+		-	Se presente lo script *sql/GovWayStatistiche.sql*, deve essere eseguito per la creazione dello schema database dedicato alle statistiche. Successivamente eseguire lo script *GovWayStatistiche_init.sql* per l'inserimento dei dati di inizializzazione del database.
+	
+		-	Se presente lo script *sql/GovWayTracciamento.sql*, deve essere eseguito per la creazione dello schema database dedicato alle tracce. Successivamente eseguire lo script *GovWayTracciamento_init.sql* per l'inserimento dei dati di inizializzazione del database.
+	
 #.  Installare il DriverJDBC, relativo al tipo di RDBMS indicato in fase
     di setup, nella directory:
 
@@ -71,6 +82,19 @@ seguenti:
     sostituire al loro interno il placeholder *NOME_DRIVER_JDBC.jar* con
     il nome del driver JDBC installato in precedenza.
 
+	.. note::
+		In caso di installazione *Avanzata*, in base alle scelte effettuate per differenziare gli schemi database saranno disponibili nella directory *dist/datasource* tutte le definizioni richieste. In particolare, se previsto, potranno essere presenti:
+	
+		-	*org.govway.datasource.tracciamento*, per l'accesso al database dedicato alle tracce
+	
+		-	*org.govway.datasource.statistiche*, per l'accesso al database dedicato alle tracce
+	
+		Se inoltre è stato indicato un ambiente dedicato per *Configurazione e Monitoraggio", quindi distinto dal runtime, dentro la directory *dist/datasource* saranno presenti le due directory:
+	
+		-	*runtime*, contenente i datasource da dispiegare nell'ambiente dedicato al runtime di Govway
+	
+		-	*manager*, contenente i datasource da dispiegare nell'ambiente dedicato alle console di configurazione e monitoraggio
+	
 #.  Eseguire il dispiegamento delle applicazioni presenti nella
     directory *archivi* secondo le modalità disponibili per
     l'Application Server scelto. Per un rapido dispiegamento è possibile

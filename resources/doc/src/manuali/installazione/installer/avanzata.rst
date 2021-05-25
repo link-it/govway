@@ -17,27 +17,27 @@ e i singoli componenti applicativi, in accordo all'architettura di dispiegamento
 
 La sezione **DBMS** prevede le seguenti opzioni:
 
-- *Configurazione*. Indica il database da utilizzare come repository delle configurazioni:
+- *Configurazione*. Indica lo schema del database da utilizzare come repository delle configurazioni:
 
-	- *Utilizza stesso database del Runtime*: le configurazioni risiedono nel medesimo database di esercizio di Govway
+	- *Utilizza stesso database del Runtime*: le configurazioni risiedono nel medesimo schema di esercizio di Govway
 
-	- *Database dedicato alla configurazione*: le configurazioni risiedono su un database separato da quello di esercizio di Govway
+	- *Database dedicato alla configurazione*: le configurazioni risiedono su uno schema separato da quello di esercizio di Govway
 
-- *Tracce*. Indica il database da utilizzare come repository delle tracce:
+- *Tracce*. Indica lo schema database da utilizzare come repository delle tracce:
 
-	- *Utilizza stesso database del Runtime*: le tracce risiedono nel medesimo database di esercizio di Govway
+	- *Utilizza stesso database del Runtime*: le tracce risiedono nel medesimo schema di esercizio di Govway
 
-	- *Database dedicato alle Tracce*: le tracce risiedono su un database separato da quello di esercizio di Govway
+	- *Database dedicato alle Tracce*: le tracce risiedono su uno schema separato da quello di esercizio di Govway
 
-	- Opzione *Standard / Full Index*: se si sceglie l'opzione *Full Index* il database sarà configurato in modo da utilizzare un indice complessivo che migliora le performance in fase di accesso alle tracce
+	- Opzione *Standard / Full Index*: se si sceglie l'opzione *Full Index*, il database sarà configurato in modo da utilizzare un indice complessivo che migliora le performance in fase di accesso alle tracce
 
-- *Statistiche*. Indica il database da utilizzare come repository delle statistiche:
+- *Statistiche*. Indica lo schema database da utilizzare come repository delle statistiche:
 
-	- *Utilizza stesso database del Runtime*: le statistiche risiedono nel medesimo database di esercizio di Govway
+	- *Utilizza stesso database del Runtime*: le statistiche risiedono nel medesimo schema di esercizio di Govway
 
-	- *Utilizza stesso database delle Tracce*: le statistiche risiedono nel medesimo database utilizzato per le Tracce
+	- *Utilizza stesso database delle Tracce*: le statistiche risiedono nel medesimo schema utilizzato per le Tracce
 
-	- *Database dedicato alle Statistiche*: le statistiche risiedono su un database separato da quello di esercizio (e tracce) di Govway
+	- *Database dedicato alle Statistiche*: le statistiche risiedono su uno schema separato da quello di esercizio (e tracce) di Govway
 
 	- Opzione *Standard / Full Index*: se si sceglie l'opzione *Full Index* il database sarà configurato in modo da utilizzare un indice complessivo che migliora le performance in fase di accesso alle statistiche
 
@@ -61,7 +61,8 @@ La sezione **Componenti Applicative** prevede le seguenti opzioni:
 
 	- *Dinamica*: modalità che prevede l'individuazione dinamica dei nodi presenti, senza che sia necessario specificarlo nella configurazione. In questo scenario non risultano accessibili dalla console di gestione alcune operazioni di manutenzione sui singoli nodi.
 
-In funzione delle scelte indicate in questo pannello saranno richiesti alcuni passi aggiuntivi. In particolare, riguardo l'accesso ai database, in funzione del numero di datasource previsto saranno opzionalmente richiesti:
+In funzione delle opzioni, fornite in questo pannello, saranno proposti dalla procedura d'installazione alcuni passaggi aggiuntivi.
+In particolare, riguardo l'accesso agli schemi del database, in funzione del numero di datasource previsto saranno opzionalmente richiesti in altrettanti pannelli:
 
 - *Informazioni DataSource dedicato alle Configurazioni*
 
@@ -81,3 +82,4 @@ In funzione della modalità di *Gestione dei Nodi* indicata, nel caso si sia sce
 
     Dispiegamento Dinamico
 
+I restanti passi del processo di installazione rimangono invariati rispetto alla modalità Standard.
