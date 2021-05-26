@@ -425,12 +425,14 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	/* Variabili per la gestione JMX */
 	private Logger log;
+	private Logger logConnettori;
 	org.openspcoop2.pdd.config.ConfigurazionePdDManager configReader = null;
 	org.openspcoop2.pdd.config.OpenSPCoop2Properties openspcoopProperties = null;
 	
 	/* Costruttore */
 	public AccessoRegistroServizi(){
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		this.logConnettori = OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori();
 		this.configReader = org.openspcoop2.pdd.config.ConfigurazionePdDManager.getInstance();
 		this.openspcoopProperties = org.openspcoop2.pdd.config.OpenSPCoop2Properties.getInstance();
 		
@@ -567,7 +569,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	public String checkConnettoreById(long idConnettore) {
 		try{
-			ConnettoreCheck.check(idConnettore, true);
+			ConnettoreCheck.check(idConnettore, true, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
@@ -577,7 +579,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 	
 	public String checkConnettoreByNome(String nomeConnettore) {
 		try{
-			ConnettoreCheck.check(nomeConnettore, true);
+			ConnettoreCheck.check(nomeConnettore, true, this.logConnettori);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);

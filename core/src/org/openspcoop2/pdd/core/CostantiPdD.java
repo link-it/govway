@@ -777,11 +777,11 @@ public class CostantiPdD {
     public final static String SEPARATOR_MESSAGGIO_CONNETTORE_MULTIPLO = "-";
     
     
-    public final static String PREFIX_TIMEOUT_REQUEST = "Request ";
-    public final static String PREFIX_TIMEOUT_RESPONSE = "Response ";
+    public final static String PREFIX_TIMEOUT_REQUEST = org.openspcoop2.core.constants.Costanti.PREFIX_TIMEOUT_REQUEST;
+    public final static String PREFIX_TIMEOUT_RESPONSE = org.openspcoop2.core.constants.Costanti.PREFIX_TIMEOUT_RESPONSE;
     
-    public final static String PREFIX_LIMITED_REQUEST = "Request ";
-    public final static String PREFIX_LIMITED_RESPONSE = "Response ";
+    public final static String PREFIX_LIMITED_REQUEST = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_REQUEST;
+    public final static String PREFIX_LIMITED_RESPONSE = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE;
 }
 
 

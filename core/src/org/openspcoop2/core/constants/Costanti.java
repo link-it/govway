@@ -133,6 +133,12 @@ public class Costanti {
 	public final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = "undefined";
 	public final static String SESSION_ATTRIBUTE_VALUE_FILTER_UNDEFINED = "undefined";
 	
+    public final static String PREFIX_TIMEOUT_REQUEST = "Request ";
+    public final static String PREFIX_TIMEOUT_RESPONSE = "Response ";
+    
+    public final static String PREFIX_LIMITED_REQUEST = "Request ";
+    public final static String PREFIX_LIMITED_RESPONSE = "Response ";
+	
 	public final static String JMX_NAME_DATASOURCE_PDD = "DatasourceGW";
 	public static DataSourceParams getDataSourceParamsPdD(boolean bindJMX,String tipoDB){
 		DataSourceParams dsParams = new DataSourceParams();

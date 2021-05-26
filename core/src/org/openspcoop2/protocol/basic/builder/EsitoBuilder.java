@@ -36,7 +36,6 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -257,10 +256,10 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			if(context!=null){
 				if(context.containsKey(LimitedInputStream.ERROR_MSG_KEY)){
 					String limitedExceededMessage = (String) context.get(LimitedInputStream.ERROR_MSG_KEY);
-					if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_REQUEST)) {
+					if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_REQUEST)) {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA, tipoContext);
 					}
-					else if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_RESPONSE)) {
+					else if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE)) {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA, tipoContext);
 					}
 				}
