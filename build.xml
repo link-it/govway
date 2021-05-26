@@ -460,6 +460,7 @@
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>
+			<param name="openspcoop2.modipa.dist" value="${dist}"/>
 		</antcall>
 
 		<antcall target="compile_openspcoop2_govwayMonitorApiRS" >

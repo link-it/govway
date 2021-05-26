@@ -26,6 +26,7 @@
 	<property name="build" location="build" />
 	<property name="deploy_sw" location="deploy/sw" />
 	<property name="deploy_sw_openspcoop2_jars" location="deploy/sw/openspcoop2" />
+	<property name="deploy_sw_openspcoop2_protocol_jars" location="deploy/sw/" />
 	<property name="deploy_sql" location="deploy/sql" />
 	<property name="deploy_jms" location="deploy/jms" />
 	<property name="deploy_resources" location="deploy/resources" />
@@ -99,6 +100,9 @@
 	</path>		
 	<path id="classpath_dist" >
 		<fileset dir="${deploy_sw_openspcoop2_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${deploy_sw_openspcoop2_protocol_jars}" >
 			<include name="*.jar"/>
 		</fileset>
 	</path>	

@@ -12,6 +12,7 @@
       <property name="required_lib_govwayConfigApiRS" location="${openspcoop2}/lib/"/>
       <property name="required_lib" value="${required_lib_govwayConfigApiRS}"/>
       <property name="openspcoop2.lib" location="${required_lib_govwayConfigApiRS}"/>
+      <property name="openspcoop2.modipa.dist" value="${openspcoop2}/protocolli/modipa/dist"/>
 
       <!-- Build-Options -->
       <property name="buildAsRelease" value="false"/>

@@ -52,6 +52,7 @@
 			<param name="dist_audit" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="required_lib_govwayConfigApiRS" value="${required_lib_govwayConfigApiRS}"/>
 			<param name="tmp_jboss_conf" value="tmp_govwayConfigApiRS" />
+			<param name="openspcoop2.modipa.dist" value="${deploy_sw}/"/>
 		</antcall>
 		<delete includeEmptyDirs="true" dir="tmp_govwayConfigApiRS"/>
 
