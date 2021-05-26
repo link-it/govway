@@ -42,6 +42,9 @@ public class ApiAzione  {
   
   @Schema(example = "false", description = "")
   private Boolean riferimentoIdRichiesta = null;
+  
+  @Schema(description = "")
+  private ApiModIAzioneSoap modi = null;
  /**
    * Get nome
    * @return nome
@@ -139,6 +142,25 @@ public class ApiAzione  {
     return this;
   }
 
+ /**
+   * Get modi
+   * @return modi
+  **/
+  @JsonProperty("modi")
+  @Valid
+  public ApiModIAzioneSoap getModi() {
+    return this.modi;
+  }
+
+  public void setModi(ApiModIAzioneSoap modi) {
+    this.modi = modi;
+  }
+
+  public ApiAzione modi(ApiModIAzioneSoap modi) {
+    this.modi = modi;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -150,6 +172,7 @@ public class ApiAzione  {
     sb.append("    profiloCollaborazione: ").append(ApiAzione.toIndentedString(this.profiloCollaborazione)).append("\n");
     sb.append("    idCollaborazione: ").append(ApiAzione.toIndentedString(this.idCollaborazione)).append("\n");
     sb.append("    riferimentoIdRichiesta: ").append(ApiAzione.toIndentedString(this.riferimentoIdRichiesta)).append("\n");
+    sb.append("    modi: ").append(ApiAzione.toIndentedString(this.modi)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -1,3 +1,9 @@
+2021-05-26  Giovanni Bussu <bussu@link.it>
+
+	* [ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1163
+	Introdotta la gestione del profilo 'ModI' nelle api di configurazione.
+
 2021-05-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovwayConsole]

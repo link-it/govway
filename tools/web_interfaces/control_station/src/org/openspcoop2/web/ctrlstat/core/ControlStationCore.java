@@ -2266,6 +2266,10 @@ public class ControlStationCore {
 			this.applicativiPasswordManager = CryptFactory.getCrypt(log, applicativiConfig);
 			this.soggettiPasswordManager = CryptFactory.getCrypt(log, soggettiConfig);
 			
+			if(initForApi) {
+				this.singlePdD = true;
+			}
+
 		}catch(Exception e){
 			ControlStationCore.logError("Errore di inizializzazione: "+e.getMessage(), e);
 			throw e;

@@ -1,0 +1,24 @@
+{
+	"http_method": "POST",
+	"path": "/libri",
+	"nome": "risorsa_",
+	"descrizione": "string",
+	"id_collaborazione": false,
+	"riferimento_id_richiesta": false,
+	"modi": {
+		"interazione": {
+			"pattern": "non-bloccante",
+			"tipo": "pull",
+			"funzione": "risposta",
+			"risorsa_correlata": {
+			"api_nome": "a",
+			"api_versione": 1,
+			"risorsa_http_method": "POST",
+			"risorsa_path": "/libri_richiesta"
+			}
+		},
+		"sicurezza_messaggio": {
+			"stato": "api"
+		}
+	}
+}

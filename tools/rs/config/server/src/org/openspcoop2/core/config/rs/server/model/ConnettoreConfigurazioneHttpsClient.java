@@ -25,51 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreConfigurazioneHttpsClient  {
-  
-  @Schema(example = "/path/to/keystore", required = true, description = "")
-  private String keystorePath = null;
+public class ConnettoreConfigurazioneHttpsClient extends BaseKeyStoreFile {
   
   @Schema(required = true, description = "")
   private KeystoreEnum keystoreTipo = null;
   
-  @Schema(example = "pwd", required = true, description = "")
-  private String keystorePassword = null;
-  
-  @Schema(example = "pwd", required = true, description = "password della chiave privata")
- /**
-   * password della chiave privata  
-  **/
-  private String keyPassword = null;
-  
-  @Schema(example = "pwd", description = "alias della chiave privata")
- /**
-   * alias della chiave privata  
-  **/
-  private String keyAlias = null;
-  
   @Schema(example = "SunX509", description = "")
   private String algoritmo = "SunX509";
- /**
-   * Get keystorePath
-   * @return keystorePath
-  **/
-  @JsonProperty("keystore_path")
-  @NotNull
-  @Valid
- @Size(max=255)  public String getKeystorePath() {
-    return this.keystorePath;
-  }
-
-  public void setKeystorePath(String keystorePath) {
-    this.keystorePath = keystorePath;
-  }
-
-  public ConnettoreConfigurazioneHttpsClient keystorePath(String keystorePath) {
-    this.keystorePath = keystorePath;
-    return this;
-  }
-
  /**
    * Get keystoreTipo
    * @return keystoreTipo
@@ -87,65 +49,6 @@ public class ConnettoreConfigurazioneHttpsClient  {
 
   public ConnettoreConfigurazioneHttpsClient keystoreTipo(KeystoreEnum keystoreTipo) {
     this.keystoreTipo = keystoreTipo;
-    return this;
-  }
-
- /**
-   * Get keystorePassword
-   * @return keystorePassword
-  **/
-  @JsonProperty("keystore_password")
-  @NotNull
-  @Valid
-  public String getKeystorePassword() {
-    return this.keystorePassword;
-  }
-
-  public void setKeystorePassword(String keystorePassword) {
-    this.keystorePassword = keystorePassword;
-  }
-
-  public ConnettoreConfigurazioneHttpsClient keystorePassword(String keystorePassword) {
-    this.keystorePassword = keystorePassword;
-    return this;
-  }
-
- /**
-   * password della chiave privata
-   * @return keyPassword
-  **/
-  @JsonProperty("key_password")
-  @NotNull
-  @Valid
-  public String getKeyPassword() {
-    return this.keyPassword;
-  }
-
-  public void setKeyPassword(String keyPassword) {
-    this.keyPassword = keyPassword;
-  }
-
-  public ConnettoreConfigurazioneHttpsClient keyPassword(String keyPassword) {
-    this.keyPassword = keyPassword;
-    return this;
-  }
-
- /**
-   * alias della chiave privata
-   * @return keyAlias
-  **/
-  @JsonProperty("key_alias")
-  @Valid
- @Size(max=255)  public String getKeyAlias() {
-    return this.keyAlias;
-  }
-
-  public void setKeyAlias(String keyAlias) {
-    this.keyAlias = keyAlias;
-  }
-
-  public ConnettoreConfigurazioneHttpsClient keyAlias(String keyAlias) {
-    this.keyAlias = keyAlias;
     return this;
   }
 
@@ -173,12 +76,8 @@ public class ConnettoreConfigurazioneHttpsClient  {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ConnettoreConfigurazioneHttpsClient {\n");
-    
-    sb.append("    keystorePath: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keystorePath)).append("\n");
+    sb.append("    ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(super.toString())).append("\n");
     sb.append("    keystoreTipo: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keystoreTipo)).append("\n");
-    sb.append("    keystorePassword: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keystorePassword)).append("\n");
-    sb.append("    keyPassword: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keyPassword)).append("\n");
-    sb.append("    keyAlias: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.keyAlias)).append("\n");
     sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsClient.toIndentedString(this.algoritmo)).append("\n");
     sb.append("}");
     return sb.toString();

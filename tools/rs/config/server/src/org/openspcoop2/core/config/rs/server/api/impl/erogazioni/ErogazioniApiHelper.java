@@ -25,6 +25,7 @@ import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -96,6 +97,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -107,6 +109,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -136,13 +139,21 @@ import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.protocol.basic.Utilities;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -185,6 +196,151 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public class ErogazioniApiHelper {
 		
 	
+	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, AccordoServizioParteSpecifica asps)
+			throws Exception {
+		if(protocolProperties!=null) {
+			try{
+
+				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, asps);
+
+				env.apsHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+			}catch(ProtocolException e){
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+			}
+		}
+	}
+
+	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, IDFruizione id)
+			throws Exception {
+		if(protocolProperties!=null) {
+			try{
+
+				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, id);
+
+				env.apsHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+			}catch(ProtocolException e){
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+			}
+		}
+	}
+
+
+	public static ConsoleConfiguration getConsoleConfiguration(ErogazioniEnv env, AccordoServizioParteSpecifica asps) throws Exception {
+    	IDServizio oldIdAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
+		oldIdAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+		oldIdAps.setPortType(asps.getPortType());
+
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		env.requestWrapper.overrideParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM, Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE);
+		
+		return consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, 
+				registryReader, configRegistryReader, oldIdAps);
+
+	}
+
+	public static ConsoleConfiguration getConsoleConfiguration(ErogazioniEnv env, IDFruizione id) throws Exception {
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		env.requestWrapper.overrideParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM, Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE);
+
+		return consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, registryReader, configRegistryReader, id);
+	}
+
+
+	public static ProtocolProperties getProtocolProperties(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+		ConsoleConfiguration consoleConf = getConsoleConfiguration(env, asps);
+
+		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, asps.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		
+		return prop;
+	}
+	public static ProtocolProperties getProtocolProperties(IDFruizione id, Fruitore f, ErogazioniEnv env) throws Exception {
+		ConsoleConfiguration consoleConf = getConsoleConfiguration(env, id);
+
+		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, f.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		
+		return prop;
+	}
+	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+
+		ProtocolProperties prop = getProtocolProperties(asps, env);
+		Map<String, AbstractProperty<?>> p = new HashMap<>();
+
+		for(int i =0; i < prop.sizeProperties(); i++) {
+			p.put(prop.getIdProperty(i), prop.getProperty(i));
+		}
+		
+		return p;
+	}
+	
+	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(IDFruizione id, Fruitore f, ErogazioniEnv env) throws Exception {
+
+		ProtocolProperties prop = getProtocolProperties(id, f, env);
+		Map<String, AbstractProperty<?>> p = new HashMap<>();
+
+		for(int i =0; i < prop.sizeProperties(); i++) {
+			p.put(prop.getIdProperty(i), prop.getProperty(i));
+		}
+		
+		return p;
+	}
+	
+	public static ProtocolProperties getProtocolProperties(Erogazione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+
+
+		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non conforme con il profilo '"+profilo+"' indicato");
+		}
+
+		switch(profilo) {
+		case APIGATEWAY:
+			return null;// trasparente 
+		case EDELIVERY:
+			return EDeliveryErogazioniApiHelper.getProtocolProperties(body);
+		case FATTURAPA:
+			return FatturaPAErogazioniApiHelper.getProtocolProperties(body);
+		case MODI:
+		case MODIPA:
+			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env);
+		case SPCOOP:
+			return SPCoopErogazioniApiHelper.getProtocolProperties(body);
+		}
+		return null;
+	}
+
+	public static ProtocolProperties getProtocolProperties(Fruizione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+
+
+		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non conforme con il profilo '"+profilo+"' indicato");
+		}
+
+		switch(profilo) {
+		case APIGATEWAY:
+			return null;// trasparente 
+		case EDELIVERY:
+//			return EDeliveryErogazioniApiHelper.getProtocolProperties(body);
+		case FATTURAPA:
+//			return FatturaPAErogazioniApiHelper.getProtocolProperties(body);
+		case MODI:
+		case MODIPA:
+			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env);
+		case SPCOOP:
+//			return SPCoopErogazioniApiHelper.getProtocolProperties(body); 
+		}
+		return null;
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public static final <T> T deserializeModalitaConfGruppo(ModalitaConfigurazioneGruppoEnum discr, Object body) throws UtilsException, InstantiationException, IllegalAccessException {
 		
@@ -1799,7 +1955,29 @@ public class ErogazioniApiHelper {
 		} else {
 			canaleStato = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_CANALE_STATO_RIDEFINITO;
 		}
-        
+
+		
+		ProtocolProperties p = null;
+		if(generaPortaApplicativa) {
+			p = getProtocolProperties(asps, env);
+		} else {
+			IDFruizione idFruizione = new IDFruizione();
+			
+			IDServizio idAps = new IDServizio();
+
+			if(asps!=null) {
+				idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			}
+			idAps.setPortType(asps.getPortType());
+
+			idFruizione.setIdServizio(idAps);
+			IDSoggetto idFruitore = new IDSoggetto(env.idSoggetto.getTipo(), env.idSoggetto.getNome());
+			idFruizione.setIdFruitore(idFruitore);
+
+			Fruitore fruitore = getFruitore(asps, env.idSoggetto.getNome());
+			p = getProtocolProperties(idFruizione, fruitore, env);
+		}
+		
         AccordiServizioParteSpecificaUtilities.create(
         		asps,
         		alreadyExists, 
@@ -1840,7 +2018,7 @@ public class ErogazioniApiHelper {
 				null,	// autenticazioneTokenSubject, 
 				null,	// autenticazioneTokenUsername, 
 				null,	// autenticazioneTokenEMail, 
-				new ProtocolProperties(), // this.protocolProperties, 
+				p, 
 				ConsoleOperationType.ADD, 
 				env.apsCore, 
 				env.erogazioniHelper,
@@ -1849,6 +2027,18 @@ public class ErogazioniApiHelper {
 			);
 
 		
+	}
+	
+	public static Fruitore getFruitore(AccordoServizioParteSpecifica asps, String nome) {
+		
+		if(asps.getFruitoreList()!=null) {
+			for(Fruitore f: asps.getFruitoreList()) {
+				if(f.getNome().equals(nome)) {
+					return f;
+				}
+			}
+		}
+		return null;
 	}
 
 	/*public static final AccordoServizioParteSpecifica getServizio(String tipo, String nome, Integer versione, IDSoggetto idErogatore, ErogazioniEnv env) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {

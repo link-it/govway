@@ -32,6 +32,9 @@ public class Api extends ApiBase {
   
   @Schema(description = "")
   private String canale = null;
+  
+  @Schema(description = "")
+  private ApiModI modi = null;
  /**
    * Get interfaccia
    * @return interfaccia
@@ -70,6 +73,25 @@ public class Api extends ApiBase {
     return this;
   }
 
+ /**
+   * Get modi
+   * @return modi
+  **/
+  @JsonProperty("modi")
+  @Valid
+  public ApiModI getModi() {
+    return this.modi;
+  }
+
+  public void setModi(ApiModI modi) {
+    this.modi = modi;
+  }
+
+  public Api modi(ApiModI modi) {
+    this.modi = modi;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -78,6 +100,7 @@ public class Api extends ApiBase {
     sb.append("    ").append(Api.toIndentedString(super.toString())).append("\n");
     sb.append("    interfaccia: ").append(Api.toIndentedString(this.interfaccia)).append("\n");
     sb.append("    canale: ").append(Api.toIndentedString(this.canale)).append("\n");
+    sb.append("    modi: ").append(Api.toIndentedString(this.modi)).append("\n");
     sb.append("}");
     return sb.toString();
   }

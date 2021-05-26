@@ -44,6 +44,9 @@ public class ApiRisorsa  {
   
   @Schema(example = "false", description = "")
   private Boolean riferimentoIdRichiesta = null;
+  
+  @Schema(description = "")
+  private ApiModIRisorsaRest modi = null;
  /**
    * Get httpMethod
    * @return httpMethod
@@ -160,6 +163,25 @@ public class ApiRisorsa  {
     return this;
   }
 
+ /**
+   * Get modi
+   * @return modi
+  **/
+  @JsonProperty("modi")
+  @Valid
+  public ApiModIRisorsaRest getModi() {
+    return this.modi;
+  }
+
+  public void setModi(ApiModIRisorsaRest modi) {
+    this.modi = modi;
+  }
+
+  public ApiRisorsa modi(ApiModIRisorsaRest modi) {
+    this.modi = modi;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -172,6 +194,7 @@ public class ApiRisorsa  {
     sb.append("    descrizione: ").append(ApiRisorsa.toIndentedString(this.descrizione)).append("\n");
     sb.append("    idCollaborazione: ").append(ApiRisorsa.toIndentedString(this.idCollaborazione)).append("\n");
     sb.append("    riferimentoIdRichiesta: ").append(ApiRisorsa.toIndentedString(this.riferimentoIdRichiesta)).append("\n");
+    sb.append("    modi: ").append(ApiRisorsa.toIndentedString(this.modi)).append("\n");
     sb.append("}");
     return sb.toString();
   }

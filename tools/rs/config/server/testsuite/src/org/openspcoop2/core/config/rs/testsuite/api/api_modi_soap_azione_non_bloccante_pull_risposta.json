@@ -1,0 +1,23 @@
+{
+  "nome": "azione_",
+  "profilo_ridefinito": false,
+  "id_collaborazione": false,
+  "riferimento_id_richiesta": false,
+	"modi": {
+		"interazione": {
+			"pattern": "non-bloccante",
+			"tipo": "pull",
+			"funzione": "risposta",
+			"azione_correlata": {
+			"api_nome": "a",
+			"api_versione": 1,
+			"servizio": "",
+			"azione": "libri_richiesta"
+			}
+		},
+		"sicurezza_messaggio": {
+			"stato": "api"
+		}
+	}
+}
+

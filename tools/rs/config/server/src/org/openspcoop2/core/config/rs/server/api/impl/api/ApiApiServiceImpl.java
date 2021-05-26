@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaRest;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaView;
 import org.openspcoop2.core.config.rs.server.model.ApiItem;
+import org.openspcoop2.core.config.rs.server.model.ApiModI;
 import org.openspcoop2.core.config.rs.server.model.ApiReferenteView;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
@@ -79,6 +80,9 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
@@ -140,9 +144,20 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			}
 
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
+
 			AccordoServizioParteComune as = ApiApiHelper.accordoApiToRegistro(body, env);
 
-			if (env.apcCore.existsAccordoServizio(env.idAccordoFactory.getIDAccordoFromAccordo(as)))
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo);
+	
+				if(protocolProperties != null) {
+					as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+			
+			IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+			if (env.apcCore.existsAccordoServizio(idAccordoFromAccordo))
 				throw FaultCode.CONFLITTO.toException("Api già esistente");
 
 			boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
@@ -194,6 +209,9 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
+			
+			ApiApiHelper.validateProperties(env, protocolProperties, idAccordoFromAccordo);
+			
 
 			List<Object> objectToCreate = new ArrayList<>();
 			
@@ -348,6 +366,16 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (env.apcCore.existsAccordoServizioPorttypeOperation(newOp.getNome(), pt.getId()))
 				throw FaultCode.CONFLITTO.toException("L'azione " + newOp.getNome() + " è già stata associata alla Api");
 
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, as, newOp, env);
+	
+				if(protocolProperties != null) {
+					newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+
+			
 			pt.addAzione(newOp);
 			
 			ProfiloCollaborazioneEnum profiloBody = body.getProfiloCollaborazione()!=null ? body.getProfiloCollaborazione() : ProfiloCollaborazioneEnum.SINCRONO;
@@ -422,6 +450,16 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			}
 
 			Resource newRes = ApiApiHelper.apiRisorsaToRegistro(body, as);
+
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, newRes, env);
+	
+				if(protocolProperties != null) {
+					newRes.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+			
 
 			if (StringUtils.isEmpty(newRes.getNome()) && newRes.getMethod() == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il campo nome non è stato definito");
@@ -547,10 +585,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
+
 			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 
 			if (as != null) {
 				StringBuilder inUsoMessage = new StringBuilder();
+				
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComune(as, env.userLogin, env.apcCore,
 						env.apcHelper, inUsoMessage, "\n");
 				if (inUsoMessage.length() > 0)
@@ -1282,12 +1322,16 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (pt == null)
 				throw FaultCode.NOT_FOUND.toException("Nessun Servizio con nome: " + nomeServizio);
 
-			ApiAzione ret = pt.getAzioneList().stream().filter(a -> nomeAzione.equals(a.getNome()))
-					.map(a -> ApiApiHelper.operazioneToApiAzione(a)).findFirst().orElse(null);
+			Operation az = pt.getAzioneList().stream().filter(a -> nomeAzione.equals(a.getNome()))
+					.findFirst().orElse(null);
 
-			if (ret == null)
+			if (az == null)
 				throw FaultCode.NOT_FOUND
 						.toException("Nessuna azione con nome " + nomeAzione + " registrato per il servizio " + nomeServizio);
+
+			ApiAzione ret = ApiApiHelper.operazioneToApiAzione(az);
+
+			ApiApiHelper.populateApiAzioneWithProtocolInfo(as, az, env, profilo, ret);
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1491,6 +1535,44 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 	}
 
 	/**
+	* Restituisce le informazioni ModI associate all'API
+	*
+	* Questa operazione consente di ottenere le informazioni ModI associato all'API identificata dal nome e dalla versione
+	*
+	*/
+	@Override
+	public ApiModI getApiModI(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+		        
+			ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
+
+			if (as == null)
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			ApiModI ret = ModiApiApiHelper.getApiModI(as, profilo, env);
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+    
+
+	/**
 	 * Restituisce il nome del soggetto referente dell'api
 	 *
 	 * Questa operazione consente di ottenere il nome del soggetto referente
@@ -1550,12 +1632,17 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 
-			ApiRisorsa ret = as.getResourceList().stream().filter(r -> nomeRisorsa.equals(r.getNome()))
-					.map(r -> ApiApiHelper.risorsaRegistroToApi(r)).findFirst().orElse(null);
+			Resource res = as.getResourceList().stream().filter(r -> nomeRisorsa.equals(r.getNome()))
+					.findFirst().orElse(null);
 
-			if (ret == null)
+			if (res == null)
 				throw FaultCode.NOT_FOUND
 						.toException("Nessuna risorsa con nome " + nomeRisorsa + " è registrata per la Api indicata");
+
+
+			ApiRisorsa ret = ApiApiHelper.risorsaRegistroToApi(res);
+
+			ApiApiHelper.populateApiRisorsaWithProtocolInfo(as, res, env, profilo, ret);
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1762,6 +1849,15 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			ProfiloCollaborazioneEnum profiloBody = body.getProfiloCollaborazione()!=null ? body.getProfiloCollaborazione() : ProfiloCollaborazioneEnum.SINCRONO;
 			
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, as, newOp, env);
+	
+				if(protocolProperties != null) {
+					newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.CHANGE, null));
+				}
+			}
+
 			if (! env.apcHelper.accordiPorttypeOperationCheckData(
 					TipoOperazione.CHANGE,
 					as.getId().toString(),
@@ -2234,6 +2330,53 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 	}
 
 	/**
+	 * Consente di modificare le informazioni ModI associate all'API
+	 *
+	 * Questa operazione consente di aggiornare le informazioni ModI associate all'API identificata dal nome e dalla versione
+	 *
+	*/
+	@Override
+	public void updateApiModI(ApiModI body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+		        
+			if (body == null)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
+
+			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			final AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
+
+			if (as == null)
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
+
+			ProtocolProperties updateModiProtocolProperties = ModiApiApiHelper.updateModiProtocolProperties(as, profilo, body);
+			
+			IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
+			ApiApiHelper.validateProperties(env, updateModiProtocolProperties, idAccordoFromAccordo);
+			
+			if(updateModiProtocolProperties != null) {
+				as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(updateModiProtocolProperties, ConsoleOperationType.ADD, null));
+			}
+
+			env.apcCore.performUpdateOperation(env.userLogin, false, as);
+
+			context.getLogger().info("Invocazione completata con successo");
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
+
+	/**
 	 * Modifica i dati di una risorsa di una API
 	 *
 	 * Questa operazione consente di aggiornare i dettagli di una risorsa della API
@@ -2272,6 +2415,15 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			ApiApiHelper.updateRisorsa(body, oldResource);
 			final Resource newRes = oldResource;
+
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ApiApiHelper.getProtocolProperties(body, profilo, newRes, env);
+	
+				if(protocolProperties != null) {
+					newRes.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.CHANGE, null));
+				}
+			}
 
 			if (!env.apcHelper.accordiResourceCheckData(TipoOperazione.CHANGE, as.getId().toString(),
 					body.getNome() != null ? body.getNome() : "", newRes.getNome(), newRes.getPath(), newRes.get_value_method(),

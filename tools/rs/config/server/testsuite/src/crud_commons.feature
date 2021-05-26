@@ -26,6 +26,7 @@ Scenario:
 * def delete_404 = read('classpath:delete_404.feature')
 * def update_204 = read('classpath:update_204.feature')
 * def update_404 = read('classpath:update_404.feature')
+* def update_400 = read('classpath:update_400.feature')
 
 
 * def random = function() { return java.lang.System.currentTimeMillis() }

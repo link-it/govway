@@ -1,0 +1,21 @@
+{
+	"nome": "PetStore",
+	"descrizione": "DescrizioneApiJson",
+	"tipo_interfaccia": {
+		"protocollo": "soap",
+		"formato": "Wsdl1.1"
+	},
+	"versione": 1,
+	"interfaccia": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHdzZGw6ZGVmaW5pdGlvbnMgdGFyZ2V0TmFtZXNwYWNlPSJodHRwOi8vd3d3Lm9wZW5zcGNvb3AyLm9yZy9leGFtcGxlIiB4bWxuczp4c2Q9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hIiB4bWxuczpzb2FwPSJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93c2RsL3NvYXAvIiB4bWxuczpzcGM9Imh0dHA6Ly93d3cub3BlbnNwY29vcDIub3JnL2V4YW1wbGUiIHhtbG5zOndzZGw9Imh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzZGwvIj4KICAKICA8d3NkbDppbXBvcnQgbmFtZXNwYWNlPSJodHRwOi8vd3d3Lm9wZW5zcGNvb3AyLm9yZy9leGFtcGxlIiBsb2NhdGlvbj0iZGVmaW5pdG9yaW8ueHNkIj4KICA8L3dzZGw6aW1wb3J0PgoKICA8IS0tIEVzLiBTaW5jcm9ubyAtLT4KICA8d3NkbDptZXNzYWdlIG5hbWU9InNlcnZpemlvQ29tcG9zdG9SZXF1ZXN0Ij4KICAgIDx3c2RsOnBhcnQgbmFtZT0ic2Vydml6aW9Db21wb3N0b1JlcXVlc3RQYXJ0IiBlbGVtZW50PSJzcGM6c2Vydml6aW9Db21wb3N0b1JlcXVlc3QiPgogICAgPC93c2RsOnBhcnQ+CiAgPC93c2RsOm1lc3NhZ2U+CiAgPHdzZGw6bWVzc2FnZSBuYW1lPSJzZXJ2aXppb0NvbXBvc3RvUmVzcG9uc2UiPgogICAgPHdzZGw6cGFydCBuYW1lPSJzZXJ2aXppb0NvbXBvc3RvUmVzcG9uc2VQYXJ0IiBlbGVtZW50PSJzcGM6c2Vydml6aW9Db21wb3N0b1Jlc3BvbnNlIj4KICAgIDwvd3NkbDpwYXJ0PgogIDwvd3NkbDptZXNzYWdlPgoKICA8IS0tIEVzLiBTaW5jcm9ubyAtLT4KICA8d3NkbDpwb3J0VHlwZSBuYW1lPSJFc2VtcGlvU2Vydml6aW9Db21wb3N0byI+CiAgICA8d3NkbDpvcGVyYXRpb24gbmFtZT0ic2Vydml6aW9Db21wb3N0byI+CiAgICAgIDx3c2RsOmlucHV0IG1lc3NhZ2U9InNwYzpzZXJ2aXppb0NvbXBvc3RvUmVxdWVzdCI+CiAgICA8L3dzZGw6aW5wdXQ+CiAgICAgIDx3c2RsOm91dHB1dCBtZXNzYWdlPSJzcGM6c2Vydml6aW9Db21wb3N0b1Jlc3BvbnNlIj4KICAgIDwvd3NkbDpvdXRwdXQ+CiAgICA8L3dzZGw6b3BlcmF0aW9uPgogIDwvd3NkbDpwb3J0VHlwZT4KCjwvd3NkbDpkZWZpbml0aW9ucz4K",
+	"modi": {
+		"sicurezza_canale": {
+			"pattern": "auth01"
+		},
+		"sicurezza_messaggio": {
+			"pattern": "integrity01-auth02",
+			"applicabilita": "richiesta",
+			"informazioni_utente" : true,
+			"soap_firma_allegati" : true
+		}
+	}
+}

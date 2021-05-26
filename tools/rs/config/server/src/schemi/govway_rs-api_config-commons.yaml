@@ -312,7 +312,181 @@ components:
           $ref: '#/components/schemas/TipoApiEnum'
         formato:
           $ref: '#/components/schemas/FormatoSoapEnum'
-                      
+
+    # ModI Configurazione
+    ApiModI:
+      type: object
+      required:
+        - sicurezza_canale
+        - sicurezza_messaggio
+      properties:
+        sicurezza_canale:
+           $ref: '#/components/schemas/ApiModISicurezzaCanale'
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/ApiModISicurezzaMessaggio'
+    ApiModISicurezzaCanale:
+      type: object
+      required:
+        - pattern
+      properties:
+        pattern:
+           $ref: '#/components/schemas/ModISicurezzaCanaleEnum'
+    ApiModISicurezzaMessaggio:
+      type: object
+      required:
+        - pattern
+      properties:
+        pattern:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioEnum'
+        digest_richiesta:
+          type: boolean
+          default: false
+        informazioni_utente:
+          type: boolean
+          default: false
+        rest_header: 
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestHeaderEnum'
+        soap_firma_allegati:
+          type: boolean
+          default: false
+        applicabilita: 
+           $ref: '#/components/schemas/ModISicurezzaMessaggioApplicabilitaEnum' 
+        applicabilita_custom:
+          $ref: '#/components/schemas/ApiModISicurezzaMessaggioApplicabilitaCustom'
+    ApiModISicurezzaMessaggioApplicabilitaCustom:
+      type: object
+      required:
+        - applicabilita
+        - richiesta
+        - risposta
+      properties:
+        applicabilita: 
+           $ref: '#/components/schemas/ModISicurezzaMessaggioApplicabilitaEnum'
+        richiesta:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioApplicabilitaCustomEnum'
+        richiesta_content_type:
+          type: string
+          maxLength: 4000
+        risposta:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioApplicabilitaCustomEnum'  
+        risposta_content_type:
+          type: string
+          maxLength: 4000
+        risposta_codice:
+          type: string
+          maxLength: 4000
+    ApiModIPatternInterazione:
+      type: object
+      required:
+        - pattern
+      properties:
+        pattern:
+           $ref: '#/components/schemas/ModIPatternInterazioneEnum'
+        tipo:
+           $ref: '#/components/schemas/ModIPatternInterazioneTipoEnum'
+        funzione:
+           $ref: '#/components/schemas/ModIPatternInterazioneFunzioneEnum'
+    ApiModIPatternInterazioneRest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiModIPatternInterazione'
+        - type: object
+          properties:
+            risorsa_correlata:
+              $ref: '#/components/schemas/ApiModIPatternInterazioneCorrelazioneRest'         
+    ApiModIPatternInterazioneSoap:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiModIPatternInterazione'
+        - type: object
+          properties:
+            azione_correlata:
+              $ref: '#/components/schemas/ApiModIPatternInterazioneCorrelazioneSoap'          
+    ApiModIPatternInterazioneCorrelazioneRest:
+      type: object
+      required:
+        - api_nome
+        - api_versione        
+      properties:
+        api_nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        api_versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+        risorsa_http_method:
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/HttpMethodEnum'
+        risorsa_path:
+          type: string
+          maxLength: 255
+          example: '/libri'         
+    ApiModIPatternInterazioneCorrelazioneSoap:
+      type: object
+      required:
+        - api_nome
+        - api_versione 
+        - servizio       
+      properties:
+        api_nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        api_versione:
+          $ref: 'govway_core.yaml#/components/schemas/Versione'
+        servizio:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        azione:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+    ApiModIRisorsaRest:
+      type: object
+      required:
+        - interazione
+        - sicurezza_messaggio
+      properties:
+        interazione:
+           $ref: '#/components/schemas/ApiModIPatternInterazioneRest'
+        sicurezza_messaggio:
+           type: object
+           oneOf:
+            - $ref: '#/components/schemas/ApiModISicurezzaMessaggioOperazione'
+            - $ref: '#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito'
+           discriminator:
+             propertyName: stato
+             mapping:
+              'api': '#/components/schemas/ApiModISicurezzaMessaggioOperazione'
+              'ridefinito': '#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito'
+    ApiModIAzioneSoap:
+      type: object
+      required:
+        - interazione
+        - sicurezza_messaggio
+      properties:
+        interazione:
+           $ref: '#/components/schemas/ApiModIPatternInterazioneSoap'
+        sicurezza_messaggio:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiModISicurezzaMessaggioOperazione'
+            - $ref: '#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito'
+          discriminator:
+            propertyName: stato
+            mapping:
+              'api': '#/components/schemas/ApiModISicurezzaMessaggioOperazione'
+              'ridefinito': '#/components/schemas/ApiModISicurezzaMessaggioOperazioneRidefinito'
+    ApiModISicurezzaMessaggioOperazione:
+      type: object
+      required:
+        - stato
+      properties:
+        stato:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioOperazioneEnum'
+    ApiModISicurezzaMessaggioOperazioneRidefinito:
+      type: object
+      required:
+        - stato
+        - configurazione
+      properties:
+        stato:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioOperazioneEnum'
+        configurazione:
+           $ref: '#/components/schemas/ApiModISicurezzaMessaggio'
+
     # Base: Credenziali
     AuthenticationHttpBasic:
       type: object
@@ -446,6 +620,71 @@ components:
               'principal': '#/components/schemas/AuthenticationPrincipal'
               'api-key': '#/components/schemas/AuthenticationApiKey'
 
+    # Base: Store (i tipi di keystore vengono definiti dove viene esteso l'oggetto)
+    BaseTrustStore:
+      type: object
+      required: 
+        - truststore_path
+        - truststore_password
+      properties:
+        truststore_path:
+          type: string
+          maxLength: 4000
+          example: '/path/to/truststore'
+        truststore_password:
+          type: string
+          format: password
+          maxLength: 255
+          example: 'pwd'
+        truststore_crl:
+          type: string
+          maxLength: 4000
+    BaseKeyStore:
+      type: object
+      required: 
+        - keystore_password
+        - key_password
+      properties:
+        keystore_password:
+          type: string
+          format: password
+          maxLength: 255
+          example: 'pwd'
+        key_password:
+          type: string
+          format: password
+          maxLength: 255
+          description: password della chiave privata
+          example: 'pwd'
+        key_alias:
+          type: string
+          maxLength: 255
+          description: alias della chiave privata
+          example: 'pwd'
+    BaseKeyStoreFile:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseKeyStore'
+        - type: object
+          required: 
+            - keystore_path
+          properties:
+            keystore_path:
+              type: string
+              maxLength: 4000
+              example: '/path/to/keystore'
+    BaseKeyStoreArchive:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseKeyStore'
+        - type: object
+          required: 
+            - keystore_archivio
+          properties:
+            keystore_archivio:
+              type: string
+              format: byte
+
     # Base: Connettore 
     ConnettoreConfigurazioneHttpBasic:
       type: object
@@ -484,64 +723,34 @@ components:
           $ref: '#/components/schemas/ConnettoreConfigurazioneHttpsClient'
     ConnettoreConfigurazioneHttpsServer:
       type: object
-      required: 
-        - truststore_path
-        - truststore_tipo
-        - truststore_password
-      properties:
-        truststore_path:
-          type: string
-          maxLength: 255
-          example: '/path/to/truststore'
-        truststore_tipo:
-          $ref: '#/components/schemas/KeystoreEnum'
-        truststore_password:
-          type: string
-          format: password
-          maxLength: 255
-          example: 'pwd'
-        truststore_crl:
-          type: string
-        algoritmo:
-          type: string
-          maxLength: 255
-          example: 'PKIX'
-          default: 'PKIX'
+      allOf:
+        - $ref: '#/components/schemas/BaseTrustStore'
+        - type: object
+          required: 
+          - truststore_tipo
+          properties:
+            truststore_tipo:
+              $ref: '#/components/schemas/KeystoreEnum'
+            algoritmo:
+              type: string
+              maxLength: 255
+              example: 'PKIX'
+              default: 'PKIX'
     ConnettoreConfigurazioneHttpsClient:
       type: object
-      required: 
-        - keystore_path
-        - keystore_tipo
-        - keystore_password
-        - key_password
-      properties:
-        keystore_path:
-          type: string
-          maxLength: 255
-          example: '/path/to/keystore'
-        keystore_tipo:
-          $ref: '#/components/schemas/KeystoreEnum'
-        keystore_password:
-          type: string
-          format: password
-          maxLength: 255
-          example: 'pwd'
-        key_password:
-          type: string
-          format: password
-          maxLength: 255
-          description: password della chiave privata
-          example: 'pwd'
-        key_alias:
-          type: string
-          maxLength: 255
-          description: alias della chiave privata
-          example: 'pwd'
-        algoritmo:
-          type: string
-          maxLength: 255
-          example: 'SunX509'
-          default: 'SunX509'
+      allOf:
+        - $ref: '#/components/schemas/BaseKeyStoreFile'
+        - type: object
+          required: 
+            - keystore_tipo
+          properties:
+            keystore_tipo:
+              $ref: '#/components/schemas/KeystoreEnum'
+            algoritmo:
+              type: string
+              maxLength: 255
+              example: 'SunX509'
+              default: 'SunX509'
     ConnettoreConfigurazioneProxy:
       type: object
       required: 
@@ -598,6 +807,7 @@ components:
         endpoint:
           type: string
           format: uri
+          maxLength: 4000
           example: 'http://ente.it/servizio'
         autenticazione_http:
           $ref: '#/components/schemas/ConnettoreConfigurazioneHttpBasic'
@@ -1185,6 +1395,525 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/ApiImplAllegatoItem'
+
+    # ModI Erogazione
+    ErogazioneModI:
+      type: object
+      required:
+        - modi
+      properties:
+        modi:
+          oneOf:
+          - $ref: '#/components/schemas/ErogazioneModISoap'
+          - $ref: '#/components/schemas/ErogazioneModIRest'
+          discriminator:
+            propertyName: protocollo
+            mapping:
+              'soap': '#/components/schemas/ErogazioneModISoap'
+              'rest': '#/components/schemas/ErogazioneModIRest'      
+      
+    # ModI Erogazione SOAP
+    ErogazioneModISoap:
+      type: object      
+      required:
+        - protocollo
+        - richiesta
+        - risposta
+      properties:
+        protocollo:
+           $ref: '#/components/schemas/TipoApiEnum'
+        richiesta:
+           $ref: '#/components/schemas/ErogazioneModISoapRichiesta'
+        risposta:
+           $ref: '#/components/schemas/ErogazioneModISoapRisposta'
+    ErogazioneModISoapRichiesta:
+      type: object      
+      required:
+        - sicurezza_messaggio
+      properties:
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/ErogazioneModISoapRichiestaSicurezzaMessaggio'
+    ErogazioneModISoapRichiestaSicurezzaMessaggio:
+      type: object      
+      required:
+        - truststore
+      properties:
+        truststore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModITrustStoreDefault'
+            - $ref: '#/components/schemas/ModITrustStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModITrustStoreDefault'
+              'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        wsa_to:
+          type: string
+          maxLength: 4000
+    ErogazioneModISoapRisposta:
+      type: object      
+      required:
+        - sicurezza_messaggio
+      properties:
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/ErogazioneModISoapRispostaSicurezzaMessaggio'
+    ErogazioneModISoapRispostaSicurezzaMessaggio:
+      type: object      
+      required:
+        - keystore
+      properties:
+        algoritmo:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma'
+        forma_canonica_xml:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml'
+        riferimento_x509:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioSoapRiferimentoX509'
+        certificate_chain:
+          type: boolean
+        includi_signature_token:
+          type: boolean      
+        keystore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModIKeyStoreDefault'
+            - $ref: '#/components/schemas/ModIKeyStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModIKeyStoreDefault'
+              'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
+          default: 300
+
+    # ModI Erogazione REST
+    ErogazioneModIRest:
+      type: object      
+      required:
+        - protocollo
+        - richiesta
+        - risposta
+      properties:
+        protocollo:
+           $ref: '#/components/schemas/TipoApiEnum'
+        richiesta:
+           $ref: '#/components/schemas/ErogazioneModIRestRichiesta'
+        risposta:
+           $ref: '#/components/schemas/ErogazioneModIRestRisposta'
+    ErogazioneModIRestRichiesta:
+      type: object      
+      required:
+        - sicurezza_messaggio
+      properties:
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/ErogazioneModIRestRichiestaSicurezzaMessaggio'
+    ErogazioneModIRestRichiestaSicurezzaMessaggio:
+      type: object      
+      required:
+        - riferimento_x509
+        - truststore
+      properties:
+        riferimento_x509:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509'
+          minItems: 1
+          maxItems: 3
+        truststore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModITrustStoreDefault'
+            - $ref: '#/components/schemas/ModITrustStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModITrustStoreDefault'
+              'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        truststore_ssl: # x5u
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModITrustStoreDefault'
+            - $ref: '#/components/schemas/ModITrustStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModITrustStoreDefault'
+              'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        audience:
+          type: string
+          maxLength: 4000
+    ErogazioneModIRestRisposta:
+      type: object      
+      required:
+        - sicurezza_messaggio
+      properties:
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggio'
+    ErogazioneModIRestRispostaSicurezzaMessaggio:
+      type: object      
+      required:
+        - keystore
+      properties:
+        algoritmo:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioRestAlgoritmoFirma'
+        header_http_firmare:
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000 
+        riferimento_x509:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509Risposta'
+        riferimento_x509_risposta:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509'
+          minItems: 1
+          maxItems: 3
+        certificate_chain:
+          type: boolean
+        url:
+          type: string
+          maxLength: 4000      
+        keystore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModIKeyStoreDefault'
+            - $ref: '#/components/schemas/ModIKeyStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModIKeyStoreDefault'
+              'ridefinito': '#/components/schemas/ModIKeyStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
+          default: 300
+
+    # ModI Fruizione
+    FruizioneModI:
+      type: object
+      required:
+        - modi
+      properties:
+        modi:
+          oneOf:
+          - $ref: '#/components/schemas/FruizioneModISoap'
+          - $ref: '#/components/schemas/FruizioneModIRest'
+          discriminator:
+            propertyName: protocollo
+            mapping:
+              'soap': '#/components/schemas/FruizioneModISoap'
+              'rest': '#/components/schemas/FruizioneModIRest' 
+      
+    # ModI Fruizione SOAP
+    FruizioneModISoap:
+      type: object      
+      required:
+        - protocollo
+        - richiesta
+        - risposta
+      properties:
+        protocollo:
+           $ref: '#/components/schemas/TipoApiEnum'
+        richiesta:
+           $ref: '#/components/schemas/FruizioneModISoapRichiesta'
+        risposta:
+           $ref: '#/components/schemas/FruizioneModISoapRisposta'
+    FruizioneModISoapRichiesta:
+      type: object      
+      required:
+        - sicurezza_messaggio
+      properties:
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/FruizioneModISoapRichiestaSicurezzaMessaggio'
+    FruizioneModISoapRichiestaSicurezzaMessaggio:
+      type: object      
+      properties:
+        algoritmo:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma'
+        forma_canonica_xml:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml'
+        riferimento_x509:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioSoapRiferimentoX509'
+        certificate_chain:
+          type: boolean
+        includi_signature_token:
+          type: boolean
+        time_to_live:
+          type: integer
+          format: int32
+          default: 300
+        wsa_to:
+          type: string
+          maxLength: 4000
+        informazioni_utente_codice_ente:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+        informazioni_utente_userid:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+        informazioni_utente_indirizzo_ip:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+    FruizioneModISoapRichiestaInformazioneUtente:
+      type: object      
+      required:
+        - modalita
+      properties:
+        modalita:
+           $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+        valore:
+          type: string
+          maxLength: 4000
+    FruizioneModISoapRisposta:
+      type: object      
+      required:
+        - sicurezza_messaggio
+      properties:
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/FruizioneModISoapRispostaSicurezzaMessaggio'
+    FruizioneModISoapRispostaSicurezzaMessaggio:
+      type: object      
+      required:
+        - truststore
+      properties:   
+        truststore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModITrustStoreDefault'
+            - $ref: '#/components/schemas/ModITrustStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModITrustStoreDefault'
+              'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        verifica_wsa_to:
+          type: boolean
+          default: true
+
+    # ModI Fruizione REST
+    FruizioneModIRest:
+      type: object      
+      required:
+        - protocollo
+        - richiesta
+        - risposta
+      properties:
+        protocollo:
+           $ref: '#/components/schemas/TipoApiEnum'
+        richiesta:
+           $ref: '#/components/schemas/FruizioneModIRestRichiesta'
+        risposta:
+           $ref: '#/components/schemas/FruizioneModIRestRisposta'
+    FruizioneModIRestRichiesta:
+      type: object      
+      required:
+        - sicurezza_messaggio
+      properties:
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/FruizioneModIRestRichiestaSicurezzaMessaggio'
+    FruizioneModIRestRichiestaSicurezzaMessaggio:
+      type: object      
+      required:
+        - riferimento_x509
+      properties:
+        algoritmo:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioRestAlgoritmoFirma'
+        header_http_firmare:
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000 
+        riferimento_x509:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509'
+          minItems: 1
+          maxItems: 3
+        certificate_chain:
+          type: boolean
+        time_to_live:
+          type: integer
+          format: int32
+          default: 300
+        audience:
+          type: string
+          maxLength: 4000
+        informazioni_utente_codice_ente:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+        informazioni_utente_userid:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+        informazioni_utente_indirizzo_ip:
+          $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+    FruizioneModIRestRisposta:
+      type: object      
+      required:
+        - sicurezza_messaggio
+      properties:
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/FruizioneModIRestRispostaSicurezzaMessaggio'
+    FruizioneModIRestRispostaSicurezzaMessaggio:
+      type: object      
+      required:
+        - truststore
+      properties:
+        riferimento_x509:
+          $ref: '#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509Risposta'
+        riferimento_x509_risposta:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModISicurezzaMessaggioRestRiferimentoX509'
+          minItems: 1
+          maxItems: 3
+        truststore:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModITrustStoreDefault'
+            - $ref: '#/components/schemas/ModITrustStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModITrustStoreDefault'
+              'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        truststore_ssl: #x5u
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ModITrustStoreDefault'
+            - $ref: '#/components/schemas/ModITrustStoreRidefinito'
+          discriminator:
+            propertyName: modalita
+            mapping:
+              'default': '#/components/schemas/ModITrustStoreDefault'
+              'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        verifica_audience:
+          type: boolean
+          default: true
+
+    # ModI Applicativo
+
+    ModIApplicativoEsterno:
+      type: object      
+      required:
+        - dominio
+      properties:
+        dominio:
+          $ref: '#/components/schemas/DominioEnum'
+        reply_audience:
+           type: string
+           maxLength: 4000         
+    
+    ModIApplicativoInterno:
+      type: object      
+      required:
+        - dominio
+        - sicurezza_messaggio
+      properties:
+        dominio:
+          $ref: '#/components/schemas/DominioEnum'
+        sicurezza_messaggio:
+           $ref: '#/components/schemas/ModIApplicativoSicurezzaMessaggio'
+    ModIApplicativoSicurezzaMessaggio:
+      type: object      
+      required:
+        - keystore
+      properties:     
+        keystore:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/ModIKeyStoreArchive'
+          - $ref: '#/components/schemas/ModIKeyStoreFile'
+          discriminator:
+            propertyName: tipologia
+            mapping:
+              'archivio': '#/components/schemas/ModIKeyStoreArchive'
+              'filesystem': '#/components/schemas/ModIKeyStoreFile'
+        reply_audience:
+           type: string
+           maxLength: 4000
+        url_x5u:
+          type: string
+          maxLength: 4000 
+
+    # ModI Store
+
+    ModITrustStoreDefault:
+      type: object
+      required:
+        - modalita
+      properties:
+        modalita:
+          $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+    ModITrustStoreRidefinito:
+      type: object
+      allOf:
+          - $ref: '#/components/schemas/ModITrustStore'
+          - type: object
+            required:
+              - modalita
+            properties:
+              modalita:
+                $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+    ModITrustStore:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseTrustStore'
+        - type: object
+          required: 
+          - truststore_tipo
+          properties:
+            truststore_tipo:
+              $ref: '#/components/schemas/ModITruststoreEnum'
+
+    ModIKeyStoreDefault:
+      type: object
+      required:
+        - modalita
+      properties:
+        modalita:
+          $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+    ModIKeyStoreRidefinito:
+      type: object
+      required:
+        - modalita
+        - dati_keystore
+      properties:
+        modalita:
+          $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+        dati_keystore:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/ModIKeyStoreArchive'
+          - $ref: '#/components/schemas/ModIKeyStoreFile'
+          discriminator:
+            propertyName: tipologia
+            mapping:
+              'archivio': '#/components/schemas/ModIKeyStoreArchive'
+              'filesystem': '#/components/schemas/ModIKeyStoreFile'
+    ModIKeyStoreFile:
+      type: object      
+      allOf:
+        - $ref: '#/components/schemas/BaseKeyStoreFile'
+        - type: object
+          required:
+            - tipologia 
+            - keystore_tipo
+          properties:
+            tipologia:
+              $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
+            keystore_tipo:
+              $ref: '#/components/schemas/ModIKeystoreEnum'
+    ModIKeyStoreArchive:
+      type: object      
+      allOf:
+        - $ref: '#/components/schemas/BaseKeyStoreArchive'
+        - type: object
+          required:
+            - tipologia 
+            - keystore_tipo
+          properties:
+            tipologia:
+              $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
+            keystore_tipo:
+              $ref: '#/components/schemas/ModIKeystoreEnum'
 
     # Base: Gruppi Erogazione/Fruizione
 
@@ -2210,3 +2939,71 @@ components:
     CanaleEnum:
       type: string
       enum: ['default', 'api', 'implementazione-api']
+    
+    # ModI: Enumeration
+    ModISicurezzaCanaleEnum:
+      type: string
+      enum: ['auth01', 'auth02']
+    ModISicurezzaMessaggioEnum:
+      type: string
+      enum: ['disabilitato', 'auth01', 'auth02', 'integrity01-auth01', 'integrity01-auth02']
+    ModISicurezzaMessaggioRestHeaderEnum:
+      type: string
+      enum: ['agid', 'bearer']
+    ModISicurezzaMessaggioApplicabilitaEnum:
+      type: string
+      enum: ['richiesta', 'risposta', 'qualsiasi', 'custom']
+      default: qualsiasi
+    ModISicurezzaMessaggioApplicabilitaCustomEnum:
+      type: string
+      enum: ['abilitato', 'disabilitato', 'custom']
+      default: abilitato
+    ModIPatternInterazioneEnum:
+      type: string
+      enum: ['crud', 'bloccante' ,'non-bloccante']
+    ModIPatternInterazioneTipoEnum:
+      type: string
+      enum: ['push', 'pull']
+    ModIPatternInterazioneFunzioneEnum:
+      type: string
+      enum: ['richiesta', 'risposta']
+    ModISicurezzaMessaggioOperazioneEnum:
+      type: string
+      enum: ['api', 'ridefinito']
+      default: api
+    ModITruststoreEnum:
+      type: string
+      enum: ['jks']
+      example: 'jks'
+    ModIKeystoreEnum:
+      type: string
+      enum: ['jks', 'pkcs12']
+      example: 'jks'
+    ModIKeystoreTipologiaEnum:
+      type: string
+      enum: ['archivio', 'filesystem']
+      example: 'filesystem'
+    ModISicurezzaMessaggioSoapAlgoritmoFirma:
+      type: string
+      enum: ['DSA-SHA-256', 'ECDSA-SHA-256', 'ECDSA-SHA-384', 'ECDSA-SHA-512', 'RSA-SHA-256', 'RSA-SHA-384', 'RSA-SHA-512']
+      default: RSA-SHA-256
+    ModISicurezzaMessaggioSoapFormaCanonicaXml:
+      type: string
+      enum: ['canonical-xml-10', 'canonical-xml-11', 'exclusive-canonical-xml-10']
+      default: exclusive-canonical-xml-10       
+    ModISicurezzaMessaggioSoapRiferimentoX509:
+      type: string
+      enum: ['binary-security-token', 'issuer-serial-security-token-reference', 'ski-key-identifier', 'thumbprint-key-identifier', 'x509-key-identifier']
+      default: binary-security-token       
+    ModISicurezzaMessaggioRestAlgoritmoFirma:
+      type: string
+      enum: ['ES256', 'ES384', 'ES512', 'RS256', 'RS384', 'RS512']
+      default: RS256
+    ModISicurezzaMessaggioRestRiferimentoX509:
+      type: string
+      enum: ['x5c', 'x5t#256', 'x5u']
+      default: x5c 
+    ModISicurezzaMessaggioRestRiferimentoX509Risposta:
+      type: string
+      enum: ['richiesta', 'ridefinito']
+      default: richiesta     

@@ -35,6 +35,8 @@ public enum ProfiloEnum {
 APIGATEWAY("APIGateway"),
     @XmlEnumValue("ModIPA")
 MODIPA("ModIPA"),
+    @XmlEnumValue("ModI")
+MODI("ModI"),
     @XmlEnumValue("SPCoop")
 SPCOOP("SPCoop"),
     @XmlEnumValue("FatturaPA")

@@ -920,8 +920,16 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	private boolean isMascheraGestioneErogazione(IConsoleHelper consoleHelper) {
 		Object obj = consoleHelper.getSession().getAttribute(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE);
 		String tipologia = null;
-		if(obj != null)
+		if(obj != null) {
 			tipologia = (String) obj;
+		} else {
+			try {
+				String p = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM);
+				if(p!=null) {
+					tipologia = p;
+				}
+			}catch(Exception e) {}
+		}
 		if(tipologia!=null) {
 			if(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
 				return true;
@@ -932,8 +940,16 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	private boolean isMascheraGestioneFruizione(IConsoleHelper consoleHelper) {
 		Object obj = consoleHelper.getSession().getAttribute(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE);
 		String tipologia = null;
-		if(obj != null)
+		if(obj != null) {
 			tipologia = (String) obj;
+		} else {
+			try {
+				String p = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM);
+				if(p!=null) {
+					tipologia = p;
+				}
+			}catch(Exception e) {}
+		}
 		if(tipologia!=null) {
 			if(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 				return true;

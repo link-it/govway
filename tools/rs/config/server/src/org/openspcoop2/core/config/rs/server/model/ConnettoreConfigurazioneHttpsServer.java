@@ -25,42 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ConnettoreConfigurazioneHttpsServer  {
-  
-  @Schema(example = "/path/to/truststore", required = true, description = "")
-  private String truststorePath = null;
+public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   
   @Schema(required = true, description = "")
   private KeystoreEnum truststoreTipo = null;
   
-  @Schema(example = "pwd", required = true, description = "")
-  private String truststorePassword = null;
-  
-  @Schema(description = "")
-  private String truststoreCrl = null;
-  
   @Schema(example = "PKIX", description = "")
   private String algoritmo = "PKIX";
- /**
-   * Get truststorePath
-   * @return truststorePath
-  **/
-  @JsonProperty("truststore_path")
-  @NotNull
-  @Valid
- @Size(max=255)  public String getTruststorePath() {
-    return this.truststorePath;
-  }
-
-  public void setTruststorePath(String truststorePath) {
-    this.truststorePath = truststorePath;
-  }
-
-  public ConnettoreConfigurazioneHttpsServer truststorePath(String truststorePath) {
-    this.truststorePath = truststorePath;
-    return this;
-  }
-
  /**
    * Get truststoreTipo
    * @return truststoreTipo
@@ -78,45 +49,6 @@ public class ConnettoreConfigurazioneHttpsServer  {
 
   public ConnettoreConfigurazioneHttpsServer truststoreTipo(KeystoreEnum truststoreTipo) {
     this.truststoreTipo = truststoreTipo;
-    return this;
-  }
-
- /**
-   * Get truststorePassword
-   * @return truststorePassword
-  **/
-  @JsonProperty("truststore_password")
-  @NotNull
-  @Valid
-  public String getTruststorePassword() {
-    return this.truststorePassword;
-  }
-
-  public void setTruststorePassword(String truststorePassword) {
-    this.truststorePassword = truststorePassword;
-  }
-
-  public ConnettoreConfigurazioneHttpsServer truststorePassword(String truststorePassword) {
-    this.truststorePassword = truststorePassword;
-    return this;
-  }
-
- /**
-   * Get truststoreCrl
-   * @return truststoreCrl
-  **/
-  @JsonProperty("truststore_crl")
-  @Valid
-  public String getTruststoreCrl() {
-    return this.truststoreCrl;
-  }
-
-  public void setTruststoreCrl(String truststoreCrl) {
-    this.truststoreCrl = truststoreCrl;
-  }
-
-  public ConnettoreConfigurazioneHttpsServer truststoreCrl(String truststoreCrl) {
-    this.truststoreCrl = truststoreCrl;
     return this;
   }
 
@@ -144,11 +76,8 @@ public class ConnettoreConfigurazioneHttpsServer  {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ConnettoreConfigurazioneHttpsServer {\n");
-    
-    sb.append("    truststorePath: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststorePath)).append("\n");
+    sb.append("    ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(super.toString())).append("\n");
     sb.append("    truststoreTipo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststoreTipo)).append("\n");
-    sb.append("    truststorePassword: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststorePassword)).append("\n");
-    sb.append("    truststoreCrl: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.truststoreCrl)).append("\n");
     sb.append("    algoritmo: ").append(ConnettoreConfigurazioneHttpsServer.toIndentedString(this.algoritmo)).append("\n");
     sb.append("}");
     return sb.toString();

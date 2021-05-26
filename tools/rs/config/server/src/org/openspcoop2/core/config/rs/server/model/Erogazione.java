@@ -38,6 +38,13 @@ public class Erogazione extends APIImpl {
   
   @Schema(description = "")
   private String canale = null;
+  
+  @Schema(description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "protocollo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModISoap.class, name = "soap"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ErogazioneModIRest.class, name = "rest")  })
+  private OneOfErogazioneModi modi = null;
  /**
    * Get descrizione
    * @return descrizione
@@ -114,6 +121,25 @@ public class Erogazione extends APIImpl {
     return this;
   }
 
+ /**
+   * Get modi
+   * @return modi
+  **/
+  @JsonProperty("modi")
+  @Valid
+  public OneOfErogazioneModi getModi() {
+    return this.modi;
+  }
+
+  public void setModi(OneOfErogazioneModi modi) {
+    this.modi = modi;
+  }
+
+  public Erogazione modi(OneOfErogazioneModi modi) {
+    this.modi = modi;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -124,6 +150,7 @@ public class Erogazione extends APIImpl {
     sb.append("    erogazioneNome: ").append(Erogazione.toIndentedString(this.erogazioneNome)).append("\n");
     sb.append("    erogazioneVersione: ").append(Erogazione.toIndentedString(this.erogazioneVersione)).append("\n");
     sb.append("    canale: ").append(Erogazione.toIndentedString(this.canale)).append("\n");
+    sb.append("    modi: ").append(Erogazione.toIndentedString(this.modi)).append("\n");
     sb.append("}");
     return sb.toString();
   }

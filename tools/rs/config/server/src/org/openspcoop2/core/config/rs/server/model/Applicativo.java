@@ -36,6 +36,13 @@ public class Applicativo extends BaseCredenziali {
   
   @Schema(description = "")
   private List<Proprieta4000> proprieta = null;
+  
+  @Schema(description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "dominio", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIApplicativoInterno.class, name = "interno"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ModIApplicativoEsterno.class, name = "esterno")  })
+  private OneOfApplicativoModi modi = null;
  /**
    * Get nome
    * @return nome
@@ -104,6 +111,25 @@ public class Applicativo extends BaseCredenziali {
     return this;
   }
 
+ /**
+   * Get modi
+   * @return modi
+  **/
+  @JsonProperty("modi")
+  @Valid
+  public OneOfApplicativoModi getModi() {
+    return this.modi;
+  }
+
+  public void setModi(OneOfApplicativoModi modi) {
+    this.modi = modi;
+  }
+
+  public Applicativo modi(OneOfApplicativoModi modi) {
+    this.modi = modi;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -113,6 +139,7 @@ public class Applicativo extends BaseCredenziali {
     sb.append("    nome: ").append(Applicativo.toIndentedString(this.nome)).append("\n");
     sb.append("    ruoli: ").append(Applicativo.toIndentedString(this.ruoli)).append("\n");
     sb.append("    proprieta: ").append(Applicativo.toIndentedString(this.proprieta)).append("\n");
+    sb.append("    modi: ").append(Applicativo.toIndentedString(this.modi)).append("\n");
     sb.append("}");
     return sb.toString();
   }

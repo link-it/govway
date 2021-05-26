@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
 import org.openspcoop2.core.config.rs.server.model.Connettore;
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
+import org.openspcoop2.core.config.rs.server.model.ErogazioneModI;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaErogazioni;
@@ -68,6 +69,9 @@ import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -164,11 +168,22 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				asps = env.apsCore.getServizio(idAps);
 			}
 
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env);
+	
+				if(protocolProperties != null) {
+					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+			
+
 			ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 
 			ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.empty(), body);
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps);
 
 			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env,
 					body.getConnettore());
@@ -638,6 +653,42 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		}
 	}
 
+   
+    /**
+     * Restituisce le informazioni ModI associate all&#x27;erogazione
+     *
+     * Questa operazione consente di ottenere le informazioni modI associate all&#x27;erogazione identificata dal nome e dalla versione
+     *
+     */
+	@Override
+    public ErogazioneModI getErogazioneModI(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+
+			ErogazioneModI ret = ModiErogazioniApiHelper.getErogazioneModi(asps, env, profilo, ErogazioniApiHelper.getProtocolPropertiesMap(asps, env));
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
 	/**
 	 * Restituisce le informazioni sull'url di invocazione necessaria ad invocare
 	 * l'erogazione
@@ -927,6 +978,55 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+
+    /**
+     * Consente di modificare le informazioni ModI associate all&#x27;erogazione
+     *
+     * Questa operazione consente di aggiornare le informazioni ModI assocaite all&#x27;erogazione identificata dal nome e dalla versione
+     *
+     */
+	@Override
+    public void updateErogazioneModI(ErogazioneModI body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
+					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(asps, profilo, body.getModi(), env);
+	
+				if(protocolProperties != null) {
+					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+
+			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
+
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps);
+
+			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
+					env.apsCore);
+
+			env.apsCore.performUpdateOperation(env.userLogin, false, oggettiDaAggiornare.toArray());
+
+			context.getLogger().info("Invocazione completata con successo");
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 
 	/**
 	 * Consente di modificare la configurazione utilizzata per identificare l'azione

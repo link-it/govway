@@ -1,0 +1,16 @@
+{
+  "nome": "libri_richiesta",
+  "profilo_ridefinito": false,
+  "id_collaborazione": false,
+  "riferimento_id_richiesta": false,
+	"modi": {
+		"interazione": {
+			"pattern": "non-bloccante",
+			"tipo": "pull",
+			"funzione": "richiesta"
+		},
+		"sicurezza_messaggio": {
+			"stato": "api"
+		}
+	}
+}
