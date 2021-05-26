@@ -44,3 +44,5 @@ Sono stati apportati i seguenti miglioramenti alla console di gestione:
 
 	- Regole di Proxy Pass
 
+- è adesso possibile attivare una scadenza temporale alle password associate alle utenze delle console.
+
