@@ -33,7 +33,6 @@ import org.openspcoop2.core.config.rs.server.api.ApplicativiApi;
 import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
-import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
