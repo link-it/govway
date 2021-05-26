@@ -635,6 +635,12 @@ public class ServiceBindingConfigurationReader  {
 					to(config.getConflict().getErrorCode(), config.getConflict().getRetry(), config.getConflict().getErrorMessage()),
 					config.isUseInternalFault());
 		}
+		if(config.getRequestTooLarge()!=null){
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.REQUEST_TOO_LARGE, 
+					convertToMessageType(config.getRequestTooLarge().getMessageType()), 
+					to(config.getRequestTooLarge().getErrorCode(), config.getRequestTooLarge().getRetry(), config.getRequestTooLarge().getErrorMessage()),
+					config.isUseInternalFault());
+		}
 		if(config.getLimitExceeded()!=null){
 			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.LIMIT_EXCEEDED, 
 					convertToMessageType(config.getLimitExceeded().getMessageType()), 

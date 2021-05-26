@@ -176,7 +176,10 @@ public class EventiUtils {
 
 
 
-	public static boolean findEventRLViolato(List<Map<String,Object>> events, PolicyAlias policy, String idServizio, Optional<String> gruppo, Logger log) {
+	public static boolean findEventRLViolato(List<Map<String,Object>> events, PolicyAlias policy, String idServizio, Optional<String> gruppo, Logger log, boolean policyApi) {
+		return findEventRLViolato(events, policy.toString(), idServizio, gruppo, log, policyApi);
+	}
+	public static boolean findEventRLViolato(List<Map<String,Object>> events, String policyAlias, String idServizio, Optional<String> gruppo, Logger log, boolean policyApi) {
 		
 		log.debug("======== VERIFICA findEventRLViolato ========");
 		
@@ -189,10 +192,19 @@ public class EventiUtils {
 			boolean contains1 = false;
 			boolean contains2 = false;
 			if(id_configurazione!=null) {
-				contains1 = id_configurazione.contains(policy.toString());
-				contains2 = id_configurazione.contains(idServizio);
+				contains1 = id_configurazione.contains(policyAlias);
+				if(policyApi) {
+					contains2 = id_configurazione.contains(idServizio);
+				}
+				else {
+					contains2 = true;
+				}
 			}
-			boolean match = tipo.equals("RateLimiting_PolicyAPI") &&
+			String tipoPolicy = "PolicyAPI";
+			if(!policyApi) {
+				tipoPolicy = "PolicyGlobale";
+			}
+			boolean match = tipo.equals("RateLimiting_"+tipoPolicy) &&
 					codice.equals("Violazione") &&
 					severita.equals(1) && 
 					contains1 &&
@@ -206,12 +218,12 @@ public class EventiUtils {
 				match = match && contains3;
 			}
 			
-			log.debug("tipo='"+tipo+"' confronto con 'RateLimiting_PolicyAPI': "+tipo.equals("RateLimiting_PolicyAPI"));
+			log.debug("tipo='"+tipo+"' confronto con 'RateLimiting_"+tipoPolicy+"': "+tipo.equals("RateLimiting_"+tipoPolicy));
 			log.debug("codice='"+codice+"' confronto con 'Violazione': "+codice.equals("Violazione"));
 			log.debug("severita='"+severita+"' confronto con 1: "+severita.equals(1));
 			if(id_configurazione!=null) {
 				log.debug("id_configurazione='"+id_configurazione+"'"+
-						"\n\tverifica1 contains("+policy.toString()+")="+contains1+""+
+						"\n\tverifica1 contains("+policyAlias+")="+contains1+""+
 						"\n\tverifica2 contains("+idServizio+")="+contains2+"");
 				if (gruppo.isPresent()) {
 					log.debug("\n\tverifica3 containsGruppo("+gruppo.get()+")="+contains3+"");
@@ -228,8 +240,10 @@ public class EventiUtils {
 	}
 
 
-
-	public static boolean findEventRLViolazioneRisolta(List<Map<String,Object>> events, PolicyAlias policy, String idServizio, Optional<String> gruppo, Logger log) {
+	public static boolean findEventRLViolazioneRisolta(List<Map<String,Object>> events, PolicyAlias policy, String idServizio, Optional<String> gruppo, Logger log, boolean policyApi) {
+		return findEventRLViolazioneRisolta(events, policy.toString(), idServizio, gruppo, log, policyApi);
+	}
+	public static boolean findEventRLViolazioneRisolta(List<Map<String,Object>> events, String policyAlias, String idServizio, Optional<String> gruppo, Logger log, boolean policyApi) {
 		
 		log.debug("======== VERIFICA findEventRLViolazioneRisolta ========");
 		
@@ -242,10 +256,19 @@ public class EventiUtils {
 			boolean contains1 = false;
 			boolean contains2 = false;
 			if(id_configurazione!=null) {
-				contains1 = id_configurazione.contains(policy.toString());
-				contains2 = id_configurazione.contains(idServizio);
+				contains1 = id_configurazione.contains(policyAlias);
+				if(policyApi) {
+					contains2 = id_configurazione.contains(idServizio);
+				}
+				else {
+					contains2 = true;
+				}
 			}
-			boolean match = tipo.equals("RateLimiting_PolicyAPI") &&
+			String tipoPolicy = "PolicyAPI";
+			if(!policyApi) {
+				tipoPolicy = "PolicyGlobale";
+			}
+			boolean match = tipo.equals("RateLimiting_"+tipoPolicy) &&
 					codice.equals("ViolazioneRisolta") &&
 					severita.equals(3) && 
 					contains1 &&
@@ -259,12 +282,12 @@ public class EventiUtils {
 				match = match && contains3;
 			}
 			
-			log.debug("tipo='"+tipo+"' confronto con 'RateLimiting_PolicyAPI': "+tipo.equals("RateLimiting_PolicyAPI"));
+			log.debug("tipo='"+tipo+"' confronto con 'RateLimiting_"+tipoPolicy+"': "+tipo.equals("RateLimiting_"+tipoPolicy));
 			log.debug("codice='"+codice+"' confronto con 'ViolazioneRisolta': "+codice.equals("ViolazioneRisolta"));
 			log.debug("severita='"+severita+"' confronto con 3: "+severita.equals(3));
 			if(id_configurazione!=null) {
 				log.debug("id_configurazione='"+id_configurazione+"'"+
-						"\n\tverifica1 contains("+policy.toString()+")="+contains1+""+
+						"\n\tverifica1 contains("+policyAlias+")="+contains1+""+
 						"\n\tverifica2 contains("+idServizio+")="+contains2+"");
 				if (gruppo.isPresent()) {
 					log.debug("\n\tverifica3 containsGruppo("+gruppo.get()+")="+contains3+"");
@@ -322,8 +345,8 @@ public class EventiUtils {
 		
 		assertEquals(true, findEventCongestioneViolata(events, log));
 		assertEquals(true, findEventCongestioneRisolta(events, log));
-		assertEquals(true, findEventRLViolato(events, PolicyAlias.RICHIESTE_SIMULTANEE, idServizio, gruppo, log));
-		assertEquals(true, findEventRLViolazioneRisolta(events, PolicyAlias.RICHIESTE_SIMULTANEE, idServizio, gruppo, log));
+		assertEquals(true, findEventRLViolato(events, PolicyAlias.RICHIESTE_SIMULTANEE, idServizio, gruppo, log, true));
+		assertEquals(true, findEventRLViolazioneRisolta(events, PolicyAlias.RICHIESTE_SIMULTANEE, idServizio, gruppo, log, true));
 	}
 
 

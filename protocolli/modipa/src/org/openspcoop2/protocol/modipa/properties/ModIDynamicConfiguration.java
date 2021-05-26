@@ -181,14 +181,19 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				this.addKeystoreConfig(configuration, false, true, true);
 			}
 			
+			String labelSicurezzaMessaggioAudienceItem = esterno ? 
+					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_LABEL : 
+					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL;
 			StringConsoleItem profiloSicurezzaMessaggioAudienceItem = (StringConsoleItem) 
 					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
 					ConsoleItemType.TEXT_AREA,
 					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID, 
-					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL);
+					labelSicurezzaMessaggioAudienceItem);
 			profiloSicurezzaMessaggioAudienceItem.setRows(2);
-			profiloSicurezzaMessaggioAudienceItem.setNote(ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_NOTE);
-			ConsoleItemInfo infoAud = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL);
+			profiloSicurezzaMessaggioAudienceItem.setNote(esterno ? 
+					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_NOTE:
+					ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_NOTE);
+			ConsoleItemInfo infoAud = new ConsoleItemInfo(labelSicurezzaMessaggioAudienceItem);
 			if(esterno) {
 				infoAud.setHeaderBody(ModIConsoleCostanti.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO);
 			}

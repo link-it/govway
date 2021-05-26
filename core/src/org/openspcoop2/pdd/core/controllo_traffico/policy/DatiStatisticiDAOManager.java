@@ -763,6 +763,7 @@ public class DatiStatisticiDAOManager  {
 		// Aggiungo esiti specifici
 		switch (tipoRisorsa) {
 		case NUMERO_RICHIESTE:
+		case DIMENSIONE_MASSIMA_MESSAGGIO:
 		case OCCUPAZIONE_BANDA:
 		case TEMPO_COMPLESSIVO_RISPOSTA:
 		case TEMPO_MEDIO_RISPOSTA:

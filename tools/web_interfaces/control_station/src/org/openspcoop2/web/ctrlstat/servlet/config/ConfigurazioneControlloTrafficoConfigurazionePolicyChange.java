@@ -35,6 +35,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -83,6 +84,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyChange extends A
 			String id = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID);
 			long idPolicy = Long.parseLong(id);
 			ConfigurazionePolicy policy = confCore.getConfigurazionePolicy(idPolicy);
+			String oldTipoRisorsa = policy.getRisorsa();
 			
 			boolean editMode = true;
 			boolean editOnlyValueMode = false;
@@ -102,6 +104,17 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyChange extends A
 			String errorValoriSoglia = confHelper.readValoriSogliaPolicyFromHttpParameters(policy, first);
 			if(errorValoriSoglia!=null){
 				confHelper.addParsingError(sbParsingError,errorValoriSoglia);
+			}
+			
+			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA.equals(confHelper.getPostBackElementName())) {
+				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(policy.getRisorsa())) {
+					//if(policy.getValore()==null) {
+					policy.setValore(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA);
+					//}
+					//if(policy.getValore2()==null) {
+					policy.setValore2(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA);
+					//}
+				}
 			}
 			
 			List<AttivazionePolicy> listPolicyAttiveConStatoDisabilitato = null;
@@ -218,6 +231,12 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyChange extends A
 			
 			policy.setDescrizione(descrizionePolicy);
 			
+			if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA.equals(confHelper.getPostBackElementName())) {
+				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(oldTipoRisorsa)) {
+					policy.setIntervalloOsservazione(null);
+				}
+			}
+			
 			if(policy.isBuiltIn()) {
 				editMode = false;
 				editOnlyValueMode = true;
@@ -285,7 +304,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyChange extends A
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.configurazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy, oldNomeSuggeritoPolicy,
+			boolean isOk = confHelper.configurazionePolicyCheckData(sbParsingError, tipoOperazione, configurazioneControlloTraffico, policy, oldNomeSuggeritoPolicy,
 					oldDescrizioneSuggeritaPolicy, oldIdPolicyS, listPolicyAttiveConStatoDisabilitato, updateValueInSeguitoModificaSogliaPolicy);
 			if (!isOk) {
 				

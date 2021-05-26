@@ -7,6 +7,15 @@
         ...
   </servlet-container>
 
+- Su application server wildfly realizzare quanto descritto in https://govway.org/documentazione/installazione/finalizzazione/rateLimiting/dimensioneMassimaMessaggi.html
+
+  L’application server, per default, limita la dimensione del payload delle richieste a 10MB. Per poter modificare il livello di soglia bisogna agire sull’attributo “max-post-size” nell’elemento “http-listener” della configurazione di WildFly (es. in standalone/configuration/standalone.xml): indica il numero di bytes massimo che un payload può contenere per essere processato. Se non presente l’attributo assume il valore di default 10485760 (10MB). È anche possibile disabilitare il limite impostando l’attributo al valore “0”.
+
+   <server name="default-server">
+         <http-listener name="default" socket-binding="http" max-post-size="0" .../>
+         ...
+   </server>
+
 - Su application server tomcat9 abilitare la gestione dei cookies tramite 'LegacyCookieProcessor'.
   Il processore di default 'Rfc6265CookieProcessor' non supporta il formato richiesto dai parametri OpenAPI dei cookie 'form/explode' e 'form/unexplode' (https://swagger.io/docs/specification/serialization/)
   Per farlo editare il file: /opt/apache-tomcat-9.xxx/conf/context.xml
@@ -139,6 +148,10 @@ Di seguito vengono descritti i test del package 'rate_limiting':
 - 'numero_richieste_completate_con_successo', verifica policy definite con metriche basate sul numero di richieste completate con successo in un intervallo
   ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste_completate_con_successo
 
+- 'dimensione_messaggi', verifica policy definite con metriche basate sulla dimensione massima delle richieste e delle risposte
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=RestTest
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=SoapTest
+
 - 'occupazione_banda', verifica policy definite con metriche basate sull'occupazine di banda in un intervallo
   ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.occupazione_banda
 
@@ -183,3 +196,6 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'timeout', verifica i timeout di connessione e lettura dei messaggi di richiesta e risposta
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.timeout
+
+- 'errori', verifica che, su API SOAP, eventuali risposte di errore senza un payload o con un payload html vengano gestite correttamente. 
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.errori

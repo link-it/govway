@@ -38,6 +38,7 @@ public enum IntegrationError implements Serializable {
 	NOT_FOUND, 
 	BAD_REQUEST, 
 	CONFLICT,
+	REQUEST_TOO_LARGE,
 	LIMIT_EXCEEDED,
 	TOO_MANY_REQUESTS, 
 	

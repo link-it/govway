@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/configurazionePdD/2021-05-21-patch.sql

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.message.exception;
 
+import org.openspcoop2.utils.LimitExceededIOException;
+import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
@@ -69,6 +71,28 @@ public class ParseExceptionUtils {
 			if(timeoutException!=null) {
 				pe.setParseException(timeoutException);
 				pe.setSourceException(timeoutException);
+				return pe;
+			}
+		}
+		
+		if(LimitExceededIOException.isLimitExceededIOException(e) || Utilities.existsInnerMessageException(e, LimitedInputStream.ERROR_MSG, true)) {
+			
+			Throwable limitedException = null;
+			if(e instanceof LimitExceededIOException) {
+				limitedException = e;
+			}
+			else {
+				limitedException = Utilities.getInnerInstanceException(e, LimitExceededIOException.class, false);
+			}
+			if(limitedException==null && Utilities.existsInnerMessageException(e, LimitedInputStream.ERROR_MSG, true)) {
+				Throwable exceptionMessageLimitExceeded = Utilities.getInnerMessageException(e, LimitedInputStream.ERROR_MSG, true);
+				if(exceptionMessageLimitExceeded!=null) {
+					limitedException = new LimitExceededIOException(exceptionMessageLimitExceeded.getMessage(), exceptionMessageLimitExceeded);
+				}
+			}
+			if(limitedException!=null) {
+				pe.setParseException(limitedException);
+				pe.setSourceException(limitedException);
 				return pe;
 			}
 		}

@@ -107,7 +107,7 @@ public class FruizioniConfigurazioneHelper {
 							+ " scelto non è assegnabile alla policy di rate limiting");
 		}
 		
-		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, 
+		if (! env.confHelper.attivazionePolicyCheckData(new StringBuilder(), tipoOperazione, configurazioneControlloTraffico, 
 				policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, modalita) ) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 		}

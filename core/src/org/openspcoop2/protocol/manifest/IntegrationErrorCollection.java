@@ -42,6 +42,7 @@ import java.io.Serializable;
  * 			&lt;element name="notFound" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="badRequest" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="conflict" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="requestTooLarge" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="limitExceeded" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="tooManyRequests" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="serviceUnavailable" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/&gt;
@@ -71,6 +72,7 @@ import java.io.Serializable;
   	"notFound",
   	"badRequest",
   	"conflict",
+  	"requestTooLarge",
   	"limitExceeded",
   	"tooManyRequests",
   	"serviceUnavailable",
@@ -134,6 +136,14 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
 
   public void setConflict(IntegrationError conflict) {
     this.conflict = conflict;
+  }
+
+  public IntegrationError getRequestTooLarge() {
+    return this.requestTooLarge;
+  }
+
+  public void setRequestTooLarge(IntegrationError requestTooLarge) {
+    this.requestTooLarge = requestTooLarge;
   }
 
   public IntegrationError getLimitExceeded() {
@@ -253,6 +263,9 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
 
   @XmlElement(name="conflict",required=false,nillable=false)
   protected IntegrationError conflict;
+
+  @XmlElement(name="requestTooLarge",required=false,nillable=false)
+  protected IntegrationError requestTooLarge;
 
   @XmlElement(name="limitExceeded",required=false,nillable=false)
   protected IntegrationError limitExceeded;

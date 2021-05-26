@@ -59,21 +59,55 @@ public class CopyStream {
 		return is;
 	}
 	
+	/** Limited Utilities */
+	public static InputStream buildLimitedInputStream(InputStream isParam, long limitBytes) throws UtilsException {
+		InputStream is = isParam;
+		if(limitBytes>0 && !(is instanceof LimitedInputStream)) {
+			try {
+				is = new LimitedInputStream(isParam, limitBytes);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		return is;
+	}
+	
 	
 	/** Copy Stream */
 	
 	public static void copy(InputStream is,OutputStream os) throws UtilsException{
-		copy(CopyStreamMethod.AUTO, is, os, -1);
+		copy(CopyStreamMethod.AUTO, is, os, -1, -1);
 	}
 	public static void copy(CopyStreamMethod method, InputStream is,OutputStream os) throws UtilsException{
-		copy(method, is, os, -1);
+		copy(method, is, os, -1, -1);
 	}
+	
 	public static void copy(InputStream is,OutputStream os, int timeout) throws UtilsException{
 		copy(CopyStreamMethod.AUTO, is, os, timeout);
 	}
 	public static void copy(CopyStreamMethod method, InputStream isParam,OutputStream os, int timeout) throws UtilsException{
+		copy(method, isParam, os, timeout, -1);
+	}
+	
+	public static void copy(InputStream is,OutputStream os, long limitBytes) throws UtilsException{
+		copy(CopyStreamMethod.AUTO, is, os, limitBytes);
+	}
+	public static void copy(CopyStreamMethod method, InputStream isParam,OutputStream os, long limitBytes) throws UtilsException{
+		copy(method, isParam, os, -1, limitBytes);
+	}
+	
+	public static void copy(InputStream isParam,OutputStream os, int timeout, long limitBytes) throws UtilsException{
+		copy(CopyStreamMethod.AUTO, isParam, os, timeout, limitBytes);
+	}
+	public static void copy(CopyStreamMethod method, InputStream isParam,OutputStream os, int timeout, long limitBytes) throws UtilsException{
 		
-		InputStream is = buildTimeoutInputStream(isParam, timeout);
+		InputStream is = isParam;
+		if(limitBytes>0) {
+			is = buildLimitedInputStream(is, limitBytes);
+		}
+		if(timeout>0) {
+			is = buildTimeoutInputStream(is, timeout);
+		}
 		
 		switch (method) {
 		case JAVA:
@@ -208,22 +242,46 @@ public class CopyStream {
 		}
 	}
 	public static void copy(InputStream from, File to) throws UtilsException{
-		copy(from, to, -1);
+		copy(from, to, -1, -1);
 	}
 	public static void copy(InputStream from, File to, int timeout) throws UtilsException{
+		copy(from, to, timeout, -1);
+	}
+	public static void copy(InputStream from, File to, long limitBytes) throws UtilsException{
+		copy(from, to, -1, limitBytes);
+	}
+	public static void copy(InputStream from, File to, int timeout, long limitBytes) throws UtilsException{
 		try{
-			InputStream is = buildTimeoutInputStream(from, timeout);
+			InputStream is = from;
+			if(limitBytes>0) {
+				is = buildLimitedInputStream(is, limitBytes);
+			}
+			if(timeout>0) {
+				is = buildTimeoutInputStream(is, timeout);
+			}
 			Files.copy(is, to.toPath());
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	public static void copy(InputStream from, File to, CopyOption ... options) throws UtilsException{
-		copy(from, to, -1, options);
+		copy(from, to, -1, -1, options);
 	}
 	public static void copy(InputStream from, File to, int timeout, CopyOption ... options) throws UtilsException{
+		copy(from, to, timeout, -1, options);
+	}
+	public static void copy(InputStream from, File to, long limitBytes, CopyOption ... options) throws UtilsException{
+		copy(from, to, -1, limitBytes, options);
+	}
+	public static void copy(InputStream from, File to, int timeout, long limitBytes, CopyOption ... options) throws UtilsException{
 		try{
-			InputStream is = buildTimeoutInputStream(from, timeout);
+			InputStream is = from;
+			if(limitBytes>0) {
+				is = buildLimitedInputStream(is, limitBytes);
+			}
+			if(timeout>0) {
+				is = buildTimeoutInputStream(is, timeout);
+			}
 			Files.copy(is, to.toPath(), options);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);

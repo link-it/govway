@@ -39,20 +39,32 @@ public class TestCopyStream {
 	@DataProvider(name="copyStreamProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-			{1024, -1, false}, // 1KB
-			{(1024*1024), -1, false}, // 1MB
-			{1024*1024*10, -1, false}, // 10MB
-			// Jenkins va in OutOfMemory {1024*1024*1024, false} // 1GB
-			{1024*1024*10, 120000, false}, // 10MB
-			{1024*1024*10, 2, true}, // 10MB
+			{1024, -1, false, -1, false}, // 1KB
+			{(1024*1024), -1, false, -1, false}, // 1MB
+			{1024*1024*10, -1, false, -1, false}, // 10MB
+			// Jenkins va in OutOfMemory {1024*1024*1024, false, -1, false} // 1GB
+			
+			// errore timeout
+			{1024*1024*10, 120000, false, -1, false}, // 10MB
+			{1024*1024*10, 2, true, -1, false}, // 10MB
+			{1024*1024*10, 2, true, 1024*1024*10, false}, // 10MB
+			
+			// errore limit exceeded
+			{1024*1024*10, -1, false, 1024*1024*10, false}, // 10MB
+			{1024*1024*10, -1, false, 1024*10, true}, // 10MB
+			{1024*1024*10, 120000, false, 1024*10, true}, // 10MB
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="copyStreamProvider")
-	public void testCopyStream(int size, int timeoutMs, boolean expectedTimeout) throws Exception{
+	public void testCopyStream(int size, 
+			int timeoutMs, boolean expectedTimeout,
+			long limitBytes, boolean expectedLimitExceeded) throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.TestCopyStream.test(size, timeoutMs, expectedTimeout);
+		org.openspcoop2.utils.TestCopyStream.test(size, 
+				timeoutMs, expectedTimeout,
+				limitBytes, expectedLimitExceeded);
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

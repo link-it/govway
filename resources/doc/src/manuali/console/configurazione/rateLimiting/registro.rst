@@ -75,6 +75,14 @@ combinazione di scelte attuate.
 
          -  *Numero Massimo di Richieste*
 
+      -  *Dimensione Massima Messaggi*: La policy limita la dimensione massima, in KB, consentita per una richiesta e/o per una risposta.
+	 Selezionando questa metrica siattiveranno i seguenti elementi per la configurazione dei
+         valori di soglia:
+
+         -  *Dimensione Richiesta*
+	
+	 -  *Dimensione Risposta*
+
       -  *OccupazioneBanda*: La policy effettua il controllo sulla banda
          occupata da e verso le comunicazioni con il gateway.
          Selezionando questa risorsa si attiveranno i seguenti elementi

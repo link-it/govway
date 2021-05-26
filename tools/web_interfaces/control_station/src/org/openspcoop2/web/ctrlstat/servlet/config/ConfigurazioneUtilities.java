@@ -202,7 +202,22 @@ public class ConfigurazioneUtilities {
 		for (AttivazionePolicy attivazionePolicy : policies) {
 			
 			boolean delete = true;
-			if(confCore.isConfigurazioneAllarmiEnabled()){
+			
+			boolean policyApi = attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().isEnabled() &&
+					attivazionePolicy.getFiltro().getRuoloPorta()!=null && 
+					attivazionePolicy.getFiltro().getNomePorta()!=null && StringUtils.isNotEmpty(attivazionePolicy.getFiltro().getNomePorta());
+			if("DimensioneMassimaMessaggi".equals(attivazionePolicy.getAlias()) && !policyApi) {
+				if(deleteMessage.length()>0){
+					deleteMessage.append(newLine);
+				}
+				StringBuilder bf = new StringBuilder();
+				bf.append(newLine);
+				bf.append("La policy '"+attivazionePolicy.getAlias()+"' non è eliminabile; è consentito modificarne i valori di soglia o disabilitarla");
+				deleteMessage.append(bf.toString());
+				delete = false;
+			}
+			
+			if(delete && confCore.isConfigurazioneAllarmiEnabled()){
 				
 				RuoloPorta ruoloPorta = null;
 				String nomePorta = null;

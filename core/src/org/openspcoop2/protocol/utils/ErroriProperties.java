@@ -355,14 +355,14 @@ public class ErroriProperties {
 							integrationError = IntegrationError.valueOf(p);
 						}
 					}
-					else if(IntegrationError.BAD_RESPONSE.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapBadResponse(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_BAD_RESPONSE)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_BAD_RESPONSE.name()+".errorCode";
 							p = getProperty(pWrappedName);
 							integrationError = IntegrationError.valueOf(p);
 						}
 					}
-					else if(IntegrationError.INTERNAL_RESPONSE_ERROR.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapInternalResponseError(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR.name()+".errorCode";
 							p = getProperty(pWrappedName);
@@ -442,13 +442,13 @@ public class ErroriProperties {
 							p = getProperty(pWrappedName);
 						}
 					}
-					else if(IntegrationError.BAD_RESPONSE.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapBadResponse(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_BAD_RESPONSE)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_BAD_RESPONSE.name()+".errorType";
 							p = getProperty(pWrappedName);
 						}
 					}
-					else if(IntegrationError.INTERNAL_RESPONSE_ERROR.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapInternalResponseError(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR.name()+".errorType";
 							p = getProperty(pWrappedName);
@@ -511,7 +511,7 @@ public class ErroriProperties {
 							integrationType = this.getErrorType(IntegrationFunctionError.WRAP_400_INTERNAL_BAD_REQUEST);
 						}
 					}
-					else if(IntegrationError.BAD_RESPONSE.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapBadResponse(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_BAD_RESPONSE)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_BAD_RESPONSE.name()+".webSite";
 							p = getOptionalProperty(pWrappedName);
@@ -519,7 +519,7 @@ public class ErroriProperties {
 							integrationType = this.getErrorType(IntegrationFunctionError.WRAP_502_BAD_RESPONSE);
 						}
 					}
-					else if(IntegrationError.INTERNAL_RESPONSE_ERROR.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapInternalResponseError(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR.name()+".webSite";
 							p = getOptionalProperty(pWrappedName);
@@ -590,6 +590,9 @@ public class ErroriProperties {
 			case CONFLICT:
 				site = site.replace(CostantiProtocollo.OPENSPCOOP2_ERRORI_TEMPLATE_HTTP_CODE, "409");
 				break;
+			case REQUEST_TOO_LARGE:
+				site = site.replace(CostantiProtocollo.OPENSPCOOP2_ERRORI_TEMPLATE_HTTP_CODE, "413");
+				break;
 			case LIMIT_EXCEEDED:
 			case TOO_MANY_REQUESTS:
 				site = site.replace(CostantiProtocollo.OPENSPCOOP2_ERRORI_TEMPLATE_HTTP_CODE, "429");
@@ -656,13 +659,13 @@ public class ErroriProperties {
 							p = getProperty(pWrappedName);
 						}
 					}
-					else if(IntegrationError.BAD_RESPONSE.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapBadResponse(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_BAD_RESPONSE)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_BAD_RESPONSE.name()+".genericDetails";
 							p = getProperty(pWrappedName);
 						}
 					}
-					else if(IntegrationError.INTERNAL_RESPONSE_ERROR.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapInternalResponseError(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR.name()+".genericDetails";
 							p = getProperty(pWrappedName);
@@ -718,13 +721,13 @@ public class ErroriProperties {
 							p = getBooleanProperty(pWrappedName);
 						}
 					}
-					else if(IntegrationError.BAD_RESPONSE.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapBadResponse(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_BAD_RESPONSE)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_BAD_RESPONSE.name()+".forceGenericDetails";
 							p = getBooleanProperty(pWrappedName);
 						}
 					}
-					else if(IntegrationError.INTERNAL_RESPONSE_ERROR.equals(integrationError)) {
+					else if(integrationFunctionError.isWrapInternalResponseError(integrationError)) {
 						if(isWrapped(IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR)) {
 							String pWrappedName = IntegrationFunctionError.WRAP_502_INTERNAL_RESPONSE_ERROR.name()+".forceGenericDetails";
 							p = getBooleanProperty(pWrappedName);

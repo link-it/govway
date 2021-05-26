@@ -45,8 +45,25 @@ Background:
     }
     """
 
+* def policy_dimensione_messaggio = read('classpath:bodies/rate-limiting-policy-fruizione_dimensione_messaggio.json')
+* def policy_update_dimensione_messaggio = read('classpath:bodies/rate-limiting-policy-fruizione-update_dimensione_messaggio.json')
+* def policy_types_dimensione_messaggio = [ 'dimensione-massima' ]
+* def build_data_dimensione_messaggio = 
+    """
+    function(policy_types, policy_body, policy_body_update, servizio_path) {
+        var ret = [];
+        for (var idx=0; idx < policy_types.length; idx++) {
+           for (var idy=0; idy < policy_intervalli.length; idy++) {
+              ret.push({servizio_path: servizio_path, policy: policy_body, policy_update: policy_body_update, policy_type: policy_types[idx] } )
+	   }
+        }
+
+        return ret;
+    }
+    """
+
 @RateLimitingAllPolicyTypes
-Scenario: Configurazione Rate Limiting Fruizioni
+Scenario: Configurazione Rate Limiting Fruizioni (eccezione: dimensione massima messaggio non presente).
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
@@ -62,6 +79,20 @@ Scenario: Configurazione Rate Limiting Fruizioni
     * call read('classpath:servizi-configurazione/rate-limiting.feature') data
 
     * call delete ({ resourcePath: 'applicativi/' + applicativo.nome })
+    * call delete ({ resourcePath: fruizione_petstore_path })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@RateLimitingPolicyDimensioneMessaggio
+Scenario: Configurazione Fruizioni Rate Limiting, policy dimensione massima messaggio
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+    
+    * def data = build_data_dimensione_messaggio(policy_types_dimensione_messaggio, policy_dimensione_messaggio, policy_update_dimensione_messaggio, fruizione_petstore_path)
+    * call read('classpath:servizi-configurazione/rate-limiting-dimensione-messaggio.feature') data
+
     * call delete ({ resourcePath: fruizione_petstore_path })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })

@@ -31,6 +31,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -244,7 +245,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, 
+			boolean isOk = confHelper.attivazionePolicyCheckData(sbParsingError, tipoOperazione, configurazioneControlloTraffico, 
 					policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, modalita);
 			if (!isOk) {
 				
@@ -290,6 +291,9 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 
 			List<TipoRisorsaPolicyAttiva> listaTipoRisorsa = 
 					confHelper.gestisciCriteriFiltroRisorsaPolicy(ricerca, ruoloPorta, nomePorta);
+			
+			// imposto come filtro il tipo di risorsa creata in modo da vederlo subito nella lista
+			ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_RISORSA_POLICY, infoPolicy.getTipoRisorsa().getValue());
 			
 			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 			

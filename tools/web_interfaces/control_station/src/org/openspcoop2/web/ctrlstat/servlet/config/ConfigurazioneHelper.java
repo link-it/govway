@@ -7639,7 +7639,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				controlloTraffico.setControlloMaxThreadsSoglia(l);
 			}catch(Exception e){
-				String messaggio = "Il valore ("+numRichieste+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA+"' deve essere un numero intero maggiore di 0";
+				String messaggio = "Il valore ("+numRichieste+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7777,7 +7777,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}catch(Exception e){
 				String messaggio = "Il valore ("+connectionTimeout+") indicato nella sezione '"+
 						ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA_FRUIZIONE
-						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL+"' deve essere un numero intero maggiore di 0";
+						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7800,7 +7800,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}catch(Exception e){
 				String messaggio = "Il valore ("+readTimeout+") indicato nella sezione '"+
 						ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA_FRUIZIONE
-						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL+"' deve essere un numero intero maggiore di 0";
+						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7823,7 +7823,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}catch(Exception e){
 				String messaggio = "Il valore ("+tempoMedioRisposta+") indicato nella sezione '"+
 						ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA_FRUIZIONE
-						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL+"' deve essere un numero intero maggiore di 0";
+						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7855,7 +7855,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}catch(Exception e){
 				String messaggio = "Il valore ("+connectionTimeout+") indicato nella sezione '"+
 						ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA_EROGAZIONE
-						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL+"' deve essere un numero intero maggiore di 0";
+						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT_LABEL+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7878,7 +7878,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}catch(Exception e){
 				String messaggio = "Il valore ("+readTimeout+") indicato nella sezione '"+
 						ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA_EROGAZIONE
-						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL+"' deve essere un numero intero maggiore di 0";
+						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_READ_TIMEOUT_LABEL+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7901,7 +7901,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}catch(Exception e){
 				String messaggio = "Il valore ("+tempoMedioRisposta+") indicato nella sezione '"+
 						ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA_EROGAZIONE
-						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL+"' deve essere un numero intero maggiore di 0";
+						+"' in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7939,7 +7939,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				cache.setSize(l);
 			}catch(Exception e){
-				String messaggio = "Il valore ("+cacheDimensione+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE+"' deve essere un numero intero maggiore di 0";
+				String messaggio = "Il valore ("+cacheDimensione+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7966,7 +7966,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				cache.setLifeTime(l);
 			}catch(Exception e){
-				String messaggio = "Il valore ("+cacheItemLife+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME+"' deve essere un numero intero maggiore di 0";
+				String messaggio = "Il valore ("+cacheItemLife+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -7992,7 +7992,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				cache.setIdleTime(l);
 			}catch(Exception e){
-				String messaggio = "Il valore ("+cacheItemIdle+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME+"' deve essere un numero intero maggiore di 0";
+				String messaggio = "Il valore ("+cacheItemIdle+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
 				ControlStationCore.getLog().error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -8356,6 +8356,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				else if(listaTipoRisorsa.contains(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE)) {
 					defaultValue = TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE;
 				}
+				else if(listaTipoRisorsa.contains(TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO)) {
+					defaultValue = TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO;
+				}
 				else if(listaTipoRisorsa.contains(TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA)) {
 					defaultValue = TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA;
 				}
@@ -8439,8 +8442,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
 				
 			String labelSogliaColonna = null;
+			TipoRisorsaPolicyAttiva tipoRisorsa = null;
 			if(filterTipoRisorsaPolicy!=null && !"".equals(filterTipoRisorsaPolicy)){
-				TipoRisorsaPolicyAttiva tipoRisorsa = TipoRisorsaPolicyAttiva.toEnumConstant(filterTipoRisorsaPolicy, true);
+				tipoRisorsa = TipoRisorsaPolicyAttiva.toEnumConstant(filterTipoRisorsaPolicy, true);
 				switch (tipoRisorsa) {
 				case NUMERO_RICHIESTE:
 				case NUMERO_RICHIESTE_SIMULTANEE:
@@ -8450,6 +8454,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_ESTESA;
 					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_NUMERO;
+					break;
+				case DIMENSIONE_MASSIMA_MESSAGGIO:
+					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_KB_LABEL;
+					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_DIMENSIONE_MESSAGGIO;
 					break;
 				case OCCUPAZIONE_BANDA:
 					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_KB_LABEL;
@@ -8482,7 +8490,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_RISORSA);
 				}
 			}
-			lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+			if(!TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+				lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+			}
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_CONTINUE);
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO);
 			//lstLabels.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_COLUMN);
@@ -8629,34 +8639,70 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					// Soglia
 					if(labelSogliaColonna!=null) {
 						de = new DataElement();
-						if(policy.isRidefinisci()) {
-							de.setValue(policy.getValore()+"");
+						
+						Integer maxLength = null;
+						if(TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+							String vReq = null;
+							String vRes = null;
+							if(policy.isRidefinisci()) {
+								vReq = policy.getValore2()+"";
+								vRes = policy.getValore()+"";
+							}
+							else {
+								if(configPolicy==null) {
+									configPolicy = this.confCore.getConfigurazionePolicy(policy.getIdPolicy());
+								}
+								vReq = configPolicy.getValore2()+"";
+								vRes = configPolicy.getValore()+"";
+							}
+							if(vReq.length()>vRes.length()) {
+								maxLength = vReq.length();
+							}
+							else {
+								maxLength = vRes.length();
+							}
+							String rigaRichiesta = "richiesta: "+vReq;
+							String rigaRisposta = "risposta:  "+vRes;
+							de.setValue(rigaRichiesta+"<BR/>"+rigaRisposta);
 						}
 						else {
-							if(configPolicy==null) {
-								configPolicy = this.confCore.getConfigurazionePolicy(policy.getIdPolicy());
+							if(policy.isRidefinisci()) {
+								de.setValue(policy.getValore()+"");
 							}
-							de.setValue(configPolicy.getValore()+"");
+							else {
+								if(configPolicy==null) {
+									configPolicy = this.confCore.getConfigurazionePolicy(policy.getIdPolicy());
+								}
+								de.setValue(configPolicy.getValore()+"");
+							}
+						}
+						
+						
+						int checkLength = de.getValue().length();
+						int guiPrefix = 0;
+						if(maxLength!=null) {
+							checkLength = maxLength;
+							guiPrefix=50;
 						}
 						
 						if(sizeColumn==null) {
-							de.setWidthPx(70);
-							sizeColumn = 70;
+							de.setWidthPx(guiPrefix+70);
+							sizeColumn = guiPrefix+70;
 						}
-						
-						if(de.getValue().length()>12) {
-							if(sizeColumn<110) {
-								de.setWidthPx(110);
-								sizeColumn = 110;
+						if(checkLength>(12)) {
+							if(sizeColumn<(guiPrefix+110)) {
+								de.setWidthPx(guiPrefix+110);
+								sizeColumn = guiPrefix+110;
 							}
 						}
-						else if(de.getValue().length()>9) {
-							if(sizeColumn<90) {
-								de.setWidthPx(90);
-								sizeColumn = 90;
+						else if(checkLength>(9)) {
+							if(sizeColumn<(guiPrefix+90)) {
+								de.setWidthPx(guiPrefix+90);
+								sizeColumn = guiPrefix+90;
 							}
 						}
 						
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					
@@ -8679,27 +8725,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					
 										
-					
-					de = new DataElement();
-					if(policy.isEnabled()){
-						de.setValue("Visualizza");
-					}
-					else{
-						de.setValue("-");
-					}
-					de.allineaTdAlCentro();
-					de.setWidthPx(60);
-
-					Parameter pJmx = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+"");
-					if(policy.isEnabled()){
-						if(ruoloPorta!=null) {
-							de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx, parRuoloPorta, parNomePorta, parServiceBinding);
+					if(!TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+						de = new DataElement();
+						if(policy.isEnabled()){
+							de.setValue("Visualizza");
 						}
-						else {
-							de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx);
+						else{
+							de.setValue("-");
 						}
+						de.allineaTdAlCentro();
+						de.setWidthPx(60);
+	
+						Parameter pJmx = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+"");
+						if(policy.isEnabled()){
+							if(ruoloPorta!=null) {
+								de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx, parRuoloPorta, parNomePorta, parServiceBinding);
+							}
+							else {
+								de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx);
+							}
+						}
+						e.addElement(de);
 					}
-					e.addElement(de);
 								
 					
 					
@@ -9130,7 +9177,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				policy.setId(l);
 			}catch(Exception e){
-				String messaggio = "Il valore ("+id+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID+"' deve essere un numero intero maggiore di 0";
+				String messaggio = "Il valore ("+id+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
 				this.log.error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -9238,39 +9285,60 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		String valore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE);
 		if(valore!=null && !"".equals(valore)){
-			try{
-				long l = Long.parseLong(valore);
-				if(l<=0){
-					throw new Exception("Valore non nell'intervallo");
+			if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)){
+				try{
+					int i = Integer.parseInt(valore);
+					if(i<=0){
+						throw new Exception("Valore non nell'intervallo");
+					}
+					policy.setValore((long)i);
+				}catch(Exception e){
+					String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RISPOSTA_LABEL;
+					String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
+					this.log.error(messaggio,e);
+					this.addParsingError(sbParsingError,messaggio);
 				}
-				policy.setValore(l);
-			}catch(Exception e){
-				String label = null;
-				if(TipoRisorsa.NUMERO_RICHIESTE.equals(tipoRisorsa)){
-					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE;
+			}
+			else {
+				try{
+					long l = Long.parseLong(valore);
+					if(l<=0){
+						throw new Exception("Valore non nell'intervallo");
+					}
+					policy.setValore(l);
+				}catch(Exception e){
+					String label = null;
+					if(TipoRisorsa.NUMERO_RICHIESTE.equals(tipoRisorsa)){
+						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE;
+					}
+					else if(TipoRisorsa.OCCUPAZIONE_BANDA.equals(tipoRisorsa)){
+						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL;
+					}
+					else if(TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(tipoRisorsa)){
+						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL;
+					}
+					else{
+						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL;
+					}
+					String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
+					this.log.error(messaggio,e);
+					this.addParsingError(sbParsingError,messaggio);
 				}
-				else if(TipoRisorsa.OCCUPAZIONE_BANDA.equals(tipoRisorsa)){
-					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL;
-				}
-				else if(TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(tipoRisorsa)){
-					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL;
-				}
-				else{
-					label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL;
-				}
-				String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0";
-				this.log.error(messaggio,e);
-				this.addParsingError(sbParsingError,messaggio);
 			}
 		}
 		else{
 			if(!first){
 				policy.setValore(null);
 			}
+			else {
+				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa) && policy.getValore()==null){
+					policy.setValore((long)ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA);
+				}
+			}
 		}
 		
 		
-		if(policy.isSimultanee()==false){
+		if(policy.isSimultanee()==false && !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)){
 			
 			// Modalità di Controllo
 			if(TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA.equals(policy.getRisorsa())){
@@ -9348,7 +9416,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}else{
 							labelPeriodo = this.getLabel(policy.getTipoIntervalloOsservazioneStatistico());
 						}
-						String messaggio = "Il valore ("+periodo+") indicato in '"+labelPeriodo+"' deve essere un numero intero maggiore di 0";
+						String messaggio = "Il valore ("+periodo+") indicato in '"+labelPeriodo+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 						this.log.error(messaggio,e);
 						this.addParsingError(sbParsingError,messaggio);
 					}
@@ -9413,6 +9481,42 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 		}
+		else if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)){
+			
+			// Viene usata questa informazione per la dimensione della richiesta
+			String valore2 = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_2);
+			if(valore2!=null && !"".equals(valore2)){
+				try{
+					int i = Integer.parseInt(valore2);
+					if(i<=0){
+						throw new Exception("Valore non nell'intervallo");
+					}
+					policy.setValore2((long)i);
+				}catch(Exception e){
+					String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RICHIESTA_LABEL;
+					String messaggio = "Il valore ("+valore2+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
+					this.log.error(messaggio,e);
+					this.addParsingError(sbParsingError,messaggio);
+				}				
+			}
+			else{
+				if(!first){
+					policy.setValore2(null);
+				}
+				else {
+					if(policy.getValore2()==null) {
+						policy.setValore2(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA);
+					}
+				}
+			}
+			
+			// reset
+			policy.setModalitaControllo(ConfigurazioneCostanti.TIPO_CONTROLLO_PERIODO_DEFAULT);
+			policy.setTipoIntervalloOsservazioneRealtime(ConfigurazioneCostanti.TIPO_PERIODO_REALTIME_DEFAULT);
+			policy.setTipoIntervalloOsservazioneStatistico(ConfigurazioneCostanti.TIPO_PERIODO_STATISTICO_DEFAULT);
+			policy.setIntervalloOsservazione(null);
+			policy.setFinestraOsservazione(null);
+		}
 		else{
 			// reset
 			policy.setModalitaControllo(ConfigurazioneCostanti.TIPO_CONTROLLO_PERIODO_DEFAULT);
@@ -9432,6 +9536,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public String readApplicabilitaPolicyFromHttpParameters(ConfigurazionePolicy policy, boolean first) throws Exception {
 			
 		StringBuilder sbParsingError = new StringBuilder();
+		
+		TipoRisorsa tipoRisorsa = TipoRisorsa.toEnumConstant(policy.getRisorsa());
+		if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)){
+			policy.setTipoApplicabilita(TipoApplicabilita.SEMPRE);
+			return null;
+		}
 		
 		// condizionale
 		String condizionale = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_TIPO);
@@ -9596,7 +9706,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					else{
 						labelIntervallo = this.getLabel(policy.getDegradoAvgTimeTipoIntervalloOsservazioneStatistico());
 					}
-					String messaggio = "Il valore ("+periodo+") indicato in '"+labelIntervallo+"' deve essere un numero intero maggiore di 0";
+					String messaggio = "Il valore ("+periodo+") indicato in '"+labelIntervallo+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 					this.log.error(messaggio,e);
 					this.addParsingError(sbParsingError,messaggio);
 				}
@@ -9727,6 +9837,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		StringBuilder bfSuggerimentoNome = new StringBuilder();
 		bfSuggerimentoNome.append(policy.getRisorsa());
+		
+		TipoRisorsa risorsa = TipoRisorsa.toEnumConstant(policy.getRisorsa());
+		
+		if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(risorsa)) {
+			return bfSuggerimentoNome.toString();
+		}
+		
 		if(policy.isSimultanee()){
 			bfSuggerimentoNome.append("-").append("RichiesteSimultanee");
 		}
@@ -9777,7 +9894,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		TipoRisorsa risorsa = TipoRisorsa.toEnumConstant(policy.getRisorsa());
 		
 		StringBuilder bfIntervallo = new StringBuilder();
-		if(!policy.isSimultanee()){
+		if(!policy.isSimultanee() && !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(risorsa)){
 			bfIntervallo.append(" durante l'intervallo di tempo specificato in ");
 			if(policy.getIntervalloOsservazione()!=null)
 				bfIntervallo.append(policy.getIntervalloOsservazione()).append(" ");
@@ -9865,6 +9982,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					bfSuggerimentoDescrizione.append(".");
 				}
 				break;
+			case DIMENSIONE_MASSIMA_MESSAGGIO:
+				bfSuggerimentoDescrizione.append("La policy limita la dimensione massima, in KB, consentita per una richiesta e/o per una risposta");
+				break;
 			case OCCUPAZIONE_BANDA:
 				bfSuggerimentoDescrizione.append("La policy limita il numero totale massimo di KB consentiti");
 				break;
@@ -9888,6 +10008,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				break;
 			}
 		}
+		
+		if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(risorsa)) {
+			return bfSuggerimentoDescrizione.toString();
+		}
+		
 		
 		bfSuggerimentoDescrizione.append(bfIntervallo.toString());
 		
@@ -9996,6 +10121,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(tipo!=null){
 						switch (tipo) {
 						case NUMERO_RICHIESTE:
+						case DIMENSIONE_MASSIMA_MESSAGGIO:
 						case OCCUPAZIONE_BANDA:
 						case TEMPO_COMPLESSIVO_RISPOSTA:
 						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
@@ -10018,6 +10144,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					if(tipo!=null){
 						switch (tipo) {
 						case NUMERO_RICHIESTE:
+						case DIMENSIONE_MASSIMA_MESSAGGIO:
 						case OCCUPAZIONE_BANDA:
 						case TEMPO_COMPLESSIVO_RISPOSTA:
 						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
@@ -10184,7 +10311,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		if(policy.isSimultanee()==false){
+		if(policy.isSimultanee()==false && !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(policy.getRisorsa())){
 			
 			// Modalità di Controllo
 			de = new DataElement();
@@ -10237,7 +10364,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		addToDatiPolicyValue(dati, policy, editMode, editOnlyValueMode);
 		
 		
-		if(policy.isSimultanee()==false){
+		if(policy.isSimultanee()==false && !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(policy.getRisorsa())){
 		
 			
 			// Intervallo Osservazione
@@ -10448,7 +10575,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	@SuppressWarnings("incomplete-switch")
 	private void addToDatiPolicyValue(Vector<DataElement> dati, ConfigurazionePolicy policy, boolean editMode, boolean editOnlyValueMode) throws Exception{
 		
 		TipoRisorsa tipoRisorsa = TipoRisorsa.toEnumConstant(policy.getRisorsa(), true);
@@ -10545,6 +10671,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				case SERVIZIO:
 					de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_LATENZA_SERVIZIO);
 					break;
+				case PORTA:
+					break;
 				}
 				de.setType(DataElementType.TEXT);
 				dati.addElement(de);
@@ -10552,11 +10680,33 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}
 		
+		if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa) ){
+			DataElement de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_2);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RICHIESTA_LABEL);
+			if(editMode || editOnlyValueMode) {
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setRequired(true);
+			}
+			else {
+				de.setType(DataElementType.TEXT);
+			}
+			if(policy.getValore2()!=null){ 
+				de.setValue(policy.getValore2()+"");
+			}
+			//de.setSize(consoleHelper.getSize());
+			dati.addElement(de);			
+		}
+			
 		DataElement de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE);
 		switch (tipoRisorsa) {
 		case NUMERO_RICHIESTE:
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+			break;
+		case DIMENSIONE_MASSIMA_MESSAGGIO:
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RISPOSTA_LABEL);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_NOTE);
 			break;
 		case OCCUPAZIONE_BANDA:
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL);
@@ -10582,6 +10732,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_FAULT_APPLICATIVI_NOTE);
 			break;
+		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_NOTE);
+			break; 
 		}
 		if(editMode || editOnlyValueMode) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -10625,6 +10779,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	public void addConfigurazionePolicyApplicabilitaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione,  ConfigurazionePolicy policy, ConfigurazioneControlloTraffico controlloTraffico, boolean editMode) throws Exception {
+		
+		if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(policy.getRisorsa())){
+			return;
+		}
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPLICABILITA);
@@ -11394,9 +11552,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public boolean configurazionePolicyCheckData(TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico, ConfigurazionePolicy policyToCheck,
+	public boolean configurazionePolicyCheckData(StringBuilder sbParsingError, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico, ConfigurazionePolicy policyToCheck,
 			String oldNomeSuggeritoPolicy,  String oldDescrizioneSuggeritaPolicy, String oldPolicyId,	List<AttivazionePolicy> listPolicyAttiveConStatoDisabilitato,
 	boolean updateValueInSeguitoModificaSogliaPolicy) throws Exception{
+		
+		// errori di parsing letti durante la read della richiesta
+		if(sbParsingError.length() >0){
+			this.pd.setMessage(sbParsingError.toString());
+			return false;
+		}
+		
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			
 			long count = 0;
@@ -11478,7 +11643,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return false;
 		}
 		String name = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE;
-		if(TipoRisorsa.OCCUPAZIONE_BANDA.equals(tipoRisorsa)){
+		if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)){
+			name = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RISPOSTA_LABEL;
+		}
+		else if(TipoRisorsa.OCCUPAZIONE_BANDA.equals(tipoRisorsa)){
 			name = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL;
 		}
 		else if(TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(tipoRisorsa)){
@@ -11508,12 +11676,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					String messaggio = "Deve essere indicato un valore in '"+name+
 							"' minore di quanto indicato nella configurazione generale alla voce '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA+"'";
 					this.pd.setMessage(messaggio);
-				return false;
+					return false;
 				}
 			}
 		}
 		
-		if(policy.isSimultanee()==false){
+		if(policy.isSimultanee()==false && !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)){
 			if(policy.getIntervalloOsservazione()==null){
 				String labelPeriodo = null;
 				if(TipoControlloPeriodo.REALTIME.equals(policy.getModalitaControllo())){
@@ -11522,6 +11690,27 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					labelPeriodo = this.getLabel(policy.getTipoIntervalloOsservazioneStatistico());
 				}
 				String messaggio = "Deve essere indicato un valore in '"+labelPeriodo+"'";
+				this.pd.setMessage(messaggio);
+				return false;
+			}
+		}
+		
+		if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+			
+			String labelDimensione = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RICHIESTA_LABEL;
+			
+			if(policy.getValore2()==null) { //|| "".equals(policy.getValore())){
+				String messaggio = "Deve essere indicato un valore in '"+labelDimensione+"'";
+				this.pd.setMessage(messaggio);
+					return false;
+			}
+			try{
+				long i = policy.getValore2();
+				if(i<=0){
+					throw new Exception("Valore non nell'intervallo");
+				}
+			}catch(Exception e){
+				String messaggio = "Il valore ("+policy.getValore2()+") indicato in '"+labelDimensione+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
 				this.pd.setMessage(messaggio);
 				return false;
 			}
@@ -11605,7 +11794,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				policy.setId(l);
 			}catch(Exception e){
-				String messaggio = "Il valore ("+id+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID+"' deve essere un numero intero maggiore di 0";
+				String messaggio = "Il valore ("+id+") indicato in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
 				this.log.error(messaggio,e);
 				this.addParsingError(sbParsingError,messaggio);
 			}
@@ -11661,29 +11850,45 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// valore
 			String valore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE);
 			if(valore!=null && !"".equals(valore)){
-				try{
-					long l = Long.parseLong(valore);
-					if(l<=0){
-						throw new Exception("Valore non nell'intervallo");
+				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+					try{
+						Integer i = Integer.parseInt(valore);
+						if(i<=0){
+							throw new Exception("Valore non nell'intervallo");
+						}
+						policy.setValore((long)i);
+					}catch(Exception e){
+						String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RISPOSTA_LABEL;
+						String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
+						this.log.error(messaggio,e);
+						this.addParsingError(sbParsingError,messaggio);
 					}
-					policy.setValore(l);
-				}catch(Exception e){
-					String label = null;
-					if(TipoRisorsa.NUMERO_RICHIESTE.equals(tipoRisorsa)){
-						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE;
+				}
+				else {
+					try{
+						long l = Long.parseLong(valore);
+						if(l<=0){
+							throw new Exception("Valore non nell'intervallo");
+						}
+						policy.setValore(l);
+					}catch(Exception e){
+						String label = null;
+						if(TipoRisorsa.NUMERO_RICHIESTE.equals(tipoRisorsa)){
+							label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE;
+						}
+						else if(TipoRisorsa.OCCUPAZIONE_BANDA.equals(tipoRisorsa)){
+							label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL;
+						}
+						else if(TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(tipoRisorsa)){
+							label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL;
+						}
+						else{
+							label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL;
+						}
+						String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Long.MAX_VALUE;
+						this.log.error(messaggio,e);
+						this.addParsingError(sbParsingError,messaggio);
 					}
-					else if(TipoRisorsa.OCCUPAZIONE_BANDA.equals(tipoRisorsa)){
-						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL;
-					}
-					else if(TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(tipoRisorsa)){
-						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_LABEL;
-					}
-					else{
-						label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_TEMPO_COMPLESSIVO_LABEL;
-					}
-					String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0";
-					this.log.error(messaggio,e);
-					this.addParsingError(sbParsingError,messaggio);
 				}
 			}
 			else{
@@ -11691,10 +11896,35 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					policy.setValore(null);
 				}
 			}
+			
+			// valore2
+			if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+				String valore2 = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE_2);
+				if(valore2!=null && !"".equals(valore2)){
+					try{
+						Integer i = Integer.parseInt(valore2);
+						if(i<=0){
+							throw new Exception("Valore non nell'intervallo");
+						}
+						policy.setValore2((long)i);
+					}catch(Exception e){
+						String label = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RICHIESTA_LABEL;
+						String messaggio = "Il valore ("+valore+") indicato in '"+label+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
+						this.log.error(messaggio,e);
+						this.addParsingError(sbParsingError,messaggio);
+					}
+				}
+				else{
+					if(!first){
+						policy.setValore2(null);
+					}
+				}
+			}
 					
 		}
 		else{
 			policy.setValore(null);
+			policy.setValore2(null);
 		}
 			
 		
@@ -12272,6 +12502,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_MEDIO_RISPOSTA;
 			case TEMPO_COMPLESSIVO_RISPOSTA:
 				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_TEMPO_COMPLESSIVO_RISPOSTA;
+			case DIMENSIONE_MASSIMA_MESSAGGIO:
+				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_DIMENSIONE_MASSIMA;
 			}
 			
 			throw new Exception("Tipo risorsa '"+tipoRisorsa+"' non gestita");
@@ -12304,6 +12536,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			case OCCUPAZIONE_BANDA:
 			case TEMPO_MEDIO_RISPOSTA:
 			case TEMPO_COMPLESSIVO_RISPOSTA:
+			case DIMENSIONE_MASSIMA_MESSAGGIO:
 				return null;
 			}
 			
@@ -12328,6 +12561,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			for (InfoPolicy info : policies) {
 				
 				if(!tipoRisorsaSelezionata.equals(info.getTipoRisorsa())) {
+					continue;
+				}
+				
+				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsaSelezionata)) {
+					idPoliciesSoddisfanoCriteri.add(info);
 					continue;
 				}
 				
@@ -12619,9 +12857,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// stato
 			//boolean hidden = (ruoloPorta!=null);
 			boolean hidden = false; // anche una policy di rate limiting sulla singola porta puo' essere disabiltiata temporaneamente
+			boolean policyWithWarningOnly = true;
+			if(infoPolicy!=null && TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa())) {
+				policyWithWarningOnly=false;
+			}
 			addToDatiDataElementStato_postBackViaPOST(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ENABLED, 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ENABLED, policy.isEnabled(), false,
-					true, policy.isWarningOnly(), hidden);
+					policyWithWarningOnly, policy.isWarningOnly(), hidden);
 			
 			if(TipoOperazione.CHANGE.equals(tipoOperazione) && addInfoDescrizionePolicy && infoPolicy!=null) {
 				DataElementInfo dInfoDescrizionePolicy = new DataElementInfo(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
@@ -12676,38 +12918,41 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ESITI+"__label", modalitaEsitiConvertValue,
 							false);
 					
-					if(!infoPolicy.isCheckRichiesteSimultanee()) {
-						de = new DataElement();
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO+"__label");
-						de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
-						de.setType(DataElementType.TEXT);
-						if(infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo()!=null) {
-							String labelValue = infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo().getValue();
-							for (int i = 0; i < ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE.length; i++) {
-								if(labelValue.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE[i])) {
-									labelValue = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE[i];
-									break;
+					if(!TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(modalitaRisorsaConvertValue)) {
+					
+						if(!infoPolicy.isCheckRichiesteSimultanee()) {
+							de = new DataElement();
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO+"__label");
+							de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
+							de.setType(DataElementType.TEXT);
+							if(infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo()!=null) {
+								String labelValue = infoPolicy.getIntervalloUtilizzaRisorseRealtimeTipoPeriodo().getValue();
+								for (int i = 0; i < ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE.length; i++) {
+									if(labelValue.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE[i])) {
+										labelValue = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE[i];
+										break;
+									}
 								}
+								de.setValue(labelValue);
 							}
-							de.setValue(labelValue);
+							dati.addElement(de);
 						}
-						dati.addElement(de);
-					}
-					
-					if(infoPolicy.isControlloCongestione()) {
-						de = new DataElement();
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE+"__label");
-						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
-						de.setType(DataElementType.TEXT);
-						dati.addElement(de);
-					}
-					
-					if(infoPolicy.isDegradoPrestazione()) {
-						de = new DataElement();
-						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO+"__label");
-						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
-						de.setType(DataElementType.TEXT);
-						dati.addElement(de);
+						
+						if(infoPolicy.isControlloCongestione()) {
+							de = new DataElement();
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE+"__label");
+							de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
+							de.setType(DataElementType.TEXT);
+							dati.addElement(de);
+						}
+						
+						if(infoPolicy.isDegradoPrestazione()) {
+							de = new DataElement();
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO+"__label");
+							de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
+							de.setType(DataElementType.TEXT);
+							dati.addElement(de);
+						}
 					}
 	
 				}
@@ -12730,10 +12975,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 				if(policy!=null && policy.isEnabled()){
-					de = new DataElement();
-					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
-					de.setType(DataElementType.SUBTITLE);
-					dati.addElement(de);	
+					
+					if(infoPolicy==null || !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa())) {
+					
+						de = new DataElement();
+						de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME);
+						de.setType(DataElementType.SUBTITLE);
+						dati.addElement(de);
+					}
 				}
 			}
 			
@@ -12760,24 +13009,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 				if(policy!=null && policy.isEnabled()){
-					// Link visualizza stato 
-					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
-					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
-					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
-					if(ruoloPorta!=null) {
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
-								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
-								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
-								parRuoloPorta,parNomePorta,parServiceBinding);			
+					
+					if(infoPolicy==null || !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa())) {
+					
+						// Link visualizza stato 
+						de = new DataElement();
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
+						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
+						de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
+						if(ruoloPorta!=null) {
+							de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+									new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+									new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
+									parRuoloPorta,parNomePorta,parServiceBinding);			
+						}
+						else {
+							de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+									new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+									new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""));
+						}
+						de.setType(DataElementType.LINK);
+						dati.addElement(de);
+						
 					}
-					else {
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
-								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
-								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""));
-					}
-					de.setType(DataElementType.LINK);
-					dati.addElement(de);
 				}
 			}
 			
@@ -12858,62 +13112,65 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_RISORSA, modalitaRisorsa, 
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ESITI, modalitaEsiti,
 						true);
-								
-				if(!modalitaSimultaneeEnabled) {
+				
+				if(!TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(modalitaRisorsa)) {
+				
+					if(!modalitaSimultaneeEnabled) {
+						de = new DataElement();
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO);
+						de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
+						de.setType(DataElementType.SELECT);
+						de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE);
+						de.setLabels(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE);
+						de.setSelected(modalitaIntervallo);
+						de.setValue(modalitaIntervallo);
+						de.setPostBack_viaPOST(true);
+						dati.addElement(de);
+					}
+					
 					de = new DataElement();
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_INTERVALLO);
-					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_INTERVALLO_OSSERVAZIONE);
-					de.setType(DataElementType.SELECT);
-					de.setValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE);
-					de.setLabels(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_INTERVALLO_OSSERVAZIONE);
-					de.setSelected(modalitaIntervallo);
-					de.setValue(modalitaIntervallo);
-					de.setPostBack_viaPOST(true);
-					dati.addElement(de);
-				}
-				
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE);
-				//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_LABEL);
-				de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(modalitaCongestioneEnabled);
-				de.setValue(modalitaCongestioneEnabled+"");
-				de.setPostBack_viaPOST(true);
-				DataElementInfo dInfoDescrizioneCongestione = new DataElementInfo(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_LABEL);
-				dInfoDescrizioneCongestione.setHeaderBody(replaceToHtmlSeparator(this.getApplicabilitaConCongestione(configurazioneControlloTraffico.getControlloTraffico())));
-				de.setInfo(dInfoDescrizioneCongestione);
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO);
-				//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_LABEL);
-				de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
-				if(!TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(modalitaRisorsa) && 
-					!TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA.equals(modalitaRisorsa) 
-					){
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_CONGESTIONE);
+					//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_LABEL);
+					de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE);
 					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(modalitaCongestioneEnabled);
+					de.setValue(modalitaCongestioneEnabled+"");
+					de.setPostBack_viaPOST(true);
+					DataElementInfo dInfoDescrizioneCongestione = new DataElementInfo(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_LABEL);
+					dInfoDescrizioneCongestione.setHeaderBody(replaceToHtmlSeparator(this.getApplicabilitaConCongestione(configurazioneControlloTraffico.getControlloTraffico())));
+					de.setInfo(dInfoDescrizioneCongestione);
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_DEGRADO);
+					//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_LABEL);
+					de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_NOTE);
+					if(!TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(modalitaRisorsa) && 
+						!TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA.equals(modalitaRisorsa) 
+						){
+						de.setType(DataElementType.CHECKBOX);
+					}
+					else{
+						de.setType(DataElementType.HIDDEN);
+					}
+					de.setSelected(modalitaDegradoEnabled);
+					de.setValue(modalitaDegradoEnabled+"");
+					de.setPostBack_viaPOST(true);
+					DataElementInfo dInfoDescrizioneDegrado = new DataElementInfo(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_LABEL);
+					dInfoDescrizioneDegrado.setHeaderBody(replaceToHtmlSeparator(this.getApplicabilitaDegradoPrestazionale()));
+					de.setInfo(dInfoDescrizioneDegrado);
+					dati.addElement(de);
+					
+	//				de = new DataElement();
+	//				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ERROR_RATE);
+	//				//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_ERROR_RATE_LABEL);
+	//				de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_ERROR_RATE_NOTE);
+	//				de.setType(DataElementType.CHECKBOX);
+	//				de.setSelected(modalitaErrorRateEnabled);
+	//				de.setValue(modalitaErrorRateEnabled+"");
+	//				de.setPostBack_viaPOST(true);
+	//				dati.addElement(de);
 				}
-				else{
-					de.setType(DataElementType.HIDDEN);
-				}
-				de.setSelected(modalitaDegradoEnabled);
-				de.setValue(modalitaDegradoEnabled+"");
-				de.setPostBack_viaPOST(true);
-				DataElementInfo dInfoDescrizioneDegrado = new DataElementInfo(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_DEGRADO_PRESTAZIONALE_LABEL);
-				dInfoDescrizioneDegrado.setHeaderBody(replaceToHtmlSeparator(this.getApplicabilitaDegradoPrestazionale()));
-				de.setInfo(dInfoDescrizioneDegrado);
-				dati.addElement(de);
-				
-//				de = new DataElement();
-//				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ERROR_RATE);
-//				//de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_ERROR_RATE_LABEL);
-//				de.setLabelRight(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_ERROR_RATE_NOTE);
-//				de.setType(DataElementType.CHECKBOX);
-//				de.setSelected(modalitaErrorRateEnabled);
-//				de.setValue(modalitaErrorRateEnabled+"");
-//				de.setPostBack_viaPOST(true);
-//				dati.addElement(de);
 				
 			}
 			
@@ -12942,12 +13199,53 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 			// Valore Soglia
+			
+			if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(modalitaRisorsa) || 
+					(infoPolicy!=null && infoPolicy.getTipoRisorsa()!=null && TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa()))) {
+				de = new DataElement();
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE_2);
+				if(infoPolicy!=null){
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RICHIESTA_LABEL);
+				}
+				if(infoPolicy!=null){
+					if(policy.isRidefinisci()){
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setRequired(true);
+						if(policy.getValore2()!=null){
+							de.setValue(policy.getValore2()+"");
+						}
+						else{
+							de.setValue("");
+						}
+					}
+					else{
+						de.setType(DataElementType.TEXT);
+						if(infoPolicy.getValore2()!=null){
+							de.setValue(infoPolicy.getValore2()+"");
+						}
+						else{
+							de.setValue("");
+						}
+					}
+				}
+				else{
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("");
+				}
+				//de.setSize(consoleHelper.getSize());
+				dati.addElement(de);
+			}
+			
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE);
 			if(infoPolicy!=null){
 				switch (infoPolicy.getTipoRisorsa()) {
 				case NUMERO_RICHIESTE:
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+					break;
+				case DIMENSIONE_MASSIMA_MESSAGGIO:
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RISPOSTA_LABEL);
+					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_NOTE);
 					break;
 				case OCCUPAZIONE_BANDA:
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL);
@@ -13099,10 +13397,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				
 				// GroupBy 
-				addToDatiAttivazioneGroupBy(dati, tipoOperazione, policy, nomeSezione, infoPolicy, 
-						ruoloPorta, nomePorta, serviceBinding,
-						tokenAbilitato
-						);
+				if(!TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(modalitaRisorsa) && 
+						(infoPolicy==null || infoPolicy.getTipoRisorsa()==null || !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa()))) {
+					addToDatiAttivazioneGroupBy(dati, tipoOperazione, policy, nomeSezione, infoPolicy, 
+							ruoloPorta, nomePorta, serviceBinding,
+							tokenAbilitato
+							);
+				}
 				
 				// Filtro 
 				addToDatiAttivazioneFiltro(dati, tipoOperazione, policy, nomeSezione, infoPolicy, ruoloPorta, nomePorta, serviceBinding,
@@ -14550,9 +14851,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean showRuoloRichiedente = false;
 			if(configurazione) {
 				showRuoloRichiedente = true;
+				if(infoPolicy!=null && TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa())) {
+					showRuoloRichiedente=false;
+				}
 			}
 			else {
-				if(serviziApplicativiFruitoreValue!=null && serviziApplicativiFruitoreValue.size()>1){
+				if(infoPolicy!=null && TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa())) {
+					showRuoloRichiedente=false;
+				}
+				else if(serviziApplicativiFruitoreValue!=null && serviziApplicativiFruitoreValue.size()>1){
 					showRuoloRichiedente = true;
 				}
 				else if(fruitoriValue!=null && fruitoriValue.size()>1){
@@ -14600,7 +14907,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 			// Fruitore
-			if(fruitoriValue!=null && fruitoriValue.size()>1){
+			if(fruitoriValue!=null && fruitoriValue.size()>1 &&
+					(infoPolicy==null || !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa()))
+				){
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE);
@@ -14633,7 +14942,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			// Servizio Applicativo Fruitore
-			if(serviziApplicativiFruitoreValue!=null && serviziApplicativiFruitoreValue.size()>1){
+			if(serviziApplicativiFruitoreValue!=null && serviziApplicativiFruitoreValue.size()>1 &&
+					(infoPolicy==null || !TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa()))
+				){
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE);
@@ -14737,8 +15048,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setType(DataElementType.TEXT);
 					}
 					else {
-						de.setValues(TipoFiltroApplicativo.toStringArray());
-						de.setLabels(ConfigurazioneCostanti.LABEL_RATE_LIMITING_FILTRO_APPLICATIVO);
+						if(infoPolicy!=null && TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa())){
+							String [] arr = TipoFiltroApplicativo.toStringArray();
+							List<String> values = new ArrayList<String>();
+							for (String v : arr) {
+								if(TipoFiltroApplicativo.CONTENT_BASED.equals(v)) {
+									continue;
+								}
+								values.add(v);
+							}
+							de.setValues(values);
+							de.setLabels(ConfigurazioneCostanti.LABEL_RATE_LIMITING_FILTRO_APPLICATIVO_SENZA_CONTENUTO);
+						}
+						else {
+							de.setValues(TipoFiltroApplicativo.toStringArray());
+							de.setLabels(ConfigurazioneCostanti.LABEL_RATE_LIMITING_FILTRO_APPLICATIVO);
+						}
 						de.setSelected(policy.getFiltro().getInformazioneApplicativaTipo());
 						de.setType(DataElementType.SELECT);
 						de.setPostBack_viaPOST(true);
@@ -15324,9 +15649,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return null;
 	}
 
-	public boolean attivazionePolicyCheckData(TipoOperazione tipoOperazione, ConfigurazioneGenerale configurazioneControlloTraffico, 
+	public boolean attivazionePolicyCheckData(StringBuilder sbParsingError, TipoOperazione tipoOperazione, ConfigurazioneGenerale configurazioneControlloTraffico, 
 			AttivazionePolicy policy, InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding, String modalita) throws Exception { 
 	
+		// errori di parsing letti durante la read della richiesta
+		if(sbParsingError.length() >0){
+			this.pd.setMessage(sbParsingError.toString());
+			return false;
+		}
+		
 		boolean check = this.checkAttivazionePolicy(configurazioneControlloTraffico,policy,infoPolicy);
 		if(!check) {
 			return false;
@@ -15375,7 +15706,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(infoPolicy!=null){
 				TipoRisorsa tipoRisorsa = infoPolicy.getTipoRisorsa();
 				String name = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE;
-				if(TipoRisorsa.OCCUPAZIONE_BANDA.equals(tipoRisorsa)){
+				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)){
+					name = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RISPOSTA_LABEL;
+				}
+				else if(TipoRisorsa.OCCUPAZIONE_BANDA.equals(tipoRisorsa)){
 					name = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_OCCUPAZIONE_DI_BANDA_LABEL;
 				}
 				else if(TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(tipoRisorsa)){
@@ -15395,7 +15729,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						throw new Exception("Valore non nell'intervallo");
 					}
 				}catch(Exception e){
-					String messaggio = "Il valore ("+policy.getValore()+") indicato in '"+name+"' deve essere un numero intero maggiore di 0";
+					String max = Long.MAX_VALUE+"";
+					if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+						max = Integer.MAX_VALUE+"";
+					}
+					String messaggio = "Il valore ("+policy.getValore()+") indicato in '"+name+"' deve essere un numero intero maggiore di 0 e minore di "+max;
 					this.pd.setMessage(messaggio);
 					return false;
 				}
@@ -15409,7 +15747,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 					}
 				}
-				
+			
+				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+					name = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_DIMENSIONE_MASSIMA_RICHIESTA_LABEL;
+					if(policy.getValore2()==null){
+						String messaggio = "Deve essere indicato un valore in '"+name+"'";
+						this.pd.setMessage(messaggio);
+						return false;
+					}
+					l = policy.getValore2();
+					try{
+						if(l<=0){
+							throw new Exception("Valore non nell'intervallo");
+						}
+					}catch(Exception e){
+						String messaggio = "Il valore ("+policy.getValore2()+") indicato in '"+name+"' deve essere un numero intero maggiore di 0 e minore di "+Integer.MAX_VALUE;
+						this.pd.setMessage(messaggio);
+						return false;
+					}
+				}
 			}
 			
 
@@ -15755,6 +16111,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					resultReset = errorMessage;
 				}
 				
+				try{
+					if(nomePorta!=null && !"".equals(nomePorta)) {
+						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(RuoloPolicy.DELEGATA.equals(ruoloPorta)?TipoPdD.DELEGATA : TipoPdD.APPLICATIVA, nomePorta);
+					}
+					else {
+						idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttiveGlobali_dimensioneMessaggio();
+					}
+					resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
+					this.log.debug("reset["+idAllPolicy+"] "+resultReset);
+				}catch(Exception e){
+					String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
+							CostantiPdD.JMX_CONFIGURAZIONE_PDD+"] (param:"+idAllPolicy+"): "+e.getMessage();
+					this.log.error(errorMessage,e);
+					resultReset = errorMessage;
+				}
+				
 				boolean resetSinglePolicy = false; // le policy attive contengono anche la data quindi non e' possibile resettarle singolarmente.
 				if(resetSinglePolicy) {
 					resultReset = null;
@@ -15766,7 +16138,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						this.log.debug("reset["+idPolicy+"] "+resultReset);
 					}catch(Exception e){
 						String errorMessage = "Errore durante l'invocazione dell'operazione ["+JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT+"] sulla risorsa ["+
-								CostantiPdD.JMX_CONFIGURAZIONE_PDD+"] (param:"+idAllPolicy+"): "+e.getMessage();
+								CostantiPdD.JMX_CONFIGURAZIONE_PDD+"] (param:"+idPolicy+"): "+e.getMessage();
 						this.log.error(errorMessage,e);
 						resultReset = errorMessage;
 					}
@@ -18294,10 +18666,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return lstParamPorta;
 	}
 	
-	public boolean allarmeCheckData(TipoOperazione tipoOp, ConfigurazioneAllarmeBean oldAllarme, ConfigurazioneAllarmeBean allarme, int numeroPluginRegistrati
+	public boolean allarmeCheckData(StringBuilder sbParsingError, TipoOperazione tipoOp, ConfigurazioneAllarmeBean oldAllarme, ConfigurazioneAllarmeBean allarme, int numeroPluginRegistrati
 			, List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters) throws Exception {
 		
 		try {
+			
+			// errori di parsing letti durante la read della richiesta
+			if(sbParsingError.length() >0){
+				this.pd.setMessage(sbParsingError.toString());
+				return false;
+			}
 			
 			/* ******** CONTROLLO PLUGIN *************** */
 			

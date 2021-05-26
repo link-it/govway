@@ -27,6 +27,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.utils.ErroriProperties;
@@ -138,6 +139,7 @@ public class GeneratoreMessaggiErrore {
 	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_CODE = "CP07";
 	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_FAULT_APPLICATIVI_CODE = "CP08";
 	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_CODE = "CP09";
+	private final static String CONTROLLO_TRAFFICO_POLICY_VIOLATED_DIMENSIONE_MASSIMA_MESSAGGIO_CODE = "CP10";
 	private final static String APPLICABILITA_CONGESTIONE_CODE = "-CC";
 	private final static String APPLICABILITA_DEGRADO_CODE = "-DP";
 	private final static String APPLICABILITA_STATO_ALLARME_CODE = "-SA";
@@ -167,11 +169,14 @@ public class GeneratoreMessaggiErrore {
 	private final static String PDD_CONTEXT_VALUE_POLICY_VIOLATA = "controlloTrafficoRateLimitingPolicyViolata";
 	private final static String PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY = "controlloTrafficoRateLimitingPolicyViolataWarningOnly";
 	public static void addPddContextInfo_ControlloTrafficoPolicyViolated(PdDContext pddContext, boolean warningOnly){
+		addContextInfo_ControlloTrafficoPolicyViolated(pddContext, warningOnly);
+	}
+	public static void addContextInfo_ControlloTrafficoPolicyViolated(Context context, boolean warningOnly){
 		if(warningOnly){
-			pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY);
+			context.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY);
 		}
 		else{
-			pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_POLICY_VIOLATA);
+			context.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_POLICY_VIOLATA);
 		}
 	}
 	
@@ -351,6 +356,9 @@ public class GeneratoreMessaggiErrore {
 				else{
 					bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_CODE);
 				}
+				break;
+			case DIMENSIONE_MASSIMA_MESSAGGIO:
+				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_DIMENSIONE_MASSIMA_MESSAGGIO_CODE);
 				break;
 			case OCCUPAZIONE_BANDA:
 				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_OCCUPAZIONE_BANDA_CODE);

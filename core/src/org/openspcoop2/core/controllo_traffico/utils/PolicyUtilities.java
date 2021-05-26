@@ -23,6 +23,7 @@ package org.openspcoop2.core.controllo_traffico.utils;
 import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -431,17 +432,21 @@ public class PolicyUtilities {
 	}
 	
 	public static String buildIdConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, IDUnivocoGroupByPolicy datiGroupBy, String API) {
+		AttivazionePolicy attivazionePolicy = activePolicy.getInstanceConfiguration();
+		return buildIdConfigurazioneEventoPerPolicy(attivazionePolicy, datiGroupBy, API);
+	}
+	public static String buildIdConfigurazioneEventoPerPolicy(AttivazionePolicy attivazionePolicy, IDUnivocoGroupByPolicy datiGroupBy, String API) {
 		// L'obiettivo è di generare un evento differente per ogni raggruppamento violato di una stessa policy
 		// All'interno di una stessa policy ci possono essere gruppi che non sono violati ed altri che lo sono
 		// Ad esempio se si raggruppa per soggetto fruitore, ci potranno essere soggetti che la violano, altri no.
 		// Si vuole un evento per ogni soggetto che viola la policy
 		boolean printDati = true;
-		String idPolicyConGruppo = PolicyUtilities.getNomeActivePolicy(activePolicy.getInstanceConfiguration().getAlias(), activePolicy.getInstanceConfiguration().getIdActivePolicy()); 
+		String idPolicyConGruppo = PolicyUtilities.getNomeActivePolicy(attivazionePolicy.getAlias(), attivazionePolicy.getIdActivePolicy()); 
 		if(API!=null && !"".equals(API)) {
 			idPolicyConGruppo = idPolicyConGruppo + " - API: "+API;
 		}
-		if(activePolicy.getInstanceConfiguration().getGroupBy().isEnabled()){
-			String toStringRaggruppamentoConDatiIstanza = PolicyUtilities.toStringGroupBy(activePolicy.getInstanceConfiguration().getGroupBy(), datiGroupBy, printDati);
+		if(attivazionePolicy.getGroupBy().isEnabled()){
+			String toStringRaggruppamentoConDatiIstanza = PolicyUtilities.toStringGroupBy(attivazionePolicy.getGroupBy(), datiGroupBy, printDati);
 			idPolicyConGruppo = idPolicyConGruppo +
 					org.openspcoop2.core.controllo_traffico.constants.Costanti.SEPARATORE_IDPOLICY_RAGGRUPPAMENTO+
 					toStringRaggruppamentoConDatiIstanza;
@@ -455,16 +460,20 @@ public class PolicyUtilities {
 	private static final String NOME_PORTA_PROPERTY = "nomePorta:";
 	
 	public static String buildConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, boolean policyGlobale) {
+		AttivazionePolicy attivazionePolicy = activePolicy.getInstanceConfiguration();
+		return buildConfigurazioneEventoPerPolicy(attivazionePolicy, policyGlobale);
+	}
+	public static String buildConfigurazioneEventoPerPolicy(AttivazionePolicy attivazionePolicy, boolean policyGlobale) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(GLOBALE_PROPERTY).append(policyGlobale);
-		sb.append("\n").append(ID_ACTIVE_POLICY_PROPERTY).append(activePolicy.getInstanceConfiguration().getIdActivePolicy());
+		sb.append("\n").append(ID_ACTIVE_POLICY_PROPERTY).append(attivazionePolicy.getIdActivePolicy());
 		if(!policyGlobale) {
-			if(activePolicy.getInstanceConfiguration().getFiltro()!=null &&
-					activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()!=null && 
-					StringUtils.isNotEmpty(activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()) && 
-					activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta()!=null) {
-				String nomePorta = activePolicy.getInstanceConfiguration().getFiltro().getNomePorta();
-				String ruoloPorta = activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta().getValue();
+			if(attivazionePolicy.getFiltro()!=null &&
+					attivazionePolicy.getFiltro().getNomePorta()!=null && 
+					StringUtils.isNotEmpty(attivazionePolicy.getFiltro().getNomePorta()) && 
+					attivazionePolicy.getFiltro().getRuoloPorta()!=null) {
+				String nomePorta = attivazionePolicy.getFiltro().getNomePorta();
+				String ruoloPorta = attivazionePolicy.getFiltro().getRuoloPorta().getValue();
 				sb.append("\n").append(RUOLO_PORTA_PROPERTY).append(ruoloPorta);
 				sb.append("\n").append(NOME_PORTA_PROPERTY).append(nomePorta);
 			}

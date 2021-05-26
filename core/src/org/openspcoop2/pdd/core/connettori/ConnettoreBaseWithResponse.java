@@ -37,8 +37,10 @@ import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
@@ -95,6 +97,16 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			this.logger.info("Stream di risposta (return-code:"+this.codice+") is null",true);
 		}
 		
+		if(this.isResponse!=null && this.useLimitedInputStream) {
+			if(this.limitBytes!=null && this.limitBytes.getSogliaKb()>0) {
+				LimitExceededNotifier notifier = new LimitExceededNotifier(this.getPddContext(), this.limitBytes, this.logger.getLogger());
+				long limitBytes = this.limitBytes.getSogliaKb()*1024; // trasformo kb in bytes
+				this.isResponse = new LimitedInputStream(this.isResponse, limitBytes, 
+						CostantiPdD.PREFIX_LIMITED_RESPONSE,
+						this.getPddContext()!=null ? this.getPddContext().getContext() : null,
+						notifier);
+			}
+		}
 		if(this.isResponse!=null && this.useTimeoutInputStream) {
 			if(timeout>0) {
 				this.isResponse = new TimeoutInputStream(this.isResponse, timeout, 

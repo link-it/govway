@@ -22,6 +22,8 @@ package org.openspcoop2.protocol.sdk.constants;
 
 import java.io.Serializable;
 
+import org.openspcoop2.message.constants.IntegrationError;
+
 /**
  * IntegrationError
  *
@@ -90,6 +92,9 @@ public enum IntegrationFunctionError implements Serializable {
 	CONFLICT_IN_QUEUE(true),
 	CONFLICT(true),
 	
+	// 413
+	REQUEST_SIZE_EXCEEDED(true),
+	
 	// 429
 	LIMIT_EXCEEDED_CONDITIONAL_CONGESTION(true),
 	LIMIT_EXCEEDED_CONDITIONAL_DETERIORATION_PERFORMANCE(true),
@@ -111,6 +116,7 @@ public enum IntegrationFunctionError implements Serializable {
 	TRANSFORMATION_RULE_RESPONSE_FAILED(false),
 	EXPECTED_RESPONSE_NOT_FOUND(false),
 	CONFLICT_RESPONSE(false),
+	RESPONSE_SIZE_EXCEEDED(false),
 	BAD_RESPONSE(false),
 	INTERNAL_RESPONSE_ERROR(false),
 	// Wrap
@@ -157,5 +163,13 @@ public enum IntegrationFunctionError implements Serializable {
 	public boolean isWrapInternalError() {
 		return GOVWAY_NOT_INITIALIZED.equals(this) || GOVWAY_RESOURCES_NOT_AVAILABLE.equals(this) || 
 				INTERNAL_REQUEST_ERROR.equals(this);
+	}
+	public boolean isWrapBadResponse(IntegrationError integrationError) {
+		// tutte tranne RESPONSE_SIZE_EXCEEDED
+		return IntegrationError.BAD_RESPONSE.equals(integrationError) &&  !RESPONSE_SIZE_EXCEEDED.equals(this);
+	}
+	public boolean isWrapInternalResponseError(IntegrationError integrationError) {
+		// tutte per adesso
+		return IntegrationError.INTERNAL_RESPONSE_ERROR.equals(integrationError);
 	}
 }	

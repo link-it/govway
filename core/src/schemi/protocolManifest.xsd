@@ -160,6 +160,7 @@
                      <xsd:element name="notFound" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="badRequest" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="conflict" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="requestTooLarge" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="limitExceeded" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="tooManyRequests" type="IntegrationError" minOccurs="0" />
                      <!-- backend non raggiungibile -->                     

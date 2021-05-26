@@ -15,23 +15,26 @@ La tabella :numref:`gestioneErroriTab` riporta l'elenco dei possibili codici di 
       :widths: auto
       :name: gestioneErroriTab
 
-      ============     ===================================     =================
-      REST / SOAP      GovWay-Transaction-ErrorType            Retry
-      ============     ===================================     =================
-      400 / Client     :ref:`errori_400`                       No
-      401 / Client     :ref:`errori_401`                       No
-      403 / Client     :ref:`errori_403`                       No
-      404 / Client     :ref:`errori_404`                       No
-      409 / Client     :ref:`errori_409`                       No
-      429 / Client     LimitExceeded - :ref:`errori_429`       No
-      429 / Client     TooManyRequests - :ref:`errori_429`     Sì
-      502 / Server     :ref:`errori_502`                       Sì, se idempotente 
-      503 / Server     :ref:`errori_503`                       Sì
-      504 / Server     :ref:`errori_504`                       Sì, se idempotente
-      ============     ===================================     =================
+      ============     ==========================================================  =============================
+      REST / SOAP      GovWay-Transaction-ErrorType                                Retry
+      ============     ==========================================================  =============================
+      400 / Client     :ref:`errori_400`                                           No
+      401 / Client     :ref:`errori_401`                                           No
+      403 / Client     :ref:`errori_403`                                           No
+      404 / Client     :ref:`errori_404`                                           No
+      409 / Client     :ref:`errori_409`                                           No
+      413 / Client     :ref:`errori_413`                                           No
+      429 / Client     :ref:`errori_429_LimitExceeded` - 429 (Rate Limiting)       No, fino a reset *
+      429 / Client     :ref:`errori_429_TooManyRequests` - 429 (Rate Limiting)     Sì
+      502 / Server     :ref:`errori_502`                                           Sì, se idempotente 
+      502 / Server     :ref:`errori_502_ResponseSizeExceeded` - 502 (Bad Gateway)  No 
+      503 / Server     :ref:`errori_503`                                           Sì
+      504 / Server     :ref:`errori_504`                                           Sì, se idempotente
+      ============     ==========================================================  =============================
+
+[*] Se vengono attivate policy di :ref:`rateLimiting` che prevedono un limite di richieste all'interno di una finestra temporale, GovWay genera un header HTTP che indica al client il numero di secondi che mancano alla nuova finestra temporale dove saranno resettati i contatori delle richieste effettuate. I nomi degli header, che cambiano in funzione delle policy attivate, vengono descritte nella sezione :ref:`headerRisposta`.
 
 Nei casi in cui è prevista la rispedizione, GovWay genera un header 'Retry-After' che indica al client il numero di secondi di attesa prima di ripetere la richiesta.
-Maggiori dettagli sugli header generati per i casi di errore con rispedizione sono riportati nella sezione :ref:`headerRisposta`.
 
 
 .. toctree::
@@ -42,6 +45,7 @@ Maggiori dettagli sugli header generati per i casi di errore con rispedizione so
 	403/index
         404/index
 	409/index
+	413/index
 	429/index
         502/index
 	503/index

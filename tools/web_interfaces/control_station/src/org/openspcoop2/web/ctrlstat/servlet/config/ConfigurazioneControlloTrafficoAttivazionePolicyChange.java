@@ -186,7 +186,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			// Controlli sui campi immessi
 			String _modalita = infoPolicy.isBuiltIn() ? ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_BUILT_IN :
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CUSTOM;
-			boolean isOk = confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, 
+			boolean isOk = confHelper.attivazionePolicyCheckData(sbParsingError, tipoOperazione, configurazioneControlloTraffico, 
 					policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, _modalita);
 			if (!isOk) {
 				

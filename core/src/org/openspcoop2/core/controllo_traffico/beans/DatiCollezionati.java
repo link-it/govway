@@ -483,6 +483,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 					bf.append(this.policyCounter);
 					break;
 				case OCCUPAZIONE_BANDA:
@@ -518,6 +519,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 					bf.append(avg.longValue());	
 					break;
 				case OCCUPAZIONE_BANDA:
@@ -575,6 +577,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 					bf.append(this.oldPolicyCounter);
 					break;
 				case OCCUPAZIONE_BANDA:
@@ -611,6 +614,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 					bf.append(oldAvg.longValue());	
 					break;
 				case OCCUPAZIONE_BANDA:
@@ -790,6 +794,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		case OCCUPAZIONE_BANDA:
 		case TEMPO_COMPLESSIVO_RISPOSTA:
 		case TEMPO_MEDIO_RISPOSTA:
+		case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 			return false;
 		}
 		return false;
@@ -805,6 +810,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		case OCCUPAZIONE_BANDA:
 		case TEMPO_COMPLESSIVO_RISPOSTA:
 		case TEMPO_MEDIO_RISPOSTA:
+		case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 			return false;
 		}
 		return false;
@@ -1177,6 +1183,13 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
             
 			
 			switch (activePolicy.getTipoRisorsaPolicy()) {
+			
+			case DIMENSIONE_MASSIMA_MESSAGGIO:
+				
+				// nop
+				
+				break;			
+			
 			case NUMERO_RICHIESTE:
 				
 				// nop

@@ -142,6 +142,7 @@
 			<xsd:element name="risorsa" type="xsd:string" /> <!--  Lascio libero in modo da aggiungere facilmente nuove policy senza intervenire sul db type="tipo-risorsa"  -->	
 			<xsd:element name="simultanee" type="xsd:boolean" default="false" />
 			<xsd:element name="valore" type="xsd:unsignedLong" minOccurs="0" />
+			<xsd:element name="valore2" type="xsd:unsignedLong" minOccurs="0" />
 			<xsd:element name="valore-tipo-banda" type="tipo-banda" minOccurs="0" />
 			<xsd:element name="valore-tipo-latenza" type="tipo-latenza" minOccurs="0" />
 			<xsd:element name="modalita-controllo" type="tipo-controllo-periodo" minOccurs="0" />
@@ -185,6 +186,7 @@
 			<xsd:element name="warning-only" type="xsd:boolean" default="false" />
 			<xsd:element name="ridefinisci" type="xsd:boolean" /> <!-- Permette di indicare se devono essere ridefiniti i valori di default -->
 			<xsd:element name="valore" type="xsd:unsignedLong" minOccurs="0" />
+			<xsd:element name="valore2" type="xsd:unsignedLong" minOccurs="0" />
 			
 			<xsd:element name="filtro" type="attivazione-policy-filtro" minOccurs="1"/>
 			
@@ -308,6 +310,7 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="NumeroRichieste"/>
 			<xsd:enumeration value="OccupazioneBanda"/>
+			<xsd:enumeration value="DimensioneMassimaMessaggio"/>
 			<xsd:enumeration value="TempoComplessivoRisposta"/>
 			<xsd:enumeration value="TempoMedioRisposta"/>
 			<xsd:enumeration value="NumeroRichiesteFallite"/>

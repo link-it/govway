@@ -1315,6 +1315,9 @@ public class OpenSPCoop2Properties {
 			}
 
 			// Connettore (Warning)
+			if(this.isConnettoriUseLimitedInputStream()) {
+				this.getLimitedInputStreamThresholdKb();
+			}
 			this.isConnettoriUseTimeoutInputStream();
 			this.getConnectionTimeout_consegnaContenutiApplicativi();
 			this.getConnectionTimeout_inoltroBuste();
@@ -12108,6 +12111,57 @@ public class OpenSPCoop2Properties {
 
 
 	/* ************* CONNETTORI ***************** */
+	
+	private static Boolean isConnettoriUseLimitedInputStream = null;
+	public boolean isConnettoriUseLimitedInputStream() {	
+		if(OpenSPCoop2Properties.isConnettoriUseLimitedInputStream==null){
+			String pName = "org.openspcoop2.pdd.connettori.useLimitedInputStream";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isConnettoriUseLimitedInputStream = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.isConnettoriUseLimitedInputStream = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isConnettoriUseLimitedInputStream = false;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isConnettoriUseLimitedInputStream;
+	}
+	
+	private static Long getLimitedInputStreamThreshold = null;
+	private static boolean limitedInputStreamThresholdDefined = false;
+	public boolean isLimitedInputStreamThresholdDefined() {
+		return limitedInputStreamThresholdDefined;
+	}
+	public long getLimitedInputStreamThresholdKb() {	
+		if(OpenSPCoop2Properties.getLimitedInputStreamThreshold==null){
+			String pName = "org.openspcoop2.pdd.connettori.limitedInputStream.threshold";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getLimitedInputStreamThreshold = java.lang.Long.valueOf(name);
+					limitedInputStreamThresholdDefined = true;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Integer.MAX_VALUE);
+					OpenSPCoop2Properties.getLimitedInputStreamThreshold = (long)Integer.MAX_VALUE;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Integer.MAX_VALUE+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getLimitedInputStreamThreshold = (long)Integer.MAX_VALUE;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getLimitedInputStreamThreshold;
+	}
 	
 	private static Boolean isConnettoriUseTimeoutInputStream = null;
 	public boolean isConnettoriUseTimeoutInputStream() {	

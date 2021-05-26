@@ -89,6 +89,9 @@
 	    			<conflict messageType="soap11" retry="false" errorMessage="specific">
 	    				<errorCode http="500" govway="409"/>
 	    			</conflict>
+	    			<requestTooLarge messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="413"/>
+	    			</requestTooLarge>
 	    			<limitExceeded messageType="soap11" retry="false" errorMessage="specific">
 	    				<errorCode http="500" govway="429"/>
 	    			</limitExceeded>
@@ -131,6 +134,9 @@
 	    			<conflict messageType="soap11" retry="false" errorMessage="specific">
 	    				<errorCode http="500" govway="409"/>
 	    			</conflict>
+	    			<requestTooLarge messageType="soap11" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="413"/>
+	    			</requestTooLarge>
 	    			<limitExceeded messageType="soap11" retry="false" errorMessage="specific">
 	    				<errorCode http="500" govway="429"/>
 	    			</limitExceeded>

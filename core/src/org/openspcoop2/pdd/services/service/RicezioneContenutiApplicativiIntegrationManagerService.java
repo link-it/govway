@@ -93,6 +93,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.utils.ErroriProperties;
+import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -678,6 +679,10 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 							TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
 						integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
 					}
+					else if( parseException!=null && parseException.getSourceException()!=null &&
+							LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
+						integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
+					}
 					
 					if(msg.getImbustamento()==false){
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
@@ -809,6 +814,10 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				if( parseException!=null && parseException.getSourceException()!=null &&
 						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
 					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				else if( parseException!=null && parseException.getSourceException()!=null &&
+						LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 				}
 				
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER,"buildMsg.nonRiuscito");

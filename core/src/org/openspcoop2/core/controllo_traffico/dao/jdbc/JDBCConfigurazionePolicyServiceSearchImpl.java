@@ -471,6 +471,7 @@ public class JDBCConfigurazionePolicyServiceSearchImpl implements IJDBCServiceSe
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().RISORSA,true));
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().SIMULTANEE,true));
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE,true));
+		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_2,true));
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_TIPO_BANDA,true));
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_TIPO_LATENZA,true));
 		sqlQueryObjectGet.addSelectField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().MODALITA_CONTROLLO,true));

@@ -381,7 +381,7 @@
             displayText="Password" regex=".+"/>
     </page>
 
-    <page name="infoDB_config_oracle" type="input" displayText="Informazioni DataSource dedicato alle Configurazioni" ifProperty="(${antinstaller_tipo_database}==oracle) AND (${antinstaller_config_db}==config)">
+    <page name="infoDB_config_oracle" type="input" displayText="Informazioni DataSource dedicato alle Configurazioni" ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}==oracle) AND (${antinstaller_config_db}==config)">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_config" displayText="Hostname"
             regex=".+"/>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_config"
@@ -400,7 +400,7 @@
             displayText="Password" regex=".+"/>
     </page>
 
-    <page name="infoDB_config_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Configurazioni" ifProperty="(${antinstaller_tipo_database}!=oracle) AND (${antinstaller_config_db}==config)">
+    <page name="infoDB_config_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Configurazioni" ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}!=oracle) AND (${antinstaller_config_db}==config)">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_config" displayText="Hostname"
             regex=".+"/>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_config"
@@ -415,7 +415,7 @@
             displayText="Password" regex=".+"/>
     </page>
 
-    <page name="infoDB_log_oracle" type="input" displayText="Informazioni DataSource dedicato alle Tracce" ifProperty="(${antinstaller_tipo_database}==oracle) AND (${antinstaller_log_db}==log)">
+    <page name="infoDB_log_oracle" type="input" displayText="Informazioni DataSource dedicato alle Tracce" ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}==oracle) AND (${antinstaller_log_db}==log)">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_log" displayText="Hostname"
             regex=".+"/>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_log"
@@ -434,7 +434,7 @@
             displayText="Password" regex=".+"/>
     </page>
 
-    <page name="infoDB_log_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Tracce" ifProperty="(${antinstaller_tipo_database}!=oracle) AND (${antinstaller_log_db}==log)">
+    <page name="infoDB_log_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Tracce" ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}!=oracle) AND (${antinstaller_log_db}==log)">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_log" displayText="Hostname"
             regex=".+"/>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_log"
@@ -449,7 +449,7 @@
             displayText="Password" regex=".+"/>
     </page>
 
-    <page name="infoDB_stats_oracle" type="input" displayText="Informazioni DataSource dedicato alle Statistiche" ifProperty="(${antinstaller_tipo_database}==oracle) AND (${antinstaller_stats_db}==stats)">
+    <page name="infoDB_stats_oracle" type="input" displayText="Informazioni DataSource dedicato alle Statistiche" ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}==oracle) AND (${antinstaller_stats_db}==stats)">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_stats" displayText="Hostname"
             regex=".+"/>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_stats"
@@ -468,7 +468,7 @@
             displayText="Password" regex=".+"/>
     </page>
 
-    <page name="infoDB_stats_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Statistiche" ifProperty="(${antinstaller_tipo_database}!=oracle) AND (${antinstaller_stats_db}==stats)">
+    <page name="infoDB_stats_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Statistiche" ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}!=oracle) AND (${antinstaller_stats_db}==stats)">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_stats" displayText="Hostname"
             regex=".+"/>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_stats"

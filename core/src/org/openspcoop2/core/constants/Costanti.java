@@ -93,6 +93,8 @@ public class Costanti {
 	public final static String CONSEGNA_MULTIPLA_SINCRONA = "CONSEGNA_MULTIPLA_SINCRONA";
 	public final static String CONSEGNA_MULTIPLA_CONNETTORI = "CONSEGNA_MULTIPLA_CONNETTORI";
 	
+	public final static String LIMITED_STREAM = "LIMITED_STREAM";
+	
 	public final static String ERRORE_VALIDAZIONE_PROTOCOLLO = "ERRORE_PROTOCOLLO";
 	
 	public final static String ERRORE_TRUE = "true";

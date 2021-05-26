@@ -149,6 +149,8 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.utils.LimitExceededIOException;
+import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
@@ -2745,13 +2747,30 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							responseReadTimeout = timeoutMessage;
 						}
 					}
-					if(connettoreMsgRequest.getParseException() != null || requestReadTimeout!=null){
+					String requestLimitExceeded = null;
+					String responseLimitExceeded = null;
+					if(pddContext!=null && pddContext.containsKey(LimitedInputStream.ERROR_MSG_KEY)) {
+						String limitedExceededMessage = PdDContext.getValue(LimitedInputStream.ERROR_MSG_KEY, pddContext);
+						if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_REQUEST)) {
+							requestLimitExceeded = limitedExceededMessage;
+						}
+						else if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_RESPONSE)) {
+							responseLimitExceeded = limitedExceededMessage;
+						}
+					}
+					if(connettoreMsgRequest.getParseException() != null || 
+							requestReadTimeout!=null || 
+							requestLimitExceeded!=null){
 						
 						ParseException parseException = null;
 						Throwable tParsing = null;
 						String errorMsg = null;
 						if(requestReadTimeout != null) {
 							tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+							errorMsg = tParsing.getMessage();
+						}
+						else if(requestLimitExceeded != null) {
+							tParsing = (LimitExceededIOException) pddContext.getObject(LimitedInputStream.EXCEPTION_KEY);
 							errorMsg = tParsing.getMessage();
 						}
 						else {
@@ -2765,9 +2784,16 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						if(requestReadTimeout!=null) {
 							integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
 						}
+						else if(requestLimitExceeded!=null) {
+							integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
+						}
 						else if(connettoreMsgRequest.getParseException().getSourceException()!=null &&
 								TimeoutIOException.isTimeoutIOException(connettoreMsgRequest.getParseException().getSourceException())) {
 							integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+						}
+						else if(connettoreMsgRequest.getParseException().getSourceException()!=null &&
+								LimitExceededIOException.isLimitExceededIOException(connettoreMsgRequest.getParseException().getSourceException())) {
+							integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 						}
 						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
 						if(localForwardEngine!=null) {
@@ -2793,6 +2819,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								pddContext.removeObject(TimeoutInputStream.ERROR_MSG_KEY);
 								pddContext.removeObject(TimeoutInputStream.EXCEPTION_KEY);
 							}
+							else if(responseLimitExceeded!=null) {
+								integrationFunctionError = IntegrationFunctionError.RESPONSE_SIZE_EXCEEDED;
+								pddContext.removeObject(LimitedInputStream.ERROR_MSG_KEY);
+								pddContext.removeObject(LimitedInputStream.EXCEPTION_KEY);
+							}
 							else if(this.propertiesReader.isServiceUnavailable_ReadTimedOut(motivoErroreConsegna)){
 								integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 							}
@@ -2813,13 +2844,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						return esito;
 					} else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION) ||
 							responseMessage.getParseException() != null ||
-							responseReadTimeout!=null){
+							responseReadTimeout!=null ||
+							responseLimitExceeded!=null){
 						
 						ParseException parseException = null;
 						Throwable tParsing = null;
 						String errorMsg = null;
 						if(responseReadTimeout != null) {
 							tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+							errorMsg = tParsing.getMessage();
+						}
+						else if(responseLimitExceeded != null) {
+							tParsing = (LimitExceededIOException) pddContext.getObject(LimitedInputStream.EXCEPTION_KEY);
 							errorMsg = tParsing.getMessage();
 						}
 						else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
@@ -2838,9 +2874,16 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						if(responseReadTimeout!=null) {
 							integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 						}
+						else if(responseLimitExceeded!=null) {
+							integrationFunctionError = IntegrationFunctionError.RESPONSE_SIZE_EXCEEDED;
+						}
 						else if(parseException.getSourceException()!=null &&
 								TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
 							integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+						}
+						else if(parseException.getSourceException()!=null &&
+								LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
+							integrationFunctionError = IntegrationFunctionError.RESPONSE_SIZE_EXCEEDED;
 						}
 						ejbUtils.setIntegrationFunctionErrorPortaApplicativa(integrationFunctionError);
 						if(localForwardEngine!=null) {

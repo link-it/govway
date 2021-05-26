@@ -37,6 +37,7 @@ public class InfoPolicy {
 	private boolean builtIn;
 	private TipoRisorsa tipoRisorsa;
 	private Long valore;
+	private Long valore2;
 	private String descrizione;
 	private boolean intervalloUtilizzaRisorseStatistiche;
 	private boolean intervalloUtilizzaRisorseRealtime;
@@ -103,6 +104,12 @@ public class InfoPolicy {
 	}
 	public void setValore(Long valore) {
 		this.valore = valore;
+	}
+	public Long getValore2() {
+		return this.valore2;
+	}
+	public void setValore2(Long valore2) {
+		this.valore2 = valore2;
 	}
 	public boolean isControlloCongestione() {
 		return this.controlloCongestione;

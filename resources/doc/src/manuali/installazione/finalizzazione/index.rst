@@ -38,7 +38,7 @@ tematiche:
    *cross-origin HTTP request (CORS)*; è possibile modificarne la
    configurazione seguendo le indicazioni presenti nella sezione :ref:`cors`.
 
-#. *Rate Limiting - Numero Complessivo Richieste Simultanee*
+#. *Rate Limiting*
 
    GovWay permette definire un rate limiting sulle singole erogazioni o
    fruizioni di API. Le metriche utilizzabili riguardano il numero di
@@ -53,6 +53,9 @@ tematiche:
    Per default GovWay è configurato per gestire simultaneamente al
    massimo 200 richieste. Per modificare tale configurazione seguire le
    indicazioni presenti nella sezione :ref:`maxRequests`.
+
+   Sempre a livello globale, GovWay limita la dimensione massima accettata di una richiesta e di una risposta a 10MB. Per modificare i livelli di soglia della policy seguire le
+   indicazioni presenti nella sezione :ref:`dimensioneMassimaMessaggi`.
 
 #. *Tempi Risposta*
 
@@ -118,7 +121,7 @@ tematiche:
         urlInvocazione
 	multiTenant
 	cors
-	maxRequests
+	rateLimiting/index
 	tempiRisposta
 	cachingRisposta
 	apiRest

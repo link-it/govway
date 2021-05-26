@@ -136,6 +136,13 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 				return "policy_valore";
 			}
 		}
+		if(field.equals(AttivazionePolicy.model().VALORE_2)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".policy_valore2";
+			}else{
+				return "policy_valore2";
+			}
+		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.ENABLED)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".filtro_enabled";
@@ -422,6 +429,9 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(AttivazionePolicy.model(), returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().VALORE)){
+			return this.toTable(AttivazionePolicy.model(), returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().VALORE_2)){
 			return this.toTable(AttivazionePolicy.model(), returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.ENABLED)){

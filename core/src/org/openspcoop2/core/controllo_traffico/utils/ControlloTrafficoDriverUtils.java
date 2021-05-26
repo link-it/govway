@@ -779,6 +779,7 @@ public class ControlloTrafficoDriverUtils {
 						ConfigurazionePolicy.model().BUILT_IN,
 						ConfigurazionePolicy.model().DESCRIZIONE,
 						ConfigurazionePolicy.model().VALORE,
+						ConfigurazionePolicy.model().VALORE_2,
 						ConfigurazionePolicy.model().SIMULTANEE,
 						ConfigurazionePolicy.model().MODALITA_CONTROLLO,
 						ConfigurazionePolicy.model().TIPO_INTERVALLO_OSSERVAZIONE_REALTIME,
@@ -818,6 +819,11 @@ public class ControlloTrafficoDriverUtils {
 						info.setValore((Long)v);
 					}
 					
+					Object v2 =  map.get(ConfigurazionePolicy.model().VALORE_2.getFieldName());
+					if(v2!=null && v2 instanceof Long){
+						info.setValore2((Long)v2);
+					}
+										
 					Object simultanee =  map.get(ConfigurazionePolicy.model().SIMULTANEE.getFieldName());
 					if(simultanee!=null && simultanee instanceof Boolean){
 						boolean simultaneeBoolean = (Boolean) simultanee;

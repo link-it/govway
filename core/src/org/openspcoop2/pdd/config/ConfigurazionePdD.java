@@ -1558,6 +1558,58 @@ public class ConfigurazionePdD  {
 						
 		}
 		
+		Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttive_dimensioneMessaggio = null;
+		try{
+			if(api) {
+				this.cache.remove(_getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(tipoPdD, nomePorta));
+				mapPolicyAttive_dimensioneMessaggio = this.getElencoIdPolicyAttiveAPI_dimensioneMessaggio(connectionPdD, true, tipoPdD, nomePorta);
+			}
+			else {
+				this.cache.remove(_getKey_ElencoIdPolicyAttiveGlobali_dimensioneMessaggio());
+				mapPolicyAttive_dimensioneMessaggio = this.getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(connectionPdD, true);
+			}
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		if(mapPolicyAttive_dimensioneMessaggio!=null && !mapPolicyAttive_dimensioneMessaggio.isEmpty()) {
+		
+			Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttive_dimensioneMessaggio.keySet().iterator();
+			while (it.hasNext()) {
+				TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+				ElencoIdPolicyAttive elencoPolicyAttive = mapPolicyAttive_dimensioneMessaggio.get(tipoRisorsaPolicyAttiva);
+			
+				if(elencoPolicyAttive!=null && elencoPolicyAttive.sizeIdActivePolicyList()>0) {
+					
+					msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura di "+elencoPolicyAttive.sizeIdActivePolicyList()+" policy "+tipo+" attive (risorsa: "+tipoRisorsaPolicyAttiva+") ...";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
+					
+					for (IdActivePolicy idActivePolicy : elencoPolicyAttive.getIdActivePolicyList()) {
+					
+						try{
+							String id = UniqueIdentifierUtilities.getUniqueId(idActivePolicy);
+							this.cache.remove(_getKey_AttivazionePolicy(id));
+							this.getAttivazionePolicy(connectionPdD, true, id);
+						}
+						catch(DriverConfigurazioneNotFound notFound){}
+						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+						
+					}
+					
+					msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura di "+elencoPolicyAttive.sizeIdActivePolicyList()+" policy "+tipo+" attive (risorsa: "+tipoRisorsaPolicyAttiva+") completata";
+					this.log.debug(msg);
+					if(alogConsole!=null){
+						alogConsole.debug(msg);
+					}
+					
+				}
+			}
+						
+		}
+		
 		msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura delle policy "+tipo+" attive completata";
 		this.log.debug(msg);
 		if(alogConsole!=null){
@@ -3969,22 +4021,44 @@ public class ConfigurazionePdD  {
 	public static String _getKey_ElencoIdPolicyAttiveGlobali(){ // usato anche per resettare la cache puntualmente via jmx, tramite la govwayConsole
 		return "ElencoIdPolicyAttiveGlobali";
 	}
+	public static String _getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(TipoPdD tipoPdD, String nomePorta){ // usato anche per resettare la cache puntualmente via jmx, tramite la govwayConsole
+		return "ElencoIdPolicyAttiveAPI_dimensioneMessaggio_"+tipoPdD.getTipo()+"_"+nomePorta;
+	}
+	public static String _getKey_ElencoIdPolicyAttiveGlobali_dimensioneMessaggio(){ // usato anche per resettare la cache puntualmente via jmx, tramite la govwayConsole
+		return "ElencoIdPolicyAttiveGlobali_dimensioneMessaggio";
+	}
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI(Connection connectionPdD, boolean useCache, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this._getElencoIdPolicyAttive(connectionPdD, useCache, tipoPdD, nomePorta, true);
+		return this._getElencoIdPolicyAttive(connectionPdD, useCache, tipoPdD, nomePorta, true,
+				false);
 	}
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this._getElencoIdPolicyAttive(connectionPdD, useCache, null, null, false);
+		return this._getElencoIdPolicyAttive(connectionPdD, useCache, null, null, false,
+				false);
+	}
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI_dimensioneMessaggio(Connection connectionPdD, boolean useCache, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this._getElencoIdPolicyAttive(connectionPdD, useCache, tipoPdD, nomePorta, true,
+				true);
+	}
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this._getElencoIdPolicyAttive(connectionPdD, useCache, null, null, false,
+				true);
 	}
 	@SuppressWarnings("unchecked")
 	private Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> _getElencoIdPolicyAttive(Connection connectionPdD, boolean useCache,
-			TipoPdD tipoPdD, String nomePorta, boolean api) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			TipoPdD tipoPdD, String nomePorta, boolean api, 
+			boolean policyDimensioneMessaggio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
+		String prefix = "";
+		if(policyDimensioneMessaggio) {
+			prefix = " [DimensioneMessaggio]";
+		}
+		
 		if(api) {
 			if(tipoPdD==null) {
-				throw new DriverConfigurazioneException("Tipo PdD non fornito; richiesto per una policy API");
+				throw new DriverConfigurazioneException("Tipo PdD non fornito; richiesto per una policy API"+prefix);
 			}
 			if(nomePorta==null) {
-				throw new DriverConfigurazioneException("Nome Porta non fornito; richiesto per una policy API");
+				throw new DriverConfigurazioneException("Nome Porta non fornito; richiesto per una policy API"+prefix);
 			}
 		}
 		
@@ -3992,10 +4066,20 @@ public class ConfigurazionePdD  {
 		String key = null;	
 		if(this.cache!=null && useCache){
 			if(api) {
-				key = _getKey_ElencoIdPolicyAttiveAPI(tipoPdD, nomePorta);
+				if(policyDimensioneMessaggio) {
+					key = _getKey_ElencoIdPolicyAttiveAPI_dimensioneMessaggio(tipoPdD, nomePorta);
+				}
+				else {
+					key = _getKey_ElencoIdPolicyAttiveAPI(tipoPdD, nomePorta);
+				}
 			}
 			else {
-				key = _getKey_ElencoIdPolicyAttiveGlobali();
+				if(policyDimensioneMessaggio) {
+					key = _getKey_ElencoIdPolicyAttiveGlobali_dimensioneMessaggio();
+				}
+				else {
+					key = _getKey_ElencoIdPolicyAttiveGlobali();
+				}
 			}
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
@@ -4013,6 +4097,9 @@ public class ConfigurazionePdD  {
 
 		// Algoritmo CACHE
 		String nomeMetodo = api? "getElencoIdPolicyAttiveAPI" : "getElencoIdPolicyAttiveGlobali";
+		if(policyDimensioneMessaggio) {
+			nomeMetodo = nomeMetodo + "_dimensioneMessaggio";
+		}
 		Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> elenco = null;
 		if(this.cache!=null  && useCache){
 			if(api) {

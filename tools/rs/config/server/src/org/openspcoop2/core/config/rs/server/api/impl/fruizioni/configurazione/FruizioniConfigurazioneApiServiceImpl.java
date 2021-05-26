@@ -498,7 +498,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			String serialId = env.confCore.getNextPolicyInstanceSerialId(infoPolicy.getIdPolicy());
 			policy.setIdActivePolicy(ControlloTrafficoDriverUtils.buildIdActivePolicy(infoPolicy.getIdPolicy(), serialId));
 	
-			ErogazioniApiHelper.override(body, env.protocolFactory.getProtocol(),  env.idSoggetto.toIDSoggetto(), env.requestWrapper);
+			ErogazioniApiHelper.override(infoPolicy.getTipoRisorsa(), body, env.protocolFactory.getProtocol(),  env.idSoggetto.toIDSoggetto(), env.requestWrapper);
 			// Dati Attivazione
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.ADD, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
@@ -2458,7 +2458,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting con nome " + idPolicy );
 			
 			InfoPolicy infoPolicy = env.confCore.getInfoPolicy(policy.getIdPolicy());
-			ErogazioniApiHelper.override(body, env.protocolFactory.getProtocol(),  env.idSoggetto.toIDSoggetto(), env.requestWrapper);
+			ErogazioniApiHelper.override(infoPolicy.getTipoRisorsa(), body, env.protocolFactory.getProtocol(),  env.idSoggetto.toIDSoggetto(), env.requestWrapper);
 
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.CHANGE, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {

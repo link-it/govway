@@ -92,6 +92,7 @@ import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDAccordo;
@@ -4314,17 +4315,9 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final RateLimitingPolicyBase convert ( AttivazionePolicy src, InfoPolicy infoPolicy, RateLimitingPolicyBase dest ) {
+	public static final RateLimitingPolicyBase convert (AttivazionePolicy src, InfoPolicy infoPolicy, RateLimitingPolicyBase dest ) {
 	
 		dest.setNome(src.getAlias());
-		dest.setSogliaRidefinita(src.isRidefinisci());
-		
-		if ( src.isRidefinisci()) {
-			dest.setSogliaValore(src.getValore().intValue());
-		}
-		else {
-			dest.setSogliaValore(infoPolicy.getValore().intValue());
-		}
 		
 		if ( src.isWarningOnly() )
 			dest.setStato( StatoFunzionalitaConWarningEnum.WARNINGONLY );
@@ -4333,6 +4326,8 @@ public class ErogazioniApiHelper {
 			dest.setStato(StatoFunzionalitaConWarningEnum.ABILITATO );
 		else
 			dest.setStato(StatoFunzionalitaConWarningEnum.DISABILITATO );
+		
+		boolean dimensioneMessaggio = false;
 		
 		if(dest instanceof RateLimitingPolicyBaseConIdentificazione) {
 			RateLimitingPolicyBaseConIdentificazione destIdentificazione = (RateLimitingPolicyBaseConIdentificazione) dest;
@@ -4362,6 +4357,10 @@ public class ErogazioniApiHelper {
 					break;
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					criteri.setMetrica(RateLimitingCriteriMetricaEnum.NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI);
+					break;
+				case DIMENSIONE_MASSIMA_MESSAGGIO:
+					criteri.setMetrica(RateLimitingCriteriMetricaEnum.DIMENSIONE_MASSIMA);
+					dimensioneMessaggio = true;
 					break;
 				case OCCUPAZIONE_BANDA:
 					criteri.setMetrica(RateLimitingCriteriMetricaEnum.OCCUPAZIONE_BANDA);
@@ -4396,9 +4395,38 @@ public class ErogazioniApiHelper {
 				RateLimitingPolicyIdentificativo id = new RateLimitingPolicyIdentificativo();
 				id.setIdentificazione(RateLimitingIdentificazionePolicyEnum.POLICY);
 				id.setPolicy(infoPolicy.getIdPolicy());
+				
+				if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(infoPolicy.getTipoRisorsa())) {
+					dimensioneMessaggio = true;
+				}
+				
 				destIdentificazione.setConfigurazione(id);
 			}
 		}
+
+		
+		
+		dest.setSogliaRidefinita(src.isRidefinisci());
+		
+		if ( src.isRidefinisci()) {
+			if(dimensioneMessaggio) {
+				dest.setSogliaDimensioneRichiesta(src.getValore2().intValue());
+				dest.setSogliaDimensioneRisposta(src.getValore().intValue());
+			}
+			else {
+				dest.setSogliaValore(src.getValore().intValue());
+			}
+		}
+		else {
+			if(dimensioneMessaggio) {
+				dest.setSogliaDimensioneRichiesta(infoPolicy.getValore2().intValue());
+				dest.setSogliaDimensioneRisposta(infoPolicy.getValore().intValue());
+			}
+			else {
+				dest.setSogliaValore(infoPolicy.getValore().intValue());
+			}
+		}
+		
 		
 		return dest;
 			
@@ -4493,6 +4521,9 @@ public class ErogazioniApiHelper {
 		case NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI:
 			tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI;
 			break;
+		case DIMENSIONE_MASSIMA:
+			tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO;
+			break;
 		case OCCUPAZIONE_BANDA:
 			tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA;
 			break;
@@ -4522,10 +4553,10 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final void override( String idPolicy, RateLimitingPolicyErogazione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override(TipoRisorsa tipoRisorsa, String idPolicy, RateLimitingPolicyErogazione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyErogazione) body, protocollo, idPropietarioSa, wrap );
+		override (tipoRisorsa, (RateLimitingPolicyErogazione) body, protocollo, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID, 
@@ -4534,10 +4565,10 @@ public class ErogazioniApiHelper {
 	}
 	
 
-	public static final void override( String idPolicy, RateLimitingPolicyFruizione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override(TipoRisorsa tipoRisorsa, String idPolicy, RateLimitingPolicyFruizione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyFruizione) body, protocollo, idPropietarioSa, wrap );
+		override (tipoRisorsa, (RateLimitingPolicyFruizione) body, protocollo, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID, 
@@ -4660,10 +4691,10 @@ public class ErogazioniApiHelper {
 			); 
 	}
 	
-	public static final void override( RateLimitingPolicyErogazioneUpdate body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override(TipoRisorsa tipoRisorsa, RateLimitingPolicyErogazioneUpdate body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override( (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
+		override(tipoRisorsa, (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
@@ -4687,10 +4718,10 @@ public class ErogazioniApiHelper {
 		override( groupCriteria, idPropietarioSa, wrap );
 
 	}
-	public static final void override( RateLimitingPolicyErogazione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
+	public static final void override(TipoRisorsa tipoRisorsa, RateLimitingPolicyErogazione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
 		if (body == null) return;
 
-		override( (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
+		override(tipoRisorsa, (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
@@ -4717,10 +4748,10 @@ public class ErogazioniApiHelper {
 	
 	
 	
-	public static final void override ( RateLimitingPolicyFruizioneUpdate body,  String protocollo, IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+	public static final void override (TipoRisorsa tipoRisorsa,  RateLimitingPolicyFruizioneUpdate body,  String protocollo, IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
+		override ( tipoRisorsa, (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		override ( body.getFiltro(), idPropietarioSa, wrap );
 		override ( body.getRaggruppamento() , idPropietarioSa, wrap );
 		
@@ -4729,10 +4760,10 @@ public class ErogazioniApiHelper {
 			RuoloPolicy.DELEGATA.toString() 
 		);
 	}
-	public static final void override ( RateLimitingPolicyFruizione body,  String protocollo, IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
+	public static final void override (TipoRisorsa tipoRisorsa,  RateLimitingPolicyFruizione body,  String protocollo, IDSoggetto idPropietarioSa,  HttpRequestWrapper wrap ) {	// Questa è in comune alla update.
 		if (body == null) return;
 
-		override ( (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
+		override ( tipoRisorsa, (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		override ( body.getFiltro(), idPropietarioSa, wrap );
 		override ( body.getRaggruppamento() , idPropietarioSa, wrap );
 		
@@ -4743,7 +4774,7 @@ public class ErogazioniApiHelper {
 		
 	}
 		
-	public static final void override ( RateLimitingPolicyBase body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {	// Questa è in comune alla update.		
+	public static final void override (TipoRisorsa tipoRisorsa, RateLimitingPolicyBase body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {	// Questa è in comune alla update.		
 		if (body == null) return;
 
 		wrap.overrideParameter(
@@ -4762,10 +4793,49 @@ public class ErogazioniApiHelper {
 			);
 		
 		
-		wrap.overrideParameter(
-				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE, 
-				evalnull( () -> body.getSogliaValore().toString() )
-			);
+		if(body.isSogliaRidefinita()) {
+			if(TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsa)) {
+				
+				if(body.getSogliaDimensioneRichiesta()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Soglia relativa alla dimensione della richiesta non fornita");
+				}
+				if(body.getSogliaDimensioneRisposta()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Soglia relativa alla dimensione della risposta non fornita");
+				}
+				if(body.getSogliaValore()!=null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Valore di Soglia non utilizzabile con una policy di tipo '"+RateLimitingCriteriMetricaEnum.DIMENSIONE_MASSIMA.toString()+"'");
+				}
+				
+				wrap.overrideParameter(
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE_2, 
+						evalnull( () -> body.getSogliaDimensioneRichiesta().toString() )
+					);
+				
+				wrap.overrideParameter(
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE, 
+						evalnull( () -> body.getSogliaDimensioneRisposta().toString() )
+					);
+				
+			}
+			else {
+			
+				if(body.getSogliaDimensioneRichiesta()!=null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Soglia relativa alla dimensione della richiesta non utilizzabile con una policy di tipo diverso da '"+RateLimitingCriteriMetricaEnum.DIMENSIONE_MASSIMA.toString()+"'");
+				}
+				if(body.getSogliaDimensioneRisposta()!=null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Soglia relativa alla dimensione della risposta non utilizzabile con una policy di tipo diverso da '"+RateLimitingCriteriMetricaEnum.DIMENSIONE_MASSIMA.toString()+"'");
+				}
+				if(body.getSogliaValore()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Valore di Soglia non fornito");
+				}
+				
+				wrap.overrideParameter(
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VALORE, 
+						evalnull( () -> body.getSogliaValore().toString() )
+					);
+				
+			}
+		}
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_ENABLED,
@@ -5050,7 +5120,7 @@ public class ErogazioniApiHelper {
 		}
 		
 		org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
-		if (! env.confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, 
+		if (! env.confHelper.attivazionePolicyCheckData(new StringBuilder(), tipoOperazione, configurazioneControlloTraffico, 
 				policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, modalita) ) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 		}

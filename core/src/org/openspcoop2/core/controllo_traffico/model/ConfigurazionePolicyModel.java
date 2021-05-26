@@ -46,6 +46,7 @@ public class ConfigurazionePolicyModel extends AbstractModel<ConfigurazionePolic
 		this.RISORSA = new Field("risorsa",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.SIMULTANEE = new Field("simultanee",boolean.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.VALORE = new Field("valore",java.lang.Long.class,"configurazione-policy",ConfigurazionePolicy.class);
+		this.VALORE_2 = new Field("valore2",java.lang.Long.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.VALORE_TIPO_BANDA = new Field("valore-tipo-banda",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.VALORE_TIPO_LATENZA = new Field("valore-tipo-latenza",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.MODALITA_CONTROLLO = new Field("modalita-controllo",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
@@ -79,6 +80,7 @@ public class ConfigurazionePolicyModel extends AbstractModel<ConfigurazionePolic
 		this.RISORSA = new ComplexField(father,"risorsa",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.SIMULTANEE = new ComplexField(father,"simultanee",boolean.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.VALORE = new ComplexField(father,"valore",java.lang.Long.class,"configurazione-policy",ConfigurazionePolicy.class);
+		this.VALORE_2 = new ComplexField(father,"valore2",java.lang.Long.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.VALORE_TIPO_BANDA = new ComplexField(father,"valore-tipo-banda",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.VALORE_TIPO_LATENZA = new ComplexField(father,"valore-tipo-latenza",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
 		this.MODALITA_CONTROLLO = new ComplexField(father,"modalita-controllo",java.lang.String.class,"configurazione-policy",ConfigurazionePolicy.class);
@@ -115,6 +117,8 @@ public class ConfigurazionePolicyModel extends AbstractModel<ConfigurazionePolic
 	public IField SIMULTANEE = null;
 	 
 	public IField VALORE = null;
+	 
+	public IField VALORE_2 = null;
 	 
 	public IField VALORE_TIPO_BANDA = null;
 	 

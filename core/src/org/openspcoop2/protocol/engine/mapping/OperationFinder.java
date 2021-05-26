@@ -28,6 +28,7 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -64,7 +65,8 @@ public class OperationFinder {
 			IProtocolFactory<?> protocolFactory,
 			ModalitaIdentificazioneAzione modalitaIdentificazione, String pattern, 
 			boolean forceRegistryBased, boolean forcePluginBased,
-			Logger log, boolean portaApplicativa) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
+			Logger log, boolean portaApplicativa,
+			boolean bufferMessage_readOnly , String idTransazione) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 		
 		try{
 
@@ -138,26 +140,20 @@ public class OperationFinder {
 							AbstractXPathExpressionEngine xPathEngine = null;
 							Element element = null;
 							String elementJson = null;
-							if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-								element = message.castAsSoap().getSOAPPart().getEnvelope();
-							}
-							else{
-								if(MessageType.XML.equals(message.getMessageType())){
-									element = message.castAsRestXml().getContent();
-								}
-								else if(MessageType.JSON.equals(message.getMessageType())){
-									elementJson = message.castAsRestJson().getContent();
-								}
-								else{
-									throw new DriverConfigurazioneNotFound("Identificazione '"+modalitaIdentificazione.getValue()+"' non supportata per il message-type '"+message.getMessageType()+"'");
-								}
+							boolean checkSoapBodyEmpty = false; // devo poter fare xpath anche su soapBody empty
+							if(message!=null) {
+								element = MessageUtils.getContentElement(message, checkSoapBodyEmpty, bufferMessage_readOnly, idTransazione);
+								elementJson = MessageUtils.getContentString(message, bufferMessage_readOnly, idTransazione);
 							}
 							if(element!=null) {
 								xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
 								azione = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, pattern,  log);
 							}
-							else {
+							else if(elementJson!=null){
 								azione = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, pattern, log);
+							}
+							else{
+								throw new DriverConfigurazioneNotFound("Identificazione '"+modalitaIdentificazione.getValue()+"' non supportata per il message-type '"+message.getMessageType()+"'");
 							}
 						}
 						else if(ModalitaIdentificazioneAzione.INPUT_BASED.equals(modalitaIdentificazione)){

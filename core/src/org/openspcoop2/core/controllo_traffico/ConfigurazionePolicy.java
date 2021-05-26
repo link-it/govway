@@ -48,6 +48,7 @@ import java.io.Serializable;
  * 			&lt;element name="risorsa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="simultanee" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
  * 			&lt;element name="valore" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="valore2" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="valore-tipo-banda" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-banda" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="valore-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-latenza" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/&gt;
@@ -87,6 +88,7 @@ import java.io.Serializable;
   	"risorsa",
   	"simultanee",
   	"valore",
+  	"valore2",
   	"valoreTipoBanda",
   	"valoreTipoLatenza",
   	"modalitaControllo",
@@ -192,6 +194,14 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBean i
 
   public void setValore(java.lang.Long valore) {
     this.valore = valore;
+  }
+
+  public java.lang.Long getValore2() {
+    return this.valore2;
+  }
+
+  public void setValore2(java.lang.Long valore2) {
+    this.valore2 = valore2;
   }
 
   public void set_value_valoreTipoBanda(String value) {
@@ -559,6 +569,10 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBean i
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="valore",required=false,nillable=false)
   protected java.lang.Long valore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="valore2",required=false,nillable=false)
+  protected java.lang.Long valore2;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_valoreTipoBanda;

@@ -55,6 +55,8 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -94,6 +96,8 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.LimitExceededIOException;
+import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.TimeoutInputStream;
@@ -159,6 +163,14 @@ public class RicezioneContenutiApplicativiService {
 			
 			// valori che verranno aggiornati dopo
 			try {
+				if(openSPCoopProperties.isConnettoriUseLimitedInputStream()) {
+					SogliaDimensioneMessaggio soglia = new SogliaDimensioneMessaggio();
+					soglia.setSogliaKb(openSPCoopProperties.getLimitedInputStreamThresholdKb());
+					soglia.setPolicyGlobale(true);
+					soglia.setNomePolicy("GovWayCore");
+					soglia.setIdPolicyConGruppo("GovWayCore");
+					req.setRequestLimitedStream(soglia);
+				}
 				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
 					req.setRequestReadTimeout(openSPCoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi());
 				}
@@ -289,7 +301,7 @@ public class RicezioneContenutiApplicativiService {
 		}
 		req.updateRequestInfo(requestInfo);
 					
-		// Timeout e DumpRaw
+		// Timeout, DimensioneMessaggi e DumpRaw
 		DumpRaw dumpRaw = null;
 		try{
 			boolean dumpBinario = configPdDManager.dumpBinarioPD();
@@ -300,6 +312,24 @@ public class RicezioneContenutiApplicativiService {
 				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
 			}
 
+			// Limited
+			String azione = (requestInfo!=null && requestInfo.getIdServizio()!=null) ? requestInfo.getIdServizio().getAzione() : null;
+			SoglieDimensioneMessaggi limitedInputStream = configPdDManager.getSoglieLimitedInputStream(pd, azione, idModulo,
+					(context!=null && context.getPddContext()!=null) ? context.getPddContext() : null, 
+					(requestInfo!=null) ? requestInfo.getProtocolContext() : null,
+					protocolFactory, logCore);
+			if(limitedInputStream!=null) {
+				req.setRequestLimitedStream(limitedInputStream.getRichiesta());
+				if(context!=null && context.getPddContext()!=null) {
+					context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.LIMITED_STREAM, limitedInputStream.getRisposta());
+				}
+			}
+			else {
+				if(!openSPCoopProperties.isLimitedInputStreamThresholdDefined()) {
+					req.disableLimitedStream();
+				}
+			}
+			
 			// Timeout
 			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pd);
 			if(useTimeoutInputStream) {
@@ -334,7 +364,7 @@ public class RicezioneContenutiApplicativiService {
 			}
 		}catch(Throwable e){
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
-			logCore.error(msg);
+			logCore.error(msg,  e);
 			cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
@@ -749,6 +779,10 @@ public class RicezioneContenutiApplicativiService {
 						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
 					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
 				}
+				else if( parseException!=null && parseException.getSourceException()!=null &&
+						LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
+				}
 				
 				responseMessage = this.generatoreErrore.build(pddContext, integrationFunctionError,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
@@ -792,10 +826,22 @@ public class RicezioneContenutiApplicativiService {
 					responseReadTimeout = timeoutMessage;
 				}
 			}
+			String requestLimitExceeded = null;
+			String responseLimitExceeded = null;
+			if(pddContext!=null && pddContext.containsKey(LimitedInputStream.ERROR_MSG_KEY)) {
+				String limitedExceededMessage = PdDContext.getValue(LimitedInputStream.ERROR_MSG_KEY, pddContext);
+				if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_REQUEST)) {
+					requestLimitExceeded = limitedExceededMessage;
+				}
+				else if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_RESPONSE)) {
+					responseLimitExceeded = limitedExceededMessage;
+				}
+			}
 			
 			if((requestMessage!=null && requestMessage.getParseException() != null) || 
 					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)) ||
-					requestReadTimeout!=null){
+					requestReadTimeout!=null ||
+					requestLimitExceeded!=null){
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 				
 				ParseException parseException = null;
@@ -804,6 +850,11 @@ public class RicezioneContenutiApplicativiService {
 				String msgErrore = null;
 				if(requestReadTimeout != null) {
 					tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+					sParsing = tParsing;
+					msgErrore = tParsing.getMessage();
+				}
+				else if(requestLimitExceeded != null) {
+					tParsing = (LimitExceededIOException) pddContext.getObject(LimitedInputStream.EXCEPTION_KEY);
 					sParsing = tParsing;
 					msgErrore = tParsing.getMessage();
 				}
@@ -831,9 +882,16 @@ public class RicezioneContenutiApplicativiService {
 				if(requestReadTimeout!=null) {
 					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
 				}
+				else if(requestLimitExceeded!=null) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
+				}
 				else if( parseException!=null && sParsing!=null &&
 						TimeoutIOException.isTimeoutIOException(sParsing)) {
 					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				else if( parseException!=null && sParsing!=null &&
+						LimitExceededIOException.isLimitExceededIOException(sParsing)) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 				}
 				
 				responseMessage = this.generatoreErrore.build(pddContext, integrationFunctionError,
@@ -843,7 +901,8 @@ public class RicezioneContenutiApplicativiService {
 			}
 			else if( (responseMessage!=null && responseMessage.getParseException() != null) ||
 					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)) ||
-					responseReadTimeout!=null){
+					responseReadTimeout!=null ||
+					responseLimitExceeded!=null){
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 				
 				ParseException parseException = null;
@@ -852,6 +911,11 @@ public class RicezioneContenutiApplicativiService {
 				String msgErrore = null;
 				if(responseReadTimeout != null) {
 					tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+					sParsing = tParsing;
+					msgErrore = tParsing.getMessage();
+				}
+				else if(responseLimitExceeded != null) {
+					tParsing = (LimitExceededIOException) pddContext.getObject(LimitedInputStream.EXCEPTION_KEY);
 					sParsing = tParsing;
 					msgErrore = tParsing.getMessage();
 				}
@@ -878,9 +942,16 @@ public class RicezioneContenutiApplicativiService {
 				if(responseReadTimeout!=null) {
 					integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 				}
+				else if(responseLimitExceeded!=null) {
+					integrationFunctionError = IntegrationFunctionError.RESPONSE_SIZE_EXCEEDED;
+				}
 				else if(sParsing!=null &&
 						TimeoutIOException.isTimeoutIOException(sParsing)) {
 					integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+				}
+				else if(sParsing!=null &&
+						LimitExceededIOException.isLimitExceededIOException(sParsing)) {
+					integrationFunctionError = IntegrationFunctionError.RESPONSE_SIZE_EXCEEDED;
 				}
 				
 				msgDiag.logPersonalizzato("parsingExceptionRisposta");
@@ -1024,6 +1095,7 @@ public class RicezioneContenutiApplicativiService {
 		Throwable erroreConsegnaRisposta = null;
 		boolean httpEmptyResponse = false;
 		boolean erroreConnessioneClient = false;
+		boolean erroreResponsePayloadTooLarge = false;
 		boolean sendInvoked = false;
 		try{
 			if(responseMessage!=null && !responseMessage.isForcedEmptyResponse() && (responseMessage.getForcedResponse()==null)){
@@ -1202,6 +1274,10 @@ public class RicezioneContenutiApplicativiService {
 			if(!erroreConnessioneClient && ServicesUtils.isConnessioneServerReadTimeout(e)) {
 				erroreConnessioneClient = true; // non e' stato possibile consegnare tutta la risposta. Il client ha ricevuto 200 ma non ha ricevuto la risposta per intero
 				erroreConsegnaRisposta = new CoreException("Connessione con il backend dell'API non più disponibile: "+e.getMessage(),e);
+			}
+			if(!erroreConnessioneClient && ServicesUtils.isResponsePayloadTooLarge(e)) {
+				erroreResponsePayloadTooLarge = true;  // non e' stato possibile consegnare tutta la risposta. Il client ha ricevuto 200 ma non ha ricevuto la risposta per intero
+				erroreConsegnaRisposta = new CoreException("Risposta ricevuta dal backend dell'API non gestibile: "+e.getMessage(),e);
 			}
 			
 			// Genero risposta con errore
@@ -1398,6 +1474,14 @@ public class RicezioneContenutiApplicativiService {
 			// forzo esito errore connessione client
 			try{
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),EsitoTransazioneName.ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE);
+			}catch(Exception eBuildError){
+				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
+			}
+		}
+		else if(erroreResponsePayloadTooLarge){
+			// forzo esito errore dovuto alla policy di rate limiting
+			try{
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
 			}catch(Exception eBuildError){
 				esito = EsitoTransazione.ESITO_TRANSAZIONE_ERROR;
 			}

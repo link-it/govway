@@ -40,6 +40,8 @@ public enum TipoRisorsa implements IEnumeration , Serializable , Cloneable {
 	NUMERO_RICHIESTE ("NumeroRichieste"),
 	@javax.xml.bind.annotation.XmlEnumValue("OccupazioneBanda")
 	OCCUPAZIONE_BANDA ("OccupazioneBanda"),
+	@javax.xml.bind.annotation.XmlEnumValue("DimensioneMassimaMessaggio")
+	DIMENSIONE_MASSIMA_MESSAGGIO ("DimensioneMassimaMessaggio"),
 	@javax.xml.bind.annotation.XmlEnumValue("TempoComplessivoRisposta")
 	TEMPO_COMPLESSIVO_RISPOSTA ("TempoComplessivoRisposta"),
 	@javax.xml.bind.annotation.XmlEnumValue("TempoMedioRisposta")

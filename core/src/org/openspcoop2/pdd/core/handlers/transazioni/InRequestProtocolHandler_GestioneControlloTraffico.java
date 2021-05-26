@@ -97,7 +97,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 		TipoErrore tipoErrore = TipoErrore.FAULT;
 		boolean includiDescrizioneErrore = true;
 		
-		ConfigurazioneControlloTraffico ConfigurazioneControlloTraffico = null;
+		ConfigurazioneControlloTraffico configurazioneControlloTraffico = null;
 		
 		Logger log = null;
 		
@@ -109,7 +109,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			
 			// ConfigurazioneControlloTraffico
 			op2Properties = OpenSPCoop2Properties.getInstance();
-			ConfigurazioneControlloTraffico =  op2Properties.getConfigurazioneControlloTraffico();
+			configurazioneControlloTraffico =  op2Properties.getConfigurazioneControlloTraffico();
 			
 			// Logger
 			log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
@@ -133,7 +133,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 				
 				Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttiveAPI = null;
 				try {
-					mapPolicyAttiveAPI = configPdDManager.getElencoIdPolicyAttiveAPI(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(),
+					mapPolicyAttiveAPI = configPdDManager.getElencoIdPolicyAttiveAPI(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache(),
 							context.getTipoPorta(), datiTransazione.getNomePorta());
 				}catch(DriverConfigurazioneNotFound notFound) {}
 				if(mapPolicyAttiveAPI!=null && !mapPolicyAttiveAPI.isEmpty()) {
@@ -150,7 +150,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 
 				Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttiveGlobali = null;
 				try {
-					mapPolicyAttiveGlobali = configPdDManager.getElencoIdPolicyAttiveGlobali(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
+					mapPolicyAttiveGlobali = configPdDManager.getElencoIdPolicyAttiveGlobali(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
 				}catch(DriverConfigurazioneNotFound notFound) {}
 				if(mapPolicyAttiveGlobali!=null && !mapPolicyAttiveGlobali.isEmpty()) {
 					Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveGlobali.keySet().iterator();
@@ -268,7 +268,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 										// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy attive
 										AttivazionePolicy attivazionePolicy = null;
 										try {
-											attivazionePolicy = configPdDManager.getAttivazionePolicy(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), 
+											attivazionePolicy = configPdDManager.getAttivazionePolicy(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), 
 												UniqueIdentifierUtilities.getUniqueId(idActive));
 										}catch(DriverConfigurazioneNotFound notFound) {
 											msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ALIAS, idActive.getNome());
@@ -327,7 +327,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 												// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy istanziata
 												ConfigurazionePolicy configurazionePolicy = null;
 												try {
-													configurazionePolicy = configPdDManager.getConfigurazionePolicy(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), idActive.getIdPolicy());
+													configurazionePolicy = configPdDManager.getConfigurazionePolicy(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache(), idActive.getIdPolicy());
 												}catch(DriverConfigurazioneNotFound notFound) {
 													throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente: "+notFound.getMessage(),notFound);
 												}
@@ -340,7 +340,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 												activePolicy.setInstanceConfiguration(attivazionePolicy);
 												activePolicy.setConfigurazionePolicy(configurazionePolicy);
 												activePolicy.setTipoRisorsaPolicy(TipoRisorsa.toEnumConstant(configurazionePolicy.getRisorsa(), true));
-												activePolicy.setConfigurazioneControlloTraffico(ConfigurazioneControlloTraffico);
+												activePolicy.setConfigurazioneControlloTraffico(configurazioneControlloTraffico);
 												
 												
 												// Creo Gruppo
@@ -613,7 +613,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoPolicyViolated(context.getPddContext(), false);
 						
 						HandlerException he = GeneratoreMessaggiErrore.getControlloTrafficoPolicyViolated(policyBloccanti,
-								ConfigurazioneControlloTraffico.isErroreGenerico(), context.getPddContext());
+								configurazioneControlloTraffico.isErroreGenerico(), context.getPddContext());
 						he.setEmettiDiagnostico(false);
 						GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(serviceBinding, he, tipoErrore, includiDescrizioneErrore,log);
 						throw he;
@@ -768,6 +768,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						String [] headers = null;
 						boolean windows = false;
 						switch (tipoRisorsa) {
+						case DIMENSIONE_MASSIMA_MESSAGGIO:
+							// non viene usata
+							break;
 						case NUMERO_RICHIESTE:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderLimit();
 							windows = op2Properties.getControlloTrafficoNumeroRichiesteHeaderLimitWindows();
@@ -848,6 +851,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						try {
 							String [] headers = null;
 							switch (tipoRisorsa) {
+							case DIMENSIONE_MASSIMA_MESSAGGIO:
+								// non viene usata
+								break;
 							case NUMERO_RICHIESTE:
 								headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderRemaining();
 								break;
@@ -901,6 +907,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						try {
 							String [] headers = null;
 							switch (tipoRisorsa) {
+							case DIMENSIONE_MASSIMA_MESSAGGIO:
+								// non viene usata
+								break;
 							case NUMERO_RICHIESTE:
 								headers = op2Properties.getControlloTrafficoNumeroRichiesteHeaderReset();
 								break;

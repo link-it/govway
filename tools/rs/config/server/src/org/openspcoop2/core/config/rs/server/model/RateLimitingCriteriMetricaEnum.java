@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum RateLimitingCriteriMetricaEnum {
 NUMERO_RICHIESTE("numero-richieste"),
   NUMERO_RICHIESTE_SIMULTANEE("numero-richieste-simultanee"),
+  DIMENSIONE_MASSIMA("dimensione-massima"),
   OCCUPAZIONE_BANDA("occupazione-banda"),
   TEMPO_MEDIO_RISPOSTA("tempo-medio-risposta"),
   TEMPO_COMPLESSIVO_RISPOSTA("tempo-complessivo-risposta"),

@@ -89,6 +89,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
@@ -158,6 +159,16 @@ public class ServicesUtils {
 				return true;
 			}
 			
+		}catch(Throwable tIgnore) {}
+		
+		return false;
+	}
+	
+	public static boolean isResponsePayloadTooLarge(Throwable t){
+		try {
+			if(LimitExceededIOException.isLimitExceededIOException(t) && t.getMessage()!=null && t.getMessage().startsWith(CostantiPdD.PREFIX_LIMITED_RESPONSE)) {
+				return true;
+			}
 		}catch(Throwable tIgnore) {}
 		
 		return false;

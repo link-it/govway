@@ -36,6 +36,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -91,6 +92,8 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	
 	@SuppressWarnings("unused")
 	private int requestReadTimeout;
+	@SuppressWarnings("unused")
+	private SogliaDimensioneMessaggio requestLimitSize;
 	
 	public AS4ConnectorInMessage(UserMessage userMessage,HashMap<String, byte[]> content) throws ConnectorException{
 		try{
@@ -170,6 +173,15 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	}
 	@Override
 	public void disableReadTimeout() {
+		// nop
+	}
+	
+	@Override
+	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize) {
+		this.requestLimitSize = requestLimitSize;
+	}
+	@Override
+	public void disableLimitedStream() {
 		// nop
 	}
 

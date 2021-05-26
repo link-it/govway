@@ -81,29 +81,61 @@ public class Bodies {
 	}
 	
 	public final static String getSOAPEnvelope11(int sizePayload) { 
-		return getSOAPEnvelope11(sizePayload, null);
+		return getSOAPEnvelope11(0, sizePayload, null);
+	}
+	public final static String getSOAPEnvelope11(int sizeHeader, int sizePayload) { 
+		return getSOAPEnvelope11(sizeHeader, sizePayload, null);
 	}
 	public final static String getSOAPEnvelope11(int sizePayload, String applicativeId) { 
-		return "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +  
+		return getSOAPEnvelope11(0, sizePayload, applicativeId);
+	}
+	public final static String getSOAPEnvelope11(int sizeHeader, int sizePayload, String applicativeId) { 
+		String env = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n";
+		if(sizeHeader>0) {
+			env = env+
+			"    <soap:Header>\n" + 
+			"        <ns2:TestHdr xmlns:ns2=\"http://govway.org/example/header\" soap:actor=\"http://govway.org/example/header\">\n" + 
+			getXmlPayload(sizeHeader,"           ",applicativeId) +
+			"        </ns2:TestHdr>\n" +
+			"    </soap:Header>\n";
+		}
+		env = env+
 			"    <soap:Body>\n" + 
 			"        <ns2:Test xmlns:ns2=\"http://govway.org/example\">\n" + 
 			getXmlPayload(sizePayload,"           ",applicativeId) +
 			"        </ns2:Test>\n" + 
 			"    </soap:Body>\n" + 
 			"</soap:Envelope>";
+		return env;
 	}
 	
 	public final static String getSOAPEnvelope12(int sizePayload) { 
-		return getSOAPEnvelope12(sizePayload, null);
+		return getSOAPEnvelope12(0, sizePayload, null);
+	}
+	public final static String getSOAPEnvelope12(int sizeHeader, int sizePayload) { 
+		return getSOAPEnvelope12(sizeHeader, sizePayload, null);
 	}
 	public final static String getSOAPEnvelope12(int sizePayload, String applicativeId) { 
-		return "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n" +  
+		return getSOAPEnvelope12(0, sizePayload, applicativeId);
+	}
+	public final static String getSOAPEnvelope12(int sizeHeader, int sizePayload, String applicativeId) { 
+		String env = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n"; 
+		if(sizeHeader>0) {
+			env = env+
+			"    <soap:Header>\n" + 
+			"        <ns2:TestHdr xmlns:ns2=\"http://govway.org/example/header\" soap:actor=\"http://govway.org/example/header\">\n" + 
+			getXmlPayload(sizeHeader,"           ",applicativeId) +
+			"        </ns2:TestHdr>\n" +
+			"    </soap:Header>\n";
+		}
+		env = env+
 			"    <soap:Body>\n" + 
 			"        <ns2:Test xmlns:ns2=\"http://govway.org/example\">\n" + 
 			getXmlPayload(sizePayload,"           ",applicativeId) +
 			"        </ns2:Test>\n" + 
 			"    </soap:Body>\n" + 
 			"</soap:Envelope>";
+		return env;
 	}
 	
 	

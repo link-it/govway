@@ -44,25 +44,30 @@ public class TestCopyStream {
 		// init resources: 1GB
 		int size = 1024*1024*1024;
 		
-		test(size, -1, false);
+		test(size, -1, false, -1, false);
 		
 		int timeoutMs = 120000;
-		test(size, timeoutMs, false);
-		test(size, 60, true); // atteso timeout dopo 60ms
+		test(size, timeoutMs, false, size, false);
+		test(size, 60, true, -1, false); // atteso timeout dopo 60ms
+		test(size, -1,false, 1024*10, true); // atteso timeout dopo 10K
+		test(size, 6000, false, 1024*10, true); // atteso timeout dopo 10K
+		test(size, 60, true, 1024*1024*1024, false); // atteso timeout dopo 60ms
 		
 		// init resources: 1MB
 		size = 1024*1024;
-		test(size, timeoutMs, false);
+		test(size, timeoutMs, false, size, false);
 		
 		// init resources: 1KB
 		size = 1024;
-		test(size, timeoutMs, false);
+		test(size, timeoutMs, false, size, false);
 		
 	}
 	
-	public static void test(int size, int timeoutMs, boolean expectedTimeout) throws Exception {
+	public static void test(int size, 
+			int timeoutMs, boolean expectedTimeout,
+			long limitBytes, boolean expectedLimitExceeded) throws Exception {
 		
-		System.out.println("\n\n========= (timeoutMs:"+timeoutMs+") =============");
+		System.out.println("\n\n========= (timeoutMs:"+timeoutMs+") (limit:"+limitBytes+") =============");
 		
 		byte [] buffer = new byte[size];
 		for (int i = 0; i < size; i++) {
@@ -90,7 +95,9 @@ public class TestCopyStream {
 				bufferInit[i] = 'a';
 			}
 			try (ByteArrayInputStream bin = new ByteArrayInputStream(bufferInit)){
-				testBuffer("Buffer-Java-InitResources", CopyStreamMethod.JAVA, bin, Utilities.DIMENSIONE_BUFFER, -1, false);
+				testBuffer("Buffer-Java-InitResources", CopyStreamMethod.JAVA, bin, Utilities.DIMENSIONE_BUFFER, 
+						-1, false, 
+						-1, false);
 			}
 						
 			
@@ -99,12 +106,16 @@ public class TestCopyStream {
 			for (CopyStreamMethod copyStreamMethod : methods) {
 				
 				try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
-					testBuffer("Buffer", copyStreamMethod, bin, size, timeoutMs, expectedTimeout);
+					testBuffer("Buffer", copyStreamMethod, bin, size, 
+							timeoutMs, expectedTimeout,
+							limitBytes, expectedLimitExceeded);
 				}
 				
 				if(CopyStreamMethod.JAVA.equals(copyStreamMethod)) {
 					try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
-						testBuffer("Buffer-Java-IterazioneBufferSize8192", copyStreamMethod, bin, size, 8192, timeoutMs, expectedTimeout);
+						testBuffer("Buffer-Java-IterazioneBufferSize8192", copyStreamMethod, bin, size, 8192, 
+								timeoutMs, expectedTimeout,
+								limitBytes, expectedLimitExceeded);
 					}
 				}
 			}
@@ -113,7 +124,9 @@ public class TestCopyStream {
 			
 			for (CopyStreamMethod copyStreamMethod : methods) {
 				try (FileInputStream fin = new FileInputStream(fSRC)){
-					testBuffer("File", copyStreamMethod, fin, size, timeoutMs, expectedTimeout);
+					testBuffer("File", copyStreamMethod, fin, size, 
+							timeoutMs, expectedTimeout,
+							limitBytes, expectedLimitExceeded);
 				}
 			}
 			testBuffer("File", fSRC, size);
@@ -124,7 +137,9 @@ public class TestCopyStream {
 				File fout = File.createTempFile("testCopyStreamOut", ".bin");
 				try {
 					try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
-						testFile("Buffer", copyStreamMethod, bin, fout, size, timeoutMs, expectedTimeout);
+						testFile("Buffer", copyStreamMethod, bin, fout, size, 
+								timeoutMs, expectedTimeout,
+								limitBytes, expectedLimitExceeded);
 					}
 				}finally {
 					fout.delete();
@@ -135,7 +150,9 @@ public class TestCopyStream {
 				try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
 					String path = fout.getAbsolutePath();
 					fout.delete();
-					testFile("Buffer", bin, new File(path), size, timeoutMs, expectedTimeout);
+					testFile("Buffer", bin, new File(path), size, 
+							timeoutMs, expectedTimeout,
+							limitBytes, expectedLimitExceeded);
 				}
 			}finally {
 				fout.delete();
@@ -147,7 +164,9 @@ public class TestCopyStream {
 				fout = File.createTempFile("testCopyStreamOut", ".bin");
 				try {
 					try (FileInputStream fin = new FileInputStream(fSRC)){
-						testFile("File", copyStreamMethod, fin, fout, size, timeoutMs, expectedTimeout);
+						testFile("File", copyStreamMethod, fin, fout, size, 
+								timeoutMs, expectedTimeout,
+								limitBytes, expectedLimitExceeded);
 					}
 				}finally {
 					fout.delete();
@@ -168,16 +187,25 @@ public class TestCopyStream {
 		
 	}
 	
-	private static void testBuffer(String src, CopyStreamMethod method, InputStream is, int size, int timeout, boolean expectedTimeout) throws Exception {
-		testBuffer(src, method, is, size, -1, timeout, expectedTimeout);
+	private static void testBuffer(String src, CopyStreamMethod method, InputStream is, int size, 
+			int timeout, boolean expectedTimeout,
+			long limitBytes, boolean expectedLimitExceeded) throws Exception {
+		testBuffer(src, method, is, size, -1, 
+				timeout, expectedTimeout,
+				limitBytes, expectedLimitExceeded);
 	}
-	private static void testBuffer(String src, CopyStreamMethod method, InputStream isParam, int size, int sizeBuffer, int timeout, boolean expectedTimeout) throws Exception {
+	private static void testBuffer(String src, CopyStreamMethod method, InputStream isParam, int size, int sizeBuffer, 
+			int timeout, boolean expectedTimeout,
+			long limitBytes, boolean expectedLimitExceeded) throws Exception {
 		//System.out.println("["+src+"->Buffer]["+method+"] .... ");
 		Date startDate = new Date();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		InputStream is = isParam;
+		if(limitBytes>0) {
+			is = new LimitedInputStream(is, limitBytes);
+		}
 		if(timeout>0) {
-			is = new TimeoutInputStream(isParam, timeout);
+			is = new TimeoutInputStream(is, timeout);
 		}
 		try {
 			if(sizeBuffer>0) {
@@ -191,8 +219,16 @@ public class TestCopyStream {
 				long time = endDate.getTime() - startDate.getTime(); 
 				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
 			}
+			else if(expectedLimitExceeded) {
+				Date endDate = new Date();
+				long time = endDate.getTime() - startDate.getTime(); 
+				throw new Exception("["+src+"->Buffer]["+method+"] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+bout.size()+"");
+			}
 		}catch(Exception e) {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
+				System.out.println("["+src+"->Buffer]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_MSG)) {
 				System.out.println("["+src+"->Buffer]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
 			}
 			else {
@@ -201,7 +237,7 @@ public class TestCopyStream {
 		}
 		bout.flush();
 		bout.close();
-		if(!expectedTimeout) {
+		if(!expectedTimeout && !expectedLimitExceeded) {
 			Date endDate = new Date();
 			long time = endDate.getTime() - startDate.getTime(); 
 			if(bout.size()!=size) {
@@ -226,13 +262,21 @@ public class TestCopyStream {
 		System.out.println("["+src+"->Buffer][COPY-FILE] "+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 	}
 	
-	private static void testFile(String src, CopyStreamMethod method, InputStream is, File f, int size, int timeout, boolean expectedTimeout) throws Exception {
+	private static void testFile(String src, CopyStreamMethod method, InputStream is, File f, int size, 
+			int timeout, boolean expectedTimeout,
+			long limitBytes, boolean expectedLimitExceeded) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
 		Date startDate = new Date();
 		FileOutputStream fout = new FileOutputStream(f);
 		try {
-			if(timeout>0) {
+			if(timeout>0 && limitBytes>0) {
+				CopyStream.copy(method, is, fout, timeout, limitBytes);
+			}
+			else if(timeout>0) {
 				CopyStream.copy(method, is, fout, timeout);
+			}
+			else if(limitBytes>0) {
+				CopyStream.copy(method, is, fout, limitBytes);
 			}
 			else {
 				CopyStream.copy(method, is, fout);
@@ -242,8 +286,16 @@ public class TestCopyStream {
 				long time = endDate.getTime() - startDate.getTime(); 
 				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
+			if(expectedLimitExceeded) {
+				Date endDate = new Date();
+				long time = endDate.getTime() - startDate.getTime(); 
+				throw new Exception("["+src+"->File]["+method+"] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
+			}
 		}catch(Exception e) {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
+				System.out.println("["+src+"->File]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_MSG)) {
 				System.out.println("["+src+"->File]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
 			}
 			else {
@@ -252,7 +304,7 @@ public class TestCopyStream {
 		}
 		fout.flush();
 		fout.close();
-		if(!expectedTimeout) {
+		if(!expectedTimeout && !expectedLimitExceeded) {
 			Date endDate = new Date();
 			long time = endDate.getTime() - startDate.getTime(); 
 			if(f.length()!=size) {
@@ -262,12 +314,20 @@ public class TestCopyStream {
 		}
 	}
 	
-	private static void testFile(String src, InputStream is, File f, int size, int timeout, boolean expectedTimeout) throws Exception {
+	private static void testFile(String src, InputStream is, File f, int size, 
+			int timeout, boolean expectedTimeout,
+			long limitBytes, boolean expectedLimitExceeded) throws Exception {
 		//System.out.println("["+src+"->File]["+method+"] .... ");
 		Date startDate = new Date();
 		try {
-			if(timeout>0) {
+			if(timeout>0 && limitBytes>0) {
+				CopyStream.copy(is, f, timeout, limitBytes);
+			}
+			else if(timeout>0) {
 				CopyStream.copy(is, f, timeout);
+			}
+			else if(limitBytes>0) {
+				CopyStream.copy(is, f, limitBytes);
 			}
 			else {
 				CopyStream.copy(is, f);
@@ -277,15 +337,23 @@ public class TestCopyStream {
 				long time = endDate.getTime() - startDate.getTime(); 
 				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa di timeout non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
 			}
+			if(expectedLimitExceeded) {
+				Date endDate = new Date();
+				long time = endDate.getTime() - startDate.getTime(); 
+				throw new Exception("["+src+"->File][COPY-FILE] Eccezione attesa 'limit exceeded' non si è verificata dopo "+Utilities.convertSystemTimeIntoString_millisecondi(time, true)+"; buffer expected: "+size+", found: "+f.length()+"");
+			}
 		}catch(Exception e) {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
+				System.out.println("["+src+"->File][COPY-FILE] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_MSG)) {
 				System.out.println("["+src+"->File][COPY-FILE] eccezione attesa ricevuta: "+e.getMessage());
 			}
 			else {
 				throw e;
 			}
 		}
-		if(!expectedTimeout) {
+		if(!expectedTimeout && !expectedLimitExceeded) {
 			Date endDate = new Date();
 			long time = endDate.getTime() - startDate.getTime(); 
 			if(f.length()!=size) {

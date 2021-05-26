@@ -5,7 +5,7 @@ Errori 502 (Bad Gateway)
 
 In questa sezione vengono riportati tutti i possibili codici di errore generati da GovWay relativi a errori emersi durante la gestione della risposta.
 
-Gli errori descritti in questa sezione, nella configurazione di default di GovWay, sono tutti restituiti al client con il solo codice di errore :ref:`errori_502_InvalidResponse`. La scelta è finalizzata ad evitare disclosure di informazioni relative al domino interno.
+Nella configurazione di default di GovWay, gli errori descritti in questa sezione, con l'eccezione del codice "ResponseSizeExceeded", sono tutti restituiti al client con il solo codice di errore :ref:`errori_502_InvalidResponse`. La scelta è finalizzata ad evitare disclosure di informazioni relative al domino interno.
 
 È possibile abilitare temporaneamente la generazione dei codici puntuali accendendo alla voce 'Strumenti - Runtime' della console di gestione e selezionando 'Errore Puntuale' per la 'Risposta' nella sezione "Errori generati dal Gateway - Codici di errore 'GovWay-Transaction-ErrorType'" (:numref:`error502specifici`).
 
@@ -27,6 +27,7 @@ L'abilitazione permanente può essere invece effettuata disabilitando le seguent
         :maxdepth: 2
         
         InvalidResponse
+	ResponseSizeExceeded
 	UnprocessableResponseContent
 	AttachmentsResponseFailed
 	ApplicationCorrelationIdentificationResponseFailed

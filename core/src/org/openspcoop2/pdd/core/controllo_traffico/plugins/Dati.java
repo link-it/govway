@@ -26,6 +26,7 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.protocol.engine.URLProtocolContext;
 
 /**
  * Dati 
@@ -42,6 +43,8 @@ public class Dati implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private DatiTransazione datiTransazione;
+	private URLProtocolContext urlProtocolContext;
+	@Deprecated
 	private InfoConnettoreIngresso connettore;
 	private OpenSPCoop2Message messaggio;
 	private PdDContext pddContext;
@@ -52,11 +55,18 @@ public class Dati implements Serializable {
 	public void setDatiTransazione(DatiTransazione datiTransazione) {
 		this.datiTransazione = datiTransazione;
 	}
+	@Deprecated
 	public InfoConnettoreIngresso getConnettore() {
 		return this.connettore;
 	}
 	public void setConnettore(InfoConnettoreIngresso connettore) {
 		this.connettore = connettore;
+	}
+	public URLProtocolContext getUrlProtocolContext() {
+		return this.urlProtocolContext;
+	}
+	public void setUrlProtocolContext(URLProtocolContext urlProtocolContext) {
+		this.urlProtocolContext = urlProtocolContext;
 	}
 	public OpenSPCoop2Message getMessaggio() {
 		return this.messaggio;

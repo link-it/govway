@@ -1,0 +1,13 @@
+{
+    "stato": "abilitato",
+    "soglia_ridefinita": true,
+    "soglia_dimensione_richiesta": 10240,
+    "soglia_dimensione_risposta": 10240,
+
+    "filtro": {
+	"azione": ["GET_pet.findByStatus","GET_pet.findByTags"],
+        "chiave_tipo": "url-based",
+        "chiave_nome": "chiave2",
+        "filtro_chiave_valore": "./exprRegular(*)"
+    }
+}

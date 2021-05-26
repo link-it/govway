@@ -119,11 +119,13 @@ public class DBVerifier {
 		
 		// diagnostici
 		
-		query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+msgErrore+"%'";
-		log().info(query);
+		if(msgErrore!=null) {
+			query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+msgErrore+"%'";
+			log().info(query);
 		
-		count = dbUtils().readValue(query, Integer.class, idTransazione);
-		assertTrue(msg+" Cerco dettaglio '"+msgErrore+"'; count trovati: "+count+"", (count>0));
+			count = dbUtils().readValue(query, Integer.class, idTransazione);
+			assertTrue(msg+" Cerco dettaglio '"+msgErrore+"'; count trovati: "+count+"", (count>0));
+		}
 
 	}
 	

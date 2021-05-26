@@ -57,6 +57,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -219,6 +220,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     
 	protected boolean useTimeoutInputStream = false;
 	
+	protected boolean useLimitedInputStream = false;
+	protected SogliaDimensioneMessaggio limitBytes = null;
+	
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
 	}
@@ -301,6 +305,20 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		this.outRequestContext = request.getOutRequestContext();
 		this.msgDiagnostico = request.getMsgDiagnostico();
 
+		// Limit
+		if(this.getPddContext()!=null && this.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.LIMITED_STREAM)){
+			Object o = this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.LIMITED_STREAM);
+			if(o!=null && o instanceof SogliaDimensioneMessaggio) {
+				try {
+					SogliaDimensioneMessaggio soglia = (SogliaDimensioneMessaggio) o;
+					if(soglia!=null && soglia.getSogliaKb()>0) {
+						this.useLimitedInputStream = true;
+						this.limitBytes = soglia;
+					}
+				}catch(Throwable t) {}
+			}
+		}
+		
 		// Timeout e Dump
 		this.useTimeoutInputStream = this.openspcoopProperties.isConnettoriUseTimeoutInputStream();
 		boolean dumpBinario = this.debug;

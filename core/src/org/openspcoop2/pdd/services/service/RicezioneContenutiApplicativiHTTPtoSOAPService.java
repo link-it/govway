@@ -55,6 +55,8 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
+import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -94,6 +96,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
@@ -158,6 +161,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			// valori che verranno aggiornati dopo
 			try {
+				if(openSPCoopProperties.isConnettoriUseLimitedInputStream()) {
+					SogliaDimensioneMessaggio soglia = new SogliaDimensioneMessaggio();
+					soglia.setSogliaKb(openSPCoopProperties.getLimitedInputStreamThresholdKb());
+					soglia.setPolicyGlobale(true);
+					soglia.setNomePolicy("GovWayCore");
+					soglia.setIdPolicyConGruppo("GovWayCore");
+					req.setRequestLimitedStream(soglia);
+				}
 				if(openSPCoopProperties.isConnettoriUseTimeoutInputStream()) {
 					req.setRequestReadTimeout(openSPCoopProperties.getReadConnectionTimeout_ricezioneContenutiApplicativi());
 				}
@@ -299,6 +310,24 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
 			}
 
+			// Limited
+			String azione = (requestInfo!=null && requestInfo.getIdServizio()!=null) ? requestInfo.getIdServizio().getAzione() : null;
+			SoglieDimensioneMessaggi limitedInputStream = configPdDManager.getSoglieLimitedInputStream(pd, azione, idModulo,
+					(context!=null && context.getPddContext()!=null) ? context.getPddContext() : null, 
+					(requestInfo!=null) ? requestInfo.getProtocolContext() : null,
+					protocolFactory, logCore);
+			if(limitedInputStream!=null) {
+				req.setRequestLimitedStream(limitedInputStream.getRichiesta());
+				if(context!=null && context.getPddContext()!=null) {
+					context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.LIMITED_STREAM, limitedInputStream.getRisposta());
+				}
+			}
+			else {
+				if(!openSPCoopProperties.isLimitedInputStreamThresholdDefined()) {
+					req.disableLimitedStream();
+				}
+			}
+			
 			// Timeout
 			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pd);
 			if(useTimeoutInputStream) {
@@ -333,7 +362,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			}
 		}catch(Throwable e){
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
-			logCore.error(msg);
+			logCore.error(msg,  e);
 			cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
@@ -662,6 +691,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
 					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
 				}
+				else if( parseException!=null && parseException.getSourceException()!=null &&
+						LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
+				}
 				
 				responseMessage = this.generatoreErrore.build(pddContext,integrationFunctionError,
 						ErroriIntegrazione.ERRORE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA.
@@ -681,6 +714,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				if( parseException!=null && parseException.getSourceException()!=null &&
 						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
 					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				else if( parseException!=null && parseException.getSourceException()!=null &&
+						LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 				}
 				
 				responseMessage = this.generatoreErrore.build(pddContext,integrationFunctionError,
@@ -736,6 +773,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				if( parseException!=null && parseException.getSourceException()!=null &&
 						TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
 					integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+				}
+				else if( parseException!=null && parseException.getSourceException()!=null &&
+						LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
+					integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 				}
 				
 				responseMessage = this.generatoreErrore.build(pddContext, integrationFunctionError,

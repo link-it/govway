@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
@@ -323,6 +324,11 @@ public class PolicyVerifier {
 			boolean rilevataViolazione = false;
 			
 			switch (activePolicy.getTipoRisorsaPolicy()) {
+			
+			case DIMENSIONE_MASSIMA_MESSAGGIO:
+				// non viene viene verificata dal PolicyVerifier 
+				break;
+			
 			case NUMERO_RICHIESTE:
 			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 			case NUMERO_RICHIESTE_FALLITE:
@@ -810,16 +816,20 @@ public class PolicyVerifier {
 	}
 	
 	public static String getIdAPI(ActivePolicy activePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager) throws Exception {
+		AttivazionePolicy attivazionePolicy = activePolicy.getInstanceConfiguration();
+		return getIdAPI(attivazionePolicy, protocolFactory, configPdDManager);
+	}
+	public static String getIdAPI(AttivazionePolicy attivazionePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager) throws Exception {
 		PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
 		
 		String API = null;
 		
-		if(activePolicy.getInstanceConfiguration().getFiltro()!=null &&
-				activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()!=null && 
-				StringUtils.isNotEmpty(activePolicy.getInstanceConfiguration().getFiltro().getNomePorta()) && 
-				activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta()!=null) {
-			String nomePorta = activePolicy.getInstanceConfiguration().getFiltro().getNomePorta();
-			if(RuoloPolicy.DELEGATA.equals(activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta())) {
+		if(attivazionePolicy.getFiltro()!=null &&
+				attivazionePolicy.getFiltro().getNomePorta()!=null && 
+				StringUtils.isNotEmpty(attivazionePolicy.getFiltro().getNomePorta()) && 
+				attivazionePolicy.getFiltro().getRuoloPorta()!=null) {
+			String nomePorta = attivazionePolicy.getFiltro().getNomePorta();
+			if(RuoloPolicy.DELEGATA.equals(attivazionePolicy.getFiltro().getRuoloPorta())) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(nomePorta);
 				PortaDelegata pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
@@ -846,7 +856,7 @@ public class PolicyVerifier {
 					}
 				}
 			}
-			else if(RuoloPolicy.APPLICATIVA.equals(activePolicy.getInstanceConfiguration().getFiltro().getRuoloPorta())) {
+			else if(RuoloPolicy.APPLICATIVA.equals(attivazionePolicy.getFiltro().getRuoloPorta())) {
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(nomePorta);
 				PortaApplicativa pa = configPdDManager.getPortaApplicativa_SafeMethod(idPA);

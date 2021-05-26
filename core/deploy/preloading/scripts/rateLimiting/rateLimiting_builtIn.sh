@@ -30,6 +30,9 @@ do
 	elif [ "${risorsa}" == "NumeroRichieste" ]
 	then
 		descrizione="La policy limita il numero totale massimo di richieste consentite"
+	elif [ "${risorsa}" == "DimensioneMassimaMessaggio" ]
+	then
+		descrizione="La policy limita la dimensione massima, in KB, consentita per una richiesta e/o per una risposta"
 	elif [ "${risorsa}" == "OccupazioneBanda" ]
 	then
 		descrizione="La policy limita il numero totale massimo di KB consentiti"
@@ -53,7 +56,7 @@ do
 		descrizione="La policy conteggia il numero di richieste fallite o che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata"
 	fi
 
-	if [ "${richiesteSimultanee}" == "false" ]
+	if [ "${richiesteSimultanee}" == "false" -a "${risorsa}" != "DimensioneMassimaMessaggio" ]
 	then
 		if [ "${intervallo}" == "minuti" ]
 		then
@@ -112,6 +115,10 @@ do
 
 	# Valore
 	echo -e "\t<valore>${valore}</valore>" >> ${file}
+	if [ "${risorsa}" == "DimensioneMassimaMessaggio" ]
+	then
+		echo -e "\t<valore2>${valore}</valore2>" >> ${file}
+	fi
 	if [ "${risorsa}" == "OccupazioneBanda" ]
 	then
 		echo -e "\t<valore-tipo-banda>complessiva</valore-tipo-banda>" >> ${file}

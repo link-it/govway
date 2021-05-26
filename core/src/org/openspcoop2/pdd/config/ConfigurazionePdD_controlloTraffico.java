@@ -108,19 +108,35 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 	
 	
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getElencoIdPolicyApiAttive(connectionPdD, tipoPdD, nomePorta, true);
+		return this._getElencoIdPolicyApiAttive(connectionPdD, tipoPdD, nomePorta, true,
+				false,true);
 	}
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this._getElencoIdPolicyApiAttive(connectionPdD, null, null, false);
+		return this._getElencoIdPolicyApiAttive(connectionPdD, null, null, false,
+				false,true);
 	}
-	private Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> _getElencoIdPolicyApiAttive(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta, boolean api) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI_dimensioneMessaggio(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this._getElencoIdPolicyApiAttive(connectionPdD, tipoPdD, nomePorta, true,
+				true,false);
+	}
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this._getElencoIdPolicyApiAttive(connectionPdD, null, null, false,
+				true,false);
+	}
+	private Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> _getElencoIdPolicyApiAttive(Connection connectionPdD, TipoPdD tipoPdD, String nomePorta, boolean api, 
+			boolean includiSoloPolicyDimensioneMessaggio, boolean escludiPolicyDimensioneMessaggio) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		String prefix = "";
+		if(includiSoloPolicyDimensioneMessaggio) {
+			prefix = " [DimensioneMessaggio]";
+		}
 		
 		if(api) {
 			if(tipoPdD==null) {
-				throw new DriverConfigurazioneException("Tipo PdD non fornito; richiesto per una policy API");
+				throw new DriverConfigurazioneException("Tipo PdD non fornito; richiesto per una policy API"+prefix);
 			}
 			if(nomePorta==null) {
-				throw new DriverConfigurazioneException("Nome Porta non fornito; richiesto per una policy API");
+				throw new DriverConfigurazioneException("Nome Porta non fornito; richiesto per una policy API"+prefix);
 			}
 		}
 		
@@ -169,6 +185,18 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 					ElencoIdPolicyAttive elencoIdPolicy = null;
 					
 					TipoRisorsaPolicyAttiva tipoPolicyAttiva = TipoRisorsaPolicyAttiva.getTipo(confPolicy.getRisorsa(), confPolicy.isSimultanee());
+					
+					if(escludiPolicyDimensioneMessaggio) {
+						if(TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoPolicyAttiva)) {
+							continue;
+						}
+					}
+					else if(includiSoloPolicyDimensioneMessaggio) {
+						if(!TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoPolicyAttiva)) {
+							continue;
+						}
+					}
+					
 					if(map.containsKey(tipoPolicyAttiva)) {
 						elencoIdPolicy = map.get(tipoPolicyAttiva);
 					}
@@ -180,14 +208,23 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 					elencoIdPolicy.addIdActivePolicy(idActivePolicy);
 				}
 				
+				if(map.isEmpty()) {
+					if(api) {
+						throw new NotFoundException("policy API non esistenti per la porta '"+nomePorta+"' (ruolo: "+tipoPdD.getTipo()+")"+prefix);
+					}
+					else {
+						throw new NotFoundException("policy globali non esistenti"+prefix);	
+					}
+				}
+				
 				return map;
 			}
 			else {
 				if(api) {
-					throw new NotFoundException("policy API non esistenti per la porta '"+nomePorta+"' (ruolo: "+tipoPdD.getTipo()+")");
+					throw new NotFoundException("policy API non esistenti per la porta '"+nomePorta+"' (ruolo: "+tipoPdD.getTipo()+")"+prefix);
 				}
 				else {
-					throw new NotFoundException("policy globali non esistenti");	
+					throw new NotFoundException("policy globali non esistenti"+prefix);	
 				}
 			}
 		}

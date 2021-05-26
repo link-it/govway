@@ -36,6 +36,7 @@ public enum TipoRisorsaPolicyAttiva implements IEnumeration , Serializable , Clo
 
 	NUMERO_RICHIESTE_SIMULTANEE ("NumeroRichiesteSimultanee"),
 	NUMERO_RICHIESTE (TipoRisorsa.NUMERO_RICHIESTE.getValue()),
+	DIMENSIONE_MASSIMA_MESSAGGIO (TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.getValue()),
 	OCCUPAZIONE_BANDA (TipoRisorsa.OCCUPAZIONE_BANDA.getValue()),
 	TEMPO_COMPLESSIVO_RISPOSTA (TipoRisorsa.TEMPO_COMPLESSIVO_RISPOSTA.getValue()),
 	TEMPO_MEDIO_RISPOSTA (TipoRisorsa.TEMPO_MEDIO_RISPOSTA.getValue()),

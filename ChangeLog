@@ -1,3 +1,9 @@
+2021-05-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovwayConsole]
+	Aggiunta funzionalità OP-1189
+	Introdotta nuova metrica che consente di indicare la dimensione massima di un messaggio di richiesta o di risposta.
+
 2021-05-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovwayConsole]

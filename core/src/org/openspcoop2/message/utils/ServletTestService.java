@@ -1277,6 +1277,7 @@ public class ServletTestService extends HttpServlet {
 				if(fileResponse==null) {
 					fileResponse = getParameter_checkWhiteList(req, this.whitePropertiesList, "op"); // alias per response, in modo da rendere meno evidente l'operazione
 				}
+				String responseContent = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContent");
 				ByteArrayOutputStream boutStaticFile = null;
 				if(fileDestinazione!=null || fileResponse!=null){
 					
@@ -1305,6 +1306,9 @@ public class ServletTestService extends HttpServlet {
 					fin.close();
 					
 					String fileDestinazioneContentType = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFileContentType");
+					if(fileDestinazioneContentType==null) {
+						fileDestinazioneContentType = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContentType");
+					}
 					if(fileDestinazioneContentType!=null){
 						fileDestinazioneContentType = fileDestinazioneContentType.trim();
 						contentTypeRisposta = fileDestinazioneContentType;
@@ -1343,8 +1347,33 @@ public class ServletTestService extends HttpServlet {
 						
 					}
 					
-
+					if("none".equals(contentTypeRisposta)) {
+						contentTypeRisposta=null; // per test
+					}
 									
+				}
+				else if(responseContent!=null) {
+					boutStaticFile = new ByteArrayOutputStream();
+					boutStaticFile.write(responseContent.getBytes());
+					boutStaticFile.flush();
+					boutStaticFile.close();
+					
+					String responseContentType = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContentType");
+					if(responseContentType!=null){
+						responseContentType = responseContentType.trim();
+						contentTypeRisposta = responseContentType;
+					}
+					else{
+						
+						if(contentTypeRichiesta!=null && contentTypeRichiesta.contains("multipart/related")==false){
+							contentTypeRisposta = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta); // uso lo stesso contentType della richiesta.
+						}else
+							contentTypeRisposta = "text/xml"; // default soap 1.1
+					}
+					
+					if("none".equals(contentTypeRisposta)) {
+						contentTypeRisposta=null; // per test
+					}
 				}
 				
 				//System.out.println("CHUNKED: "+chunked);

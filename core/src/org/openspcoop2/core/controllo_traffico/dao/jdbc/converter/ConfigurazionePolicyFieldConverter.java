@@ -108,6 +108,13 @@ public class ConfigurazionePolicyFieldConverter extends AbstractSQLFieldConverte
 				return "rt_valore";
 			}
 		}
+		if(field.equals(ConfigurazionePolicy.model().VALORE_2)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".rt_valore2";
+			}else{
+				return "rt_valore2";
+			}
+		}
 		if(field.equals(ConfigurazionePolicy.model().VALORE_TIPO_BANDA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".rt_bytes_type";
@@ -277,6 +284,9 @@ public class ConfigurazionePolicyFieldConverter extends AbstractSQLFieldConverte
 			return this.toTable(ConfigurazionePolicy.model(), returnAlias);
 		}
 		if(field.equals(ConfigurazionePolicy.model().VALORE)){
+			return this.toTable(ConfigurazionePolicy.model(), returnAlias);
+		}
+		if(field.equals(ConfigurazionePolicy.model().VALORE_2)){
 			return this.toTable(ConfigurazionePolicy.model(), returnAlias);
 		}
 		if(field.equals(ConfigurazionePolicy.model().VALORE_TIPO_BANDA)){

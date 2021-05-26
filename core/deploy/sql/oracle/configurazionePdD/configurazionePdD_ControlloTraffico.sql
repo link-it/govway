@@ -74,6 +74,7 @@ CREATE TABLE ct_config_policy
 	-- Valori di Soglia
 	rt_simultanee NUMBER NOT NULL,
 	rt_valore NUMBER,
+	rt_valore2 NUMBER,
 	rt_bytes_type VARCHAR2(255),
 	rt_latency_type VARCHAR2(255),
 	rt_modalita_controllo VARCHAR2(255),
@@ -158,6 +159,7 @@ CREATE TABLE ct_active_policy
 	-- Valori di Soglia
 	policy_redefined NUMBER NOT NULL,
 	policy_valore NUMBER,
+	policy_valore2 NUMBER,
 	-- Filtro
 	filtro_enabled NUMBER NOT NULL,
 	filtro_protocollo VARCHAR2(255),

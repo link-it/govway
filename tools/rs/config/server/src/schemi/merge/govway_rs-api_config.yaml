@@ -9062,6 +9062,12 @@ components:
           soglia_valore:
             type: "integer"
             format: "int32"
+          soglia_dimensione_richiesta:
+            type: "integer"
+            format: "int32"
+          soglia_dimensione_risposta:
+            type: "integer"
+            format: "int32"
     RateLimitingPolicyBaseConIdentificazione:
       type: "object"
       allOf:
@@ -9683,6 +9689,7 @@ components:
       enum:
       - "numero-richieste"
       - "numero-richieste-simultanee"
+      - "dimensione-massima"
       - "occupazione-banda"
       - "tempo-medio-risposta"
       - "tempo-complessivo-risposta"

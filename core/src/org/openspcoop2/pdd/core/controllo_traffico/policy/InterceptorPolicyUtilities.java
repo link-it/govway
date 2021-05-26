@@ -26,6 +26,9 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -39,9 +42,12 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
@@ -185,27 +191,24 @@ public class InterceptorPolicyUtilities {
 	}
 	
 	public static DatiTransazione readDatiTransazione(InRequestProtocolContext context){
-		DatiTransazione datiTransazione = new DatiTransazione();
-		
-		datiTransazione.setTipoPdD(context.getTipoPorta());
-		datiTransazione.setModulo(context.getIdModulo());
-		
-		String idTransazione = (String) context.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
-		datiTransazione.setIdTransazione(idTransazione);		
-		
+		TipoPdD tipoPdD = context.getTipoPorta();
+		String idModulo = context.getIdModulo();
+		PdDContext pddContext = context.getPddContext();
+		URLProtocolContext urlProtocolContext = null;
 		if(context.getConnettore()!=null && context.getConnettore().getUrlProtocolContext()!=null) {
-			datiTransazione.setNomePorta(context.getConnettore().getUrlProtocolContext().getInterfaceName());
+			urlProtocolContext = context.getConnettore().getUrlProtocolContext();
 		}
+		IProtocolFactory<?> protocolFactory = context.getProtocolFactory();
+		IState state = context.getStato();
+		Logger log = context.getLogCore();
 		
-		if(context.getProtocolFactory()!=null)
-			datiTransazione.setProtocollo(context.getProtocolFactory().getProtocol());
-		
-		// Controllo sui dati del Fruitore e del Servizio (Erogatore)
-		if(context.getProtocollo()!=null){
-			
-			datiTransazione.setDominio(context.getProtocollo().getDominio());
-			
-			datiTransazione.setSoggettoFruitore(context.getProtocollo().getFruitore());
+		IDSoggetto idDominio = null;
+		IDSoggetto soggettoFruitore = null;
+		IDServizio idServizio = null;
+		IDAccordo idAccordo = null;
+		if(context.getProtocollo()!=null) {
+			idDominio = context.getProtocollo().getDominio();
+			soggettoFruitore = context.getProtocollo().getFruitore();
 			
 			IDSoggetto soggettoErogatore = context.getProtocollo().getErogatore();
 			String soggettoErogatoreTipo = null;
@@ -218,79 +221,133 @@ public class InterceptorPolicyUtilities {
 			if(context.getProtocollo().getVersioneServizio()!=null) {
 				versione = context.getProtocollo().getVersioneServizio();
 			}
-			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(context.getProtocollo().getTipoServizio(), 
+			idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(context.getProtocollo().getTipoServizio(), 
 					context.getProtocollo().getServizio(),
 					soggettoErogatoreTipo, soggettoErogatoreNome, 
 					versione); 
 			idServizio.setAzione(context.getProtocollo().getAzione());
-			datiTransazione.setIdServizio(idServizio);
 			
-			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(context.getStato());
-			if(context.getProtocollo().getIdAccordo()!=null) {
-				datiTransazione.setIdAccordoServizioParteComune(context.getProtocollo().getIdAccordo());
-			}
-			else {
-				try {
-					AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
-					datiTransazione.setIdAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
-				}catch(Exception e) {
-					//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
-					//e.printStackTrace(System.out);
-					context.getLogCore().debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
-				}				
-			}
-			if(datiTransazione.getIdAccordoServizioParteComune()!=null) {
-				try {
-					AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(datiTransazione.getIdAccordoServizioParteComune(), null, false);
-					if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
-						List<String> tags = new ArrayList<String>();
-						for (GruppoAccordo gruppoAccordo : aspc.getGruppi().getGruppoList()) {
-							tags.add(gruppoAccordo.getNome());
-						}
-						datiTransazione.setTagsAccordoServizioParteComune(tags);
-					}
-				}catch(Exception e) {
-					//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
-					//e.printStackTrace(System.out);
-					context.getLogCore().debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
-				}	
-			}
-			
+			idAccordo = context.getProtocollo().getIdAccordo();
 		}
 		
+		IDPortaDelegata idPD = null;
+		IDPortaApplicativa idPA = null;
+		String servizioApplicativoFruitore = null;
+		List<String> serviziApplicativiErogatori = null;
 		if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null){
+			idPD = context.getIntegrazione().getIdPD();
+			servizioApplicativoFruitore = context.getIntegrazione().getServizioApplicativoFruitore();
+		}
+		else if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null){
+			idPA = context.getIntegrazione().getIdPA();
+			if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
+				serviziApplicativiErogatori = new ArrayList<String>();
+				for (int i = 0; i < context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
+					serviziApplicativiErogatori.add(context.getIntegrazione().getServizioApplicativoErogatore(i));
+				}
+			}
+			servizioApplicativoFruitore = context.getIntegrazione().getServizioApplicativoFruitore();
+		}
+		
+		return readDatiTransazione(tipoPdD, idModulo, 
+				pddContext, urlProtocolContext,
+				protocolFactory, state, log,
+				idDominio, soggettoFruitore, idServizio, idAccordo,
+				idPD, idPA,
+				servizioApplicativoFruitore, serviziApplicativiErogatori);
+	}
+	public static DatiTransazione readDatiTransazione(TipoPdD tipoPdD, String idModulo, 
+			PdDContext pddContext, URLProtocolContext urlProtocolContext,
+			IProtocolFactory<?> protocolFactory, IState state, Logger log,
+			IDSoggetto idDominio, IDSoggetto soggettoFruitore, IDServizio idServizio, IDAccordo idAccordo,
+			IDPortaDelegata idPD, IDPortaApplicativa idPA,
+			String servizioApplicativoFruitore, List<String> serviziApplicativiErogatori){
+		DatiTransazione datiTransazione = new DatiTransazione();
+		
+		datiTransazione.setTipoPdD(tipoPdD);
+		datiTransazione.setModulo(idModulo);
+		
+		if(pddContext!=null) {
+			String idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
+			datiTransazione.setIdTransazione(idTransazione);
+		}
+		
+		if(urlProtocolContext!=null) {
+			datiTransazione.setNomePorta(urlProtocolContext.getInterfaceName());
+		}
+		
+		if(protocolFactory!=null)
+			datiTransazione.setProtocollo(protocolFactory.getProtocol());
+		
+		// Controllo sui dati del Fruitore e del Servizio (Erogatore)
+		datiTransazione.setDominio(idDominio);
+		datiTransazione.setSoggettoFruitore(soggettoFruitore);
+		datiTransazione.setIdServizio(idServizio);
+		
+		RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
+		if(idAccordo!=null) {
+			datiTransazione.setIdAccordoServizioParteComune(idAccordo);
+		}
+		else {
+			try {
+				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+				datiTransazione.setIdAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			}catch(Exception e) {
+				//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
+				//e.printStackTrace(System.out);
+				log.debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
+			}				
+		}
+		if(datiTransazione.getIdAccordoServizioParteComune()!=null) {
+			try {
+				AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(datiTransazione.getIdAccordoServizioParteComune(), null, false);
+				if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
+					List<String> tags = new ArrayList<String>();
+					for (GruppoAccordo gruppoAccordo : aspc.getGruppi().getGruppoList()) {
+						tags.add(gruppoAccordo.getNome());
+					}
+					datiTransazione.setTagsAccordoServizioParteComune(tags);
+				}
+			}catch(Exception e) {
+				//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
+				//e.printStackTrace(System.out);
+				log.debug("Lettura AccordoServizioParteSpecifica ("+idServizio+") non riuscita: "+e.getMessage(),e);
+			}	
+		}
+		
+		if(idPD!=null){
 
-			if(context.getIntegrazione().getServizioApplicativoFruitore()!=null){
-				datiTransazione.setServizioApplicativoFruitore(context.getIntegrazione().getServizioApplicativoFruitore());
+			if(servizioApplicativoFruitore!=null){
+				datiTransazione.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 			}
 			else{
 				datiTransazione.setServizioApplicativoFruitore(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO);
 			}
 
 		}
-		else if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null){
+		else if(idPA!=null){
 			
-			if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
-				for (int i = 0; i < context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
-					datiTransazione.getListServiziApplicativiErogatori().add(context.getIntegrazione().getServizioApplicativoErogatore(i));
+			if(serviziApplicativiErogatori!=null && serviziApplicativiErogatori.size()>0){
+				for (int i = 0; i < serviziApplicativiErogatori.size(); i++) {
+					datiTransazione.getListServiziApplicativiErogatori().add(serviziApplicativiErogatori.get(i));
 				}
 			}
 			
-			if(context.getIntegrazione().getServizioApplicativoFruitore()!=null){
-				datiTransazione.setServizioApplicativoFruitore(context.getIntegrazione().getServizioApplicativoFruitore());
+			if(servizioApplicativoFruitore!=null){
+				datiTransazione.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 			}
 			
 		}
 		
-		if(context.getPddContext()!=null) {
+		if(pddContext!=null) {
 			
-			if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO)) {
-				String id = (String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO);
+			if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO)) {
+				String id = (String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO);
 				datiTransazione.setIdentificativoAutenticato(id);
 			}
 			
-			if(context.getPddContext().containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
-				InformazioniToken informazioniTokenNormalizzate = (InformazioniToken) context.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			if(pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				InformazioniToken informazioniTokenNormalizzate = (InformazioniToken) pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 				if(informazioniTokenNormalizzate!=null) {
 					datiTransazione.setTokenSubject(informazioniTokenNormalizzate.getSub());
 					datiTransazione.setTokenIssuer(informazioniTokenNormalizzate.getIss());

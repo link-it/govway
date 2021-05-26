@@ -38,6 +38,12 @@ public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
   
   @Schema(description = "")
   private Integer sogliaValore = null;
+  
+  @Schema(description = "")
+  private Integer sogliaDimensioneRichiesta = null;
+  
+  @Schema(description = "")
+  private Integer sogliaDimensioneRisposta = null;
  /**
    * Get nome
    * @return nome
@@ -116,6 +122,44 @@ public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
     return this;
   }
 
+ /**
+   * Get sogliaDimensioneRichiesta
+   * @return sogliaDimensioneRichiesta
+  **/
+  @JsonProperty("soglia_dimensione_richiesta")
+  @Valid
+  public Integer getSogliaDimensioneRichiesta() {
+    return this.sogliaDimensioneRichiesta;
+  }
+
+  public void setSogliaDimensioneRichiesta(Integer sogliaDimensioneRichiesta) {
+    this.sogliaDimensioneRichiesta = sogliaDimensioneRichiesta;
+  }
+
+  public RateLimitingPolicyBase sogliaDimensioneRichiesta(Integer sogliaDimensioneRichiesta) {
+    this.sogliaDimensioneRichiesta = sogliaDimensioneRichiesta;
+    return this;
+  }
+
+ /**
+   * Get sogliaDimensioneRisposta
+   * @return sogliaDimensioneRisposta
+  **/
+  @JsonProperty("soglia_dimensione_risposta")
+  @Valid
+  public Integer getSogliaDimensioneRisposta() {
+    return this.sogliaDimensioneRisposta;
+  }
+
+  public void setSogliaDimensioneRisposta(Integer sogliaDimensioneRisposta) {
+    this.sogliaDimensioneRisposta = sogliaDimensioneRisposta;
+  }
+
+  public RateLimitingPolicyBase sogliaDimensioneRisposta(Integer sogliaDimensioneRisposta) {
+    this.sogliaDimensioneRisposta = sogliaDimensioneRisposta;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -126,6 +170,8 @@ public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
     sb.append("    stato: ").append(RateLimitingPolicyBase.toIndentedString(this.stato)).append("\n");
     sb.append("    sogliaRidefinita: ").append(RateLimitingPolicyBase.toIndentedString(this.sogliaRidefinita)).append("\n");
     sb.append("    sogliaValore: ").append(RateLimitingPolicyBase.toIndentedString(this.sogliaValore)).append("\n");
+    sb.append("    sogliaDimensioneRichiesta: ").append(RateLimitingPolicyBase.toIndentedString(this.sogliaDimensioneRichiesta)).append("\n");
+    sb.append("    sogliaDimensioneRisposta: ").append(RateLimitingPolicyBase.toIndentedString(this.sogliaDimensioneRisposta)).append("\n");
     sb.append("}");
     return sb.toString();
   }

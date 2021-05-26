@@ -50,6 +50,7 @@ public class AttivazionePolicyModel extends AbstractModel<AttivazionePolicy> {
 		this.WARNING_ONLY = new Field("warning-only",boolean.class,"attivazione-policy",AttivazionePolicy.class);
 		this.RIDEFINISCI = new Field("ridefinisci",boolean.class,"attivazione-policy",AttivazionePolicy.class);
 		this.VALORE = new Field("valore",java.lang.Long.class,"attivazione-policy",AttivazionePolicy.class);
+		this.VALORE_2 = new Field("valore2",java.lang.Long.class,"attivazione-policy",AttivazionePolicy.class);
 		this.FILTRO = new org.openspcoop2.core.controllo_traffico.model.AttivazionePolicyFiltroModel(new Field("filtro",org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro.class,"attivazione-policy",AttivazionePolicy.class));
 		this.GROUP_BY = new org.openspcoop2.core.controllo_traffico.model.AttivazionePolicyRaggruppamentoModel(new Field("group-by",org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento.class,"attivazione-policy",AttivazionePolicy.class));
 	
@@ -69,6 +70,7 @@ public class AttivazionePolicyModel extends AbstractModel<AttivazionePolicy> {
 		this.WARNING_ONLY = new ComplexField(father,"warning-only",boolean.class,"attivazione-policy",AttivazionePolicy.class);
 		this.RIDEFINISCI = new ComplexField(father,"ridefinisci",boolean.class,"attivazione-policy",AttivazionePolicy.class);
 		this.VALORE = new ComplexField(father,"valore",java.lang.Long.class,"attivazione-policy",AttivazionePolicy.class);
+		this.VALORE_2 = new ComplexField(father,"valore2",java.lang.Long.class,"attivazione-policy",AttivazionePolicy.class);
 		this.FILTRO = new org.openspcoop2.core.controllo_traffico.model.AttivazionePolicyFiltroModel(new ComplexField(father,"filtro",org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro.class,"attivazione-policy",AttivazionePolicy.class));
 		this.GROUP_BY = new org.openspcoop2.core.controllo_traffico.model.AttivazionePolicyRaggruppamentoModel(new ComplexField(father,"group-by",org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento.class,"attivazione-policy",AttivazionePolicy.class));
 	
@@ -95,6 +97,8 @@ public class AttivazionePolicyModel extends AbstractModel<AttivazionePolicy> {
 	public IField RIDEFINISCI = null;
 	 
 	public IField VALORE = null;
+	 
+	public IField VALORE_2 = null;
 	 
 	public org.openspcoop2.core.controllo_traffico.model.AttivazionePolicyFiltroModel FILTRO = null;
 	 

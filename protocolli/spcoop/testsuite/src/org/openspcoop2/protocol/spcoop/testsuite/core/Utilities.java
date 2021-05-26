@@ -183,6 +183,7 @@ public class Utilities {
 				case NOT_FOUND:
 				case BAD_REQUEST: 
 				case CONFLICT:
+				case REQUEST_TOO_LARGE:
 				case LIMIT_EXCEEDED:
 				case TOO_MANY_REQUESTS:
 					codiceEccezioneAtteso = org.openspcoop2.message.constants.Costanti.SOAP11_FAULT_CODE_CLIENT +

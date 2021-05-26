@@ -312,7 +312,7 @@
 				<antcall target="set_property">
 					<param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
-					<param name="value" value="/RateLimiting.zip,/TokenPolicy.zip,/apiConfig.zip,/apiMonitor.zip"/>
+					<param name="value" value="/RateLimiting.zip,/RateLimiting_policies.zip,/TokenPolicy.zip,/apiConfig.zip,/apiMonitor.zip"/>
 				</antcall>
 			</then>
 			<elseif>
@@ -323,7 +323,7 @@
 					<antcall target="set_property">
 						<param name="file" value="${file}"/>
 						<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
-						<param name="value" value="/RateLimiting.zip,/TokenPolicy.zip,/apiConfig.zip"/>
+						<param name="value" value="/RateLimiting.zip,/RateLimiting_policies.zip,/TokenPolicy.zip,/apiConfig.zip"/>
 					</antcall>
 				</then>
 			</elseif>
@@ -335,7 +335,7 @@
 					<antcall target="set_property">
 						<param name="file" value="${file}"/>
 						<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
-						<param name="value" value="/RateLimiting.zip,/TokenPolicy.zip,/apiMonitor.zip"/>
+						<param name="value" value="/RateLimiting.zip,/RateLimiting_policies.zip,/TokenPolicy.zip,/apiMonitor.zip"/>
 					</antcall>
 				</then>
 			</elseif>
@@ -343,7 +343,7 @@
 				<antcall target="set_property">
 					<param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.config.preLoading.locale"/>
-					<param name="value" value="/RateLimiting.zip,/TokenPolicy.zip"/>
+					<param name="value" value="/RateLimiting.zip,/RateLimiting_policies.zip,/TokenPolicy.zip"/>
 				</antcall>
 			</else>
 		</if>

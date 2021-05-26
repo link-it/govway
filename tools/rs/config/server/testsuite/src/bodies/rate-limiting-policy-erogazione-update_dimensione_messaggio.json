@@ -1,0 +1,12 @@
+{
+    "nome": "PolicyProvaKarate",
+    "stato": "disabilitato",
+    "soglia_ridefinita": false,
+
+    "filtro": {
+	"azione": ["GET_pet.findByStatus","GET_pet.findByTags"],
+        "chiave_tipo": "header-based",
+        "chiave_nome": "nomeHeader2",
+        "filtro_chiave_valore": "chiave_valore13"
+    }
+}

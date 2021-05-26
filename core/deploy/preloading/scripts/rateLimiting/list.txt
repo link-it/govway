@@ -20,6 +20,9 @@ NumeroRichieste|false|giornaliero|1000|true|false
 NumeroRichieste|false|giornaliero|1000|false|true
 NumeroRichieste|false|giornaliero|1000|true|true
 #
+# DimensioneMassimaMessaggio (in kb) (default è 10240, sono 10MB)
+DimensioneMassimaMessaggio|false|minuti|10240|false|false
+#
 # OccupazioneBanda (in kb) (default è 1024 sono 1MB per 10 transazioni)
 OccupazioneBanda|false|minuti|1024|false|false
 OccupazioneBanda|false|minuti|1024|true|false

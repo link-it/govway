@@ -127,6 +127,10 @@ public class ModISecurityConfig {
 			listProtocolProperties = aspsParam.getProtocolPropertyList();
 		}
 		
+		if(listProtocolProperties==null || listProtocolProperties.isEmpty()) {
+			throw new ProtocolException("Configurazione della sicurezza incompleta");
+		}
+		
 		if(rest) {
 			this.initSharedRest(listProtocolProperties,sa,fruizione,request);
 			
@@ -361,6 +365,10 @@ public class ModISecurityConfig {
 		// METODO USATO IN VALIDAZIONE
 		
 		List<ProtocolProperty> listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, aspsParam);
+		
+		if(listProtocolProperties==null || listProtocolProperties.isEmpty()) {
+			throw new ProtocolException("Configurazione della sicurezza incompleta");
+		}
 		
 		if(rest) {
 			this.initSharedRest(listProtocolProperties,null, fruizione,request);

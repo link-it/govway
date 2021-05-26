@@ -74,6 +74,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "policy_redefined", AttivazionePolicy.model().RIDEFINISCI.getFieldType()));
 				setParameter(object, "setValore", AttivazionePolicy.model().VALORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "policy_valore", AttivazionePolicy.model().VALORE.getFieldType()));
+				setParameter(object, "setValore2", AttivazionePolicy.model().VALORE_2.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "policy_valore2", AttivazionePolicy.model().VALORE_2.getFieldType()));
 				object.setFiltro(new AttivazionePolicyFiltro());
 				setParameter(object.getFiltro(), "setEnabled", AttivazionePolicy.model().FILTRO.ENABLED.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_enabled", AttivazionePolicy.model().FILTRO.ENABLED.getFieldType()));
@@ -188,6 +190,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"ridefinisci"));
 				setParameter(object, "setValore", AttivazionePolicy.model().VALORE.getFieldType(),
 					this.getObjectFromMap(map,"valore"));
+				setParameter(object, "setValore2", AttivazionePolicy.model().VALORE_2.getFieldType(),
+					this.getObjectFromMap(map,"valore2"));
 				object.setFiltro(new AttivazionePolicyFiltro());
 				setParameter(object.getFiltro(), "setEnabled", AttivazionePolicy.model().FILTRO.ENABLED.getFieldType(),
 					this.getObjectFromMap(map,"filtro.enabled"));

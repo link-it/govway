@@ -39,8 +39,25 @@ Background:
     }
     """
 
+* def policy_dimensione_messaggio = read('classpath:bodies/rate-limiting-policy-erogazione_dimensione_messaggio.json')
+* def policy_update_dimensione_messaggio = read('classpath:bodies/rate-limiting-policy-erogazione-update_dimensione_messaggio.json')
+* def policy_types_dimensione_messaggio = [ 'dimensione-massima' ]
+* def build_data_dimensione_messaggio = 
+    """
+    function(policy_types, policy_body, policy_body_update, servizio_path) {
+        var ret = [];
+        for (var idx=0; idx < policy_types.length; idx++) {
+	   for (var idy=0; idy < policy_intervalli.length; idy++) {
+              ret.push({servizio_path: servizio_path, policy: policy_body, policy_update: policy_body_update, policy_type: policy_types[idx] } )
+	   }
+        }
+
+        return ret;
+    }
+    """
+
 @RateLimitingAllPolicyTypes
-Scenario: Configurazione Erogazioni Rate Limiting, tutti i tipi di policy vengono considerati.
+Scenario: Configurazione Erogazioni Rate Limiting, tutti i tipi di policy vengono considerati (eccezione: dimensione massima messaggio non presente).
  
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
@@ -67,6 +84,19 @@ Scenario: Configurazione Erogazioni Rate Limiting, tutti i tipi di policy vengon
     * call delete ({ resourcePath: 'soggetti/' + soggetto_http.nome })
     * call delete ({ resourcePath: erogazione_petstore_path })
     * call delete ({ resourcePath: api_petstore_path })
+
+@RateLimitingPolicyDimensioneMessaggio
+Scenario: Configurazione Erogazioni Rate Limiting, policy dimensione massima messaggio
+ 
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+    
+    * def data = build_data_dimensione_messaggio(policy_types_dimensione_messaggio, policy_dimensione_messaggio, policy_update_dimensione_messaggio, erogazione_petstore_path)
+    * def conf = call read('classpath:servizi-configurazione/rate-limiting-dimensione-messaggio.feature') data
+
+    * call delete ({ resourcePath: erogazione_petstore_path })
+    * call delete ({ resourcePath: api_petstore_path })
+
 
 @FiltroApplicativoFruitoreInesistente400
 Scenario: Configurazione del Rate Limting filtrando per un applicativo inesistente

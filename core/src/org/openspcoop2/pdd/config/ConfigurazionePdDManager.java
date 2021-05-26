@@ -104,6 +104,7 @@ import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
@@ -583,6 +584,14 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getFileTraceConfig(this.getConnection(), pd);
 	}
 
+	public SoglieDimensioneMessaggi getSoglieLimitedInputStream(PortaDelegata pd, String azione, String idModulo,
+			PdDContext pddContext, URLProtocolContext urlProtocolContext,
+			IProtocolFactory<?> protocolFactory, Logger log) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getSoglieLimitedInputStream(this.getConnection(), pd, azione, idModulo,
+				pddContext, urlProtocolContext,
+				protocolFactory, log);
+	}
+	
 	public boolean isConnettoriUseTimeoutInputStream(PortaDelegata pd) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.isConnettoriUseTimeoutInputStream(this.getConnection(), pd);
 	}
@@ -861,6 +870,14 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getFileTraceConfig(this.getConnection(), pa);
 	}
 
+	public SoglieDimensioneMessaggi getSoglieLimitedInputStream(PortaApplicativa pa, String azione, String idModulo,
+			PdDContext pddContext, URLProtocolContext urlProtocolContext,
+			IProtocolFactory<?> protocolFactory, Logger log) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getSoglieLimitedInputStream(this.getConnection(), pa, azione, idModulo,
+				pddContext, urlProtocolContext,
+				protocolFactory, log);
+	}
+	
 	public boolean isConnettoriUseTimeoutInputStream(PortaApplicativa pa) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.isConnettoriUseTimeoutInputStream(this.getConnection(), pa);
 	}
@@ -1380,6 +1397,14 @@ public class ConfigurazionePdDManager {
 
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali(boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getElencoIdPolicyAttiveGlobali(this.getConnection(), useCache);
+	}
+	
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI_dimensioneMessaggio(boolean useCache, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getElencoIdPolicyAttiveAPI_dimensioneMessaggio(this.getConnection(), useCache, tipoPdD, nomePorta);
+	}
+
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(this.getConnection(), useCache);
 	}
 
 	public AttivazionePolicy getAttivazionePolicy(boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

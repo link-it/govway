@@ -779,6 +779,9 @@ public class CostantiPdD {
     
     public final static String PREFIX_TIMEOUT_REQUEST = "Request ";
     public final static String PREFIX_TIMEOUT_RESPONSE = "Response ";
+    
+    public final static String PREFIX_LIMITED_REQUEST = "Request ";
+    public final static String PREFIX_LIMITED_RESPONSE = "Response ";
 }
 
 

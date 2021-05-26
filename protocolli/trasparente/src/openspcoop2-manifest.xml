@@ -100,6 +100,9 @@
 	    			<conflict messageType="soapAsRequest" retry="false" errorMessage="specific">
 	    				<errorCode http="500" govway="409"/>
 	    			</conflict>
+	    			<requestTooLarge messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="413"/>
+	    			</requestTooLarge>
 	    			<limitExceeded messageType="soapAsRequest" retry="false" errorMessage="specific">
 	    				<errorCode http="500" govway="429"/>
 	    			</limitExceeded>
@@ -143,6 +146,9 @@
 	    			<conflict messageType="soapAsRequest" retry="false" errorMessage="specific">
 	    				<errorCode http="500" govway="409"/>
 	    			</conflict>
+	    			<requestTooLarge messageType="soapAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="500" govway="413"/>
+	    			</requestTooLarge>
 	    			<limitExceeded messageType="soapAsRequest" retry="false" errorMessage="specific">
 	    				<errorCode http="500" govway="429"/>
 	    			</limitExceeded>
@@ -249,6 +255,9 @@
 	    			<conflict messageType="sameAsRequest" retry="false" errorMessage="specific">
 	    				<errorCode http="409" govway="409"/>
 	    			</conflict>
+	    			<requestTooLarge messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="413" govway="413"/>
+	    			</requestTooLarge>
 	    			<limitExceeded messageType="sameAsRequest" retry="false" errorMessage="specific">
 	    				<errorCode http="429" govway="429"/>
 	    			</limitExceeded>
@@ -291,6 +300,9 @@
 	    			<conflict messageType="sameAsRequest" retry="false" errorMessage="specific">
 	    				<errorCode http="409" govway="409"/>
 	    			</conflict>
+	    			<requestTooLarge messageType="sameAsRequest" retry="false" errorMessage="specific">
+	    				<errorCode http="413" govway="413"/>
+	    			</requestTooLarge>
 	    			<limitExceeded messageType="sameAsRequest" retry="false" errorMessage="specific">
 	    				<errorCode http="429" govway="429"/>
 	    			</limitExceeded>

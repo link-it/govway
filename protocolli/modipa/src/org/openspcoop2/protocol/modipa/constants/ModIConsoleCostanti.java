@@ -110,14 +110,17 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_APPLICATIVI_LABEL = MODIPA_TITLE_LABEL;
 	public static final String MODIPA_APPLICATIVI_ID = "modipaApplicativiTitleId";
 	
-	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL = "Reply Audience/WSA-To";
+	//public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL = "Reply Audience/WSA-To";
+	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL = "Identificativo Client";
+	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_LABEL = "Reply Audience/WSA-To";
 	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE;
-	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_NOTE = "Identificativo dell'Applicativo scambiato nei token di sicurezza";
+	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_NOTE = "Identificativo dell'Applicativo scambiato nei token di sicurezza";
+	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_NOTE = "Identificativo dell'Applicativo indicato nel token di sicurezza della risposta";
 	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO = "Identificativo dell’applicativo utilizzato per valorizzare gli elementi indicati di seguito, generati all'interno del token di sicurezza:<BR/>"+
-			"- in una fruzione viene utilizzato per valorizzare il claim 'client_id' per API REST e l'header 'wsa:From' per API SOAP del token associato alla richiesta;<BR/>"+
+			"- in una fruzione viene utilizzato per valorizzare il claim 'client_id' per API REST e l'header 'wsa:From' per API SOAP del token associato alla richiesta (<b>Nota:</b> se non definito viene utilizzato il nome dell'applicativo);<BR/>"+
 			"- in un'erogazione viene utilizzato per valorizzare il claim 'aud' per API REST e l'header 'wsa:To' per API SOAP del token associato alla risposta.<BR/><BR/>"+
 			"In una fruizione, inoltre, se è abilitata la funzionalità 'Verifica Audience / WSAddressing To' nella configurazione ModI di sicurezza della risposta, viene verificato che nel token associato alla risposta ricevuta vi sia un claim 'aud' per API REST o un header 'wsa:To' per API SOAP che possiede un valore identico all'identificato fornito.";
-	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO = "Identificativo dell’applicativo utilizzato per valorizzare il claim 'aud' per API REST e l'header 'wsa:To' per API SOAP nel token di sicurezza associato alla risposta.";
+	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO = "Identificativo dell’applicativo utilizzato per valorizzare il claim 'aud' per API REST e l'header 'wsa:To' per API SOAP nel token di sicurezza associato alla risposta. Se non definito viene utilizzato il nome dell'erogazione";
 	
 	public static final String MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_LABEL = "URL (x5u)";
 	public static final String MODIPA_APPLICATIVI_PROFILO_SICUREZZA_MESSAGGIO_REST_X5U_URL_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_SA_RICHIESTA_X509_VALUE_X5URL;

@@ -53,6 +53,7 @@ CREATE TABLE ct_config_policy
 	-- Valori di Soglia
 	rt_simultanee BOOLEAN NOT NULL DEFAULT false,
 	rt_valore BIGINT,
+	rt_valore2 BIGINT,
 	rt_bytes_type VARCHAR(255),
 	rt_latency_type VARCHAR(255),
 	rt_modalita_controllo VARCHAR(255),
@@ -117,6 +118,7 @@ CREATE TABLE ct_active_policy
 	-- Valori di Soglia
 	policy_redefined BOOLEAN NOT NULL,
 	policy_valore BIGINT,
+	policy_valore2 BIGINT,
 	-- Filtro
 	filtro_enabled BOOLEAN NOT NULL DEFAULT false,
 	filtro_protocollo VARCHAR(255),

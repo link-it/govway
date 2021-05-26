@@ -116,7 +116,9 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -143,6 +145,9 @@ import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiConfigurationUtils;
+import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.InterceptorPolicyUtilities;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
@@ -160,6 +165,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -1220,9 +1226,13 @@ public class ConfigurazionePdDReader {
 				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pd.getAzione().getForceInterfaceBased());
 			}
 
+			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
-					pattern, forceRegistryBased, forcePluginBased, this.log, false);
+					pattern, forceRegistryBased, forcePluginBased, this.log, false,
+					bufferMessage_readOnly, 
+					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null);
 
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
@@ -1822,6 +1832,53 @@ public class ConfigurazionePdDReader {
 
 	}
 	
+	protected SoglieDimensioneMessaggi getSoglieLimitedInputStream(Connection connectionPdD,PortaDelegata pd, String azione, String idModulo,
+			PdDContext pddContext, URLProtocolContext urlProtocolContext,
+			IProtocolFactory<?> protocolFactory, Logger log) throws DriverConfigurazioneException{
+		TipoPdD tipoPdD = null;
+		String nomePorta = null;
+		IDSoggetto idDominio = null;
+		IDSoggetto soggettoFruitore = null;
+		IDServizio idServizio = null;
+		IDPortaDelegata idPD = null;
+		IDPortaApplicativa idPA = null;
+		if(pd!=null) {
+			tipoPdD = TipoPdD.DELEGATA;
+			nomePorta = pd.getNome();
+			idDominio = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+			soggettoFruitore = idDominio;
+			try {
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+						pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(),
+						pd.getServizio().getVersione());
+				idServizio.setAzione(azione);
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+			idPD = new IDPortaDelegata();
+			idPD.setNome(nomePorta);
+		}
+		else {
+			idDominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null);
+		}
+		 
+		IState state = null;
+		IDAccordo idAccordo = null; // viene calcolato all'interno del metodo
+		String servizioApplicativoFruitore = null; 
+		List<String> serviziApplicativiErogatori = null;
+		try {
+			DatiTransazione datiTransazione = InterceptorPolicyUtilities.readDatiTransazione(tipoPdD, idModulo, 
+					pddContext, urlProtocolContext,
+					protocolFactory, state, log,
+					idDominio, soggettoFruitore, idServizio, idAccordo,
+					idPD, idPA,
+					servizioApplicativoFruitore, serviziApplicativiErogatori);
+			return DimensioneMessaggiConfigurationUtils.readSoglieDimensioneMessaggi(tipoPdD, nomePorta, datiTransazione, log, urlProtocolContext, pddContext, protocolFactory);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
 	protected boolean isConnettoriUseTimeoutInputStream(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
 		
 		boolean defaultValue = this.openspcoopProperties.isConnettoriUseTimeoutInputStream();
@@ -2111,9 +2168,13 @@ public class ConfigurazionePdDReader {
 				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pa.getAzione().getForceInterfaceBased());
 			}
 
+			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+			
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
-					pattern, forceRegistryBased, forcePluginBased, this.log, true);
+					pattern, forceRegistryBased, forcePluginBased, this.log, true,
+					bufferMessage_readOnly, 
+					headerIntegrazione!=null ? headerIntegrazione.getIdTransazione() : null);
 
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
@@ -2873,6 +2934,52 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
 
+	}
+	
+	protected SoglieDimensioneMessaggi getSoglieLimitedInputStream(Connection connectionPdD,PortaApplicativa pa, String azione, String idModulo,
+			PdDContext pddContext, URLProtocolContext urlProtocolContext,
+			IProtocolFactory<?> protocolFactory, Logger log) throws DriverConfigurazioneException{
+		TipoPdD tipoPdD = null;
+		String nomePorta = null;
+		IDSoggetto idDominio = null;
+		IDSoggetto soggettoFruitore = null;
+		IDServizio idServizio = null;
+		IDPortaDelegata idPD = null;
+		IDPortaApplicativa idPA = null;
+		if(pa!=null) {
+			tipoPdD = TipoPdD.APPLICATIVA;
+			nomePorta = pa.getNome();
+			idDominio = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+			try {
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+						pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+						pa.getServizio().getVersione());
+				idServizio.setAzione(azione);
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+			idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+		}
+		else {
+			idDominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null);
+		}
+		 
+		IState state = null;
+		IDAccordo idAccordo = null; // viene calcolato all'interno del metodo
+		String servizioApplicativoFruitore = null; 
+		List<String> serviziApplicativiErogatori = null;
+		try {
+			DatiTransazione datiTransazione = InterceptorPolicyUtilities.readDatiTransazione(tipoPdD, idModulo, 
+					pddContext, urlProtocolContext,
+					protocolFactory, state, log,
+					idDominio, soggettoFruitore, idServizio, idAccordo,
+					idPD, idPA,
+					servizioApplicativoFruitore, serviziApplicativiErogatori);
+			return DimensioneMessaggiConfigurationUtils.readSoglieDimensioneMessaggi(tipoPdD, nomePorta, datiTransazione, log, urlProtocolContext, pddContext, protocolFactory);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
 	}
 	
 	protected boolean isConnettoriUseTimeoutInputStream(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
@@ -5931,6 +6038,14 @@ public class ConfigurazionePdDReader {
 
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getElencoIdPolicyAttiveGlobali(connectionPdD, useCache);
+	}
+	
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI_dimensioneMessaggio(Connection connectionPdD, boolean useCache, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getElencoIdPolicyAttiveAPI_dimensioneMessaggio(connectionPdD, useCache, tipoPdD, nomePorta);
+	}
+
+	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(connectionPdD, useCache);
 	}
 
 	public AttivazionePolicy getAttivazionePolicy(Connection connectionPdD, boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

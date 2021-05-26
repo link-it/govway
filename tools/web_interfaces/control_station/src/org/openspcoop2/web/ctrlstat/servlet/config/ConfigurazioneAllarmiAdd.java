@@ -356,7 +356,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			}
 				
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.allarmeCheckData(TipoOperazione.ADD, null, allarme, numeroPluginRegistrati, parameters); 
+			boolean isOk = confHelper.allarmeCheckData(sbParsingError, TipoOperazione.ADD, null, allarme, numeroPluginRegistrati, parameters); 
 			if (!isOk) {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				

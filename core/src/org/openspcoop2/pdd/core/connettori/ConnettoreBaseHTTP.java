@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -350,7 +351,13 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		/*
 		 * Se il messaggio e' un html di errore me ne esco 
 		 */			
-		if(this.codice>=400 && this.tipoRisposta!=null && this.tipoRisposta.contains(HttpConstants.CONTENT_TYPE_HTML)){
+		if(this.codice>=400 && 
+				(
+					(this.tipoRisposta!=null && this.tipoRisposta.contains(HttpConstants.CONTENT_TYPE_HTML))
+					||
+					(this.tipoRisposta==null || StringUtils.isEmpty(this.tipoRisposta)) // fix per casi in cui viene ritornata una pagina html senza content-type
+				)
+			){
 			String tmpResultHTTPMessage=this.resultHTTPMessage;
 			if(tmpResultHTTPMessage==null) {
 				// provo a tradurlo

@@ -494,6 +494,17 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="valore2" type="xsd:unsignedLong" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="rt_valore2" />
+							<linkit:sql-ddl-column-comment><![CDATA[Eventuale altro valore di soglia della policy]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="valore-tipo-banda" type="tipo-banda" minOccurs="0">
 				<xsd:annotation>
 					<xsd:appinfo>
@@ -850,6 +861,17 @@
 							xmlns:linkit="http://www.link.it/project_generator">
 							<linkit:sql-column-mapping name="policy_valore"/>
 							<linkit:sql-ddl-column-comment><![CDATA[Valore della soglia ridefinito rispetto alla configurazione generale della policy]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="valore2" type="xsd:unsignedLong" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="policy_valore2"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Eventuale altro valore della soglia ridefinito rispetto alla configurazione generale della policy]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>
@@ -1446,6 +1468,7 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="NumeroRichieste"/>
 			<xsd:enumeration value="OccupazioneBanda"/>
+			<xsd:enumeration value="DimensioneMassimaMessaggio"/>
 			<xsd:enumeration value="TempoComplessivoRisposta"/>
 			<xsd:enumeration value="TempoMedioRisposta"/>
 			<xsd:enumeration value="NumeroRichiesteFallite"/>

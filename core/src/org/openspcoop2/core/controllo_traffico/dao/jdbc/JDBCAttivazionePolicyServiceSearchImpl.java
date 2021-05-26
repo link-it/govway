@@ -495,6 +495,7 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().WARNING_ONLY,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().RIDEFINISCI,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().VALORE,true));
+		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().VALORE_2,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.ENABLED,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.PROTOCOLLO,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.RUOLO_PORTA,true));

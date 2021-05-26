@@ -36,6 +36,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
@@ -84,6 +85,8 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	
 	@SuppressWarnings("unused")
 	private int requestReadTimeout;
+	@SuppressWarnings("unused")
+	private SogliaDimensioneMessaggio requestLimitSize;
 	
 	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
 			Map<String, List<String>> trasporto,
@@ -187,6 +190,15 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	}
 	@Override
 	public void disableReadTimeout() {
+		// nop
+	}
+	
+	@Override
+	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize) {
+		this.requestLimitSize = requestLimitSize;
+	}
+	@Override
+	public void disableLimitedStream() {
 		// nop
 	}
 	

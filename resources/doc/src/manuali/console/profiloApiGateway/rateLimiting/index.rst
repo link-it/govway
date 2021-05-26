@@ -20,6 +20,7 @@ Una policy di rate limiting si compone concettualmente dei seguenti elementi:
 
     - *Numero Richieste*: consente di limitare il numero totale massimo di richieste consentite.
     - *Numero Richieste Simultanee*: limita il numero totale massimo di richieste simultanee consentite.
+    - *Dimensione Massima Messaggi*: limita la dimensione massima accettata di una richiesta e di una risposta.
     - *Occupazione Banda*: limita il numero totale massimo di KB consentiti.
     - *Tempo Medio Risposta*: la policy blocca ogni successiva richiesta se viene rilevato un tempo medio di risposta elevato.
     - *Tempo Complessivo Risposta*: la policy limita il numero totale massimo di secondi consentiti.

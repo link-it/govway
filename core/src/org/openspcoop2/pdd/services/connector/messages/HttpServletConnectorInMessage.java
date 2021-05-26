@@ -40,6 +40,8 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -47,6 +49,7 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
@@ -71,6 +74,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	protected OpenSPCoop2Properties openspcoopProperties;
 	protected OpenSPCoop2Message message;
 	protected InputStream is;
+	protected LimitedInputStream _limitedIS;
 	protected TimeoutInputStream _timeoutIS;
 	protected DumpByteArrayOutputStream buffer;
 	protected boolean buffered = false;
@@ -87,6 +91,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	private File repositoryFile;
 	
 	private int requestReadTimeout;
+	private SogliaDimensioneMessaggio requestLimitSize;
 	
 	public HttpServletConnectorInMessage(RequestInfo requestInfo, HttpServletRequest req,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
@@ -128,6 +133,9 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		if(this._timeoutIS!=null && this.context!=null) {
 			this._timeoutIS.updateContext(this.context.getContext());
 		}
+		if(this._limitedIS!=null && this.context!=null) {
+			this._limitedIS.updateContext(this.context.getContext());
+		}
 	}
 	
 	@Override
@@ -147,7 +155,27 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			this._timeoutIS.disableCheckTimeout();
 		}
 	}
-	private InputStream buildTimeoutInputStream() throws IOException {
+	@Override
+	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize) {
+		this.requestLimitSize = requestLimitSize;
+		if(this._limitedIS!=null && this.requestLimitSize!=null && this.requestLimitSize.getSogliaKb()>0) {
+			try {
+				long limitBytes = this.requestLimitSize.getSogliaKb()*1024; // trasformo kb in bytes
+				this._limitedIS.updateThreshold(limitBytes);
+			}catch(Exception e) {
+				throw new RuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se la soglia e' maggiore di 0
+			}
+			LimitExceededNotifier notifier = new LimitExceededNotifier(this.context, this.requestLimitSize, this.log);
+			this._limitedIS.updateNotifier(notifier);
+		}
+	}
+	@Override
+	public void disableLimitedStream() {
+		if(this._limitedIS!=null) {
+			this._limitedIS.disableCheck();
+		}
+	}
+	private InputStream buildInputStream() throws IOException {
 		
 		if(this.buffered) {
 			if(this.buffer!=null && this.buffer.size()>0) {
@@ -159,6 +187,15 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			return this.is; // stream timeout gia' utilizzato per il soapReader
 		}
 		
+		if(this.is!=null && this.requestLimitSize!=null && this.requestLimitSize.getSogliaKb()>0) {
+			LimitExceededNotifier notifier = new LimitExceededNotifier(this.context, this.requestLimitSize, this.log);
+			long limitBytes = this.requestLimitSize.getSogliaKb()*1024; // trasformo kb in bytes
+			this._limitedIS = new LimitedInputStream(this.is, limitBytes,
+					CostantiPdD.PREFIX_LIMITED_REQUEST,
+					this.context!=null ? this.context.getContext() : null,
+					notifier);
+			this.is = this._limitedIS;
+		}
 		if(this.is!=null && this.requestReadTimeout>0) {
 			this._timeoutIS = new TimeoutInputStream(this.is, this.requestReadTimeout,
 					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
@@ -248,7 +285,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 				String contentType = getContentType();
 				if(contentType!=null) {
 					this.soapReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), contentType, 
-							this.buildTimeoutInputStream(), this.openspcoopProperties.getSoapMessageReaderBufferThresholdKb());
+							this.buildInputStream(), this.openspcoopProperties.getSoapMessageReaderBufferThresholdKb());
 					this.is = this.soapReader.read();
 				}
 				return this.soapReader;
@@ -264,7 +301,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		try{
 			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
-					this.buildTimeoutInputStream(),notifierInputStreamParams, this.soapReader,
+					this.buildInputStream(),notifierInputStreamParams, this.soapReader,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return pr;
@@ -278,7 +315,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		try{
 			InputStream in = null;
 			try{
-				Utilities.writeAsByteArrayOuputStream(buffer, this.buildTimeoutInputStream(),false); // se l'input stream is empty ritorna null grazie al parametro false
+				Utilities.writeAsByteArrayOuputStream(buffer, this.buildInputStream(),false); // se l'input stream is empty ritorna null grazie al parametro false
 				if(buffer.size()>0) {
 					if(buffer.isSerializedOnFileSystem()) {
 						in = new FileInputStream(buffer.getSerializedFile());
@@ -322,7 +359,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			
 			bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
 					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
-			Utilities.writeAsByteArrayOuputStream(bout, this.buildTimeoutInputStream(),false); // se l'input stream is empty ritorna null grazie al parametro false
+			Utilities.writeAsByteArrayOuputStream(bout, this.buildInputStream(),false); // se l'input stream is empty ritorna null grazie al parametro false
 			bout.flush();
 			bout.close();
 			return bout;

@@ -1,0 +1,22 @@
+{
+    "nome": "PolicyProvaKarate",
+    "stato": "abilitato",
+    
+    "configurazione": {
+        "identificazione": "criteri",
+	"metrica": "dimensione-massima",
+        "intervallo": "minuti",
+	"congestione": false, 
+	"degrado": false
+    },
+
+    "soglia_ridefinita": true,
+    "soglia_dimensione_richiesta": 50763,
+    "soglia_dimensione_risposta": 8021111,
+
+    "filtro": {
+        "chiave_tipo": "form-based",
+        "chiave_nome": "nomeParametro",
+        "filtro_chiave_valore": "chiave_valore1"
+    }
+}

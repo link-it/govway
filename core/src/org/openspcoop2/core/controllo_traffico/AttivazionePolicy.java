@@ -45,6 +45,7 @@ import java.io.Serializable;
  * 			&lt;element name="warning-only" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
  * 			&lt;element name="ridefinisci" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="valore" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="valore2" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="filtro" type="{http://www.openspcoop2.org/core/controllo_traffico}attivazione-policy-filtro" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="group-by" type="{http://www.openspcoop2.org/core/controllo_traffico}attivazione-policy-raggruppamento" minOccurs="1" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
@@ -70,6 +71,7 @@ import java.io.Serializable;
   	"warningOnly",
   	"ridefinisci",
   	"valore",
+  	"valore2",
   	"filtro",
   	"groupBy"
   }
@@ -199,6 +201,14 @@ public class AttivazionePolicy extends org.openspcoop2.utils.beans.BaseBean impl
     this.valore = valore;
   }
 
+  public java.lang.Long getValore2() {
+    return this.valore2;
+  }
+
+  public void setValore2(java.lang.Long valore2) {
+    this.valore2 = valore2;
+  }
+
   public AttivazionePolicyFiltro getFiltro() {
     return this.filtro;
   }
@@ -277,6 +287,10 @@ public class AttivazionePolicy extends org.openspcoop2.utils.beans.BaseBean impl
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="valore",required=false,nillable=false)
   protected java.lang.Long valore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
+  @XmlElement(name="valore2",required=false,nillable=false)
+  protected java.lang.Long valore2;
 
   @XmlElement(name="filtro",required=true,nillable=false)
   protected AttivazionePolicyFiltro filtro;

@@ -1,3 +1,9 @@
+2021-05-21  Andrea Poli <apoli@link.it>
+
+	Aggiunte colonne che possono gestire un secondo valore di soglia per le policy:
+	ALTER TABLE ct_config_policy ADD COLUMN rt_valore2 BIGINT;
+	ALTER TABLE ct_active_policy ADD COLUMN policy_valore2 BIGINT;
+
 2021-04-15  Andrea Poli <apoli@link.it>
 
 	Aggiunte tabelle che consentono di definire proprietà generiche ai servizi applicativi e ai soggetti:	

@@ -64,6 +64,8 @@ public class ConfigurazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "rt_simultanee", ConfigurazionePolicy.model().SIMULTANEE.getFieldType()));
 				setParameter(object, "setValore", ConfigurazionePolicy.model().VALORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "rt_valore", ConfigurazionePolicy.model().VALORE.getFieldType()));
+				setParameter(object, "setValore2", ConfigurazionePolicy.model().VALORE_2.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "rt_valore2", ConfigurazionePolicy.model().VALORE_2.getFieldType()));
 				setParameter(object, "set_value_valoreTipoBanda", String.class,
 					jdbcParameterUtilities.readParameter(rs, "rt_bytes_type", ConfigurazionePolicy.model().VALORE_TIPO_BANDA.getFieldType())+"");
 				setParameter(object, "set_value_valoreTipoLatenza", String.class,
@@ -138,6 +140,8 @@ public class ConfigurazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"simultanee"));
 				setParameter(object, "setValore", ConfigurazionePolicy.model().VALORE.getFieldType(),
 					this.getObjectFromMap(map,"valore"));
+				setParameter(object, "setValore2", ConfigurazionePolicy.model().VALORE_2.getFieldType(),
+					this.getObjectFromMap(map,"valore2"));
 				setParameter(object, "set_value_valoreTipoBanda", String.class,
 					this.getObjectFromMap(map,"valore-tipo-banda"));
 				setParameter(object, "set_value_valoreTipoLatenza", String.class,

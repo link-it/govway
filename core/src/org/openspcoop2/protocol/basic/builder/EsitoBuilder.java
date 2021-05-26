@@ -36,6 +36,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -51,6 +52,7 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeContextProperty;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
 import org.openspcoop2.protocol.utils.EsitoTransportContextIdentification;
+import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
@@ -251,6 +253,18 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			EsitoTransazione esitoErrore5xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 			
 			// Una richiesta o risposta malformata deve essere immediatamente riconosciuta prima di analizzare il contesto
+			// Ancora prima però deve essere riconosciuto un caso di LimitedStream che altrimeni rientra in un contenuto malformato
+			if(context!=null){
+				if(context.containsKey(LimitedInputStream.ERROR_MSG_KEY)){
+					String limitedExceededMessage = (String) context.get(LimitedInputStream.ERROR_MSG_KEY);
+					if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_REQUEST)) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA, tipoContext);
+					}
+					else if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_RESPONSE)) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA, tipoContext);
+					}
+				}
+			}
 			if(informazioniErroriInfrastrutturali.isContenutoRichiestaNonRiconosciuto()){
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, tipoContext);
 			}

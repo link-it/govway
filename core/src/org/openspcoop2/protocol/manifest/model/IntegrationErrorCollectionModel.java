@@ -46,6 +46,7 @@ public class IntegrationErrorCollectionModel extends AbstractModel<IntegrationEr
 		this.NOT_FOUND = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("notFound",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.BAD_REQUEST = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("badRequest",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.CONFLICT = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("conflict",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
+		this.REQUEST_TOO_LARGE = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("requestTooLarge",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.LIMIT_EXCEEDED = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("limitExceeded",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.TOO_MANY_REQUESTS = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("tooManyRequests",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.SERVICE_UNAVAILABLE = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("serviceUnavailable",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
@@ -69,6 +70,7 @@ public class IntegrationErrorCollectionModel extends AbstractModel<IntegrationEr
 		this.NOT_FOUND = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"notFound",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.BAD_REQUEST = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"badRequest",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.CONFLICT = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"conflict",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
+		this.REQUEST_TOO_LARGE = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"requestTooLarge",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.LIMIT_EXCEEDED = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"limitExceeded",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.TOO_MANY_REQUESTS = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"tooManyRequests",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.SERVICE_UNAVAILABLE = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"serviceUnavailable",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
@@ -95,6 +97,8 @@ public class IntegrationErrorCollectionModel extends AbstractModel<IntegrationEr
 	public org.openspcoop2.protocol.manifest.model.IntegrationErrorModel BAD_REQUEST = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.IntegrationErrorModel CONFLICT = null;
+	 
+	public org.openspcoop2.protocol.manifest.model.IntegrationErrorModel REQUEST_TOO_LARGE = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.IntegrationErrorModel LIMIT_EXCEEDED = null;
 	 

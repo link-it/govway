@@ -71,6 +71,7 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().RISORSA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().SIMULTANEE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_2,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_TIPO_BANDA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_TIPO_LATENZA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().MODALITA_CONTROLLO,false),"?");
@@ -101,6 +102,7 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getRisorsa(),ConfigurazionePolicy.model().RISORSA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getSimultanee(),ConfigurazionePolicy.model().SIMULTANEE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getValore(),ConfigurazionePolicy.model().VALORE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getValore2(),ConfigurazionePolicy.model().VALORE_2.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getValoreTipoBanda(),ConfigurazionePolicy.model().VALORE_TIPO_BANDA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getValoreTipoLatenza(),ConfigurazionePolicy.model().VALORE_TIPO_LATENZA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(configurazionePolicy.getModalitaControllo(),ConfigurazionePolicy.model().MODALITA_CONTROLLO.getFieldType()),
@@ -176,6 +178,8 @@ public class JDBCConfigurazionePolicyServiceImpl extends JDBCConfigurazionePolic
 		lstObjects.add(new JDBCObject(configurazionePolicy.getSimultanee(), ConfigurazionePolicy.model().SIMULTANEE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE,false), "?");
 		lstObjects.add(new JDBCObject(configurazionePolicy.getValore(), ConfigurazionePolicy.model().VALORE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_2,false), "?");
+		lstObjects.add(new JDBCObject(configurazionePolicy.getValore2(), ConfigurazionePolicy.model().VALORE_2.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_TIPO_BANDA,false), "?");
 		lstObjects.add(new JDBCObject(configurazionePolicy.getValoreTipoBanda(), ConfigurazionePolicy.model().VALORE_TIPO_BANDA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getConfigurazionePolicyFieldConverter().toColumn(ConfigurazionePolicy.model().VALORE_TIPO_LATENZA,false), "?");

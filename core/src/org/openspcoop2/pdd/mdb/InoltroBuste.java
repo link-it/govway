@@ -168,6 +168,8 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
+import org.openspcoop2.utils.LimitExceededIOException;
+import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
@@ -3456,8 +3458,21 @@ public class InoltroBuste extends GenericLib{
 									responseReadTimeout = timeoutMessage;
 								}
 							}
+							String requestLimitExceeded = null;
+							String responseLimitExceeded = null;
+							if(pddContext!=null && pddContext.containsKey(LimitedInputStream.ERROR_MSG_KEY)) {
+								String limitedExceededMessage = PdDContext.getValue(LimitedInputStream.ERROR_MSG_KEY, pddContext);
+								if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_REQUEST)) {
+									requestLimitExceeded = limitedExceededMessage;
+								}
+								else if(limitedExceededMessage!=null && limitedExceededMessage.startsWith(CostantiPdD.PREFIX_LIMITED_RESPONSE)) {
+									responseLimitExceeded = limitedExceededMessage;
+								}
+							}
 							
-							if(requestMessagePrimaTrasformazione.getParseException()!=null || requestReadTimeout!=null){
+							if(requestMessagePrimaTrasformazione.getParseException()!=null || 
+									requestReadTimeout!=null || 
+									requestLimitExceeded!=null){
 								pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 								
 								ParseException parseException = null;
@@ -3465,6 +3480,10 @@ public class InoltroBuste extends GenericLib{
 								String errorMsg = null;
 								if(requestReadTimeout != null) {
 									tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+									errorMsg = tParsing.getMessage();
+								}
+								else if(requestLimitExceeded != null) {
+									tParsing = (LimitExceededIOException) pddContext.getObject(LimitedInputStream.EXCEPTION_KEY);
 									errorMsg = tParsing.getMessage();
 								}
 								else {
@@ -3477,9 +3496,16 @@ public class InoltroBuste extends GenericLib{
 								if(requestReadTimeout!=null) {
 									integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
 								}
+								else if(requestLimitExceeded!=null) {
+									integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
+								}
 								else if(requestMessagePrimaTrasformazione.getParseException().getSourceException()!=null &&
 										TimeoutIOException.isTimeoutIOException(requestMessagePrimaTrasformazione.getParseException().getSourceException())) {
 									integrationFunctionError = IntegrationFunctionError.REQUEST_TIMED_OUT;
+								}
+								else if(requestMessagePrimaTrasformazione.getParseException().getSourceException()!=null &&
+										LimitExceededIOException.isLimitExceededIOException(requestMessagePrimaTrasformazione.getParseException().getSourceException())) {
+									integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
 								}
 								
 								OpenSPCoop2Message responseMessageError = 
@@ -3495,6 +3521,7 @@ public class InoltroBuste extends GenericLib{
 							}
 							else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)
 									//|| responseReadTimeout!=null deve essere gestito dopo per generare un errore di connessione. Viene gestito all'interno del metodo 'getIntegrationFunctionErroreConnectionError' dell'else sottostante
+									|| responseLimitExceeded!=null
 									){
 								
 								ParseException parseException = null;
@@ -3502,6 +3529,10 @@ public class InoltroBuste extends GenericLib{
 								String errorMsg = null;
 								if(responseReadTimeout != null) {
 									tParsing = (TimeoutIOException) pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
+									errorMsg = tParsing.getMessage();
+								}
+								else if(responseLimitExceeded != null) {
+									tParsing = (LimitExceededIOException) pddContext.getObject(LimitedInputStream.EXCEPTION_KEY);
 									errorMsg = tParsing.getMessage();
 								}
 								else if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
@@ -3515,9 +3546,16 @@ public class InoltroBuste extends GenericLib{
 								if(responseReadTimeout!=null) {
 									integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 								}
+								else if(responseLimitExceeded!=null) {
+									integrationFunctionError = IntegrationFunctionError.RESPONSE_SIZE_EXCEEDED;
+								}
 								else if(parseException.getSourceException()!=null &&
 										TimeoutIOException.isTimeoutIOException(parseException.getSourceException())) {
 									integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
+								}
+								else if(parseException.getSourceException()!=null &&
+										LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
+									integrationFunctionError = IntegrationFunctionError.RESPONSE_SIZE_EXCEEDED;
 								}
 								OpenSPCoop2Message responseMessageError = 
 										this.generatoreErrore.build(pddContext,integrationFunctionError,

@@ -31,6 +31,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
+import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -79,13 +80,22 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 			int soglia, File repositoryFile) {
 		// nop
 	}
+	
+	@Override
+	public void setRequestReadTimeout(int timeout) {
+		// nop
+	}
 	@Override
 	public void disableReadTimeout() {
 		// nop
 	}
 	
 	@Override
-	public void setRequestReadTimeout(int timeout) {
+	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize) {
+		// nop
+	}
+	@Override
+	public void disableLimitedStream() {
 		// nop
 	}
 	
