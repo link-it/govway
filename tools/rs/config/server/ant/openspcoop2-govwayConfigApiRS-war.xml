@@ -156,7 +156,7 @@
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			
-                        <lib dir="${openspcoop2}/protocolli/modipa/dist">
+                        <lib dir="${openspcoop2.modipa.dist}">
                                 <include name="openspcoop2_modipa-protocol*.jar"/>
                         </lib>
 
