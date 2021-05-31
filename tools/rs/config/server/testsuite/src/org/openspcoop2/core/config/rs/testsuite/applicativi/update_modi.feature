@@ -103,7 +103,7 @@ Examples:
 Scenario Outline: Applicativi modi interno Creazione 204 OK <nome>
 
 		* def query_param_profilo_modi = {'profilo': 'ModI'}
-		* def query_param_applicativi = {'profilo': 'ModI', 'soggetto' : 'ENTE'}
+		* def query_param_applicativi = ({'profilo': 'ModI', 'soggetto' : soggettoDefault})
 		
 		* def applicativo_interno = read('applicativo_interno.json') 
 		* eval randomize(applicativo_interno, ["nome" ])
@@ -131,7 +131,7 @@ Examples:
 Scenario Outline: Applicativi modi interno Creazione 400 <nome>
 
 		* def query_param_profilo_modi = {'profilo': 'ModI'}
-		* def query_param_applicativi = {'profilo': 'ModI', 'soggetto' : 'ENTE'}
+		* def query_param_applicativi = ({'profilo': 'ModI', 'soggetto' : soggettoDefault})
 		
 		* def applicativo_interno = read('applicativo_interno.json') 
 		* eval randomize(applicativo_interno, ["nome" ])
