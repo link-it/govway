@@ -131,5 +131,6 @@ then
 fi
 
 
+touch arch.dodeploy
 ant -buildfile prepare-build.xml -Dapplication_server_version=${AS_VERSION} -Ddatabase_version=${DB_VERSION}
 

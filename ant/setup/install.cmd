@@ -56,9 +56,9 @@ copy installer\setup\ant.install.properties.template ant.install.properties
 echo. >> ant.install.properties
 
 REM # Per utilizzare lo stateful
-if exist cfg.dodeploy echo antinstaller_conf_avanzata_enabled=true >> ant.install.properties
+if exist cfg.dodeploy echo antinstaller_conf_avanzata_enabled=true>> ant.install.properties
 REM # Per decidere l'architettura del database e software
-if exist arch.dodeploy echo antinstaller_architettura_avanzata_enabled=true >> ant.install.properties
+if exist arch.dodeploy echo antinstaller_architettura_avanzata_enabled=true>> ant.install.properties
 
 %COMMAND% -classpath %CLASSPATH%  org.tp23.antinstaller.runtime.ExecInstall %INTERFACE% %ROOT_OPENSPCOOP%\ant\setup
 

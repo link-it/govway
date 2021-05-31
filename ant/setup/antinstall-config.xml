@@ -23,6 +23,11 @@
                 considerati i valori iniziali presenti nel file ant.install.properties impostato nei comandi install.* -->
         <hidden property="antinstaller_conf_avanzata_enabled" value=""/>
 	<hidden property="antinstaller_architettura_avanzata_enabled" value=""/>
+
+	<!-- NOTA: la seguente proprietà per adesso disabilita la generazione del batch che si occupa di ripulire il database dei messaggi presi in carico 
+		   La proprietà verrà attivata quando la funzionalità sarà rilasciata stabile.
+	-->
+        <hidden property="antinstaller_batchRuntimeRepository" value="false"/>
     </page>
 
     <page name="modalitaInstallazione" type="input" displayText="Modalità Installazione" ifProperty="${antinstaller_architettura_avanzata_enabled}!=true">

@@ -30,6 +30,17 @@ seguenti:
 
     - *psql <hostname> <username> -f sql/GovWay_init.sql*
 
+	.. note::
+		In caso di installazione *Avanzata*:
+	
+		-	Gli script *sql/GovWay.sql* e *sql/GovWay_init.sql* saranno eseguiti limitatamente al database del runtime di Govway.
+	
+		-	Se presente lo script *sql/GovWayConfigurazione.sql*, deve essere eseguito per la creazione dello schema database dedicato alle configurazioni. Successivamente eseguire lo script *GovWayConfigurazione_init.sql* per l'inserimento dei dati di inizializzazione del database.
+	
+		-	Se presente lo script *sql/GovWayStatistiche.sql*, deve essere eseguito per la creazione dello schema database dedicato alle statistiche. Successivamente eseguire lo script *GovWayStatistiche_init.sql* per l'inserimento dei dati di inizializzazione del database.
+	
+		-	Se presente lo script *sql/GovWayTracciamento.sql*, deve essere eseguito per la creazione dello schema database dedicato alle tracce. Successivamente eseguire lo script *GovWayTracciamento_init.sql* per l'inserimento dei dati di inizializzazione del database.
+	
 #.  Installare il DriverJDBC, relativo al tipo di RDBMS indicato in fase
     di setup, nella directory:
 
@@ -71,6 +82,20 @@ seguenti:
     sostituire al loro interno il placeholder *NOME_DRIVER_JDBC.jar* con
     il nome del driver JDBC installato in precedenza.
 
+	.. note::
+		In caso di installazione *Avanzata*, in base alle scelte effettuate per differenziare gli schemi database saranno disponibili nella directory *dist/datasource* tutte le definizioni richieste. In particolare, se previsto, potranno essere presenti:
+	
+		-	*org.govway.datasource.tracciamento*, per l'accesso al database dedicato alle tracce
+	
+		-	*org.govway.datasource.statistiche*, per l'accesso al database dedicato alle statistiche
+	
+		
+		Se inoltre è stato indicato un ambiente dedicato per *Configurazione e Monitoraggio", quindi distinto dal runtime, dentro la directory *dist/datasource* saranno presenti le due directory:
+	
+		-	*runtime*, contenente i datasource da dispiegare nell'ambiente dedicato al runtime di Govway
+	
+		-	*manager*, contenente i datasource da dispiegare nell'ambiente dedicato alle console di configurazione e monitoraggio
+	
 #.  Eseguire il dispiegamento delle applicazioni presenti nella
     directory *archivi* secondo le modalità disponibili per
     l'Application Server scelto. Per un rapido dispiegamento è possibile
@@ -79,6 +104,13 @@ seguenti:
     -  *<WILDFLY_HOME>/standalone/deployments*, nel caso di Wildfly.
 
     -  *<TOMCAT_HOME>/webapps*, nel caso di Tomcat
+
+	.. note::
+		In caso di installazione *Avanzata*, se è stata indicata la scelta di un ambiente dedicato per Configurazione e Monitoraggio, la directory *dist/archivi* conterrà due subdirectory:
+
+		-	*runtime*, contenente gli archivi applicativi da dispiegare nell'ambiente dedicato al runtime di Govway
+	
+		-	*manager*, contenente gli archivi applicativi da dispiegare nell'ambiente dedicato alle console di configurazione e monitoraggio
 
 #.  Verificare che la directory di lavoro di GovWay, fornita con le
     informazioni preliminari dell'utility di installazione, esista o
@@ -93,8 +125,18 @@ seguenti:
     La directory di destinazione deve essere accessibile in lettura
     all'utente con cui si esegue l'Application Server.
 
+	.. note::
+		In caso di installazione *Avanzata*, se è stata indicata la scelta di un ambiente dedicato per Configurazione e Monitoraggio, la directory *dist/cfg* conterrà due subdirectory:
+
+		-	*runtime*, contenente i file di configurazione da copiare nella directory di lavoro dell'ambiente dedicato al runtime di Govway
+	
+		-	*manager*, contenente i file di configurazione da copiare nella directory di lavoro dell'ambiente dedicato alle console di configurazione e monitoraggio
+
 #. Avviare l'application server con il relativo service oppure utilizzando la linea di comando:
 
     -  *<WILDFLY_HOME>/bin/standalone.sh*, nel caso di Wildfly.
 
     -  *<TOMCAT_HOME>/bin/startup.sh*, nel caso di Tomcat.
+
+.. note::
+	In caso di installazione *Avanzata*, se è stata indicata la scelta *Generazione tramite Applicazione Batch* relativamente all'opzione di *Generazione delle Statistiche*, sarà presente la directory *dist/batch*. Per il dispiegamento del batch fare riferimento alla sezione :ref:`deploy_batch`.

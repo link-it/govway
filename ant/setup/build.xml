@@ -2604,7 +2604,10 @@
 	<target name="setup_batchRuntimeRepository" depends="_setup_batchRuntimeRepository"/>
 	<target name="_setup_batchRuntimeRepository">
 		<if>
-			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<and>
+				<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+				<equals arg1="${antinstaller_batchRuntimeRepository}" arg2="true"/>
+			</and>
 			<then>
 				<mkdir dir="${tmp_batch}" /> 
 				<copy todir="${tmp_batch}/gestoreRuntimeRepository">

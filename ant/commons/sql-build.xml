@@ -14,66 +14,65 @@
 
 	<!-- SCRIPT SQL -->
 	<target name="git-version-sql-replace">
-						
-		<!-- Info git -->
-		<runtarget target="checkgit" />
-		
+
+		<!-- Imposto versione -->	
+		<var name="pddDetails" value="3.3.4" />
+		<var name="pddVersionMajor" value="3" />
+                <var name="pddVersionMinor" value="3" />
+
 		<if>
-			<istrue value="${jgit.jar.presente}"/>
+			<isfalse value="${buildAsRelease}"/>
 			<then>
-			      <GitProperties src="${gitrepo_root}" 
-                	        authorNameProperty="git.authorName"
-                        	authorMailProperty="git.authorMail"
-	                        authorCommitDateProperty="git.authorDate"
-        	                shortHashProperty="git.commitShortHash"
-		        	/>
-
-				<!-- <echo message="TEST A[${git.commitShortHash}] B[${git.authorName}] C[${git.commitShortHash}] D[${git.authorDate}] E[${git.url}]"/> -->
-				<!-- Imposto versione -->	
-				<var name="pddDetails" value="3.3.4" />
-				<var name="pddVersionMajor" value="3" />
-                                <var name="pddVersionMinor" value="3" />
+				<runtarget target="checkgit" />
+		
 				<if>
-					<isfalse value="${buildAsRelease}"/>
+					<istrue value="${jgit.jar.presente}"/>
 					<then>
-						<var name="pddDetails" value="GovWay commit.${git.commitShortHash}, ${git.authorDate}" />	
-					</then>
-					<else>
-						<if>
-							<isset property="env.RELEASE_VERSION_MAJOR]"/>
-							<then>
-								<var name="pddVersionMajor" value="${env.RELEASE_VERSION_MAJOR}" />
-							</then>
-						</if>
-						<if>
-							<isset property="env.RELEASE_VERSION_MINOR]"/>
-							<then>
-								<var name="pddVersionMinor" value="${env.RELEASE_VERSION_MINOR}" />
-							</then>
-						</if>
-						<if>
-							<isset property="env.RELEASE_DETAILS]"/>
-							<then>
-								<var name="pddDetails" value="${env.RELEASE_DETAILS}" />	
-							</then>
-						</if>						
-					</else>
-					
-					<!--<echo message="DETAILS[${pddDetails}] FULL_VERSION[${pddVersion}] MAJOR[${pddVersionMajor}] MINOR[${pddVersionMinor}]"/>-->
-				</if>
-				<replace file="${SQLDestFile}" 
-					 token="@MAJOR_VERSION@" 
-					 value="${pddVersionMajor}" />
-				<replace file="${SQLDestFile}" 
-					 token="@MINOR_VERSION@" 
-					 value="${pddVersionMinor}" />
-				<replace file="${SQLDestFile}"  
-					 token="v@FULL_VERSION@" 
-					 value="${pddDetails}" />
+					      <GitProperties src="${gitrepo_root}" 
+					        authorNameProperty="git.authorName"
+				        	authorMailProperty="git.authorMail"
+					        authorCommitDateProperty="git.authorDate"
+					        shortHashProperty="git.commitShortHash"
+						/>
 
-				
+						<!-- <echo message="TEST A[${git.commitShortHash}] B[${git.authorName}] C[${git.commitShortHash}] D[${git.authorDate}] E[${git.url}]"/> -->
+						<!-- Imposto versione -->	
+						<var name="pddDetails" value="GovWay commit.${git.commitShortHash}, ${git.authorDate}" />						
+					</then>
+				</if>	
 			</then>
+			<else>
+				<if>
+					<isset property="env.RELEASE_VERSION_MAJOR]"/>
+					<then>
+						<var name="pddVersionMajor" value="${env.RELEASE_VERSION_MAJOR}" />
+					</then>
+				</if>
+				<if>
+					<isset property="env.RELEASE_VERSION_MINOR]"/>
+					<then>
+						<var name="pddVersionMinor" value="${env.RELEASE_VERSION_MINOR}" />
+					</then>
+				</if>
+				<if>
+					<isset property="env.RELEASE_DETAILS]"/>
+					<then>
+						<var name="pddDetails" value="${env.RELEASE_DETAILS}" />	
+					</then>
+				</if>
+			</else>
 		</if>
+
+		<replace file="${SQLDestFile}" 
+			 token="@MAJOR_VERSION@" 
+			 value="${pddVersionMajor}" />
+		<replace file="${SQLDestFile}" 
+			 token="@MINOR_VERSION@" 
+			 value="${pddVersionMinor}" />
+		<replace file="${SQLDestFile}"  
+			 token="v@FULL_VERSION@" 
+			 value="${pddDetails}" />
+
 	</target>
 	
 	<target name="build_sql" description="Genera i file SQL per l'installazione">

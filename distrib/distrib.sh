@@ -373,6 +373,7 @@ infoPrintln "Generazione della documentazione terminata correttamente"
 
 infoPrintln "Generazione pacchetto installer ..."
 /bin/cp -f ${WORKING_COPY}/ant/setup/install.cmd ${WORKING_COPY}/ant/setup/install.sh ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/
+touch ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/arch.dodeploy
 sed -r -i -e 's#(.*)ROOT_OPENSPCOOP=.*#\1ROOT_OPENSPCOOP=.#g' \
  -e 's#/ant/setup#/installer/setup#g' -e 's#\\ant\\setup#\\installer\\setup#g'  \
  -e 's#\$\{ROOT_OPENSPCOOP\}/lib#\$\{ROOT_OPENSPCOOP\}/installer/lib#g'  -e 's#%ROOT_OPENSPCOOP%\\lib#%ROOT_OPENSPCOOP%\\installer\\lib#g' \

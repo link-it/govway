@@ -23,12 +23,17 @@ Esecuzione dell'Installer
    procede con la scelta della *Modalità di Installazione*. Le scelte
    possibili sono:
 
-   -  *Nuova Installazione*: scelta da effettuare nel caso in cui si
-      stia procedendo con una nuova installazione di GovWay.
+   - *Modalità*:
 
-   -  *Aggiornamento*: scelta da effettuare nel caso in cui si stia
-      procedendo con l'aggiornamento di una versione di GovWay
-      precedentemente installata.
+   	- *Nuova Installazione*: scelta da effettuare nel caso in cui si stia procedendo con una nuova installazione di GovWay.
+
+   	- *Aggiornamento*: scelta da effettuare nel caso in cui si stia procedendo con l'aggiornamento di una versione di GovWay precedentemente installata.
+
+   - *Tipo*:
+
+	- *Standard*: selezione del modello architetturale più semplice e adeguato nei casi più comuni
+
+	- *Avanzata*: permette di selezionare caratteristiche architetturali avanzate nei casi con esigenze specifiche
 
    .. figure:: ../_figure_installazione/installer-scr0b.jpg
       :scale: 100%
@@ -41,3 +46,4 @@ Esecuzione dell'Installer
 
         nuovaInstallazione
 	aggiornamento
+	avanzata
