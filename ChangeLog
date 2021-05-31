@@ -1,3 +1,8 @@
+2021-05-31  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	In caso di validazione xsd disabilitata una fattura P7M non viene adesso valutata.
+
 2021-05-31  Giuliano Pintori <pintori@link.it>
 
 	* [GovwayConsole]

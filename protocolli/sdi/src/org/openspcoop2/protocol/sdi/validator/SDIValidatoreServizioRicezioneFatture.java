@@ -496,7 +496,8 @@ public class SDIValidatoreServizioRicezioneFatture {
 			}
 			
 			// Se la fattura e' un P7M per poterla validare devo estrarne il contenuto.
-			if(((String)formato).equals(SDICostanti.SDI_TIPO_FATTURA_P7M) ){
+			if(((String)formato).equals(SDICostanti.SDI_TIPO_FATTURA_P7M) && 
+					(this.sdiValidazioneSemantica.sdiProperties.isEnableAccessoFattura() || this.sdiValidazioneSemantica.sdiProperties.isEnableValidazioneXsdFattura() ) ){
 				if(tmpFatturaP7M==null){
 					try{
 						P7MInfo infoP7M = new P7MInfo(fattura, this.sdiValidazioneSemantica.getProtocolFactory().getLogger());
