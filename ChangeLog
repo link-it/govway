@@ -1,3 +1,9 @@
+2021-05-31  Giuliano Pintori <pintori@link.it>
+
+	* [GovwayConsole]
+	Aggiunta funzionalità OP-1185
+	Introdotta la possibilità di associare una scadenza alle password relative alle utenze delle console di gestione e monitoraggio
+
 2021-05-26  Giovanni Bussu <bussu@link.it>
 
 	* [ApiRsConfigurazione]

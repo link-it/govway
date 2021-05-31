@@ -23,6 +23,7 @@ package org.openspcoop2.web.lib.users.dao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDServizio;
@@ -45,6 +46,8 @@ public class User implements Serializable {
 
 	protected String login;
 	protected String password;
+	private Date lastUpdatePassword;
+	private boolean checkLastUpdatePassword;
 	private InterfaceType interfaceType;
 	private boolean permitInterfaceComplete = false;
 	private PermessiUtente permessi;
@@ -58,6 +61,7 @@ public class User implements Serializable {
 	private List<IDSoggetto> soggetti = new ArrayList<>();
 	private List<IDServizio> servizi = new ArrayList<>();
 	private List<Stato> stati = new ArrayList<>();
+	private List<UserPassword> precedentiPassword = new ArrayList<>();
 	
 	public List<String> getProtocolliSupportati() {
 		return this.protocolliSupportati;
@@ -205,6 +209,9 @@ public class User implements Serializable {
 	public List<Stato> getStati() {
 		return this.stati;
 	}
+	public List<UserPassword> getPrecedentiPassword() {
+		return this.precedentiPassword;
+	}
 	
 	public String getSoggettoSelezionatoPddConsole() {
 		return this.soggettoSelezionatoPddConsole;
@@ -265,6 +272,19 @@ public class User implements Serializable {
 			}	
 		}
 		return true;
+	}
+	
+	public Date getLastUpdatePassword() {
+		return this.lastUpdatePassword;
+	}
+	public void setLastUpdatePassword(Date lastUpdatePassword) {
+		this.lastUpdatePassword = lastUpdatePassword;
+	}
+	public boolean isCheckLastUpdatePassword() {
+		return this.checkLastUpdatePassword;
+	}
+	public void setCheckLastUpdatePassword(boolean checkLastUpdatePassword) {
+		this.checkLastUpdatePassword = checkLastUpdatePassword;
 	}
 	
 	public String getReasonInvalidConfiguration() {

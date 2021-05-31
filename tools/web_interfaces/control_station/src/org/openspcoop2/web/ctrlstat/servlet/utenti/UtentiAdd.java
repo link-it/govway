@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -33,6 +34,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -109,6 +111,8 @@ public final class UtentiAdd extends Action {
 			String isSoggettiAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
 			String isServiziAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);
 			
+			String scadenza = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SCADENZA);
+			
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
@@ -150,7 +154,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte, isSoggettiAll, isServiziAll, null);
+						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false);
 				
 				pd.setDati(dati);
 		
@@ -179,7 +183,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte, isSoggettiAll, isServiziAll, null);
+						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false);
 				
 				pd.setDati(dati);
 	
@@ -269,6 +273,16 @@ public final class UtentiAdd extends Action {
 				}
 				newU.setPermitAllServizi(ServletUtils.isCheckBoxEnabled(isServiziAll));
 			}
+			
+			// aggiornamento password
+			PasswordVerifier passwordVerifier = utentiCore.getUtenzePasswordVerifier();
+			if(passwordVerifier.isCheckPasswordExpire()) {
+				newU.setCheckLastUpdatePassword(ServletUtils.isCheckBoxEnabled(scadenza));
+			} else {
+				newU.setCheckLastUpdatePassword(false);
+			}
+			// salvo comunque la data di immissione password
+			newU.setLastUpdatePassword(new Date());
 			
 			
 			utentiCore.performCreateOperation(userLogin, utentiHelper.smista(), newU);

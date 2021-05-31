@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -33,6 +34,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginSessionUtilities;
@@ -45,6 +47,7 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.lib.users.dao.UserPassword;
 
 /**
  * changePw
@@ -187,6 +190,21 @@ public final class UtenteChange extends Action {
 
 							// Modifico i dati della pw nel db
 							myS = utentiCore.getUser(userLogin);
+							
+							
+							PasswordVerifier passwordVerifier = utentiCore.getUtenzePasswordVerifier();
+							
+							// aggiornamento della password nello storico e nella data 
+							if(passwordVerifier.isHistory()) {
+								List<UserPassword> precedentiPassword = myS.getPrecedentiPassword();
+								
+								UserPassword userPassword = new UserPassword();
+								userPassword.setDatePassword(user.getLastUpdatePassword());
+								userPassword.setPassword(user.getPassword());
+								precedentiPassword.add(userPassword );
+							}
+							
+							myS.setLastUpdatePassword(new Date());
 							myS.setPassword(newpw);
 
 							utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);

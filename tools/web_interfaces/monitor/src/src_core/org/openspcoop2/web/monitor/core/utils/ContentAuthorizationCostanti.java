@@ -46,7 +46,10 @@ public class ContentAuthorizationCostanti {
 		"/index.jsp",
 		"/timeout.jsp",
 		"/report/statistica",
-		"/report/configurazione"
+		"/report/configurazione",
+		
+		// Cambio Password Scaduta Utente
+		"/core/pages/form/userPasswordScaduta.jsf"
 	};
 
 	// Elenco delle pagine che sono disponibili al ruolo amministratore
@@ -202,6 +205,7 @@ public class ContentAuthorizationCostanti {
 
 		//Utenti
 		{"/core/pages/form/user.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
+		{"/core/pages/form/userPasswordScaduta.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
 
 		// Stats
 		{"/stat/pages/form/analisiStatistica.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},

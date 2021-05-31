@@ -72,6 +72,11 @@ public class LoginPhaseListener implements PhaseListener {
 			//sullo stato jsf quindi devo riautenticarmi
 	        boolean allowedPage = vr!=null ? isAllowedPage(vr.getViewId()) : false;
 	        
+	        // controllo se sto cambiando la password perche' e' scaduta
+ 			if(!isLogged && lb.getUserToUpdate() != null) {
+ 				allowedPage = true;
+ 			}
+	        
 	        String msg = null;
 	      //Controllo se sto andando alla pagina di errore e se c'e' un errore da visualizzare
 	        if(allowedPage && StringUtils.contains(vr.getViewId(), "error")){

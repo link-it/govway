@@ -22,6 +22,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -124,6 +126,8 @@ public final class UtentiChange extends Action {
 			String isSoggettiAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
 			String isServiziAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);
 			
+			String scadenza = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SCADENZA);
+			
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
@@ -136,6 +140,8 @@ public final class UtentiChange extends Action {
 			
 			// Prendo l'utente
 			User user = utentiCore.getUser(nomesu);
+			Date dataUltimoAggiornamentoPassword = user.getLastUpdatePassword();
+			boolean oldScadenza = user.isCheckLastUpdatePassword();
 			//Prendo i vecchi dati dell'utente
 			
 			// Check multitenant
@@ -200,6 +206,8 @@ public final class UtentiChange extends Action {
 				isSoggettiAll = (isSoggettiAll==null) ? (user.isPermitAllSoggetti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isSoggettiAll;
 				isServiziAll = (isServiziAll==null) ? (user.isPermitAllServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isServiziAll;
 								
+				scadenza = (scadenza == null) ? (user.isCheckLastUpdatePassword() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : scadenza;
+				
 				if(first) {
 					for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 						String protocolloName = protocolliRegistratiConsole.get(i);
@@ -220,7 +228,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user);
+						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza);
 
 				pd.setDati(dati);
 
@@ -262,7 +270,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user);
+						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza);
 
 				pd.setDati(dati);
 
@@ -420,20 +428,29 @@ public final class UtentiChange extends Action {
 				boolean secret_appId = false;
 				
 				// Modifico l'utente
-
+				PasswordVerifier passwordVerifier = utentiCore.getUtenzePasswordVerifier();
+				if(passwordVerifier.isCheckPasswordExpire()) {
+					user.setCheckLastUpdatePassword(ServletUtils.isCheckBoxEnabled(scadenza));
+				} else {
+					user.setCheckLastUpdatePassword(false);
+				}
+				
 				// Cripto la password
 				boolean cpwd = ServletUtils.isCheckBoxEnabled(changepwd);
 				if(cpwd && !"".equals(pwsu)){
+//					String pswuChiaro = pwsu;
 					if(utentiCore.isUtenzePasswordEncryptEnabled()) {
 						secret = true;
 						pwsu = utentiCore.getUtenzePasswordManager().crypt(pwsu);
 					}
+					
+					user.setLastUpdatePassword(new Date());
+					user.setPassword(pwsu);
 				}
 
 				// Modifico i dati dell'utente
 				user.setInterfaceType(InterfaceType.valueOf(tipoGui));
-				if(cpwd && !"".equals(pwsu))
-					user.setPassword(pwsu);
+					
 				String puString = "";
 
 				if (isServizi != null && ServletUtils.isCheckBoxEnabled(isServizi))

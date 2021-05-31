@@ -150,7 +150,7 @@
 				  					<h:outputText id="infoTitleMessage" value="#{facesContext.maximumSeverity.ordinal>=2 ? 'Messaggio di Errore' : 'Messaggio informativo'}" 
 				  						styleClass="messages-title-text"/>
 				  				</a4j:outputPanel>
-								<div class="errorsSpacer"/>
+				  				<a4j:outputPanel id="errorMessagesSpacer" layout="block" styleClass="errorsSpacer" />
 								<rich:messages id="errorMessages">
 								</rich:messages>
 							</h:panelGroup>

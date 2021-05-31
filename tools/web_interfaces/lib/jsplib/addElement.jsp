@@ -40,6 +40,7 @@ if(params == null) params="";
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 String customListViewName = pd.getCustomListViewName();
+boolean includiMenuLateraleSx = pd.isIncludiMenuLateraleSx();
 %>
 
 <head>
@@ -286,7 +287,9 @@ function CheckDati() {
 	
 		<!-- TR3: Body -->
 		<tr class="trPageBody">
-			<jsp:include page="/jsplib/menu.jsp" flush="true" />
+			<% if(includiMenuLateraleSx){ %>
+				<jsp:include page="/jsplib/menu.jsp" flush="true" />
+			<% } %>
 			<% if(customListViewName == null || "".equals(customListViewName)){ %>
 				<jsp:include page="/jsplib/edit-page.jsp" flush="true" />
 			<% } else {%>	

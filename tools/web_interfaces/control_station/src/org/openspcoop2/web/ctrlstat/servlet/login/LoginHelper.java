@@ -22,6 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.login;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.MessageType;
@@ -114,7 +115,41 @@ public class LoginHelper extends ConsoleHelper {
 
 			// setto l utente in sessione
 			ServletUtils.setUserIntoSession(this.session, u);
+			
+			return true;
 
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	public boolean loginScadenzaPasswordCheckData(LoginTipologia tipoCheck) throws Exception {
+		String login = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
+		String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
+		return this.loginScadenzaPasswordCheckData(tipoCheck, login, password);
+	}
+	public boolean loginScadenzaPasswordCheckData(LoginTipologia tipoCheck, String login, String password) throws Exception {
+		try{
+		
+			// elimino attributo che abilita il cambio della password
+			ServletUtils.removeObjectFromSession(this.session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+			// controllo scadenza password
+			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
+			if(passwordVerifier.isCheckPasswordExpire()) {
+				User u = this.utentiCore.getUser(login);
+				if(u.isCheckLastUpdatePassword()) {
+					StringBuilder bfMotivazioneErrore = new StringBuilder(); 
+					if(passwordVerifier.isPasswordExpire(u.getLastUpdatePassword(), bfMotivazioneErrore)) {
+						// imposto attributo che abilita il cambio della password
+						ServletUtils.setObjectIntoSession(this.session, login, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+						ServletUtils.removeUserFromSession(this.session);
+						this.pd.setMessage(bfMotivazioneErrore.toString(),MessageType.ERROR_SINTETICO);
+						return false;
+					}
+				}
+			}
+			
 			return true;
 
 		} catch (Exception e) {

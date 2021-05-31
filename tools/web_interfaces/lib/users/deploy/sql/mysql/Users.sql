@@ -4,6 +4,9 @@ CREATE TABLE users
 (
 	login VARCHAR(255) NOT NULL,
 	password VARCHAR(255) NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_password TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+	check_data_password INT NOT NULL DEFAULT 1,
 	tipo_interfaccia VARCHAR(255) NOT NULL,
 	interfaccia_completa INT,
 	permessi VARCHAR(255) NOT NULL,
@@ -35,6 +38,22 @@ CREATE TABLE users_stati
 	-- fk/pk keys constraints
 	CONSTRAINT fk_users_stati_1 FOREIGN KEY (id_utente) REFERENCES users(id),
 	CONSTRAINT pk_users_stati PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+
+
+
+CREATE TABLE users_password
+(
+	password VARCHAR(255) NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_password TIMESTAMP(3) NOT NULL DEFAULT 0,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	id_utente BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_users_password_1 FOREIGN KEY (id_utente) REFERENCES users(id),
+	CONSTRAINT pk_users_password PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 

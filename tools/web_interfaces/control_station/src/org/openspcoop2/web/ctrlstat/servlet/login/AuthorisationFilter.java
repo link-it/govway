@@ -42,6 +42,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.about.AboutCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utils.UtilsCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -230,6 +231,13 @@ public final class AuthorisationFilter implements Filter {
 	
 	private boolean isRisorsaProtetta(HttpServletRequest request){
 		String urlRichiesta = request.getRequestURI();
+		HttpSession session = request.getSession(true); 
+		String changePwd = ServletUtils.getObjectFromSession(session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+		if(changePwd != null && (urlRichiesta.indexOf("/"+UtentiCostanti.SERVLET_NAME_UTENTE_PASSWORD_CHANGE) > -1)) {
+			return false;
+		}
+		
+		
 		if ((urlRichiesta.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) == -1) 
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.IMAGES_DIR) == -1) 
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.CSS_DIR) == -1)

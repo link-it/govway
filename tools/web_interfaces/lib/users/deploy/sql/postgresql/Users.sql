@@ -6,6 +6,8 @@ CREATE TABLE users
 (
 	login VARCHAR(255) NOT NULL,
 	password VARCHAR(255) NOT NULL,
+	data_password TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	check_data_password INT NOT NULL DEFAULT 1,
 	tipo_interfaccia VARCHAR(255) NOT NULL,
 	interfaccia_completa INT,
 	permessi VARCHAR(255) NOT NULL,
@@ -39,6 +41,23 @@ CREATE TABLE users_stati
 	-- fk/pk keys constraints
 	CONSTRAINT fk_users_stati_1 FOREIGN KEY (id_utente) REFERENCES users(id),
 	CONSTRAINT pk_users_stati PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_users_password start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE users_password
+(
+	password VARCHAR(255) NOT NULL,
+	data_password TIMESTAMP NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_users_password') NOT NULL,
+	id_utente BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_users_password_1 FOREIGN KEY (id_utente) REFERENCES users(id),
+	CONSTRAINT pk_users_password PRIMARY KEY (id)
 );
 
 

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -32,6 +33,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 
 /**
@@ -54,6 +56,8 @@ public class PasswordVerifier {
 	private final static String PROPERTY_INCLUDE_NUMBER = "passwordVerifier.includeNumber";
 	private final static String PROPERTY_INCLUDE_NOT_ALPHANUMERIC_SYMBOL = "passwordVerifier.includeNotAlphanumericSymbol";
 	private final static String PROPERTY_ALL_DISTINCT_CHARACTERS = "passwordVerifier.allDistinctCharacters";
+	private final static String PROPERTY_EXPIRE = "passwordVerifier.expireDays";
+	private final static String PROPERTY_HISTORY = "passwordVerifier.history";
 	
 	protected List<String> regulaExpressions = new ArrayList<>();
 	protected boolean notContainsLogin = false;
@@ -65,6 +69,9 @@ public class PasswordVerifier {
 	protected boolean includeNumber = false;
 	protected boolean includeNotAlphanumericSymbol = false;
 	protected boolean allDistinctCharacters = false;
+	protected boolean checkPasswordExpire;
+	protected int expireDays;
+	protected boolean history;
 
 	public PasswordVerifier(){}
 	public PasswordVerifier(PasswordVerifier pv){
@@ -78,6 +85,9 @@ public class PasswordVerifier {
 		this.includeNumber = pv.includeNumber;
 		this.includeNotAlphanumericSymbol = pv.includeNotAlphanumericSymbol;
 		this.allDistinctCharacters = pv.allDistinctCharacters;
+		this.checkPasswordExpire = pv.checkPasswordExpire;
+		this.expireDays = pv.expireDays;
+		this.history = pv.history;
 	}
 	public PasswordVerifier(String resource) throws UtilsException{
 		InputStream is = null;
@@ -225,7 +235,28 @@ public class PasswordVerifier {
 					throw new Exception("Property '"+PROPERTY_ALL_DISTINCT_CHARACTERS+"' with wrong value '"+tmp+"': "+e.getMessage(),e);
 				}
 			}
+			
+			tmp = p.getProperty(PROPERTY_EXPIRE);
+			if(tmp!=null){
+				tmp=tmp.trim();
+				try{
+					this.expireDays = Integer.parseInt(tmp);
+					this.checkPasswordExpire = this.expireDays>0;
+				}catch(Exception e){
+					throw new Exception("Property '"+PROPERTY_EXPIRE+"' with wrong value '"+tmp+"': "+e.getMessage(),e);
+				}
+			}
 
+			tmp = p.getProperty(PROPERTY_HISTORY);
+			if(tmp!=null){
+				tmp=tmp.trim();
+				try{
+					this.history = Boolean.parseBoolean(tmp);
+				}catch(Exception e){
+					throw new Exception("Property '"+PROPERTY_HISTORY+"' with wrong value '"+tmp+"': "+e.getMessage(),e);
+				}
+			}
+			
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -290,6 +321,22 @@ public class PasswordVerifier {
 	}
 	public void setAllDistinctCharacters(boolean allDistinctCharacters) {
 		this.allDistinctCharacters = allDistinctCharacters;
+	}
+	public int getExpireDays() {
+		return this.expireDays;
+	}
+	public void setExpireDays(int expireDays) {
+		this.expireDays = expireDays;
+		this.checkPasswordExpire = this.expireDays>0;
+	}
+	public boolean isCheckPasswordExpire() {
+		return this.checkPasswordExpire;
+	}
+	public boolean isHistory() {
+		return this.history;
+	}
+	public void setHistory(boolean history) {
+		this.history = history;
 	}
 	
 	public boolean validate(String login, String password){
@@ -418,18 +465,46 @@ public class PasswordVerifier {
 		return true;
 	}
 	
+	public boolean isPasswordExpire(Date lastUpdatePassword){
+		StringBuilder bf = new StringBuilder();
+		return this.isPasswordExpire(lastUpdatePassword,bf);
+	}
+	public boolean isPasswordExpire(Date lastUpdatePassword, StringBuilder bfMotivazioneErrore) {
+		if(this.checkPasswordExpire) {
+			Date now = DateManager.getDate();
+			long expireMs = ((long) this.expireDays * 24 * 60 * 60 * 1000);
+			Date expireDate = new Date(lastUpdatePassword.getTime() + expireMs );
+			if(expireDate.before(now)) {
+				bfMotivazioneErrore.append("Password impostata da più di "+this.expireDays+" giorni");
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean existsRestriction(){
-		String s = this.help("", "", false);
+		String s = this.help("", "", false, false);
 		return s != null && !"".equals(s);
 	}
 	
 	public String help(){
-		return this.help("\n", "- ", true);
+		return this.help("\n", "- ", true, false);
 	}
 	public String help(String separator){
-		return this.help(separator, "- ", true);
+		return this.help(separator, "- ", true, false);
 	}
-	public String help(String separator, String elenco, boolean premessa){
+	public boolean existsRestrictionUpdate(){
+		String s = this.help("", "", false, true);
+		return s != null && !"".equals(s);
+	}
+	
+	public String helpUpdate(){
+		return this.help("\n", "- ", true, true);
+	}
+	public String helpUpdate(String separator){
+		return this.help(separator, "- ", true, true);
+	}
+	public String help(String separator, String elenco, boolean premessa, boolean update){
 		StringBuilder bf = new StringBuilder();
 		if(premessa){
 			bf.append("La password deve rispettare i seguenti vincoli: ");
@@ -475,6 +550,12 @@ public class PasswordVerifier {
 		if(this.allDistinctCharacters){
 			bf.append(separator);
 			bf.append(elenco).append("tutti i caratteri utilizzati devono essere differenti");
+		}
+		if(this.history){
+			if(update) {
+				bf.append(separator);
+				bf.append(elenco).append("non deve corrispondere ad una precedente password");
+			}
 		}
 		return bf.toString();
 	}

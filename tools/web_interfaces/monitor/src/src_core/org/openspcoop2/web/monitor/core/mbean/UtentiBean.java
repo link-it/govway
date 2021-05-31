@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.core.mbean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -36,6 +37,7 @@ import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.lib.users.dao.UserPassword;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -65,6 +67,9 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	private String confermaPassword;
 	private String vecchiaPassword;
 	private boolean showFormCambiaPassword = false;
+	
+	private String nuovaPassword;
+	private String userToUpdate;
 
 	private Boolean showServizi = false;
 
@@ -87,7 +92,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			this.gestionePassword = pddMonitorProperties.isGestionePasswordUtentiAttiva();
 			if(utentiPasswordConfig!=null){
 				this.passwordVerifier = new PasswordVerifier(utentiPasswordConfig);
-				if(this.passwordVerifier.existsRestriction()==false){
+				if(this.passwordVerifier.existsRestrictionUpdate()==false){
 					this.passwordVerifier = null;
 				}
 			}
@@ -104,7 +109,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 
 	public String getNotePassword(){
 		if(this.passwordVerifier!=null){
-			return this.passwordVerifier.help("<BR/>");
+			return this.passwordVerifier.helpUpdate("<BR/>");
 		}
 		return null;
 	}
@@ -200,6 +205,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 				return null;
 			}
 
+			boolean updateStoricoPassword = false;
 			if(this.passwordVerifier!=null){
 				StringBuilder motivazioneErrore = new StringBuilder();
 				if(this.passwordVerifier.validate(this.user.getLogin(), this.user.getPassword(), motivazioneErrore)==false){
@@ -207,11 +213,53 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 					MessageUtils.addErrorMsg(motivazioneErrore.toString());
 					return null;
 				}
+				
+				if(this.passwordVerifier.isHistory()) {
+					List<UserPassword> precedentiPassword = this.user.getPrecedentiPassword();
+					User findById = this.service.findById(this.user.getLogin());
+					
+					// se la lista storico e' vuota controllo la password precedente salvata nel bean
+					if(precedentiPassword == null || precedentiPassword.isEmpty()) {
+						boolean trovato = this.passwordManager.check(this.user.getPassword(), findById.getPassword());
+						if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+							trovato = this.passwordManager_backwardCompatibility.check(this.user.getPassword(), findById.getPassword());
+						}
+						if (trovato) {
+							MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+							return null;
+						}
+					}
+					
+					for (UserPassword userPassword : precedentiPassword) {
+						boolean trovato = this.passwordManager.check(this.user.getPassword(), userPassword.getPassword());
+						if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+							trovato = this.passwordManager_backwardCompatibility.check(this.user.getPassword(), userPassword.getPassword());
+						}
+						if (trovato) {
+							MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+							return null;
+						}
+					}
+					
+					UserPassword userPassword = new UserPassword();
+					userPassword.setDatePassword(findById.getLastUpdatePassword());
+					userPassword.setPassword(findById.getPassword());
+					this.user.getPrecedentiPassword().add(userPassword );
+					updateStoricoPassword = true;
+				}
 			}
+			
+			// aggiorno data ultima modifica
+			this.user.setLastUpdatePassword(new Date());
 
 			// cript pwd
 			String newPassword = this.passwordManager.crypt(this.user.getPassword());
-			((UserService)this.service).savePassword(this.user.getLogin(), newPassword);
+			
+			if(updateStoricoPassword) {
+				((UserService)this.service).savePasswordStorico(this.user.getId(), this.user.getLogin(), newPassword, this.user.getLastUpdatePassword(), this.user.getPrecedentiPassword());
+			} else {
+				((UserService)this.service).savePassword(this.user.getId(), this.user.getLogin(), newPassword, this.user.getLastUpdatePassword());
+			}
 
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage("Password modificata correttamente"));
@@ -223,6 +271,129 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		}
 
 		return null;
+	}
+	
+	public String cambioPasswordScaduta() {
+
+		try {
+			User findById = this.service.findById(this.userToUpdate);
+			
+			if(StringUtils.isEmpty(this.nuovaPassword)){
+				MessageUtils.addErrorMsg("Il campo Nuova non pu\u00F2 essere vuoto");
+				return null;
+			}
+
+			if(StringUtils.isEmpty(this.confermaPassword)){
+				MessageUtils.addErrorMsg("Il campo Conferma Nuova non pu\u00F2 essere vuoto");
+				return null;
+			}
+			
+			// Controllo che non ci siano spazi nei campi di testo
+			if ((this.nuovaPassword.indexOf(" ") != -1) || (this.confermaPassword.indexOf(" ") != -1)) {
+				MessageUtils.addErrorMsg("Non inserire spazi nei campi di testo");
+				return null;
+			}
+
+			if(StringUtils.isEmpty(this.vecchiaPassword)){
+				MessageUtils.addErrorMsg("La vecchia password indicata non \u00E8 corretta");
+				return null;
+			}
+			
+			// Controllo che non ci siano spazi nei campi di testo
+			if ((this.vecchiaPassword.indexOf(" ") != -1)) {
+				MessageUtils.addErrorMsg("Non inserire spazi nei campi di testo");
+				return null;
+			}
+
+			// check vecchia password dal db [TODO]
+			boolean trovato = this.passwordManager.check(this.vecchiaPassword, findById.getPassword());
+			if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+				trovato = this.passwordManager_backwardCompatibility.check(this.vecchiaPassword, findById.getPassword());
+			}
+			if (!trovato) {
+				MessageUtils.addErrorMsg("La vecchia password indicata non \u00E8 corretta");
+				return null;
+			}
+			
+			// controlla che la nuova password non coincida con la vecchia
+			if (StringUtils.equals(this.vecchiaPassword, this.nuovaPassword)) {
+				// errore
+				MessageUtils.addErrorMsg("La nuova password deve essere differente dalla vecchia");
+				return null;
+			}
+
+			// controlla pwd
+			if (!StringUtils.equals(this.confermaPassword, this.nuovaPassword)) {
+				// errore
+				MessageUtils.addErrorMsg("Le password inserite nei campi Nuova e Conferma Nuova non corrispondono");
+				return null;
+			}
+
+			boolean updateStoricoPassword = false;
+			List<UserPassword> precedentiPassword = null;
+			if(this.passwordVerifier!=null){
+				StringBuilder motivazioneErrore = new StringBuilder();
+				if(this.passwordVerifier.validate(this.userToUpdate, this.nuovaPassword, motivazioneErrore)==false){
+					// errore
+					MessageUtils.addErrorMsg(motivazioneErrore.toString());
+					return null;
+				}
+				
+				if(this.passwordVerifier.isHistory()) {
+					precedentiPassword = findById.getPrecedentiPassword();
+					
+					// se la lista storico e' vuota controllo la password precedente salvata nel bean
+					if(precedentiPassword == null || precedentiPassword.isEmpty()) {
+						trovato = this.passwordManager.check(this.nuovaPassword, findById.getPassword());
+						if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+							trovato = this.passwordManager_backwardCompatibility.check(this.nuovaPassword, findById.getPassword());
+						}
+						if (trovato) {
+							MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+							return null;
+						}
+					}
+					
+					for (UserPassword userPassword : precedentiPassword) {
+						trovato = this.passwordManager.check(this.nuovaPassword, userPassword.getPassword());
+						if(!trovato && this.passwordManager_backwardCompatibility!=null) {
+							trovato = this.passwordManager_backwardCompatibility.check(this.nuovaPassword, userPassword.getPassword());
+						}
+						if (trovato) {
+							MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+							return null;
+						}
+					}
+					
+					UserPassword userPassword = new UserPassword();
+					userPassword.setDatePassword(findById.getLastUpdatePassword());
+					userPassword.setPassword(findById.getPassword());
+					precedentiPassword.add(userPassword );
+					updateStoricoPassword = true;
+				}
+			}
+			
+			// aggiorno data ultima modifica
+//			this.user.setLastUpdatePassword(new Date());
+
+			// cript pwd
+			String newPassword = this.passwordManager.crypt(this.nuovaPassword);
+			
+			if(updateStoricoPassword) {
+				((UserService)this.service).savePasswordStorico(findById.getId(), this.userToUpdate, newPassword, new Date(), precedentiPassword);
+			} else {
+				((UserService)this.service).savePassword(findById.getId(), this.userToUpdate, newPassword, new Date());
+			}
+
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Password aggiornata con successo"));
+			
+			// caricamento delle impostazioni utente e redirect alla home
+			return Utility.getLoginBean().ricaricaUtenteDopoCambioPasswordScaduta();
+		} catch (Exception e) {
+			log.error("Cambio Password non riuscito",e);
+			MessageUtils.addErrorMsg("Cambio Password non riuscito");
+			return null;
+		}
 	}
 
 
@@ -334,4 +505,22 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		
 		return sb.toString();
 	}
+
+	public String getNuovaPassword() {
+		return this.nuovaPassword;
+	}
+
+	public void setNuovaPassword(String nuovaPassword) {
+		this.nuovaPassword = nuovaPassword;
+	}
+
+	public String getUserToUpdate() {
+		return this.userToUpdate;
+	}
+
+	public void setUserToUpdate(String userToUpdate) {
+		this.userToUpdate = userToUpdate;
+	}
+	
+	
 }

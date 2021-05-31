@@ -79,6 +79,7 @@ public class PageData {
 	Dialog dialog = null;
 
 	boolean postBackResult=false;
+	boolean includiMenuLateraleSx = true;
 		
 	public PageData() {
 		this.pageDescription = "";
@@ -112,6 +113,7 @@ public class PageData {
 		this.labelBottoneFiltra = Costanti.LABEL_MONITOR_BUTTON_FILTRA;
 		this.labelBottoneRipulsci = Costanti.LABEL_MONITOR_BUTTON_RIPULISCI;
 		this.postBackResult=false;
+		this.includiMenuLateraleSx = true;
 	}
 
 	public void setPageDescription(String s) {
@@ -572,5 +574,13 @@ public class PageData {
 	}
 	public void setPostBackResult(boolean postBackResult) {
 		this.postBackResult = postBackResult;
+	}
+
+	public boolean isIncludiMenuLateraleSx() {
+		return this.includiMenuLateraleSx;
+	}
+
+	public void setIncludiMenuLateraleSx(boolean includiMenuLateraleSx) {
+		this.includiMenuLateraleSx = includiMenuLateraleSx;
 	}
 }

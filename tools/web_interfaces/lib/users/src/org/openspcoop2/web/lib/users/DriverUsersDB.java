@@ -26,7 +26,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -51,6 +53,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -58,6 +61,7 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.lib.users.dao.UserPassword;
 import org.slf4j.Logger;
 
 /**
@@ -298,10 +302,6 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[getUser] Parametri Non Validi");
 
 		Connection connectionDB = null;
-		User user = null;
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-
 		try {
 			// Get Connection
 			if(this.connection!=null)
@@ -312,12 +312,36 @@ public class DriverUsersDB {
 					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
 			
+			return getUser(connectionDB, login);
+			
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::getUser] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::getUser] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public User getUser(Connection conParam, String login) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[getUser] Parametri Non Validi");
+
+		User user = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		try {
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("login = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = connectionDB.prepareStatement(sqlQuery);
+			stm = conParam.prepareStatement(sqlQuery);
 			stm.setString(1, login);
 			rs = stm.executeQuery();
 			if (rs.next()) {
@@ -325,6 +349,8 @@ public class DriverUsersDB {
 				user.setId(Long.valueOf(rs.getInt("id")));
 				user.setLogin(login);
 				user.setPassword(rs.getString("password"));
+				user.setLastUpdatePassword(rs.getTimestamp("data_password"));
+				user.setCheckLastUpdatePassword(rs.getInt("check_data_password") == CostantiDB.TRUE);
 				
 				String gui =rs.getString("tipo_interfaccia");
 				if(gui==null || "".equals(gui))
@@ -389,7 +415,7 @@ public class DriverUsersDB {
 			JDBCServiceManagerProperties jdbcProperties = new JDBCServiceManagerProperties();
 			jdbcProperties.setDatabaseType(this.tipoDatabase);
 			jdbcProperties.setShowSql(true);
-			JDBCServiceManager search = new JDBCServiceManager(connectionDB, jdbcProperties, this.log);
+			JDBCServiceManager search = new JDBCServiceManager(conParam, jdbcProperties, this.log);
 			IDBSoggettoServiceSearch soggettiSearch = (IDBSoggettoServiceSearch) search.getSoggettoServiceSearch();
 			IDBAccordoServizioParteSpecificaServiceSearch serviziSearch = (IDBAccordoServizioParteSpecificaServiceSearch) search.getAccordoServizioParteSpecificaServiceSearch();
 			
@@ -401,7 +427,7 @@ public class DriverUsersDB {
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = connectionDB.prepareStatement(sqlQuery);
+			stm = conParam.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
 			rs = stm.executeQuery();
 			while (rs.next()) {
@@ -411,6 +437,26 @@ public class DriverUsersDB {
 				statoObject.setOggetto(oggetto);
 				statoObject.setStato(stato);
 				user.getStati().add(statoObject);
+			}
+			rs.close();
+			stm.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_PASSWORD);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_utente = ?");
+			sqlQueryObject.addOrderBy(CostantiDB.USERS_PASSWORD+".data_password");
+			sqlQueryObject.setSortType(false);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = conParam.prepareStatement(sqlQuery);
+			stm.setLong(1, user.getId());
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				UserPassword userPassword = new UserPassword();
+				userPassword.setPassword(rs.getString("password"));
+				userPassword.setDatePassword(rs.getTimestamp("data_password"));
+				user.getPrecedentiPassword().add(userPassword);
 			}
 			rs.close();
 			stm.close();
@@ -428,7 +474,7 @@ public class DriverUsersDB {
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = connectionDB.prepareStatement(sqlQuery);
+			stm = conParam.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
 			rs = stm.executeQuery();
 			while (rs.next()) {
@@ -461,7 +507,7 @@ public class DriverUsersDB {
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = connectionDB.prepareStatement(sqlQuery);
+			stm = conParam.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
 			rs = stm.executeQuery();
 			while (rs.next()) {
@@ -494,10 +540,6 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){}
 		}
 	}
 
@@ -529,7 +571,7 @@ public class DriverUsersDB {
 			stm.setLong(1, id);
 			rs = stm.executeQuery();
 			if (rs.next()) {
-				user = this.getUser(rs.getString("login"));
+				user = this.getUser(connectionDB, rs.getString("login"));
 			}
 			rs.close();
 			stm.close();
@@ -636,7 +678,7 @@ public class DriverUsersDB {
 
 			User newU = null;
 			while (risultato.next()) {
-				newU = this.getUser(risultato.getString("login"));
+				newU = this.getUser(connectionDB, risultato.getString("login"));
 				lista.add(newU);
 			}
 			risultato.close();
@@ -865,6 +907,8 @@ public class DriverUsersDB {
 			sqlQueryObject.addInsertTable(CostantiDB.USERS);
 			sqlQueryObject.addInsertField("login", "?");
 			sqlQueryObject.addInsertField("password", "?");
+			sqlQueryObject.addInsertField("data_password", "?");
+			sqlQueryObject.addInsertField("check_data_password", "?");
 			sqlQueryObject.addInsertField("tipo_interfaccia", "?");
 			sqlQueryObject.addInsertField("interfaccia_completa", "?");
 			sqlQueryObject.addInsertField("permessi", "?");
@@ -880,6 +924,12 @@ public class DriverUsersDB {
 			int index = 1;
 			stm.setString(index++, login);
 			stm.setString(index++, user.getPassword());
+			Timestamp dataPassword = DateManager.getTimestamp();
+			if(user.getLastUpdatePassword()!=null) {
+				dataPassword = new Timestamp(user.getLastUpdatePassword().getTime());
+			}
+			stm.setTimestamp(index++, dataPassword);
+			stm.setInt(index++, user.isCheckLastUpdatePassword()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++, user.getInterfaceType().toString());
 			stm.setInt(index++, user.isPermitInterfaceComplete()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++, user.getPermessi().toString());
@@ -893,7 +943,7 @@ public class DriverUsersDB {
 			stm.executeUpdate();
 			stm.close();
 						
-			if(user.getStati().size()>0 || user.getSoggetti().size()>0 || user.getServizi().size()>0) {
+			if(user.getStati().size()>0 || user.getPrecedentiPassword().size()>0 || user.getSoggetti().size()>0 || user.getServizi().size()>0) {
 			
 				// recupero id
 				long idUser = this._getIdUser(connectionDB, login);
@@ -955,6 +1005,10 @@ public class DriverUsersDB {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
 			sqlQueryObject.addUpdateField("password", "?");
+			if(user.getLastUpdatePassword()!=null) {
+				sqlQueryObject.addUpdateField("data_password", "?");
+			}
+			sqlQueryObject.addUpdateField("check_data_password", "?");
 			sqlQueryObject.addUpdateField("tipo_interfaccia", "?");
 			sqlQueryObject.addUpdateField("interfaccia_completa", "?");
 			sqlQueryObject.addUpdateField("permessi", "?");
@@ -970,6 +1024,10 @@ public class DriverUsersDB {
 			stm = connectionDB.prepareStatement(sqlQuery);
 			int index = 1;
 			stm.setString(index++, user.getPassword());
+			if(user.getLastUpdatePassword()!=null) {
+				stm.setTimestamp(index++, new Timestamp(user.getLastUpdatePassword().getTime()));
+			}
+			stm.setInt(index++, user.isCheckLastUpdatePassword()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++,user.getInterfaceType().toString());
 			stm.setInt(index++, user.isPermitInterfaceComplete()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++,user.getPermessi().toString());
@@ -988,7 +1046,7 @@ public class DriverUsersDB {
 				
 			_deleteListeUtente(connectionDB, idUser);
 			
-			if(user.getStati().size()>0 || user.getSoggetti().size()>0 || user.getServizi().size()>0) {
+			if(user.getStati().size()>0 || user.getPrecedentiPassword().size()>0 || user.getSoggetti().size()>0 || user.getServizi().size()>0) {
 				_addListeUtente(connectionDB, user, idUser);
 			}
 			
@@ -1104,6 +1162,25 @@ public class DriverUsersDB {
 				}
 			}
 			
+			if(user.getPrecedentiPassword().size()>0) {
+				for (UserPassword userPassword : user.getPrecedentiPassword()) {
+					
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+					sqlQueryObject.addInsertTable(CostantiDB.USERS_PASSWORD);
+					sqlQueryObject.addInsertField("id_utente", "?");
+					sqlQueryObject.addInsertField("password", "?");
+					sqlQueryObject.addInsertField("data_password", "?");
+					String sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = connectionDB.prepareStatement(sqlQuery);
+					int index = 1;
+					stm.setLong(index++, idUser);
+					stm.setString(index++, userPassword.getPassword());
+					stm.setTimestamp(index++, new Timestamp(userPassword.getDatePassword().getTime()));
+					stm.executeUpdate();
+					stm.close();
+				}
+			}
+			
 			if(user.getSoggetti().size()>0) {
 				for (IDSoggetto idSoggetto : user.getSoggetti()) {
 					
@@ -1174,6 +1251,15 @@ public class DriverUsersDB {
 			sqlQueryObject.addDeleteTable(CostantiDB.USERS_STATI);
 			sqlQueryObject.addWhereCondition("id_utente = ?");
 			String sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setLong(1, idUser);
+			stm.executeUpdate();
+			stm.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addDeleteTable(CostantiDB.USERS_PASSWORD);
+			sqlQueryObject.addWhereCondition("id_utente = ?");
+			sqlQuery = sqlQueryObject.createSQLDelete();
 			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, idUser);
 			stm.executeUpdate();
@@ -1881,7 +1967,6 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[saveSoggettoUtilizzatoPddConsole] Parametri Non Validi");
 
 		Connection connectionDB = null;
-		PreparedStatement stm = null;
 		try {
 			// Get Connection
 			if(this.connection!=null)
@@ -1892,13 +1977,33 @@ public class DriverUsersDB {
 					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
 			
+			saveSoggettoUtilizzatoPddConsole(connectionDB, login, soggetto);
+
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddConsole] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddConsole] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public void saveSoggettoUtilizzatoPddConsole(Connection conParam, String login, String soggetto) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[saveSoggettoUtilizzatoPddConsole] Parametri Non Validi");
+
+		PreparedStatement stm = null;
+		try {			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
 			sqlQueryObject.addUpdateField("soggetto_pddconsole", "?");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLUpdate();
-			stm = connectionDB.prepareStatement(sqlQuery);
+			stm = conParam.prepareStatement(sqlQuery);
 			stm.setString(1, soggetto);
 			stm.setString(2, login);
 			stm.executeUpdate();
@@ -1914,10 +2019,6 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){}
 		}
 	}
 	
@@ -1933,7 +2034,6 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[saveSoggettoUtilizzatoPddMonitor] Parametri Non Validi");
 
 		Connection connectionDB = null;
-		PreparedStatement stm = null;
 		try {
 			// Get Connection
 			if(this.connection!=null)
@@ -1944,13 +2044,33 @@ public class DriverUsersDB {
 					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
 			}
 			
+			saveSoggettoUtilizzatoPddMonitor(connectionDB, login, soggetto);
+
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddMonitor] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveSoggettoUtilizzatoPddMonitor] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public void saveSoggettoUtilizzatoPddMonitor(Connection conParam, String login, String soggetto) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[saveSoggettoUtilizzatoPddMonitor] Parametri Non Validi");
+
+		PreparedStatement stm = null;
+		try {			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
 			sqlQueryObject.addUpdateField("soggetto_pddmonitor", "?");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLUpdate();
-			stm = connectionDB.prepareStatement(sqlQuery);
+			stm = conParam.prepareStatement(sqlQuery);
 			stm.setString(1, soggetto);
 			stm.setString(2, login);
 			stm.executeUpdate();
@@ -1966,10 +2086,6 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				// ignore exception
 			}
-			try{
-				if(this.connection==null)
-					connectionDB.close();
-			}catch(Exception eClose){}
 		}
 	}
 	
@@ -2014,7 +2130,7 @@ public class DriverUsersDB {
 			stm.close();
 			if(!users.isEmpty()) {
 				for (String user : users) {
-					this.saveSoggettoUtilizzatoPddConsole(user, newSoggetto);
+					this.saveSoggettoUtilizzatoPddConsole(connectionDB, user, newSoggetto);
 				}
 			}
 			
@@ -2035,7 +2151,7 @@ public class DriverUsersDB {
 			stm.close();
 			if(!users.isEmpty()) {
 				for (String user : users) {
-					this.saveSoggettoUtilizzatoPddMonitor(user, newSoggetto);
+					this.saveSoggettoUtilizzatoPddMonitor(connectionDB, user, newSoggetto);
 				}
 			}
 
@@ -2156,7 +2272,11 @@ public class DriverUsersDB {
 	}
 	
 	
-	public void savePassword(String login, String password) throws DriverUsersDBException {
+	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws DriverUsersDBException {
+		this.savePassword(idUser, login, newPassword, dataAggiornamentoPassword, null);
+	}
+	
+	public void savePassword(Long idUser, String login, String password, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws DriverUsersDBException {
 		if (login == null || password==null)
 			throw new DriverUsersDBException("[savePassword] Parametri Non Validi");
 
@@ -2175,14 +2295,83 @@ public class DriverUsersDB {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
 			sqlQueryObject.addUpdateField("password", "?");
+			if(dataAggiornamentoPassword!=null) {
+				sqlQueryObject.addUpdateField("data_password", "?");
+			}
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = connectionDB.prepareStatement(sqlQuery);
-			stm.setString(1, password);
-			stm.setString(2, login);
+			int index = 1;
+			stm.setString(index++, password);
+			if(dataAggiornamentoPassword!=null) {
+				stm.setTimestamp(index++, new Timestamp(dataAggiornamentoPassword.getTime()));
+			}
+			stm.setString(index++, login);
 			stm.executeUpdate();
 			stm.close();
+			
+			// salvataggio dello storico password
+			if(storicoPassword != null) {
+				try {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+					sqlQueryObject.addDeleteTable(CostantiDB.USERS_PASSWORD);
+					sqlQueryObject.addWhereCondition("id_utente = ?");
+					sqlQuery = sqlQueryObject.createSQLDelete();
+					stm = connectionDB.prepareStatement(sqlQuery);
+					stm.setLong(1, idUser);
+					stm.executeUpdate();
+					stm.close();
+				} finally {
+
+					//Chiudo statement and resultset
+					try {
+						if (stm != null)
+							stm.close();
+					} catch (Exception e) {
+						//ignore
+					}
+				}
+				
+				if(storicoPassword.size()>0) {
+					stm = null;
+					ResultSet rs = null;
+					try {
+						for (UserPassword userPassword : storicoPassword) {
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+							sqlQueryObject.addInsertTable(CostantiDB.USERS_PASSWORD);
+							sqlQueryObject.addInsertField("id_utente", "?");
+							sqlQueryObject.addInsertField("password", "?");
+							sqlQueryObject.addInsertField("data_password", "?");
+							sqlQuery = sqlQueryObject.createSQLInsert();
+							stm = connectionDB.prepareStatement(sqlQuery);
+							index = 1;
+							stm.setLong(index++, idUser);
+							stm.setString(index++, userPassword.getPassword());
+							stm.setTimestamp(index++, new Timestamp(userPassword.getDatePassword().getTime()));
+							stm.executeUpdate();
+							stm.close();
+						}
+					} finally {
+
+						//Chiudo statement and resultset
+						try {
+							if (rs != null)
+								rs.close();
+						} catch (Exception e) {
+							//ignore
+						}
+						try {
+							if (stm != null)
+								stm.close();
+						} catch (Exception e) {
+							//ignore
+						}
+						
+					}
+				}
+			}
 
 		} catch (SQLException se) {
 			throw new DriverUsersDBException("[DriverUsersDB::savePassword] SqlException: " + se.getMessage(),se);

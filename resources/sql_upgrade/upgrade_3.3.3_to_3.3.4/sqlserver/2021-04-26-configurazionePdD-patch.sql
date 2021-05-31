@@ -1,0 +1,1 @@
+../../../../tools/web_interfaces/lib/users/deploy/sql/patch/sqlserver/2021-04-26-patch.sql

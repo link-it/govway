@@ -42,6 +42,8 @@ public class UtentiCostanti {
 	
 	public final static String OBJECT_NAME_UTENTI_SOGGETTI = "utentiSoggetti";
 	
+	public final static String OBJECT_NAME_UTENTE_PASSWORD = "utentePassword";
+	
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_UTENTI_ADD = OBJECT_NAME_UTENTI+"Add.do";
@@ -57,9 +59,11 @@ public class UtentiCostanti {
 	}
 	
 	public final static String SERVLET_NAME_UTENTE_CHANGE = OBJECT_NAME_UTENTE+"Change.do";
+	public final static String SERVLET_NAME_UTENTE_PASSWORD_CHANGE = OBJECT_NAME_UTENTE_PASSWORD+"Change.do";
 	public final static Vector<String> SERVLET_UTENTE = new Vector<String>();
 	static{
 		SERVLET_UTENTE.add(SERVLET_NAME_UTENTE_CHANGE);
+		SERVLET_UTENTE.add(SERVLET_NAME_UTENTE_PASSWORD_CHANGE);
 	}
 	
 	public final static String SERVLET_NAME_UTENTI_SERVIZI_ADD = OBJECT_NAME_UTENTI_SERVIZI+"Add.do";
@@ -122,6 +126,7 @@ public class UtentiCostanti {
 	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri soggetti del "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE.toLowerCase()+" {0} associabili all''utente";
 	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI = "Non esistono altri servizi associabili all'utente";
 	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri servizi del "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE.toLowerCase()+" {0} associabili all''utente";
+
 	
 	/* PARAMETRI */
 	
@@ -145,6 +150,7 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTI_PROTOCOLLO = "protocollo";
 	public final static String PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL = "isSoggettiAll";
 	public final static String PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL = "isServiziAll";
+	public final static String PARAMETRO_UTENTI_SCADENZA = "scadenza";
 	
 	public final static String PARAMETRO_UTENTE_LOGIN = "login";
 	public final static String PARAMETRO_UTENTE_PASSWORD = "password";
@@ -184,7 +190,10 @@ public class UtentiCostanti {
 	public final static String LABEL_PARAMETRO_UTENTI_GOVWAY_MONITOR_SUBSECTION = "GovWay Monitor";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA = "Monitoraggio [D]";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA = "Reportistica [R]";
-
+	public final static String LABEL_PARAMETRO_UTENTI_SCADENZA = "Scadenza";
+	public final static String LABEL_NOTA_UTENTI_SCADENZA_ADD = "La password scade dopo {0} giorni";
+	public final static String LABEL_NOTA_UTENTI_SCADENZA_CHANGE = "La password scade fra {0} giorni";
+	public final static String LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA = "Password scaduta";
 	
 
 	public final static String LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD = "Vecchia";
@@ -214,6 +223,7 @@ public class UtentiCostanti {
 	/* MESSAGGI ERRORE */
 	public final static String MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO = "Selezionare un soggetto";
 	public final static String MESSAGGIO_ERRORE_NOME_SERVIZIO_OBBLIGATORIO = "Selezionare un servizio";
-	 
+	public final static String MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA = "La password scelta non deve corrispondere ad una precedente password";
+	public final static String MESSAGGIO_ERRORE_PASSWORD_NUOVE_DIFFERENTI = "Le password inserite nei campi Nuova e Conferma Nuova non corrispondono";
 	
 }

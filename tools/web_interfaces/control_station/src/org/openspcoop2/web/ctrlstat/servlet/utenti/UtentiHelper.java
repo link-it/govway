@@ -19,8 +19,11 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -54,6 +57,7 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.lib.users.dao.UserPassword;
 
 /**
  * UtentiHelper
@@ -117,7 +121,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			String changepwd, String [] modalitaGateway,
-			String isSoggettiAll, String isServiziAll, User oldImgUser) throws Exception{
+			String isSoggettiAll, String isServiziAll, User oldImgUser, String scadenza, Date dataUltimoAggiornamentoPassword , boolean oldScadenza) throws Exception{
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -454,6 +458,51 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
+		
+		PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
+		
+		// se e' abilitato il controllo sulla scadenza della password visualizzo la checkbox di abilitazione scadenza sul singolo utente
+		if(passwordVerifier.isCheckPasswordExpire()) {
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SCADENZA);
+			de.setType(DataElementType.CHECKBOX);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_SCADENZA);
+			de.setSelected(scadenza);
+			de.setSize(this.getSize());
+			
+			if(TipoOperazione.ADD.equals(tipoOperazione)) {
+				de.setLabelAffiancata(true);
+				de.setNote(MessageFormat.format(UtentiCostanti.LABEL_NOTA_UTENTI_SCADENZA_ADD, passwordVerifier.getExpireDays()));
+			}
+			
+			if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
+				de.setLabelAffiancata(true);
+				boolean passwordExpire = passwordVerifier.isPasswordExpire(dataUltimoAggiornamentoPassword);
+				
+				// se l'utente e' stato configurato con controllo scadenza password visualizzo il messaggio di stato attuale della password
+				if(oldScadenza) {
+					if(passwordExpire) {
+						de.setNote(UtentiCostanti.LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA);
+						de.setValoreBoldRed();
+					} else {
+						long giorni = 0;
+						Calendar c = Calendar.getInstance();
+						c.setTime(dataUltimoAggiornamentoPassword);
+						c.add(Calendar.DATE, passwordVerifier.getExpireDays());
+						Date end = c.getTime();
+						Date now = new Date();
+						long endMs = end.getTime();
+						long nowMs = now.getTime();
+						long diff = endMs - nowMs;
+						giorni = (diff / 1000 / 60 / 60 / 24);
+						
+						de.setNote(MessageFormat.format(UtentiCostanti.LABEL_NOTA_UTENTI_SCADENZA_CHANGE, giorni));
+					}
+				} 
+			}
+			
+			dati.addElement(de);
+		}
 
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 			de = new DataElement();
@@ -468,9 +517,6 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 
 		if( (TipoOperazione.ADD.equals(tipoOperazione)) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
-
-			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
-			
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
 			de.setValue(pwsu);
@@ -481,25 +527,13 @@ public class UtentiHelper extends ConsoleHelper {
 				PasswordGenerator passwordGenerator = new PasswordGenerator(passwordVerifier);
 				passwordGenerator.setDefaultLength(this.utentiCore.getUtenzeLunghezzaPasswordGenerate());
 				de.getPassword().setPasswordGenerator(passwordGenerator);
+				// stesso messaggio in add e change perche' l'amministratore puo' impostare anche password ripetute
 				de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 			}
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
 			de.setSize(this.getSize());
 			de.setRequired(true);
 			dati.addElement(de);
-
-//			de = new DataElement();
-//			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD);
-//			de.setValue(confpwsu);
-//			de.setType(DataElementType.CRYPT);
-//			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
-//			de.setSize(this.getSize());
-//			de.setRequired(true);
-//			if(passwordVerifier!=null){
-//				de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
-//			}
-//			dati.addElement(de);
-			
 		}
 		
 		
@@ -823,7 +857,7 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setValue("");
 			de.setRequired(true);
 			if(passwordVerifier!=null){
-				de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+				de.setNote(passwordVerifier.helpUpdate(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 			}
 			dati.addElement(de);
 		}
@@ -947,10 +981,11 @@ public class UtentiHelper extends ConsoleHelper {
 			//		}
 			
 			// in modalita change devo controllare che se ho cambiato le modalita' all'utente ci sia almeno un altro utente che puo' gestire le modalita' che lascio
+			User user = null;
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
 				
 				// prelevo l'utenza dal db
-				User user = this.utentiCore.getUser(nomesu);
+				user = this.utentiCore.getUser(nomesu);
 				
 				// se l'utente aveva solo il controllo degli utenti, questo controllo non importa tanto non ha modalita' associate
 				if(!oldUserHasOnlyPermessiUtenti) {
@@ -1085,6 +1120,40 @@ public class UtentiHelper extends ConsoleHelper {
 						this.pd.setMessage(motivazioneErrore.toString());
 						return false;
 					}
+					
+					// controllo storico password in caso di change
+					// Attualmente l'amministratore puo' impostare una vecchia password
+//					if(TipoOperazione.CHANGE.equals(tipoOperazione) && passwordVerifier.isHistory()) {
+//						List<UserPassword> precedentiPassword = user.getPrecedentiPassword();
+//						
+////						String tmpPass = pwsu;
+////						if(this.utentiCore.isUtenzePasswordEncryptEnabled()) {
+////							tmpPass = this.utentiCore.getUtenzePasswordManager().crypt(pwsu);
+////						}
+//
+//						// se la lista storico e' vuota controllo la password precedente salvata nel bean
+//						if(precedentiPassword == null || precedentiPassword.isEmpty()) {
+//							boolean trovato = this.utentiCore.getUtenzePasswordManager().check(pwsu, user.getPassword());
+//							if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
+//								trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(pwsu, user.getPassword());
+//							}
+//							if (trovato) {
+//								this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
+//								return false;
+//							}
+//						}
+//						
+//						for (UserPassword userPassword : precedentiPassword) {
+//							boolean trovato = this.utentiCore.getUtenzePasswordManager().check(pwsu, userPassword.getPassword());
+//							if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
+//								trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(pwsu, userPassword.getPassword());
+//							}
+//							if (trovato) {
+//								this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
+//								return false;
+//							}
+//						}
+//					}
 				}
 			}
 
@@ -1229,14 +1298,14 @@ public class UtentiHelper extends ConsoleHelper {
 			// Controllo che la vecchia password e la nuova corrispondano
 			if(user.getPermessi().isUtenti()==false){
 				if (oldpw.equals(newpw)) {
-					this.pd.setMessage("Le nuova password deve essere differente dalla vecchia");
+					this.pd.setMessage("La nuova password deve essere differente dalla vecchia");
 					return false;
 				}
 			}
 			
 			// Controllo che le password corrispondano
 			if (!newpw.equals(confpw)) {
-				this.pd.setMessage("Le due password non corrispondono!");
+				this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_NUOVE_DIFFERENTI);
 				return false;
 			}
 
@@ -1246,6 +1315,38 @@ public class UtentiHelper extends ConsoleHelper {
 				if(passwordVerifier.validate(user.getLogin(), newpw, motivazioneErrore)==false){
 					this.pd.setMessage(motivazioneErrore.toString());
 					return false;
+				}
+				
+				// controllo storico password in caso di change
+				if(passwordVerifier.isHistory()) {
+					List<UserPassword> precedentiPassword = user.getPrecedentiPassword();
+					
+//					String tmpPass = newpw;
+//					if(this.utentiCore.isUtenzePasswordEncryptEnabled()) {
+//						tmpPass = this.utentiCore.getUtenzePasswordManager().crypt(newpw);
+//					}
+					
+					if(precedentiPassword == null || precedentiPassword.isEmpty()) {
+						boolean trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, user.getPassword());
+						if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
+							trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(newpw, user.getPassword());
+						}
+						if (trovato) {
+							this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
+							return false;
+						}
+					}
+					
+					for (UserPassword userPassword : precedentiPassword) {
+						boolean trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, userPassword.getPassword());
+						if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
+							trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(newpw, userPassword.getPassword());
+						}
+						if (trovato) {
+							this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
+							return false;
+						}
+					}
 				}
 			}
 			
@@ -1299,6 +1400,8 @@ public class UtentiHelper extends ConsoleHelper {
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			
+			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 
 			if (lista != null) {
 				Iterator<User> it = lista.iterator();
@@ -1319,6 +1422,18 @@ public class UtentiHelper extends ConsoleHelper {
 						de.setValue(mySU.getReasonInvalidConfiguration());
 						de.setSelected(CheckboxStatusType.DISABILITATO);
 					}
+					
+					// se e' abilitato il check di scadenza delle password e la password e' scaduta imposto il check rosso
+					if(passwordVerifier.isCheckPasswordExpire()) {
+						if(mySU.isCheckLastUpdatePassword()) {
+							if(passwordVerifier.isPasswordExpire(mySU.getLastUpdatePassword())) {
+								de.setToolTip(UtentiCostanti.LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA);
+								de.setValue(UtentiCostanti.LABEL_UTENTI_SCADENZA_PASSWORD_SCADUTA);
+								de.setSelected(CheckboxStatusType.DISABILITATO);
+							}
+						}
+					}
+					
 					de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE,
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, mySU.getLogin()));
 					e.addElement(de);
@@ -1836,5 +1951,158 @@ public class UtentiHelper extends ConsoleHelper {
 		}
 		
 		return true;
+	}
+	
+	public void addUtenteChangePasswordScadutaToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione) throws Exception{
+
+		DataElement de = new DataElement();
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue("false");
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PASSWORD);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+
+		PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+		de.setType(DataElementType.CRYPT);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+		de.setValue("");
+		de.setSize(this.getSize());
+		de.setRequired(true);
+		dati.addElement(de);
+			
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD);
+		de.setType(DataElementType.CRYPT);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
+		de.setSize(this.getSize());
+		de.setValue("");
+		de.setRequired(true);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+		de.setType(DataElementType.CRYPT);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+		de.setSize(this.getSize());
+		de.setValue("");
+		de.setRequired(true);
+		if(passwordVerifier!=null){
+			de.setNote(passwordVerifier.helpUpdate(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+		}
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ESEGUI);
+		de.setValue(UtentiCostanti.PARAMETRO_UTENTE_ESEGUI);
+		dati.addElement(de);
+	}
+	
+	boolean changePwScadutaCheckData() throws Exception {
+
+		try{
+
+			String oldpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+			String newpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
+			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
+
+			// String cpwd = this.procToCall.cryptPw(oldpw);
+			String userToUpdate = ServletUtils.getObjectFromSession(this.session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+			
+			User user = this.utentiCore.getUser(userToUpdate);
+
+			boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());
+			if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
+				trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(oldpw, user.getPassword());
+			}
+			if (!trovato) {
+				this.pd.setMessage("La vecchia password indicata non &egrave; corretta");
+				return false;
+			}
+			
+			// Controllo che non ci siano spazi nei campi di testo
+			if ((oldpw.indexOf(" ") != -1)) {
+				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				return false;
+			}
+
+			// Campi obbligatori
+			if (newpw.equals("") || confpw.equals("")) {
+				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare una password");
+				return false;
+			}
+
+			// Controllo che non ci siano spazi nei campi di testo
+			if ((newpw.indexOf(" ") != -1) || (confpw.indexOf(" ") != -1)) {
+				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				return false;
+			}
+
+			// Controllo che la vecchia password e la nuova corrispondano
+			if (oldpw.equals(newpw)) {
+				this.pd.setMessage("La nuova password deve essere differente dalla vecchia");
+				return false;
+			}
+			
+			// Controllo che le password corrispondano
+			if (!newpw.equals(confpw)) {
+				this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_NUOVE_DIFFERENTI);
+				return false;
+			}
+
+			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
+			if(passwordVerifier!=null){
+				StringBuilder motivazioneErrore = new StringBuilder();
+				if(passwordVerifier.validate(user.getLogin(), newpw, motivazioneErrore)==false){
+					this.pd.setMessage(motivazioneErrore.toString());
+					return false;
+				}
+				
+				// controllo storico password in caso di change
+				if(passwordVerifier.isHistory()) {
+					List<UserPassword> precedentiPassword = user.getPrecedentiPassword();
+					
+//					String tmpPass = newpw;
+//					if(this.utentiCore.isUtenzePasswordEncryptEnabled()) {
+//						tmpPass = this.utentiCore.getUtenzePasswordManager().crypt(newpw);
+//					}
+					
+					if(precedentiPassword == null || precedentiPassword.isEmpty()) {
+						trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, user.getPassword());
+						if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
+							trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(newpw, user.getPassword());
+						}
+						if (trovato) {
+							this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
+							return false;
+						}
+					}
+					
+					for (UserPassword userPassword : precedentiPassword) {
+						trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, userPassword.getPassword());
+						if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
+							trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(newpw, userPassword.getPassword());
+						}
+						if (trovato) {
+							this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
+							return false;
+						}
+					}
+				}
+			}
+			
+			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
 	}
 }

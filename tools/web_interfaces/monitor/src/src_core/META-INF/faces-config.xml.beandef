@@ -70,6 +70,21 @@
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
+		<managed-bean-name>utenteBean</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.core.mbean.UtentiBean</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>service</property-name>
+			<property-class>org.openspcoop2.web.monitor.core.dao.IUserService</property-class>
+			<value>#{userService}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>userToUpdate</property-name>
+			<property-class>java.lang.String</property-class>
+			<value>#{loginBean.username}</value>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
 		<managed-bean-name>applicationBean</managed-bean-name>
 		<managed-bean-class>org.openspcoop2.web.monitor.core.bean.ApplicationBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
@@ -136,6 +151,17 @@
 			<from-outcome>loginSuccess</from-outcome>
 			<to-view-id>/commons/pages/welcome.jsf?usaSVG=true</to-view-id>
 			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>utentePasswordChange</from-outcome>
+			<to-view-id>/core/pages/form/userPasswordScaduta.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/core/pages/form/userPasswordScaduta.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>loginSuccess</from-outcome>
+			<to-view-id>/commons/pages/welcome.jsf?usaSVG=true</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<validator>
