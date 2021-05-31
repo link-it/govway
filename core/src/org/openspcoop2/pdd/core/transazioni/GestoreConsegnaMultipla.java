@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.OpenspcoopAppender;
@@ -53,6 +54,9 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.slf4j.Logger;
 
 /**     
@@ -373,23 +377,73 @@ public class GestoreConsegnaMultipla {
 					isMessaggioConsegnato = true;
 				}
 
-				boolean transazioneAggiornata = TransactionServerUtils.save(transazioneService, (TransazioneApplicativoServer)o, update, throwNotFoundIfNotExists, false);
-				if(!transazioneAggiornata) {
-					isMessaggioConsegnato = false; // per gestire eventuali errori durante il  recupero da file system
+				int oldTransactionIsolation = -1;
+				try{
+					oldTransactionIsolation = con.getTransactionIsolation();
+					// già effettuato fuori dal metodo connectionDB.setAutoCommit(false);
+					JDBCUtilities.setTransactionIsolationSerializable(daoFactoryServiceManagerPropertiesTransazioni.getDatabase(), con);
+				} catch(Exception er) {
+					throw new CoreException("(setIsolation) "+er.getMessage(),er);
 				}
+				
+				boolean updateEffettuato = false;
+				long gestioneSerializableDB_AttesaAttiva = openspcoopProperties.getGestioneSerializableDB_AttesaAttiva();
+				int gestioneSerializableDB_CheckInterval = openspcoopProperties.getGestioneSerializableDB_CheckInterval();
+				
+				long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
+				
+				while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
+
+					try{
+						
+						boolean transazioneAggiornata = TransactionServerUtils.save(transazioneService, (TransazioneApplicativoServer)o, update, throwNotFoundIfNotExists, false);
+						
+						con.commit();
+						
+						if(!transazioneAggiornata) {
+							isMessaggioConsegnato = false; // per gestire eventuali errori durante il  recupero da file system
+						}
+
+						updateEffettuato = true;
+
+					} catch(Exception e) {
+						//System.out.println("Serializable error:"+e.getMessage());
+						try{
+							con.rollback();
+						} catch(Exception er) {}
+					}
+
+					if(updateEffettuato == false){
+						// Per aiutare ad evitare conflitti
+						try{
+							Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+						}catch(Exception eRandom){}
+					}
+				}
+				// Ripristino Transazione
+				try{
+					con.setTransactionIsolation(oldTransactionIsolation);
+					// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
+				} catch(Exception er) {
+					throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
+				}
+				
 			}
 			else if(o instanceof org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico) {
 
 				this.msgDiagnosticiOpenSPCoopAppender.log(con, (org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico)o);
+				
+				con.commit();
 
 			}
 			else if(o instanceof Messaggio) {
 
 				this.dumpOpenSPCoopAppender.dump(con, (Messaggio)o);
-
+				
+				con.commit();
+				
 			}
 
-			con.commit();
 		}catch(Throwable e){
 			try{
 				con.rollback();
