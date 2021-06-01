@@ -116,13 +116,22 @@ public class TransportUtils {
 			value = get ? p.get(name.toUpperCase()) : p.remove(name.toUpperCase()); 
 		}
 		if(value==null){
+			List<String> keysFound = new ArrayList<String>();
 			Iterator<String> keys = p.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				String keyCaseInsensitive = key.toLowerCase();
 				String nameCaseInsensitive = name.toLowerCase();
 				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
-					return get ? p.get(key) : p.remove(key);
+					keysFound.add(key);
+				}
+			}
+			if(!keysFound.isEmpty()) {
+				for (String keyFound : keysFound) {
+					T v = get? p.get(keyFound) : p.remove(keyFound);
+					if(value==null) {
+						value=v;
+					}
 				}
 			}
 		}

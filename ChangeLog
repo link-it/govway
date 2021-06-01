@@ -1,3 +1,9 @@
+2021-06-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-1191
+	Aggiunto supporto per wildfly 23.	
+
 2021-05-31  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
@@ -36,7 +42,7 @@
 
 2021-05-19  Andrea Poli <apoli@link.it>
 
-	* [GovWayCore]
+	* [GovWayCore, InstallerVersioneBinaria]
 	Aggiunta funzionalità OP-1191
 	Aggiunto supporto per wildfly 22.
 
