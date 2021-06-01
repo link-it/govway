@@ -3101,7 +3101,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping varchar="4000"/>
+                                <linkit:sql-column-mapping varchar="3000"/> <!-- per poter essere aggiunti negli indici su mysql -->
                                 <linkit:sql-ddl-column-comment>Hostname del nodo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -3112,7 +3112,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping varchar="4000"/>
+                                <linkit:sql-column-mapping varchar="3000"/> <!-- per poter essere aggiunti negli indici su mysql -->
                                 <linkit:sql-ddl-column-comment>Gruppo di appartenenza del nodo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

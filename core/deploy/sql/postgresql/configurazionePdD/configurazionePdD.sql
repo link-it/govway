@@ -687,8 +687,8 @@ CREATE SEQUENCE seq_nodi_runtime start 1 increment 1 maxvalue 922337203685477580
 
 CREATE TABLE nodi_runtime
 (
-	hostname VARCHAR(4000) NOT NULL,
-	gruppo VARCHAR(4000) NOT NULL,
+	hostname VARCHAR(3000) NOT NULL,
+	gruppo VARCHAR(3000) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	data_refresh TIMESTAMP NOT NULL,
 	id_numerico INT NOT NULL,

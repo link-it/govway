@@ -638,6 +638,17 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				</antcall>
 			</then>
 		</if>
+
+		<!-- Append Init Database Instruction -->
+		<move file="${tmp_sql}/${tmpSqlUpgradeScriptName}" tofile="${tmp_sql}/${tmpSqlUpgradeScriptName}.moved"/>
+		<antcall target="_initSQL_${antinstaller_tipo_database}">
+			<param name="sqlFileOutput" value="${tmp_sql}/${tmpSqlUpgradeScriptName}"/>
+		</antcall>
+		<concat destfile="${tmp_sql}/${tmpSqlUpgradeScriptName}" append="true">
+			<filelist dir="${tmp_sql}" files="${tmpSqlUpgradeScriptName}.moved"/>
+		</concat>
+		<delete file="${tmp_sql}/${tmpSqlUpgradeScriptName}.moved"/>
+
 	</target>
 
 </project>

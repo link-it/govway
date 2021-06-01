@@ -643,8 +643,8 @@ CREATE UNIQUE INDEX index_config_handlers_1 ON config_handlers (tipologia,tipo);
 
 CREATE TABLE nodi_runtime
 (
-	hostname VARCHAR(4000) NOT NULL,
-	gruppo VARCHAR(4000) NOT NULL,
+	hostname VARCHAR(3000) NOT NULL,
+	gruppo VARCHAR(3000) NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_registrazione TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'

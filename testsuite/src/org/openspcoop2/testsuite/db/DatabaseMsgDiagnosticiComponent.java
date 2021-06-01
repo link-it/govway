@@ -402,6 +402,30 @@ public class DatabaseMsgDiagnosticiComponent {
 					// Se si ottiene: ORA-22835 Buffer too small for CLOB to CHAR or BLOB to RAW conversion (actual: 4907, maximum: 4000)
 					// Eliminare tutti i diagnostici e riprovare
 					
+					if(eClob.getMessage().contains("ORA-22835") && eClob.getMessage().contains("Buffer too small")){
+						
+						try {
+							
+							try{
+								res.close();
+							}catch(Exception eClose){}
+							try{
+								prep.close();
+							}catch(Exception eClose){}
+							
+							prep = this.connectionMsgDiagnostici
+							.prepareStatement("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+									CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" like '"+messaggio+"' ");
+							
+							res = prep.executeQuery();
+							return res.next();
+						} catch (SQLException eClob2Like) {
+							throw new TestSuiteException("Errore nel database: "+eClob.getMessage(),
+							"nella fase DBC.getResult (CLOB-LIKE)");
+						}
+						
+					}
+					
 					throw new TestSuiteException("Errore nel database: "+eClob.getMessage(),
 					"nella fase DBC.getResult (CLOB)");
 				}

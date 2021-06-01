@@ -1835,6 +1835,11 @@ public class ConfigurazionePdDReader {
 	protected SoglieDimensioneMessaggi getSoglieLimitedInputStream(Connection connectionPdD,PortaDelegata pd, String azione, String idModulo,
 			PdDContext pddContext, URLProtocolContext urlProtocolContext,
 			IProtocolFactory<?> protocolFactory, Logger log) throws DriverConfigurazioneException{
+		
+		if(!this.openspcoopProperties.isControlloTrafficoEnabled()){
+			return null;
+		}
+		
 		TipoPdD tipoPdD = null;
 		String nomePorta = null;
 		IDSoggetto idDominio = null;
@@ -2939,6 +2944,11 @@ public class ConfigurazionePdDReader {
 	protected SoglieDimensioneMessaggi getSoglieLimitedInputStream(Connection connectionPdD,PortaApplicativa pa, String azione, String idModulo,
 			PdDContext pddContext, URLProtocolContext urlProtocolContext,
 			IProtocolFactory<?> protocolFactory, Logger log) throws DriverConfigurazioneException{
+		
+		if(!this.openspcoopProperties.isControlloTrafficoEnabled()){
+			return null;
+		}
+		
 		TipoPdD tipoPdD = null;
 		String nomePorta = null;
 		IDSoggetto idDominio = null;

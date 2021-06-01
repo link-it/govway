@@ -4,8 +4,8 @@ DROP TABLE plugins_filtro_comp;
 
 -- Supporto per la registrazione delle classi di plugins
 ALTER TABLE plugins ADD COLUMN tipo_plugin VARCHAR(255) NOT NULL;
-ALTER TABLE plugins DROP CONSTRAINT unique_plugins_1;
-ALTER TABLE plugins DROP CONSTRAINT unique_plugins_2;
+ALTER TABLE plugins DROP INDEX unique_plugins_1;
+ALTER TABLE plugins DROP INDEX unique_plugins_2;
 ALTER TABLE plugins DROP COLUMN tipo;
 ALTER TABLE plugins ADD COLUMN tipo VARCHAR(255) NOT NULL;
 ALTER TABLE plugins ADD COLUMN stato BOOLEAN DEFAULT true;

@@ -7,7 +7,7 @@ ALTER TABLE transazioni ADD esito_sincrono INT;
 ALTER TABLE transazioni ADD consegne_multiple INT;
 
 ALTER TABLE dump_messaggi ADD servizio_applicativo_erogatore VARCHAR(2000);
-ALTER TABLE dump_messaggi ADD COLUMN data_consegna_erogatore DATETIME2;
+ALTER TABLE dump_messaggi ADD data_consegna_erogatore DATETIME2;
 
 
 CREATE TABLE transazioni_sa
