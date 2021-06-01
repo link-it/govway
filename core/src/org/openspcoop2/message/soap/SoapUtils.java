@@ -748,6 +748,19 @@ public class SoapUtils {
 	}
 	
 	public static String toString(OpenSPCoop2MessageFactory messageFactory, SOAPFault fault,boolean printDetails) throws MessageException{
+		return SoapUtils._toString(messageFactory, fault, true, true, null);
+	}
+	
+	public static String safe_toString(OpenSPCoop2MessageFactory messageFactory, SOAPFault fault, Logger log) throws MessageException{
+		return SoapUtils.safe_toString(messageFactory, fault, false, log);
+	}
+	
+	public static String safe_toString(OpenSPCoop2MessageFactory messageFactory, SOAPFault fault,boolean printDetails, Logger log) throws MessageException{
+		return SoapUtils._toString(messageFactory, fault, true, false, log);
+	}
+	
+	public static String _toString(OpenSPCoop2MessageFactory messageFactory, SOAPFault fault,boolean printDetails, 
+			boolean throwsException, Logger log) throws MessageException{
 		try{
 			if(printDetails){
 				if(fault!=null){
@@ -760,14 +773,35 @@ public class SoapUtils {
 				StringBuilder bf = new StringBuilder();
 				if(fault!=null){
 					bf.append("SOAPFault");
-					if(fault.getFaultCode()!=null && !"".equals(fault.getFaultCode())){
-						bf.append(" faultCode["+fault.getFaultCode()+"]");
+					try{
+						if(fault.getFaultCode()!=null && !"".equals(fault.getFaultCode())){
+							bf.append(" faultCode["+fault.getFaultCode()+"]");
+						}
+					} catch(Throwable e) {
+						if(throwsException) {
+							throw e;
+						}
+						bf.append(" faultCode[unparsable: "+e.getMessage()+"]");
 					}
-					if(fault.getFaultActor()!=null && !"".equals(fault.getFaultActor())){
-						bf.append(" faultActor["+fault.getFaultActor()+"]");
+					try{
+						if(fault.getFaultActor()!=null && !"".equals(fault.getFaultActor())){
+							bf.append(" faultActor["+fault.getFaultActor()+"]");
+						}
+					} catch(Throwable e) {
+						if(throwsException) {
+							throw e;
+						}
+						bf.append(" faultActor[unparsable: "+e.getMessage()+"]");
 					}
-					if(fault.getFaultString()!=null && !"".equals(fault.getFaultString())){
-						bf.append(" faultString["+fault.getFaultString()+"]");
+					try{
+						if(fault.getFaultString()!=null && !"".equals(fault.getFaultString())){
+							bf.append(" faultString["+fault.getFaultString()+"]");
+						}
+					} catch(Throwable e) {
+						if(throwsException) {
+							throw e;
+						}
+						bf.append(" faultString[unparsable: "+e.getMessage()+"]");
 					}
 					
 				}else{
@@ -777,8 +811,16 @@ public class SoapUtils {
 				return bf.toString();
 			}
 			
-		} catch(Exception e) {
-			throw new MessageException("toString SOAPFault: "+e.getMessage(),e);
+		} catch(Throwable e) {
+			if(throwsException) {
+				throw new MessageException("toString SOAPFault: "+e.getMessage(),e);
+			}
+			else {
+				if(log!=null) {
+					log.error("Unparsable SOAPFault: "+e.getMessage(),e);
+				}
+				return "Unparsable SOAPFault: "+e.getMessage();
+			}
 		}
 	}
 

@@ -1310,7 +1310,7 @@ public class InoltroRisposte extends GenericLib{
 			else if(errorConsegna && presenzaRispostaProtocolConnectionReply==false){
 				//	Effettuo log dell'eventuale fault
 				if(soapFaultConnectionReply!=null){
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReplyMessageFactory, soapFaultConnectionReply));
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(faultConnectionReplyMessageFactory, soapFaultConnectionReply, this.log));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
 				}
 				else if(restProblemConnectionReply!=null){
@@ -1454,7 +1454,7 @@ public class InoltroRisposte extends GenericLib{
 			else if(responseHttpReply != null ){
 				// potenziale Fault (inserito dopo il codice soprastante, per fare decriptare il body al MessageSecurity se presente)
 				if(soapFaultConnectionReply!=null){
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReplyMessageFactory, soapFaultConnectionReply));
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(faultConnectionReplyMessageFactory, soapFaultConnectionReply, this.log));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
 				}
 				else if(restProblemConnectionReply!=null){

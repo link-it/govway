@@ -238,7 +238,7 @@ public class DBVerifier {
 					assertEquals(true, EventiUtils.findEventRLViolato(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));
 					assertEquals(true, EventiUtils.findEventRLViolazioneRisolta(events, nomePolicy, idServizio, Optional.empty(), log, policyApi));	
 				}catch(Throwable t3) {
-					Utilities.sleep(5000);
+					Utilities.sleep(10000);
 					List<Map<String, Object>> events = EventiUtils.getNotificheEventi(dataSpedizione);		
 					log().info(events.toString());
 

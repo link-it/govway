@@ -3435,7 +3435,7 @@ public class InoltroBuste extends GenericLib{
 				}else{
 					//	Effettuo log dell'eventuale fault (registro anche i fault spcoop, potrebbero contenere dei details aggiunti da una PdD.)
 					if( soapFault!=null && faultLogged==false ){
-						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, soapFault));
+						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(faultMessageFactory, soapFault, this.log));
 						msgDiag.logPersonalizzato("ricezioneSoapFault");
 						faultLogged = true;
 					}
@@ -4342,7 +4342,7 @@ public class InoltroBuste extends GenericLib{
 			msgDiag.mediumDebug("Registrazione eventuale fault...");
 			//	Effettuo log dell'eventuale fault (registro anche i fault spcoop, potrebbero contenere dei details aggiunti da una PdD.)
 			if( soapFault!=null && faultLogged==false ){
-				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, soapFault));
+				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(faultMessageFactory, soapFault, this.log));
 				msgDiag.logPersonalizzato("ricezioneSoapFault");
 				faultLogged = true;
 			}

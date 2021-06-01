@@ -1149,7 +1149,7 @@ public class RicezioneBusteService  {
 					if(soapMessage.hasSOAPFault()){
 						consume = false; // può essere usato nel post out response handler
 						statoServletResponse = 500;
-						descrizioneSoapFault = " ("+SoapUtils.toString(responseMessage.getFactory(), soapMessage.getSOAPBody().getFault(), false)+")";
+						descrizioneSoapFault = " ("+SoapUtils.safe_toString(responseMessage.getFactory(), soapMessage.getSOAPBody().getFault(), false, logCore)+")";
 					}
 					else if(statoServletResponse==500) {
 						// in SOAP 500 deve essere associato con un fault
@@ -1350,7 +1350,7 @@ public class RicezioneBusteService  {
 						if(body!=null && body.hasFault()){
 							statoServletResponse = 500;
 							res.setStatus(statoServletResponse);
-							descrizioneSoapFault = " ("+SoapUtils.toString(responseMessageError.getFactory(), body.getFault(), false)+")";
+							descrizioneSoapFault = " ("+SoapUtils.safe_toString(responseMessageError.getFactory(), body.getFault(), false, logCore)+")";
 						}
 					}
 					

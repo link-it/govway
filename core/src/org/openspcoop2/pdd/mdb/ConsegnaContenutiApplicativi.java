@@ -2681,7 +2681,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					    ) 
 					){
 					// Se non l'ho gia indicato nel motivo di errore, registro il fault
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, soapFault));
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(faultMessageFactory, soapFault, this.log));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
 				}
 				else if(restProblem!=null && 
@@ -2975,7 +2975,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			msgDiag.mediumDebug("Registrazione eventuale fault...");
 			// Effettuo log del fault
 			if(soapFault!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, soapFault));
+				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(faultMessageFactory, soapFault, this.log));
 				msgDiag.logPersonalizzato("ricezioneSoapFault");
 			}
 			else if(restProblem!=null){

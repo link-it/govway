@@ -866,7 +866,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						OpenSPCoop2SoapMessage soapMessage = msgResponse.castAsSoap();
 						if(soapMessage.hasSOAPFault()){
 	
-							descrizioneSoapFault = " ("+SoapUtils.toString(soapMessage.getFactory(), soapMessage.getSOAPBody().getFault(), false)+")";
+							descrizioneSoapFault = " ("+SoapUtils.safe_toString(soapMessage.getFactory(), soapMessage.getSOAPBody().getFault(), false, logCore)+")";
 							
 							// Potenziale MsgErroreApplicativo
 							SOAPFault fault = soapMessage.getSOAPBody().getFault();

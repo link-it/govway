@@ -962,7 +962,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					byte[] risposta = null;
 					if(body!=null && body.hasFault()){
 						statoServletResponse = 500; // cmq e' un errore come l'errore applicativo
-						String msgError = SoapUtils.toString(responseMessage.getFactory(), body.getFault(), false);
+						String msgError = SoapUtils.safe_toString(responseMessage.getFactory(), body.getFault(), false, logCore);
 						//risposta=msgError.getBytes();
 						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(responseMessage.getFactory());
 						risposta=xmlUtils.toByteArray(body.getFault(), true);

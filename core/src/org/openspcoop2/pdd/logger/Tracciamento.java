@@ -875,7 +875,7 @@ public class Tracciamento {
 							bf.append(esito.getDettaglio());
 							bf.append("\n");
 						}
-						bf.append(SoapUtils.toString(msg.getFactory(), body.getFault()));
+						bf.append(SoapUtils.safe_toString(msg.getFactory(), body.getFault(), OpenSPCoop2Logger.loggerOpenSPCoopCore));
 						traccia.getEsitoElaborazioneMessaggioTracciato().setDettaglio(bf.toString());
 					}
 				}
