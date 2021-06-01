@@ -202,6 +202,7 @@ public class TransportUtils {
 			value = get? map.get(name.toUpperCase()) : map.remove(name.toUpperCase());
 		}
 		if(value==null){
+			List<String> keysFound = new ArrayList<String>();
 			Iterator<String> keys = map.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = keys.next();
@@ -209,7 +210,15 @@ public class TransportUtils {
 					String keyCaseInsensitive = key.toLowerCase();
 					String nameCaseInsensitive = name.toLowerCase();
 					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
-						value = get? map.get(key) : map.remove(key);
+						keysFound.add(key);
+					}
+				}
+			}
+			if(!keysFound.isEmpty()) {
+				for (String keyFound : keysFound) {
+					Object v = get? map.get(keyFound) : map.remove(keyFound);
+					if(value==null) {
+						value=v;
 					}
 				}
 			}

@@ -297,12 +297,12 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(this.descrizione, codiceParam, keyValueObjects);
 	}
 	private ErroreIntegrazione newErroreIntegrazione(String descrizioneParam,CodiceErroreIntegrazione codiceParam, KeyValueObject ... keyValueObjects){
-		String newDescrizione = new String(descrizioneParam);
+		String newDescrizione = new String(descrizioneParam!=null ? descrizioneParam : "Internal Error");
 		return new ErroreIntegrazione(newDescrizione, codiceParam, keyValueObjects);
 	}
 	
 	private ErroreIntegrazione newErroreIntegrazione(String descrizioneParam,CodiceErroreIntegrazione codiceParam, SOAPFaultCode faultCode, KeyValueObject ... keyValueObjects){
-		String newDescrizione = new String(descrizioneParam);
+		String newDescrizione = new String(descrizioneParam!=null ? descrizioneParam : "Internal Error");
 		return new ErroreIntegrazione(newDescrizione, codiceParam, faultCode, keyValueObjects);
 	}
 	
