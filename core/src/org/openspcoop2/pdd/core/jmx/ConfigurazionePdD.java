@@ -1108,7 +1108,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			this.cacheAbilitata = ConfigurazionePdDReader.isCacheAbilitata();
 		}catch(Exception e){
-			this.log.error("Errore durante la comprensione dello stato della cache");
+			this.log.error("Errore durante l'identificazione dello stato della cache");
 		}
 				
 		// Messaggi diagnostici

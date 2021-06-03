@@ -290,7 +290,7 @@ public class ReportExporter extends HttpServlet{
 			
 			// Lettura parametri comuni obbligatori:
 			
-			// Comprensione distribuzione del report
+			// Identificazione distribuzione del report
 			String tipoDistribuzioneReport = req.getParameter(CostantiExporter.TIPO_DISTRIBUZIONE);
 			if(tipoDistribuzioneReport==null){
 				throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.TIPO_DISTRIBUZIONE+"' non fornito");
@@ -301,7 +301,7 @@ public class ReportExporter extends HttpServlet{
 						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_DISTRIBUZIONE);
 			}
 			
-			// Comprensione tipo documentato da esportare
+			// Identificazione tipo documentato da esportare
 			String tipoFormato = req.getParameter(CostantiExporter.TIPO_FORMATO);
 			if(tipoFormato==null){
 				throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.TIPO_FORMATO+"' non fornito");
@@ -312,7 +312,7 @@ public class ReportExporter extends HttpServlet{
 						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_FORMATO);
 			}
 			
-			// Comprensione claim
+			// Identificazione claim
 			org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tokenClaim = null;
 			if(CostantiExporter.TIPO_DISTRIBUZIONE_TOKEN_INFO.equals(tipoDistribuzioneReport)){
 				String claim = req.getParameter(CostantiExporter.CLAIM);

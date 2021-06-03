@@ -117,7 +117,7 @@ public class ConnettoriDiversiHTTP {
 				this.doTestJMS = false;
 			}
 		}catch(Exception e){
-			System.err.println("Comprensione A.S. non riuscita: "+e.getMessage());
+			System.err.println("Identificazione A.S. non riuscita: "+e.getMessage());
 			e.printStackTrace(System.out);
 		}
 		

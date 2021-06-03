@@ -455,7 +455,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			}
 		}catch (Throwable e) {
 			esitiDaRegistrare = null;
-			this.log.error("Transazione ID["+idTransazione+"] errore durante la comprensione degli esiti da registrare: "+e.getMessage(),e);
+			this.log.error("Transazione ID["+idTransazione+"] errore durante l'identificazione degli esiti da registrare: "+e.getMessage(),e);
 		}
 		
 

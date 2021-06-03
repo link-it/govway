@@ -310,7 +310,7 @@ public class DimensioneMessaggiConfigurationUtils {
 								
 			}
 		}catch(Exception e){
-			throw new Exception("Errore durante la comprensione dei limiti sulla dimensione dei messaggi: "+e.getMessage(), e);
+			throw new Exception("Errore durante l'identificazione dei limiti sulla dimensione dei messaggi: "+e.getMessage(), e);
 		}
 		
 		if(soglie!=null) {

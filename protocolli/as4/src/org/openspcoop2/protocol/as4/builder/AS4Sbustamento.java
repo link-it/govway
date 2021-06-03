@@ -136,7 +136,7 @@ public class AS4Sbustamento {
 			String azione = busta.getAzione();
 			String nomePortType = asps.getPortType();
 			
-			// Raccolgo profile binding per comprensione xml root
+			// Raccolgo profile binding per identificazione xml root
 			// Serve solamente se gli i contenuti sono piu' di uno
 			if(!multipart) {
 				listPartInfo = userMessage.getPayloadInfo().getPartInfoList();

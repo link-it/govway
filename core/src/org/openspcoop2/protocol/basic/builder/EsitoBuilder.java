@@ -307,7 +307,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 										}
 									}
 								}catch(Throwable t){
-									this.log.error("Errore durante la comprensione dell'esito: "+t.getMessage(),t);
+									this.log.error("Errore durante l'identificazione dell'esito: "+t.getMessage(),t);
 								}
 							}
 						}
@@ -497,7 +497,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				}
 			}
 		}catch(Exception e){
-			throw new ProtocolException("Comprensione stato non riuscita: "+e.getMessage(),e);
+			throw new ProtocolException("Identificazione stato non riuscita: "+e.getMessage(),e);
 		}
 	}
 
@@ -573,7 +573,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
 									}
 								}catch(Exception e) {
-									this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+									this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 								}
 							}			
 						}
@@ -781,7 +781,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
 							}
 						}catch(Exception e) {
-							this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+							this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 						}
 					}
 				}
@@ -831,7 +831,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 							}
 							
 						}catch(Exception e){
-							this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+							this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 						}
 						
 					}
@@ -841,7 +841,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						try{
 							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 						}catch(Exception e){
-							this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+							this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 						}
 					}
 				}
@@ -874,7 +874,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
 				}
 			}catch(Exception e) {
-				this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+				this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 			}
 		}
 		else {
@@ -925,7 +925,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				}
 				
 			}catch(Exception e){
-				this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+				this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 			}
 			
 			// se arrivo qua provo a vedere se siamo nel caso di un internal Error
@@ -934,7 +934,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 				}
 			}catch(Exception e){
-				this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+				this.log.error("Errore durante l'identificazione dell'esito: "+e.getMessage(),e);
 			}
 			
 		}

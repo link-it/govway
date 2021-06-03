@@ -678,7 +678,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 						idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 					}catch(Throwable e) {
 						// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
-						this.logger.error("Errore durante la comprensione delle caratteristiche dell'API (Accesso servizio): "+e.getMessage(),e);
+						this.logger.error("Errore durante l'identificazione delle caratteristiche dell'API (Accesso servizio): "+e.getMessage(),e);
 					}
 				}
 			}
@@ -718,7 +718,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					
 				}catch(Throwable e) {
 					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
-					this.logger.error("Errore durante la comprensione delle caratteristiche dell'API (Accesso servizio): "+e.getMessage(),e);
+					this.logger.error("Errore durante l'identificazione delle caratteristiche dell'API (Accesso servizio): "+e.getMessage(),e);
 				}
 				try {
 					if(transactionDTO.getUriAccordoServizio()==null){
@@ -731,7 +731,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 				}catch(Throwable e) {
 					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
-					this.logger.error("Errore durante la comprensione dell'identificativo dell'API (Accesso servizio parte comune): "+e.getMessage(),e);
+					this.logger.error("Errore durante l'identificazione dell'identificativo dell'API (Accesso servizio parte comune): "+e.getMessage(),e);
 				}
 			}
 

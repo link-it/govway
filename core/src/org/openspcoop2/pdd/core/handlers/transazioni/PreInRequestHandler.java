@@ -119,7 +119,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 					pddContext.addObject(Costanti.CLIENT_IP_REMOTE_ADDRESS,remoteAddr);
 				}
 			}catch(Throwable e){
-				log.error("Errore durante la comprensione dell'indirizzo ip del chiamante (via socket): "+e.getMessage(),e);
+				log.error("Errore durante l'identificazione dell'indirizzo ip del chiamante (via socket): "+e.getMessage(),e);
 			}
 			try{
 				String transportAddr = getIPClientAddressFromHeader(HttpUtilities.getClientAddressHeaders(), req);
@@ -127,7 +127,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 					pddContext.addObject(Costanti.CLIENT_IP_TRANSPORT_ADDRESS,transportAddr);
 				}
 			}catch(Throwable e){
-				log.error("Errore durante la comprensione dell'indirizzo ip del chiamante (via trasporto): "+e.getMessage(),e);
+				log.error("Errore durante l'identificazione dell'indirizzo ip del chiamante (via trasporto): "+e.getMessage(),e);
 			}
 		}
 	}

@@ -3123,7 +3123,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			
 			if(!listaErrori.isEmpty()) {
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				
 				for (int i = 0; i < listaErrori.size(); i++) {
 					if(i != 0) {

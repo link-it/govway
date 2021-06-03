@@ -714,7 +714,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 		boolean casoSpecialeModificaNomeFruizione = !fruizioni && this.isMascheraGestioneFruizione(consoleHelper);
 		
-		// Comprensione API
+		// Identificazione API
 		AccordoServizioParteComune api = null;
 		String portType = null; 
 		try {
@@ -735,7 +735,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			return null;
 		}
 		
-		// Comprensione se è richiesta la sicurezza
+		// Identificazione se è richiesta la sicurezza
 		if(isSicurezzaMessaggioRequired(api, portType)) {
 		
 			ConsoleConfiguration configuration = new ConsoleConfiguration();
@@ -768,7 +768,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 		boolean casoSpecialeModificaNomeFruizione = !fruizioni && this.isMascheraGestioneFruizione(consoleHelper);
 		
-		// Comprensione API
+		// Identificazione API
 		AccordoServizioParteComune api = null;
 		String portType = null; 
 		try {
@@ -789,7 +789,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			return false;
 		}
 		
-		// Comprensione se è richiesta la sicurezza
+		// Identificazione se è richiesta la sicurezza
 		if(isSicurezzaMessaggioRequired(api, portType)) {
 		
 			boolean corniceSicurezza = isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
@@ -833,7 +833,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			return false;
 		}
 		
-		// Comprensione se è richiesta la sicurezza
+		// Identificazione se è richiesta la sicurezza
 		if(isSicurezzaMessaggioRequired(api, portType)) {
 			
 			AbstractConsoleItem<?> profiloSicurezzaMessaggioHttpHeadersItem = 	

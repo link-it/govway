@@ -1201,9 +1201,9 @@ public class RicezioneBuste {
 		
 		
 		
-		/* ------------ Comprensione IDServizio  ------------- */	
+		/* ------------ Identificazione IDServizio  ------------- */	
 		
-		msgDiag.mediumDebug("Comprensione IDServizio ...");
+		msgDiag.mediumDebug("Identificazione IDServizio ...");
 		
 		IDServizio idServizio = requestInfo.getIdServizio();
 		PortaApplicativa pa = null;
@@ -1315,7 +1315,7 @@ public class RicezioneBuste {
 					// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
 					setSOAPFault_processamento(integrationFunctionError,logCore,null,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),e,
-							"comprensioneIDServizio");
+							"IdentificazioneIDServizio");
 					openspcoopstate.releaseResource();
 					return;
 				}
@@ -1348,7 +1348,7 @@ public class RicezioneBuste {
 		
 		
 		
-		/* ------------ Comprensione Router Function  ------------- */	
+		/* ------------ Identificazione Router Function  ------------- */	
 		
 		// PdD Function: router o normale PdD
 		boolean functionAsRouter = false;
@@ -1683,7 +1683,7 @@ public class RicezioneBuste {
 		
 		
 		
-		/* ------------ Comprensione Azione  ------------- */	
+		/* ------------ Identificazione Azione  ------------- */	
 		
 		try{
 			if(pa!=null){
@@ -1779,7 +1779,7 @@ public class RicezioneBuste {
 				}
 				setSOAPFault_processamento(integrationFunctionError,logCore,null,
 						identificazione.getErroreIntegrazione(),null,
-						"comprensionePASpecificaPerAzione");
+						"IdentificazionePASpecificaPerAzione");
 				openspcoopstate.releaseResource();
 				return;
 			}
@@ -1846,7 +1846,7 @@ public class RicezioneBuste {
 
 		/* ------------  
 		 * URL Mapping 
-		 * (Comprensione dati sul soggetto fruitore e sulle funzionalità di protocollo ed identificativo di protocollo)
+		 * (Identificazione dati sul soggetto fruitore e sulle funzionalità di protocollo ed identificativo di protocollo)
 		 * In questo punto l'idServizio contiene tutte le informazioni necessarie per accedere al registro se le funzionalità di protocollo sono statiche
 		 * Deve contenere anche l'azione, visto che quest'ultima influenza il profili di collaborazione 
 		 * ------------- */	
@@ -2476,7 +2476,7 @@ public class RicezioneBuste {
 			msgDiag.mediumDebug("Lettura porta applicativa/delegata...");
 			try{
 
-				/* ----------- Comprensione profilo -------------- */
+				/* ----------- Identificazione profilo -------------- */
 				if(     (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
 						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) &&
 						!(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta.toString())) )
@@ -3839,9 +3839,9 @@ public class RicezioneBuste {
 			String esito = null;
 			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_SUSPEND;
 			if(serviceIsEnabledExceptionProcessamento!=null){
-				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] Comprensione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
-				msgDiag.logErroreGenerico("Comprensione stato servizio di ricezione buste non riuscita", "PA");
-				esito = "["+ RicezioneBuste.ID_MODULO+ "] Comprensione stato servizio di ricezione buste non riuscita";
+				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] Identificazione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+				msgDiag.logErroreGenerico("Identificazione stato servizio di ricezione buste non riuscita", "PA");
+				esito = "["+ RicezioneBuste.ID_MODULO+ "] Identificazione stato servizio di ricezione buste non riuscita";
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 			}else{
@@ -5850,7 +5850,7 @@ public class RicezioneBuste {
 			try{
 
 
-				/* ----------- Comprensione profilo -------------- */
+				/* ----------- Identificazione profilo -------------- */
 				if(     (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
 						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) &&
 						(bustaRichiesta.getRiferimentoMessaggio()!=null) )

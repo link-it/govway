@@ -59,7 +59,7 @@ La sezione **Componenti Applicative** prevede le seguenti opzioni:
 
 	- *Statica*: modalità che prevede la registrazione manuale dei nodi presenti come descritto nella sezione :ref:`cluster`. In questo caso la console di gestione consente l'accesso a specifiche operazioni di manutenzione sui singoli nodi.
 
-	- *Dinamica*: modalità che prevede l'individuazione dinamica dei nodi presenti, senza che sia necessario specificarlo nella configurazione (utile in ambienti container). In questo scenario non risultano accessibili dalla console di gestione alcune operazioni di manutenzione sui singoli nodi.
+	- *Dinamica*: in questo caso le operazioni di manutenzione dei singoli nodi non risultano più accessibili individualmente, ma viene indirizzato complessivamente il cluster.
 
 In funzione delle opzioni, fornite in questo pannello, saranno proposti dalla procedura d'installazione alcuni passaggi aggiuntivi.
 In particolare, riguardo l'accesso agli schemi del database, in funzione del numero di datasource previsto saranno opzionalmente richiesti in altrettanti pannelli:

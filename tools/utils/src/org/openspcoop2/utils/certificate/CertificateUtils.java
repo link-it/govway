@@ -306,7 +306,7 @@ public class CertificateUtils {
 			String [] keyValue = _getKeyValuePair(valoriPrincipal[i], principal, type);
 
 			if(keyValue[0].trim().contains(" ")){
-				throw new UtilsException("("+principal+") Comprensione "+type+" non riuscita: il campo ["+valoriPrincipal[i]+"] contiene spazi nella chiave identificativa ["+keyValue[0].trim()+"]");
+				throw new UtilsException("("+principal+") Analisi "+type+" fallita: il campo ["+valoriPrincipal[i]+"] contiene spazi nella chiave identificativa ["+keyValue[0].trim()+"]");
 			}
 			
 			if(CertificateUtils.formatKeyPrincipal(keyValue[0]).equalsIgnoreCase("CN")){
@@ -470,7 +470,7 @@ public class CertificateUtils {
 			}
 		}
 		if(valori==null || valori.length<1){
-			throw new UtilsException("("+principal+") Comprensione "+type+" interno alla configurazione di OpenSPCoop non riuscita: null??");
+			throw new UtilsException("("+principal+") Analisi "+type+" interno alla configurazione di OpenSPCoop non riuscita: null??");
 		}
 		
 		// validazione
@@ -488,7 +488,7 @@ public class CertificateUtils {
 			
 			// override eccezione in caso '=' non rpesente
 			if(valoriPrincipal[i].contains("=")==false){
-				throw new UtilsException("("+principal+") Comprensione "+type+" non riuscita: ["+valoriPrincipal[i]+"] non separata dal carattere \"=\"");
+				throw new UtilsException("("+principal+") Analisi "+type+" fallita: ["+valoriPrincipal[i]+"] non separata dal carattere \"=\"");
 			}
 			String [] keyValue = _getKeyValuePair(valoriPrincipal[i], principal, type);
 			
@@ -539,7 +539,7 @@ public class CertificateUtils {
 	private static String[] _getKeyValuePair(String keyValue, String principal, PrincipalType type) throws UtilsException {
 		
 		if(keyValue.contains("=")==false){
-			throw new UtilsException("("+principal+") Comprensione "+type+" non riuscita: ["+keyValue+"] non separata dal carattere \"=\". Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
+			throw new UtilsException("("+principal+") Analisi "+type+" fallita: ["+keyValue+"] non separata dal carattere \"=\". Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
 		}
 		
 		// Bug Fix OP-664
@@ -557,7 +557,7 @@ public class CertificateUtils {
 				keyValueReturn[1] = "";
 			}
 			else {
-				throw new UtilsException("("+principal+") Comprensione "+type+" non riuscita: ["+keyValue+"] non contiene un valore? Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
+				throw new UtilsException("("+principal+") Analisi "+type+" fallita: ["+keyValue+"] non contiene un valore? Verificare che non esistano coppie che possiedono valori che contengono il carattere separatore (usare eventualmente come carattere di escape '\\')");
 			}
 		}
 		
@@ -567,7 +567,7 @@ public class CertificateUtils {
 		
 		// Questo controllo non deve essere fatto poiche' il valore puo' contenere il '='.
 //		if(keyValue.length!=2){
-//			throw new UtilsException("("+principal+") Comprensione "+type+" non riuscita: ["+keyValue+"] contiene piu' di un carattere \"=\"");
+//			throw new UtilsException("("+principal+") Analisi "+type+" fallita: ["+keyValue+"] contiene piu' di un carattere \"=\"");
 //		}
 		if(keyValueReturn.length==2) {
 			return keyValueReturn;

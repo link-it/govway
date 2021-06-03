@@ -20,7 +20,7 @@ richiesta: # [required]
   contenuti: # [optional]
     # [optional] contiene la lista degli header http presenti nella richiesta. 
     #            Alcuni header potrebbero non essere riportati nella traccia se classificati come infrastrutturali (es. Proxy). 
-    #            E' obbligatorio registrare tutti gli header che rientrano nell'ambito applicativo e/o sono inerenti alla comprensione del body (ContentEncoding, Signature, Encrypt ...)
+    #            E' obbligatorio registrare tutti gli header che rientrano nell'ambito applicativo e/o sono inerenti al processamento del body (ContentEncoding, Signature, Encrypt ...)
     headers: 
     - nome: Accept
       valore: application/json

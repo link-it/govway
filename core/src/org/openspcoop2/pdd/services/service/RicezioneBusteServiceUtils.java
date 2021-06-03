@@ -381,11 +381,11 @@ public class RicezioneBusteServiceUtils {
 				generatoreErrore.updateRequestMessageType(requestMessageTypeProtocol);
 			}catch(Exception error){
 				if(res!=null) {
-					logCore.error("Comprensione MessageType fallita: "+error.getMessage(),error);
+					logCore.error("Identificazione MessageType fallita: "+error.getMessage(),error);
 					msgDiag.addKeywordErroreProcessamento(error);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
-							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Comprensione MessageType fallita"),
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Identificazione MessageType fallita"),
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 				}
 				return null;

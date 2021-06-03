@@ -280,7 +280,7 @@ public class CompressorUtilities {
 			bout.close();
 			return bout.toByteArray();
 		}catch(Exception e){
-			throw new UtilsException("Errore durante la comprensione '"+type+"': "+e.getMessage(),e);
+			throw new UtilsException("Errore durante la scrittura '"+type+"': "+e.getMessage(),e);
 		}
 	}
 
@@ -386,7 +386,7 @@ public class CompressorUtilities {
 	        return list;
 	        
 		}catch(Exception e){
-			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+			throw new UtilsException("Errore durante la lettura '"+type+"': "+e.getMessage(),e);
 		}
 	}
 }

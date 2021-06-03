@@ -338,10 +338,10 @@ public class DiagnosticManager {
 				methodName = fieldName.substring(0, fieldName.indexOf("["));
 			}catch(Exception e){
 				if(this.diagnosticProperties.isThrowExceptionPlaceholderFailedResolution()){
-					throw new UtilsException("Errore durante la comprensione del parametro di posizionamento ["+fieldName+"]: "+e.getMessage(),e);
+					throw new UtilsException("Errore durante l'identificazione del parametro di posizionamento ["+fieldName+"]: "+e.getMessage(),e);
 				}
 				else{
-					return "(???Placeholder ["+placeholderOriginale+"] uncorrect, errore durante la comprensione del parametro di posizionamento ["+fieldName+"]: "+e.getMessage()+")";
+					return "(???Placeholder ["+placeholderOriginale+"] uncorrect, errore durante l'identificazione del parametro di posizionamento ["+fieldName+"]: "+e.getMessage()+")";
 				}
 			}
 		}

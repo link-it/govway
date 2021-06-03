@@ -88,7 +88,7 @@ public class PortaImpl {
 				this.doTestStateful = false;
 			}
 		}catch(Exception e){
-			System.out.println("Errore durante la comprensione dell'application server");
+			System.out.println("Errore durante l'identificazione dell'application server");
 			e.printStackTrace(System.out);
 		}
 	}

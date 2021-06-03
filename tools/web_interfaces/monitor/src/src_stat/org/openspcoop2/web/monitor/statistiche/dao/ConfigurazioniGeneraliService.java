@@ -420,7 +420,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					try{
 						supportoReferente = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(tipoSoggetto).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
 					}catch(Throwable e) {
-						log.error("Comprensione se il protocollo supporta il soggetto referente: "+e.getMessage());
+						log.error("Analisi se il protocollo supporta il soggetto referente: "+e.getMessage());
 					}
 					if(supportoReferente) {
 						count =   this.dynamicService.countAccordiServizio(tipoProtocollo,tipoSoggetto, nomeSoggetto, true, isErogatore, gruppo);
@@ -439,7 +439,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 							supportoReferente = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
 						}
 					}catch(Throwable e) {
-						log.error("Comprensione se il protocollo supporta il soggetto referente: "+e.getMessage());
+						log.error("Analisi se il protocollo supporta il soggetto referente: "+e.getMessage());
 					}
 					
 					count =   this.dynamicService.countAccordiServizio(tipoProtocollo,null, null, supportoReferente, isErogatore, gruppo);

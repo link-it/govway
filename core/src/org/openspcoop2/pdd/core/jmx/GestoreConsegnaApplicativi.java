@@ -548,7 +548,7 @@ public class GestoreConsegnaApplicativi extends NotificationBroadcasterSupport i
 		try{
 			this.cacheAbilitata = GestoreLoadBalancerCaching.isCacheAbilitata();
 		}catch(Exception e){
-			this.log.error("Errore durante la comprensione dello stato della cache");
+			this.log.error("Errore durante l'identificazione dello stato della cache");
 		}
 		
 		this.maxLifePresaInConsegna = this.openspcoopProperties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife();

@@ -1084,7 +1084,7 @@ public class Sbustamento extends GenericLib{
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pa);
 									}
 								}catch(Exception e){
-									this.log.error("Errore durante la comprensione della Porta (Delegata/Applicativa) associata alla busta: "+e.getMessage(),e);
+									this.log.error("Errore durante l'identificazione della Porta (Delegata/Applicativa) associata alla busta: "+e.getMessage(),e);
 								}
 								
 								if(ricevutaAbilitata==false){

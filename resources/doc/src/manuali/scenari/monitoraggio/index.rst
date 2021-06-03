@@ -33,7 +33,7 @@ Se apriamo il dettaglio della transazione con esito errore, relativa all'invocaz
 
 Il dettaglio della transazione:
 
-- Il riquadro "Informazioni Generali" riepiloga i principali dati identificativi della transazione. In questo riquadro è mostrato l'esito, in questo caso negativo. Tramite il link apposito si possono visualizzare i messaggi diagnosti, utili alla comprensione del problema occorso (:numref:`monitor_token_non_presente_diagnostici_fig`).
+- Il riquadro "Informazioni Generali" riepiloga i principali dati identificativi della transazione. In questo riquadro è mostrato l'esito, in questo caso negativo. Tramite il link apposito si possono visualizzare i messaggi diagnosti, utili all'identificazione del problema occorso (:numref:`monitor_token_non_presente_diagnostici_fig`).
 
    .. figure:: ../_figure_scenari/Monitor_token_non_presente_diagnostici.png
     :scale: 80%

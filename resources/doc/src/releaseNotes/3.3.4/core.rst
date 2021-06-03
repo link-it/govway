@@ -2,21 +2,21 @@ Miglioramenti alle funzionalità base dell'API Gateway
 ------------------------------------------------------------
 
 
-Sono stati introdotti miglioramenti focalizzati all'aspetto prestazionale:
+Sono stati introdotti significativi miglioramenti prestazionali:
 
-- la gestione dei messaggi di API SOAP è adesso equivalente a quella delle API REST: se non sono attive funzionalità che richiedono l'accesso al messaggio la gestione dei contenuti avviene in 'Passthrough';
+- la gestione dei messaggi di API SOAP è adesso equivalente a quella delle API REST: se non sono attive funzionalità che richiedono l'accesso al contenuto del messaggio, la gestione avviene in 'Passthrough', senza introdurre nessun overhead nella trasmissione;
 
 - per API SOAP, anche se viene richiesta la costruzione in memoria dell'oggetto DOM che rappresenta il messaggio, al backend verrà inoltrata esattamente la richiesta originale ricevuta dal client, preventivamente bufferizzata, se le funzionalità che hanno avuto bisogno di accedere all'oggetto DOM non lo hanno modificato;
 
 - la connessione verso il database 'runtime' viene adesso negoziata solamente se richiesta da funzionalità che ne necessitano;
 
-- i connettori http preservavano il 'keep-alive';
+- i connettori http preservano il 'keep-alive';
 
-- la SSLSocketFactory istanziata per i connettori https viene mantenuta in una cache;
+- la SSLSocketFactory istanziata per i connettori https viene mantenuta in una apposita cache;
 
-- le chiavi private accedute per funzionalità di firma e decrifratura vengono salvate in cache insieme ai keystore;
+- le chiavi private accedute per funzionalità di firma e decrifratura vengono salvate in cache assieme ai keystore;
 
-- sono adesso attivabili i seguenti generatori di UUID:
+- sono adesso gestiti i seguenti generatori di UUID:
 
 	- generatore uuid v4 che utilizza SecureRandom;
 
@@ -26,19 +26,17 @@ Sono stati introdotti miglioramenti focalizzati all'aspetto prestazionale:
 
 	- il default del prodotto è stato modificato da UUIDv4 (java.util.UUID senza ThreadLocal) a UUIDv1 (com.fasterxml.uuid.impl.TimeBasedGenerator con ThreadLocal).
 
+È stata migliorata la generazione delle informazioni statistiche:
 
-È stata inoltre completamente rivista la generazione delle informazioni statistiche:
-
-- i criteri di generazione dei report statistici utilizzano adesso un'identificazione dell'intervallo temporale inclusivo al giorno di interesse del report (es. >=2021-02-10 00:00:00.000), soluzione che risulta maggiormente efficente in presenza di partizionamento giornaliero delle transazioni; 
+- i criteri di generazione dei report statistici utilizzano adesso un'identificazione dell'intervallo temporale inclusivo del giorno di interesse del report (es. >=2021-02-10 00:00:00.000), soluzione che risulta maggiormente efficente in presenza di partizionamento giornaliero delle transazioni; 
 
 - l'algoritmo di generazione delle statistiche è stato completamente rivisto:
 
-	- le informazioni statistiche, comprensive di latenze, vengono adesso calcolate tramite un'unica query SQL in modo da essere maggiormente efficente in presenza di grandi mole di dati;
+	- le informazioni statistiche, comprensive di latenze, vengono adesso calcolate tramite un'unica query SQL in modo da essere maggiormente efficente in presenza di grande mole di dati;
 
-	- l'aggiornamento dell'intervallo corrente è adesso completamente transazionale;
+	- l'aggiornamento dell'intervallo corrente è adesso transazionale;
 
 	- aggiunto refresh della connessione ogni 300 secondi.
-
 
 Infine sono stati apportati i seguenti ulteriori miglioramenti:
 

@@ -1,3 +1,7 @@
+2021-06-04  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.4
+
 2021-06-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, InstallerVersioneBinaria]
@@ -548,7 +552,7 @@
  			org.openspcoop2.core.registry.driver.DriverRegistroServiziException: L'API non contiene una specifica
 			at org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities.buildApiFromSpecific(AccordoServizioWrapperUtilities.java:167) 
 			...
-	- Errore durante la comprensione dell'esito in presenza di richieste parallele ricevute non appena veniva avviato il gateway:
+	- Errore durante l'identificazione dell'esito in presenza di richieste parallele ricevute non appena veniva avviato il gateway:
 		ERROR <14-12-2020 10:03:17.261> org.openspcoop2.pdd.services.service.RicezioneBusteService.process(1029): ErroreGenerale 
  			org.openspcoop2.protocol.sdk.ProtocolException: Comprensione stato non riuscita: null
 		        at org.openspcoop2.protocol.basic.builder.EsitoBuilder.getEsito(EsitoBuilder.java:473) 

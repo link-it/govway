@@ -684,7 +684,7 @@ public class AlarmManager {
 			boolean acknowledged = (allarme.getAcknowledged()==null || allarme.getAcknowledged()==1);
 			
 			
-			alarmLogger.debug(prefix+"comprensione se è necessario una notifica di cambio stato per mail/script (acknowledged:"+acknowledged+") ...");
+			alarmLogger.debug(prefix+"valutazione se è necessario una notifica di cambio stato per mail/script (acknowledged:"+acknowledged+") ...");
 			
 			alarmLogger.debug(prefix+"mail sendChangeStatusOk:"+mailSendChangeStatusOk+" checkAcknowledgedStatus:"+mailCheckAcknowledgedStatus+"");
 			alarmLogger.debug(prefix+"script sendChangeStatusOk:"+scriptSendChangeStatusOk+" checkAcknowledgedStatus:"+scriptCheckAcknowledgedStatus+"");

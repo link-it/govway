@@ -116,7 +116,7 @@ public class ZipUtilities {
 			bout.close();
 			return bout.toByteArray();
 		}catch(Exception e){
-			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+			throw new UtilsException("Errore durante la scrittura dello zip: "+e.getMessage(),e);
 		}
 	}
 	
@@ -138,7 +138,7 @@ public class ZipUtilities {
 			bout.close();
 			return bout.toByteArray();
 		}catch(Exception e){
-			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+			throw new UtilsException("Errore durante la scrittura dello zip: "+e.getMessage(),e);
 		}
 	}
 	
@@ -168,7 +168,7 @@ public class ZipUtilities {
 	        bin.close();
 	        return bout.toByteArray();
 		}catch(Exception e){
-			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+			throw new UtilsException("Errore durante la lettura dello zip: "+e.getMessage(),e);
 		}
 	}
 
@@ -209,7 +209,7 @@ public class ZipUtilities {
 	        return list;
 	        
 		}catch(Exception e){
-			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+			throw new UtilsException("Errore durante la lettura dello zip: "+e.getMessage(),e);
 		}
 	}
 
@@ -220,18 +220,18 @@ public class ZipUtilities {
 			String dir = entry;
 			int indexOf=dir.indexOf(File.separatorChar);
 			if(indexOf<=0){
-				throw new UtilsException("Errore durante la comprensione della directory radice presente all'interno dello zip ("+indexOf+")");
+				throw new UtilsException("Errore durante l'identificazione della directory radice presente all'interno dello zip ("+indexOf+")");
 			}
 			dir = dir.substring(0,indexOf);
 			if(dir==null || "".equals(dir)){
-				throw new UtilsException("Errore durante la comprensione della directory radice presente all'interno dello zip ("+dir+")");
+				throw new UtilsException("Errore durante l'identificazione della directory radice presente all'interno dello zip ("+dir+")");
 			}
 			rootDir=dir+File.separatorChar;
 			return rootDir;
 		}catch(UtilsException ex){
 			throw ex;
 		}catch(Exception e){
-			throw new UtilsException("Errore durante la comprensione della directory radice presente all'interno dello zip: "+e.getMessage(),e);
+			throw new UtilsException("Errore durante l'identificazione della directory radice presente all'interno dello zip: "+e.getMessage(),e);
 		}
 	}
 	
@@ -239,7 +239,7 @@ public class ZipUtilities {
 		try{
 			return (new File(file)).getName();
 		}catch(Exception e){
-			throw new UtilsException("Errore durante la comprensione del base name per il file ["+file+"]: "+e.getMessage(),e);
+			throw new UtilsException("Errore durante l'identificazione del base name per il file ["+file+"]: "+e.getMessage(),e);
 		}
 	}
 	

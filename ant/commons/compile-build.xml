@@ -310,7 +310,7 @@
 		</if>
 		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.GIT_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 		
-		<!-- Comprensione valore 'duplicate' jar task -->
+		<!-- Identificazione valore 'duplicate' jar task -->
 		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
 		<if>
 			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />
@@ -566,7 +566,7 @@ Last-Changed-Date:  ${git.package.authorDate}
 		</if>
 		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.GIT_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 		
-		<!-- Comprensione valore 'duplicate' jar task -->
+		<!-- Identificazione valore 'duplicate' jar task -->
 		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
 		<if>
 			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />
@@ -785,7 +785,7 @@ Last-Changed-Date:  ${git.authorDate}
 		</if>
 		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.GIT_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 	
-		<!-- Comprensione valore 'duplicate' jar task -->
+		<!-- Identificazione valore 'duplicate' jar task -->
 		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
 		<if>
 			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />

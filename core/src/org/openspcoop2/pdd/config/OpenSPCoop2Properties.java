@@ -5835,7 +5835,7 @@ public class OpenSPCoop2Properties {
 				try{ 
 					OpenSPCoop2Properties.attachmentsProcessingMode=AttachmentsProcessingMode.getFileCacheProcessingMode(getAttachmentRepoDir(), getFileThreshold());
 				} catch(java.lang.Exception e) {
-					this.log.error("Riscontrato errore durante la comprensione sulla modalità di processing degli attachments: "+e.getMessage(),e);
+					this.log.error("Riscontrato errore durante l'identificazione della modalità di processing degli attachments: "+e.getMessage(),e);
 					OpenSPCoop2Properties.attachmentsProcessingMode=AttachmentsProcessingMode.getMemoryCacheProcessingMode();
 				} 
 			}else{

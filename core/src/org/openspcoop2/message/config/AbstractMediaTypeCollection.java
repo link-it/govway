@@ -210,7 +210,7 @@ public abstract class AbstractMediaTypeCollection implements Serializable {
 						return this.map_messageProcessor.get(i);
 					}
 				}catch(Exception e){
-					throw new MessageException("Errore durante la comprensione del content-type ["+mediaType+"] (pattern:"+pattern+"): "+e.getMessage(),e);
+					throw new MessageException("Errore durante l'identificazione del content-type ["+mediaType+"] (pattern:"+pattern+"): "+e.getMessage(),e);
 				}
 			}
 			else{

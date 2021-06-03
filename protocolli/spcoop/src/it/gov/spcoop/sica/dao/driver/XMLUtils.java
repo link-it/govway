@@ -271,7 +271,7 @@ public class XMLUtils  {
 			}
 			
 			
-			/* Comprensione altri campi */
+			/* Identificazione altri campi */
 			e = zip.entries();
 			while(e.hasMoreElements()) {
 				ZipEntry zipEntry = (ZipEntry)e.nextElement();
@@ -767,7 +767,7 @@ public class XMLUtils  {
 			}
 			
 			
-			/* Comprensione altri campi */
+			/* Identificazione altri campi */
 			e = zip.entries();
 			while(e.hasMoreElements()) {
 				ZipEntry zipEntry = (ZipEntry)e.nextElement();
@@ -1616,7 +1616,7 @@ public class XMLUtils  {
 			}
 			
 			
-			/* Comprensione altri campi */
+			/* Identificazione altri campi */
 			e = zip.entries();
 			while(e.hasMoreElements()) {
 				ZipEntry zipEntry = (ZipEntry)e.nextElement();

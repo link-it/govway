@@ -2758,8 +2758,8 @@ public class RicezioneContenutiApplicativi {
 			ErroreIntegrazione errore = null;
 			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_SUSPEND;
 			if(serviceIsEnabledExceptionProcessamento!=null){
-				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] Comprensione stato servizio di ricezione contenuti applicativi non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
-				msgDiag.logErroreGenerico("Comprensione stato servizio di ricezione contenuti applicativi non riuscita", "PD");
+				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] Identificazione stato servizio di ricezione contenuti applicativi non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+				msgDiag.logErroreGenerico("Identificazione stato servizio di ricezione contenuti applicativi non riuscita", "PD");
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 			}else{
@@ -3550,7 +3550,7 @@ public class RicezioneContenutiApplicativi {
 		} catch (Exception e) {
 			msgDiag.addKeywordErroreProcessamento(e,"analisi del profilo di gestione fallita");
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
-			logCore.error("Comprensione Profilo Gestione fallita",e);
+			logCore.error("Identificazione Profilo Gestione fallita",e);
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
@@ -3616,7 +3616,7 @@ public class RicezioneContenutiApplicativi {
 			} catch (Exception e) {
 				msgDiag.addKeywordErroreProcessamento(e,"recupero degli indirizzi di risposta per i soggetti fallita");
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioFallita");
-				logCore.error("Comprensione Indirizzo Risposta fallita",e);
+				logCore.error("Identificazione Indirizzo Risposta fallita",e);
 				openspcoopstate.releaseResource();
 				if (this.msgContext.isGestioneRisposta()) {
 					this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTERNAL_REQUEST_ERROR,

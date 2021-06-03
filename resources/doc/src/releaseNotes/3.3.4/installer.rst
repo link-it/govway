@@ -7,4 +7,4 @@ Sono stati apportati i seguenti miglioramenti all'installer binario:
 
 - gli indici 'Full', generabili utilizzando l'installer in modalità avanzata, vengono adesso generati anche per i tipi di database hsql e sqlserver;
 
-- aggiunta preconfigurazione del software, tramite installer eseguito in modalità avanzata, per poter essere utilizzato in modalità 'cluster dinamico'.
+- aggiunta all'installer  in modalità avanzata, opzione per la configurazione del software in modalità 'cluster dinamico', indicata per le installazioni in cloud.

@@ -1712,7 +1712,7 @@ public class ImporterInformationMissingUtils {
 	private List<String> letturaServiziDefinitiParteComune(Fruitore fruitore,AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc){
 		Boolean correlato = null;
 		
-		// Comprensione attraverso WSDL Implementativo
+		// Identificazione attraverso WSDL Implementativo
 		if(fruitore.getByteWsdlImplementativoErogatore()!=null){
 			correlato = false;
 		}
@@ -1726,7 +1726,7 @@ public class ImporterInformationMissingUtils {
 			correlato = true;
 		}
 		
-		// Comprensione attraverso tipologia
+		// Identificazione attraverso tipologia
 		if(correlato==null){
 			TipologiaServizio tipologiaServizio = TipologiaServizio.NORMALE;
 			if(asps!=null){
@@ -1740,7 +1740,7 @@ public class ImporterInformationMissingUtils {
 	private List<String> letturaServiziDefinitiParteComune(AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc){
 		Boolean correlato = null;
 		
-		// Comprensione attraverso WSDL Implementativo
+		// Identificazione attraverso WSDL Implementativo
 		if(asps.getByteWsdlImplementativoErogatore()!=null){
 			correlato = false;
 		}
@@ -1748,7 +1748,7 @@ public class ImporterInformationMissingUtils {
 			correlato = true;
 		}
 		
-		// Comprensione attraverso tipologia
+		// Identificazione attraverso tipologia
 		if(correlato==null){
 			TipologiaServizio tipologiaServizio = TipologiaServizio.NORMALE;
 			if(asps!=null){
@@ -1793,7 +1793,7 @@ public class ImporterInformationMissingUtils {
 	private void verificaMappingPortTypeBindingInRiferimentoParteComune(Fruitore fruitore,AccordoServizioParteSpecifica asps, 
 			AccordoServizioParteComune aspc,
 			List<String> serviziIdentificatiNellaParteComune) throws Exception {
-		// Comprensione WSDL Implementativo
+		// Identificazione WSDL Implementativo
 		byte[]wsdlImplementativo = null;
 		String tipoWSDL = "WSDL Implementativo";
 		if(fruitore.getByteWsdlImplementativoErogatore()!=null){
@@ -1819,7 +1819,7 @@ public class ImporterInformationMissingUtils {
 	private void verificaMappingPortTypeBindingInRiferimentoParteComune(AccordoServizioParteSpecifica asps, 
 			AccordoServizioParteComune aspc,
 			List<String> serviziIdentificatiNellaParteComune) throws Exception {
-		// Comprensione WSDL Implementativo
+		// Identificazione WSDL Implementativo
 		byte[]wsdlImplementativo = null;
 		String tipoWSDL = "WSDL Implementativo";
 		if(asps.getByteWsdlImplementativoErogatore()!=null){

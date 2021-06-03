@@ -180,7 +180,7 @@ public class XmlDecrypt extends AbstractXmlCipher {
 				encryptedKeyElement = (Element) o;
 			}
 			
-			// Comprensione algoritmi
+			// Identificazione algoritmi
 			
 			org.apache.xml.security.encryption.XMLCipher xmlCipherReaderAlgo = super.getXMLCipher();
 			EncryptedData encryptedData = xmlCipherReaderAlgo.loadEncryptedData(document, encryptedDataElement);

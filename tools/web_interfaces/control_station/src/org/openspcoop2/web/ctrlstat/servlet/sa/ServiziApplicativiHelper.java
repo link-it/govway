@@ -275,7 +275,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 										labelErogazione = labelErogazione+" (gruppo:"+mappingPA.getDescrizione()+")";
 									}
 								}catch(Throwable t) {
-									this.log.error("Errore durante la comprensione dell'erogazione: "+t.getMessage(),t);
+									this.log.error("Errore durante l'identificazione dell'erogazione: "+t.getMessage(),t);
 								}
 							}
 							this.pd.setMessage("L'erogazione "+labelErogazione+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");

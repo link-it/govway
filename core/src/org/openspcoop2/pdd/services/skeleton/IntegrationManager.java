@@ -398,7 +398,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						errori.append("(Autenticazione " +tipoAutenticazione[i]+") non ha identificato alcun servizio applicativo");
 					}
 				}catch(Exception e){
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione dell'errore: "+e.getMessage(),e);
+					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante l'identificazione dell'errore: "+e.getMessage(),e);
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_519_INTEGRATION_MANAGER_CONFIGURATION_ERROR),
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.getErroriProperties(logCore));
@@ -497,7 +497,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}
 		if (!serviceIsEnabled || serviceIsEnabledExceptionProcessamento!=null) {
 			if(serviceIsEnabledExceptionProcessamento!=null){
-				logCore.error("["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Comprensione stato servizio IntegrationManager non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+				logCore.error("["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Identificazione stato servizio IntegrationManager non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
 			}else{
 				logCore.error("["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Servizio IntegrationManager disabilitato");
 			}
@@ -1104,7 +1104,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					ruoloMessaggio = gestoreMessaggiIdentificativoReale.getRiferimentoMessaggio()==null ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
 				}
 			}catch(Exception e){
-				logCore.error("Comprensione tipo messaggio non riuscita: "+e.getMessage(),e);
+				logCore.error("Identificazione tipo messaggio non riuscita: "+e.getMessage(),e);
 			}
 			
 			// Messaggio

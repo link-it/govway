@@ -359,7 +359,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 			}
 
 		}catch(Exception e){
-			result.setMessaggioErrore("Lettura wsdl "+tipoWsdl+" (comprensione port types) non riuscita: "+e.getMessage());
+			result.setMessaggioErrore("Lettura wsdl "+tipoWsdl+" (identificazione port types) non riuscita: "+e.getMessage());
 			result.setException(e);
 			return result;
 		}
@@ -390,7 +390,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 			}
 
 		}catch(Exception e){
-			result.setMessaggioErrore("Lettura wsdl "+tipoWsdl+" (comprensione port types) non riuscita: "+e.getMessage());
+			result.setMessaggioErrore("Lettura wsdl "+tipoWsdl+" (identificazione port types) non riuscita: "+e.getMessage());
 			result.setException(e);
 			return result;
 		}

@@ -150,7 +150,7 @@ public class ConfigurazioneUtilities {
 					}
 					return labelErogazione;
 				}catch(Throwable t) {
-					ControlStationCore.getLog().error("Errore durante la comprensione dell'erogazione: "+t.getMessage(),t);
+					ControlStationCore.getLog().error("Errore durante l'identificazione dell'erogazione: "+t.getMessage(),t);
 				}
 				break;
 			case DELEGATA:
@@ -168,7 +168,7 @@ public class ConfigurazioneUtilities {
 					}
 					return labelFruizione;
 				}catch(Throwable t) {
-					ControlStationCore.getLog().error("Errore durante la comprensione della fruizione: "+t.getMessage(),t);
+					ControlStationCore.getLog().error("Errore durante l'identificazione della fruizione: "+t.getMessage(),t);
 				}
 				break;
 			default:

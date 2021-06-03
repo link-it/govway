@@ -339,11 +339,11 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					
 					generatoreErrore.updateRequestMessageType(requestMessageTypeIntegration);
 				}catch(Exception error){
-					logCore.error("Comprensione MessageType fallita: "+error.getMessage(),error);
+					logCore.error("Identificazione MessageType fallita: "+error.getMessage(),error);
 					msgDiag.addKeywordErroreProcessamento(error);
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
 					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
-							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Comprensione MessageType fallita"),
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Identificazione MessageType fallita"),
 							IntegrationFunctionError.INTERNAL_REQUEST_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 				}
 				

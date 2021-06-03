@@ -111,7 +111,7 @@ public class SICAtoOpenSPCoopUtilities {
 		}
 		valori =  dn.split(",");
 		if(valori==null || valori.length<1){
-			throw new SICAToOpenSPCoopUtilitiesException("Comprensione dn non riuscita: null??");
+			throw new SICAToOpenSPCoopUtilitiesException("Identificazione dn non riuscita: null??");
 		}
 		return valori;
 	}
@@ -135,14 +135,14 @@ public class SICAtoOpenSPCoopUtilities {
 		boolean campoObbligatorioO = false;
 		for(int i=0; i<valoriDN.length; i++){
 			if(valoriDN[i].contains("=")==false){
-				throw new SICAToOpenSPCoopUtilitiesException("Comprensione dn non riuscita: ["+valoriDN[i]+"] non separata dal carattere \"=\"");
+				throw new SICAToOpenSPCoopUtilitiesException("Identificazione dn non riuscita: ["+valoriDN[i]+"] non separata dal carattere \"=\"");
 			}
 			String [] keyValue = valoriDN[i].trim().split("=");
 			if(keyValue.length!=2){
-				throw new SICAToOpenSPCoopUtilitiesException("Comprensione dn non riuscita: ["+valoriDN[i]+"] contiene piu' di un carattere \"=\"");
+				throw new SICAToOpenSPCoopUtilitiesException("Identificazione dn non riuscita: ["+valoriDN[i]+"] contiene piu' di un carattere \"=\"");
 			}
 			if(keyValue[0].trim().contains(" ")){
-				throw new SICAToOpenSPCoopUtilitiesException("Comprensione dn non riuscita: il campo ["+valoriDN[i]+"] contiene spazi nella chiave identificativa ["+keyValue[0].trim()+"]");
+				throw new SICAToOpenSPCoopUtilitiesException("Identificazione dn non riuscita: il campo ["+valoriDN[i]+"] contiene spazi nella chiave identificativa ["+keyValue[0].trim()+"]");
 			}
 			if(CertificateUtils.formatKeyPrincipal(keyValue[0]).equalsIgnoreCase("O")){
 				campoObbligatorioO = true;
@@ -1716,7 +1716,7 @@ public class SICAtoOpenSPCoopUtilities {
 				aspsOpenSPCoop.setByteWsdlImplementativoErogatore(doc);
 				aspsOpenSPCoop.setTipologiaServizio(TipologiaServizio.NORMALE);
 				
-				// comprensione servizio SPCoop
+				// Identificazione servizio SPCoop
 				if(nomeServizio==null){
 					try{
 						Document d = xmlUtils.newDocument(doc);
@@ -1744,8 +1744,8 @@ public class SICAtoOpenSPCoopUtilities {
 							}
 						}
 					}catch(Exception e){
-						log.error("Comprensione servizio spcoop da wsdl implementativo erogatore non riuscita: "+e.getMessage(),e);
-						//throw new SICAToOpenSPCoopUtilitiesException("Comprensione servizio spcoop da wsdl implementativo erogatore non riuscita: "+e.getMessage(),e);
+						log.error("Identificazione servizio spcoop da wsdl implementativo erogatore non riuscita: "+e.getMessage(),e);
+						//throw new SICAToOpenSPCoopUtilitiesException("Identificazione servizio spcoop da wsdl implementativo erogatore non riuscita: "+e.getMessage(),e);
 						// Il Servizio verra' selezionato tramite select list
 						nomeServizio = "Errore lettura dati Wsdl: "+e.getMessage();
 					}
@@ -1773,7 +1773,7 @@ public class SICAtoOpenSPCoopUtilities {
 				aspsOpenSPCoop.setByteWsdlImplementativoFruitore(doc);
 				aspsOpenSPCoop.setTipologiaServizio(TipologiaServizio.CORRELATO);
 				
-				// comprensione servizio SPCoop
+				// Identificazione servizio SPCoop
 				if(nomeServizioCorrelato==null){
 					try{
 						Document d = xmlUtils.newDocument(doc);
@@ -1801,8 +1801,8 @@ public class SICAtoOpenSPCoopUtilities {
 							}
 						}
 					}catch(Exception e){
-						log.error("Comprensione servizio spcoop da wsdl implementativo fruitore non riuscita: "+e.getMessage(),e);
-						// throw new SICAToOpenSPCoopUtilitiesException("Comprensione servizio spcoop da wsdl implementativo fruitore non riuscita: "+e.getMessage(),e);
+						log.error("Identificazione servizio spcoop da wsdl implementativo fruitore non riuscita: "+e.getMessage(),e);
+						// throw new SICAToOpenSPCoopUtilitiesException("Identificazione servizio spcoop da wsdl implementativo fruitore non riuscita: "+e.getMessage(),e);
 						// Il Servizio verra' selezionato tramite select list
 						nomeServizioCorrelato = "Errore lettura dati Wsdl: "+e.getMessage();
 					}
@@ -1811,7 +1811,7 @@ public class SICAtoOpenSPCoopUtilities {
 		}
 		if(TipologiaServizio.CORRELATO.equals(aspsOpenSPCoop.getTipologiaServizio())){
 			if(nomeServizioCorrelato==null){
-				//throw new SICAToOpenSPCoopUtilitiesException("Comprensione nome del Servizio SPCoop correlato non riuscita tramite la lettura dei wsdl implementativi");
+				//throw new SICAToOpenSPCoopUtilitiesException("Identificazione nome del Servizio SPCoop correlato non riuscita tramite la lettura dei wsdl implementativi");
 				// Il Servizio verra' selezionato tramite select list
 				nomeServizioCorrelato = "Errore lettura dati Wsdl: wsdl implementativo fruitore non esistente o corrotto";
 			}
@@ -1822,7 +1822,7 @@ public class SICAtoOpenSPCoopUtilities {
 			//}
 		}else{
 			if(nomeServizio==null){
-				//throw new SICAToOpenSPCoopUtilitiesException("Comprensione nome del Servizio SPCoop non riuscita tramite la lettura dei wsdl implementativi");
+				//throw new SICAToOpenSPCoopUtilitiesException("Identificazione nome del Servizio SPCoop non riuscita tramite la lettura dei wsdl implementativi");
 				// Il Servizio verra' selezionato tramite select list
 				nomeServizio = "Errore lettura dati Wsdl: wsdl implementativo erogatore non esistente o corrotto";
 			}

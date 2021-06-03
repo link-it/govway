@@ -18884,7 +18884,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										NamingUtils.getLabelAccordoServizioParteSpecifica(protocollo, mappingPA.getIdServizio())+
 										suffixGruppo;
 							}catch(Exception e) {
-								this.log.error("Comprensione erogazione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
+								this.log.error("Identificazione erogazione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
 								descrPorta = existsAllarmeBean.getFiltro().getNomePorta();
 							}
 							
@@ -18909,7 +18909,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										" (Fruitore:"+NamingUtils.getLabelSoggetto(protocollo, new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()))+")"+
 										suffixGruppo;
 							}catch(Exception e) {
-								this.log.error("Comprensione fruizione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
+								this.log.error("Identificazione fruizione che possiede l'allarme '"+allarme.getNome()+"' non riuscita: "+e.getMessage(),e);
 								descrPorta = existsAllarmeBean.getFiltro().getNomePorta();
 							}
 						

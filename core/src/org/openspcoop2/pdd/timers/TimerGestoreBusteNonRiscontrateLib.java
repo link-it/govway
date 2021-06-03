@@ -409,7 +409,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 										String profiloGestione = this.registroServiziReader.getProfiloGestioneFruizioneServizio(servizioBusta, null);
 										richiestaDelegata.setProfiloGestione(profiloGestione);
 		
-										// Comprensione modalita di gestione (oneway 11 o 10)
+										// Identificazione modalita di gestione (oneway 11 o 10)
 										PortaDelegata pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 										boolean oneWayStateless = this.configurazionePdDReader.isModalitaStateless(pd, bustaToSend.getProfiloDiCollaborazione());
 										boolean oneWayVersione11 = this.propertiesReader.isGestioneOnewayStateful_1_1() && !oneWayStateless;

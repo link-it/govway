@@ -13447,7 +13447,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					dati.add(de);
 					
 				}catch(Exception e) {
-					this.log.error("Errore durante la comprensione dell'endpoint: "+e.getMessage(),e);
+					this.log.error("Errore durante l'identificazione dell'endpoint: "+e.getMessage(),e);
 				}
 			}
 		}

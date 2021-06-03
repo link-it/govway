@@ -567,7 +567,7 @@ public class ServicesUtils {
 			}
 			
 		}catch(Exception e){
-			logCore.error("Comprensione isRequestWsdl fallita: "+e.getMessage(),e);
+			logCore.error("IsRequestWsdl fallita: "+e.getMessage(),e);
 		}
 		
 		return false;
