@@ -387,7 +387,22 @@ function Esporta(tipo) {
 };
 
 function Change(form,dataElementName) {
+	Change(form,dataElementName,false);
+}
+function Change(form,dataElementName,fromFilters) {
     
+	if( fromFilters ){
+		if(form.action.endsWith('Add.do')){
+			form.action=form.action.replace('Add.do','List.do');
+		}
+		if(form.action.endsWith('Change.do')){
+			form.action=form.action.replace('Change.do','List.do');
+		}
+		if(form.action.endsWith('Del.do')){
+			form.action=form.action.replace('Del.do','List.do');
+		}
+	}
+	
     //aggiungo parametro per indicare che si tratta di postback e azzero idhid
     addHidden(form, 'isPostBack' , true);
     if(dataElementName!=null)

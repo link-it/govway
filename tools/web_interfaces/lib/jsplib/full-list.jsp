@@ -133,7 +133,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							  	String [] values = filtro.getValues();
 							  	String [] labels = filtro.getLabels();
 							  	String selezionato = filtro.getSelected();
-								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\""+ Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"')\" " ) : " ";
+								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\""+ Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"',true)\" " ) : " ";
 								String classInput = filtro.getStyleClass();
 								String filterId = filterName + "__id";
 							  	%>

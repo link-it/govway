@@ -2,6 +2,12 @@
 
 	* Rilasciata versione 3.3.4
 
+2021-06-04  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto bug sull'utilizzo dei filtro dopo aver creato o modificato un oggetto.
+	I filtri con postback ridirigevano erroneamente sulle pagine di 'Add', 'Change' e 'Delete' invece che sulla pagina 'list'.
+
 2021-06-04  Andrea Poli <apoli@link.it>
 	
 	* [GovWayCore]

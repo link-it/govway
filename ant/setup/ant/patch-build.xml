@@ -331,7 +331,7 @@ Esempi:
 						<equals arg1="${patchArchiveType}" arg2="runtimeRepository"/>
 					</or>
 					<then>
-						<var name="patchTmpArchive" value="${tmp_batch}/runtimeRepository"/>
+						<var name="patchTmpArchive" value="${tmp_batch}/gestoreRuntimeRepository"/>
 						<var name="patchTmpArchiveType" value="ear"/>
 						<foreach target="-patch-resource" param="patchResource" inheritall="true">
 							<path>
