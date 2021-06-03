@@ -3,7 +3,7 @@ Bug Fix
 
 Sono stati risolti i seguenti bug:
 
-- In presenza di parametri della query con lo stesso nome, veniva inoltrato all'API di backend solamente il primo. Analogo problema avveniva con gli header http (es. Set-Cookie).
+- In presenza di parametri della query con lo stesso nome, veniva inoltrato all'API di backend solamente il primo. Analogo problema si verificava con gli header http (es. Set-Cookie).
 
 - Le richieste contenenti Content-Type strutturalmente non corretti non venivano registrate nello storico delle transazioni e ai client veniva restituito una pagina html su codice di risposta 404.
   La problematica è stata risolta: tutte le richieste vengono adesso registrate e ai client viene ritornato un errore 'Bad Request' conforme alla specifica REST o SOAP dell'API invocata.
@@ -22,7 +22,7 @@ Sono stati risolti i seguenti bug:
 
 - Risolte le seguenti anomalie presenti sul Rate Limiting:
 
-	- durante la valutazione di una policy configurata per essere applicata solamente in presenza di degrado prestazionale, avveniva un errrore inatteso dovuto ad un accesso fallito alla base dati statistica a causa di una inizializzazione errata;
+	- durante la valutazione di una policy configurata per essere applicata solamente in presenza di degrado prestazionale, si verificava un errore inatteso dovuto ad un accesso fallito alla base dati statistica a causa di una inizializzazione errata;
 
 	- in presenza di una policy con filtro basato su chiave estratta dal contenuto, la valutazione della policy terminava con errore, invece di essere semplicemente filtrata, nel caso la richiesta non contenesse un payload http (es. GET);
 
@@ -50,7 +50,7 @@ Sono stati risolti i seguenti bug:
 
 - Su una installazione con più nodi in load balancer sono stati risolti i seguenti errori:
 
-	- se arrivavano nel medesimo istante, ma su due nodi differente, due richieste che presentano la stessa credenziale fino ad ora mai ricevuta sul gateway: "ERROR org.openspcoop2.generic_project.exception.ServiceException: Create not completed: insertAndReturnGeneratedKey failed: ORA-00001: violata restrizione di unicità (GOVWAY_TRAC.UNIQUE_CREDENZIALE_MITTENTE_1)"
+	- se arrivavano nel medesimo istante, ma su due nodi differenti, due richieste che presentano la stessa credenziale fino ad ora mai ricevuta sul gateway: "ERROR org.openspcoop2.generic_project.exception.ServiceException: Create not completed: insertAndReturnGeneratedKey failed: ORA-00001: violata restrizione di unicità (GOVWAY_TRAC.UNIQUE_CREDENZIALE_MITTENTE_1)"
 
 	- al primo avvio del gateway, dopo l'installazione, se nell'avvio venivano fatti partire simultaneamente più nodi (installazione in cluster) avveniva un errore simile al seguente "org.openspcoop2.core.registry.driver.DriverRegistroServiziException: [DriverRegistroServiziDB::createAccordoServizioParteComune] SQLException [ERROR: duplicate key value violates unique constraint "unique_accordi_1"
 
@@ -62,20 +62,20 @@ Sono stati risolti i seguenti bug:
  
 - Invocazioni GET che richiedevano un wsdl tramite il parametro '?wsdl' potevano causare un OutOfMemory sul Gateway. L'anomalia risiedeva nel fatto che tutte le richieste venivano registrate in memoria ma mai rilasciate e continuavano a crescere nel tempo. Si poteva individuare l'anomalia tramite la console di gestione, accedendo alla sezione 'Runtime - Transazioni Attive', dove veniva riportata una crescita costante del numero di transazioni.
 
-- Corretta anomalia che si verificava durante la comprensione dell'esito in presenza di richieste parallele ricevute non appena veniva avviato il gateway: "Comprensione stato non riuscita: null ... Caused by: java.util.ConcurrentModificationException"
+- Corretta anomalia che si verificava durante l'identificazione dell'esito in presenza di richieste parallele ricevute non appena veniva avviato il gateway: "Comprensione stato non riuscita: null ... Caused by: java.util.ConcurrentModificationException"
 
 - Modificato livello di serverità da ERROR a WARN per l'evento registrato nel file di log govway_core.log relativo all'invocazione di una API per la quale non esiste una specifica di interfaccia. 
 
 - Corretto problema presente su application server wildfly che non consentiva di accedere ai parametri di una richiesta 'application/x-www-form-urlencoded' se i parametri erano un numero maggiore di uno.
 
-- Risolto un problema di rilascio dell'input stream della risposta che avveniva se la richiesta presentava il medesimo identificativo; l'errore generato riportava il messaggio 'stream is closed'.
+- Risolto un problema di rilascio dell'input stream della risposta che si verificava se la richiesta presentava il medesimo identificativo; l'errore generato riportava il messaggio 'stream is closed'.
 
 - La consegna con notifiche non propagava l'identità del servizio applicativo fruitore.
 
 - Nella funzionalità di presa in carico dei messaggi (attivabile con una installazione in modalità avanzata):
 
 	- i comandi che si occupavano di aggiornare lo stato della transazione sono stati ricondotti ad un unico comando di UPDATE con CASE e condizione di BEETWEEN per ottimizzare le query in presenza di partizioni,
-	- i comandi che si occupano di selezionare i messaggi da consegnare sono stati rivisti al fine di smistare normalmente solamente i nuovi messaggi e ogni X secondi di provare a rispedire eventuali messaggio andati precedentemente in errore. È stato inoltre aggiunta una query che calcola, in caso di rispedizione dei messaggi in errore, la data del più vecchio messaggio che può essere rispedito.
+	- i comandi che si occupano di selezionare i messaggi da consegnare sono stati rivisti al fine di smistare normalmente solamente i nuovi messaggi e ogni X secondi di provare a rispedire eventuali messaggio andati precedentemente in errore. È stata inoltre aggiunta una query che calcola, in caso di rispedizione dei messaggi in errore, la data del più vecchio messaggio che può essere rispedito.
 
 - Rivisto il servizio di IntegrationManager (attivabile con una installazione in modalità avanzata): per:
 
@@ -89,8 +89,6 @@ Sono stati risolti i seguenti bug:
 
 	- sono infine state migliorate le query in generale di accesso al messaggio e di eliminazione e in ogni comando è stato aggiunta la condizione BEETWEEN per ottimizzare le query in presenza di partizioni.
 
-
-
 Per la console di gestione sono stati risolti i seguenti bug:
 
 - La creazione o l'aggiornamento di una API tramite il caricamento dell'interfaccia OpenAPI 3.x non rilevava alcuni tipi di errore presenti nell'interfaccia (es. negli schema) e terminava con la creazione dell'API correttamente senza segnalarli. Il problema è stato risolto, e adesso vengono segnalati anche eventuali anomalie non bloccanti (es. url scorrette definite nella sezione info).
@@ -100,7 +98,7 @@ Per la console di gestione sono stati risolti i seguenti bug:
 - Il semaforo che visualizza lo stato di una erogazione o fruizione considerava lo stato del gruppo 'Predefinito' anche se tutte le azioni o risorse erano state riassegnate in altri gruppi. Il problema è stato risolto.
 
 - Le policy di RateLimiting associate ad un'erogazione si perdevano se si effettuava la modifica del nome del soggetto erogatore.
-
+  
 - Le policy di RateLimiting associate ad una fruizione si perdevano se si effettuava la modifica del nome del soggetto erogatore o fruitore.
 
 - In presenza di una policy di RateLimiting con raggruppamento per risorsa/azione, se veniva abilitato un filtro sulla policy, l'impostazione del raggruppamento spariva.
@@ -127,21 +125,15 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - L'aggiornamento dell'interfaccia WSDL di una API SOAP provocava un errore inatteso della console se il WSDL possedeva i caratteri \\r\\n all'inizio del file.
 
-- In seguito alla creazione di una API REST creata attraverso il caricamento di un'interfaccia OpenAPI contenente una descrizione maggiore di 255 caratteri, una qualsiasi modifica dell'API (del nome, tag, descrizione stessa, ...) terminava con un errore: 'La descrizione supera i 255 caratteri ammessi'. Il problema derivava dall'aggiunta dei caratteri '\\r' dove erano presenti i caratteri '\\n' nella descrizione.  La risoluzione è stata effettuata per tutti gli elementi della console che vengono gestiti con lo stesso tipo di elemento html: 'text-area'.
+- In seguito alla creazione di una API REST creata attraverso il caricamento di un'interfaccia OpenAPI contenente una descrizione maggiore di 255 caratteri, una qualsiasi modifica dell'API (del nome, tag, descrizione stessa, ...) terminava con un errore: 'La descrizione supera i 255 caratteri ammessi'. Il problema derivava dall'aggiunta dei caratteri '\\r' dove erano presenti i caratteri '\\n' nella descrizione.  La correzione è stata effettuata per tutti gli elementi della console che vengono gestiti con lo stesso tipo di elemento html: 'text-area'.
 
-- Se ad un applicativo o soggetto veniva caricato un certificato con serial number più grande della dimensione massima di un long, la console visualizzava un numero negativo.
+- Se per un applicativo o soggetto veniva caricato un certificato con serial number più grande della dimensione massima di un long, la console visualizzava un numero negativo.
 	
 - Nella sezione 'Configurazione - Cache' (disponibile in modalità avanzata) sono adesso configurabili tutte le cache del prodotto (anche registry e controllo del traffico).
 	
-- La seguente combinazione di configurazioni portava ad un errore inatteso della console:
+- Corretta anomalia nella ridefinizione del connettore su un nuovo gruppo, che provocava errore in caso di annullamento/ripetizione della stessa operazione.
 
-	- creazione di un gruppo specifico per l'erogazione;
-	- tramite l'interfaccia in modalità avanzata veniva ridefinito il connettore per il nuovo gruppo associando al connettore un applicativo di tipo server;
-	- si ripristinava nuovamente il connettore del gruppo Predefinito per il nuovo gruppo;
-	- a questo punto provando nuovamente a ridefinire il connettore per il gruppo la console terminava con un errore inatteso poichè la precedente operazione non aveva eliminato sul database l'applicativo interno.
-
-- L'eliminazione di un'entità del registro rimaneva nella cache interna dell'applicazione e in alcune circostanze veniva ripresentata erroneamente. 
-  Si riproduceva ad esempio accedendo alla lista delle API e eliminandone una. Successivamente se si entrava nel dettaglio di un'altra API e si ritornava alla lista passando dalla breadcrumb "API > NomeApi .." veniva erroneamente riportata la precedente API eliminata. Un problema simile era presente quando si eliminava o modificava il nome di un Soggetto, di un Applicativo, di uno Scope o di un Ruolo.
+- L'eliminazione di un'entità del registro rimaneva nella cache interna dell'applicazione e in alcune circostanze veniva ripresentata erroneamente.
 
 - Una volta impostato un filtro su un connettore multiplo, era possibile solamente modificarne il valore ma non eliminarlo.
 
@@ -153,32 +145,27 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - Nei Connettori Multipli erano presenti i seguenti problemi relativi alle credenziali basic associate in una consegna tramite servizio IntegrationManager (funzionalità attivabile con una installazione 'avanzata'):
 
-	- le credenziali non venivano verificate ed era quindi erroneamente possibile creare una consegna senza credenziali
+	- le credenziali non venivano verificate ed era quindi possibile creare una configurazione di consegna senza credenziali
 
-	- le credenziali definite non venivano controllate se fossero già utilizzate in altri applicativi o erogazioni
+	- per le credenziali definite non veniva controllato se fossero già utilizzate in altri applicativi o erogazioni
 
-	- se veniva prima abilitata la consegna tramite I.M. assegnando delle credenziali basic e poi successivamente disabilitata,   le credenziali rimanevano erroneamente assegnate all'applicativo. Il problema si evidenziava quando si effettuava un export ed un successivo import dell'erogazione. Terminato il processo di import veniva creato erroneamente un applicativo che possedeva il nome interno dell'erogazione e le credenziali che inizialmente erano state assegnate alla funzione I.M.
-
-
-
+	- se veniva prima abilitata la consegna tramite I.M. assegnando delle credenziali basic e poi successivamente disabilitata, le credenziali restavano erroneamente assegnate all'applicativo.
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
 
 - La console non visualizzava il contenuto del messaggio, anche se salvato dal gateway, in presenza di header http con valore una stringa vuota.
 
-- Risolto problema presente sui criteri di generazione di un report statistico: quando veniva selezionata un'implementazione di API non era più possibile modificare il tipo delle informazioni visualizzate nel report (numero transazioni, dimensione e latenza).
+- Risolto problema presente sui criteri di generazione di report statistici: quando veniva selezionata un'implementazione di API non era più possibile modificare il tipo delle informazioni visualizzate nel report (numero transazioni, dimensione e latenza).
 
 - In presenza di una configurazione in Load Balancing, se la connessione verso un nodo andava in "read timed out", la console era accessibile allo scadere del timeout impostato a 120 secondi. Il valore di default del timeout è stato ridotto a 5 secondi.
 
 - Risolto problema presente nella gestione dei permessi riguardanti gli utenti della console di monitoraggio con visibilità limitata per soggetti e/o API:
 
-	- le ricerche puntuali tramite identificativo di transazione o di messaggio non verificavano che l'utente avesse i diritti a visualizzare i dati della transazione;
+	- le ricerche puntuali tramite identificativo di transazione o di messaggio non verificavano che l'utente avesse i diritti per visualizzare i dati della transazione;
 
 	- le liste contenenti le erogazioni o le fruizioni di API, impostabili nei criteri di ricerca, visualizzano adesso solamente le API associate all'utente.
 
 - Il controllo dello stato dei nodi del cluster non avveniva ogni 60 secondi a causa di una problematica che resettava il counter ad ogni navigazione sulla console di monitoraggio e quindi una continua navigazione faceva si che l'aggiornamento dello stato non avvenisse mai.
-
-
 
 Per le API di monitoraggio sono stati risolti i seguenti bug:
 
