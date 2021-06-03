@@ -19,17 +19,21 @@
  */
 package org.openspcoop2.core.diagnostica.ws.server;
 
+import org.openspcoop2.core.diagnostica.ws.server.filter.SearchFilterMessaggioDiagnostico;
 import java.util.List;
+
+
+import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
+
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException_Exception;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
-
-import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException_Exception;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException_Exception;
-import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
-import org.openspcoop2.core.diagnostica.ws.server.filter.SearchFilterMessaggioDiagnostico;
 
 /**     
  * MessaggioDiagnosticoSearch

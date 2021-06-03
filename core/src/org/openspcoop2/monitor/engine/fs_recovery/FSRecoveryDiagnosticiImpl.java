@@ -21,12 +21,16 @@ package org.openspcoop2.monitor.engine.fs_recovery;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici;
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 import org.openspcoop2.core.diagnostica.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.utils.UtilsMultiException;
 
 /**
  * FSRecoveryDiagnosticiImpl
@@ -60,9 +64,29 @@ public class FSRecoveryDiagnosticiImpl extends AbstractFSRecovery {
 	@Override
 	public void insertObject(File file, Connection connection) throws Exception {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
-		MessaggioDiagnostico diagnostico = deserializer.readMessaggioDiagnostico(file);
-		MsgDiagnostico msgDiagOp2 = new MsgDiagnostico(diagnostico);
-		this.diagnosticoAppender.log(connection, msgDiagOp2);
+		List<MessaggioDiagnostico> msgDiagnostici = new ArrayList<MessaggioDiagnostico>();
+		try {
+			ElencoMessaggiDiagnostici elencoDiagnostici = deserializer.readElencoMessaggiDiagnostici(file);
+			if(elencoDiagnostici!=null && elencoDiagnostici.sizeMessaggioDiagnosticoList()>0) {
+				for (MessaggioDiagnostico diagnostico : elencoDiagnostici.getMessaggioDiagnosticoList()) {
+					msgDiagnostici.add(diagnostico);
+				}
+			}
+		}catch(Throwable t) {
+			// backward compatibility: si salvavano i singoli messaggi
+			try {
+				MessaggioDiagnostico diagnostico = deserializer.readMessaggioDiagnostico(file);
+				msgDiagnostici.add(diagnostico);
+			}catch(Throwable tInternal) {
+				throw new UtilsMultiException(t,tInternal);
+			}
+		}
+		if(!msgDiagnostici.isEmpty()) {
+			for (MessaggioDiagnostico diagnostico : msgDiagnostici) {
+				MsgDiagnostico msgDiagOp2 = new MsgDiagnostico(diagnostico);
+				this.diagnosticoAppender.log(connection, msgDiagOp2);	
+			}
+		}
 	}
 
 

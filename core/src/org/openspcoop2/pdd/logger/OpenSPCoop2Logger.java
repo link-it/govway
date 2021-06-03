@@ -561,24 +561,24 @@ public class OpenSPCoop2Logger {
 			if(allarmiEnabled) {
 			
 				// ALLARMI LOG
-				OpenSPCoop2Logger.loggerOpenSPCoopAllarmi = LoggerWrapperFactory.getLogger("govway.allarmi");
+				OpenSPCoop2Logger.loggerOpenSPCoopAllarmi = LoggerWrapperFactory.getLogger("govway.controlloAllarmi");
 				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmi==null)
-					throw new Exception("Logger govway.allarmi non trovato");
+					throw new Exception("Logger govway.controlloAllarmi non trovato");
 				
 				// ALLARMI LOG (ERROR)
-				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiError = LoggerWrapperFactory.getLogger("govway.allarmi.error");
+				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiError = LoggerWrapperFactory.getLogger("govway.controlloAllarmi.error");
 				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiError==null)
-					throw new Exception("Logger govway.allarmi.error non trovato");
+					throw new Exception("Logger govway.controlloAllarmi.error non trovato");
 				
 				// ALLARMI SQL LOG
-				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSql = LoggerWrapperFactory.getLogger("govway.allarmi.sql");
+				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSql = LoggerWrapperFactory.getLogger("govway.controlloAllarmi.sql");
 				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSql==null)
-					throw new Exception("Logger govway.allarmi.sql non trovato");
+					throw new Exception("Logger govway.controlloAllarmi.sql non trovato");
 				
 				// ALLARMI SQL LOG (ERROR)
-				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSqlError = LoggerWrapperFactory.getLogger("govway.allarmi.sql.error");
+				OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSqlError = LoggerWrapperFactory.getLogger("govway.controlloAllarmi.sql.error");
 				if(OpenSPCoop2Logger.loggerOpenSPCoopAllarmiSqlError==null)
-					throw new Exception("Logger govway.allarmi.sql.error non trovato");
+					throw new Exception("Logger govway.controlloAllarmi.sql.error non trovato");
 				
 			}
 			

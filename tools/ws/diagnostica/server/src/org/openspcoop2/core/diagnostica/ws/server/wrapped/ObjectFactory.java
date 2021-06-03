@@ -42,6 +42,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link FindAllMessaggioDiagnosticoResponse }
+     */
+    public FindAllMessaggioDiagnosticoResponse createFindAllMessaggioDiagnosticoResponse() {
+        return new FindAllMessaggioDiagnosticoResponse();
+    }
+    
+    /**
      * Create an instance of {@link FindAllMessaggioDiagnostico }
      */
     public FindAllMessaggioDiagnostico createFindAllMessaggioDiagnostico() {
@@ -60,13 +67,6 @@ public class ObjectFactory {
      */
     public CountMessaggioDiagnostico createCountMessaggioDiagnostico() {
         return new CountMessaggioDiagnostico();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllMessaggioDiagnosticoResponse }
-     */
-    public FindAllMessaggioDiagnosticoResponse createFindAllMessaggioDiagnosticoResponse() {
-        return new FindAllMessaggioDiagnosticoResponse();
     }
     
 

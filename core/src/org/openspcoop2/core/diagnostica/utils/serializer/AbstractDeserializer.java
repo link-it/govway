@@ -22,10 +22,11 @@ package org.openspcoop2.core.diagnostica.utils.serializer;
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
 import org.openspcoop2.core.diagnostica.DominioSoggetto;
+import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
+import org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici;
 import org.openspcoop2.core.diagnostica.DominioDiagnostico;
 import org.openspcoop2.core.diagnostica.Proprieta;
 import org.openspcoop2.core.diagnostica.Protocollo;
-import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 
 import java.io.InputStream;
 import java.io.File;
@@ -101,6 +102,132 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public DominioSoggetto readDominioSoggettoFromString(String in) throws DeserializerException {
 		return (DominioSoggetto) this.xmlToObj(in.getBytes(), DominioSoggetto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: messaggio-diagnostico
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public MessaggioDiagnostico readMessaggioDiagnostico(String fileName) throws DeserializerException {
+		return (MessaggioDiagnostico) this.xmlToObj(fileName, MessaggioDiagnostico.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public MessaggioDiagnostico readMessaggioDiagnostico(File file) throws DeserializerException {
+		return (MessaggioDiagnostico) this.xmlToObj(file, MessaggioDiagnostico.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public MessaggioDiagnostico readMessaggioDiagnostico(InputStream in) throws DeserializerException {
+		return (MessaggioDiagnostico) this.xmlToObj(in, MessaggioDiagnostico.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public MessaggioDiagnostico readMessaggioDiagnostico(byte[] in) throws DeserializerException {
+		return (MessaggioDiagnostico) this.xmlToObj(in, MessaggioDiagnostico.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public MessaggioDiagnostico readMessaggioDiagnosticoFromString(String in) throws DeserializerException {
+		return (MessaggioDiagnostico) this.xmlToObj(in.getBytes(), MessaggioDiagnostico.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: elenco-messaggi-diagnostici
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ElencoMessaggiDiagnostici readElencoMessaggiDiagnostici(String fileName) throws DeserializerException {
+		return (ElencoMessaggiDiagnostici) this.xmlToObj(fileName, ElencoMessaggiDiagnostici.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ElencoMessaggiDiagnostici readElencoMessaggiDiagnostici(File file) throws DeserializerException {
+		return (ElencoMessaggiDiagnostici) this.xmlToObj(file, ElencoMessaggiDiagnostici.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ElencoMessaggiDiagnostici readElencoMessaggiDiagnostici(InputStream in) throws DeserializerException {
+		return (ElencoMessaggiDiagnostici) this.xmlToObj(in, ElencoMessaggiDiagnostici.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ElencoMessaggiDiagnostici readElencoMessaggiDiagnostici(byte[] in) throws DeserializerException {
+		return (ElencoMessaggiDiagnostici) this.xmlToObj(in, ElencoMessaggiDiagnostici.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @return Object type {@link org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ElencoMessaggiDiagnostici readElencoMessaggiDiagnosticiFromString(String in) throws DeserializerException {
+		return (ElencoMessaggiDiagnostici) this.xmlToObj(in.getBytes(), ElencoMessaggiDiagnostici.class);
 	}	
 	
 	
@@ -290,69 +417,6 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Protocollo readProtocolloFromString(String in) throws DeserializerException {
 		return (Protocollo) this.xmlToObj(in.getBytes(), Protocollo.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: messaggio-diagnostico
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public MessaggioDiagnostico readMessaggioDiagnostico(String fileName) throws DeserializerException {
-		return (MessaggioDiagnostico) this.xmlToObj(fileName, MessaggioDiagnostico.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public MessaggioDiagnostico readMessaggioDiagnostico(File file) throws DeserializerException {
-		return (MessaggioDiagnostico) this.xmlToObj(file, MessaggioDiagnostico.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public MessaggioDiagnostico readMessaggioDiagnostico(InputStream in) throws DeserializerException {
-		return (MessaggioDiagnostico) this.xmlToObj(in, MessaggioDiagnostico.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public MessaggioDiagnostico readMessaggioDiagnostico(byte[] in) throws DeserializerException {
-		return (MessaggioDiagnostico) this.xmlToObj(in, MessaggioDiagnostico.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @return Object type {@link org.openspcoop2.core.diagnostica.MessaggioDiagnostico}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public MessaggioDiagnostico readMessaggioDiagnosticoFromString(String in) throws DeserializerException {
-		return (MessaggioDiagnostico) this.xmlToObj(in.getBytes(), MessaggioDiagnostico.class);
 	}	
 	
 	

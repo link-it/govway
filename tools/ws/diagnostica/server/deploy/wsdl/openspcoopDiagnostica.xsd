@@ -59,6 +59,14 @@
 	</xsd:complexType>
 		
 	
+	<!-- Elenco -->
+	<xsd:element name="elenco-messaggi-diagnostici" type="elenco-messaggi-diagnostici"/>
+	<xsd:complexType name="elenco-messaggi-diagnostici">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" ref="messaggio-diagnostico"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
 	
 	<!-- Enumeration -->
 	

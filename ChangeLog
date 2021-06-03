@@ -2,6 +2,11 @@
 
 	* Rilasciata versione 3.3.4
 
+2021-06-04  Andrea Poli <apoli@link.it>
+	
+	* [GovWayCore]
+	I diagnostici salvati su filesystem, in caso di inserimento fallito su database delle tracce, vengono adesso serializzati all'interno di un unico file.
+
 2021-06-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, InstallerVersioneBinaria]

@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.diagnostica.ElencoMessaggiDiagnostici;
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -62,8 +63,9 @@ public class ExceptionSerialzerFileSystem {
 		}
 	}
 	
-	public void registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(Transaction transaction,String idTransazione, Transazione transazioneDTO){
-		if(transaction.getTracciaRichiesta()!=null){
+	public void registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(Transaction transaction,String idTransazione, Transazione transazioneDTO,
+			boolean registraTracciaRichiesta, boolean registraTracciaRisposta, boolean registrazioneMessaggiDiagnostici, boolean registrazioneDumpMessaggi){
+		if(registraTracciaRichiesta && transaction.getTracciaRichiesta()!=null){
 			// Registro tracce non registrate su database su file system
 			try{
 				transaction.getTracciaRichiesta().addPropertyInBusta(Costanti.ID_TRANSAZIONE, idTransazione);
@@ -79,7 +81,7 @@ public class ExceptionSerialzerFileSystem {
 				this.logger.error("Errore durante la registrazione su file system della traccia di richiesta [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 			}
 		}
-		if(transaction.getTracciaRisposta()!=null){
+		if(registraTracciaRisposta && transaction.getTracciaRisposta()!=null){
 			// Registro tracce non registrate su database su file system
 			try{
 				transaction.getTracciaRisposta().addPropertyInBusta(Costanti.ID_TRANSAZIONE, idTransazione);
@@ -95,19 +97,43 @@ public class ExceptionSerialzerFileSystem {
 				this.logger.error("Errore durante la registrazione su file system della traccia di risposta [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 			}
 		}
-		if(transaction.getMsgDiagnostici()!=null && transaction.getMsgDiagnostici().size()>0){
+		if(registrazioneMessaggiDiagnostici && transaction.getMsgDiagnostici()!=null && transaction.getMsgDiagnostici().size()>0){
 			boolean error = false;
-			for (MsgDiagnostico msgDiag : transaction.getMsgDiagnostici()) {
-				try{
+			boolean registrazioneSingoloDiagnostico = false;
+			if(registrazioneSingoloDiagnostico) {
+				for (MsgDiagnostico msgDiag : transaction.getMsgDiagnostici()) {
+					try{
+						MessaggioDiagnostico msgDiagOp2 = msgDiag.getMessaggioDiagnostico();
+						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+						msgDiagOp2.writeTo(bout, WriteToSerializerType.XML_JAXB);
+				    	bout.flush();
+				    	bout.close();
+						FileSystemSerializer.getInstance().registraDiagnostico(bout.toByteArray(), msgDiagOp2.getOraRegistrazione());
+					}catch(Exception eSerializer){
+						error = true;
+						this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
+					}
+				}
+			}
+			else {
+				ElencoMessaggiDiagnostici elencoDiagnostici = new ElencoMessaggiDiagnostici();
+				Date oraRegistrazione = null;
+				for (MsgDiagnostico msgDiag : transaction.getMsgDiagnostici()) {
 					MessaggioDiagnostico msgDiagOp2 = msgDiag.getMessaggioDiagnostico();
+					elencoDiagnostici.addMessaggioDiagnostico(msgDiagOp2);
+					if(oraRegistrazione==null) {
+						oraRegistrazione=msgDiagOp2.getOraRegistrazione();
+					}
+				}
+				try{
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					msgDiagOp2.writeTo(bout, WriteToSerializerType.XML_JAXB);
-			    	bout.flush();
-			    	bout.close();
-					FileSystemSerializer.getInstance().registraDiagnostico(bout.toByteArray(), msgDiagOp2.getOraRegistrazione());
+					elencoDiagnostici.writeTo(bout, WriteToSerializerType.XML_JAXB);
+					bout.flush();
+					bout.close();
+					FileSystemSerializer.getInstance().registraDiagnostico(bout.toByteArray(), oraRegistrazione);
 				}catch(Exception eSerializer){
 					error = true;
-					this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
+					this.logger.error("Errore durante la registrazione su file system dei messaggi diagnostici [idTransazione: "+idTransazione+"]: "+eSerializer.getMessage(),eSerializer);
 				}
 			}
 			if(!error && transazioneDTO!=null){
@@ -116,7 +142,7 @@ public class ExceptionSerialzerFileSystem {
 				transazioneDTO.setDiagnosticiList2(null);
 			}
 		}
-		if(transaction.getMessaggi()!=null && transaction.getMessaggi().size()>0){
+		if(registrazioneDumpMessaggi && transaction.getMessaggi()!=null && transaction.getMessaggi().size()>0){
 			boolean error = false;
 			for (Messaggio messaggio : transaction.getMessaggi()) {
 				try{

@@ -529,7 +529,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	
 			}catch (Throwable e) {
 				try{
-					exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(transaction, idTransazione, null);
+					exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(transaction, idTransazione, null,
+							true, true, true, true);
 				} catch (Exception eClose) {}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
 				String msg = "Errore durante la scrittura della transazione sul database (Lettura dati Transazione): " + e.getLocalizedMessage();
@@ -617,13 +618,16 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	    	Resource resource = null;
 			Connection connection = null;
 			boolean errore = false;
+			boolean registraTracciaRichiesta = true;
+			boolean registraTracciaRisposta = true;
+			boolean registrazioneMessaggiDiagnostici = true;
+			boolean registrazioneDumpMessaggi = true;
 			try {
 				
 	
 				/* ---- Recupero informazioni sulla modalita' di salvataggio delle tracce ----- */
 	
 				// TRACCIA RICHIESTA
-				boolean registraTracciaRichiesta = true;
 				String informazioneTracciaRichiestaDaSalvare = null;
 				if(this.salvataggioTracceManager!=null) {
 					StatoSalvataggioTracce statoTracciaRichiesta =  
@@ -647,7 +651,6 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				}
 				
 				// TRACCIA RISPOSTA
-				boolean registraTracciaRisposta = true;
 				String informazioneTracciaRispostaDaSalvare = null;
 				if(this.salvataggioTracceManager!=null) {
 					StatoSalvataggioTracce statoTracciaRisposta =  
@@ -671,7 +674,6 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				}
 	
 				// MESSAGGI DIAGNOSTICI
-				boolean registrazioneMessaggiDiagnostici = true;
 				HashMap<DiagnosticColumnType, String> informazioniDiagnosticiDaSalvare = null;
 				if(this.salvataggioDiagnosticiManager!=null) {
 					StatoSalvataggioDiagnostici statoDiagnostici =  
@@ -693,7 +695,23 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						}
 					}
 				}
+				
+				// IMPOSTO INFORMAZIONI IN TRANSAZIONE DTO
+				
+				// ** dati tracce **
+				transazioneDTO.setTracciaRichiesta(informazioneTracciaRichiestaDaSalvare);
+				transazioneDTO.setTracciaRisposta(informazioneTracciaRispostaDaSalvare);
+				
+				// ** dati diagnostica **
+				if(informazioniDiagnosticiDaSalvare!=null){
+					transazioneDTO.setDiagnostici(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.META_INF));
+					transazioneDTO.setDiagnosticiList1(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST1));
+					transazioneDTO.setDiagnosticiList2(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST2));
+					transazioneDTO.setDiagnosticiListExt(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST_EXT));
+					transazioneDTO.setDiagnosticiExt(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.EXT));
+				}
 	
+				
 				
 				// CONTENUTI
 				boolean registrazioneRisorse = transaction.getTransactionServiceLibrary()!=null || transaction.sizeMessaggi()>0;
@@ -714,7 +732,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	
 				if(this.debug)
 					this.logSql.debug("["+idTransazione+"] recupero jdbcServiceManager in corso ...");
-	
+
+				
 				// Ottiene la connessione al db
 				dbManager = DBTransazioniManager.getInstance();
 				resource = dbManager.getResource(idDominio, modulo, idTransazione);
@@ -746,19 +765,6 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				// Inserisco transazione
 				if(this.debug)
 					this.log.debug("["+idTransazione+"] inserimento transazione in corso ...");
-				
-				// ** dati tracce **
-				transazioneDTO.setTracciaRichiesta(informazioneTracciaRichiestaDaSalvare);
-				transazioneDTO.setTracciaRisposta(informazioneTracciaRispostaDaSalvare);
-				
-				// ** dati diagnostica **
-				if(informazioniDiagnosticiDaSalvare!=null){
-					transazioneDTO.setDiagnostici(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.META_INF));
-					transazioneDTO.setDiagnosticiList1(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST1));
-					transazioneDTO.setDiagnosticiList2(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST2));
-					transazioneDTO.setDiagnosticiListExt(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST_EXT));
-					transazioneDTO.setDiagnosticiExt(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.EXT));
-				}
 				
 				transazioneService.create(transazioneDTO);
 				if(this.debug)
@@ -931,7 +937,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				// Registrazione su FileSystem informazioni se la gestione e' andata in errore
 				if(errore){
 					try {
-						exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(transaction, idTransazione, transazioneDTO);
+						exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(transaction, idTransazione, transazioneDTO,
+								registraTracciaRichiesta, registraTracciaRisposta, registrazioneMessaggiDiagnostici, registrazioneDumpMessaggi);
 					} catch (Exception e) {}
 					try {
 						exceptionSerializerFileSystem.registrazioneFileSystem(transazioneDTO, idTransazione);

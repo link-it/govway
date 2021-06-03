@@ -42,6 +42,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Protocollo }
+     */
+    public Protocollo createProtocollo() {
+        return new Protocollo();
+    }
+    
+    /**
      * Create an instance of {@link DominioSoggetto }
      */
     public DominioSoggetto createDominioSoggetto() {
@@ -53,13 +60,6 @@ public class ObjectFactory {
      */
     public DominioDiagnostico createDominioDiagnostico() {
         return new DominioDiagnostico();
-    }
-    
-    /**
-     * Create an instance of {@link Protocollo }
-     */
-    public Protocollo createProtocollo() {
-        return new Protocollo();
     }
     
 

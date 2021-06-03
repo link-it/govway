@@ -52,6 +52,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Protocollo }
+     */
+    public Protocollo createProtocollo() {
+        return new Protocollo();
+    }
+
+    /**
+     * Create an instance of {@link ElencoMessaggiDiagnostici }
+     */
+    public ElencoMessaggiDiagnostici createElencoMessaggiDiagnostici() {
+        return new ElencoMessaggiDiagnostici();
+    }
+
+    /**
      * Create an instance of {@link DominioSoggetto }
      */
     public DominioSoggetto createDominioSoggetto() {
@@ -66,13 +80,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DominioDiagnostico }
-     */
-    public DominioDiagnostico createDominioDiagnostico() {
-        return new DominioDiagnostico();
-    }
-
-    /**
      * Create an instance of {@link MessaggioDiagnostico }
      */
     public MessaggioDiagnostico createMessaggioDiagnostico() {
@@ -80,10 +87,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Protocollo }
+     * Create an instance of {@link DominioDiagnostico }
      */
-    public Protocollo createProtocollo() {
-        return new Protocollo();
+    public DominioDiagnostico createDominioDiagnostico() {
+        return new DominioDiagnostico();
     }
 
 
