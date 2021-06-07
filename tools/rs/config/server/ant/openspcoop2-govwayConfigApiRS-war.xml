@@ -112,7 +112,7 @@
 				<include name="joda-time-2.10.5.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="guava-30.1.1-jre.jar"/>
-				<include name="snakeyaml-1.25.jar"/>
+				<include name="snakeyaml-1.28.jar"/>
 				<include name="javassist-3.12.1.GA.jar"/>
 				<include name="struts-core-1.3.10.jar"/>
 				<include name="${xerces_jar}"/>

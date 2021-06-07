@@ -133,7 +133,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-1.25.jar"/>
+			<include name="snakeyaml-1.28.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
 			<include name="commons-lang3-3.9.jar"/>

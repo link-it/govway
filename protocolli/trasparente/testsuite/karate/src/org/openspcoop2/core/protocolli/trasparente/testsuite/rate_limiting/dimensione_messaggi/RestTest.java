@@ -340,7 +340,7 @@ public class RestTest extends ConfigLoader {
 			_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.BIG_SIZE).getBytes(),
 				"sendRegistrazioneAbilitata/client", "2mb", "Response Payload too large",
 				"Risposta", true,
-				false); // gia verificato eventi per 50kb
+				true); // gia verificato eventi per 50kb, ma riverifico per discorso synchronized
 		}
 	}
 	@Test
@@ -350,7 +350,7 @@ public class RestTest extends ConfigLoader {
 			_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, Bodies.getJson(Bodies.BIG_SIZE).getBytes(),
 				"sendRegistrazioneAbilitata/client", "2mb", "Response Payload too large",
 				"Risposta", true,
-				false); // gia verificato eventi per 50kb
+				true); // gia verificato eventi per 50kb, ma riverifico per discorso synchronized
 		}
 	}
 	

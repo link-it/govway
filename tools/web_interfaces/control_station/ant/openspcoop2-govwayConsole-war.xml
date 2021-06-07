@@ -364,7 +364,7 @@
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
 				<include name="xmlunit-1.6.jar" />
-				<include name="snakeyaml-1.25.jar" />
+				<include name="snakeyaml-1.28.jar" />
 				<include name="freemarker-2.3.29.jar" />
 				<include name="joda-time-2.10.5.jar" />
 				<include name="reactive-streams-1.0.3.jar" />
