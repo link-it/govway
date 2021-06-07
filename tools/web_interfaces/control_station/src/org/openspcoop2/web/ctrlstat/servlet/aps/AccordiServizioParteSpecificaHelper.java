@@ -7553,7 +7553,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					forceHttps, forceDisableOptional);
 						
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa, tipoProtocollo,
-					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
+					erogazioneAutenticazione, null,
+					erogazioneAutorizzazione, null, 
 					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
@@ -7586,7 +7587,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					false, false);
 		
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd, tipoProtocollo,
-					fruizioneAutenticazione, fruizioneAutorizzazione, null, 
+					fruizioneAutenticazione, null,
+					fruizioneAutorizzazione, null, 
 					fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 					fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
 					fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
@@ -8476,7 +8478,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						false, false);
 				
 				this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,protocolloSoggettoGestitoPorta,
-						fruizioneAutenticazione, fruizioneAutorizzazione, null, 
+						fruizioneAutenticazione, null,
+						fruizioneAutorizzazione, null, 
 						fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 						fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
 						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
@@ -9410,7 +9413,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					forceHttps, forceDisableOptional);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,protocollo,
-					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
+					erogazioneAutenticazione, null,
+					erogazioneAutorizzazione, null, 
 					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
@@ -9794,7 +9798,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					false, false);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,protocollo,
-				fruizioneAutenticazione, fruizioneAutorizzazione, null, 
+				fruizioneAutenticazione, null,
+				fruizioneAutorizzazione, null, 
 				fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 				fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
 				fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 

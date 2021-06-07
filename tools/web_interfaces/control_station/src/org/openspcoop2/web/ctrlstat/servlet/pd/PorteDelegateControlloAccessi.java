@@ -529,7 +529,8 @@ public class PorteDelegateControlloAccessi extends Action {
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,protocollo,
-						autenticazione, autorizzazione, autorizzazioneCustom, 
+						autenticazione, autenticazioneCustom,
+						autorizzazione, autorizzazioneCustom, 
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
@@ -583,7 +584,8 @@ public class PorteDelegateControlloAccessi extends Action {
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,protocollo,
-						autenticazione, autorizzazione, autorizzazioneCustom, 
+						autenticazione, autenticazioneCustom,
+						autorizzazione, autorizzazioneCustom, 
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
@@ -979,7 +981,8 @@ public class PorteDelegateControlloAccessi extends Action {
 			
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,protocollo,
-					autenticazione, autorizzazione, autorizzazioneCustom, 
+					autenticazione, autenticazioneCustom,
+					autorizzazione, autorizzazioneCustom, 
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,

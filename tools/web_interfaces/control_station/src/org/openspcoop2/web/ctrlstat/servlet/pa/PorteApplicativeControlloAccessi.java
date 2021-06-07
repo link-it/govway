@@ -577,7 +577,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,protocollo,
-						autenticazione, autorizzazione, autorizzazioneCustom, 
+						autenticazione, autenticazioneCustom,
+						autorizzazione, autorizzazioneCustom, 
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
@@ -664,7 +665,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,protocollo,
-						autenticazione, autorizzazione, autorizzazioneCustom, 
+						autenticazione, autenticazioneCustom,
+						autorizzazione, autorizzazioneCustom, 
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
@@ -1119,7 +1121,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,protocollo,
-					autenticazione, autorizzazione, autorizzazioneCustom, 
+					autenticazione, autenticazioneCustom,
+					autorizzazione, autorizzazioneCustom, 
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,

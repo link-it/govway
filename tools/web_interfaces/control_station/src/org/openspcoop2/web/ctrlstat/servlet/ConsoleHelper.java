@@ -4484,7 +4484,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
 						de.setType(DataElementType.TEXT);
 						String labelAutenticazione = null;
-						for (int i = 0; i < autenticazioneValues.size(); i++) {
+						for (int i = 0; i < tipoAutenticazione.length; i++) {
 							if(autenticazione!=null && autenticazione.equals(tipoAutenticazione[i])) {
 								labelAutenticazione = labelTipoAutenticazione[i];
 								break;
@@ -5123,7 +5123,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
-			String autenticazione, 
+			String autenticazione, String autenticazioneCustom, 
 			String autorizzazione, String autorizzazioneCustom, 
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, String autenticato,
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
@@ -5133,7 +5133,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati,
 			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList) throws Exception{
 		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, protocolloParam,
-				autenticazione, autorizzazione, autorizzazioneCustom, 
+				autenticazione, autenticazioneCustom,
+				autorizzazione, autorizzazioneCustom, 
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numAutenticati, autenticati, null, autenticato, 
 				autorizzazioneRuoli, urlAutorizzazioneRuoli, numRuoli, ruolo, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
 				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,
@@ -5144,7 +5145,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
-			String autenticazione, String autorizzazione, String autorizzazioneCustom, 
+			String autenticazione, String autenticazioneCustom, 
+			String autorizzazione, String autorizzazioneCustom, 
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, List<String> autenticatiLabel, String autenticato,
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata, boolean addTitoloSezione,
@@ -5410,7 +5412,12 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 						if(urlAutorizzazioneAutenticati!=null && autorizzazione_autenticazione && 
 								(old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) &&
-								(oldAutenticazione!=null && oldAutenticazione.equals(autenticazione))
+								(oldAutenticazione!=null && (
+											oldAutenticazione.equals(autenticazione) 
+											||  
+											(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && oldAutenticazione.equals(autenticazioneCustom) )
+										) 
+								)
 								){
 							de = new DataElement();
 							de.setType(DataElementType.LINK);
@@ -5438,7 +5445,12 @@ public class ConsoleHelper implements IConsoleHelper {
 								&& isSupportatoAutenticazione // il link degli applicativi sulla pa deve essere visualizzato SOLO se è abilitata l'autenticazione
 								&& !profiloModi // e non siamo nel profilo ModI
 								&&
-								(oldAutenticazione!=null && oldAutenticazione.equals(autenticazione))
+								(oldAutenticazione!=null && (
+										oldAutenticazione.equals(autenticazione) 
+										||  
+										(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && oldAutenticazione.equals(autenticazioneCustom) )
+									) 
+								)
 								){
 							if(urlAutorizzazioneErogazioneApplicativiAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
 								de = new DataElement();

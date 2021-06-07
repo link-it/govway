@@ -1727,7 +1727,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String urlAutorizzazioneContenutiErogazioneCustomPropertiesList = null;
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante, null,protocollo,
-					autenticazione, autorizzazione, autorizzazioneCustom, 
+					autenticazione, autenticazioneCustom,
+					autorizzazione, autorizzazioneCustom, 
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, 0, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,

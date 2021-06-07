@@ -830,7 +830,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String urlAutorizzazioneScope = null;
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,null,protocollo,
-					autenticazione, autorizzazione, autorizzazioneCustom, 
+					autenticazione, autenticazioneCustom,
+					autorizzazione, autorizzazioneCustom, 
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numSA, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
 					autorizzazioneRuoliTipologia, ruoloMatch,
