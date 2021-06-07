@@ -73,7 +73,7 @@ public class LoginPhaseListener implements PhaseListener {
 	        boolean allowedPage = vr!=null ? isAllowedPage(vr.getViewId()) : false;
 	        
 	        // controllo se sto cambiando la password perche' e' scaduta
- 			if(!isLogged && lb.getUserToUpdate() != null) {
+ 			if(!isLogged && (lb != null && lb.getUserToUpdate() != null)) {
  				allowedPage = true;
  			}
 	        

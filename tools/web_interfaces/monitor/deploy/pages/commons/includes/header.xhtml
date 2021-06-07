@@ -39,7 +39,7 @@
 												</h:graphicImage>
 											</a>
 											
-											<a4j:jsFunction id="pollStatoPddFn" name="pollStatoPdd" reRender="cdLabel_stPdd,statusPdd" oncomplete="startCounterStatoPdd()" rendered="#{statusBean.enable}">
+											<a4j:jsFunction id="pollStatoPddFn" name="pollStatoPdd" reRender="cdLabel_stPdd,statusPdd" oncomplete="stopCounterStatoPdd();startCounterStatoPdd()" rendered="#{statusBean.enable}">
 					                			<f:setPropertyActionListener value="true" target="#{statusBean.aggiornamentoAutomatico}" /> 
 					                		</a4j:jsFunction>
 					                		<script type="text/javascript">

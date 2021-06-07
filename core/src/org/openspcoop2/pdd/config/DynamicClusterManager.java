@@ -376,6 +376,13 @@ public class DynamicClusterManager {
 			}
 		}
 		catch(Exception e) {
+			
+			try {
+				if(!con.getAutoCommit()) {
+					con.rollback();
+				}
+			}catch(Throwable eClose) {}
+			
 			throw new CoreException("[DynamicClusterManager.unregister] failed: "+e.getMessage(), e);
 		}
 		finally {
@@ -411,9 +418,21 @@ public class DynamicClusterManager {
 			pstmt.setString(index++, this.op2Properties.getClusterHostname());
 			int row = pstmt.executeUpdate();
 			pstmt.close(); pstmt = null;
+			
+			if(!con.getAutoCommit()) {
+				con.commit();
+			}
+			
 			log.debug("Aggiornato hostname '"+this.op2Properties.getClusterHostname()+"' nella tabella '"+CostantiDB.CONFIG_NODI_RUNTIME+"' (update-row: "+row+")");
 		}
 		catch(Exception e) {
+			
+			try {
+				if(!con.getAutoCommit()) {
+					con.rollback();
+				}
+			}catch(Throwable eClose) {}
+			
 			throw new CoreException("[DynamicClusterManager.refresh] failed: "+e.getMessage(), e);
 		}
 		finally {
