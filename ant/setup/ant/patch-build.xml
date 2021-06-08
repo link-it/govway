@@ -323,7 +323,10 @@ Esempi:
 
 		<!-- *** Aggiunta dell'applicazione runtimeRepository ***-->
 		<if>
-			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<and>
+				<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+				<equals arg1="${antinstaller_batchRuntimeRepository}" arg2="true"/>
+			</and>
 			<then>
 				<if>
 					<or>
