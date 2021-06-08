@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.notifier.NotifierConstants;
 import org.openspcoop2.pdd.core.handlers.notifier.NotifierInRequestHandler;
 import org.openspcoop2.pdd.core.handlers.notifier.NotifierInRequestProtocolHandler;
@@ -1327,13 +1328,19 @@ public class GestoreHandlers  {
 	
 	
 	public static void preInRequest(PreInAcceptRequestContext context,Logger logCore,Logger log) {
+		_engine_preInRequest(null, context, null, logCore, log);
+	}
+	public static void emitDiagnostic(MsgDiagnostico msgDiag, PreInAcceptRequestContext context, PdDContext pddContext,Logger logCore,Logger log) {
+		_engine_preInRequest(msgDiag, context, pddContext, logCore, log);
+	}
+	public static void _engine_preInRequest(MsgDiagnostico msgDiag, PreInAcceptRequestContext context, PdDContext pddContext,Logger logCore,Logger log) {
 		
 		if(GestoreHandlers.initialize==false){
 			GestoreHandlers.initialize(logCore,log);
 		}
 		
 		// unisco handler generali (props+config) con eventuali handler definiti sulla porta
-		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(context,GestoreHandlers.preInRequestHandlers, GestoreHandlers.tipiPreInRequestHandlers, log);
+		List<Object[]> _mergeWithImplementation = _mergeWithImplementation(msgDiag, context, pddContext,GestoreHandlers.preInRequestHandlers, GestoreHandlers.tipiPreInRequestHandlers, log);
 		PreInRequestHandler [] preInRequestHandlersUsers = (PreInRequestHandler []) _mergeWithImplementation.get(0);
 		String [] tipiPreInRequestHandlersUsers = (String []) _mergeWithImplementation.get(1);
 		
@@ -1343,15 +1350,16 @@ public class GestoreHandlers  {
 					preInRequestHandlersUsers, tipiPreInRequestHandlersUsers, new PreInRequestHandler [1]);
 			PreInRequestHandler [] handlers = (PreInRequestHandler []) list.get(0);
 			String [] tipiHandlers = (String []) list.get(1);
-			_preInRequestHandler(context, log, handlers, tipiHandlers, "PreInRequestHandler");
+			_preInRequestHandler(msgDiag, context, pddContext, log, handlers, tipiHandlers, "PreInRequestHandler");
 		}
 		else {
-			_preInRequestHandler(context, log, GestoreHandlers.preInRequestHandlersBuiltIn, GestoreHandlers.tipiPreInRequestHandlersBuiltIn, "PreInRequestHandler");
-			_preInRequestHandler(context, log, preInRequestHandlersUsers, tipiPreInRequestHandlersUsers, "PreInRequestHandler");
+			_preInRequestHandler(msgDiag, context, pddContext, log, GestoreHandlers.preInRequestHandlersBuiltIn, GestoreHandlers.tipiPreInRequestHandlersBuiltIn, "PreInRequestHandler");
+			_preInRequestHandler(msgDiag, context, pddContext, log, preInRequestHandlersUsers, tipiPreInRequestHandlersUsers, "PreInRequestHandler");
 		}
 		
 	}
-	private static List<Object[]> _mergeWithImplementation(PreInAcceptRequestContext context,PreInRequestHandler [] preInRequestHandlers,String [] tipiPreInRequestHandlers,
+	private static List<Object[]> _mergeWithImplementation(MsgDiagnostico msgDiag, PreInAcceptRequestContext context, PdDContext pddContext,
+			PreInRequestHandler [] preInRequestHandlers,String [] tipiPreInRequestHandlers,
 			Logger log) {
 		List<Object[]> mergeList = null;
 		try{
@@ -1415,13 +1423,19 @@ public class GestoreHandlers  {
 		}
 		return mergeList;
 	}
-	private static void _preInRequestHandler(PreInAcceptRequestContext context,Logger log, PreInRequestHandler [] handlers, String [] tipiHandlers, String name) {
+	private static void _preInRequestHandler(MsgDiagnostico msgDiag, PreInAcceptRequestContext context, PdDContext pddContext,Logger log,
+			PreInRequestHandler [] handlers, String [] tipiHandlers, String name) {
 		if(handlers!=null){
 			for(int i=0; i<handlers.length; i++){
 				try{
-					emitDiagnosticInvokeHandlerStart(handlers[i], null, log);
-					handlers[i].invoke(context);
-					emitDiagnosticInvokeHandlerEnd(handlers[i], null, log);
+					if(msgDiag!=null) {
+						handlers[i].emitDiagnostic(msgDiag, context, pddContext);
+					}
+					else {
+						emitDiagnosticInvokeHandlerStart(handlers[i], null, log);
+						handlers[i].invoke(context);
+						emitDiagnosticInvokeHandlerEnd(handlers[i], null, log);
+					}
 				}catch(Exception e){
 					// Sollevo l'eccezione
 					/*HandlerException ex = null;

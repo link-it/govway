@@ -6824,6 +6824,26 @@ public class OpenSPCoop2Properties {
 				return null;
 			}
 
+			String faultCodeIntegrationNamespace = null;
+			try{  
+				faultCodeIntegrationNamespace = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultCode.integrationNamespace"); 
+				if(faultCodeIntegrationNamespace!=null) {
+					faultCodeIntegrationNamespace = faultCodeIntegrationNamespace.trim();
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultCode.integrationNamespace': "+e.getMessage(),e);
+			}
+			
+			String faultCodeProtocolNamespace = null;
+			try{  
+				faultCodeProtocolNamespace = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultCode.protocolNamespace"); 
+				if(faultCodeProtocolNamespace!=null) {
+					faultCodeProtocolNamespace = faultCodeProtocolNamespace.trim();
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultCode.protocolNamespace': "+e.getMessage(),e);
+			}
+			
 			String faultActor = null;
 			try{  
 				faultActor = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.erroreApplicativo.faultActor"); 
@@ -6860,6 +6880,8 @@ public class OpenSPCoop2Properties {
 				gestione.setFaultAsXML(true);
 			else
 				gestione.setFaultAsXML(false); // default: ERRORE_APPLICATIVO_SOAP
+			gestione.setDefaultFaultCodeIntegrationNamespace(faultCodeIntegrationNamespace);
+			gestione.setDefaultFaultCodeProtocolNamespace(faultCodeProtocolNamespace);
 			gestione.setFaultActor(faultActor);
 			if(CostantiConfigurazione.ABILITATO.equals(faultGeneric))
 				gestione.setFaultAsGenericCode(true);
@@ -6878,6 +6900,8 @@ public class OpenSPCoop2Properties {
 
 		ProprietaErroreApplicativo pNew = new ProprietaErroreApplicativo();
 		pNew.setDominio(OpenSPCoop2Properties.proprietaGestioneErrorePD.getDominio());
+		pNew.setDefaultFaultCodeIntegrationNamespace(OpenSPCoop2Properties.proprietaGestioneErrorePD.getDefaultFaultCodeIntegrationNamespace());
+		pNew.setDefaultFaultCodeProtocolNamespace(OpenSPCoop2Properties.proprietaGestioneErrorePD.getDefaultFaultCodeProtocolNamespace());
 		pNew.setFaultActor(OpenSPCoop2Properties.proprietaGestioneErrorePD.getFaultActor());
 		pNew.setFaultAsGenericCode(OpenSPCoop2Properties.proprietaGestioneErrorePD.isFaultAsGenericCode());
 		pNew.setFaultAsXML(OpenSPCoop2Properties.proprietaGestioneErrorePD.isFaultAsXML());
@@ -7052,8 +7076,8 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getErroriHttpHeaderGovWayStatus = name;
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_STATUS()+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getErroriHttpHeaderGovWayStatus = org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_STATUS();
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._internal_getHTTP_HEADER_GOVWAY_ERROR_STATUS()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayStatus = org.openspcoop2.protocol.basic.Costanti._internal_getHTTP_HEADER_GOVWAY_ERROR_STATUS();
 			}
 		}
 
@@ -7073,8 +7097,8 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getErroriHttpHeaderGovWayType = name;
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_TYPE()+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getErroriHttpHeaderGovWayType = org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_TYPE();
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._internal_getHTTP_HEADER_GOVWAY_ERROR_TYPE()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayType = org.openspcoop2.protocol.basic.Costanti._internal_getHTTP_HEADER_GOVWAY_ERROR_TYPE();
 			}
 		}
 
@@ -7094,8 +7118,8 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getErroriHttpHeaderGovWayCode = name;
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_CODE()+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getErroriHttpHeaderGovWayCode = org.openspcoop2.protocol.basic.Costanti._getHTTP_HEADER_GOVWAY_ERROR_CODE();
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._internal_getHTTP_HEADER_GOVWAY_ERROR_CODE()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getErroriHttpHeaderGovWayCode = org.openspcoop2.protocol.basic.Costanti._internal_getHTTP_HEADER_GOVWAY_ERROR_CODE();
 			}
 		}
 
@@ -7339,8 +7363,8 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getProblemRFC7807_transactionId_claim = fault;
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID()+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getProblemRFC7807_transactionId_claim = org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID();
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._internal_getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getProblemRFC7807_transactionId_claim = org.openspcoop2.protocol.basic.Costanti._internal_getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID();
 			}
 		}
 
@@ -7360,8 +7384,8 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getProblemRFC7807_code_claim = fault;
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_CODE()+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getProblemRFC7807_code_claim = org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_CODE();
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._internal_getPROBLEM_RFC7807_GOVWAY_CODE()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getProblemRFC7807_code_claim = org.openspcoop2.protocol.basic.Costanti._internal_getPROBLEM_RFC7807_GOVWAY_CODE();
 			}
 		}
 
@@ -7381,8 +7405,8 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.getProblemRFC7807_type_claim = fault;
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TYPE()+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getProblemRFC7807_type_claim = org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TYPE();
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._internal_getPROBLEM_RFC7807_GOVWAY_TYPE()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getProblemRFC7807_type_claim = org.openspcoop2.protocol.basic.Costanti._internal_getPROBLEM_RFC7807_GOVWAY_TYPE();
 			}
 		}
 

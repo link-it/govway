@@ -1,3 +1,10 @@
+2021-06-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Resa possibile la personalizzazione del nome dell'header HTTP 'GovWay-Transaction-ErrorType' e del namespace associato al faultCode su SOAPFault 1.2.
+	Aggiunta inoltre la possibilità di non far generare il claim 'type' in un Problem Detail.
+	Nell'handler PreInRequest aggiunta la possibilità di emettere diagnostici non appena è disponibile l'identificativo di transazione.
+
 2021-06-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

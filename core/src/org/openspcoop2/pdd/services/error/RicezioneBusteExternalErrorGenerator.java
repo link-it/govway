@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
@@ -76,8 +77,11 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 
 		this.state = state;
 		
-		this.imbustamentoErrore = new ImbustamentoErrore(this.log, this.protocolFactory, this.state, this.serviceBinding,
-				this.openspcoopProperties.getProprietaGestioneErrorePD(this.protocolFactory.createProtocolManager()).getFaultActor(),
+		ProprietaErroreApplicativo proprieta = this.openspcoopProperties.getProprietaGestioneErrorePD(this.protocolFactory.createProtocolManager()); 
+		this.imbustamentoErrore = new ImbustamentoErrore(this.log, this.protocolFactory, this.state, 
+				this.serviceBinding,
+				proprieta.getDefaultFaultCodeIntegrationNamespace(), proprieta.getDefaultFaultCodeProtocolNamespace(),
+				proprieta.getFaultActor(),
 				requestInfo.getIdTransazione());
 		
 		this.forceSoapPrefixCompatibilitOpenSPCoopV1 = this.openspcoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1();

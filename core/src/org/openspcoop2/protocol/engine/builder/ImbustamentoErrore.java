@@ -114,11 +114,15 @@ public class ImbustamentoErrore  {
 	private Imbustamento imbustamento;
 	private IState state;
 	private IErroreApplicativoBuilder erroreApplicativoBuilder;
+	private String defaultFaultCodeIntegrationNamespace;
+	private String defaultFaultCodeProtocolNamespace;
 	private String actorInternalSoapFault;
 	private String idTransazione;
 	
 	public ImbustamentoErrore(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, IState state, 
-			ServiceBinding serviceBinding, String actorInternalSoapFault,
+			ServiceBinding serviceBinding,
+			String defaultFaultCodeIntegrationNamespace, String defaultFaultCodeProtocolNamespace, 
+			String actorInternalSoapFault,
 			String idTransazione) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
@@ -140,6 +144,8 @@ public class ImbustamentoErrore  {
 		
 		this.erroreApplicativoBuilder = this.protocolFactory.createErroreApplicativoBuilder();
 		
+		this.defaultFaultCodeIntegrationNamespace = defaultFaultCodeIntegrationNamespace;
+		this.defaultFaultCodeProtocolNamespace = defaultFaultCodeProtocolNamespace;
 		this.actorInternalSoapFault = actorInternalSoapFault;
 		
 		this.idTransazione = idTransazione;
@@ -643,9 +649,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 							String codiceEccezione = ecc.getCode();
 							String posizioneEccezione = ecc.getDescription();
 							if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.INTEGRATION.equals(ecc.getType())){
-								eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneIntegrazione(codiceEccezione);
+								eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneIntegrazione(this.defaultFaultCodeIntegrationNamespace, codiceEccezione);
 							}else{
-								eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(codiceEccezione);
+								eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(this.defaultFaultCodeProtocolNamespace, codiceEccezione);
 							}
 							
 							int codeInt = -1;
@@ -718,13 +724,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 								eccezioneNameGovway = new QName(org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE, codiceEccezioneGW, fault.getPrefix());
 							}
 							else {
-								eccezioneNameGovway = this.erroreApplicativoBuilder.getQNameEccezioneIntegrazione(codiceEccezioneGW);
+								eccezioneNameGovway = this.erroreApplicativoBuilder.getQNameEccezioneIntegrazione(this.defaultFaultCodeIntegrationNamespace, codiceEccezioneGW);
 							}
 							msg.castAsSoap().setFaultCode(fault, code, eccezioneNameGovway);
 						}
 						
 						if(Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE) {
-							msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_CODE(), returnConfig.getGovwayReturnCode()+"");
+							msg.forceTransportHeader(Costanti.getHTTP_HEADER_GOVWAY_ERROR_CODE(), returnConfig.getGovwayReturnCode()+"");
 						}
 						
 						fault.setFaultActor(this.actorInternalSoapFault); 
@@ -794,7 +800,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 									code = codeDetailsErrorWrapper.getPrefixCode() + ":" +code;
 								}
 							}
-							msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_STATUS(), code);
+							msg.forceTransportHeader(Costanti.getHTTP_HEADER_GOVWAY_ERROR_STATUS(), code);
 						}
 					}
 					if(codeDetailsErrorWrapper.getDetails()!=null) {
@@ -807,7 +813,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				
 				try {
 					if(erroriProperties!=null) {
-						msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_TYPE(), erroriProperties.getErrorType(functionError));
+						msg.forceTransportHeader(Costanti.getHTTP_HEADER_GOVWAY_ERROR_TYPE(), erroriProperties.getErrorType(functionError));
 					}
 				}catch(Exception e) {
 					this.log.error("Scrittura header http 'GovWayErrorType' non riuscita: "+e.getMessage(),e);
@@ -838,12 +844,17 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			
 			// Problem builder
 			ProblemRFC7807Builder rfc7807ProblemBuilder = null;
-			String webSite = erroriProperties.getWebSite(functionError);
-			if(webSite!=null && !"".equals(webSite)) {
-				rfc7807ProblemBuilder = new ProblemRFC7807Builder(webSite);
-			}
-			else if(rfc7807.isType()) {
-				rfc7807ProblemBuilder = new ProblemRFC7807Builder(rfc7807.getTypeFormat());
+			if(erroriProperties.isTypeEnabled()) {
+				String webSite = erroriProperties.getWebSite(functionError);
+				if(webSite!=null && !"".equals(webSite)) {
+					rfc7807ProblemBuilder = new ProblemRFC7807Builder(webSite);
+				}
+				else if(rfc7807.isType()) {
+					rfc7807ProblemBuilder = new ProblemRFC7807Builder(rfc7807.getTypeFormat());
+				}
+				else {
+					rfc7807ProblemBuilder = new ProblemRFC7807Builder(false);
+				}
 			}
 			else {
 				rfc7807ProblemBuilder = new ProblemRFC7807Builder(false);

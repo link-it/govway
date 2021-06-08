@@ -69,7 +69,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 	// NAMESPACE
 	
 	@Override
-	public String getNamespaceEccezioneProtocollo(){
+	public String getNamespaceEccezioneProtocollo(String defaultNamespace){
 		return SPCoopCostanti.NAMESPACE_EGOV;
 	}
 	

@@ -121,25 +121,35 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	// NAMESPACE
 	
 	@Override
-	public String getNamespaceEccezioneProtocollo(){
-		return Costanti.ERRORE_PROTOCOLLO_NAMESPACE;
+	public String getNamespaceEccezioneProtocollo(String defaultNamespace){
+		if(defaultNamespace!=null && StringUtils.isNotEmpty(defaultNamespace)) {
+			return defaultNamespace;
+		}
+		else {
+			return Costanti.ERRORE_PROTOCOLLO_NAMESPACE;
+		}
 	}
 
 	@Override
-	public QName getQNameEccezioneProtocollo(String codice){
-		return new QName(this.getNamespaceEccezioneProtocollo(),
+	public QName getQNameEccezioneProtocollo(String defaultNamespace, String codice){
+		return new QName(this.getNamespaceEccezioneProtocollo(defaultNamespace),
 				codice, 
 				Costanti.ERRORE_PROTOCOLLO_PREFIX);
 	}
 	
 	@Override
-	public String getNamespaceEccezioneIntegrazione(){
-		return Costanti.ERRORE_INTEGRAZIONE_NAMESPACE;
+	public String getNamespaceEccezioneIntegrazione(String defaultNamespace){
+		if(defaultNamespace!=null && StringUtils.isNotEmpty(defaultNamespace)) {
+			return defaultNamespace;
+		}
+		else {
+			return Costanti.ERRORE_INTEGRAZIONE_NAMESPACE;
+		}
 	}
 	
 	@Override
-	public QName getQNameEccezioneIntegrazione(String codice){
-		return new QName(getNamespaceEccezioneIntegrazione(),
+	public QName getQNameEccezioneIntegrazione(String defaultNamespace, String codice){
+		return new QName(getNamespaceEccezioneIntegrazione(defaultNamespace),
 				codice, 
 				Costanti.ERRORE_INTEGRAZIONE_PREFIX);
 	}
@@ -505,12 +515,17 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			
 			// Problem builder
 			ProblemRFC7807Builder rfc7807ProblemBuilder = null;
-			String webSite = erroriProperties.getWebSite(functionError);
-			if(webSite!=null && !"".equals(webSite)) {
-				rfc7807ProblemBuilder = new ProblemRFC7807Builder(webSite);
-			}
-			else if(rfc7807.isType()) {
-				rfc7807ProblemBuilder = new ProblemRFC7807Builder(rfc7807.getTypeFormat());
+			if(erroriProperties.isTypeEnabled()) {
+				String webSite = erroriProperties.getWebSite(functionError);
+				if(webSite!=null && !"".equals(webSite)) {
+					rfc7807ProblemBuilder = new ProblemRFC7807Builder(webSite);
+				}
+				else if(rfc7807.isType()) {
+					rfc7807ProblemBuilder = new ProblemRFC7807Builder(rfc7807.getTypeFormat());
+				}
+				else {
+					rfc7807ProblemBuilder = new ProblemRFC7807Builder(false);
+				}
 			}
 			else {
 				rfc7807ProblemBuilder = new ProblemRFC7807Builder(false);
@@ -967,10 +982,10 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					// ECCEZIONE CODE
 					QName eccezioneName = null;
 					if(eccezioneIntegrazione!=null){
-						eccezioneName = this.getQNameEccezioneIntegrazione(codiceEccezione);
+						eccezioneName = this.getQNameEccezioneIntegrazione(proprieta!=null ? proprieta.getDefaultFaultCodeIntegrationNamespace() : null, codiceEccezione);
 						code = eccezioneIntegrazione.getSoapFaultCode();
 					}else{
-						eccezioneName = this.getQNameEccezioneProtocollo(codiceEccezione);
+						eccezioneName = this.getQNameEccezioneProtocollo(proprieta!=null ? proprieta.getDefaultFaultCodeProtocolNamespace() : null, codiceEccezione);
 						code = eccezioneProtocollo.getSoapFaultCode();
 					}
 					
@@ -1013,7 +1028,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 								eccezioneNameGovway = new QName(org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE, codiceEccezioneGW, fault.getPrefix());
 							}
 							else {
-								eccezioneNameGovway = this.getQNameEccezioneIntegrazione(codiceEccezioneGW);
+								eccezioneNameGovway = this.getQNameEccezioneIntegrazione(proprieta!=null ? proprieta.getDefaultFaultCodeIntegrationNamespace() : null, codiceEccezioneGW);
 							}
 							msg.castAsSoap().setFaultCode(fault, code, eccezioneNameGovway);
 						}
@@ -1111,7 +1126,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 									code = codeDetailsErrorWrapper.getPrefixCode() + ":" +code;
 								}
 							}
-							msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_STATUS(), code);
+							msg.forceTransportHeader(Costanti.getHTTP_HEADER_GOVWAY_ERROR_STATUS(), code);
 						}
 					}
 					if(codeDetailsErrorWrapper.getDetails()!=null) {
@@ -1124,7 +1139,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				
 				try {
 					if(erroriProperties!=null) {
-						msg.forceTransportHeader(Costanti._getHTTP_HEADER_GOVWAY_ERROR_TYPE(), erroriProperties.getErrorType(functionError));
+						msg.forceTransportHeader(Costanti.getHTTP_HEADER_GOVWAY_ERROR_TYPE(), erroriProperties.getErrorType(functionError));
 					}
 				}catch(Exception e) {
 					this.log.error("Scrittura header http 'GovWayErrorType' non riuscita: "+e.getMessage(),e);

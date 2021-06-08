@@ -57,7 +57,7 @@ public interface IErroreApplicativoBuilder extends IComponentFactory {
 	 * 
 	 * @return namespace che definisce una eccezione di protocollo
 	 */
-	public String getNamespaceEccezioneProtocollo();
+	public String getNamespaceEccezioneProtocollo(String defaultNamespace);
 	
 	/**
 	 * Ritorna il QName che definisce una eccezione di protocollo
@@ -65,14 +65,14 @@ public interface IErroreApplicativoBuilder extends IComponentFactory {
 	 * @param codice Codice da utilizzare come localName
 	 * @return QName che definisce una eccezione di protocollo
 	 */
-	public QName getQNameEccezioneProtocollo(String codice);
+	public QName getQNameEccezioneProtocollo(String defaultNamespace, String codice);
 	
 	/**
 	 * Ritorna il namespace che definisce una eccezione di integrazione
 	 * 
 	 * @return namespace che definisce una eccezione di integrazione
 	 */
-	public String getNamespaceEccezioneIntegrazione();
+	public String getNamespaceEccezioneIntegrazione(String defaultNamespacea);
 	
 	/**
 	 * Ritorna il QName che definisce una eccezione di integrazione
@@ -80,7 +80,7 @@ public interface IErroreApplicativoBuilder extends IComponentFactory {
 	 * @param codice Codice da utilizzare come localName
 	 * @return QName che definisce una eccezione di integrazione
 	 */
-	public QName getQNameEccezioneIntegrazione(String codice);
+	public QName getQNameEccezioneIntegrazione(String defaultNamespace, String codice);
 	
 	
 	

@@ -234,6 +234,10 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		if(context!=null && protocolFactory!=null) {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 		}
+		
+		// emitDiagnostic preAccept handler
+		GestoreHandlers.emitDiagnostic(msgDiag, preInAcceptRequestContext, context!=null ? context.getPddContext() : null, 
+				logCore, logCore);
 				
 		// GeneratoreErrore
 		RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore = null;

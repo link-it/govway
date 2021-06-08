@@ -289,6 +289,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 		}
 		
+		// emitDiagnostic preAccept handler
+		GestoreHandlers.emitDiagnostic(msgDiag, preInAcceptRequestContext, context!=null ? context.getPddContext() : null, 
+				logCore, logCore);
+		
 		// Aggiorno RequestInfo
 		ConnectorDispatcherInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, req, res,
 				this.generatoreErrore, serviceIdentificationReader, msgDiag, 

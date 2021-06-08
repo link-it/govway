@@ -35,6 +35,7 @@ public class FaultBuilderConfig {
 	private Integer httpReturnCode;
 	private Integer govwayReturnCode;
 	
+	private boolean rfc7807Type = true;
 	private String rfc7807WebSite;
 	private String rfc7807Title;
 	private String rfc7807GovWayTypeHeaderErrorTypeName;
@@ -50,6 +51,12 @@ public class FaultBuilderConfig {
 	
 	private String details;
 	
+	public boolean isRfc7807Type() {
+		return this.rfc7807Type;
+	}
+	public void setRfc7807Type(boolean rfc7807type) {
+		this.rfc7807Type = rfc7807type;
+	}
 	public String getRfc7807WebSite() {
 		return this.rfc7807WebSite;
 	}

@@ -52,6 +52,10 @@ public class ProprietaErroreApplicativo implements java.io.Serializable {
 	/** Indicazione se il msg di Errore Applicativo deve essere costruito come un SOAPFault(false)
 	 *                    o come un msg di errore applicativo (true). */
 	private boolean faultAsXML;
+	/** Eventuale defaultFaultCodeIntegrationNamespace */
+	private String defaultFaultCodeIntegrationNamespace;
+	/** Eventuale defaultFaultCodeProtocolNamespace */
+	private String defaultFaultCodeProtocolNamespace;
 	/** Eventuale FaultActor. */
 	private String faultActor;
 	/** Dominio del soggetto che ha effettuato la richiesta */
@@ -141,6 +145,12 @@ public class ProprietaErroreApplicativo implements java.io.Serializable {
 	public void setFaultAsXML(boolean faultAsXML) {
 		this.faultAsXML = faultAsXML;
 	}
+	public void setDefaultFaultCodeIntegrationNamespace(String defaultFaultCodeIntegrationNamespace) {
+		this.defaultFaultCodeIntegrationNamespace = defaultFaultCodeIntegrationNamespace;
+	}
+	public void setDefaultFaultCodeProtocolNamespace(String defaultFaultCodeProtocolNamespace) {
+		this.defaultFaultCodeProtocolNamespace = defaultFaultCodeProtocolNamespace;
+	}
 	/**
 	 * Eventuale FaultActor
 	 *
@@ -211,6 +221,12 @@ public class ProprietaErroreApplicativo implements java.io.Serializable {
 	 */
 	public boolean isFaultAsXML() {
 		return this.faultAsXML;
+	}
+	public String getDefaultFaultCodeIntegrationNamespace() {
+		return this.defaultFaultCodeIntegrationNamespace;
+	}
+	public String getDefaultFaultCodeProtocolNamespace() {
+		return this.defaultFaultCodeProtocolNamespace;
 	}
 	/**
 	 * Eventuale FaultActor

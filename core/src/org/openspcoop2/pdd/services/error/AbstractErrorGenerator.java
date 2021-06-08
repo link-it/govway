@@ -231,6 +231,7 @@ public abstract class AbstractErrorGenerator {
 			config.setHttpReturnCode(returnConfig.getHttpReturnCode());
 			config.setGovwayReturnCode(returnConfig.getGovwayReturnCode());
 			
+			config.setRfc7807Type(erroriProperties.isTypeEnabled());
 			config.setRfc7807WebSite(erroriProperties.getWebSite(integrationFunctionError));
 			
 			if(MessageType.SOAP_11.equals(msgTypeErrorResponse) || MessageType.SOAP_12.equals(msgTypeErrorResponse) || !useProblemRFC7807) {
@@ -254,7 +255,8 @@ public abstract class AbstractErrorGenerator {
 					config.setPrefixSoap(prefix);
 				}
 				else {
-					eccezioneNameGovway = this.getProtocolFactory().createErroreApplicativoBuilder().getQNameEccezioneIntegrazione(codiceEccezioneGW);
+					eccezioneNameGovway = this.getProtocolFactory().createErroreApplicativoBuilder().getQNameEccezioneIntegrazione(this.openspcoopProperties.getProprietaGestioneErrorePD(this.protocolFactory.createProtocolManager()).getDefaultFaultCodeIntegrationNamespace(),
+							codiceEccezioneGW);
 				}
 				config.setErrorCode(eccezioneNameGovway);
 			}

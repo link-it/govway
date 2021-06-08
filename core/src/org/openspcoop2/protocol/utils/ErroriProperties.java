@@ -224,6 +224,21 @@ public class ErroriProperties {
 	
 	/* **** CONVERTER **** */
 
+	private Boolean typeEnabled = null;
+	public boolean isTypeEnabled() throws ProtocolException {
+		if(this.typeEnabled==null) {
+			this.initTypeEnabled();
+		}
+		return this.typeEnabled;
+	}
+	private synchronized void initTypeEnabled() throws ProtocolException {
+		if(this.typeEnabled==null) {
+			this.typeEnabled = getBooleanProperty("type.enabled");
+		}
+	}
+	
+	
+	
 	
 	private String webSite = null;
 	public String getPrefixWebSite() throws ProtocolException {

@@ -322,7 +322,7 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 				String codiceEccezione = 
 						this.traduttore.toString(ecc.getCodiceEccezione(),
 								ecc.getSubCodiceEccezione());
-				QName eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(codiceEccezione);
+				QName eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(null, codiceEccezione);
 				SOAPFaultCode code = params.getSoapFaultCode();
 				soapMessage.setFaultCode(f, code, eccezioneName);
 				

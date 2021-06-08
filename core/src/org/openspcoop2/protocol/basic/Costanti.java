@@ -112,7 +112,7 @@ public class Costanti {
 	
 	
 	private static final String PROBLEM_RFC7807_GOVWAY_CODE = "govway_status";
-	public static String _getPROBLEM_RFC7807_GOVWAY_CODE() {
+	public static String _internal_getPROBLEM_RFC7807_GOVWAY_CODE() {
 		return PROBLEM_RFC7807_GOVWAY_CODE;
 	}
 	private static String valuePROBLEM_RFC7807_GOVWAY_CODE = null;
@@ -134,7 +134,7 @@ public class Costanti {
 	}
 	
 	private static final String PROBLEM_RFC7807_GOVWAY_TYPE = "govway_type";
-	public static String _getPROBLEM_RFC7807_GOVWAY_TYPE() {
+	public static String _internal_getPROBLEM_RFC7807_GOVWAY_TYPE() {
 		return PROBLEM_RFC7807_GOVWAY_TYPE;
 	}
 	private static String valuePROBLEM_RFC7807_GOVWAY_TYPE = null;
@@ -159,7 +159,7 @@ public class Costanti {
 	public static final String PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL = ERRORE_PROTOCOLLO_PREFIX+":";
 	
 	private static final String PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = "govway_id";
-	public static String _getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID() {
+	public static String _internal_getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID() {
 		return PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID;
 	}
 	private static String valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = null;
@@ -184,7 +184,7 @@ public class Costanti {
 	
 	
 	private static final String HTTP_HEADER_GOVWAY_ERROR_STATUS = "GovWay-Transaction-ErrorStatus";
-	public static String _getHTTP_HEADER_GOVWAY_ERROR_STATUS() {
+	public static String _internal_getHTTP_HEADER_GOVWAY_ERROR_STATUS() {
 		return HTTP_HEADER_GOVWAY_ERROR_STATUS;
 	}
 	private static String valueHTTP_HEADER_GOVWAY_ERROR_STATUS = null;
@@ -209,7 +209,7 @@ public class Costanti {
 	
 	
 	private static final String HTTP_HEADER_GOVWAY_ERROR_TYPE = "GovWay-Transaction-ErrorType";
-	public static String _getHTTP_HEADER_GOVWAY_ERROR_TYPE() {
+	public static String _internal_getHTTP_HEADER_GOVWAY_ERROR_TYPE() {
 		return HTTP_HEADER_GOVWAY_ERROR_TYPE;
 	}
 	private static String valueHTTP_HEADER_GOVWAY_ERROR_TYPE = null;
@@ -234,7 +234,7 @@ public class Costanti {
 	
 	
 	private static final String HTTP_HEADER_GOVWAY_ERROR_CODE = "GovWay-Transaction-ErrorCode";
-	public static String _getHTTP_HEADER_GOVWAY_ERROR_CODE() {
+	public static String _internal_getHTTP_HEADER_GOVWAY_ERROR_CODE() {
 		return HTTP_HEADER_GOVWAY_ERROR_CODE;
 	}
 	private static String valueHTTP_HEADER_GOVWAY_ERROR_CODE = null;

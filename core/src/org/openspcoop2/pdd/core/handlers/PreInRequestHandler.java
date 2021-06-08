@@ -21,6 +21,9 @@
 
 package org.openspcoop2.pdd.core.handlers;
 
+import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
+
 /**
  * PreInRequestHandler
  *
@@ -32,6 +35,10 @@ package org.openspcoop2.pdd.core.handlers;
 public interface PreInRequestHandler {
 
 	public default void invoke(PreInAcceptRequestContext context) {
+		// non deve lanciare eccezioni
+	}
+	
+	public default void emitDiagnostic(MsgDiagnostico msgDiag, PreInAcceptRequestContext context, PdDContext pddContext) {
 		// non deve lanciare eccezioni
 	}
 	

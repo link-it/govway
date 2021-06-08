@@ -1124,11 +1124,16 @@ public abstract class OpenSPCoop2MessageFactory {
 			else if(MessageType.XML.equals(messageType)){
 				if(useProblemRFC7807) {
 					ProblemRFC7807Builder builder = null;
-					if(faultBuilderConfig.getRfc7807WebSite()!=null) {
-						builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+					if(faultBuilderConfig.isRfc7807Type()) {
+						if(faultBuilderConfig.getRfc7807WebSite()!=null) {
+							builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+						}
+						else {
+							builder = new ProblemRFC7807Builder(true);
+						}
 					}
 					else {
-						builder = new ProblemRFC7807Builder(true);
+						builder = new ProblemRFC7807Builder(false);
 					}
 					ProblemRFC7807 problemRFC7807 = builder.buildProblem(faultBuilderConfig.getGovwayReturnCode());
 					if(faultBuilderConfig.getRfc7807Title()!=null) {
@@ -1149,11 +1154,16 @@ public abstract class OpenSPCoop2MessageFactory {
 			else if(MessageType.JSON.equals(messageType)){
 				if(useProblemRFC7807) {
 					ProblemRFC7807Builder builder = null;
-					if(faultBuilderConfig.getRfc7807WebSite()!=null) {
-						builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+					if(faultBuilderConfig.isRfc7807Type()) {
+						if(faultBuilderConfig.getRfc7807WebSite()!=null) {
+							builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+						}
+						else {
+							builder = new ProblemRFC7807Builder(true);
+						}
 					}
 					else {
-						builder = new ProblemRFC7807Builder(true);
+						builder = new ProblemRFC7807Builder(false);
 					}
 					ProblemRFC7807 problemRFC7807 = builder.buildProblem(faultBuilderConfig.getGovwayReturnCode());
 					if(faultBuilderConfig.getRfc7807Title()!=null) {
@@ -1179,11 +1189,16 @@ public abstract class OpenSPCoop2MessageFactory {
 				// modifica default in json
 				if(useProblemRFC7807) {
 					ProblemRFC7807Builder builder = null;
-					if(faultBuilderConfig.getRfc7807WebSite()!=null) {
-						builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+					if(faultBuilderConfig.isRfc7807Type()) {
+						if(faultBuilderConfig.getRfc7807WebSite()!=null) {
+							builder = new ProblemRFC7807Builder(faultBuilderConfig.getRfc7807WebSite());
+						}
+						else {
+							builder = new ProblemRFC7807Builder(true);
+						}
 					}
 					else {
-						builder = new ProblemRFC7807Builder(true);
+						builder = new ProblemRFC7807Builder(false);
 					}
 					ProblemRFC7807 problemRFC7807 = builder.buildProblem(faultBuilderConfig.getGovwayReturnCode());
 					if(faultBuilderConfig.getRfc7807Title()!=null) {

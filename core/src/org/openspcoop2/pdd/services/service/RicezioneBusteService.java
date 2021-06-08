@@ -287,6 +287,10 @@ public class RicezioneBusteService  {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 		}
 		
+		// emitDiagnostic preAccept handler
+		GestoreHandlers.emitDiagnostic(msgDiag, preInAcceptRequestContext, context!=null ? context.getPddContext() : null, 
+				logCore, logCore);
+		
 		// Aggiorno RequestInfo
 		ConnectorDispatcherInfo cInfo = RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, req, res,
 				this.generatoreErrore, serviceIdentificationReader,msgDiag, 
