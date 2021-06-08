@@ -198,7 +198,7 @@ public class ProblemUtilities {
 			Reporter.log("Controllo esistenza govway id");
 			String govwayTransactionId = null;
 			if(problemRFC7807.getCustom()!=null) {
-				govwayTransactionId = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID());
+				govwayTransactionId = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID());
 			}
 			Assert.assertTrue(govwayTransactionId!=null);
 			
@@ -206,7 +206,7 @@ public class ProblemUtilities {
 				Reporter.log("Controllo esistenza govway status");
 				String govwayStatus = null;
 				if(problemRFC7807.getCustom()!=null) {
-					govwayStatus = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_CODE());
+					govwayStatus = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_CODE());
 				}
 				Assert.assertTrue(govwayStatus!=null);
 				
