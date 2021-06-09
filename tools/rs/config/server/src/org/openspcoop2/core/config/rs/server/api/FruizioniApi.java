@@ -27,7 +27,6 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazioneView;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreFruizione;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreMultiplo;
 import java.io.File;
 import org.openspcoop2.core.config.rs.server.model.Fruizione;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModI;
@@ -101,28 +100,6 @@ public interface FruizioniApi  {
     public void createFruizioneAllegato(@Valid ApiImplAllegato body, @PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
 
     /**
-     * Aggiunta di un connettore multiplo nella fruizione di API
-     *
-     * Questa operazione consente di aggiungere un connettore multiplo alla fruizione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-    @POST
-    @Path("/fruizioni/{erogatore}/{nome}/{versione}/connettore-multiplo")
-    @Consumes({ "application/json" })
-    @Produces({ "application/problem+json" })
-    @Operation(summary = "Aggiunta di un connettore multiplo nella fruizione di API", tags={ "fruizioni" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Resource created"),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "409", description = "Conflict (L'entità che si vuole creare risulta già esistente)", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void createFruizioneConnettoreMultiplo(@Valid ConnettoreMultiplo body, @PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
-
-    /**
      * Elimina una fruizione di api
      *
      * Questa operazione consente di eliminare una fruizione di API identificata dall'erogatore, dal nome e dalla versione
@@ -163,27 +140,6 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public void deleteFruizioneAllegato(@PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
-
-    /**
-     * Elimina un connettore multiplo dalla fruizione
-     *
-     * Questa operazione consente di eliminare un connettore multiplo associato alla fruizione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-    @DELETE
-    @Path("/fruizioni/{erogatore}/{nome}/{versione}/connettore-multiplo/{nome_connettore}")
-    @Produces({ "application/problem+json" })
-    @Operation(summary = "Elimina un connettore multiplo dalla fruizione", tags={ "fruizioni" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "204", description = "Connettore multiplo eliminato con successo"),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteFruizioneConnettoreMultiplo(@PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_connettore") @Size(max=255) String nomeConnettore, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
 
     /**
      * Restituisce l'allegato di una fruizione
@@ -333,27 +289,6 @@ public interface FruizioniApi  {
     public ConnettoreFruizione getFruizioneConnettore(@PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
 
     /**
-     * Restituisce il dettaglio di un connettore multiplo
-     *
-     * Questa operazione consente di ottenere il dettaglio di un connettore multiplo della fruizione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-    @GET
-    @Path("/fruizioni/{erogatore}/{nome}/{versione}/connettore-multiplo/{nome_connettore}")
-    @Produces({ "application/json", "application/problem+json" })
-    @Operation(summary = "Restituisce il dettaglio di un connettore multiplo", tags={ "fruizioni" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Dati del connettore multiplo restituiti con successo", content = @Content(schema = @Schema(implementation = ConnettoreMultiplo.class))),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ConnettoreMultiplo getFruizioneConnettoreMultiplo(@PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_connettore") @Size(max=255) String nomeConnettore, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
-
-    /**
      * Restituisce le informazioni generali di una fruizione di API
      *
      * Questa operazione consente di ottenere le informazioni generali di una fruizione di API identificata dall'erogatore, dal nome e dalla versione
@@ -481,28 +416,6 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public void updateFruizioneConnettore(@Valid ConnettoreFruizione body, @PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
-
-    /**
-     * Modifica i dati di un connettore multiplo della fruizione
-     *
-     * Questa operazione consente di aggiornare i dettagli di un connettore multiplo alla fruizione identificata dall'erogatore, dal nome e dalla versione
-     *
-     */
-    @PUT
-    @Path("/fruizioni/{erogatore}/{nome}/{versione}/connettore-multiplo/{nome_connettore}")
-    @Consumes({ "application/json" })
-    @Produces({ "application/problem+json" })
-    @Operation(summary = "Modifica i dati di un connettore multiplo della fruizione", tags={ "fruizioni" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "204", description = "Dati del connettore multiplo aggiornati correttamente"),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateFruizioneConnettoreMultiplo(@Valid ConnettoreMultiplo body, @PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_connettore") @Size(max=255) String nomeConnettore, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
 
     /**
      * Consente di modificare le informazioni generali di una fruizione di API
