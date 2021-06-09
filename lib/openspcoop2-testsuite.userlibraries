@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <eclipse-userlibraries version="2">
-    <library name="openspcoop2_3.3_lib_axis14" systemlibrary="false">
-        <archive path="/op2_3.3.dev/lib/axis14/wss4j-1.5.11.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/opensaml-1.1.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/neethi-2.0.4.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/addressing-1.1.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/axis-saaj-1.4.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/axis-ant-1.4.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/axis-1.4-gov4j-1.jar"/>
+    <library name="openspcoop2_3.4_lib_axis14" systemlibrary="false">
+        <archive path="/op2_3.4.dev/lib/axis14/wss4j-1.5.11.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/opensaml-1.1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/neethi-2.0.4.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/addressing-1.1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-saaj-1.4.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-ant-1.4.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-1.4-gov4j-1.jar"/>
     </library>
-    <library name="openspcoop2_3.3_lib_axis14_withoutSecurity" systemlibrary="false">
-        <archive path="/op2_3.3.dev/lib/axis14/axis-saaj-1.4.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/axis-ant-1.4.jar"/>
-        <archive path="/op2_3.3.dev/lib/axis14/axis-1.4-gov4j-1.jar"/>
+    <library name="openspcoop2_3.4_lib_axis14_withoutSecurity" systemlibrary="false">
+        <archive path="/op2_3.4.dev/lib/axis14/axis-saaj-1.4.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-ant-1.4.jar"/>
+        <archive path="/op2_3.4.dev/lib/axis14/axis-1.4-gov4j-1.jar"/>
     </library>
-    <library name="openspcoop2_3.3_lib_stub_axis14" systemlibrary="false">
-        <archive path="/op2_3.3.dev/lib/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>
+    <library name="openspcoop2_3.4_lib_stub_axis14" systemlibrary="false">
+        <archive path="/op2_3.4.dev/lib/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>
     </library>
-    <library name="openspcoop2_3.3_lib_karate" systemlibrary="false">
-        <archive path="/op2_3.3.dev/lib/testsuite/karate-apache-0.9.6.jar"/>
-        <archive path="/op2_3.3.dev/lib/testsuite/karate-core-0.9.6.jar"/>
-        <archive path="/op2_3.3.dev/lib/testsuite/karate-junit4-0.9.6.jar"/>
+    <library name="openspcoop2_3.4_lib_karate" systemlibrary="false">
+        <archive path="/op2_3.4.dev/lib/testsuite/karate-apache-0.9.6.jar"/>
+        <archive path="/op2_3.4.dev/lib/testsuite/karate-core-0.9.6.jar"/>
+        <archive path="/op2_3.4.dev/lib/testsuite/karate-junit4-0.9.6.jar"/>
     </library>
 
 </eclipse-userlibraries>
