@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class Connettore  {
+public class BaseConnettoreHttp  {
   
   @Schema(example = "http://ente.it/servizio", required = true, description = "")
   private String endpoint = null;
@@ -44,6 +44,9 @@ public class Connettore  {
   
   @Schema(description = "")
   private String tokenPolicy = null;
+  
+  @Schema(description = "")
+  private Boolean debug = false;
  /**
    * Get endpoint
    * @return endpoint
@@ -59,7 +62,7 @@ public class Connettore  {
     this.endpoint = endpoint;
   }
 
-  public Connettore endpoint(String endpoint) {
+  public BaseConnettoreHttp endpoint(String endpoint) {
     this.endpoint = endpoint;
     return this;
   }
@@ -78,7 +81,7 @@ public class Connettore  {
     this.autenticazioneHttp = autenticazioneHttp;
   }
 
-  public Connettore autenticazioneHttp(ConnettoreConfigurazioneHttpBasic autenticazioneHttp) {
+  public BaseConnettoreHttp autenticazioneHttp(ConnettoreConfigurazioneHttpBasic autenticazioneHttp) {
     this.autenticazioneHttp = autenticazioneHttp;
     return this;
   }
@@ -97,7 +100,7 @@ public class Connettore  {
     this.autenticazioneHttps = autenticazioneHttps;
   }
 
-  public Connettore autenticazioneHttps(ConnettoreConfigurazioneHttps autenticazioneHttps) {
+  public BaseConnettoreHttp autenticazioneHttps(ConnettoreConfigurazioneHttps autenticazioneHttps) {
     this.autenticazioneHttps = autenticazioneHttps;
     return this;
   }
@@ -116,7 +119,7 @@ public class Connettore  {
     this.proxy = proxy;
   }
 
-  public Connettore proxy(ConnettoreConfigurazioneProxy proxy) {
+  public BaseConnettoreHttp proxy(ConnettoreConfigurazioneProxy proxy) {
     this.proxy = proxy;
     return this;
   }
@@ -135,7 +138,7 @@ public class Connettore  {
     this.tempiRisposta = tempiRisposta;
   }
 
-  public Connettore tempiRisposta(ConnettoreConfigurazioneTimeout tempiRisposta) {
+  public BaseConnettoreHttp tempiRisposta(ConnettoreConfigurazioneTimeout tempiRisposta) {
     this.tempiRisposta = tempiRisposta;
     return this;
   }
@@ -154,8 +157,27 @@ public class Connettore  {
     this.tokenPolicy = tokenPolicy;
   }
 
-  public Connettore tokenPolicy(String tokenPolicy) {
+  public BaseConnettoreHttp tokenPolicy(String tokenPolicy) {
     this.tokenPolicy = tokenPolicy;
+    return this;
+  }
+
+ /**
+   * Get debug
+   * @return debug
+  **/
+  @JsonProperty("debug")
+  @Valid
+  public Boolean isDebug() {
+    return this.debug;
+  }
+
+  public void setDebug(Boolean debug) {
+    this.debug = debug;
+  }
+
+  public BaseConnettoreHttp debug(Boolean debug) {
+    this.debug = debug;
     return this;
   }
 
@@ -163,14 +185,15 @@ public class Connettore  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Connettore {\n");
+    sb.append("class BaseConnettoreHttp {\n");
     
-    sb.append("    endpoint: ").append(Connettore.toIndentedString(this.endpoint)).append("\n");
-    sb.append("    autenticazioneHttp: ").append(Connettore.toIndentedString(this.autenticazioneHttp)).append("\n");
-    sb.append("    autenticazioneHttps: ").append(Connettore.toIndentedString(this.autenticazioneHttps)).append("\n");
-    sb.append("    proxy: ").append(Connettore.toIndentedString(this.proxy)).append("\n");
-    sb.append("    tempiRisposta: ").append(Connettore.toIndentedString(this.tempiRisposta)).append("\n");
-    sb.append("    tokenPolicy: ").append(Connettore.toIndentedString(this.tokenPolicy)).append("\n");
+    sb.append("    endpoint: ").append(BaseConnettoreHttp.toIndentedString(this.endpoint)).append("\n");
+    sb.append("    autenticazioneHttp: ").append(BaseConnettoreHttp.toIndentedString(this.autenticazioneHttp)).append("\n");
+    sb.append("    autenticazioneHttps: ").append(BaseConnettoreHttp.toIndentedString(this.autenticazioneHttps)).append("\n");
+    sb.append("    proxy: ").append(BaseConnettoreHttp.toIndentedString(this.proxy)).append("\n");
+    sb.append("    tempiRisposta: ").append(BaseConnettoreHttp.toIndentedString(this.tempiRisposta)).append("\n");
+    sb.append("    tokenPolicy: ").append(BaseConnettoreHttp.toIndentedString(this.tokenPolicy)).append("\n");
+    sb.append("    debug: ").append(BaseConnettoreHttp.toIndentedString(this.debug)).append("\n");
     sb.append("}");
     return sb.toString();
   }

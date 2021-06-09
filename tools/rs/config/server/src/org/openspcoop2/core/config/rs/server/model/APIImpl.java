@@ -46,7 +46,7 @@ public class APIImpl extends APIBaseImpl {
   private OneOfAPIImplAutorizzazione autorizzazione = null;
   
   @Schema(required = true, description = "")
-  private Connettore connettore = null;
+  private BaseConnettoreHttp connettore = null;
  /**
    * Get autenticazione
    * @return autenticazione
@@ -92,15 +92,15 @@ public class APIImpl extends APIBaseImpl {
   @JsonProperty("connettore")
   @NotNull
   @Valid
-  public Connettore getConnettore() {
+  public BaseConnettoreHttp getConnettore() {
     return this.connettore;
   }
 
-  public void setConnettore(Connettore connettore) {
+  public void setConnettore(BaseConnettoreHttp connettore) {
     this.connettore = connettore;
   }
 
-  public APIImpl connettore(Connettore connettore) {
+  public APIImpl connettore(BaseConnettoreHttp connettore) {
     this.connettore = connettore;
     return this;
   }

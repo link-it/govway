@@ -45,7 +45,9 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazione;
 import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazioneView;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
-import org.openspcoop2.core.config.rs.server.model.Connettore;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreFruizione;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreMultiplo;
 import org.openspcoop2.core.config.rs.server.model.Fruizione;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModI;
 import org.openspcoop2.core.config.rs.server.model.FruizioneViewItem;
@@ -272,6 +274,38 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 		}
 	}
 
+    /**
+     * Aggiunta di un connettore multiplo nella fruizione di API
+     *
+     * Questa operazione consente di aggiungere un connettore multiplo alla fruizione identificata dall&#x27;erogatore, dal nome e dalla versione
+     *
+     */
+	@Override
+    public void createFruizioneConnettoreMultiplo(ConnettoreMultiplo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+        // TODO: Implement...
+        
+			context.getLogger().info("Invocazione completata con successo");
+        
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
 	/**
 	 * Elimina una fruizione di api
 	 *
@@ -400,6 +434,37 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+
+    /**
+     * Elimina un connettore multiplo dalla fruizione
+     *
+     * Questa operazione consente di eliminare un connettore multiplo associato alla fruizione identificata dall&#x27;erogatore, dal nome e dalla versione
+     *
+     */
+	@Override
+    public void deleteFruizioneConnettoreMultiplo(String erogatore, String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+        // TODO: Implement...
+        
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 
 	/**
 	 * Ricerca fruizioni di api
@@ -651,8 +716,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 	 *
 	 */
 	@Override
-	public Connettore getFruizioneConnettore(String erogatore, String nome, Integer versione, ProfiloEnum profilo,
-			String soggetto, String tipoServizio) {
+	public ConnettoreFruizione getFruizioneConnettore(String erogatore, String nome, Integer versione, ProfiloEnum profilo,
+			String soggetto, String tipoServizio, String gruppo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -670,7 +735,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					env.idSoggetto, env);
 			Map<String, String> props = regConn.getProperties(); // Qui c'è solo la proprietà location.
 
-			Connettore c = ErogazioniApiHelper.buildConnettore(props);
+			ConnettoreFruizione c = ErogazioniApiHelper.buildConnettoreFruizione(props);
 
 			context.getLogger().info("Invocazione completata con successo");
 			return c;
@@ -683,6 +748,37 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+
+    /**
+     * Restituisce il dettaglio di un connettore multiplo
+     *
+     * Questa operazione consente di ottenere il dettaglio di un connettore multiplo della fruizione identificata dall&#x27;erogatore, dal nome e dalla versione
+     *
+     */
+	@Override
+    public ConnettoreMultiplo getFruizioneConnettoreMultiplo(String erogatore, String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+        // TODO: Implement...
+        
+			context.getLogger().info("Invocazione completata con successo");
+        return null;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 
 	/**
 	 * Restituisce le informazioni generali di una fruizione di API
@@ -950,8 +1046,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 	 *
 	 */
 	@Override
-	public void updateFruizioneConnettore(Connettore body, String erogatore, String nome, Integer versione,
-			ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void updateFruizioneConnettore(ConnettoreFruizione body, String erogatore, String nome, Integer versione,
+			ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -991,13 +1087,15 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
 
-			ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, body, oldConnT);
+			ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
+			
+			ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, connettoreHttp, oldConnT);
 
-			if (!ErogazioniApiHelper.connettoreCheckData(body, env, false)) {
+			if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, false)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 			}
 
-			fruitore.setConnettore(ErogazioniApiHelper.buildConnettoreRegistro(env, body));
+			fruitore.setConnettore(ErogazioniApiHelper.buildConnettoreRegistro(env, connettoreHttp));
 			fruitori.add(fruitore);
 			asps.setFruitoreList(fruitori);
 
@@ -1013,6 +1111,37 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+
+    /**
+     * Modifica i dati di un connettore multiplo della fruizione
+     *
+     * Questa operazione consente di aggiornare i dettagli di un connettore multiplo alla fruizione identificata dall&#x27;erogatore, dal nome e dalla versione
+     *
+     */
+	@Override
+    public void updateFruizioneConnettoreMultiplo(ConnettoreMultiplo body, String erogatore, String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+        // TODO: Implement...
+        
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
 
 	/**
 	 * Consente di modificare le informazioni generali di una fruizione di API

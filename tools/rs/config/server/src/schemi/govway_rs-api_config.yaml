@@ -39,7 +39,9 @@ tags:
   - name: soggetti
     description: soggetti esterni o interni al dominio di gestione
   - name: applicativi
-    description: applicativi interni al dominio di gestione
+    description: applicativi client che fruiscono di API
+  - name: applicativi-server
+    description: applicativi server che erogano una API
   - name: ruoli
     description: ruoli associabili agli applicativi ed ai soggetti
   - name: scope
@@ -1884,6 +1886,7 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_ncname"
       - $ref: "govway_core.yaml#/components/parameters/id_versione"   
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
     get:
       tags:
         - erogazioni
@@ -1896,7 +1899,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/Connettore"
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreErogazione"
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -1923,10 +1926,138 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Connettore'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreErogazione'
       responses: 
         "204":
           description: Configurazione dell'erogazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /erogazioni/{nome}/{versione}/connettore-multiplo:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+    post:
+      tags:
+        - erogazioni
+      summary: Aggiunta di un connettore multiplo nell'erogazione di API
+      operationId: createErogazioneConnettoreMultiplo
+      description: Questa operazione consente di aggiungere un connettore multiplo all'erogazione di API identificata dal nome e dalla versione
+      requestBody:
+        description: Dati del connettore che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMultiplo'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /erogazioni/{nome}/{versione}/connettore-multiplo/{nome_connettore}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_connettore"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+    get:
+      tags:
+        - erogazioni
+      summary: Restituisce il dettaglio di un connettore multiplo
+      operationId: getErogazioneConnettoreMultiplo
+      description: Questa operazione consente di ottenere il dettaglio di un connettore multiplo dell'erogazione di API identificata dal nome e dalla versione
+      responses:
+        "200":
+          description: Dati del connettore multiplo restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMultiplo"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni
+      summary: Modifica i dati di un connettore multiplo dell'erogazione
+      operationId: updateErogazioneConnettoreMultiplo
+      description: Questa operazione consente di aggiornare i dettagli di un connettore multiplo associato all'erogazione di API identificata dal nome e dalla versione
+      requestBody:
+        description: Dati del connettore multiplo da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMultiplo'
+      responses: 
+        "204":
+          description: Dati del connettore multiplo aggiornati correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - erogazioni
+      summary: Elimina un connettore multiplo dall'erogazione
+      operationId: deleteErogazioneConnettoreMultiplo
+      description: Questa operazione consente di eliminare un connettore multiplo associato all'erogazione di API identificata dal nome e dalla versione
+      responses: 
+        "204":
+          description: Connettore multiplo eliminato con successo
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -4429,6 +4560,7 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/id_ncname"
       - $ref: "govway_core.yaml#/components/parameters/id_versione"    
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
     get:
       tags:
         - fruizioni
@@ -4441,7 +4573,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/Connettore"
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreFruizione"
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -4468,10 +4600,140 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Connettore'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreFruizione'
       responses: 
         "204":
           description: Configurazione della fruizione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /fruizioni/{erogatore}/{nome}/{versione}/connettore-multiplo:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+    post:
+      tags:
+        - fruizioni
+      summary: Aggiunta di un connettore multiplo nella fruizione di API
+      operationId: createFruizioneConnettoreMultiplo
+      description: Questa operazione consente di aggiungere un connettore multiplo alla fruizione identificata dall'erogatore, dal nome e dalla versione
+      requestBody:
+        description: Dati del connettore che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMultiplo'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /fruizioni/{erogatore}/{nome}/{versione}/connettore-multiplo/{nome_connettore}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_nome_connettore"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+    get:
+      tags:
+        - fruizioni
+      summary: Restituisce il dettaglio di un connettore multiplo
+      operationId: getFruizioneConnettoreMultiplo
+      description: Questa operazione consente di ottenere il dettaglio di un connettore multiplo della fruizione identificata dall'erogatore, dal nome e dalla versione
+      responses:
+        "200":
+          description: Dati del connettore multiplo restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMultiplo"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni
+      summary: Modifica i dati di un connettore multiplo della fruizione
+      operationId: updateFruizioneConnettoreMultiplo
+      description: Questa operazione consente di aggiornare i dettagli di un connettore multiplo alla fruizione identificata dall'erogatore, dal nome e dalla versione
+      requestBody:
+        description: Dati del connettore multiplo da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMultiplo'
+      responses: 
+        "204":
+          description: Dati del connettore multiplo aggiornati correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - fruizioni
+      summary: Elimina un connettore multiplo dalla fruizione
+      operationId: deleteFruizioneConnettoreMultiplo
+      description: Questa operazione consente di eliminare un connettore multiplo associato alla fruizione identificata dall'erogatore, dal nome e dalla versione
+      responses: 
+        "204":
+          description: Connettore multiplo eliminato con successo
         "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         "401":
@@ -6679,6 +6941,160 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  # ** Applicativi Server **
+  /applicativi-server:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+    get:
+      tags:
+        - applicativi-server
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/profilo_qualsiasi'
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/parameters/soggetto_qualsiasi'
+      summary: Ricerca applicativi server
+      operationId: findAllApplicativiServer
+      description: Elenca gli applicativi server registrati
+      responses: 
+        "200":
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaApplicativiServer"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - applicativi-server
+      summary: Creazione di un applicativo server
+      operationId: createApplicativoServer
+      description: Questa operazione consente di creare un applicativo server associato ad un soggetto interno
+      requestBody:
+        description: Dati dell'applicativo server che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicativoServer'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /applicativi-server/{nome}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+    get:
+      tags:
+        - applicativi-server
+      summary: Restituisce il dettaglio di un applicativo server
+      operationId: getApplicativoServer
+      description: Questa operazione consente di ottenere il dettaglio di un applicativo server identificato dal nome e dal soggetto di riferimento
+      responses:
+        "200":
+          description: Dati dell'applicativo restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicativoServer"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - applicativi-server
+      summary: Modifica i dati di un applicativo server
+      operationId: updateApplicativoServer
+      description: Questa operazione consente di aggiornare i dati di un applicativo server identificato dal nome e dal soggetto di riferimento
+      requestBody:
+        description: Dati dell'applicativo server da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicativoServer'
+      responses: 
+        "204":
+          description: Applicativo Server aggiornato con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    delete:
+      tags:
+        - applicativi-server
+      summary: Elimina un applicativo server
+      operationId: deleteApplicativoServer
+      description: Questa operazione consente di eliminare un applicativo server identificato dal nome e dal soggetto di riferimento
+      responses: 
+        "204":
+          description: Applicativo server eliminato con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
   
   # ** Ruoli **        
   /ruoli:
@@ -7535,6 +7951,63 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/ApplicativoItem'
+
+    # ApplicativiServer
+    ApplicativoServer:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'            
+        proprieta:
+          type: array
+          items:
+            $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000'
+        connettore:
+           type: object
+           oneOf:
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreHttp' 
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreFile'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreJms'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreNull'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreEcho'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettorePlugin'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreApplicativoServer'
+             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMessageBox'
+           discriminator:
+             propertyName: tipo
+             mapping:
+               'http': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreHttp'
+               'file': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreFile'
+               'jms': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreJms'
+               'null': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreNull'
+               'echo': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreEcho'
+               'plugin': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettorePlugin'
+               'applicativo-server': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreApplicativoServer'
+               'message-box': 'govway_rs-api_config-commons.yaml#/components/schemas/ConnettoreMessageBox' 
+    ApplicativoServerItem:
+      type: object
+      allOf:
+        - $ref: 'govway_core.yaml#/components/schemas/BaseSoggettoItem'
+        - type: object
+          required: 
+            - nome
+          properties:
+            nome:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+    ListaApplicativiServer:
+       type: object
+       allOf:
+          - $ref: 'govway_core.yaml#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicativoServerItem'
                  
     # Ruoli
     Ruolo:

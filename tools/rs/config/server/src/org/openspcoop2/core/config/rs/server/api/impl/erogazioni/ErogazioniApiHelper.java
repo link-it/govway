@@ -478,7 +478,7 @@ public class ErogazioniApiHelper {
 		
 		final boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 
-		final Connettore connRest = ErogazioniApiHelper.buildConnettore(connRegistro.getProperties());
+		final ConnettoreHttp connRest = ErogazioniApiHelper.buildConnettoreHttp(connRegistro.getProperties());
 		final ConnettoreConfigurazioneHttps httpsConf 	 = connRest.getAutenticazioneHttps();
 
 		final ConnettoreConfigurazioneHttpBasic httpConf	 = connRest.getAutenticazioneHttp();
@@ -1107,7 +1107,7 @@ public class ErogazioniApiHelper {
 		
 		 if (impl == null) { 
 			 impl = new APIImpl();
-			 impl.setConnettore(new Connettore());
+			 impl.setConnettore(new BaseConnettoreHttp());
 		 }
 		
 		 boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();		
@@ -1165,7 +1165,7 @@ public class ErogazioniApiHelper {
         		.map( a -> a.getId().toString() )
         		.toArray(String[]::new);
         
-        final Connettore conn = impl.getConnettore();
+        final BaseConnettoreHttp conn = impl.getConnettore();
         final ConnettoreConfigurazioneHttps httpsConf 	 = conn.getAutenticazioneHttps();
         final ConnettoreConfigurazioneHttpBasic	httpConf	 = conn.getAutenticazioneHttp();
         
@@ -1504,7 +1504,7 @@ public class ErogazioniApiHelper {
 	}
 	
 	public static final boolean connettoreCheckData(
-			final Connettore conn,
+			final BaseConnettoreHttp conn,
 			final ErogazioniEnv env,
 			boolean erogazione
 			) throws Exception {
@@ -1608,7 +1608,7 @@ public class ErogazioniApiHelper {
 			);
 	}
 		
-	public static final org.openspcoop2.core.registry.Connettore buildConnettoreRegistro(final ErogazioniEnv env, final Connettore conn) throws Exception {
+	public static final org.openspcoop2.core.registry.Connettore buildConnettoreRegistro(final ErogazioniEnv env, final BaseConnettoreHttp conn) throws Exception {
 		final org.openspcoop2.core.registry.Connettore regConnettore = new org.openspcoop2.core.registry.Connettore();
 		fillConnettoreRegistro(regConnettore, env, conn, "");
 		return regConnettore;
@@ -1618,7 +1618,7 @@ public class ErogazioniApiHelper {
 	public static final void fillConnettoreRegistro(
 			final org.openspcoop2.core.registry.Connettore regConnettore,
 			final ErogazioniEnv env,
-			final Connettore conn,
+			final BaseConnettoreHttp conn,
 			final String oldConnT
 			) throws Exception {
 		
@@ -1731,7 +1731,7 @@ public class ErogazioniApiHelper {
 	public static final void fillConnettoreConfigurazione(
 			final org.openspcoop2.core.config.Connettore regConnettore,
 			final ErogazioniEnv env,
-			final Connettore conn,
+			final BaseConnettoreHttp conn,
 			final String oldConnType
 			) throws Exception {
 		
@@ -3206,10 +3206,20 @@ public class ErogazioniApiHelper {
 
 
 
+	public static final ConnettoreErogazione buildConnettoreErogazione(Map<String, String> props) {
+		ConnettoreErogazione connettoreErogazione = new ConnettoreErogazione();
+		connettoreErogazione.setConnettore(buildConnettoreHttp(props));
+		return connettoreErogazione;
+	}
+	public static final ConnettoreFruizione buildConnettoreFruizione(Map<String, String> props) {
+		ConnettoreFruizione connettoreFruizione = new ConnettoreFruizione();
+		connettoreFruizione.setConnettore(buildConnettoreHttp(props));
+		return connettoreFruizione;
+	}
+	public static final ConnettoreHttp buildConnettoreHttp(Map<String, String> props) {
 
-	public static final Connettore buildConnettore(Map<String, String> props) {
-
-		Connettore c = new Connettore();
+		ConnettoreHttp c = new ConnettoreHttp();
+		c.setTipo(ConnettoreEnum.HTTP);
 		c.setEndpoint(props.get(CostantiDB.CONNETTORE_HTTP_LOCATION));
 		
 		//TODO: Forse questi nel caso delle erogazioni vanno presi dall'invocazione, guarda la updateConnettore.

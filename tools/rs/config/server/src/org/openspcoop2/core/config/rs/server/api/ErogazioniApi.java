@@ -26,7 +26,8 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazione;
 import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazioneView;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
-import org.openspcoop2.core.config.rs.server.model.Connettore;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreErogazione;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreMultiplo;
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModI;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
@@ -100,6 +101,28 @@ public interface ErogazioniApi  {
     public void createErogazioneAllegato(@Valid ApiImplAllegato body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
 
     /**
+     * Aggiunta di un connettore multiplo nell'erogazione di API
+     *
+     * Questa operazione consente di aggiungere un connettore multiplo all'erogazione di API identificata dal nome e dalla versione
+     *
+     */
+    @POST
+    @Path("/erogazioni/{nome}/{versione}/connettore-multiplo")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Aggiunta di un connettore multiplo nell'erogazione di API", tags={ "erogazioni" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "201", description = "Resource created"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "409", description = "Conflict (L'entità che si vuole creare risulta già esistente)", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void createErogazioneConnettoreMultiplo(@Valid ConnettoreMultiplo body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
+
+    /**
      * Elimina un'erogazione di api
      *
      * Questa operazione consente di eliminare un'erogazione di API identificata dal nome e dalla versione
@@ -140,6 +163,27 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public void deleteErogazioneAllegato(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
+
+    /**
+     * Elimina un connettore multiplo dall'erogazione
+     *
+     * Questa operazione consente di eliminare un connettore multiplo associato all'erogazione di API identificata dal nome e dalla versione
+     *
+     */
+    @DELETE
+    @Path("/erogazioni/{nome}/{versione}/connettore-multiplo/{nome_connettore}")
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Elimina un connettore multiplo dall'erogazione", tags={ "erogazioni" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Connettore multiplo eliminato con successo"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void deleteErogazioneConnettoreMultiplo(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_connettore") @Size(max=255) String nomeConnettore, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
 
     /**
      * Restituisce l'allegato di una erogazione
@@ -278,7 +322,7 @@ public interface ErogazioniApi  {
     @Produces({ "application/json", "application/problem+json" })
     @Operation(summary = "Restituisce le informazioni su connettore associato all'erogazione", tags={ "erogazioni" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Informazioni sul connettore restituite con successo", content = @Content(schema = @Schema(implementation = Connettore.class))),
+        @ApiResponse(responseCode = "200", description = "Informazioni sul connettore restituite con successo", content = @Content(schema = @Schema(implementation = ConnettoreErogazione.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -286,7 +330,28 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public Connettore getErogazioneConnettore(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
+    public ConnettoreErogazione getErogazioneConnettore(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
+
+    /**
+     * Restituisce il dettaglio di un connettore multiplo
+     *
+     * Questa operazione consente di ottenere il dettaglio di un connettore multiplo dell'erogazione di API identificata dal nome e dalla versione
+     *
+     */
+    @GET
+    @Path("/erogazioni/{nome}/{versione}/connettore-multiplo/{nome_connettore}")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Restituisce il dettaglio di un connettore multiplo", tags={ "erogazioni" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Dati del connettore multiplo restituiti con successo", content = @Content(schema = @Schema(implementation = ConnettoreMultiplo.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ConnettoreMultiplo getErogazioneConnettoreMultiplo(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_connettore") @Size(max=255) String nomeConnettore, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
 
     /**
      * Restituisce le informazioni generali di un'erogazione di API
@@ -415,7 +480,29 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateErogazioneConnettore(@Valid Connettore body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
+    public void updateErogazioneConnettore(@Valid ConnettoreErogazione body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
+
+    /**
+     * Modifica i dati di un connettore multiplo dell'erogazione
+     *
+     * Questa operazione consente di aggiornare i dettagli di un connettore multiplo associato all'erogazione di API identificata dal nome e dalla versione
+     *
+     */
+    @PUT
+    @Path("/erogazioni/{nome}/{versione}/connettore-multiplo/{nome_connettore}")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Modifica i dati di un connettore multiplo dell'erogazione", tags={ "erogazioni" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Dati del connettore multiplo aggiornati correttamente"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void updateErogazioneConnettoreMultiplo(@Valid ConnettoreMultiplo body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_connettore") @Size(max=255) String nomeConnettore, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("gruppo") @Size(max=255) String gruppo);
 
     /**
      * Consente di modificare le informazioni generali di un'erogazione di API
