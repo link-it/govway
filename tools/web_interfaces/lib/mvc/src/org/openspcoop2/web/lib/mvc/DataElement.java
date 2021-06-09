@@ -230,6 +230,10 @@ public class DataElement {
 		if(DataElementType.TEXT.toString().equals(s)) {
 			this.styleClass = Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS;
 		}
+		// classe css default per gli elementi CHECKBOX
+		if(DataElementType.CHECKBOX.toString().equals(s)) {
+			this.styleClass = null;
+		}
 		
 	}
 	public String getType() {
