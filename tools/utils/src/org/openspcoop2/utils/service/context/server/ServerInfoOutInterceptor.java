@@ -20,6 +20,9 @@
 
 package org.openspcoop2.utils.service.context.server;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.cxf.common.injection.NoJSR250Annotations;
 import org.apache.cxf.ext.logging.event.DefaultLogEventMapper;
 import org.apache.cxf.ext.logging.event.LogEvent;
@@ -61,7 +64,8 @@ public class ServerInfoOutInterceptor extends org.apache.cxf.ext.logging.Logging
 		
 			ServerInfoResponse response = new ServerInfoResponse();
 			
-			final LogEvent event = new DefaultLogEventMapper().map(message);
+			Set<String> sensitiveProtocolHeaders = new HashSet<String>();
+			final LogEvent event = new DefaultLogEventMapper().map(message, sensitiveProtocolHeaders);
 				
 			try {
 				if(event.getResponseCode()!=null) {

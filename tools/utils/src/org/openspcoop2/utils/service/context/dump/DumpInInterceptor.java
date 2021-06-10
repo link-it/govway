@@ -22,6 +22,8 @@ package org.openspcoop2.utils.service.context.dump;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.cxf.common.injection.NoJSR250Annotations;
 import org.apache.cxf.common.util.StringUtils;
@@ -78,7 +80,8 @@ public class DumpInInterceptor extends org.apache.cxf.ext.logging.LoggingInInter
 
 		try {
 		
-			final LogEvent event = new DefaultLogEventMapper().map(message);
+			Set<String> sensitiveProtocolHeaders = new HashSet<String>();
+			final LogEvent event = new DefaultLogEventMapper().map(message, sensitiveProtocolHeaders);
 			if (shouldLogContent(event)) {
 				addContent(message, event);
 			} else {

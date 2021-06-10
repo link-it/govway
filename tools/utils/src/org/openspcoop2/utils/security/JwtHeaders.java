@@ -221,14 +221,7 @@ public class JwtHeaders {
 					headers.add(ch);
 				}
 			}
-			StringBuilder bf = new StringBuilder();
-			for (String ch : headers) {
-				if(bf.length()>0) {
-					bf.append(",");
-				}
-				bf.append("\"").append(ch).append("\"");
-			}
-			hdrs.setHeader(JWT_HDR_CRIT, "["+bf.toString()+"]");
+			hdrs.setCritical(headers);
 		}
 		if(this.x509Url!=null) {
 			if(!hdrs.containsHeader(JWT_HDR_X5U) || forceOverride) {
