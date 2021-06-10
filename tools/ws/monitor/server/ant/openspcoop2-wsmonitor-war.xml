@@ -164,7 +164,7 @@
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
-				<include name="commons-codec-1.14.jar"/>
+				<include name="commons-codec-1.15.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">

@@ -20,24 +20,24 @@
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>
 		<commons.chain.version>1.2</commons.chain.version>
 		<commons.cli.version>1.4</commons.cli.version>
-		<commons.codec.version>1.14</commons.codec.version>
+		<commons.codec.version>1.15</commons.codec.version>
 		<commons.collections.version>3.2.2</commons.collections.version>
 		<commons.collections4.version>4.4</commons.collections4.version>
 		<commons.compress.version>1.20</commons.compress.version>
 		<commons.csv.version>1.8</commons.csv.version>
-		<commons.dbcp2.version>2.7.0</commons.dbcp2.version>
+		<commons.dbcp2.version>2.8.0</commons.dbcp2.version>
 		<commons.digester.version>2.1</commons.digester.version>
 		<commons.discovery.version>0.5</commons.discovery.version>
 		<commons.email.version>1.5</commons.email.version>
 		<commons.fileupload.version>1.4</commons.fileupload.version>
-		<commons.io.version>2.8.0</commons.io.version>
+		<commons.io.version>2.9.0</commons.io.version>
 		<commons.lang.version>2.6</commons.lang.version>
-		<commons.lang3.version>3.9</commons.lang3.version>
+		<commons.lang3.version>3.12.0</commons.lang3.version>
 		<commons.logging.version>1.2</commons.logging.version>
 		<commons.math3.version>3.6.1</commons.math3.version>
-		<commons.net.version>3.6</commons.net.version>
-		<commons.pool2.version>2.8.0</commons.pool2.version>
-		<commons.validator.version>1.6</commons.validator.version>
+		<commons.net.version>3.8.0</commons.net.version>
+		<commons.pool2.version>2.10.0</commons.pool2.version>
+		<commons.validator.version>1.7</commons.validator.version>
 
 	</properties>
 

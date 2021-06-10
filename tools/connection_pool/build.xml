@@ -80,7 +80,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="commons_pool_jar" value="commons-pool2-2.8.0.jar"/>
+			<var name="commons_pool_jar" value="commons-pool2-2.10.0.jar"/>
 		</then>
 	</if>
 	<!-- commons_dbcp -->
@@ -91,7 +91,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="commons_dbcp_jar" value="commons-dbcp2-2.7.0.jar"/>
+			<var name="commons_dbcp_jar" value="commons-dbcp2-2.8.0.jar"/>
 		</then>
 	</if>
 	<!-- jboss_classloading -->
@@ -192,8 +192,8 @@
 		<basename property="jar.driverJDBC" file="${driverJDBC}"/>
 		<move todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/plugins/">
 			<fileset dir="${build_openspcoop2Pools}/pluginSRC/WEB-INF/lib">
-				<include name="commons-dbcp2-2.7.0.jar"/>
-				<include name="commons-pool2-2.8.0.jar"/>
+				<include name="commons-dbcp2-2.8.0.jar"/>
+				<include name="commons-pool2-2.10.0.jar"/>
 				<include name="openspcoop2_pools-core_*.jar"/>
 				<include name="openspcoop2_pools-driver_*.jar"/>
 				<include name="${jar.driverJDBC}"/>

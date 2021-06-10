@@ -20,13 +20,13 @@
 		<var name="tmp_prefix" value="lib" />
 		<var name="tmp" value="${tmp_prefix}/bcprov-ext-jdk15on-1.68.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-1.68.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.14.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.15.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.8.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.9.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.6.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.8.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.3.5-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.3.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.3.5.jar"/>
@@ -785,17 +785,17 @@
 			</zipfileset>
 			<!-- Librerie richieste a run-time da OpenSPCoop (Shared Lib) -->
 			<zipfileset prefix="lib" dir="${required_lib}/commons">
-				<include name="commons-codec-1.14.jar"/>
+				<include name="commons-codec-1.15.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.4.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-io-2.8.0.jar"/>
+				<include name="commons-io-2.9.0.jar"/>
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-net-3.6.jar"/>
-				<include name="commons-validator-1.6.jar"/>
+				<include name="commons-net-3.8.0.jar"/>
+				<include name="commons-validator-1.7.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
 				<include name="${commons_logging_jar}"/>
-				<include name="commons-lang3-3.9.jar"/>
+				<include name="commons-lang3-3.12.0.jar"/>
 				<include name="commons-compress-1.20.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">

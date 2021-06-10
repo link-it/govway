@@ -1186,7 +1186,7 @@
 			<classpath>
 				<path id="classpath_run">
 					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-					<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.14.jar"/>
+					<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.15.jar"/>
 					<fileset dir="${deploy_sw}" includes="jars/jasypt-1.9.3.jar"/>
 			   	</path>				
 			</classpath>
@@ -1199,7 +1199,7 @@
 			<classpath>
 				<path id="classpath_run">
 					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-					<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.14.jar"/>
+					<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.15.jar"/>
 					<fileset dir="${deploy_sw}" includes="jars/jasypt-1.9.3.jar"/>
 			   	</path>				
 			</classpath>
