@@ -159,6 +159,7 @@ public class ConnettoreUtils {
 		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
 				TipiConnettore.HTTPS.toString().equals(tipoConnettore) ||
 				ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				ConnettoreHTTPCORE5.ENDPOINT_TYPE.equals(tipoConnettore) ||
 				ConnettoreSAAJ.ENDPOINT_TYPE.equals(tipoConnettore)  ||
 				ConnettoreStresstest.ENDPOINT_TYPE.equals(tipoConnettore)){
 	

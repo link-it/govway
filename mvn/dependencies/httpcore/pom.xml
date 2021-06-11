@@ -17,20 +17,72 @@
 
 		<jar.group.name>httpcore</jar.group.name>
 		
-		<apache-mime4j.version>0.8.3</apache-mime4j.version>
-		<httpclient.version>4.5.13</httpclient.version>
-		<httpasyncclient.version>4.1.4</httpasyncclient.version>
-		<httpcore.version>4.4.13</httpcore.version>
-		<httpcore.gov4j.version>4.4.13-gov4j-2</httpcore.gov4j.version>
+		<httpcore5.version>5.1.1</httpcore5.version>
 
+		<httpclient5.version>5.1</httpclient5.version>
+
+		<httpcore.version>4.4.14</httpcore.version>
+
+		<httpcore.gov4j.version>4.4.14-gov4j-1</httpcore.gov4j.version>
+		<apache-mime4j.version>0.8.4</apache-mime4j.version>
+
+		<httpclient.version>4.5.13</httpclient.version>
+
+		<httpasyncclient.version>4.1.4</httpasyncclient.version>
+		
 	</properties>
 
 	<dependencies>
 
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore-ab</artifactId>
-			<version>${httpcore.gov4j.version}</version>
+			<groupId>org.apache.httpcomponents.core5</groupId>
+			<artifactId>httpcore5</artifactId>
+			<version>${httpcore5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5-fluent</artifactId>
+			<version>${httpclient5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>${httpclient5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5-cache</artifactId>
+			<version>${httpclient5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5-win</artifactId>
+			<version>${httpclient5.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -61,7 +113,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-	
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore-ab</artifactId>
+			<version>${httpcore.gov4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.james</groupId>
 			<artifactId>apache-mime4j-core</artifactId>

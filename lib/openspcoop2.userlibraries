@@ -59,17 +59,22 @@
         <archive path="/op2_3.4.dev/lib/cxf/xml-resolver-1.2.jar"/>
 	<!-- httpcore -->
         <archive path="/op2_3.4.dev/lib/httpcore/httpmime-4.5.13.jar"/>
-        <archive path="/op2_3.4.dev/lib/httpcore/httpcore-nio-4.4.13.jar"/>
-        <archive path="/op2_3.4.dev/lib/httpcore/httpcore-4.4.13.jar"/>
-	<archive path="/op2_3.4.dev/lib/httpcore/httpcore-ab-4.4.13-gov4j-2.jar"/>
+        <archive path="/op2_3.4.dev/lib/httpcore/httpcore-nio-4.4.14.jar"/>
+        <archive path="/op2_3.4.dev/lib/httpcore/httpcore-4.4.14.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpcore-ab-4.4.14-gov4j-1.jar"/>
         <archive path="/op2_3.4.dev/lib/httpcore/httpclient-cache-4.5.13.jar"/>
         <archive path="/op2_3.4.dev/lib/httpcore/httpclient-4.5.13.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpclient-win-4.5.13.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/fluent-hc-4.5.13.jar"/>
         <archive path="/op2_3.4.dev/lib/httpcore/httpasyncclient-4.1.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpasyncclient-cache-4.1.4.jar"/>
-	<archive path="/op2_3.4.dev/lib/httpcore/apache-mime4j-core-0.8.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/httpcore/apache-mime4j-dom-0.8.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/apache-mime4j-core-0.8.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/apache-mime4j-dom-0.8.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-5.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-win-5.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-cache-5.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-fluent-5.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-5.1.1.jar"/>
 	<!-- jackson -->
 	<archive path="/op2_3.4.dev/lib/jackson/jackson-annotations-2.10.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/jackson/jackson-core-2.10.2.jar"/>
