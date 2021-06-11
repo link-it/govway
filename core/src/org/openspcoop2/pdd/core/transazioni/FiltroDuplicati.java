@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -118,122 +119,192 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	@Override
 	public boolean isDuplicata(IProtocolFactory<?> protocolFactory, String idBusta) throws ProtocolException {
 		
-		if(this.filtroDuplicatiProtocol!=null) {
-			return this.filtroDuplicatiProtocol.isDuplicata(protocolFactory, idBusta);
-		}
-		
-		//System.out.println("@@IS_DUPLICATA ["+idBusta+"] ...");
-		
-		// E' duplicata se esiste nel contesto una transazione con tale idBusta 
-		if(TransactionContext.containsIdentificativoProtocollo(idBusta)){
-			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (CONTEXT)");
-			try{
-				TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
-			}catch(Exception e){
-				new ProtocolException(e);
+		long timeStart = -1;
+		try {
+			if(this.openspcoop2Properties.isTransazioniRegistrazioneSlowLog()) {
+				timeStart = DateManager.getTimeMillis();
 			}
-			return true;
-		}
 		
-		// oppure se esiste una transazione registrata con tale idBusta sul database (Richiesta o Risposta).
-		//System.out.println("@@IS_DUPLICATA ["+idBusta+"] READ FROM DB");
-		if(esisteTransazione(protocolFactory,idBusta,idBusta)){
-			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (DATABASE)");
-			try{
-				TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
-			}catch(Exception e){
-				new ProtocolException(e);
+			if(this.filtroDuplicatiProtocol!=null) {
+				return this.filtroDuplicatiProtocol.isDuplicata(protocolFactory, idBusta);
 			}
-			return true;
-		}
-		
-		// Se non esiste registro nel contesto questa transazione.
-		// Comunque OpenSPCoop se torno false, procedera a chiamare registraBusta, il quale metodo non fara' nulla (vedi implementazione sotto stante)
-		// Il metodo di registrazione dell'identificativo busta e' synchronized e controlla che non sia possibile registrare due identificativi busta.
-		// Tale implementazione garantisce che nel contesto puo' esistere solo un idBusta, e tale id viene eliminato SOLO dopo 
-		// aver salvato la transazione nel database (vedi implementazione PostOutResponseHandler, metodo removeIdentificativoProtocollo)
-		// Se dopo aver eliminato dal contesto l'id, arriva una nuova busta con stesso id, questo metodo la trova nella tabelle delle transazioni 
-		// e quindi ritornera' immediatamente l'informazione di busta duplicata.
-		try{
-			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] FALSE ....");
-			TransactionContext.registraIdentificativoProtocollo(idBusta);
-			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] FALSE REGISTRATA");
-		}catch(Exception e){
-			if(e.getMessage()!=null && "DUPLICATA".equals(e.getMessage())){
-				//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (ERRORE ECCEZIONE)");
+			
+			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] ...");
+			
+			// E' duplicata se esiste nel contesto una transazione con tale idBusta 
+			if(TransactionContext.containsIdentificativoProtocollo(idBusta)){
+				//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (CONTEXT)");
 				try{
 					TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
-				}catch(Exception eSetDuplicata){
-					new ProtocolException(eSetDuplicata);
+				}catch(Exception e){
+					new ProtocolException(e);
 				}
 				return true;
-			}else{
-				throw new ProtocolException(e);
+			}
+			
+			// oppure se esiste una transazione registrata con tale idBusta sul database (Richiesta o Risposta).
+			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] READ FROM DB");
+			if(esisteTransazione(protocolFactory,idBusta,idBusta)){
+				//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (DATABASE)");
+				try{
+					TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
+				}catch(Exception e){
+					new ProtocolException(e);
+				}
+				return true;
+			}
+			
+			// Se non esiste registro nel contesto questa transazione.
+			// Comunque OpenSPCoop se torno false, procedera a chiamare registraBusta, il quale metodo non fara' nulla (vedi implementazione sotto stante)
+			// Il metodo di registrazione dell'identificativo busta e' synchronized e controlla che non sia possibile registrare due identificativi busta.
+			// Tale implementazione garantisce che nel contesto puo' esistere solo un idBusta, e tale id viene eliminato SOLO dopo 
+			// aver salvato la transazione nel database (vedi implementazione PostOutResponseHandler, metodo removeIdentificativoProtocollo)
+			// Se dopo aver eliminato dal contesto l'id, arriva una nuova busta con stesso id, questo metodo la trova nella tabelle delle transazioni 
+			// e quindi ritornera' immediatamente l'informazione di busta duplicata.
+			try{
+				//System.out.println("@@IS_DUPLICATA ["+idBusta+"] FALSE ....");
+				TransactionContext.registraIdentificativoProtocollo(idBusta);
+				//System.out.println("@@IS_DUPLICATA ["+idBusta+"] FALSE REGISTRATA");
+			}catch(Exception e){
+				if(e.getMessage()!=null && "DUPLICATA".equals(e.getMessage())){
+					//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (ERRORE ECCEZIONE)");
+					try{
+						TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
+					}catch(Exception eSetDuplicata){
+						new ProtocolException(eSetDuplicata);
+					}
+					return true;
+				}else{
+					throw new ProtocolException(e);
+				}
+			}
+			
+			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] FALSE FINE");
+			return false;
+			
+		}finally {
+			if(this.openspcoop2Properties.isTransazioniRegistrazioneSlowLog()) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				if(timeProcess>=this.openspcoop2Properties.getTransazioniRegistrazioneSlowLogThresholdMs()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(timeProcess);
+					if(this.idTransazione!=null) {
+						sb.append(" <").append(this.idTransazione).append(">");
+					}
+					sb.append(" [isDuplicata]");
+					sb.append(" ").append(idBusta);
+					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(sb.toString());
+				}
 			}
 		}
-		
-		//System.out.println("@@IS_DUPLICATA ["+idBusta+"] FALSE FINE");
-		return false;
 	}
 
 	@Override
 	public void incrementaNumeroDuplicati(IProtocolFactory<?> protocolFactory, String idBusta) throws ProtocolException {
 		
-		if(this.filtroDuplicatiProtocol!=null) {
-			this.filtroDuplicatiProtocol.incrementaNumeroDuplicati(protocolFactory, idBusta);
-			return;
-		}
+		long timeStart = -1;
+		try {
+			if(this.openspcoop2Properties.isTransazioniRegistrazioneSlowLog()) {
+				timeStart = DateManager.getTimeMillis();
+			}
 		
-		//System.out.println("@@incrementaNumeroDuplicati ["+idBusta+"] ...");
-		
-		// Aggiorno numero duplicati per transazione che possiede tale idBusta (Richiesta o Risposta)
-		// Se non esiste una transazione sul database, devo attendere che questa compaia,
-		// significa che una precedente transazione con stesso idBusta e' ancora in gestione
-		
-		boolean esisteRichiesta = false;
-		boolean esisteRisposta = false;
-		esisteRichiesta = esisteTransazione(protocolFactory,idBusta,null);
-		if(!esisteRichiesta){
-			esisteRisposta = esisteTransazione(protocolFactory,null,idBusta);
-		}
-		//System.out.println("@@incrementaNumeroDuplicati richiesta["+esisteRichiesta+"] risposta["+esisteRisposta+"] ...");
-		
-		int i=0;
-		while(!esisteRichiesta && !esisteRisposta && i<60){
-			//System.out.println("@@incrementaNumeroDuplicati WHILE richiesta["+esisteRichiesta+"] risposta["+esisteRisposta+"]  SLEEP ...");
-			// ATTENDI
-			org.openspcoop2.utils.Utilities.sleep(1000);
-			i++;
+			if(this.filtroDuplicatiProtocol!=null) {
+				this.filtroDuplicatiProtocol.incrementaNumeroDuplicati(protocolFactory, idBusta);
+				return;
+			}
+			
+			//System.out.println("@@incrementaNumeroDuplicati ["+idBusta+"] ...");
+			
+			// Aggiorno numero duplicati per transazione che possiede tale idBusta (Richiesta o Risposta)
+			// Se non esiste una transazione sul database, devo attendere che questa compaia,
+			// significa che una precedente transazione con stesso idBusta e' ancora in gestione
+			
+			boolean esisteRichiesta = false;
+			boolean esisteRisposta = false;
 			esisteRichiesta = esisteTransazione(protocolFactory,idBusta,null);
 			if(!esisteRichiesta){
 				esisteRisposta = esisteTransazione(protocolFactory,null,idBusta);
 			}
-			//System.out.println("@@incrementaNumeroDuplicati WHILE richiesta["+esisteRichiesta+"] risposta["+esisteRisposta+"]  SLEEP FINE ...");
+			//System.out.println("@@incrementaNumeroDuplicati richiesta["+esisteRichiesta+"] risposta["+esisteRisposta+"] ...");
+			
+			int i=0;
+			while(!esisteRichiesta && !esisteRisposta && i<60){
+				//System.out.println("@@incrementaNumeroDuplicati WHILE richiesta["+esisteRichiesta+"] risposta["+esisteRisposta+"]  SLEEP ...");
+				// ATTENDI
+				org.openspcoop2.utils.Utilities.sleep(1000);
+				i++;
+				esisteRichiesta = esisteTransazione(protocolFactory,idBusta,null);
+				if(!esisteRichiesta){
+					esisteRisposta = esisteTransazione(protocolFactory,null,idBusta);
+				}
+				//System.out.println("@@incrementaNumeroDuplicati WHILE richiesta["+esisteRichiesta+"] risposta["+esisteRisposta+"]  SLEEP FINE ...");
+			}
+			
+			if(esisteRichiesta){
+				incrementDuplicatiTransazione(protocolFactory,true, idBusta);
+			}
+			else if(esisteRisposta){
+				incrementDuplicatiTransazione(protocolFactory,false, idBusta);
+			}
+			else{
+				throw new ProtocolException("Precedente transazione con solito idBusta risulta in gestione da oltre 60 secondi");
+			}
+			
+			//System.out.println("@@incrementaNumeroDuplicati richiesta["+esisteRichiesta+"] risposta["+esisteRisposta+"] FINE");
+		}finally {
+			if(this.openspcoop2Properties.isTransazioniRegistrazioneSlowLog()) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				if(timeProcess>=this.openspcoop2Properties.getTransazioniRegistrazioneSlowLogThresholdMs()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(timeProcess);
+					if(this.idTransazione!=null) {
+						sb.append(" <").append(this.idTransazione).append(">");
+					}
+					sb.append(" [incrementaNumeroDuplicati]");
+					sb.append(" ").append(idBusta);
+					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(sb.toString());
+				}
+			}
 		}
-		
-		if(esisteRichiesta){
-			incrementDuplicatiTransazione(protocolFactory,true, idBusta);
-		}
-		else if(esisteRisposta){
-			incrementDuplicatiTransazione(protocolFactory,false, idBusta);
-		}
-		else{
-			throw new ProtocolException("Precedente transazione con solito idBusta risulta in gestione da oltre 60 secondi");
-		}
-		
-		//System.out.println("@@incrementaNumeroDuplicati richiesta["+esisteRichiesta+"] risposta["+esisteRisposta+"] FINE");
 	}
 
 	@Override
 	public void registraBusta(IProtocolFactory<?> protocolFactory, Busta busta) throws ProtocolException {
 		
-		if(this.filtroDuplicatiProtocol!=null) {
-			this.filtroDuplicatiProtocol.registraBusta(protocolFactory, busta);
-			return;
-		}
+		long timeStart = -1;
+		try {
+			if(this.openspcoop2Properties.isTransazioniRegistrazioneSlowLog()) {
+				timeStart = DateManager.getTimeMillis();
+			}
 		
-		// Implementazione inserita in isDuplicata
-		//System.out.println("@@registraBusta ["+busta.getID()+"] NON IMPLEMENTATO");
+			if(this.filtroDuplicatiProtocol!=null) {
+				this.filtroDuplicatiProtocol.registraBusta(protocolFactory, busta);
+				return;
+			}
+			
+			// Implementazione inserita in isDuplicata
+			//System.out.println("@@registraBusta ["+busta.getID()+"] NON IMPLEMENTATO");
+			
+		}finally {
+			if(this.openspcoop2Properties.isTransazioniRegistrazioneSlowLog()) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				if(timeProcess>=this.openspcoop2Properties.getTransazioniRegistrazioneSlowLogThresholdMs()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(timeProcess);
+					if(this.idTransazione!=null) {
+						sb.append(" <").append(this.idTransazione).append(">");
+					}
+					sb.append(" [registraBusta]");
+					if(busta!=null) {
+						sb.append(" ").append(busta.getID());
+					}
+					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(sb.toString());
+				}
+			}
+		}
 	}
 
 	

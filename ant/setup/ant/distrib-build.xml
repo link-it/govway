@@ -152,12 +152,15 @@
 						<delete file="${dist}/datasource/govway_tracciamento-ds.xml"/>
 					</then>
 				</if>
+				<!--
+				Il datasource delle statistiche serve al runtime per il controllo del traffico
 				<if>
 					<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
 					<then>
 						<delete file="${dist}/datasource/govway_statistiche-ds.xml"/>
 					</then>
 				</if>
+				-->
 
 				<!-- copio datasource in runtime -->
 				<move todir="${dist}/datasource/runtime">

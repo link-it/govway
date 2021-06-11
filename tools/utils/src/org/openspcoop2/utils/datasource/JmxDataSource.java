@@ -60,6 +60,8 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 	public final static String CONNESSIONI_ALLOCATE = "getUsedConnections";
 	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
 	public final static String DATASOURCE_CREATI = "getDatasources";
+	public final static String DATASOURCE_CREATI_METHOD2 = "listDatasources"; // per farlo comparire in jmx-console
+
 	
 	public final static String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
 	
@@ -176,7 +178,7 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			return this.getInformazioniDatabase(param1);
 		}
 		
-		else if(actionName.equals(JmxDataSource.DATASOURCE_CREATI)){
+		else if(actionName.equals(JmxDataSource.DATASOURCE_CREATI) || actionName.equals(JmxDataSource.DATASOURCE_CREATI_METHOD2)){
 		
 			return this.getDatasource();
 			
@@ -239,6 +241,13 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 			
+			// MetaData per l'operazione 
+			MBeanOperationInfo getDatasourceAllocatiOP_method2
+				= new MBeanOperationInfo(JmxDataSource.DATASOURCE_CREATI_METHOD2,"Elenca i datasource allocati",
+						null,
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+			
 			// Mbean costruttore
 			MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
 	
@@ -249,7 +258,7 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 			
 			// Lista operazioni
-			MBeanOperationInfo[] operations = new MBeanOperationInfo[]{getDatasourceAllocatiOP, getConnessioneAllocateOP, getInformazioniDatabaseOP};
+			MBeanOperationInfo[] operations = new MBeanOperationInfo[]{getDatasourceAllocatiOP, getDatasourceAllocatiOP_method2, getConnessioneAllocateOP, getInformazioniDatabaseOP};
 			
 			return new MBeanInfo(className,description,attributes,constructors,operations,null);
 			

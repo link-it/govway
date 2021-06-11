@@ -224,7 +224,7 @@ public class GestoreConsegnaMultipla {
 		// cluster id
 		transazioneApplicativoServer.setClusterIdPresaInCarico(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), false, false, idPA, state, null);
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), false, false, idPA, state, null, "create");
 
 	}
 	
@@ -233,7 +233,7 @@ public class GestoreConsegnaMultipla {
 		// cluster id
 		transazioneApplicativoServer.setClusterIdConsegna(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, true, idPA, state, null); // l'informazione dovrebbe esistere!
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, true, idPA, state, null, "updateDeliveredMessage"); // l'informazione dovrebbe esistere!
 
 	}
 	
@@ -242,7 +242,7 @@ public class GestoreConsegnaMultipla {
 		// cluster id
 		transazioneApplicativoServer.setClusterIdPrelievoIm(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null);
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, "updateRetrieveMessageByMessageBox");
 
 	}
 	
@@ -251,32 +251,64 @@ public class GestoreConsegnaMultipla {
 		// cluster id
 		transazioneApplicativoServer.setClusterIdEliminazioneIm(openspcoopProperties.getClusterId(false));
 		
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null);
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, "updateDeletedMessageByMessageBox");
 
 	}
 	
 	public void safeUpdateMessaggioScaduto(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPA, IOpenSPCoopState state) {
 
-		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null);
+		getConnectionAndSave(transazioneApplicativoServer, transazioneApplicativoServer.getProtocollo(), true, false, idPA, state, null, "updateExpiredMessage");
 
 	}
 
 	
 	public void safeSave(org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico diagnostico, IDPortaApplicativa idPA, IState state) {
 
-		getConnectionAndSave(diagnostico, diagnostico.getProtocollo(), false, false, idPA, null, state);
+		getConnectionAndSave(diagnostico, diagnostico.getProtocollo(), false, false, idPA, null, state, "saveDiagnostic");
 
 	}
 
 	public void safeSave(Messaggio dumpMessaggio, IDPortaApplicativa idPA, IState state) {
 
-		getConnectionAndSave(dumpMessaggio, dumpMessaggio.getProtocollo(), false, false, idPA, null, state);
+		getConnectionAndSave(dumpMessaggio, dumpMessaggio.getProtocollo(), false, false, idPA, null, state, "saveContent");
 
 	}
 
 	@SuppressWarnings("resource")
 	private void getConnectionAndSave(Object o, String protocol, boolean update, boolean throwNotFoundIfNotExists, IDPortaApplicativa idPA, 
-			IOpenSPCoopState openspcoopState, IState state) {
+			IOpenSPCoopState openspcoopState, IState state,
+			String tipoOperazione) {
+		TransazioniSAProcessTimes times = null;
+		long timeStart = -1;
+		if(openspcoopProperties.isTransazioniRegistrazioneSlowLog()) {
+			times = new TransazioniSAProcessTimes();
+			timeStart = DateManager.getTimeMillis();
+		}
+		try {
+			getConnectionAndSave(o, protocol, update, throwNotFoundIfNotExists, idPA, 
+					openspcoopState, state,
+					tipoOperazione, times);
+		}finally {
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				if(timeProcess>=openspcoopProperties.getTransazioniRegistrazioneSlowLogThresholdMs()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(timeProcess);
+					if(times.idTransazione!=null) {
+						sb.append(" <").append(times.idTransazione).append(">");
+					}
+					sb.append(" [GestoreConsegnaMultipla."+tipoOperazione+"]");
+					sb.append(" ").append(times.toString());
+					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(sb.toString());
+				}
+			}
+		}
+	}
+	@SuppressWarnings("resource")
+	private void getConnectionAndSave(Object o, String protocol, boolean update, boolean throwNotFoundIfNotExists, IDPortaApplicativa idPA, 
+			IOpenSPCoopState openspcoopState, IState state,
+			String tipoOperazione, TransazioniSAProcessTimes times) {
 
 		EsitiProperties esitiProperties = null;
 		try {
@@ -311,6 +343,18 @@ public class GestoreConsegnaMultipla {
 			this.log.debug("Errore avvenuto durante la lettura della configurazione delle transazioni da salvare: "+e.getMessage(),e); 
 		}
 		
+		if(times!=null && o!=null) {
+			if(o instanceof TransazioneApplicativoServer) {
+				times.idTransazione = ((TransazioneApplicativoServer)o).getIdTransazione();
+			}
+			else if(o instanceof org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico) {
+				times.idTransazione = ((org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico)o).getIdTransazione();
+			}
+			else if(o instanceof Messaggio) {
+				times.idTransazione = ((Messaggio)o).getIdTransazione();
+			}
+		}
+		
 		Resource dbResource = null;
 		DBTransazioniManager dbManager = DBTransazioniManager.getInstance();
 		IDSoggetto idDominio = openspcoopProperties.getIdentitaPortaDefault(protocol);
@@ -320,128 +364,175 @@ public class GestoreConsegnaMultipla {
 		TransazioneApplicativoServer transazioneApplicativoServer = null;
 		boolean useConnectionRuntime = false;
 		try{
-			if(openspcoopProperties.isTransazioniUsePddRuntimeDatasource()) {
-				if(openspcoopState!=null) {
-					if(openspcoopState instanceof OpenSPCoopState) {
-						OpenSPCoopState s = (OpenSPCoopState) openspcoopState;
-						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
-							con = s.getConnectionDB();
-							useConnectionRuntime = true;
+			long timeStart = -1;
+			try{
+				if(times!=null) {
+					timeStart = DateManager.getTimeMillis();
+				}
+				if(openspcoopProperties.isTransazioniUsePddRuntimeDatasource()) {
+					if(openspcoopState!=null) {
+						if(openspcoopState instanceof OpenSPCoopState) {
+							OpenSPCoopState s = (OpenSPCoopState) openspcoopState;
+							if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+								con = s.getConnectionDB();
+								useConnectionRuntime = true;
+							}
+						}
+					}
+					else if(state!=null) {
+						if(state instanceof StateMessage) {
+							StateMessage s = (StateMessage) state;
+							if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+								con = s.getConnectionDB();
+								useConnectionRuntime = true;
+							}
 						}
 					}
 				}
-				else if(state!=null) {
-					if(state instanceof StateMessage) {
-						StateMessage s = (StateMessage) state;
-						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
-							con = s.getConnectionDB();
-							useConnectionRuntime = true;
-						}
-					}
+				
+				if(useConnectionRuntime==false){
+					dbResource = dbManager.getResource(idDominio, ID_MODULO, null);
+					con = (Connection) dbResource.getResource();	
 				}
-			}
-			
-			if(useConnectionRuntime==false){
-				dbResource = dbManager.getResource(idDominio, ID_MODULO, null);
-				con = (Connection) dbResource.getResource();	
+				
+			}finally {	
+				if(times!=null) {
+					long timeEnd =  DateManager.getTimeMillis();
+					long timeProcess = timeEnd-timeStart;
+					times.getConnection = timeProcess;
+				}
 			}
 				
 			boolean autoCommit = false;
 			con.setAutoCommit(autoCommit);
 
 			if(o instanceof TransazioneApplicativoServer) {
-
-				org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
-						(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
-								con, autoCommit,
-								daoFactoryServiceManagerPropertiesTransazioni, daoFactoryLoggerTransazioniSql);
-				jdbcServiceManager.getJdbcProperties().setShowSql(this.debug);
-				ITransazioneApplicativoServerService transazioneService = jdbcServiceManager.getTransazioneApplicativoServerService();
-
-				// ** Aggiorno campi dipendenti da questa invocazione **
-				// Campi che non possono essere gestiti a livello 'core'
-
-				transazioneApplicativoServer = (TransazioneApplicativoServer) o;
-
-				// dettaglio esito
-				this.setDettaglioEsito(transazioneApplicativoServer, esitiProperties);
-				
-				// consegna terminata
-				if(transazioneApplicativoServer.isConsegnaTerminata()) {
-					isMessaggioConsegnato = true;
-				}
-				else if(transazioneApplicativoServer.getDataEliminazioneIm()!=null) {
-					isMessaggioConsegnato = true;
-				}
-				else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
-					isMessaggioConsegnato = true;
-				}
-
-				int oldTransactionIsolation = -1;
 				try{
-					oldTransactionIsolation = con.getTransactionIsolation();
-					// già effettuato fuori dal metodo connectionDB.setAutoCommit(false);
-					JDBCUtilities.setTransactionIsolationSerializable(daoFactoryServiceManagerPropertiesTransazioni.getDatabase(), con);
-				} catch(Exception er) {
-					throw new CoreException("(setIsolation) "+er.getMessage(),er);
-				}
-				
-				boolean updateEffettuato = false;
-				long gestioneSerializableDB_AttesaAttiva = openspcoopProperties.getGestioneSerializableDB_AttesaAttiva();
-				int gestioneSerializableDB_CheckInterval = openspcoopProperties.getGestioneSerializableDB_CheckInterval();
-				
-				long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
-				
-				while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
-
+					if(times!=null) {
+						timeStart = DateManager.getTimeMillis();
+					}
+					org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
+							(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
+									con, autoCommit,
+									daoFactoryServiceManagerPropertiesTransazioni, daoFactoryLoggerTransazioniSql);
+					jdbcServiceManager.getJdbcProperties().setShowSql(this.debug);
+					ITransazioneApplicativoServerService transazioneService = jdbcServiceManager.getTransazioneApplicativoServerService();
+	
+					// ** Aggiorno campi dipendenti da questa invocazione **
+					// Campi che non possono essere gestiti a livello 'core'
+	
+					transazioneApplicativoServer = (TransazioneApplicativoServer) o;
+	
+					// dettaglio esito
+					this.setDettaglioEsito(transazioneApplicativoServer, esitiProperties);
+					
+					// consegna terminata
+					if(transazioneApplicativoServer.isConsegnaTerminata()) {
+						isMessaggioConsegnato = true;
+					}
+					else if(transazioneApplicativoServer.getDataEliminazioneIm()!=null) {
+						isMessaggioConsegnato = true;
+					}
+					else if(transazioneApplicativoServer.getDataMessaggioScaduto()!=null) {
+						isMessaggioConsegnato = true;
+					}
+	
+					int oldTransactionIsolation = -1;
 					try{
-						
-						boolean transazioneAggiornata = TransactionServerUtils.save(transazioneService, (TransazioneApplicativoServer)o, update, throwNotFoundIfNotExists, false);
-						
-						con.commit();
-						
-						if(!transazioneAggiornata) {
-							isMessaggioConsegnato = false; // per gestire eventuali errori durante il  recupero da file system
+						oldTransactionIsolation = con.getTransactionIsolation();
+						// già effettuato fuori dal metodo connectionDB.setAutoCommit(false);
+						JDBCUtilities.setTransactionIsolationSerializable(daoFactoryServiceManagerPropertiesTransazioni.getDatabase(), con);
+					} catch(Exception er) {
+						throw new CoreException("(setIsolation) "+er.getMessage(),er);
+					}
+					
+					boolean updateEffettuato = false;
+					long gestioneSerializableDB_AttesaAttiva = openspcoopProperties.getGestioneSerializableDB_AttesaAttiva();
+					int gestioneSerializableDB_CheckInterval = openspcoopProperties.getGestioneSerializableDB_CheckInterval();
+					
+					long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
+					
+					while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
+	
+						try{
+							
+							boolean transazioneAggiornata = TransactionServerUtils.save(transazioneService, (TransazioneApplicativoServer)o, update, throwNotFoundIfNotExists, false);
+							
+							con.commit();
+							
+							if(!transazioneAggiornata) {
+								isMessaggioConsegnato = false; // per gestire eventuali errori durante il  recupero da file system
+							}
+	
+							updateEffettuato = true;
+	
+						} catch(Exception e) {
+							//System.out.println("Serializable error:"+e.getMessage());
+							try{
+								con.rollback();
+							} catch(Exception er) {}
 						}
-
-						updateEffettuato = true;
-
-					} catch(Exception e) {
-						//System.out.println("Serializable error:"+e.getMessage());
-						try{
-							con.rollback();
-						} catch(Exception er) {}
+	
+						if(updateEffettuato == false){
+							// Per aiutare ad evitare conflitti
+							try{
+								Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+							}catch(Exception eRandom){}
+						}
 					}
-
-					if(updateEffettuato == false){
-						// Per aiutare ad evitare conflitti
-						try{
-							Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
-						}catch(Exception eRandom){}
+					// Ripristino Transazione
+					try{
+						con.setTransactionIsolation(oldTransactionIsolation);
+						// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
+					} catch(Exception er) {
+						throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
+					}
+				}finally {	
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						if(update) {
+							times.update = timeProcess;
+						}
+						else {
+							times.insert = timeProcess;
+						}
 					}
 				}
-				// Ripristino Transazione
-				try{
-					con.setTransactionIsolation(oldTransactionIsolation);
-					// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
-				} catch(Exception er) {
-					throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
-				}
-				
 			}
 			else if(o instanceof org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico) {
-
-				this.msgDiagnosticiOpenSPCoopAppender.log(con, (org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico)o);
-				
-				con.commit();
-
+				try{
+					if(times!=null) {
+						timeStart = DateManager.getTimeMillis();
+					}
+					
+					this.msgDiagnosticiOpenSPCoopAppender.log(con, (org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico)o);
+					
+					con.commit();
+				}finally {	
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.insert = timeProcess;
+					}
+				}
 			}
 			else if(o instanceof Messaggio) {
-
-				this.dumpOpenSPCoopAppender.dump(con, (Messaggio)o);
-				
-				con.commit();
-				
+				try{
+					if(times!=null) {
+						timeStart = DateManager.getTimeMillis();
+					}
+					
+					this.dumpOpenSPCoopAppender.dump(con, (Messaggio)o);
+					
+					con.commit();
+				}finally {	
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.insert = timeProcess;
+					}
+				}
 			}
 
 		}catch(Throwable e){
@@ -493,9 +584,21 @@ public class GestoreConsegnaMultipla {
 			
 			if(isMessaggioConsegnato) {
 
-				// aggiorno esito transazione (non viene sollevata alcuna eccezione)
-				_safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties);
-
+				long timeStart = -1;
+				try{
+					if(times!=null) {
+						timeStart = DateManager.getTimeMillis();
+					}
+				
+					// aggiorno esito transazione (non viene sollevata alcuna eccezione)
+					_safe_aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, con, esitiProperties);
+				}finally {	
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.updateTransazione = timeProcess;
+					}
+				}
 			}
 			
 			try{
@@ -610,4 +713,43 @@ public class GestoreConsegnaMultipla {
 		}
 	}
 
+}
+
+class TransazioniSAProcessTimes{
+
+	String idTransazione;
+	long getConnection = -1;
+	long insert = -1;
+	long update = -1;
+	long updateTransazione = -1;
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if(this.getConnection>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("getConnection:").append(this.getConnection);
+		}
+		if(this.insert>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("insert:").append(this.insert);
+		}
+		if(this.update>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("update:").append(this.update);
+		}
+		if(this.updateTransazione>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("updateTransazione:").append(this.updateTransazione);
+		}
+		return sb.toString();
+	}
 }

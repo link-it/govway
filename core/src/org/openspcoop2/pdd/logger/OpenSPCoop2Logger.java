@@ -133,6 +133,8 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per le transazioni stateful */
 	protected static Logger loggerOpenSPCoopTransazioniStatefulSql = null;
 	protected static Logger loggerOpenSPCoopTransazioniStatefulSqlError = null;
+	/**  Logger log4j utilizzato per le transazioni, per registrare le operazioni lente */
+	protected static Logger loggerOpenSPCoopTransazioniSlowLog = null;
 	/**  Logger log4j utilizzato per attività di file system recovery */
 	protected static Logger loggerOpenSPCoopFileSystemRecovery = null;
 	protected static Logger loggerOpenSPCoopFileSystemRecoveryError = null;
@@ -512,7 +514,12 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSqlError = LoggerWrapperFactory.getLogger("govway.transazioni.stateful.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSqlError==null)
 				throw new Exception("Logger govway.transazioni.stateful.sql.error non trovato");
-				
+			
+			// TRANSAZIONI SLOW LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSlowLog = LoggerWrapperFactory.getLogger("govway.transazioni.slowLog");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSlowLog==null)
+				throw new Exception("Logger govway.transazioni.slowLog non trovato");
+			
 			// EVENTI LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopEventiError = LoggerWrapperFactory.getLogger("govway.eventi.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopEventiError==null)
@@ -1220,6 +1227,10 @@ public class OpenSPCoop2Logger {
 		else {
 			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSqlError;
 		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopTransazioniSlowLog() {
+		return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSlowLog;
 	}
 	
 	public static Logger getLoggerOpenSPCoopEventi(boolean debug) {
