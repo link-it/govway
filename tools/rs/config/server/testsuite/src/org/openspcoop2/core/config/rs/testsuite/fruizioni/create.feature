@@ -44,6 +44,25 @@ Scenario: Creazione Fruizioni Petstore 204
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
 
+@CreatePetstore204_connettoreDebug
+Scenario Outline: Erogazioni Creazione Petstore 204 connettore debug
+
+		* eval fruizione_petstore.connettore.debug = <debug>
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key })
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/connettore'} )
+		* match response.connettore.debug == <debug>
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key})
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|debug|
+|true|
+|false|
+
+
 @CreateSPCoop204
 Scenario: Creazione Fruizioni SPCoop 204
 

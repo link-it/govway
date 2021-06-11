@@ -53,6 +53,23 @@ Scenario: Erogazioni Creazione Petstore 204
     * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key })
     * call delete ({ resourcePath: api_petstore_path })
 
+@CreatePetstore204_connettoreDebug
+Scenario Outline: Erogazioni Creazione Petstore 204 connettore debug
+
+		* eval erogazione_petstore.connettore.debug = <debug>
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key })
+		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/connettore'} )
+		* match response.connettore.debug == <debug>
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key})
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|debug|
+|true|
+|false|
+
+
 @CreatePetstoreAuth204
 Scenario: Erogazioni Creazione Petstore con autenticazione e autorizzazione
 

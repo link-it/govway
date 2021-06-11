@@ -1657,7 +1657,7 @@ public class ErogazioniApiHelper {
 	     
 		env.apsHelper.fillConnettore(
 				regConnettore, 
-				"false",				// this.connettoreDebug,
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
 				endpointtype, 			// endpointtype
 				oldConnT,						// oldConnT
 				"",						// tipoConn Personalizzato
@@ -1769,7 +1769,7 @@ public class ErogazioniApiHelper {
 	    	     
 		env.apsHelper.fillConnettore(
 				regConnettore, 
-				"false",				// this.connettoreDebug,
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
 				endpointtype, 			// endpointtype
 				oldConnType,			// oldConnT
 				"",						// tipoConn Personalizzato
@@ -3221,6 +3221,7 @@ public class ErogazioniApiHelper {
 		ConnettoreHttp c = new ConnettoreHttp();
 		c.setTipo(ConnettoreEnum.HTTP);
 		c.setEndpoint(props.get(CostantiDB.CONNETTORE_HTTP_LOCATION));
+		c.setDebug(Boolean.parseBoolean(props.get(CostantiDB.CONNETTORE_DEBUG)));
 		
 		//TODO: Forse questi nel caso delle erogazioni vanno presi dall'invocazione, guarda la updateConnettore.
 		ConnettoreConfigurazioneHttpBasic http = new ConnettoreConfigurazioneHttpBasic();

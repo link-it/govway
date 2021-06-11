@@ -74,6 +74,35 @@ Scenario: Update Fruizioni Connettore 204
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
 
+@UpdateConnettore204_connettoreDebug
+Scenario Outline: Update Fruizioni Connettore 204 connettore Debug
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+
+		* eval connettore.connettore.debug=<debug>
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method put
+    Then status 204
+    
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/connettore'} )
+    
+		* match response.connettore.debug == <debug>
+    
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|debug|
+|true|
+|false|
+
 
 @UpdateInfoGenerali204
 Scenario: Update Fruizioni Info Generali 204
