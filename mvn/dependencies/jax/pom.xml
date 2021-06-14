@@ -18,9 +18,9 @@
 		<jar.group.name>jax</jar.group.name>
 		
 		<jaxb.api.version>2.3.1</jaxb.api.version>
-		<jaxb.xjc.version>2.3.2</jaxb.xjc.version>
+		<jaxb.xjc.version>2.3.4</jaxb.xjc.version>
 		<jaxb.core.version>2.3.0.1</jaxb.core.version>
-		<jaxb.impl.version>2.3.2</jaxb.impl.version>
+		<jaxb.impl.version>2.3.4</jaxb.impl.version>
 		<jaxp-ri.gov4j.version>1.4.5-gov4j-1</jaxp-ri.gov4j.version>
 		<jaxws-api.version>2.3.1</jaxws-api.version>
 		<jaxws-jsr181-api.version>1.0-MR1</jaxws-jsr181-api.version>

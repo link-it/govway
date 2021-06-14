@@ -1479,7 +1479,7 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="_RELEASE." value="-${antinstaller_versione_attuale_con_p_level}."/>
 
 		<!-- replace jar in cui e' stato corretto il manifest -->
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-impl-2.3.2.jar" value="jaxb-impl-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-impl-2.3.4.jar" value="jaxb-impl-2.3.2.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
 			<replacetoken><![CDATA[jaxb-impl-2.3.2.ja
  r]]></replacetoken>
@@ -1507,7 +1507,7 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
  ]]></replacevalue>
 		</replace>		
 
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-xjc-2.3.2.jar" value="jaxb-xjc-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-xjc-2.3.4.jar" value="jaxb-xjc-2.3.2.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
 			<replacetoken><![CDATA[jaxb-xjc-2.3.2.ja
  r]]></replacetoken>
