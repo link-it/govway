@@ -9,6 +9,7 @@
 2021-06-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità OP-1208
 	Aggiunto file 'govway_transazioni_slow.log' utilizzabile per registrare le operazioni effettuate sulla base dati del tracciamento (registrazione log, controllo duplicati) che impiegano un tempo maggiore di una soglia prefissata.
 
 2021-06-11  Andrea Poli <apoli@link.it>
