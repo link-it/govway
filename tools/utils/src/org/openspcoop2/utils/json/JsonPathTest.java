@@ -289,18 +289,18 @@ public class JsonPathTest {
 
 			String valoreP1 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p1, LoggerWrapperFactory.getLogger(JsonPathTest.class));
 			if(!"8.95".equals(valoreP1)) {
-				throw new Exception("Atteso '8.95' trovato '"+valoreP1+"' nel messaggio json:\n\n"+json);
+				throw new Exception("Atteso '8.95' trovato '"+valoreP1+"' nel messaggio json (pattern:"+p1+"):\n\n"+json);
 			}
 
 			String valoreP2 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p2, LoggerWrapperFactory.getLogger(JsonPathTest.class));
 			if(!"reference".equals(valoreP2)) {
-				throw new Exception("Atteso 'reference' trovato '"+valoreP2+"' nel messaggio json:\n\n"+json);
+				throw new Exception("Atteso 'reference' trovato '"+valoreP2+"' nel messaggio json (pattern:"+p2+"):\n\n"+json);
 			}
 
 			String s1= JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, LoggerWrapperFactory.getLogger(JsonPathTest.class));
 			//System.out.println("Concat1 :" + s1);
 			if(!"8.95#reference".equals(s1)) {
-				throw new Exception("Atteso '8.95#reference' trovato '"+s1+"' nel messaggio json:\n\n"+json);
+				throw new Exception("Atteso '8.95#reference' trovato '"+s1+"' nel messaggio json (pattern:"+pattern+"):\n\n"+json);
 			}
 
 			// modifico contenuto per verificare che non vi sia una cache disabilitata
@@ -309,18 +309,18 @@ public class JsonPathTest {
 
 			valoreP1 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p1, LoggerWrapperFactory.getLogger(JsonPathTest.class));
 			if(!"1234.77".equals(valoreP1)) {
-				throw new Exception("Atteso '1234.77' trovato '"+valoreP1+"' nel messaggio json:\n\n"+json);
+				throw new Exception("Atteso '1234.77' trovato '"+valoreP1+"' nel messaggio json (pattern:"+p1+"):\n\n"+json);
 			}
 
 			valoreP2 = JsonPathExpressionEngine.extractAndConvertResultAsString(json, p2, LoggerWrapperFactory.getLogger(JsonPathTest.class));
 			if(!"altrovalorecasuale".equals(valoreP2)) {
-				throw new Exception("Atteso 'altrovalorecasuale' trovato '"+valoreP2+"' nel messaggio json:\n\n"+json);
+				throw new Exception("Atteso 'altrovalorecasuale' trovato '"+valoreP2+"' nel messaggio json (pattern:"+p1+"):\n\n"+json);
 			}
 
 			String s2= JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, LoggerWrapperFactory.getLogger(JsonPathTest.class));
 			//System.out.println("Concat2 :" + s2);
 			if(!"1234.77#altrovalorecasuale".equals(s2)) {
-				throw new Exception("Atteso '1234.77#altrovalorecasuale' trovato '"+s2+"' nel messaggio json:\n\n"+json);
+				throw new Exception("Atteso '1234.77#altrovalorecasuale' trovato '"+s2+"' nel messaggio json (pattern:"+pattern+"):\n\n"+json);
 			}
 
 			System.out.println("Test cache disabilita per operazione 'concat': ok");

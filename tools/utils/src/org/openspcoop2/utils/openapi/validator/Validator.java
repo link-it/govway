@@ -104,6 +104,7 @@ import org.w3c.dom.Element;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.networknt.schema.SpecVersion.VersionFlag;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.Schema;
@@ -527,6 +528,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 									schemaValidationConfig.setVerbose(config.isVerbose());
 									schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
 									schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+									schemaValidationConfig.setJsonSchemaVersion(VersionFlag.V4); // https://github.com/OAI/OpenAPI-Specification/blob/main/schemas/v3.0/schema.json
 									//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
 									validator.setSchema(schema, schemaValidationConfig, log);
 									
@@ -680,6 +682,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 															schemaValidationConfig.setVerbose(config.isVerbose());
 															schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
 															schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+															schemaValidationConfig.setJsonSchemaVersion(VersionFlag.V4); // https://github.com/OAI/OpenAPI-Specification/blob/main/schemas/v3.0/schema.json
 															//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
 															validator.setSchema(bout.toByteArray(), schemaValidationConfig, log);
 															
@@ -749,6 +752,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							schemaValidationConfig.setVerbose(config.isVerbose());
 							schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
 							schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+							schemaValidationConfig.setJsonSchemaVersion(VersionFlag.V4); // https://github.com/OAI/OpenAPI-Specification/blob/main/schemas/v3.0/schema.json
 							//System.out.println("ADD SCHEMA PER ["+schemaName+"] ["+new String(schema)+"]");
 							validator.setSchema(schema, schemaValidationConfig, log);
 							

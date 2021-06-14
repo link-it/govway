@@ -36,6 +36,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.SpecVersionDetector;
 import com.networknt.schema.ValidationMessage;
 
 /**
@@ -80,10 +82,18 @@ public class NetworkNTJsonschemaValidator implements IJsonSchemaValidator {
 		this.schemaBytes = schema;
 		
 		try {
-	        JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
-
-	        JsonNode jsonSchema =  this.mapper.readTree(schema);
+			JsonNode jsonSchema =  this.mapper.readTree(schema);
 	        
+			SpecVersion.VersionFlag version	= null;
+			if(config!=null && config.getJsonSchemaVersion()!=null) {
+				version = config.getJsonSchemaVersion();
+			}
+			else {
+				version = SpecVersionDetector.detect(jsonSchema);
+			}
+			
+	        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(version);
+			
 			switch(config.getAdditionalProperties()) {
 			case DEFAULT:
 				break;
