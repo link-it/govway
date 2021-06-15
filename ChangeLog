@@ -1,3 +1,12 @@
+2021-06-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1210
+	Con l'introduzione della funzionalità 'SOAPReader' per la lettura ottimizzata dei messaggi soap, 
+	le richieste che presentavano un ritorno a capo nel rootElement causavano un fallimento del parser il quale riporta erroneamente l'errore:
+		Caused by: org.xml.sax.SAXParseException: The end-tag for element type "rootElementName" must end with a '>' delimiter.
+	Inoltre in questi casi, se si abilitava la registrazione dei messaggi, il contenuto salvato non conteneva la parte letta dal parser e quindi il messaggio salvato risultava incompleto.
+
 2021-06-11  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

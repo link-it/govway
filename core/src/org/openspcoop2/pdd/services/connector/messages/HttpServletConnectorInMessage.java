@@ -286,7 +286,12 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 				if(contentType!=null) {
 					this.soapReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), contentType, 
 							this.buildInputStream(), this.openspcoopProperties.getSoapMessageReaderBufferThresholdKb());
-					this.is = this.soapReader.read();
+					try {
+						this.soapReader.read();
+					}finally {
+						// anche in caso di eccezione devo cmq aggiornare is
+						this.is = this.soapReader.getBufferedInputStream();
+					}
 				}
 				return this.soapReader;
 			}

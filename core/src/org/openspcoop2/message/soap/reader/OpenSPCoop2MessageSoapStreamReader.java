@@ -90,17 +90,22 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			throw this.tBuffered;
 		}
 	}
-	public InputStream read() throws MessageException {
+	private InputStream bufferedInputStream = null;
+	public InputStream getBufferedInputStream() {
+		return this.bufferedInputStream;
+	}
+	public void read() throws MessageException {
 
+		this.bufferedInputStream = this.is;
+				
 		if(this.tBuffered!=null) {
 			throw this.tBuffered;
 		}
 		
 		if(this.contentType==null || StringUtils.isEmpty(this.contentType) || this.is == null) {
-			return this.is;
+			return;
 		}
 				
-		InputStream isReturn = this.is;
 		try {
 			ByteArrayOutputStream bufferReaded = new ByteArrayOutputStream();
 			int letti = 0;
@@ -324,11 +329,11 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				ByteArrayInputStream bin = new ByteArrayInputStream(bufferReaded.toByteArray());
 				if(letti!=-1) {
 					// sono uscita prima della chiusura dello stream
-					isReturn = new SequenceInputStream(bin,this.is);
+					this.bufferedInputStream = new SequenceInputStream(bin,this.is);
 				}
 				else {
 					// letto tutto
-					isReturn = bin;
+					this.bufferedInputStream = bin;
 				}
 			}
 			
@@ -342,10 +347,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			if(header!=null && header.length()>0) {
 				if(this.envelope.endsWith("/>")) {
 					if(throwException) {
-						throw new Exception("Invalid content; found 'Header' after envelope closure '/>'");
+						throw new Exception("Invalid content; found 'Header' after envelope closure '/>': ("+header+")");
 					}
 					else{
-						return isReturn;
+						return;
 					}
 				}
 				if(headerCompletato) {
@@ -361,10 +366,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				//System.out.println("BODY ["+this.body+"]");
 				if(this.envelope.endsWith("/>")) {
 					if(throwException) {
-						throw new Exception("Invalid content; found 'Body' after envelope closure '/>'");
+						throw new Exception("Invalid content; found 'Body' after envelope closure '/>': ("+this.body+")");
 					}
 					else{
-						return isReturn;
+						return;
 					}
 				}
 				if(this.body.endsWith("/>")) {
@@ -376,10 +381,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				//System.out.println("TROVATO FAULT ["+this.fault+"]");
 				if(this.body.endsWith("/>")) {
 					if(throwException) {
-						throw new Exception("Invalid content; found Fault after body closure '/>'");
+						throw new Exception("Invalid content; found Fault after body closure '/>': ("+this.fault+")");
 					}
 					else{
-						return isReturn;
+						return;
 					}
 				}
 				StringBuilder sbFaultAnalizer = new StringBuilder();
@@ -390,7 +395,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					StringBuilder sb = new StringBuilder();
 					for (int i = 1; i < this.fault.length(); i++) {
 						char c = this.fault.charAt(i);
-						if(c==' ' || c=='>') {
+						if(c==' ' || c=='>' || c=='\t' || c=='\r' || c=='\n') {
 							break;
 						}
 						sb.append(c);
@@ -411,10 +416,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					}
 				}catch(Throwable t) {
 					if(throwException) {
-						throw new Exception("Invalid content: "+t.getMessage(),t);
+						throw new Exception("Invalid content ("+sbFaultAnalizer.toString()+"): "+t.getMessage(),t);
 					}
 					else{
-						return isReturn;
+						return;
 					}
 				}
 				if(!this.namespace.equals(namespaceFaultTrovato)) {
@@ -428,10 +433,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				//System.out.println("elementAfterBody ["+elementAfterBody+"]");
 				if(this.body.endsWith("/>")) {
 					if(throwException) {
-						throw new Exception("Invalid content; found element after body closure '/>'");
+						throw new Exception("Invalid content; found element after body closure '/>': ("+elementAfterBody+")");
 					}
 					else{
-						return isReturn;
+						return;
 					}
 				}
 				StringBuilder sbElementAnalizer = new StringBuilder();
@@ -442,7 +447,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					StringBuilder sb = new StringBuilder();
 					for (int i = 1; i < elementAfterBody.length(); i++) {
 						char c = elementAfterBody.charAt(i);
-						if(c==' ' || c=='>') {
+						if(c==' ' || c=='>' || c=='\t' || c=='\r' || c=='\n') {
 							break;
 						}
 						sb.append(c);
@@ -469,10 +474,10 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					this.rootElementNamespace = saxHandler.getNamespace();					
 				}catch(Throwable t) {
 					if(throwException) {
-						throw new Exception("Invalid content: "+t.getMessage(),t);
+						throw new Exception("Invalid content '"+elementAfterBody+"' ("+sbElementAnalizer.toString()+"): "+t.getMessage(),t);
 					}
 					else{
-						return isReturn;
+						return;
 					}
 				}finally {
 					if(saxParser!=null) {
@@ -500,7 +505,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			throw this.tBuffered;
 		}
 		
-		return isReturn;
+		return;
 		
 	}
 	
@@ -528,7 +533,11 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					xmlReader.parse(inputSource);
 				}
 				this.namespace = saxHandler.getNamespace();
-			}finally {
+			}
+			catch(Throwable t) {
+				throw new Exception("Invalid content ("+s+"): "+t.getMessage(),t);
+			}
+			finally {
 				if(saxParser!=null) {
 					returnParser(saxParser);
 				}
@@ -605,7 +614,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 				
 				//this._header = XMLUtils.getInstance().newElement(this.header.getBytes());
 			}catch(Throwable t) {
-				throw SoapUtils.buildMessageException("Invalid header: ", t);
+				throw SoapUtils.buildMessageException("Invalid header ("+this.header+"): "+t.getMessage(),t);
 			}
 		}
 		return this._header;
