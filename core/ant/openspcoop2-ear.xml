@@ -37,26 +37,26 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs-core-2.2.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.1.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-profile-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-profile-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-saml-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-saml-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-security-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-security-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-soap-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-soap-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-storage-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-storage-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-saml-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-saml-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-api-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-impl-3.4.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/java-support-7.5.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-profile-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-profile-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-saml-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-saml-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-security-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-security-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-soap-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-soap-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-storage-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-storage-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-saml-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xacml-saml-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-api-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-impl-4.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/java-support-8.0.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.5.1-gov4j-3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.8.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.12.jar"/>
