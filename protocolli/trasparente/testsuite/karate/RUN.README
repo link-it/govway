@@ -184,6 +184,9 @@ Di seguito vengono descritti i test del package 'trasformazione':
 - 'form', verifica la trasformazione utilizzata per riconoscere casi di errori generati durante la certificazione di uno SPIDProvider 
   ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.form
 
+- 'soap_action', verifica la trasformazione utilizzata per adeguare la soapAction su messaggi soap
+  ant run_test -Ddelete=false -Dload=false -Dpackage=trasformazione.soap_action
+
 Di seguito vengono descritti i test del package 'registrazione_messaggi':
 
 - 'dump_binario', verifica la registrazione dei messaggi in modalità 'binaria'

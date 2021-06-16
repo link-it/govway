@@ -226,8 +226,11 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 			}
 		}
 		else {
-			return super.getContentType();
+			return _getContentType();
 		}
+	}
+	protected String _getContentType() {
+		return super.getContentType();
 	}
 	
 	/* Save */

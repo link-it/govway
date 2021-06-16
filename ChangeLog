@@ -1,3 +1,9 @@
+2021-06-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1212
+	L'header HTTP SOAPAction non risultava modificabile tramite una trasformazione.
+
 2021-06-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
