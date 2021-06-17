@@ -1,5 +1,7 @@
-Bug Fix
--------
+.. _3.3.4.1_bug:
+
+Bug Fix 3.3.4.p1
+----------------
 
 Sono stati risolti i seguenti bug:
 
@@ -17,7 +19,7 @@ Sono stati risolti i seguenti bug:
 
 Per la console di gestione sono stati risolti i seguenti bug:
 
-- il bottone 'i' di informazione presente negli elementi 'checkbox' veniva erroneamente visualizzata spostato sulla destra;
+- il bottone 'i' di informazione presente negli elementi 'checkbox' veniva erroneamente visualizzato spostato sulla destra;
 
 - su un'installazione Tomcat, la sezione 'Runtime' non visualizzava correttamente le informazioni relative alle connessioni attive del database di configurazione;
 
@@ -25,7 +27,7 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
 
-- risolta problematica che si presentava saltuariamente sul server.log dell'application server e riporta un errore simile al seguente:
+- risolta problematica che si presentava saltuariamente sul server.log dell'application server, riportando un errore simile al seguente:
 
 	SEVERE [facelets.viewhandler] (default task-5) Error Rendering View[/transazioni/pages/form/dettagliMessaggioTab.xhtml]: java.lang.IllegalArgumentException: could not find dataTable with id 'diagnosticiTable_tbl'
 
