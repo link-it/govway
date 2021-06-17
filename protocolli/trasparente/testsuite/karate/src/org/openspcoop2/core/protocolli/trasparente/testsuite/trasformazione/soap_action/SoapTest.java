@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -180,6 +181,185 @@ public class SoapTest extends ConfigLoader {
 	
 	
 	
+	
+	
+	@Test
+	public void erogazione_soap11_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.content", "http://govway.org/testSoapAction/v11", null,
+				false, false);
+	}
+	@Test
+	public void fruizione_soap11_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.content", "http://govway.org/testSoapAction/v11", null,
+				false, false);
+	}
+	@Test
+	public void erogazione_soap11_quotata_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.content", "\"http://govway.org/testSoapAction/v11\"", null,
+				true, false);
+	}
+	@Test
+	public void fruizione_soap11_quotata_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.content", "\"http://govway.org/testSoapAction/v11\"", null,
+				true, false);
+	}
+	
+	@Test
+	public void erogazione_soap12_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_2, Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap12.content", soapaction12_nonQuotata, null,
+				false, false);
+	}
+	@Test
+	public void fruizione_soap12_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_2, Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap12.content", soapaction12_nonQuotata, null,
+				false, false);
+	}
+	@Test
+	public void erogazione_soap12_quotata_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_2, Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap12.content", "\"http://govway.org/testSoapAction/v12\"", null,
+				true, false);
+	}
+	@Test
+	public void fruizione_soap12_quotata_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_2, Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap12.content", "\"http://govway.org/testSoapAction/v12\"", null,
+				true, false);
+	}
+	
+	
+	
+	
+	
+	@Test
+	public void erogazione_soap11_trasformazioneViaTemplate_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.trasformazioneTemplate.content", "http://govway.org/testSoapActionTrasformata/template/1c/v11", null,
+				false, true);
+	}
+	@Test
+	public void fruizione_soap11_trasformazioneViaTemplate_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.trasformazioneTemplate.content", "http://govway.org/testSoapActionTrasformata/template/2c/v11", null,
+				false, true);
+	}
+	@Test
+	public void erogazione_soap11_quotata_trasformazioneViaTemplate_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.trasformazioneTemplate.content", "\"http://govway.org/testSoapActionTrasformata/template/3c/v11\"", null,
+				true, true);
+	}
+	@Test
+	public void fruizione_soap11_quotata_trasformazioneViaTemplate_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.trasformazioneTemplate.content", "\"http://govway.org/testSoapActionTrasformata/template/4c/v11\"", null,
+				true, true);
+	}
+	
+	
+	@Test
+	public void erogazione_soap12_trasformazioneViaTemplate_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_2, Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap12.trasformazioneTemplate.content", "http://govway.org/testSoapActionTrasformata/template/1c/v12", null,
+				false, true);
+	}
+	@Test
+	public void fruizione_soap12_trasformazioneViaTemplate_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_2, Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap12.trasformazioneTemplate.content", "http://govway.org/testSoapActionTrasformata/template/2c/v12", null,
+				false, true);
+	}
+	@Test
+	public void erogazione_soap12_quotata_trasformazioneViaTemplate_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_2, Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap12.trasformazioneTemplate.content", "\"http://govway.org/testSoapActionTrasformata/template/3c/v12\"", null,
+				true, true);
+	}
+	@Test
+	public void fruizione_soap12_quotata_trasformazioneViaTemplate_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_2, Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap12.trasformazioneTemplate.content", "\"http://govway.org/testSoapActionTrasformata/template/4c/v12\"", null,
+				true, true);
+	}
+	
+	
+	
+	
+	
+	
+	@Test
+	public void erogazione_soap11_trasformazioneViaHeader_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.trasformazioneHeader.content", "http://govway.org/testSoapActionTrasformata/hdr/1c/v11", null,
+				false, true);
+	}
+	@Test
+	public void fruizione_soap11_trasformazioneViaHeader_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.trasformazioneHeader.content", "http://govway.org/testSoapActionTrasformata/hdr/2c/v11", null,
+				false, true);
+	}
+	@Test
+	public void erogazione_soap11_quotata_trasformazioneViaHeader_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.trasformazioneHeader.content", "\"http://govway.org/testSoapActionTrasformata/hdr/3c/v11\"", null,
+				true, true);
+	}
+	@Test
+	public void fruizione_soap11_quotata_trasformazioneViaHeader_correlazioneApplicativa() throws Exception {
+		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
+		String idApplicativoClaim = "<identificativoApplicativo>"+idApplicativo+"</identificativoApplicativo>";
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE,idApplicativoClaim).getBytes(),
+				"soap11.trasformazioneHeader.content", "\"http://govway.org/testSoapActionTrasformata/hdr/4c/v11\"", null,
+				true, true);
+	}
+	
+	
+	
 	private static HttpResponse _test(
 			TipoServizio tipoServizio, String contentTypeParam, byte[]content,
 			String operazione, String soapActionAttesaRisposta, String msgErrore,
@@ -201,7 +381,7 @@ public class SoapTest extends ConfigLoader {
 		HttpRequest request = new HttpRequest();
 		
 		if(trasforma) {
-			request.addHeader("Trasformazione",soapActionAttesaRisposta);
+			request.addHeader("trasformazione",soapActionAttesaRisposta);
 		}
 		
 		String contentTypeRequest = contentTypeParam;

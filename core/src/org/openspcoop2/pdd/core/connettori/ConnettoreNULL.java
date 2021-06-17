@@ -39,6 +39,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
@@ -148,11 +149,18 @@ public class ConnettoreNULL extends ConnettoreBase {
 			if(this.isSoap && this.sbustamentoSoap == false){
 				if(this.debug)
 					this.logger.debug("Impostazione soap action...");
-				this.soapAction = soapMessageRequest.getSoapAction();
+				boolean existsTransportProperties = false;
+				if(TransportUtils.containsKey(this.propertiesTrasporto, Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION)){
+					this.soapAction = TransportUtils.getFirstValue(this.propertiesTrasporto, Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
+					existsTransportProperties = (this.soapAction!=null);
+				}
+				if(!existsTransportProperties) {
+					this.soapAction = soapMessageRequest.getSoapAction();
+				}
 				if(this.soapAction==null){
 					this.soapAction="\"OpenSPCoop\"";
 				}
-				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
+				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType()) && !existsTransportProperties){
 					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
 					setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, propertiesTrasportoDebug);
 				}

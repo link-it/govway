@@ -513,11 +513,18 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(this.isSoap && this.sbustamentoSoap == false){
 				if(this.debug)
 					this.logger.debug("Impostazione soap action...");
-				this.soapAction = soapMessageRequest.getSoapAction();
+				boolean existsTransportProperties = false;
+				if(TransportUtils.containsKey(this.propertiesTrasporto, Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION)){
+					this.soapAction = TransportUtils.getFirstValue(this.propertiesTrasporto, Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
+					existsTransportProperties = (this.soapAction!=null);
+				}
+				if(!existsTransportProperties) {
+					this.soapAction = soapMessageRequest.getSoapAction();
+				}
 				if(this.soapAction==null){
 					this.soapAction="\"OpenSPCoop\"";
 				}
-				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
+				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType()) && !existsTransportProperties){
 					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
 					this.setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, propertiesTrasportoDebug);
 				}

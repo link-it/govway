@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.exception.MessageException;
@@ -112,15 +113,30 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 					cType.setParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY, 
 							getMessage1_2_FIX_Impl().getMimeMultipart().getContentType().getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY));
 			}
-			if(this.getSoapAction()!=null){
+			String soapActionValue = this.getSoapAction();
+			if(soapActionValue!=null){
 				String pSoapAction = cType.getParameter(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
-				if(pSoapAction!=null){
-					cType.getParameterList().remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
+				if(!soapActionValue.equals(pSoapAction)) {
+					if(soapActionValue.startsWith("\"") && soapActionValue.length()>1) {
+						soapActionValue = soapActionValue.substring(1);
+					}
+					if(soapActionValue.endsWith("\"") && soapActionValue.length()>1) {
+						soapActionValue = soapActionValue.substring(0,soapActionValue.length()-1);
+					}
+					if(StringUtils.isNotEmpty(soapActionValue)) {
+						if(pSoapAction!=null){
+							cType.getParameterList().remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
+						}
+						if(this.contentTypeParamaters!=null && this.contentTypeParamaters.containsKey(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION)){
+							this.contentTypeParamaters.remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
+						}
+						this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, soapActionValue);
+						//System.out.println("NEW '"+soapActionValue+"'");
+					}
 				}
-				if(this.contentTypeParamaters!=null && this.contentTypeParamaters.containsKey(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION)){
-					this.contentTypeParamaters.remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
-				}
-				this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, this.getSoapAction());
+				//else {
+				//	System.out.println("EQUALS");
+				//}
 			}
 			if(includeContentTypeParameters) {
 				return ContentTypeUtilities.buildContentType(cType.toString(),this.contentTypeParamaters);
