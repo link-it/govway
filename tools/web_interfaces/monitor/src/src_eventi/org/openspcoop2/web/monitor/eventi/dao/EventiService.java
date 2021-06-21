@@ -23,6 +23,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -50,6 +53,7 @@ import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 import org.slf4j.Logger;
@@ -72,6 +76,8 @@ public class EventiService implements IEventiService{
 
 	private EventiSearchForm searchForm = null;
 
+	private boolean timeoutEvent = false;
+	private Integer timeoutRicerche = null;
 
 	private List<Index> forceIndexFindAll;
 	private List<Index> forceIndexCount;
@@ -102,6 +108,8 @@ public class EventiService implements IEventiService{
 			
 			this.initForceIndex(PddMonitorProperties.getInstance(EventiService.log));
 			
+			this.timeoutRicerche = PddMonitorProperties.getInstance(EventiService.log).getIntervalloTimeoutRicercaEventi();
+			
 		} catch (Exception e) {
 			EventiService.log.error(e.getMessage(), e);
 		}
@@ -126,6 +134,8 @@ public class EventiService implements IEventiService{
 					.getEventoServiceSearch();
 			
 			this.initForceIndex(PddMonitorProperties.getInstance(EventiService.log));
+			
+			this.timeoutRicerche = PddMonitorProperties.getInstance(EventiService.log).getIntervalloTimeoutRicercaEventi();
 			
 		} catch (Exception e) {
 			EventiService.log.error(e.getMessage(), e);
@@ -162,7 +172,29 @@ public class EventiService implements IEventiService{
 				}
 			}
 			
-			List<Evento> list = this.eventiDao.findAll(pagExpr);
+			this.timeoutEvent = false;
+			
+			List<Evento> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.eventiDao.findAll(pagExpr);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.eventiDao.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					EventiService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					EventiService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					EventiService.log.error(e.getMessage(), e);
+				}
+			}
 			if(list!=null && list.size()>0){
 				List<EventoBean> wrappedList = new ArrayList<EventoBean>();
 				for (Evento evento : list) {
@@ -295,7 +327,29 @@ public class EventiService implements IEventiService{
 				}
 			}
 			
-			List<Evento> list = this.eventiDao.findAll(pagExpr);
+			this.timeoutEvent = false;
+			
+			List<Evento> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.eventiDao.findAll(pagExpr);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.eventiDao.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					EventiService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					EventiService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					EventiService.log.error(e.getMessage(), e);
+				}
+			}
 			if(list!=null && list.size()>0){
 				List<EventoBean> wrappedList = new ArrayList<EventoBean>();
 				for (Evento evento : list) {
@@ -436,5 +490,8 @@ public class EventiService implements IEventiService{
 		return expr;
 	}
 
-
+	@Override
+	public boolean isTimeoutEvent() {
+		return this.timeoutEvent;
+	}
 }

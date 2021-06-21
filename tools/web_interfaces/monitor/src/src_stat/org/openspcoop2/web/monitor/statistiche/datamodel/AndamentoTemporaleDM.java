@@ -118,4 +118,7 @@ public class AndamentoTemporaleDM extends BaseDataModel<Long, Res, IStatisticheG
 		this.visualizzaComandiExport = visualizzaComandiExport;
 	}
 	
+	public boolean isTimeoutEvent(){
+		return this.getDataProvider().isTimeoutEvent();
+	}
 }

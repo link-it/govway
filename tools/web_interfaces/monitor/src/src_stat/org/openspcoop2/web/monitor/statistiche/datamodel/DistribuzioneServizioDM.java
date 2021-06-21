@@ -114,4 +114,7 @@ public class DistribuzioneServizioDM extends BaseDataModel<String, ResDistribuzi
 		this.visualizzaComandiExport = visualizzaComandiExport;
 	}
 	
+	public boolean isTimeoutEvent(){
+		return this.getDataProvider().isTimeoutEvent();
+	}
 }

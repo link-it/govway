@@ -776,4 +776,8 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 		return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_APPLICATIVO_FILE_NAME;
 	}
+	
+	public boolean isTimeoutEvent(){
+		return ((IStatisticheGiornaliere)this.service).isTimeoutEvent();
+	}
 }

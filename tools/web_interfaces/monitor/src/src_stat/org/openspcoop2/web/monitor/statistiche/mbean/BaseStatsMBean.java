@@ -525,4 +525,10 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 			boolean nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati) {
 		this.nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati = nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati;
 	}
+	
+	public void updateChartDirezioneLabel(ActionEvent e) {
+	}
+	
+	public void updateChartNumeroRisultati(ActionEvent e) {
+	}
 }

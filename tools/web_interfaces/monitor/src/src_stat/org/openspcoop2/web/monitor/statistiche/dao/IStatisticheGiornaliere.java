@@ -79,4 +79,5 @@ public interface IStatisticheGiornaliere extends IService<ResBase, Integer>,ILiv
 	public List<String> getHostnames(String gruppo, int refreshSecondsInterval);
 	public List<String> getClusterIdDinamici(String gruppo, int refreshSecondsInterval);
 
+	public boolean isTimeoutEvent() ;
 }

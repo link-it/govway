@@ -1,0 +1,48 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	<f:loadBundle var="msg" basename="messages" /> 
+	
+	<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{mBean.timeoutEvent}">
+		 <rich:modalPanel id="#{id}_timeoutModal" width="350" height="200">
+		   <f:facet name="header">
+		   	<h:outputText value="Attenzione" />
+		   </f:facet>
+		   <div class="form-container noborder">
+			  <div class="buttonrowmodal">
+			      <h:panelGrid columns="2">
+			        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+			        <a4j:outputPanel style="font-weight: bold;text-align: left;">
+			        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
+			        	<p style="margin: 4px 0px 0px 16px;">Prova a restingere l'intervallo di richiesta</p>
+			        </a4j:outputPanel>
+			      </h:panelGrid>
+			  </div>
+	        <div class="errorsSpacer"/>
+	         <div class="buttonrowmodal">
+	     		<input type="button" value="Chiudi" 
+					   onclick="Richfaces.hideModalPanel('#{id}_timeoutModal');return false" />
+	         </div>
+		   </div>
+		</rich:modalPanel>
+		
+		<script type="text/javascript">
+			//<![CDATA[
+				Richfaces.showModalPanel('#{id}_timeoutModal');
+				
+// 			   jQuery(document).ready(controllaEventoTimeout);
+	
+// 			   function controllaEventoTimeout(){  
+// 				   if(#{mBean.timeoutEvent}){
+// 						Richfaces.showModalPanel('#{id}_timeoutModal');
+// 					}
+// 			   }
+			 //]]>	
+		</script>
+	</a4j:outputPanel>
+</ui:composition>
