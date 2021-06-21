@@ -194,7 +194,7 @@
 				</values>
 				<property name="rs.security.keystore.type" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="text" name="validazioneJwtTruststoreFile" label="File" required="true">
+			<item type="textarea" name="validazioneJwtTruststoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="signatureVerificationPropRefId" />
 			</item>
 			<item type="text" name="validazioneJwtTruststorePassword" label="Password" required="true">
@@ -258,7 +258,7 @@
 				</values>
 				<property name="rs.security.keystore.type" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="validazioneJwtKeystoreFile" label="File" required="true">
+			<item type="textarea" name="validazioneJwtKeystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="decryptionPropRefId" />
 			</item>
 			<item type="text" name="validazioneJwtKeystorePassword" label="Password" required="true">
@@ -298,7 +298,7 @@
 			<property name="policy.introspection.tipo" />
 		</item>
 
-		<item type="text" name="introspectionEndpointURLGoogle" label="URL" required="true" default="https://www.googleapis.com/oauth2/v3/tokeninfo">
+		<item type="textarea" name="introspectionEndpointURLGoogle" label="URL" required="true" default="https://www.googleapis.com/oauth2/v3/tokeninfo">
 			<conditions>
 				<condition and="true">
 					<equals name="introspectionType" value="GOOGLE"/>
@@ -306,7 +306,7 @@
 			</conditions>
 			<property name="policy.introspection.endpoint.url" />
 		</item>
-		<item type="text" name="introspectionEndpointURL" label="URL" required="true" default="http://">
+		<item type="textarea" name="introspectionEndpointURL" label="URL" required="true" default="http://">
 			<conditions>
 				<condition not="true" and="true">
 					<equals name="introspectionType" value="GOOGLE"/>
@@ -529,7 +529,7 @@
 					<selected name="introspectionEndpointBearer"/>
 				</condition>
 			</conditions>
-			<item type="text" name="introspectionEndpointBearerToken" label="Token" required="true">
+			<item type="textarea" name="introspectionEndpointBearerToken" label="Token" required="true">
 			      	<property name="policy.introspection.endpoint.bearer.token" />
 			</item>
 		</subsection>
@@ -554,7 +554,7 @@
 			<property name="policy.userInfo.tipo" />
 		</item>
 		
-		<item type="text" name="userInfoEndpointURLGoogle" label="URL" required="true" default="https://www.googleapis.com/oauth2/v3/userinfo">
+		<item type="textarea" name="userInfoEndpointURLGoogle" label="URL" required="true" default="https://www.googleapis.com/oauth2/v3/userinfo">
 			<conditions>
 				<condition and="true">
 					<equals name="userInfoType" value="GOOGLE"/>
@@ -562,7 +562,7 @@
 			</conditions>
 		    <property name="policy.userInfo.endpoint.url" />
 		</item>
-		<item type="text" name="userInfoEndpointURL" label="URL" required="true" default="http://">
+		<item type="textarea" name="userInfoEndpointURL" label="URL" required="true" default="http://">
 			<conditions>
 				<condition not="true" and="true">
 					<equals name="userInfoType" value="GOOGLE"/>
@@ -775,7 +775,7 @@
 					<equals name="userInfoRequestPositionToken" value="authorization"/>
 				</condition>
 			</conditions>
-			<item type="text" name="userInfoEndpointBearerToken" label="Token" required="true">
+			<item type="textarea" name="userInfoEndpointBearerToken" label="Token" required="true">
 			      	<property name="policy.userInfo.endpoint.bearer.token" />
 			</item>
 		</subsection>
@@ -801,8 +801,17 @@
 	
 	
 		<subsection label="Autenticazione Server">
+
+			<item type="checkbox" name="endpointHttpsTrustAllCerts" label="Verifica" defaultSelected="true" reloadOnChange="true">
+				<property name="trustAllCerts" properties="sslConfig" selectedValue="false" unselectedValue="true"/>
+			</item>
 	
 			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
@@ -810,17 +819,37 @@
 				</values>
 				<property name="trustStoreType" properties="sslConfig" />
 			</item>
-			<item type="text" name="endpointHttpsTruststoreFile" label="File" required="true">
-			    <property name="trustStoreLocation" properties="sslConfig" />
+			<item type="textarea" name="endpointHttpsTruststoreFile" label="File" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<property name="trustStoreLocation" properties="sslConfig" />
 			</item>
 			<item type="text" name="endpointHttpsTruststorePassword" label="Password" required="true">
-			      	<property name="trustStorePassword" properties="sslConfig" />
+			      	<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<property name="trustStorePassword" properties="sslConfig" />
 			</item>
 			<item type="text" name="endpointHttpsTruststoreAlgoritmo" label="Algoritmo" default="PKIX" required="true">
-			      	<property name="trustManagementAlgorithm" properties="sslConfig" />
+			      	<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<property name="trustManagementAlgorithm" properties="sslConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
-			      	<property name="trustStoreCRLs" />
+			      	<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<property name="trustStoreCRLs" />
 			</item>
 			
 		</subsection>
@@ -854,7 +883,7 @@
 				</values>
 				<property name="keyStoreType" properties="sslClientConfig" />
 			</item>
-			<item type="text" name="endpointHttpsClientKeystoreFile" label="File" required="true">
+			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="File" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
@@ -1356,7 +1385,7 @@
 				</values>
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystoreFile" label="File" required="true">
+			<item type="textarea" name="tokenForwardInfoRaccolteModeJWSKeystoreFile" label="File" required="true">
 			     <property name="rs.security.keystore.file" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePassword" label="Password" required="true">
@@ -1393,7 +1422,7 @@
 				</values>
 				<property name="rs.security.keystore.type" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystoreFile" label="File" required="true">
+			<item type="textarea" name="tokenForwardInfoRaccolteModeJWEContentKeystoreFile" label="File" required="true">
 			    <property name="rs.security.keystore.file" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystorePassword" label="Password" required="true">

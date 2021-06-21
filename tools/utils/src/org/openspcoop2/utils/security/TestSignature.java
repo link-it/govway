@@ -26,6 +26,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
@@ -137,6 +138,7 @@ public class TestSignature {
 			JsonWebKeys jwks_symmetric_keystore = new JWKSet(FileSystemUtilities.readFile(jwks_symmetric_fKeystore)).getJsonWebKeys();
 			JsonWebKey jwk_symmetric_keystore = new JWK(FileSystemUtilities.readFile(jwk_symmetric_fKeystore)).getJsonWebKey();
 
+			String secret = UUID.randomUUID().toString();
 
 			JwtHeaders jwtHeader = new JwtHeaders();
 			jwtHeader.setContentType("application/json");
@@ -174,59 +176,63 @@ public class TestSignature {
 			// Esempio Signature JSON
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JKS.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS, fKeystore, fTruststore, truststore, null, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS, fKeystore, fTruststore, truststore, null, null, null);
 			}
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM, fKeystore, fTruststore, truststore, jwtHeader, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM, fKeystore, fTruststore, truststore, jwtHeader, null, null);
 				jwtHeader.setX509Url(null);
 			}
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY, fKeystore, fTruststore, truststore, jwtHeader, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY, fKeystore, fTruststore, truststore, jwtHeader, null, null);
 			}
 
 
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS, fKeystoreJCEKS, fKeystoreJCEKS, null, null, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS, fKeystoreJCEKS, fKeystoreJCEKS, null, null, null, null);
 			}
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setX509Url(new URI("file://"+fCertX509.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM, fKeystoreJCEKS, fKeystoreJCEKS, null, jwtHeader, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM, fKeystoreJCEKS, fKeystoreJCEKS, null, jwtHeader, null, null);
 				jwtHeader.setX509Url(null);
 			}
 
 
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK, jwks_fKeystore, jwks_fTruststore, truststore, null, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK, jwks_fKeystore, jwks_fTruststore, truststore, null, null, null);
 			}
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM, jwks_fKeystore, jwks_fTruststore, truststore, jwtHeader, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM, jwks_fKeystore, jwks_fTruststore, truststore, jwtHeader, null, null);
 				jwtHeader.setJwkUrl(null);
 			}
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY, jwks_fKeystore, jwks_fTruststore, truststore, jwtHeader, jwks_truststore);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY, jwks_fKeystore, jwks_fTruststore, truststore, jwtHeader, jwks_truststore, null);
 			}
 
 
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipoTest)) {
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC, jwks_symmetric_fKeystore, jwks_symmetric_fKeystore, null, null, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC, jwks_symmetric_fKeystore, jwks_symmetric_fKeystore, null, null, null, null);
 			}
 
 			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipoTest)) {
 				jwtHeader.setJwkUrl(new URI("file://"+jwks_fTruststore.getAbsolutePath()));
-				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM, jwks_symmetric_fKeystore, jwks_symmetric_fKeystore, null, jwtHeader, null);
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM, jwks_symmetric_fKeystore, jwks_symmetric_fKeystore, null, jwtHeader, null, null);
 				jwtHeader.setJwkUrl(null);
 			}
-
+			
+			
+			if(tipoTest==null || TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET.equals(tipoTest)) {
+				testJsonProperties(TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET, null, null, null, null, null, secret);
+			}
 
 
 
@@ -374,7 +380,14 @@ public class TestSignature {
 			}
 
 
+			if(tipoTest==null || TipoTest.JSON_SIGNATURE_SECRET.equals(tipoTest)) {
 
+				testSecret(TipoTest.JSON_SIGNATURE_SECRET, secret, null);
+				
+			}
+			
+			
+			
 
 			System.out.println("Testsuite terminata");
 
@@ -582,7 +595,7 @@ public class TestSignature {
 	}
 
 	private static void testJsonProperties(TipoTest tipo, File fKeystore, File fTruststore, KeyStore truststore, JwtHeaders headers,
-			JsonWebKeys jsonWebKeys) throws Exception {
+			JsonWebKeys jsonWebKeys, String secret) throws Exception {
 		// Esempio Signature JSON
 
 		System.out.println("\n\n ============== "+tipo+" ==================");
@@ -594,7 +607,9 @@ public class TestSignature {
 		Properties signatureProps = new Properties();
 		InputStream is = TestSignature.class.getResourceAsStream("jws.signature.properties");
 		signatureProps.load(is);
-		signatureProps.put("rs.security.keystore.file", fKeystore.getPath());
+		if(fKeystore!=null) {
+			signatureProps.put("rs.security.keystore.file", fKeystore.getPath());
+		}
 		signatureProps.remove("rs.security.keystore.type");
 		if(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS.equals(tipo) || 
 				TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
@@ -634,6 +649,21 @@ public class TestSignature {
 			signatureProps.remove("rs.security.signature.include.cert.sha1");
 			signatureProps.remove("rs.security.signature.include.cert.sha256");
 		}
+		else if(TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET.equals(tipo)) {
+			
+			signatureProps.put("rs.security.signature.algorithm","HS256");
+			signatureProps.put("rs.security.key.password",secret);
+			signatureProps.put("rs.security.keystore.type",JsonUtils.RSSEC_KEY_STORE_TYPE_SECRET);
+			
+			signatureProps.remove("rs.security.signature.include.cert.sha1");
+			signatureProps.remove("rs.security.signature.include.cert.sha256");
+			signatureProps.remove("rs.security.signature.include.key.id");
+			signatureProps.remove("rs.security.signature.include.public.key");
+			signatureProps.remove("rs.security.signature.include.cert");
+			signatureProps.remove("rs.security.keystore.password");
+			signatureProps.remove("rs.security.keystore.alias");
+			signatureProps.remove("rs.security.keystore.file");
+		}
 
 
 		if(headers!=null) {
@@ -641,10 +671,15 @@ public class TestSignature {
 			signatureProps.remove("rs.security.signature.include.public.key");
 		}
 
+		boolean test_jsonSignature = true;
+		boolean test_compact = true;
+		
 		Properties verifySignatureProps = new Properties();
 		InputStream verifySignaturePropsis = TestSignature.class.getResourceAsStream("jws.verify.signature.properties");
 		verifySignatureProps.load(verifySignaturePropsis);
-		verifySignatureProps.put("rs.security.keystore.file", fTruststore.getPath());
+		if(fTruststore!=null) {
+			verifySignatureProps.put("rs.security.keystore.file", fTruststore.getPath());
+		}
 		verifySignatureProps.remove("rs.security.keystore.type");
 		if(TipoTest.JSON_SIGNATURE_PROPERTIES_JKS.equals(tipo) || 
 				TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM.equals(tipo)) {
@@ -666,195 +701,214 @@ public class TestSignature {
 			verifySignatureProps.put("rs.security.keystore.type", "jwk");
 			verifySignatureProps.put("rs.security.signature.algorithm","HS256");
 		}
+		else if(TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET.equals(tipo) ) {
+			verifySignatureProps.put("rs.security.signature.algorithm","HS256");
+			verifySignatureProps.put("rs.security.key.password",secret);
+			verifySignatureProps.put("rs.security.keystore.type",JsonUtils.RSSEC_KEY_STORE_TYPE_SECRET);
+			
+			verifySignatureProps.remove("rs.security.keystore.password");
+			verifySignatureProps.remove("rs.security.keystore.alias");
+			verifySignatureProps.remove("rs.security.keystore.file");
+		}
 
 
 		System.out.println("\n");
 
 
 
+		if(test_jsonSignature) {
 
-
-		// **** JSON - !detached -  payloadEncoding ***
-
-		// Signature Json
-		JWSOptions options = new JWSOptions(JOSESerialization.JSON);
-		JsonSignature jsonSignature = null;
-		if(headers==null) {
-			jsonSignature = new JsonSignature(signatureProps, options);
-		}
-		else {
-			jsonSignature = new JsonSignature(signatureProps, headers, options);
-		}
-		String attachSign = jsonSignature.sign(jsonInput);
-		verifySignatureBuild(tipo, attachSign, jsonInput, options, signatureProps, headers);
-
-		// Verifica
-		JWTOptions optionsVerify = new JWTOptions(JOSESerialization.JSON);
-		JsonVerifySignature jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
-		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
-
-		// Verifica basata sull'header
-		if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
-			if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
-				jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+			// **** JSON - !detached -  payloadEncoding ***
+			
+			// Signature Json
+			JWSOptions options = new JWSOptions(JOSESerialization.JSON);
+			JsonSignature jsonSignature = null;
+			if(headers==null) {
+				jsonSignature = new JsonSignature(signatureProps, options);
 			}
 			else {
-				jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+				jsonSignature = new JsonSignature(signatureProps, headers, options);
 			}
-			verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
-		}
-
-		System.out.println("\n\n");
-
-
-
-		// **** JSON - !detached -  !payloadEncoding ***
-
-		// Signature Json - Unencoded Payload Option (RFC 7797)
-		options = new JWSOptions(JOSESerialization.JSON);
-		options.setPayloadEncoding(false);
-		if(headers==null) {
-			jsonSignature = new JsonSignature(signatureProps, options);
-		}
-		else {
-			jsonSignature = new JsonSignature(signatureProps, headers, options);
-		}
-		attachSign = jsonSignature.sign(jsonInput);
-		verifySignatureBuild(tipo,attachSign, jsonInput, options, signatureProps, headers);
-
-		// Verifica
-		optionsVerify = new JWTOptions(JOSESerialization.JSON);
-		jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
-		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
-
-		// Verifica basata sull'header
-		if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
-			if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
-				jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+			String attachSign = jsonSignature.sign(jsonInput);
+			verifySignatureBuild(tipo, attachSign, jsonInput, options, signatureProps, headers);
+	
+			// Verifica
+			JWTOptions optionsVerify = new JWTOptions(JOSESerialization.JSON);
+			JsonVerifySignature jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
+			verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+	
+			// Verifica basata sull'header
+			if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET.equals(tipo)) {
+				if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+					jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+				}
+				else {
+					jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+				}
+				verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
 			}
-			else {
-				jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
-			}
-			verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
-		}
-
-		System.out.println("\n\n");
-
-
-
-		// **** JSON - detached -  [n.c. payloadEncoding] ***
-
-		// Signature Json - detached
-		options = new JWSOptions(JOSESerialization.JSON);
-		options.setDetached(true);
-		if(headers==null) {
-			jsonSignature = new JsonSignature(signatureProps, options);
-		}
-		else {
-			jsonSignature = new JsonSignature(signatureProps, headers, options);
-		}
-		String detachedSign = jsonSignature.sign(jsonInput);
-		verifySignatureBuild(tipo,detachedSign, jsonInput, options, signatureProps, headers);
-
-		// Verifica
-		optionsVerify = new JWTOptions(JOSESerialization.JSON);
-		jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
-		verifySignature(tipo, false, jsonVerify, detachedSign, jsonInput, options);
-
-		// Verifica basata sull'header
-		if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
-			if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
-				jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+	
+			System.out.println("\n\n");
+	
+	
+	
+			// **** JSON - !detached -  !payloadEncoding ***
+	
+			// Signature Json - Unencoded Payload Option (RFC 7797)
+			options = new JWSOptions(JOSESerialization.JSON);
+			options.setPayloadEncoding(false);
+			if(headers==null) {
+				jsonSignature = new JsonSignature(signatureProps, options);
 			}
 			else {
-				jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+				jsonSignature = new JsonSignature(signatureProps, headers, options);
 			}
-			verifySignature(tipo, true, jsonVerify, detachedSign, jsonInput, options);
-		}
-
-		System.out.println("\n\n");
-
-
-
-		// **** COMPACT - !detached -  [n.c. payloadEncoding] ***		
-
-		// Signature Compact
-		options = new JWSOptions(JOSESerialization.COMPACT);
-		if(headers==null) {
-			jsonSignature = new JsonSignature(signatureProps, options);
-		}
-		else {
-			jsonSignature = new JsonSignature(signatureProps, headers, options);
-		}
-		String compactSign = jsonSignature.sign(jsonInput);
-		verifySignatureBuild(tipo, compactSign, jsonInput, options, signatureProps, headers);
-
-		// Verifica
-		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
-		jsonVerify = new JsonVerifySignature(verifySignatureProps, optionsVerify);
-		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
-
-		// Verifica basata sull'header
-		if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
-			if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
-				jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+			attachSign = jsonSignature.sign(jsonInput);
+			verifySignatureBuild(tipo,attachSign, jsonInput, options, signatureProps, headers);
+	
+			// Verifica
+			optionsVerify = new JWTOptions(JOSESerialization.JSON);
+			jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
+			verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+	
+			// Verifica basata sull'header
+			if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET.equals(tipo)) {
+				if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+					jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+				}
+				else {
+					jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+				}
+				verifySignature(tipo, true, jsonVerify, attachSign, jsonInput, options);
 			}
-			else {
-				jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
-			}
-			verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
-		}
-
-		System.out.println("\n\n");
-
-
-
-		// **** COMPACT - detached -  [n.c. payloadEncoding] ***
-
-		// Signature Compact
-		options = new JWSOptions(JOSESerialization.COMPACT);
-		options.setDetached(true);
-		if(headers==null) {
-			jsonSignature = new JsonSignature(signatureProps, options);
-		}
-		else {
-			jsonSignature = new JsonSignature(signatureProps, headers, options);
-		}
-		compactSign = jsonSignature.sign(jsonInput);
-		verifySignatureBuild(tipo, compactSign, jsonInput, options, signatureProps, headers);
-
-		// Verifica
-		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
-		jsonVerify = new JsonVerifySignature(verifySignatureProps, optionsVerify);
-		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
-
-		// Verifica basata sull'header
-		if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
-				!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo)) {
-			if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
-				jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+	
+			System.out.println("\n\n");
+	
+	
+	
+			// **** JSON - detached -  [n.c. payloadEncoding] ***
+	
+			// Signature Json - detached
+			options = new JWSOptions(JOSESerialization.JSON);
+			options.setDetached(true);
+			if(headers==null) {
+				jsonSignature = new JsonSignature(signatureProps, options);
 			}
 			else {
-				jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+				jsonSignature = new JsonSignature(signatureProps, headers, options);
 			}
-			verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+			String detachedSign = jsonSignature.sign(jsonInput);
+			verifySignatureBuild(tipo,detachedSign, jsonInput, options, signatureProps, headers);
+	
+			// Verifica
+			optionsVerify = new JWTOptions(JOSESerialization.JSON);
+			jsonVerify = new JsonVerifySignature(verifySignatureProps,optionsVerify);
+			verifySignature(tipo, false, jsonVerify, detachedSign, jsonInput, options);
+	
+			// Verifica basata sull'header
+			if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET.equals(tipo)) {
+				if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+					jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+				}
+				else {
+					jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+				}
+				verifySignature(tipo, true, jsonVerify, detachedSign, jsonInput, options);
+			}
+	
+			System.out.println("\n\n");
+			
 		}
 
-		System.out.println("\n\n");
+
+		if(test_compact) {
+
+			// **** COMPACT - !detached -  [n.c. payloadEncoding] ***		
+	
+			// Signature Compact
+			JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+			JsonSignature jsonSignature = null;
+			if(headers==null) {
+				jsonSignature = new JsonSignature(signatureProps, options);
+			}
+			else {
+				jsonSignature = new JsonSignature(signatureProps, headers, options);
+			}
+			String compactSign = jsonSignature.sign(jsonInput);
+			verifySignatureBuild(tipo, compactSign, jsonInput, options, signatureProps, headers);
+	
+			// Verifica
+			JWTOptions optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+			JsonVerifySignature jsonVerify = new JsonVerifySignature(verifySignatureProps, optionsVerify);
+			verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+	
+			// Verifica basata sull'header
+			if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET.equals(tipo)) {
+				if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+					jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+				}
+				else {
+					jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+				}
+				verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+			}
+	
+			System.out.println("\n\n");
+	
+	
+	
+			// **** COMPACT - detached -  [n.c. payloadEncoding] ***
+	
+			// Signature Compact
+			options = new JWSOptions(JOSESerialization.COMPACT);
+			options.setDetached(true);
+			if(headers==null) {
+				jsonSignature = new JsonSignature(signatureProps, options);
+			}
+			else {
+				jsonSignature = new JsonSignature(signatureProps, headers, options);
+			}
+			compactSign = jsonSignature.sign(jsonInput);
+			verifySignatureBuild(tipo, compactSign, jsonInput, options, signatureProps, headers);
+	
+			// Verifica
+			optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+			jsonVerify = new JsonVerifySignature(verifySignatureProps, optionsVerify);
+			verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+	
+			// Verifica basata sull'header
+			if(!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS_HEADER_CUSTOM.equals(tipo) && 
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM.equals(tipo) &&
+					!TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET.equals(tipo)) {
+				if(TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY.equals(tipo)) {
+					jsonVerify = new JsonVerifySignature(jsonWebKeys, optionsVerify);
+				}
+				else {
+					jsonVerify = new JsonVerifySignature(truststore, optionsVerify);
+				}
+				verifySignature(tipo, true, jsonVerify, compactSign, jsonInput, options);
+			}
+	
+			System.out.println("\n\n");
+		}
 	}
 
 
@@ -1383,6 +1437,134 @@ public class TestSignature {
 		System.out.println("\n\n");
 
 	}
+	
+	
+	private static void testSecret(TipoTest tipo, String secret, JwtHeaders headers) throws Exception {
+		// Esempio Signature JSON con altri costruttori
+
+		String jsonInput = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"value2\"\n}";
+
+		System.out.println("\n\n ================ "+tipo+"  ================");
+		System.out.println("["+tipo+"]. Example JsonSignature (Costruttore keystore) \n");
+
+		String signatureAlgorithm = "HS256";
+		
+
+		// **** JSON - !detached -  payloadEncoding ***
+
+		// Signature Json
+		JWSOptions options = new JWSOptions(JOSESerialization.JSON);
+		JsonSignature jsonSignature = null;
+		if(headers==null) {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, headers, options);
+		}
+		String attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, attachSign, jsonInput, options, null, headers);
+
+		// Verifica
+		JWTOptions optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		JsonVerifySignature jsonVerify = null;
+		jsonVerify = new JsonVerifySignature(secret, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+
+		System.out.println("\n\n");
+
+
+
+		// **** JSON - !detached -  !payloadEncoding ***
+
+		// Signature Json - Unencoded Payload Option (RFC 7797)
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setPayloadEncoding(false);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, headers, options);
+		}
+		attachSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,attachSign, jsonInput, options, null, headers);
+
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(secret, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, attachSign, jsonInput, options);
+
+		System.out.println("\n\n");
+
+
+
+		// **** JSON - detached -  [n.c. payloadEncoding] ***
+
+		// Signature Json - detached
+		options = new JWSOptions(JOSESerialization.JSON);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, headers, options);
+		}
+		String detachedSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo,detachedSign, jsonInput, options, null, headers);
+
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.JSON);
+		jsonVerify = new JsonVerifySignature(secret, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, detachedSign, jsonInput, options);
+
+		System.out.println("\n\n");
+
+
+
+		// **** COMPACT - !detached -  [n.c. payloadEncoding] ***		
+
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, headers, options);
+		}
+		String compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, null, headers);
+
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(secret, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+
+		System.out.println("\n\n");
+
+
+
+		// **** COMPACT - detached -  [n.c. payloadEncoding] ***
+
+		// Signature Compact
+		options = new JWSOptions(JOSESerialization.COMPACT);
+		options.setDetached(true);
+		if(headers==null) {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, options);
+		}
+		else {
+			jsonSignature = new JsonSignature(secret, signatureAlgorithm, headers, options);
+		}
+		compactSign = jsonSignature.sign(jsonInput);
+		verifySignatureBuild(tipo, compactSign, jsonInput, options, null, headers);
+
+		// Verifica
+		optionsVerify = new JWTOptions(JOSESerialization.COMPACT);
+		jsonVerify = new JsonVerifySignature(secret, signatureAlgorithm,optionsVerify);
+		verifySignature(tipo, false, jsonVerify, compactSign, jsonInput, options);
+
+		System.out.println("\n\n");
+
+	}
+	
 
 
 	private static void verifySignatureBuild(TipoTest tipo, String signature, String jsonInput, JWSOptions options, 
@@ -1642,6 +1824,7 @@ public class TestSignature {
 		JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM,
 		JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY,
 		JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY,
+		JSON_SIGNATURE_PROPERTIES_SECRET,
 		JSON_SIGNATURE_JKS_KEYSTORE,
 		JSON_SIGNATURE_JKS_KEYSTORE_HEADER_CUSTOM,
 		JSON_SIGNATURE_JCEKS_KEYSTORE,
@@ -1653,7 +1836,8 @@ public class TestSignature {
 		JSON_SIGNATURE_JWK_SYMMETRIC_KEYS,
 		JSON_SIGNATURE_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM,
 		JSON_SIGNATURE_JWK_SYMMETRIC_KEY,
-		JSON_SIGNATURE_JWK_SYMMETRIC_KEY_HEADER_CUSTOM
+		JSON_SIGNATURE_JWK_SYMMETRIC_KEY_HEADER_CUSTOM,
+		JSON_SIGNATURE_SECRET
 
 	}
 }

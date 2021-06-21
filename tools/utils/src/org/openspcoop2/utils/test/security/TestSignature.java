@@ -52,6 +52,7 @@ public class TestSignature {
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_SYMMETRIC_HEADER_CUSTOM},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS_HEADER_CUSTOM_KID_ONLY},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JWK_HEADER_CUSTOM_KID_ONLY},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_SECRET},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JKS_KEYSTORE},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JKS_KEYSTORE_HEADER_CUSTOM},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JCEKS_KEYSTORE},
@@ -63,7 +64,8 @@ public class TestSignature {
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEYS},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEYS_HEADER_CUSTOM},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEY},
-				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEY_HEADER_CUSTOM}
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_JWK_SYMMETRIC_KEY_HEADER_CUSTOM},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_SECRET}
 		};
 	}
 	

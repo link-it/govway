@@ -228,6 +228,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				return GestoreKeystoreCaching.getSSLSocketFactory(this.sslContextProperties).getSslSocketFactory();
 			}catch(Exception e) {
 				this.logger.error("Lettura SSLSocketFactory '"+this.sslContextProperties.toString()+"' dalla cache fallita: "+e.getMessage(),e);
+				throw new UtilsException(e.getMessage(),e);
 			}finally {
 				if(sbError!=null && sbError.length()>0) {
 					this.logger.error(sbError.toString());

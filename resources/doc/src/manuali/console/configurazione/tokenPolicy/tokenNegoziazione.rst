@@ -30,8 +30,10 @@ sezione *Token Endpoint* si specifica il tipo di negoziazione e i vari parametri
 
 -  *Tipo*: indica la modalità di negoziazione del token. I valori possibili sono:
 
-   -  *Client Credentials*: modalità di negoziazione 'Client Credentials Grant' descritta nel RFC 6749 (https://tools.ietf.org/html/rfc6749#page-40).
-   -  *Resource Owner Password Credentials*: modalità di negoziazione 'Resource Owner Password Credentials Grant' descritta nel RFC 6749 (https://tools.ietf.org/html/rfc6749#page-37).
+   -  *Client Credentials*: modalità di negoziazione 'Client Credentials Grant' descritta nel RFC 6749 (https://tools.ietf.org/html/rfc6749#page-40);
+   -  *Resource Owner Password Credentials*: modalità di negoziazione 'Resource Owner Password Credentials Grant' descritta nel RFC 6749 (https://tools.ietf.org/html/rfc6749#page-37);
+   -  *Signed JWT*: modalità di negoziazione 'Client Credentials Grant' descritta nella sezione 2.2 del RFC 7523 (https://datatracker.ietf.org/doc/html/rfc7523#section-2.2) che prevede lo scambio di un'asserzione JWT firmata tramite certificato x.509 con l'authorization server;
+   -  *Signed JWT with Client Secret*: modalità di negoziazione identica alla precedente dove però l'asserzione JWT viene firmata tramite una chiave simmetrica.
 
 -  *URL*: endpoint del servizio di negoziazione token.
 
@@ -52,14 +54,28 @@ dell'autenticazione utente, se il tipo di negoziazione selezionato è 'Resource 
 
 -  *Username* e *Password*: Dovranno essere forniti Username e Password dell'utente per cui verrà effettuata la negoziazione del token.
 
-Successivamente devono essere forniti i dati di configurazione specifici
-dell'autenticazione client:
+Successivamente devono essere forniti i dati di configurazione specifici dell'autenticazione client in caso di modalità di negoziazione che non prevedono un JWT firmato:
 
 -  *Autenticazione Http Basic*: flag da attivare nel caso in cui il servizio di negoziazione richieda autenticazione di tipo HTTP-BASIC. In questo caso dovranno essere forniti Client-ID e Client-Secret nei campi successivi.
 
 -  *Autenticazione Bearer*: flag da attivare nel caso in cui il servizio di negoziazione richieda autenticazione tramite un bearer token. Quest'ultimo dovrà essere indicato nel campo seguente.
 
 -  *Autenticazione Https*: flag da attivare nel caso in cui il servizio di negoziazione richieda autenticazione di tipo Https. In questo caso dovranno essere forniti tutti i dati di configurazione nei campi seguenti.
+
+Se invece è previsto un JWT firmato saranno richiesti i parametri da inserire nel JWT (claims) e l'algoritmo di firma da utilizzare:
+
+-  *Signature Algorithm*: algoritmo utilizzato per firmare l'asserzione jwt;
+
+-  *Client ID*: identificativo del client censito sull'AuthorizationServer che verrà indicato nel claim 'sub' dell'asserzione JWT;
+
+-  *Audience*: identifica l'authorization server come destinario dell'asserzione JWT (claim 'aud');
+
+-  *Issuer*: identità del firmatario dell'asserzione JWT;
+
+-  *Time to Live*: indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione.
+
+Se il tipo di negoziazione selezionato è 'Signed JWT with Client Secret', oltre al Client-ID viene richiesto anche il secret, concordato con l'authorization server, da utilizzare per firmare l'asserzione JWT. Nel caso invece sia stato selezionato il tipo 'Signed JWT' vengono richiesti i parametri di accesso al keystore per individuare la chiave privata da utilizzare per firmare l'asserzione.
+
 
 Nella sezione 'Configurazione' potranno invece essere definiti ulteriori criteri che riguardano la richiesta di un token:
 

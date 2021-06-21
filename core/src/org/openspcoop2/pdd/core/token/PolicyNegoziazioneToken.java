@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
@@ -96,6 +97,14 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL.equals(mode);
 	}
+	public boolean isRfc7523_x509_Grant() throws ProviderException, ProviderValidationException{
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
+		return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(mode);
+	}
+	public boolean isRfc7523_clientSecret_Grant() throws ProviderException, ProviderValidationException{
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
+		return Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(mode);
+	}
 	public boolean isUsernamePasswordGrant() throws ProviderException, ProviderValidationException{
 		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_MODE);
 		return Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD.equals(mode);
@@ -142,4 +151,44 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public String getForwardTokenModeCustomUrl() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL_PARAMETER_NAME);
 	}
+	
+	public String getJwtClientId() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID);
+	}
+	public String getJwtClientSecret() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET);
+	}
+	public String getJwtIssuer() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER);
+	}
+	public String getJwtAudience() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE);
+	}
+	public Integer getJwtTtlSeconds() {
+		String ttl = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS);
+		if(ttl==null || StringUtils.isEmpty(ttl)) {
+			ttl = Costanti.POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE;
+		}
+		return Integer.valueOf(ttl);
+	}
+	public String getJwtSignAlgorithm() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_ALGORITHM);
+	}
+	
+	public String getJwtSignKeystoreType() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_TYPE);
+	}
+	public String getJwtSignKeystoreFile() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE);
+	}
+	public String getJwtSignKeystorePassword() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD);
+	}
+	public String getJwtSignKeyAlias() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS);
+	}
+	public String getJwtSignKeyPassword() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD);
+	}
+
 }

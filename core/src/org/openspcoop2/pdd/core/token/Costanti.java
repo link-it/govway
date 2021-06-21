@@ -204,6 +204,18 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_SCOPES = "policy.retrieveToken.scope";
 	public final static String POLICY_RETRIEVE_TOKEN_AUDIENCE = "policy.retrieveToken.audience";
 	public final static String POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE = "policy.retrieveToken.saveErrorInCache";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID= "policy.retrieveToken.jwt.clientId";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_ISSUER= "policy.retrieveToken.jwt.issuer";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE= "policy.retrieveToken.jwt.audience";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "policy.retrieveToken.jwt.expired";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE = "300";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_ALGORITHM= "policy.retrieveToken.jwt.signature.algorithm";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_TYPE= "policy.retrieveToken.jwt.signature.keystoreType";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE= "policy.retrieveToken.jwt.signature.keystoreFile";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD= "policy.retrieveToken.jwt.signature.keystorePassword";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_ALIAS= "policy.retrieveToken.jwt.signature.keyAlias";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEY_PASSWORD= "policy.retrieveToken.jwt.signature.keyPassword";
 	
 	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE = "policy.tokenForward.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER = "RFC6750_header";
@@ -226,8 +238,15 @@ public class Costanti {
 	public final static String ID_RETRIEVE_TOKEN_METHOD = "retrieveTokenMethod";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL = "clientCredentials";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD = "usernamePassword";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509 = "rfc7523_x509";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET = "rfc7523_clientSecret";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL = "Client Credentials";
 	public final static String ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL = "Resource Owner Password Credentials";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL = "Signed JWT";
+	public final static String ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL = "Signed JWT with Client Secret";
+	public final static String ID_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "jwtExpTtl";
+	public final static String ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM = "jwtSymmetricSignatureAlgorithm";
+	public final static String ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM = "jwtAsymmetricSignatureAlgorithm";
 	
 	public final static String ID_INTROSPECTION_HTTP_METHOD = "introspectionHttpMethod";
 	

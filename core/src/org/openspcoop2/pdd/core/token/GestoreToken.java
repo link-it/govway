@@ -57,6 +57,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
+import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.ClaimsNegoziazione;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
@@ -66,12 +67,16 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.security.keystore.MerlinKeystore;
+import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.security.JOSESerialization;
@@ -2640,6 +2645,10 @@ public class GestoreToken {
 		if(policyNegoziazioneToken.isClientCredentialsGrant()) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT);
 		}
+		else if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION_TYPE_RFC_7523);
+		}
 		else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT);
 		}
@@ -2653,6 +2662,11 @@ public class GestoreToken {
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, policyNegoziazioneToken.getUsernamePasswordGrant_username());
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
+		}
+		if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
+			String jwt = buildJwt(policyNegoziazioneToken);
+			String signedJwt = signJwt(policyNegoziazioneToken, jwt);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION, signedJwt);
 		}
 		List<String> scopes = policyNegoziazioneToken.getScopes();
 		if(scopes!=null && !scopes.isEmpty()) {
@@ -2741,6 +2755,126 @@ public class GestoreToken {
 			}
 		}
 		
+		
+	}
+	
+	private static String buildJwt(PolicyNegoziazioneToken policyNegoziazioneToken) throws Exception {
+		
+		// https://datatracker.ietf.org/doc/html/rfc7523
+		
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		JSONUtils jsonUtils = JSONUtils.getInstance(false);
+		
+		ObjectNode jwtPayload = jsonUtils.newObjectNode();
+
+		// add iat, nbf, exp
+		long nowMs = DateManager.getTimeMillis();
+		long nowSeconds = nowMs/1000;
+		
+		String issuer = policyNegoziazioneToken.getJwtIssuer();
+		if(issuer==null) {
+			issuer = op2Properties.getIdentitaPortaDefault(null).getNome();
+		}
+		jwtPayload.put(Claims.OIDC_ID_TOKEN_ISSUER, issuer);
+		
+		// For client authentication, the subject MUST be the "client_id" of the OAuth client.
+		String clientId = policyNegoziazioneToken.getJwtClientId();
+		if(clientId==null) {
+			throw new Exception("ClientID undefined");
+		}
+		jwtPayload.put(Claims.OIDC_ID_TOKEN_SUBJECT, clientId);
+		jwtPayload.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, clientId);
+		
+		// The JWT MUST contain an "aud" (audience) claim containing a value that identifies the authorization server as an intended audience. 
+		String jwtAudience = policyNegoziazioneToken.getJwtAudience();
+		if(jwtAudience==null) {
+			throw new Exception("JWT-Audience undefined");
+		}
+		jwtPayload.put(Claims.OIDC_ID_TOKEN_AUDIENCE, jwtAudience);
+		
+		// The JWT MAY contain an "iat" (issued at) claim that identifies the time at which the JWT was issued. 
+		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
+		
+		// The JWT MAY contain an "nbf" (not before) claim that identifies the time before which the token MUST NOT be accepted for processing.
+		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE, nowSeconds);
+		
+		// The JWT MUST contain an "exp" (expiration time) claim that limits the time window during which the JWT can be used.
+		int ttl = -1;
+		try {
+			ttl = policyNegoziazioneToken.getJwtTtlSeconds();
+		}catch(Exception e) {
+			throw new Exception("Invalid JWT-TimeToLive value: "+e.getMessage(),e);
+		}
+		long expired = nowSeconds+ttl;
+		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
+		
+		// The JWT MAY contain a "jti" (JWT ID) claim that provides a unique identifier for the token.
+		String uuid = null;
+		try {
+			uuid = UniqueIdentifierManager.newUniqueIdentifier().toString();
+		}catch(Exception e) {
+			throw new Exception("Invalid JWT-TimeToLive value: "+e.getMessage(),e);
+		}
+		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, uuid);
+		
+		return jsonUtils.toString(jwtPayload);
+	}
+	
+	private static String signJwt(PolicyNegoziazioneToken policyNegoziazioneToken, String payload) throws Exception {
+		
+		String signAlgo = policyNegoziazioneToken.getJwtSignAlgorithm();
+		if(signAlgo==null) {
+			throw new Exception("SignAlgorithm undefined");
+		}
+		
+		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+		
+		if(policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
+		
+			String clientSecret = policyNegoziazioneToken.getJwtClientSecret();
+			if(clientSecret==null) {
+				throw new Exception("ClientSecret undefined");
+			}
+			
+			JsonSignature jsonSignature = new JsonSignature(clientSecret, signAlgo, options);
+			return jsonSignature.sign(payload);
+		}
+		else if(policyNegoziazioneToken.isRfc7523_x509_Grant()) {
+			
+			String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
+			if(keystoreType==null) {
+				throw new Exception("JWT Signature keystore type undefined");
+			}
+			String keystoreFile = policyNegoziazioneToken.getJwtSignKeystoreFile();
+			if(keystoreFile==null) {
+				throw new Exception("JWT Signature keystore file undefined");
+			}
+			String keystorePassword = policyNegoziazioneToken.getJwtSignKeystorePassword();
+			if(keystorePassword==null) {
+				throw new Exception("JWT Signature keystore password undefined");
+			}
+			String keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
+			if(keyAlias==null) {
+				throw new Exception("JWT Signature key alias undefined");
+			}
+			String keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
+			if(keyPassword==null) {
+				throw new Exception("JWT Signature key password undefined");
+			}
+						
+			
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
+			if(merlinKs==null) {
+				throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
+			}
+			KeyStore ks = merlinKs.getKeyStore();
+			
+			JsonSignature jsonSignature = new JsonSignature(ks, false, keyAlias,  keyPassword, signAlgo, null, options);
+			return jsonSignature.sign(payload);
+		}
+		else {
+			throw new Exception("JWT Signed mode unknown");
+		}
 		
 	}
 	

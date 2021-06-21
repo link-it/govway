@@ -46,4 +46,8 @@ public class ClaimsNegoziazione {
 	public final static String OAUTH2_RFC_6749_REQUEST_SCOPE = "scope";
 	public final static String OAUTH2_RFC_6749_REQUEST_AUDIENCE = "audience"; // es. https://auth0.com/docs/api-auth/tutorials/client-credentials
 	
+	public final static String OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION_TYPE = "client_assertion_type";
+	public final static String OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION_TYPE_RFC_7523 = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+	public final static String OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION = "client_assertion";
+	
 }

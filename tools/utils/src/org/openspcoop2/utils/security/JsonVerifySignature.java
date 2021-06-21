@@ -179,6 +179,19 @@ public class JsonVerifySignature {
 		}
 	}
 	
+	public JsonVerifySignature(String secret, String signatureAlgorithm, JWTOptions options) throws UtilsException{
+		try {
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			this.provider = JwsUtils.getHmacSignatureVerifier(secret.getBytes(), algo);
+			if(this.provider==null) {
+				throw new Exception("(Secret) JwsSignatureVerifier init failed; check signature algorithm ("+signatureAlgorithm+")");
+			}
+			this.options=options;
+		}catch(Throwable t) {
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+		}
+	}
+	
 	
 	public JsonVerifySignature(JWTOptions options) throws UtilsException{
 		_initVerifyCertificatiHeaderJWT(null, null, 
