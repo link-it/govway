@@ -309,7 +309,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 	public Vector<DataElement> addProtocolPropertyChangeToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String protocollo, String id, String nome,
 			String idProprietario, ProprietariProtocolProperty tipoProprietario, String tipoAccordo, String nomeProprietario,String nomeParentProprietario, String urlChange, String label,
 			BinaryParameter contenutoDocumento, StringBuilder contenutoDocumentoStringBuilder, String errore, String tipologiaDocumentoScaricare, AbstractConsoleItem<?> binaryConsoleItem,
-			boolean readOnly) throws Exception { 
+			boolean readOnly, String noteAggiornamento) throws Exception { 
 
 		/* ID */
 		DataElement de = new DataElement();
@@ -561,6 +561,15 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				}
 			}
 	
+			if(!readOnly && noteAggiornamento!=null) {
+				de = new DataElement();
+				de.setValue(noteAggiornamento);
+				de.setType(DataElementType.NOTE);
+				de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO_NOTE);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+			}
+			
 			if(readOnly) {
 				this.pd.disableEditMode();
 			}

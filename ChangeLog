@@ -1,3 +1,11 @@
+2021-06-22  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto bug OP-1216
+	La console non consentiva l'aggiornamento delle chiavi private registrate in modalità 'Archivio' (caricate su database), 
+	relativamente alla sezione 'sicurezza messaggio' degli applicativi e delle erogazioni nel profilo ModI.
+	Inoltre in caso di installazione Multi-Tenant, gli applicativi interni di un Tenant non venivano identificati sull'erogazione di un altro Tenant, facendo fallire eventuali autorizzazioni configurate.
+
 2021-06-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
