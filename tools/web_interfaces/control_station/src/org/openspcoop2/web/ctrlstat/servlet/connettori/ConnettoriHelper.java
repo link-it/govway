@@ -4867,7 +4867,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return true;
 	}
 	
-	public String getTooltipConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is) {
+	public String getTooltipConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) {
 		StringBuilder sbCon = new StringBuilder();
 		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
 			sbCon.append(ConnettoriCostanti.LABEL_SERVER);
@@ -4875,22 +4875,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 			sbCon.append(sa.getNome());
 			sbCon.append(CostantiControlStation.TOOLTIP_BREAK_LINE);
 		}
-		sbCon.append(this.getLabelConnettore(is));
+		sbCon.append(this.getLabelConnettore(is, addExtInfo, true));
 		return sbCon.toString();
 	}
 	
-	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is) {
+	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) {
 		StringBuilder sbCon = new StringBuilder();
 		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
 			//sbCon.append(sa.getNome());
 			//sbCon.append(" ");
 		}
-		sbCon.append(this.getLabelConnettore(is));
+		sbCon.append(this.getLabelConnettore(is, addExtInfo, false));
 		return sbCon.toString();
 	}
 	
-	public String getLabelConnettore(org.openspcoop2.core.config.InvocazioneServizio is) {
-		String urlConnettore = this.getLabelConnettore(is.getConnettore());
+	public String getLabelConnettore(org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo, boolean tooltip) {
+		String urlConnettore = this.getLabelConnettore(is.getConnettore(), addExtInfo, tooltip);
 		
 		if(is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
 			urlConnettore = urlConnettore + " [MessageBox]";
@@ -4898,10 +4898,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		return urlConnettore;
 	}
-	public String getLabelConnettore(org.openspcoop2.core.registry.Connettore connettore) {
-		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione());
+	public String getLabelConnettore(org.openspcoop2.core.registry.Connettore connettore, boolean addExtInfo, boolean tooltip) {
+		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione(), addExtInfo, tooltip);
 	}
-	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore) {
+	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip) {
 		String urlConnettore = "";
 		
 		List<org.openspcoop2.core.config.Property> cp = connettore.getPropertyList();
@@ -4955,6 +4955,25 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if(tipo.equals(TipiConnettore.FILE.getNome()))
 				propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
 		
+			// Prefix token
+			String token = "";
+			if(addExtInfo) {
+				if(tipo.equals(TipiConnettore.HTTP.getNome()) || tipo.equals(TipiConnettore.HTTPS.getNome())) {
+					for (int i = 0; i < connettore.sizePropertyList(); i++) {
+						org.openspcoop2.core.config.Property singlecp = cp.get(i);
+						if (singlecp.getNome().equals(CostantiConnettori.CONNETTORE_TOKEN_POLICY) && 
+								singlecp.getValore()!=null && StringUtils.isNotEmpty(singlecp.getValore())) {
+							if(tooltip) {
+								token = "[token: "+singlecp.getValore()+"]\n";
+							}
+							else {
+								token = "[token] ";
+							}
+						}
+					}
+				}
+			}
+			
 			for (int i = 0; i < connettore.sizePropertyList(); i++) {
 				org.openspcoop2.core.config.Property singlecp = cp.get(i);
 				if (singlecp.getNome().equals(propertyName)) {
@@ -4962,7 +4981,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						urlConnettore = tipoLabel + singlecp.getValore();
 					}
 					else {
-						urlConnettore = singlecp.getValore();
+						urlConnettore = token + singlecp.getValore();
 					}
 					
 					break;

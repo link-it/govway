@@ -1,5 +1,12 @@
 2021-06-22  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole]
+	Risolto bug sulla validazione dei token OAuth utilizzando il parser 'OpenID Connect - ID Token': 
+	gli scope presenti nell'access token non venivano identificati e quindi non erano utilizzabili per un'autorizzazione puntuale basata sugli scope.
+	Nei dettagli sul connettore abilitato nelle erogazioni e nelle fruizioni è stata aggiunta l'informazione sull'eventuale token configurato.
+
+2021-06-22  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloModIPA]
 	Risolto bug OP-1216
 	La console non consentiva l'aggiornamento delle chiavi private registrate in modalità 'Archivio' (caricate su database), 

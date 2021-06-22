@@ -338,7 +338,9 @@ public class BasicTokenParser implements ITokenParser {
 	public List<String> getScopes() {
 		
 		String tmpScopes = null;
-		if(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662.equals(this.parser)) {
+		if(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662.equals(this.parser) ||
+				TipologiaClaims.OIDC_ID_TOKEN.equals(this.parser) ||
+				TipologiaClaims.JSON_WEB_TOKEN_RFC_7519.equals(this.parser)) {
 			tmpScopes = getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_SCOPE);
 		}
 		else if(TipologiaClaims.GOOGLE.equals(this.parser)) {

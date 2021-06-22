@@ -128,7 +128,7 @@ public class PorteDelegateVerificaConnettore extends Action {
 			else {
 				connettore = connettoriCore.getConnettoreConfig(idConnettore);
 			}
-			String labelConnettore = porteDelegateHelper.getLabelConnettore(connettore);
+			String labelConnettore = porteDelegateHelper.getLabelConnettore(connettore,false,false);
 			
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = portaDelegata.getNome();

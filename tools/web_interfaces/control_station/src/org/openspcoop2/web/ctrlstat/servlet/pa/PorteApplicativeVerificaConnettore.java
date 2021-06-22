@@ -157,7 +157,7 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			else {
 				connettore = connettoriCore.getConnettoreConfig(idConnettore);
 			}
-			String labelConnettore = porteApplicativeHelper.getLabelConnettore(connettore);
+			String labelConnettore = porteApplicativeHelper.getLabelConnettore(connettore,false,false);
 			
 			long idSA = saCore.getIdServizioApplicativoByConnettore(idConnettore);
 			ServizioApplicativo sa = null;

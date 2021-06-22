@@ -7956,8 +7956,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				org.openspcoop2.core.config.InvocazioneServizio is = sa.getInvocazioneServizio();
 				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
 				
-				de.setValue(this.getLabelConnettore(sa,is));
-				String tooltipConnettore = this.getTooltipConnettore(sa,is);
+				de.setValue(this.getLabelConnettore(sa,is,true));
+				String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 				de.setToolTip(tooltipConnettore);
 				
 				image = new DataElementImage();
