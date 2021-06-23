@@ -165,6 +165,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -2769,6 +2770,31 @@ public class ErogazioniApiHelper {
 		final ServizioApplicativo sa = saCore.getServizioApplicativo(saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPA.getNome()));
 		        		
 		return sa.getInvocazioneServizio().getConnettore();
+	}
+	
+	public static final org.openspcoop2.core.config.Connettore getConnettoreErogazioneGruppo(IdServizio idAsps, IDServizio idServizio, ErogazioniEnv env, String gruppo) 
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	
+		IDPortaApplicativa idPaDefault = env.paCore.getIDPortaApplicativaAssociataDefault(idServizio);
+		PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPaDefault);
+
+		final IDPortaApplicativa idPA = (gruppo!=null) ? BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta") : idPaDefault;
+		final PortaApplicativa pa = (gruppo!=null) ? env.paCore.getPortaApplicativa(idPA): paDefault;
+		
+		boolean isConnettoreRidefinito = false;
+		if(gruppo != null) {
+			isConnettoreRidefinito = env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0));
+		}
+		
+		if(isConnettoreRidefinito) {
+			final ServizioApplicativo sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPA.getNome()));
+    		
+			return sa.getInvocazioneServizio().getConnettore();
+		} else {
+			final ServizioApplicativo sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPaDefault.getNome()));
+    		
+			return sa.getInvocazioneServizio().getConnettore();
+		}
 	}
 	
 	

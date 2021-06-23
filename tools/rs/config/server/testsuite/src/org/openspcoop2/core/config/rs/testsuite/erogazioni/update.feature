@@ -49,6 +49,27 @@ Background:
 * eval randomize(info_generali, ["nome"])
 * def erogazione_versione = read('api_versione3.json')
 
+* def getExpectedConnettoreHTTPS =
+"""
+function(connettore) {
+var expected = connettore
+expected.connettore.autenticazione_https.trust_all_server_certs = expected.connettore.autenticazione_https.trust_all_server_certs != null ? expected.connettore.autenticazione_https.trust_all_server_certs : false  
+expected.connettore.autenticazione_https.server.algoritmo = expected.connettore.autenticazione_https.server.algoritmo != null ? expected.connettore.autenticazione_https.server.algoritmo : 'PKIX'  
+expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
+return expected
+} 
+"""
+
+* def getExpectedConnettoreHTTP =
+"""
+function(connettore) {
+var expected = connettore
+expected.connettore.tipo = 'http'
+expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
+return expected
+} 
+"""
+
 @UpdateConnettore204
 Scenario: Erogazioni Update Connettore 204
 
@@ -62,6 +83,64 @@ Scenario: Erogazioni Update Connettore 204
     And params query_params
     When method put
     Then status 204
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@UpdateConnettore_gruppo_200
+Scenario: Erogazioni Update Connettore gruppo OK
+
+		* def gruppo_petstore = read ('gruppo_petstore.json')
+		* def query_params = {'gruppo': 'GruppoJson'}
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+    * call create ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method put
+    Then status 204
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == getExpectedConnettoreHTTPS(connettore)
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method put
+    Then status 204
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method get
+    Then status 200
+
+		* match response == getExpectedConnettoreHTTPS(connettore)
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    When method get
+    Then status 200
+
+		* match response == getExpectedConnettoreHTTP({connettore: erogazione_petstore.connettore})
     
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: api_petstore_path })

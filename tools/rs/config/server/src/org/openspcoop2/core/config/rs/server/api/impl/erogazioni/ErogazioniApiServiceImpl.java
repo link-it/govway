@@ -29,17 +29,23 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
+import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.rs.server.api.ErogazioniApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
+import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.ApiImplAllegato;
 import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGenerali;
@@ -85,7 +91,9 @@ import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeServizioApplicativoAutorizzatoUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiUtilities;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -662,12 +670,15 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 
+
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 
+			IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+
 			org.openspcoop2.core.config.Connettore connettore = ErogazioniApiHelper
-					.getConnettoreErogazione(env.idServizioFactory.getIDServizioFromAccordo(asps), env.saCore, env.paCore);
+					.getConnettoreErogazioneGruppo(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo);
 
 			final ConnettoreErogazione ret = ErogazioniApiHelper.buildConnettoreErogazione(connettore.getProperties());
 
@@ -969,12 +980,86 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 
-			IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
-			IDPortaApplicativa idPA = env.paCore.getIDPortaApplicativaAssociataDefault(idServizio);
+			IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 
-			final ServizioApplicativo sa = BaseHelper.supplyOrNotFound(() -> env.saCore
-					.getServizioApplicativo(env.saCore.getIdServizioApplicativo(env.idSoggetto.toIDSoggetto(), idPA.getNome())),
+			IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
+			IDPortaApplicativa idPaDefault = env.paCore.getIDPortaApplicativaAssociataDefault(idServizio);
+			final PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPaDefault);
+			
+			boolean creaNuovoConnettore = false;
+			IDPortaApplicativa idPa = null;
+			PortaApplicativa pa = null;
+			
+			if(gruppo != null) {
+				idPa = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+				pa = env.paCore.getPortaApplicativa(idPa);
+	
+				creaNuovoConnettore = !env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0));
+			} else {
+				idPa = idPaDefault;
+				pa = paDefault;
+			}
+
+			final String nomePA = idPa.getNome();
+
+			ServizioApplicativo sa = null;
+			if(creaNuovoConnettore) {
+				// crea sa e associa connettore
+				
+				List<Object> listaOggettiDaCreare = new ArrayList<Object>();
+				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+
+				// creare un servizio applicativo
+				String nomeServizioApplicativoErogatore = pa.getNome();
+
+				sa = new ServizioApplicativo();
+				sa.setNome(nomeServizioApplicativoErogatore);
+				sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
+				sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+				sa.setIdSoggetto(pa.getIdSoggetto());
+				sa.setTipoSoggettoProprietario(pa.getTipoSoggettoProprietario());
+				sa.setNomeSoggettoProprietario(pa.getNomeSoggettoProprietario());
+
+				RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
+				rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+				rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
+				sa.setRispostaAsincrona(rispostaAsinc);
+
+				InvocazioneServizio invServizio = new InvocazioneServizio();
+				invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+				invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
+				Connettore conn = new Connettore();
+				conn.setTipo(TipiConnettore.DISABILITATO.toString());
+				invServizio.setConnettore(conn);
+				sa.setInvocazioneServizio(invServizio);
+
+				listaOggettiDaCreare.add(sa);
+
+				pa.getServizioApplicativoList().clear();
+
+//				// Scelto un servizio applicativo server, creo il servizio di default e poi associo quello server
+//				if(erogazioneServizioApplicativoServer != null && !"".equals(erogazioneServizioApplicativoServer)) {
+//					portaApplicativa.setServizioApplicativoDefault(nomeServizioApplicativoErogatore);
+//					nomeServizioApplicativoErogatore = erogazioneServizioApplicativoServer;
+//				} 
+				
+				PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
+				paSA.setNome(nomeServizioApplicativoErogatore);
+				pa.getServizioApplicativoList().add(paSA);
+
+				listaOggettiDaModificare.add(pa);
+
+				env.paCore.performCreateOperation(env.userLogin, false, listaOggettiDaCreare.toArray());
+				env.paCore.performUpdateOperation(env.userLogin, false, listaOggettiDaModificare.toArray());
+
+//			} else {
+			}
+
+			// aggiorna connettore gruppo
+			sa = BaseHelper.supplyOrNotFound(() -> env.saCore
+					.getServizioApplicativo(env.saCore.getIdServizioApplicativo(env.idSoggetto.toIDSoggetto(), nomePA)),
 					"Applicativo");
+
 
 			ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
 			String endpointtype = connettoreHttp.getAutenticazioneHttp() != null ? TipiConnettore.HTTP.getNome()
