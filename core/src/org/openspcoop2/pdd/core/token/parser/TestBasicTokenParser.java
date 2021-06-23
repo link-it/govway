@@ -935,11 +935,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Username non atteso");
 			}
 			
-			// non supportato
-			if(info.getScopes()!=null) {
-				throw new Exception("Scope non attesi");
-			}
-			/*
+			// scope comunque aggiunti per supportare alcuni authorization server OIDC che li ritornano
 			if(info.getScopes()==null) {
 				throw new Exception("Scope attesi non trovato");
 			}
@@ -976,7 +972,6 @@ public class TestBasicTokenParser {
 			if(!find) {
 				throw new Exception("Scope atteso '"+s3+"' non trovato");
 			}
-			*/
 			
 			Date d = info.getIat();
 			if(d==null) {
@@ -1314,11 +1309,7 @@ public class TestBasicTokenParser {
 				throw new Exception("Atteso username '"+username+"' trovato '"+info.getUsername()+"'");
 			}
 			
-			// non supportato
-			if(info.getScopes()!=null) {
-				throw new Exception("Scope non attesi");
-			}
-			/*
+			// scope comunque aggiunti per supportare alcuni authorization server OIDC che li ritornano
 			if(info.getScopes()==null) {
 				throw new Exception("Scope attesi non trovato");
 			}
@@ -1355,7 +1346,6 @@ public class TestBasicTokenParser {
 			if(!find) {
 				throw new Exception("Scope atteso '"+s3+"' non trovato");
 			}
-			*/
 			
 			Date d = info.getIat();
 			if(d==null) {
