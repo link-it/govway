@@ -1,3 +1,11 @@
+2021-06-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1218
+	Con l'introduzione della funzionalità di ottimizzazione delle connessioni, 
+	la consegna con connettore multipli 'Più Destinatari' su API Soap con profilo 'oneway' (funzionalità non attiva per default sul prodotto) falliva con un errore simile al seguente:
+	Riscontrato errore durante la gestione del messaggio [EJBUtils.sendToConsegnaContenutiApplicativi(RichiestaApplicativa)]: GESTORE_MESSAGGI, Errore di aggiornamento proprietario Messaggio INBOX/xxxx: null
+
 2021-06-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

@@ -1571,39 +1571,99 @@ public class EJBUtils {
 				}
 				
 				if(registraNuoviMessaggiViaBehaviour){
+
+					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+					IOpenSPCoopState stateGestoreMessaggiBehaviour_newConnection_old = null;
+					OpenSPCoopStateless stateGestoreMessaggiBehaviour_newConnection = null;
+					OpenSPCoopStateless stateGestoreMessaggiBehaviour_onlyUseConnectionFalse = null;
+					boolean oldUseConnection = false;
+					try{
+						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
+							boolean createNew = true;
+							if( (gestoreMessaggi.getOpenspcoopstate() instanceof OpenSPCoopStateless)) {
+								OpenSPCoopStateless check = (OpenSPCoopStateless) gestoreMessaggi.getOpenspcoopstate();
+								if(check.getConnectionDB()!=null && check.getConnectionDB().isClosed()==false) {
+									createNew = false;
+									stateGestoreMessaggiBehaviour_onlyUseConnectionFalse = (OpenSPCoopStateless) gestoreMessaggi.getOpenspcoopstate();
+									oldUseConnection = check.isUseConnection();
+									stateGestoreMessaggiBehaviour_onlyUseConnectionFalse.setUseConnection(true);
+								}
+							}
+							
+							if(createNew) {
+								
+								stateGestoreMessaggiBehaviour_newConnection_old = gestoreMessaggi.getOpenspcoopstate();
+								
+								stateGestoreMessaggiBehaviour_newConnection = new OpenSPCoopStateless();
+								stateGestoreMessaggiBehaviour_newConnection.setUseConnection(true);
+								stateGestoreMessaggiBehaviour_newConnection.setTempiAttraversamentoPDD(((OpenSPCoopStateless)this.openSPCoopState).getTempiAttraversamentoPDD());
+								stateGestoreMessaggiBehaviour_newConnection.setDimensioneMessaggiAttraversamentoPDD(((OpenSPCoopStateless)this.openSPCoopState).getDimensioneMessaggiAttraversamentoPDD());
+								stateGestoreMessaggiBehaviour_newConnection.setIDCorrelazioneApplicativa(((OpenSPCoopStateless)this.openSPCoopState).getIDCorrelazioneApplicativa());
+								stateGestoreMessaggiBehaviour_newConnection.setIDCorrelazioneApplicativaRisposta(((OpenSPCoopStateless)this.openSPCoopState).getIDCorrelazioneApplicativaRisposta());
+								stateGestoreMessaggiBehaviour_newConnection.setPddContext(((OpenSPCoopStateless)this.openSPCoopState).getPddContext());
+								stateGestoreMessaggiBehaviour_newConnection.initResource(this.identitaPdD, "EJBUtils.behaviour_"+pa.getBehaviour().getNome(), idTransazione);
+								gestoreMessaggi.updateOpenSPCoopState(stateGestoreMessaggiBehaviour_newConnection);
+								
+							}
+						}
 					
-					sizeNuoviMessaggiViaBehaviour = behaviour.getForwardTo().size();
-						
-					// elimino l'attuale messaggio
-					if(localForwardRichiestaDelegata!=null){
-						
-						if(stateless){
-							repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),false);
+						sizeNuoviMessaggiViaBehaviour = behaviour.getForwardTo().size();
+							
+						// elimino l'attuale messaggio
+						if(localForwardRichiestaDelegata!=null){
+							
+							if(stateless){
+								repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),false);
+							}
+							else{
+								repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),true);
+							}
+							
+							gestoreMessaggi.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+							
 						}
 						else{
-							repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),true);
+							
+							if(stateless){
+								repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),repositoryBuste.isRegistrazioneInCorso());
+							}
+							else{
+								repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),true);
+							}
+						
+							// Forzo oneway1.1 per farlo registrare anche se siamo in stateless puro
+							boolean originalValue = gestoreMessaggi.isOneWayVersione11();
+							gestoreMessaggi.setOneWayVersione11(true);
+							gestoreMessaggi.logicDeleteMessage();
+							gestoreMessaggi.setOneWayVersione11(originalValue);
+							
 						}
 						
-						gestoreMessaggi.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+						// Applico modifiche effettuate dal modulo Consegna
+						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
+							if(stateGestoreMessaggiBehaviour_newConnection!=null) {
+								if(stateGestoreMessaggiBehaviour_newConnection.resourceReleased()){
+									// il modulo di consegna rilascia la risorsa
+									stateGestoreMessaggiBehaviour_newConnection.updateResource(idTransazione);
+								}
+								stateGestoreMessaggiBehaviour_newConnection.commit();
+							}
+							else if(stateGestoreMessaggiBehaviour_onlyUseConnectionFalse!=null) {
+								stateGestoreMessaggiBehaviour_onlyUseConnectionFalse.commit();
+							}
+						}
 						
+					}finally{
+						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
+							if(stateGestoreMessaggiBehaviour_newConnection!=null){
+								stateGestoreMessaggiBehaviour_newConnection.releaseResource();
+								gestoreMessaggi.updateOpenSPCoopState(stateGestoreMessaggiBehaviour_newConnection_old);
+							}
+							else if(stateGestoreMessaggiBehaviour_onlyUseConnectionFalse!=null) {
+								stateGestoreMessaggiBehaviour_onlyUseConnectionFalse.setUseConnection(oldUseConnection);
+							}
+						}
 					}
-					else{
-						
-						if(stateless){
-							repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),repositoryBuste.isRegistrazioneInCorso());
-						}
-						else{
-							repositoryBuste.eliminaUtilizzoPdDFromInBox(busta.getID(),true);
-						}
-					
-						// Forzo oneway1.1 per farlo registrare anche se siamo in stateless puro
-						boolean originalValue = gestoreMessaggi.isOneWayVersione11();
-						gestoreMessaggi.setOneWayVersione11(true);
-						gestoreMessaggi.logicDeleteMessage();
-						gestoreMessaggi.setOneWayVersione11(originalValue);
-						
-					}
-					
 				}
 				else{
 					// se non devo registrare alcun messaggio, e sono in stateless, ma e' stata configurata una replyTo
