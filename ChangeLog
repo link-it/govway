@@ -1,3 +1,9 @@
+2021-06-24  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto bug che non consentiva il caricamento degli allegati con struttura xml nelle API e nelle Erogazioni/Fruizioni.
+	Inoltre anche gli allegati di altro tipo, in cui il caricamento veniva completato con successo da console, venivano salvati con un contenuto corrotto.
+
 2021-06-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

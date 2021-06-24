@@ -57,7 +57,7 @@ boolean mime = false;
 Vector<?> dati = pd.getDati();
 for (int i = 0; i < dati.size(); i++) {
   DataElement de = (DataElement) dati.elementAt(i);
-  if (de.getType().equals("file")) {
+  if (de.getType().equals("file") || de.getType().equals("multi-file")) {
     mime = true;
   }
 }
