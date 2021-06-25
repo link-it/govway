@@ -3878,7 +3878,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(sa,is,true));
 									} 
 									else if(connettoreMultiploEnabledDefault) {
-										de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault));
+										//de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault));
+										de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault)); // comunque i connettori vengono ridefiniti internamente, sono proprio istanze differenti, quindi non ha senso la descrizione 
 										de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociataDefault));
 										// Ci vuole, devo poter ridefinire il connettore visualizzaLinkConfigurazioneConnettore = false;
 									}
