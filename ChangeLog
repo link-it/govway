@@ -1,5 +1,9 @@
 2021-06-25  Andrea Poli <apoli@link.it>
 
+	* Rilasciata versione 3.3.4.p2
+
+2021-06-25  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto bug OP-1220
 	I connettori multipli, definiti su di un'erogazione, non venivano cancellati dalla base dati in seguito all'eliminazione dell'erogazione.
