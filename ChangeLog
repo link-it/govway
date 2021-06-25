@@ -1,3 +1,8 @@
+2021-06-25  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto bug che visualizzava erroneamente la checkbox di selezione delle consegne avvenute con connettore multiplo.
+
 2021-06-24  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
