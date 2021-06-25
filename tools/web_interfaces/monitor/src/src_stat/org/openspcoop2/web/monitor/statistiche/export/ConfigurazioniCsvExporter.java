@@ -42,7 +42,10 @@ import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlow;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.Property;
@@ -259,6 +262,7 @@ public class ConfigurazioniCsvExporter {
 	    
 	    Autorizzazione (stato)
 	    Autorizzazione (Soggetti autorizzati)
+	    Autorizzazione (Applicativi autorizzati)
 	    Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
 	    Autorizzazione (Ruoli)
 	    Ruoli Richiesti (all/any)
@@ -328,6 +332,7 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_SOGGETTI_AUTORIZZATI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SOGGETTI_AUTORIZZATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RUOLI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
@@ -370,6 +375,7 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ALTRE_CONFIGURAZIONI);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_APPLICATIVA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_APPLICATIVA_NOME_CONNETTORE);
 
 		}
 
@@ -691,6 +697,7 @@ public class ConfigurazioniCsvExporter {
 		//                                  sa3 (user:xxx)
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
 			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+			/*
 			List<String> fruitori = dettaglioPA.getFruitori();
 
 			if(fruitori != null && fruitori.size() > 0){
@@ -702,8 +709,37 @@ public class ConfigurazioniCsvExporter {
 				oneLine.add(sb.toString());
 			} else 
 				oneLine.add("");
+			 */
+			
+			// devo elencare i soggetti autorizzati
+			if(paOp2.getSoggetti()!=null && paOp2.getSoggetti().sizeSoggettoList()>0) {
+				StringBuilder sb = new StringBuilder();
+				for (PortaApplicativaAutorizzazioneSoggetto soggetto : paOp2.getSoggetti().getSoggettoList()) {
+					if(sb.length()>0) sb.append("\n");
+					sb.append(soggetto.getTipo()+"/"+soggetto.getNome());
+				}
+				oneLine.add(sb.toString());
+			}
+			else {
+				oneLine.add("");
+			}
+
+			// devo elencare gli applicativi autorizzati
+			if(paOp2.getServiziApplicativiAutorizzati()!=null && paOp2.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+				StringBuilder sb = new StringBuilder();
+				for (PortaApplicativaAutorizzazioneServizioApplicativo sa : paOp2.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
+					if(sb.length()>0) sb.append("\n");
+					sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
+				}
+				oneLine.add(sb.toString());
+			}
+			else {
+				oneLine.add("");
+			}
+			
 		}else {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
 			oneLine.add("");
 		}
 
@@ -944,6 +980,22 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(portaApplicativa.getNome());
 		else 
 			oneLine.add("");
+		
+		// NOME PA CONNETTORE
+		String nomePAConnettore = "";
+		if(dettaglioSA != null) {
+			ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
+			if(StringUtils.isNotEmpty(saOp2.getNome()) && paOp2.sizeServizioApplicativoList()>0) {
+				for (PortaApplicativaServizioApplicativo pasa : paOp2.getServizioApplicativoList()) {
+					if(saOp2.getNome().equals(pasa.getNome())) {
+						if(pasa.getDatiConnettore()!=null && StringUtils.isNotEmpty(pasa.getDatiConnettore().getNome())) {
+							nomePAConnettore = pasa.getDatiConnettore().getNome();
+						}
+					}
+				}
+			}
+		}
+		oneLine.add(nomePAConnettore);
 
 		dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
 	}

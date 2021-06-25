@@ -4,6 +4,13 @@
 
 2021-06-25  Andrea Poli <apoli@link.it>
 
+	* [GovWayMonitor]
+	Risolto bug OP-1221
+	Nei csv esportati tramite la funzionalità di reportistica relativa ai dati delle configurazioni non venivano riportati i soggetti e gli applicativi autorizzati nel controllo degli accessi delle erogazioni.
+	Inoltre in presenza di connettori multipli non veniva riportato il nome del connettore.
+
+2021-06-25  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto bug OP-1220
 	I connettori multipli, definiti su di un'erogazione, non venivano cancellati dalla base dati in seguito all'eliminazione dell'erogazione.

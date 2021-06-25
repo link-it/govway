@@ -153,6 +153,7 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_FRUITORE = "Fruitore";
 	public static final String LABEL_PORTA_DELEGATA = "Porta Delegata";
 	public static final String LABEL_PORTA_APPLICATIVA = "Porta Applicativa";
+	public static final String LABEL_PORTA_APPLICATIVA_NOME_CONNETTORE = "Nome Connettore Multiplo";
 	public static final String LABEL_ESPRESSIONE = "Espressione";
 	public static final String LABEL_AUTENTICAZIONE_STATO = "Autenticazione (Stato)";
 	public static final String LABEL_AUTENTICAZIONE_OPZIONALE = "Autenticazione (Opzionale)";
