@@ -91,9 +91,7 @@ import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUtilities;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeServizioApplicativoAutorizzatoUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiUtilities;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -991,7 +989,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			PortaApplicativa pa = null;
 			
 			if(gruppo != null) {
-				idPa = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+				idPa = BaseHelper.supplyOrNonValida( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 				pa = env.paCore.getPortaApplicativa(idPa);
 	
 				creaNuovoConnettore = !env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0));

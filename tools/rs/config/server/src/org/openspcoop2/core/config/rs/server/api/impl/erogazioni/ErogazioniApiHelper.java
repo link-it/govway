@@ -165,7 +165,6 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -2469,6 +2468,10 @@ public class ErogazioniApiHelper {
 				listaPorteApplicativeAssociate.add(env.paCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa()));
 			}
 			
+			IDPortaApplicativa idPAdefault = new IDPortaApplicativa();
+			idPAdefault.setNome(nomePortaDefault);
+			PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPAdefault);
+
 			int numeroAbilitate = 0;
 			int numeroConfigurazioni = listaMappingErogazionePortaApplicativa.size();
 			boolean allActionRedefined = false;
@@ -2480,7 +2483,8 @@ public class ErogazioniApiHelper {
 					azioniL.addAll(azioni.keySet());
 				allActionRedefined = env.erogazioniHelper.allActionsRedefinedMappingErogazione(azioniL, listaMappingErogazionePortaApplicativa);
 			}
-			
+
+			boolean isRidefinito = false;
 			for (PortaApplicativa paAssociata : listaPorteApplicativeAssociate) {
 				boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
 				if(statoPA) {
@@ -2488,21 +2492,22 @@ public class ErogazioniApiHelper {
 						numeroAbilitate ++;
 					}
 				}
+
+				isRidefinito =  isRidefinito || env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, paAssociata.getServizioApplicativoList().get(0));
+				
 			}
 			
 			StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );
 			
-			IDPortaApplicativa idPAdefault = new IDPortaApplicativa();
-			idPAdefault.setNome(nomePortaDefault);
-			PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPAdefault);
 			ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, paDefault, apc, false);
 			
+			String urlConnettore = isRidefinito ? "Connettori ridefiniti nei gruppi" : getConnettoreErogazione(idServizio, env.saCore, env.paCore).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION);
 			fillApiImplViewItemWithAsps(
 					env, 
 					asps, 
 					toFill, 
 					getUrlInvocazioneErogazione(asps, env),
-					getConnettoreErogazione(idServizio, env.saCore, env.paCore).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION),
+					urlConnettore,
 					getGestioneCorsFromErogazione(asps, env),
 					idServizio.getSoggettoErogatore().getNome(),
 					stato.stato,
@@ -2796,7 +2801,6 @@ public class ErogazioniApiHelper {
 			return sa.getInvocazioneServizio().getConnettore();
 		}
 	}
-	
 	
 	public static final org.openspcoop2.core.registry.Connettore getConnettoreFruizione(AccordoServizioParteSpecifica asps, IdSoggetto fruitore, ErogazioniEnv env) {
 		

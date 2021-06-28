@@ -54,6 +54,27 @@ Background:
 * def info_generali = read('informazioni_generali_petstore.json')
 * def erogazione_versione = read('api_versione3.json')
 
+* def getExpectedConnettoreHTTPS =
+"""
+function(connettore) {
+var expected = connettore
+expected.connettore.autenticazione_https.trust_all_server_certs = expected.connettore.autenticazione_https.trust_all_server_certs != null ? expected.connettore.autenticazione_https.trust_all_server_certs : false  
+expected.connettore.autenticazione_https.server.algoritmo = expected.connettore.autenticazione_https.server.algoritmo != null ? expected.connettore.autenticazione_https.server.algoritmo : 'PKIX'  
+expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
+return expected
+} 
+"""
+
+* def getExpectedConnettoreHTTP =
+"""
+function(connettore) {
+var expected = connettore
+expected.connettore.tipo = 'http'
+expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
+return expected
+} 
+"""
+
 @UpdateConnettore204
 Scenario: Update Fruizioni Connettore 204
 
@@ -70,6 +91,63 @@ Scenario: Update Fruizioni Connettore 204
     Then status 204
     
     
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@UpdateConnettoreGruppo204
+Scenario: Update Fruizioni Connettore gruppo 204
+
+		* def gruppo_petstore = read ('gruppo_petstore.json')
+		* def query_params = {'gruppo': 'GruppoJson'}
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+    * call create ( { resourcePath: 'fruizioni/' + petstore_key + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method put
+    Then status 204
+    
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    
+    * match response == getExpectedConnettoreHTTPS(connettore)
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore
+    And params query_params
+    When method put
+    Then status 204
+    
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    
+    * match response == getExpectedConnettoreHTTPS(connettore)
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response == getExpectedConnettoreHTTP({connettore: fruizione_petstore.connettore})
+
     * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })

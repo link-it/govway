@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.rs.server.api.FruizioniApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
+import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ModiErogazioniApiHelper;
@@ -59,8 +60,11 @@ import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
@@ -667,8 +671,55 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					.getServizioIfFruizione(tipoServizio, nome, versione, idErogatore, env.idSoggetto.toIDSoggetto(), env),
 					"Fruizione");
 
-			org.openspcoop2.core.registry.Connettore regConn = ErogazioniApiHelper.getConnettoreFruizione(asps,
-					env.idSoggetto, env);
+			
+			
+			org.openspcoop2.core.registry.Connettore regConn = null;
+			
+			if(gruppo != null) {
+				
+				IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+
+				IDPortaDelegata idPd = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPD(gruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+				PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
+				MappingFruizionePortaDelegata mapping = env.pdCore.getMappingFruizionePortaDelegata(pd);
+				
+				if(!mapping.isDefault()) {
+					List<String> listaAzioniPDAssociataMappingNonDefault = pd.getAzione().getAzioneDelegataList();
+					String azioneConnettore =  null;
+					if(listaAzioniPDAssociataMappingNonDefault!=null && listaAzioniPDAssociataMappingNonDefault.size()>0) {
+						azioneConnettore = listaAzioniPDAssociataMappingNonDefault.get(0);
+					}
+
+					
+					long idServizioFruitoreInt = env.apsCore
+							.getServizioFruitore(IDServizioFactory.getInstance().getIDServizioFromAccordo(asps), env.idSoggetto.getId());
+					final Fruitore servFru = env.apsCore.getServizioFruitore(idServizioFruitoreInt);
+
+					if (servFru == null)
+						throw FaultCode.NOT_FOUND
+								.toException("Soggetto fruitore " + env.idSoggetto.toString() + "non registrato per la fruizione scelta");
+
+					// Prendo pero poi immagine del fruitore dall'asps
+					final Fruitore fruitore = BaseHelper.findFirst(asps.getFruitoreList(),
+							f -> f.getTipo().equals(servFru.getTipo()) && f.getNome().equals(servFru.getNome()))
+							.orElseThrow(() -> FaultCode.RICHIESTA_NON_VALIDA.toException("Fruizione non presente nel registro."));
+							
+
+					if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
+						for (ConfigurazioneServizioAzione check : fruitore.getConfigurazioneAzioneList()) {
+							if(check.getAzioneList().contains(azioneConnettore)) {
+								regConn = check.getConnettore();
+							}
+						}
+					}
+				}
+			}
+
+			if(regConn == null) {
+			       regConn = ErogazioniApiHelper.getConnettoreFruizione(asps,
+	                       env.idSoggetto, env);
+			}
+	       
 			Map<String, String> props = regConn.getProperties(); // Qui c'è solo la proprietà location.
 
 			ConnettoreFruizione c = ErogazioniApiHelper.buildConnettoreFruizione(props);
@@ -979,28 +1030,107 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 				throw FaultCode.NOT_FOUND
 						.toException("Soggetto fruitore " + env.idSoggetto.toString() + "non registrato per la fruizione scelta");
 
+			org.openspcoop2.core.registry.Connettore connettore = null;
+
+			IDPortaDelegata idPd = null;
+			
 			// Prendo pero poi immagine del fruitore dall'asps
 			final Fruitore fruitore = BaseHelper.findAndRemoveFirst(fruitori,
 					f -> f.getTipo().equals(servFru.getTipo()) && f.getNome().equals(servFru.getNome()));
 
-			final org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
 
-			String oldConnT = connettore.getTipo();
-			if ((connettore.getCustom() != null && connettore.getCustom())
-					&& !connettore.getTipo().equals(TipiConnettore.HTTPS.toString())
-					&& !connettore.getTipo().equals(TipiConnettore.FILE.toString())) {
-				oldConnT = TipiConnettore.CUSTOM.toString();
+			IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+
+			if(gruppo != null) {
+				idPd = BaseHelper.supplyOrNonValida( () -> ErogazioniApiHelper.getIDGruppoPD(gruppo, env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+				PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
+				MappingFruizionePortaDelegata mapping = env.pdCore.getMappingFruizionePortaDelegata(pd);
+				
+				if(!mapping.isDefault()) {
+					List<String> listaAzioniPDAssociataMappingNonDefault = pd.getAzione().getAzioneDelegataList();
+					String azioneConnettore =  null;
+					if(listaAzioniPDAssociataMappingNonDefault!=null && listaAzioniPDAssociataMappingNonDefault.size()>0) {
+						azioneConnettore = listaAzioniPDAssociataMappingNonDefault.get(0);
+					}
+
+					if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
+						for (ConfigurazioneServizioAzione check : fruitore.getConfigurazioneAzioneList()) {
+							if(check.getAzioneList().contains(azioneConnettore)) {
+								connettore = check.getConnettore();
+							}
+						}
+					}
+				}
+
+			} else {
+				idPd = env.pdCore.getIDPortaDelegataAssociataDefault(idAsps, env.idSoggetto.toIDSoggetto());
 			}
 
-			ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
+			PortaDelegata pd = env.pdCore.getPortaDelegata(idPd);
+
+
+			if(gruppo != null) {
+				if(connettore != null) {
+					String oldConnT = connettore.getTipo();
+					if ((connettore.getCustom() != null && connettore.getCustom())
+							&& !connettore.getTipo().equals(TipiConnettore.HTTPS.toString())
+							&& !connettore.getTipo().equals(TipiConnettore.FILE.toString())) {
+						oldConnT = TipiConnettore.CUSTOM.toString();
+					}
+
+					ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
+					
+					ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, connettoreHttp, oldConnT);
+
+					if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, false)) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+					}
+
+				} else {
+	
+					ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
+					Connettore connettoreN = new Connettore();
+	
+					String oldConnT = connettoreN.getTipo();
+					if ((connettoreN.getCustom() != null && connettoreN.getCustom())
+							&& !connettoreN.getTipo().equals(TipiConnettore.HTTPS.toString())
+							&& !connettoreN.getTipo().equals(TipiConnettore.FILE.toString())) {
+						oldConnT = TipiConnettore.CUSTOM.toString();
+					}
+	
+					ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
+					
+					ErogazioniApiHelper.fillConnettoreRegistro(connettoreN, env, connettoreHttp, oldConnT);
+	
+					configurazioneAzione.setConnettore(connettoreN);
+					for (int i = 0; i < pd.getAzione().sizeAzioneDelegataList(); i++) {
+						configurazioneAzione.addAzione(pd.getAzione().getAzioneDelegata(i));
+					}
+					fruitore.addConfigurazioneAzione(configurazioneAzione);
+	
+				} 
+			}else {
+				
+				connettore = fruitore.getConnettore();
+				
+				String oldConnT = connettore.getTipo();
+				if ((connettore.getCustom() != null && connettore.getCustom())
+						&& !connettore.getTipo().equals(TipiConnettore.HTTPS.toString())
+						&& !connettore.getTipo().equals(TipiConnettore.FILE.toString())) {
+					oldConnT = TipiConnettore.CUSTOM.toString();
+				}
+
+				ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
+				
+				ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, connettoreHttp, oldConnT);
+
+				if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, false)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				}
+
+				fruitore.setConnettore(ErogazioniApiHelper.buildConnettoreRegistro(env, connettoreHttp));
+			}
 			
-			ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, connettoreHttp, oldConnT);
-
-			if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, false)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
-			}
-
-			fruitore.setConnettore(ErogazioniApiHelper.buildConnettoreRegistro(env, connettoreHttp));
 			fruitori.add(fruitore);
 			asps.setFruitoreList(fruitori);
 

@@ -108,7 +108,6 @@ Scenario: Erogazioni Update Connettore gruppo OK
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
     And header Authorization = govwayConfAuth
-    And request connettore
     And params query_params
     When method get
     Then status 200
@@ -126,7 +125,6 @@ Scenario: Erogazioni Update Connettore gruppo OK
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
     And header Authorization = govwayConfAuth
-    And request connettore
     And params query_params
     When method get
     Then status 200
@@ -136,7 +134,6 @@ Scenario: Erogazioni Update Connettore gruppo OK
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
     And header Authorization = govwayConfAuth
-    And request connettore
     When method get
     Then status 200
 
