@@ -116,4 +116,8 @@ public class LiveBean extends DynamicPdDBean<Transazione,String,ISearchFormServi
 		}
 		return new ArrayList<TransazioneBean>();
 	}
+	
+	public boolean isTimeoutEvent(){
+		return (((ITransazioniService)this.service)).isTimeoutEvent();
+	}
 }

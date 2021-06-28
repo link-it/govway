@@ -701,4 +701,8 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 	public String getExportFilename() {
 		return CostantiGrafici.DISTRIBUZIONE_AZIONE_FILE_NAME;
 	}
+	
+	public boolean isTimeoutEvent(){
+		return ((IStatisticheGiornaliere)this.service).isTimeoutEvent();
+	}
 }

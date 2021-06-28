@@ -285,6 +285,20 @@
 	
 					</link:dataTable>
 				</h:form>
+				
+				<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{eventiDM.timeoutEvent}">
+					<script type="text/javascript">
+						//<![CDATA[
+						   jQuery(document).ready(controllaEventoTimeout);
+				
+						   function controllaEventoTimeout(){  
+							   if(#{eventiDM.timeoutEvent}){
+									Richfaces.showModalPanel('tableEventi_timeoutModal');
+								}
+						   }
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
 			</a4j:outputPanel>
 		</a4j:outputPanel>
 	</ui:define>

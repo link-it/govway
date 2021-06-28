@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
@@ -669,7 +670,10 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneNonTemporale.mostraUnitaTempo", true, true));
 	}
 	
-
+	public Integer getIntervalloTimeoutRicercaStatistiche() throws Exception{
+		String timeoutS = this.appProperties.getProperty("statistiche.timeoutRicercaStatistiche", false, true);
+		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
+	}
 
 
 	
@@ -685,6 +689,11 @@ public class PddMonitorProperties {
 	
 	public Integer getTempoMassimoRefreshLive() throws Exception{
 		return Integer.parseInt(this.appProperties.getProperty("transazioni.tempoMassimoRefreshLive", true, true));
+	}
+	
+	public Integer getIntervalloTimeoutRicercaTransazioniLive() throws Exception{
+		String timeoutS = this.appProperties.getProperty("transazioni.live.timeoutRicercaTransazioni", false, true);
+		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
 	}
 	
 	// status pdd
@@ -746,6 +755,11 @@ public class PddMonitorProperties {
 		return p;
 	}
 	
+	
+	// Numero thread ricerche con timeout
+	public Integer getDimensionePoolRicercheConTimeout() throws Exception{
+		return Integer.parseInt(this.appProperties.getProperty("console.search.numeroThreadGestioneTimeout", true, true));
+	}
 	
 	// Visualizza idPdd
 	
@@ -903,6 +917,11 @@ public class PddMonitorProperties {
 		return this.appProperties.getProperty("console.header.logo.link", false, true);
 	}
 	
+	
+	public Integer getIntervalloTimeoutRicercaTransazioniStorico() throws Exception{
+		String timeoutS = this.appProperties.getProperty("transazioni.storico.timeoutRicercaTransazioni", false, true);
+		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
+	}
 
 	public boolean isAttivoUtilizzaVisualizzazioneCustomTransazioni() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaVisualizzazioneCustom.enabled", true, true));
@@ -1066,4 +1085,11 @@ public class PddMonitorProperties {
 		return this.appProperties.getProperty("allarmi.configurazione", true, true);
 	}
 	
+	
+	// Eventi
+	
+	public Integer getIntervalloTimeoutRicercaEventi() throws Exception{
+		String timeoutS = this.appProperties.getProperty("eventi.lista.timeoutRicercaEventi", false, true);
+		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
+	}
 }

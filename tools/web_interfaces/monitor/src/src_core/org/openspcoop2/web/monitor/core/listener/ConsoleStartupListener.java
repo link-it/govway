@@ -29,6 +29,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 
 /**
  * ConsoleStartupListener
@@ -95,6 +96,15 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 				try {	isFont.close(); } catch (IOException e) {	}
 			}
 		}
+		
+		// Inizializzazione Thread 
+		try{
+			ThreadExecutorManager.setup();
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+			String msgErrore = "Errore durante l'inizializzazione del ThreadExecutorManager: "+e.getMessage();
+			throw new RuntimeException(msgErrore,e);
+		} 
 	}
 
 
@@ -103,6 +113,14 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		super.contextDestroyed(arg0);
+		
+		log.info("Shutdown pool thread ricerche ...");
+        try {
+            ThreadExecutorManager.shutdown();
+            log.info("Shutdown pool thread ricerche completato.");
+        } catch (Exception e) {
+            log.warn("Shutdown pool thread ricerche fallito:" + e);
+        }
 	}
 
 }

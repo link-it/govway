@@ -1,3 +1,11 @@
+2021-06-28  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità OP-1206
+	Nelle ricerche in cui è configurabile un intervallo temporale è stata aggiunta una gestione del timeout, 
+	in modo da segnalare all'utente di restringere l'intervallo di ricerca poichè i parametri indicati richiedono un tempo eccessivo di elaborazione.
+	Nell'intervento è stata realizzata anche un'ottimizzazione riguardante la generazione dei report statistici dove sono stati eliminati gli accessi duplicati alla base dati.
+
 2021-06-25  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.4.p2
