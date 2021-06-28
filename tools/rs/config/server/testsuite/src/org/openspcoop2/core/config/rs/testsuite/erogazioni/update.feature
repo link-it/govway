@@ -87,7 +87,7 @@ Scenario: Erogazioni Update Connettore 204
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: api_petstore_path })
 
-@UpdateConnettore_gruppo_200
+@UpdateConnettoreGruppo204	
 Scenario: Erogazioni Update Connettore gruppo OK
 
 		* def gruppo_petstore = read ('gruppo_petstore.json')
@@ -96,6 +96,16 @@ Scenario: Erogazioni Update Connettore gruppo OK
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
     * call create ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response.connettore == 'https://ginovadifretta.it/petstore'
+    
 
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
@@ -138,6 +148,14 @@ Scenario: Erogazioni Update Connettore gruppo OK
     Then status 200
 
 		* match response == getExpectedConnettoreHTTP({connettore: erogazione_petstore.connettore})
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response.connettore == 'Connettori ridefiniti nei gruppi'
     
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: api_petstore_path })

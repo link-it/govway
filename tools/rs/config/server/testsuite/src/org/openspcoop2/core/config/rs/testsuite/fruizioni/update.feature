@@ -107,6 +107,14 @@ Scenario: Update Fruizioni Connettore gruppo 204
     * call create ( { resourcePath: 'fruizioni/' + petstore_key + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
 
     Given url configUrl
+    And path 'fruizioni', petstore_key
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response.connettore == 'https://ginovadifretta.it/petstore'
+
+    Given url configUrl
     And path 'fruizioni', petstore_key, 'connettore'
     And header Authorization = govwayConfAuth
     And request connettore
@@ -147,6 +155,16 @@ Scenario: Update Fruizioni Connettore gruppo 204
     Then status 200
 
 		* match response == getExpectedConnettoreHTTP({connettore: fruizione_petstore.connettore})
+
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response.connettore == 'Connettori ridefiniti nei gruppi'
+    
 
     * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })

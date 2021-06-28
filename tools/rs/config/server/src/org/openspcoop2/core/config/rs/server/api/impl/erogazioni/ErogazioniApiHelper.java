@@ -108,6 +108,7 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
@@ -2493,7 +2494,9 @@ public class ErogazioniApiHelper {
 					}
 				}
 
-				isRidefinito =  isRidefinito || env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, paAssociata.getServizioApplicativoList().get(0));
+				if(!paAssociata.getNome().equals(nomePortaDefault) && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), paAssociata, paAssociata.getServizioApplicativoList().get(0))) {
+					isRidefinito = true;
+				}
 				
 			}
 			
@@ -2559,9 +2562,33 @@ public class ErogazioniApiHelper {
 		List<PortaDelegata> listaPorteDelegateAssociate = new ArrayList<>();
 
 		String nomePortaDefault = null;
+		boolean isRidefinito = false;
+
 		for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruzionePortaDelegata) {
 			if(mappingFruizione.isDefault()) {
 				nomePortaDefault = mappingFruizione.getIdPortaDelegata().getNome();
+			} else {
+				
+				PortaDelegata pd = env.pdCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata());
+
+				List<String> listaAzioniPDAssociataMappingNonDefault = pd.getAzione().getAzioneDelegataList();
+				String azioneConnettore =  null;
+				if(listaAzioniPDAssociataMappingNonDefault!=null && listaAzioniPDAssociataMappingNonDefault.size()>0) {
+					azioneConnettore = listaAzioniPDAssociataMappingNonDefault.get(0);
+				}
+
+				Optional<Fruitore> fruit = BaseHelper.findFirst(asps.getFruitoreList(),
+						f -> f.getTipo().equals(mappingFruizione.getIdFruitore().getTipo()) && f.getNome().equals(mappingFruizione.getIdFruitore().getNome()));
+
+				if(fruit.isPresent()) {
+					if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
+						for (ConfigurazioneServizioAzione check : fruit.get().getConfigurazioneAzioneList()) {
+							if(check.getAzioneList().contains(azioneConnettore)) {
+								isRidefinito = true;
+							}
+						}
+					}
+				}
 			}
 			listaPorteDelegateAssociate.add(env.pdCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata()));
 		}
@@ -2585,6 +2612,7 @@ public class ErogazioniApiHelper {
 					numeroAbilitate ++;
 				}
 			}
+			
 		}
 		
 		StatoDescrizione stato = getStatoDescrizione(numeroAbilitate, allActionRedefined, numeroConfigurazioni );		
@@ -2595,12 +2623,13 @@ public class ErogazioniApiHelper {
 		ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, pdDefault, apc, false);
 		
 		try {
+			String connettore = isRidefinito ? "Connettori ridefiniti nei gruppi" : evalnull( () -> getConnettoreFruizione(asps, fruitore, env).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION) );
 			fillApiImplViewItemWithAsps(
 					env, 
 					asps, 
 					toFill, 
 					getUrlInvocazioneFruizione(asps, fruitore.toIDSoggetto(), env),
-					evalnull( () -> getConnettoreFruizione(asps, fruitore, env).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION) ),
+					connettore,
 					getGestioneCorsFromFruizione(asps, fruitore.toIDSoggetto(), env),
 					fruitore.getNome(),
 					stato.stato,
