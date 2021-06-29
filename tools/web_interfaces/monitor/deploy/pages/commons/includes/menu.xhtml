@@ -33,7 +33,7 @@
 							rendered="#{applicationBean.showTransazioniBase}">
 							<rich:panelMenuItem id="transazioniMenuLink" label="#{msg['menu.monitoraggio.storico']}" action="transazioniStart" />
 							
-							<rich:panelMenuItem label="#{msg['menu.monitoraggio.live']}" id="live" action="#{transazioniBean.submit}" actionListener="#{transazioniBean.search.initSearchListener}" 
+							<rich:panelMenuItem label="#{msg['menu.monitoraggio.live']}" id="live" action="#{liveBean.submit}" actionListener="#{liveBean.search.initSearchListener}" 
 									rendered="#{applicationBean.showTransazioniLive}">
 								<f:setPropertyActionListener value="Live" target="#{searchFormTransazioni.periodo}" />
 								<f:setPropertyActionListener value="false" target="#{searchFormTransazioni.visualizzaFiltroAperto}" />
