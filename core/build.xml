@@ -663,7 +663,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.1.4.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.2.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -712,7 +712,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.1.4.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.2.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -761,7 +761,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.1.4.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.2.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -785,7 +785,7 @@
 	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.4.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.2.2.jar"/>
 	        </classpath>
 		</java>
 	</target>
@@ -807,7 +807,7 @@
 	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.4.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.2.2.jar"/>
 	        </classpath>
 		</java>
 	</target>
@@ -829,7 +829,7 @@
 	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.4.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.2.2.jar"/>
 	        </classpath>
 		</java>
 	</target>
@@ -851,7 +851,7 @@
 	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.4.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.2.2.jar"/>
 	        </classpath>
 		</java>
 	</target>

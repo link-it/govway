@@ -397,12 +397,13 @@
 				<include name="${javax.jms-api-2.0.1.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="xmlsec-2.1.4.jar"/>
+				<include name="xmlsec-2.2.2.jar"/>
 				<include name="${neethi_jar}" />
 				<include name="${govwayConsoleRemota_security_neethi}"/>
 				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
-				<include name="bcpkix-jdk15on-1.68.jar"/>
-				<include name="bcprov-ext-jdk15on-1.68.jar"/>
+				<include name="bcpkix-jdk15on-1.69.jar"/>
+				<include name="bcprov-ext-jdk15on-1.69.jar"/>
+				<include name="bcutil-jdk15on-1.69.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/httpcore">
