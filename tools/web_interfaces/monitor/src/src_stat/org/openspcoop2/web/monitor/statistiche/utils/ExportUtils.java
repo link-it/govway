@@ -375,6 +375,27 @@ public class ExportUtils {
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento) throws Exception{
 		esportaXls(outputStream, report, titoloReport, headerLabel, tipoVisualizzazione, tipiBanda, tipiLatenza, tipoStatistica, tipoRiconoscimento, false);
 	}
+	@SuppressWarnings("deprecation")
+	private static TextColumnBuilder<String> buildColumnDeprecated(String label, String category){
+		return col.column(label, category, type.stringType())
+			.setStretchWithOverflow(false)
+			.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true");
+	}
+	private static TextColumnBuilder<String> buildColumnWithoutTextAdjust(String label, String category){
+		return col.column(label, category, type.stringType())
+			//.setTextAdjust(TextAdjust.STRETCH_HEIGHT)
+			.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true");
+	}
+	private static TextColumnBuilder<String> buildColumn(String label, String category){
+		boolean useDeprecatedMethod = false;
+		if(useDeprecatedMethod) {
+			return buildColumnDeprecated(label, category);
+		}
+		else {
+			return buildColumnWithoutTextAdjust(label, category);
+		}
+	}
+	
 	public static void esportaXls(OutputStream outputStream, JasperReportBuilder report,String titoloReport, String headerLabel,TipoVisualizzazione tipoVisualizzazione, 
 			List<TipoBanda> tipiBanda,List<TipoLatenza> tipiLatenza,TipoStatistica tipoStatistica,String tipoRiconoscimento, boolean distribuzionePerEsiti) throws Exception{
 		JasperXlsExporterBuilder builder = export.xlsExporter(outputStream).setDetectCellType(true).setIgnorePageMargins(true)
@@ -385,26 +406,22 @@ public class ExportUtils {
 		String headerValueCategory = "";
 
 		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
-		TextColumnBuilder<String> nomeColumn = col.column(headerLabel, "nome", type.stringType()).setStretchWithOverflow(false)
-				.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true");
+		TextColumnBuilder<String> nomeColumn = buildColumn(headerLabel, "nome");
 		colonne.add(nomeColumn);
 
 		if(distribuzionePerEsiti){
 
 			headerValueCategory = "ok";
 			headerValueLabel = "Ok";
-			colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-					.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+			colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 
 			headerValueCategory = "faultApplicativo";
 			headerValueLabel = "Fault Applicativo";
-			colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-					.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+			colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 
 			headerValueCategory = "errore";
 			headerValueLabel = "Fallite";
-			colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-					.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+			colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 
 		}
 		else{
@@ -412,27 +429,23 @@ public class ExportUtils {
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
 				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+				colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 				
 				headerValueCategory = "parent_1";
 				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+				colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 				break;
 			case DISTRIBUZIONE_SERVIZIO:
 				
 				headerValueCategory = "parent_0";
 				headerValueLabel = MessageManager.getInstance().getMessage(Costanti.EROGATORE_LABEL_KEY);
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+				colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 				break;
 			case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 				if(tipoRiconoscimento != null && tipoRiconoscimento.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
 					headerValueCategory = "parent_0";
 					headerValueLabel = MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LABEL_KEY);
-					colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-							.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+					colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 				}
 				break;
 			case ANDAMENTO_TEMPORALE:
@@ -449,21 +462,18 @@ public class ExportUtils {
 					case COMPLESSIVA:
 						headerValueCategory = "occupazioneBandaComplessiva";
 						headerValueLabel = "Occupazione Banda Complessiva [bytes]";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-								.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 					case INTERNA:
 						headerValueCategory = "occupazioneBandaInterna";
 						headerValueLabel = "Occupazione Banda Interna [bytes]";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-								.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 					case ESTERNA:
 					default:
 						headerValueCategory = "occupazioneBandaEsterna";
 						headerValueLabel = "Occupazione Banda Esterna [bytes]";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-								.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 					}
 				}
@@ -472,8 +482,7 @@ public class ExportUtils {
 			case NUMERO_TRANSAZIONI:
 				headerValueCategory = "numeroRichieste";
 				headerValueLabel = "Numero Transazioni";
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+				colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 				break;
 
 			case TEMPO_MEDIO_RISPOSTA:
@@ -482,22 +491,19 @@ public class ExportUtils {
 					case LATENZA_PORTA:
 						headerValueCategory = "latenzaMediaPorta";
 						headerValueLabel = "Latenza Media Porta [ms]";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-								.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 					case LATENZA_SERVIZIO:
 						headerValueCategory = "latenzaMediaServizio";
 						headerValueLabel = "Latenza Media Servizio [ms]";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-								.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 
 					case LATENZA_TOTALE:
 					default:
 						headerValueCategory = "latenzaMediaTotale";
 						headerValueLabel = "Latenza Media Totale [ms]";
-						colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-								.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+						colonne.add(buildColumn(headerValueLabel, headerValueCategory));
 						break;
 					}
 				}
@@ -880,8 +886,7 @@ public class ExportUtils {
 				.setRemoveEmptySpaceBetweenColumns(true);
 
 		List<ColumnBuilder<?,?>> colonne = new ArrayList<ColumnBuilder<?,?>>();
-		TextColumnBuilder<String> nomeColumn = col.column(headerLabel, "nome", type.stringType()).setStretchWithOverflow(false)
-				.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true");
+		TextColumnBuilder<String> nomeColumn = buildColumn(headerLabel, "nome");
 		colonne.add(nomeColumn);
 
 		if (results != null && results.size() > 0) {

@@ -177,12 +177,12 @@
         <archive path="/op2_3.4.dev/lib/opensaml/opensaml-xmlsec-impl-4.0.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/opensaml/java-support-8.0.0.jar"/>
 	<!-- reports -->
-	<archive path="/op2_3.4.dev/lib/reports/dynamicreports-core-6.1.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/reports/dynamicreports-core-6.12.1.jar"/>
         <archive path="/op2_3.4.dev/lib/reports/itext-2.1.7.js7.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/jasperreports-6.11.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/jasperreports-metadata-6.11.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/reports/jasperreports-6.12.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/reports/jasperreports-metadata-6.12.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/jcommon-1.0.24.jar"/>
-	<archive path="/op2_3.4.dev/lib/reports/jfreechart-1.5.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/reports/jfreechart-1.5.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/poi-4.1.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/SparseBitSet-1.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/reports/net.tascalate.javaflow.api-2.6.1.jar"/>
