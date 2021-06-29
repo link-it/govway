@@ -666,42 +666,39 @@ xmlns="http://www.w3.org/1999/xhtml"
 					</a4j:form>
 
 					<a4j:outputPanel id="timeoutCtrLive" layout="block" styleClass="" rendered="#{true}">
-						<c:if test="#{liveBean.timeoutEvent}">
-							<rich:modalPanel id="dtTblLive_timeoutModal" width="350" height="200">
-							   <f:facet name="header">
-							   	<h:outputText value="Attenzione" />
-							   </f:facet>
-							   <div class="form-container noborder">
-								  <div class="buttonrowmodal">
-								      <h:panelGrid columns="2">
-								        <h:graphicImage value="/images/tema_link/alert_orange.png" />
-								        <a4j:outputPanel style="font-weight: bold;text-align: left;">
-								        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
-								        	<p style="margin: 4px 0px 0px 16px;">Prova a restingere l'intervallo di richiesta</p>
-								        </a4j:outputPanel>
-								      </h:panelGrid>
-								  </div>
-						        <div class="errorsSpacer"/>
-						         <div class="buttonrowmodal">
-						     		<input type="button" value="Chiudi" 
-										   onclick="Richfaces.hideModalPanel('dtTblLive_timeoutModal');return false" />
-						         </div>
-							   </div>
-							</rich:modalPanel>
+						<rich:modalPanel id="dtTblLive_timeoutModal" width="350" height="200">
+						   <f:facet name="header">
+						   	<h:outputText value="Attenzione" />
+						   </f:facet>
+						   <div class="form-container noborder">
+							  <div class="buttonrowmodal">
+							      <h:panelGrid columns="2">
+							        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+							        <a4j:outputPanel style="font-weight: bold;text-align: left;">
+							        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
+							        	<p style="margin: 4px 0px 0px 16px;">Prova a restingere l'intervallo di richiesta</p>
+							        </a4j:outputPanel>
+							      </h:panelGrid>
+							  </div>
+					        <div class="errorsSpacer"/>
+					         <div class="buttonrowmodal">
+					     		<input type="button" value="Chiudi" 
+									   onclick="Richfaces.hideModalPanel('dtTblLive_timeoutModal');return false" />
+					         </div>
+						   </div>
+						</rich:modalPanel>
 						
-							<script type="text/javascript">
-								//<![CDATA[
-								   Richfaces.showModalPanel('dtTblLive_timeoutModal');
-	// 							   jQuery(document).ready(controllaEventoTimeout);
+						<script type="text/javascript">
+							//<![CDATA[
+							   jQuery(document).ready(controllaEventoTimeout);
 						
-	// 							   function controllaEventoTimeout(){  
-	// 								   if(#{liveBean.timeoutEvent}){
-	// 										Richfaces.showModalPanel('dtTblLive_timeoutModal');
-	// 									}
-	// 							   }
-								 //]]>	
-							</script>
-						</c:if>
+							   function controllaEventoTimeout(){  
+								   if(#{liveBean.timeoutEvent}){
+										Richfaces.showModalPanel('dtTblLive_timeoutModal');
+									}
+							   }
+							 //]]>	
+						</script>
 					</a4j:outputPanel>
 				</a4j:region>
 			</a4j:outputPanel>
