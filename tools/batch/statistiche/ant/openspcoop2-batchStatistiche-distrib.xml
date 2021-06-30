@@ -37,9 +37,9 @@
 			<fileset dir="${openspcoop2.lib}" includes="jax/jaxb-*.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="saaj/javax.xml.soap-api-1.4.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="saaj/saaj-impl-1.5.3-gov4j-1.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="shared/jakarta.activation-1.2.1.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.10.5.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="shared/xercesImpl-2.12.0.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="shared/jakarta.activation-1.2.2.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.10.10.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="shared/xercesImpl-2.12.1.jar"/>
 		</copy>
 
 		<mkdir dir="${distrib_batchStatistiche}/jdbc"/>

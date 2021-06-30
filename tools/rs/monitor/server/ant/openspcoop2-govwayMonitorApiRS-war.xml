@@ -106,11 +106,11 @@
 			<lib dir="${openspcoop2.lib}/shared">
 				<include name="reactive-streams-1.0.3.jar"/>
 				<include name="reflections-0.9.12.jar"/>
-				<include name="joda-time-2.10.5.jar"/>
+				<include name="joda-time-2.10.10.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="guava-30.1.1-jre.jar"/>
-				<include name="snakeyaml-1.28.jar"/>
-				<include name="javassist-3.12.1.GA.jar"/>
+				<include name="snakeyaml-1.29.jar"/>
+				<include name="javassist-3.28.0-GA.jar"/>
 				<include name="ezmorph-1.0.6.jar" />
 				<include name="xom-1.2.11.jar" />
 				<include name="${xerces_jar}"/>

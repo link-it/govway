@@ -32,7 +32,7 @@
 				<pathelement path="${required_lib}/jax/jaxb-api-2.3.1.jar"/>
 				<pathelement path="${required_lib}/jax/jaxb-impl-2.3.4.jar"/>
 				<pathelement path="${required_lib}/jax/jaxb-core-2.3.0.1.jar"/>
-				<pathelement path="${required_lib}/shared/jakarta.activation-1.2.1.jar"/>
+				<pathelement path="${required_lib}/shared/jakarta.activation-1.2.2.jar"/>
 			</classpath>
 		</java>
 	</target>

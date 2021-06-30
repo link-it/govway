@@ -315,12 +315,16 @@ public class GestoreAutenticazione {
 
 	}
 	
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(GestoreAutenticazione.cacheAutenticazione==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		GestoreAutenticazione.cacheAutenticazione.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(GestoreAutenticazione.cacheAutenticazione==null) {
 			throw new UtilsException("Cache disabled");

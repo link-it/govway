@@ -114,7 +114,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="xerces_jar" value="xercesImpl-2.12.0.jar"/>
+			<var name="xerces_jar" value="xercesImpl-2.12.1.jar"/>
 			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 		</then>
 	</if>
@@ -141,7 +141,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="jakarta_activation_jar" value="jakarta.activation-1.2.1.jar" />
+			<var name="jakarta_activation_jar" value="jakarta.activation-1.2.2.jar" />
 		</then>
 	</if> 
 	
@@ -222,7 +222,7 @@
 				<include name="${neethi_jar}" />
 			</lib>
 			<lib dir="${libs}/shared">
-				<include name="joda-time-2.10.5.jar"/>
+				<include name="joda-time-2.10.10.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>

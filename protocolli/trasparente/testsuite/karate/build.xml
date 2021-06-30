@@ -41,12 +41,12 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-1.28.jar"/>
+			<include name="snakeyaml-1.29.jar"/>
 			<include name="xercesImpl-*.jar"/>
 			<include name="xalan-*.jar"/>
-			<include name="joda-time-2.10.5.jar"/>
-			<include name="mailapi-1.6.4.jar"/>
-			<include name="jakarta.activation-1.2.1.jar"/>
+			<include name="joda-time-2.10.10.jar"/>
+			<include name="mailapi-1.6.7.jar"/>
+			<include name="jakarta.activation-1.2.2.jar"/>
 			<include name="serializer-2.7.2.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/cxf">

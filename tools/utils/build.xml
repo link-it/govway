@@ -97,7 +97,7 @@
 				<include name="openspcoop2_utils_*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/shared">
-				<include name="commons-jcs-core-2.2.1-gov4j-1.jar"/>
+				<include name="commons-jcs3-core-3.0-gov4j-1.jar"/>
 				<include name="com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar"/>
 			</lib>
 		</war>
@@ -119,7 +119,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared" >
-			<include name="joda-time-2.10.5.jar"/>
+			<include name="joda-time-2.10.10.jar"/>
 		</fileset>
 	</path>
 	<path id="classpath_run_openapi_dist" >
@@ -133,7 +133,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-1.28.jar"/>
+			<include name="snakeyaml-1.29.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
 			<include name="commons-lang3-3.12.0.jar"/>

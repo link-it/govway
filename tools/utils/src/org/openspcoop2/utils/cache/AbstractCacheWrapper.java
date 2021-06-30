@@ -150,12 +150,16 @@ public abstract class AbstractCacheWrapper {
 		return this.cache!=null;
 	}
 	
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public void disableSyncronizedGet() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		this.cache.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public boolean isDisableSyncronizedGet() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");

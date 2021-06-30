@@ -73,8 +73,8 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement path="${openspcoop2.lib}/shared/uddi4j-2.0.5.jar"/>
-		<pathelement path="${openspcoop2.lib}/shared/mailapi-1.6.4.jar"/>
-		<pathelement path="${openspcoop2.lib}/shared/jakarta.activation-1.2.1.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/mailapi-1.6.7.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/jakarta.activation-1.2.2.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-logging-1.2.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-discovery-0.5.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.15.jar"/>

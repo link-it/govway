@@ -31,17 +31,18 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
-import org.apache.commons.jcs.JCS;
-import org.apache.commons.jcs.access.CacheAccess;
-import org.apache.commons.jcs.admin.CountingOnlyOutputStream;
-import org.apache.commons.jcs.admin.JCSAdminBean;
-import org.apache.commons.jcs.engine.CacheElementSerialized;
-import org.apache.commons.jcs.engine.behavior.ICacheElement;
-import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
-import org.apache.commons.jcs.engine.behavior.IElementAttributes;
-import org.apache.commons.jcs.engine.control.CompositeCache;
-import org.apache.commons.jcs.engine.memory.behavior.IMemoryCache;
+import org.apache.commons.jcs3.JCS;
+import org.apache.commons.jcs3.access.CacheAccess;
+import org.apache.commons.jcs3.admin.CountingOnlyOutputStream;
+import org.apache.commons.jcs3.admin.JCSAdminBean;
+import org.apache.commons.jcs3.engine.CacheElementSerialized;
+import org.apache.commons.jcs3.engine.behavior.ICacheElement;
+import org.apache.commons.jcs3.engine.behavior.ICompositeCacheAttributes;
+import org.apache.commons.jcs3.engine.behavior.IElementAttributes;
+import org.apache.commons.jcs3.engine.control.CompositeCache;
+import org.apache.commons.jcs3.engine.memory.behavior.IMemoryCache;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.CollectionProperties;
@@ -146,13 +147,15 @@ public class Cache {
 	public Cache(String name) throws UtilsException{
 		this(name, DEFAULT_DISABLE_SYNCRONIZED_GET);
 	}
+	@Deprecated
 	private Cache(String name, boolean disableSyncronizedGet) throws UtilsException{
 		try{
 			this.cacheAdmin = new JCSAdminBean();
 			this.cacheName = name;
 			this.cache = JCS.getInstance(name);
 			if(disableSyncronizedGet) {
-				this.cache.getCacheControl().setSyncDisabled(disableSyncronizedGet);
+				// Dalla versione 3.0 non è più presente la gestione del synchronized
+				//this.cache.getCacheControl().setSyncDisabled(disableSyncronizedGet);
 			}
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
@@ -168,43 +171,53 @@ public class Cache {
 		return DEFAULT_DISABLE_SYNCRONIZED_GET;
 	}
 	
+	@Deprecated
 	public void disableSyncronizedGet() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		try{
-			this.cache.getCacheControl().setSyncDisabled(true);
+			// Dalla versione 3.0 non è più presente la gestione del synchronized
+			//this.cache.getCacheControl().setSyncDisabled(true);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	@Deprecated
 	public boolean isDisableSyncronizedGet() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		try{
-			return this.cache.getCacheControl().isSyncDisabled();
+			// Dalla versione 3.0 non è più presente la gestione del synchronized
+			//return this.cache.getCacheControl().isSyncDisabled();
+			return true;
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	
+	@Deprecated
 	public void enableDebugSystemOut() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		try{
-			this.cache.getCacheControl().setDebugSystemOut(true);
+			// Dalla versione 3.0 non è più presente la gestione del synchronized
+			//this.cache.getCacheControl().setDebugSystemOut(true);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	public boolean isEnableDebugSystemOut() throws UtilsException {
+	@Deprecated
+	boolean isEnableDebugSystemOut() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		try{
-			return this.cache.getCacheControl().isDebugSystemOut();
+			// Dalla versione 3.0 non è più presente la gestione del synchronized
+			//return this.cache.getCacheControl().isDebugSystemOut();
+			return false;
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -370,12 +383,20 @@ public class Cache {
 	}
 	public void printAllStats(OutputStream out, String separatorStat, String separatorCache) throws UtilsException {
 		try{
-			String[] cacheNames = JCSAdminBean.getCompositeCacheManager().getCacheNames();
-	        Arrays.sort( cacheNames );
-	        for ( int i = 0; i < cacheNames.length; i++ ) {
-		    	this.printStats(cacheNames[i],out,separatorStat,false);
-		    	out.write(separatorCache.getBytes());
-		    }		    
+			Set<String> cacheNames_tmp = JCSAdminBean.getCompositeCacheManager().getCacheNames();
+			if(cacheNames_tmp.size()>0) {
+				String[] cacheNames = new String[cacheNames_tmp.size()];
+				int index = 0;
+				for (String name : cacheNames_tmp) {
+					cacheNames[index] = name;
+					index++;
+				}
+		        Arrays.sort( cacheNames );
+		        for ( int i = 0; i < cacheNames.length; i++ ) {
+			    	this.printStats(cacheNames[i],out,separatorStat,false);
+			    	out.write(separatorCache.getBytes());
+			    }
+			}
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -394,119 +415,104 @@ public class Cache {
 	
 	private boolean errorOccursCountingBytes_debug = false;
 	private boolean errorOccursCountingBytes = false;
-    public <K, V> int getByteCount(CompositeCache<K, V> cache)
+    public <K, V> long getByteCount(CompositeCache<K, V> cache)
     {
     	this.errorOccursCountingBytes = false;
     	
-        if (cache == null)
-        {
-            throw new IllegalArgumentException("The cache object specified was null.");
-        }
+    	if (cache == null)
+    	{
+    		throw new IllegalArgumentException("The cache object specified was null.");
+    	}
 
-        long size = 0;
-        IMemoryCache<K, V> memCache = cache.getMemoryCache();
+    	long size = 0;
+    	IMemoryCache<K, V> memCache = cache.getMemoryCache();
 
-        try {
-	        for (K key : memCache.getKeySet())
-	        {
-	            ICacheElement<K, V> ice = null;
-				try
-				{
-					ice = memCache.get(key);
-				}
-				catch (IOException e)
-				{
-					//Modificato per openspcoop
-					if(this.errorOccursCountingBytes_debug) {
-						System.err.println("["+this.cacheName+"] Element cache get");
-						e.printStackTrace(System.err);
-					}
-					this.errorOccursCountingBytes = true;
-					continue;
-	                // throw new RuntimeException("IOException while trying to get a cached element", e);
-				}
-	
-				if (ice == null)
-				{
-					continue;
-				}
-	
-				if (ice instanceof CacheElementSerialized)
-	            {
-	                size = size + ((CacheElementSerialized<K, V>) ice).getSerializedValue().length;
-	            }
-	            else
-	            {
-	                Object element = ice.getVal();
-	                if(element == null) {
-	                	//Modificato per openspcoop
-	                	if(this.errorOccursCountingBytes_debug) {
-							System.err.println("["+this.cacheName+"] Element cache is null");
-						}
-	    				this.errorOccursCountingBytes = true;
-	    				continue;
-	                }
-	
-	                //CountingOnlyOutputStream: Keeps track of the number of bytes written to it, but doesn't write them anywhere.
-	                CountingOnlyOutputStream counter = new CountingOnlyOutputStream();
-	                ObjectOutputStream out = null;
-	                try
-	                {
-	                    out = new ObjectOutputStream(counter);
-	                    out.writeObject(element);
-	                }
-	                catch (IOException e)
-	                {
-	                	//Modificato per openspcoop
-	                	if(this.errorOccursCountingBytes_debug) {
-	                		System.err.println("["+this.cacheName+"] Element cache writeObject ("+element.getClass().getName()+")");
-							e.printStackTrace(System.err);
-						}
-	    				this.errorOccursCountingBytes = true;
-	    				continue;
-	                    //throw new RuntimeException("IOException while trying to measure the size of the cached element", e);
-	                }
-	                finally
-	                {
-	                	try
-	                	{
-	                		if (out != null)
-	                		{
-	                			out.close();
-	                		}
-						}
-	                	catch (IOException e)
-	                	{
-	                		// ignore
-						}
-	                	try
-	                	{
-							counter.close();
-						}
-	                	catch (IOException e)
-	                	{
-	                		// ignore
-						}
-	                }
-	
-	                // 4 bytes lost for the serialization header
-	                size = size + counter.getCount() - 4;
-	            }
-	        }
-        }
-        catch ( Exception e )
-        {
-            System.err.println( "Problem getting byte count (Modified by OpenSPCoop).  Likley cause is a non serilizable object." + e.getMessage() );
-            e.printStackTrace();   
-        }
-	        
-        if (size > Integer.MAX_VALUE)
-        {
-            throw new IllegalStateException("The size of cache " + cache.getCacheName() + " (" + size + " bytes) is too large to be represented as an integer.");
-        }
+    	try {
+    		for (K key : memCache.getKeySet())
+    		{
+    			ICacheElement<K, V> ice = null;
+    			try
+    			{
+    				ice = memCache.get(key);
+    			}
+    			catch (IOException e)
+    			{
+    				//Modificato per openspcoop
+    				if(this.errorOccursCountingBytes_debug) {
+    					System.err.println("["+this.cacheName+"] Element cache get");
+    					e.printStackTrace(System.err);
+    				}
+    				this.errorOccursCountingBytes = true;
+    				continue;
+    				//throw new RuntimeException("IOException while trying to get a cached element", e);
+    			}
 
-        return (int) size;
+    			if (ice == null)
+    			{
+    				continue;
+    			}
+
+    			if (ice instanceof CacheElementSerialized)
+    			{
+    				size += ((CacheElementSerialized<K, V>) ice).getSerializedValue().length;
+    			}
+    			else
+    			{
+    				Object element = ice.getVal();
+    				if(element == null) {
+    					//Modificato per openspcoop
+    					if(this.errorOccursCountingBytes_debug) {
+    						System.err.println("["+this.cacheName+"] Element cache is null");
+    					}
+    					this.errorOccursCountingBytes = true;
+    					continue;
+    				}
+
+    				//CountingOnlyOutputStream: Keeps track of the number of bytes written to it, but doesn't write them anywhere.
+    				CountingOnlyOutputStream counter = new CountingOnlyOutputStream();
+    				try (ObjectOutputStream out = new ObjectOutputStream(counter);)
+    				{
+    					out.writeObject(element);
+    				}
+    				catch (IOException e)
+    				{
+    					// Modificato per openspcoop
+    					if(this.errorOccursCountingBytes_debug) {
+    						System.err.println("["+this.cacheName+"] Element cache writeObject ("+element.getClass().getName()+")");
+    						e.printStackTrace(System.err);
+    					}
+    					this.errorOccursCountingBytes = true;
+    					continue;
+    					//throw new RuntimeException("IOException while trying to measure the size of the cached element", e);
+    				}
+    				finally
+    				{
+    					try
+    					{
+    						counter.close();
+    					}
+    					catch (IOException e)
+    					{
+    						// ignore
+    					}
+    				}
+
+    				// 4 bytes lost for the serialization header
+		    	   size += counter.getCount() - 4;
+    			}
+    		}
+    	}
+    	catch ( Exception e )
+    	{
+    		System.err.println( "Problem getting byte count (Modified by OpenSPCoop).  Likley cause is a non serilizable object." + e.getMessage() );
+    		e.printStackTrace();   
+    	}
+
+    	return size;
     }
+    
+    
+
 	
 	
 	
@@ -526,10 +532,10 @@ public class Cache {
 			//		 A volte, quando poi veniva registrato l'errore soprastante, avveniva questo errore (scoperto aggiungendo stampe nelle classi di JCS)
 			//		 java.util.ConcurrentModificationException
 			//		 	at java.util.Hashtable$Enumerator.next(Hashtable.java:1031)
-			//			at org.apache.commons.jcs.engine.memory.lru.LRUMemoryCache$IteratorWrapper.next(LRUMemoryCache.java:428)
-			//			at org.apache.commons.jcs.admin.JCSAdminBean.getByteCount(JCSAdminBean.java:95)
+			//			at org.apache.commons.jcs3.engine.memory.lru.LRUMemoryCache$IteratorWrapper.next(LRUMemoryCache.java:428)
+			//			at org.apache.commons.jcs3.admin.JCSAdminBean.getByteCount(JCSAdminBean.java:95)
 			int tentativi = 0;
-			int sizeAttuale = -1;
+			long sizeAttuale = -1;
 			while (tentativi<10) {
 				sizeAttuale = this.getByteCount(cache);
 				if(this.errorOccursCountingBytes==false){
@@ -558,11 +564,12 @@ public class Cache {
 			
 			bf.append(separator);
 			
-			bf.append("GetSyncDisabled:");
-			bf.append(cache.isSyncDisabled());
-			bf.append(" ");
-			
-			bf.append(separator);
+			// Dalla versione 3.0 non è più presente la gestione del synchronized
+//			bf.append("GetSyncDisabled:");
+//			bf.append(cache.isSyncDisabled());
+//			bf.append(" ");
+//			
+//			bf.append(separator);
 			
 			if(cache.getCacheAttributes()!=null){
 			
@@ -689,16 +696,16 @@ public class Cache {
 	private String formatKeyCache(String key) {
 		// org/apache/commons/jcs/engine/control/CompositeCache.java
 		//		if ( cacheElement.getKey() instanceof String
-		//	            && cacheElement.getKey().toString().endsWith( CacheConstants.NAME_COMPONENT_DELIMITER ) )
+		//	            && cacheElement.getKey().toString().endsWith( NAME_COMPONENT_DELIMITER ) )
 		//	        {
-		//	            throw new IllegalArgumentException( "key must not end with " + CacheConstants.NAME_COMPONENT_DELIMITER
+		//	            throw new IllegalArgumentException( "key must not end with " + NAME_COMPONENT_DELIMITER
 		//	                + " for a put operation" );
 		//	        }
 		//
-		// Dove in org.apache.commons.jcs.engine.CacheConstants
+		// Dove in org.apache.commons.jcs3.engine.behavior.ICache
 		// 		public final static String NAME_COMPONENT_DELIMITER = ":";
 		StringBuilder bf = new StringBuilder(key);
-		if(bf.toString().endsWith(org.apache.commons.jcs.engine.CacheConstants.NAME_COMPONENT_DELIMITER)){
+		if(bf.toString().endsWith(org.apache.commons.jcs3.engine.behavior.ICache.NAME_COMPONENT_DELIMITER)){
 			bf.append("_");
 		}
 		return bf.toString();

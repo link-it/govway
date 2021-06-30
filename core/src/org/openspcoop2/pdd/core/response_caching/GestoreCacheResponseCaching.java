@@ -250,12 +250,16 @@ public class GestoreCacheResponseCaching {
 	}
 	
 	
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		cache.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(cache==null) {
 			throw new UtilsException("Cache disabled");

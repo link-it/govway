@@ -127,14 +127,14 @@
 																									Missing End Boundary for Mime Package : EOF while skipping headers 
 					Deve essere usata una versione compatibile (mailapi-1.5.6.jar presente tra i jar axis14) con le classi della versione 1.4 di axis.
 				--> 
-				<!-- <include name="mailapi-1.6.4.jar"/> -->
+				<!-- <include name="mailapi-1.6.7.jar"/> -->
 				<include name="wsdl4j-1.6.3.jar"/>
-				<include name="jakarta.activation-1.2.1.jar"/>
+				<include name="jakarta.activation-1.2.2.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
-				<include name="joda-time-2.10.5.jar"/>
+				<include name="joda-time-2.10.10.jar"/>
 			</lib>
 			<lib dir="${required_lib}/commons">
 				<include name="commons-codec-1.15.jar"/>

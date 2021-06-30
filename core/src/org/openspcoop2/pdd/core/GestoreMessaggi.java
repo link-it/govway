@@ -393,12 +393,16 @@ public class GestoreMessaggi  {
 	}
 	
 	
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		GestoreMessaggi.cacheMappingGestoreMessaggi.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null) {
 			throw new UtilsException("Cache disabled");

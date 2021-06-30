@@ -324,12 +324,16 @@ public class GestoreToken {
 	
 	
 
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(GestoreToken.cacheToken==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		GestoreToken.cacheToken.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(GestoreToken.cacheToken==null) {
 			throw new UtilsException("Cache disabled");
