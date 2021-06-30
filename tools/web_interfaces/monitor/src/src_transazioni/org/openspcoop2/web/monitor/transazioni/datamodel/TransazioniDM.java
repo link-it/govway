@@ -24,16 +24,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.generic_project.expression.SortOrder;
-import org.richfaces.model.Ordering;
-import org.slf4j.Logger;
-
+import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.openspcoop2.web.monitor.core.datamodel.SortableBaseDataModel;
-import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
+import org.richfaces.model.Ordering;
+import org.slf4j.Logger;
 
 /**
  * TransazioniDM
@@ -82,7 +81,6 @@ SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniS
 		try{
 			TransazioniDM.log.debug("findObjects Start["+start+"], Limit["+limit+"], SortField["+sortField+"], SortOrder["+sortOrder.toString()+"]...");
 			list = this.getDataProvider().findAll(start, limit,sortOrder ,sortField);
-
 			TransazioniDM.log.debug("findObjects trovati["+(list != null ? list.size() : 0)+"].");
 		}
 		catch(Exception e){
@@ -145,5 +143,9 @@ SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniS
 
 	public boolean isExecuteQuery(){
 		return this.getDataProvider().getSearch().isExecuteQuery();
-	}	
+	}
+	
+	public boolean isTimeoutEvent(){
+		return this.getDataProvider().isTimeoutEvent();
+	}
 }

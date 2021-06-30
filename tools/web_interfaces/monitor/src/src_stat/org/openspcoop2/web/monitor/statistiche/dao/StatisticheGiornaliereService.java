@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
@@ -109,6 +112,7 @@ import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.CostantiReport;
+import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
@@ -127,6 +131,9 @@ import org.slf4j.Logger;
 public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();
+	
+	private boolean timeoutEvent = false;
+	private Integer timeoutRicerche = null;
 
 	private static final String FALSA_UNION_DEFAULT_VALUE = "gbyfake";
 	private static final Integer FALSA_UNION_DEFAULT_VALUE_VERSIONE = 1;
@@ -168,6 +175,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private boolean clusterDinamico = false;
 	private int clusterDinamicoRefresh;
 	
+	private IServiceSearchWithoutId<?> dao = null;
+	
 	public StatisticheGiornaliereService() {
 
 		try {
@@ -197,16 +206,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.useStatisticheGiornaliereCalcoloDistribuzioneMensile = this.govwayMonitorProperties.isUseStatisticheGiornaliereCalcoloDistribuzioneMensile();
 			this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere = this.govwayMonitorProperties.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere();
 			
-			String datasourceJNDIName = DAOFactoryProperties.getInstance(log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			this.driverRegistroServiziDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
-			this.driverConfigurazioneDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, log, tipoDatabase);
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(StatisticheGiornaliereService.log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(StatisticheGiornaliereService.log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String tipoDatabase = DAOFactoryProperties.getInstance(StatisticheGiornaliereService.log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			this.driverRegistroServiziDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, StatisticheGiornaliereService.log, tipoDatabase);
+			this.driverConfigurazioneDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, StatisticheGiornaliereService.log, tipoDatabase);
 			
 			this.clusterDinamico = this.govwayMonitorProperties.isClusterDinamico();
 			if(this.clusterDinamico) {
 				this.clusterDinamicoRefresh = this.govwayMonitorProperties.getClusterDinamicoRefresh();
 			}
+			
+			this.timeoutRicerche = this.govwayMonitorProperties.getIntervalloTimeoutRicercaStatistiche();
 			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -260,6 +271,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				this.clusterDinamicoRefresh = this.govwayMonitorProperties.getClusterDinamicoRefresh();
 			}
 			
+			this.timeoutRicerche = this.govwayMonitorProperties.getIntervalloTimeoutRicercaStatistiche();
+			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -311,6 +324,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(this.clusterDinamico) {
 				this.clusterDinamicoRefresh = this.govwayMonitorProperties.getClusterDinamicoRefresh();
 			}
+			
+			this.timeoutRicerche = this.govwayMonitorProperties.getIntervalloTimeoutRicercaStatistiche();
 			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -468,7 +483,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private NonNegativeNumber countAndamentoTemporale() throws ServiceException {
 		try {
 			StatisticType tipologiaSearch = this.andamentoTemporaleSearch.getModalitaTemporale();
-			IExpression gByExpr = null;
+//			IExpression gByExpr = null;
 
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
@@ -525,7 +540,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 
-			gByExpr = createGenericAndamentoTemporaleExpression(dao, model,	true);
+			IExpression gByExpr = dao.newExpression();
+			gByExpr = createGenericAndamentoTemporaleExpression(gByExpr, dao, model,	true);
 			TipoVisualizzazione tipoVisualizzazione = this.andamentoTemporaleSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
 			case DIMENSIONE_TRANSAZIONI:
@@ -615,10 +631,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private List<Res> executeAndamentoTemporaleSearch(boolean isCount,	boolean isPaginated, int offset, int limit) {
 		try {
 			StatisticType tipologiaSearch = this.andamentoTemporaleSearch.getModalitaTemporale();
-			IExpression gByExpr = null;
+//			IExpression gByExpr = null;
 
 			StatisticaModel model = null;
-			IServiceSearchWithoutId<?> dao = null;
+//			IServiceSearchWithoutId<?> dao = null;
 
 			boolean forceUseDistribGiornaliera = false;
 			StatisticType tipologia = tipologiaSearch;
@@ -629,38 +645,38 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			switch (tipologiaSearch) {
 			case ORARIA:
 				model = StatisticaOraria.model().STATISTICA_BASE;
-				dao = this.statOrariaSearchDAO;
+				this.dao = this.statOrariaSearchDAO;
 				break;
 			case GIORNALIERA:
 				model = StatisticaGiornaliera.model().STATISTICA_BASE;
-				dao = this.statGiornaliereSearchDAO;
+				this.dao = this.statGiornaliereSearchDAO;
 				break;
 			case SETTIMANALE:
 				forceUseDistribGiornaliera = this.useStatisticheGiornaliereCalcoloDistribuzioneSettimanale;
 				if(forceUseDistribGiornaliera) {
 					model = StatisticaGiornaliera.model().STATISTICA_BASE;
-					dao = this.statGiornaliereSearchDAO;
+					this.dao = this.statGiornaliereSearchDAO;
 					tipologia = StatisticType.GIORNALIERA;
 					statisticheSettimanaliUtils = StatisticheSettimanali.getInstanceForUtils();	
 					calcolaSommeMediaPesata = this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere;
 				}
 				else {
 					model = StatisticaSettimanale.model().STATISTICA_BASE;
-					dao = this.statSettimanaleSearchDAO;
+					this.dao = this.statSettimanaleSearchDAO;
 				}
 				break;
 			case MENSILE:
 				forceUseDistribGiornaliera = this.useStatisticheGiornaliereCalcoloDistribuzioneMensile;
 				if(forceUseDistribGiornaliera) {
 					model = StatisticaGiornaliera.model().STATISTICA_BASE;
-					dao = this.statGiornaliereSearchDAO;
+					this.dao = this.statGiornaliereSearchDAO;
 					tipologia = StatisticType.GIORNALIERA;
 					statisticheMensiliUtils = StatisticheMensili.getInstanceForUtils();
 					calcolaSommeMediaPesata = this.isMediaPesataCalcoloDistribuzioneSettimanaleMensileUtilizzandoStatisticheGiornaliere;
 				}
 				else {
 					model = StatisticaMensile.model().STATISTICA_BASE;
-					dao = this.statMensileSearchDAO;
+					this.dao = this.statMensileSearchDAO;
 				}
 				break;
 			}
@@ -675,8 +691,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-
-			gByExpr = createGenericAndamentoTemporaleExpression(dao, model,	isCount);
+			IExpression gByExpr = this.dao.newExpression();
+			createGenericAndamentoTemporaleExpression(gByExpr, this.dao, model,	isCount);
 			boolean isLatenza = false;	
 			boolean isLatenza_totale = false;	
 			boolean isLatenza_servizio = false;	
@@ -809,29 +825,88 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			List<Map<String, Object>> list = null;
+			this.timeoutEvent = false;
+			
 
-			try{
-				if(forceIndexes!=null && forceIndexes.size()>0){
-					for (Index index : forceIndexes) {
-						gByExpr.addForceIndex(index);	
+			
+			if(forceIndexes!=null && forceIndexes.size()>0){
+				for (Index index : forceIndexes) {
+					gByExpr.addForceIndex(index);	
+				}
+			}
+			
+			if (!isPaginated) {
+				if(this.timeoutRicerche == null) {
+					try{
+						list = this.dao.groupBy(gByExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+					} catch (NotFoundException e) {
+						StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+						list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+					} 
+				} else {
+					try {
+						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(gByExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					} catch (ExecutionException e) {
+						if(e.getCause() instanceof NotFoundException) {
+							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+							list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+						} else {
+							if(e.getCause() instanceof ServiceException) {
+								throw (ServiceException) e.getCause();
+							}
+							if(e.getCause() instanceof NotImplementedException) {
+								throw (NotImplementedException) e.getCause();
+							}
+							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						}
+					} catch (TimeoutException e) {
+						this.timeoutEvent = true;
+						list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
 					}
+				}
+			} else {
+				IPaginatedExpression pagExpr = this.dao.toPaginatedExpression(gByExpr);
+
+				if(!forceUseDistribGiornaliera) {
+					pagExpr.offset(offset).limit(limit);
 				}
 				
-				if (!isPaginated) {
-					list = dao.groupBy(gByExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+				if(this.timeoutRicerche == null) {
+					try{
+						list = this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+					} catch (NotFoundException e) {
+						StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+						list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+					} 
 				} else {
-					IPaginatedExpression pagExpr = dao
-							.toPaginatedExpression(gByExpr);
-
-					if(!forceUseDistribGiornaliera) {
-						pagExpr.offset(offset).limit(limit);
-					}
-					list = dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+					try {
+						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					} catch (ExecutionException e) {
+						if(e.getCause() instanceof NotFoundException) {
+							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
+							list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+						} else {
+							if(e.getCause() instanceof ServiceException) {
+								throw (ServiceException) e.getCause();
+							}
+							if(e.getCause() instanceof NotImplementedException) {
+								throw (NotImplementedException) e.getCause();
+							}
+							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						}
+					} catch (TimeoutException e) {
+						this.timeoutEvent = true;
+						list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					} 
 				}
-			} catch (NotFoundException e) {
-				StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente: "+e.getMessage(),e);
-				list = new ArrayList<Map<String,Object>>(); // per evitare il nullPointer
-			} 
+			}
+			
 			
 			List<Res> res = new ArrayList<Res>();
 			for (Map<String, Object> row : list) {
@@ -947,10 +1022,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//System.out.println(" CALCOLO ESITI ");
 
 					// ************ ESITI ******************
-
-					IExpression expOk = createGenericAndamentoTemporaleExpression(dao, model,	isCount,data,false);
-					IExpression expKo = createGenericAndamentoTemporaleExpression(dao, model,	isCount,data,false);
-					IExpression expFault = createGenericAndamentoTemporaleExpression(dao, model,	isCount,data,false);
+					IExpression expOk = this.dao.newExpression();
+					IExpression expKo = this.dao.newExpression();
+					IExpression expFault = this.dao.newExpression();
+					
+					this.createGenericAndamentoTemporaleExpression(expOk, this.dao, model,	isCount,data,false);
+					this.createGenericAndamentoTemporaleExpression(expKo, this.dao, model,	isCount,data,false);
+					this.createGenericAndamentoTemporaleExpression(expFault, this.dao, model,	isCount,data,false);
 					switch (tipoVisualizzazione) {
 					case TEMPO_MEDIO_RISPOSTA:{
 						TipoLatenza tipoLatenza = this.andamentoTemporaleSearch.getTipoLatenza();
@@ -1000,13 +1078,46 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					rEsito.setId(data.getTime());
 					rEsito.setRisultato(data);
 					List<Number> rEsitoSommaMediaPesata = new ArrayList<Number>();
-					try{
-						listOk = dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
-					} catch (NotFoundException e) {
-						StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
-						//collezione dei risultati
-						rEsito.inserisciSomma(0);
-					} 
+					
+					this.timeoutEvent = false;
+					
+					if(this.timeoutRicerche == null) {
+						try{
+						listOk = this.dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+						} catch (NotFoundException e) {
+							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
+							//collezione dei risultati
+							rEsito.inserisciSomma(0);
+						} 
+					} else {
+						try {
+							listOk =  ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
+							this.dao.groupBy(expOk, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
+								).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+						} catch (InterruptedException e) {
+							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						} catch (ExecutionException e) {
+							if(e.getCause() instanceof NotFoundException) {
+								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ok: "+esitiOk);
+								//collezione dei risultati
+								rEsito.inserisciSomma(0);
+							}else {
+								if(e.getCause() instanceof ServiceException) {
+									throw (ServiceException) e.getCause();
+								}
+								if(e.getCause() instanceof NotImplementedException) {
+									throw (NotImplementedException) e.getCause();
+								}
+								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							}
+						} catch (TimeoutException e) {
+							this.timeoutEvent = true;
+							//collezione dei risultati
+							rEsito.inserisciSomma(0);
+							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						}
+					}
+					
 					if(listOk!=null && listOk.size()>0){
 						if(listOk.size()>1){
 							throw new Exception("Expected only one result, found: "+listOk.size());
@@ -1118,13 +1229,46 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//System.out.println("MISURAZIONE OK: \n"+rEsito.toString());
 
 					List<Map<String, Object>> listFaultApplicativo = null;
-					try{
-						listFaultApplicativo = dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
-					} catch (NotFoundException e) {
-						StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
-						//collezione dei risultati
-						rEsito.inserisciSomma(0);
-					} 
+					
+					this.timeoutEvent = false;
+					
+					if(this.timeoutRicerche == null) {
+						try{
+							listFaultApplicativo = this.dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+						} catch (NotFoundException e) {
+							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
+							//collezione dei risultati
+							rEsito.inserisciSomma(0);
+						} 
+					} else {
+						try {
+							listFaultApplicativo = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
+							 this.dao.groupBy(expFault, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
+								).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+						} catch (InterruptedException e) {
+							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						} catch (ExecutionException e) {
+							if(e.getCause() instanceof NotFoundException) {
+								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Fault: "+esitiFault);
+								//collezione dei risultati
+								rEsito.inserisciSomma(0);
+							}else {
+								if(e.getCause() instanceof ServiceException) {
+									throw (ServiceException) e.getCause();
+								}
+								if(e.getCause() instanceof NotImplementedException) {
+									throw (NotImplementedException) e.getCause();
+								}
+								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							}
+						} catch (TimeoutException e) {
+							this.timeoutEvent = true;
+							//collezione dei risultati
+							rEsito.inserisciSomma(0);
+							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						}
+					}
+				
 					if(listFaultApplicativo!=null && listFaultApplicativo.size()>0){
 						if(listFaultApplicativo.size()>1){
 							throw new Exception("Expected only one result, found: "+listFaultApplicativo.size());
@@ -1234,13 +1378,46 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//System.out.println("MISURAZIONE FAULT: \n"+rEsito.toString());
 
 					List<Map<String, Object>> listKo = null;
-					try{
-						listKo = dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
-					} catch (NotFoundException e) {
-						StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
-						//collezione dei risultati
-						rEsito.inserisciSomma(0);
-					} 
+					
+					this.timeoutEvent = false;
+					
+					if(this.timeoutRicerche == null) {
+						try{
+							listKo = this.dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+						} catch (NotFoundException e) {
+							StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
+							//collezione dei risultati
+							rEsito.inserisciSomma(0);
+						} 
+					} else {
+						try {
+							listKo = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> 
+							this.dao.groupBy(expKo, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))
+								).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+						} catch (InterruptedException e) {
+							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						} catch (ExecutionException e) {
+							if(e.getCause() instanceof NotFoundException) {
+								StatisticheGiornaliereService.log.debug("Nessuna statistica trovata per la ricerca corrente con esiti Ko: "+esitiKo);
+								//collezione dei risultati
+								rEsito.inserisciSomma(0);
+							}else {
+								if(e.getCause() instanceof ServiceException) {
+									throw (ServiceException) e.getCause();
+								}
+								if(e.getCause() instanceof NotImplementedException) {
+									throw (NotImplementedException) e.getCause();
+								}
+								StatisticheGiornaliereService.log.error(e.getMessage(), e);
+							}
+						} catch (TimeoutException e) {
+							this.timeoutEvent = true;
+							//collezione dei risultati
+							rEsito.inserisciSomma(0);
+							StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						}
+					}
+					
 					if(listKo!=null && listKo.size()>0){
 						if(listKo.size()>1){
 							throw new Exception("Expected only one result, found: "+listKo.size());
@@ -1480,18 +1657,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						Number nSommaMediaEsistente = sommeMediaPesataEsistente.get(i);
 						Number nSommaMediaNuovo = sommaMediaPesata.get(i);
 						
-						log.debug("Latenza già registrata: "+nEsistente+" per un totale di record "+nSommaMediaEsistente);
-						log.debug("Latenza nuova: "+nNuovo+" per un totale di record "+nSommaMediaNuovo);
+						StatisticheGiornaliereService.log.debug("Latenza già registrata: "+nEsistente+" per un totale di record "+nSommaMediaEsistente);
+						StatisticheGiornaliereService.log.debug("Latenza nuova: "+nNuovo+" per un totale di record "+nSommaMediaNuovo);
 						
 						Number totale = nSommaMediaEsistente.longValue() + nSommaMediaNuovo.longValue();
 						sommaMediaPesataRicalcolata.add(totale);
-						log.debug("TOT: "+totale);
+						StatisticheGiornaliereService.log.debug("TOT: "+totale);
 						Number nMediaEsistente = nSommaMediaEsistente.longValue() * nEsistente.longValue();
 						Number nMediaNuovo = nSommaMediaNuovo.longValue() * nNuovo.longValue();
 						Number nMedia = nMediaEsistente.longValue() + nMediaNuovo.longValue();
-						log.debug("MEDIA: esi "+nMediaEsistente+" + nuovo "+nMediaNuovo+" = "+nMedia);
+						StatisticheGiornaliereService.log.debug("MEDIA: esi "+nMediaEsistente+" + nuovo "+nMediaNuovo+" = "+nMedia);
 						Number nMediaPesata = nMedia.longValue() / totale.longValue();
-						log.debug("MEDIA PESATA: "+nMediaPesata);
+						StatisticheGiornaliereService.log.debug("MEDIA PESATA: "+nMediaPesata);
 						//log.debug("MEDIA REALE: "+((nEsistente.longValue() + nNuovo.longValue())/2));
 						rEsitoRicalcolato.inserisciSomma(nMediaPesata);
 					}
@@ -1512,14 +1689,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		
 	}
 	
-	private IExpression createGenericAndamentoTemporaleExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, 
+	private IExpression createGenericAndamentoTemporaleExpression(IExpression expr, IServiceSearchWithoutId<?> dao, StatisticaModel model, 
 			boolean isCount) {
-		return this.createGenericAndamentoTemporaleExpression(dao, model, isCount, null, true);
+		return this.createGenericAndamentoTemporaleExpression(expr, dao, model, isCount, null, true);
 	}
-	private IExpression createGenericAndamentoTemporaleExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, 
+	private IExpression createGenericAndamentoTemporaleExpression(IExpression expr, IServiceSearchWithoutId<?> dao, StatisticaModel model, 
 			boolean isCount, Date date, boolean setEsito) {
 
-		IExpression expr = null;
+//		IExpression expr = null;
 
 		StatisticheGiornaliereService.log
 		.debug("creo  Expression per Andamento Temporale!");
@@ -1529,7 +1706,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<Soggetto> listaSoggettiGestione = this.andamentoTemporaleSearch
 					.getSoggettiGestione();
 
-			expr = dao.newExpression();
+//			expr = dao.newExpression();
 
 			// Data
 			if(date==null){
@@ -3303,9 +3480,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// + destinatario.toString()
 			// + ") ) GROUP BY tipo_soggetto, soggetto ");
 			// union.append(" ORDER BY somma DESC ");
-
-			list = dao.union(union, erogazione_portaApplicativa_UnionExpr, fruizione_portaDelegata_UnionExpr);
-
+			
+			this.timeoutEvent = false;
+			
+			if(this.timeoutRicerche == null) {
+				list = dao.union(union, erogazione_portaApplicativa_UnionExpr, fruizione_portaDelegata_UnionExpr);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, erogazione_portaApplicativa_UnionExpr, fruizione_portaDelegata_UnionExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				}
+			}
 			if (list != null) {
 
 				// List<Object[]> list = q.getResultList();
@@ -3593,9 +3793,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.setOffset(start);
 				union.setLimit(limit);
 			}
-
-			list = dao.union(union, erogazione_portaApplicativa_UnionExpr, unionExprFake);
-
+			
+			this.timeoutEvent = false;
+			
+			if(this.timeoutRicerche == null) {
+				list = dao.union(union, erogazione_portaApplicativa_UnionExpr, unionExprFake);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, erogazione_portaApplicativa_UnionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				}
+			}
 			if (list != null) {
 
 				// List<Object[]> list = q.getResultList();
@@ -3887,9 +4110,31 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.setLimit(limit);
 			}
 
-
-			list = dao.union(union, fruizione_portaDelegata_UnionExpr, unionExprFake);
-
+			this.timeoutEvent = false;
+			
+			if(this.timeoutRicerche == null) {
+				list = dao.union(union, fruizione_portaDelegata_UnionExpr, unionExprFake);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> dao.union(union, fruizione_portaDelegata_UnionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				}
+			}
 			if (list != null) {
 
 				// List<Object[]> list = q.getResultList();
@@ -4002,28 +4247,28 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			StatisticType tipologia = this.distribServizioSearch.getModalitaTemporale();
 			StatisticaModel model = null;
-			IServiceSearchWithoutId<?> dao = null;
+//			IServiceSearchWithoutId<?> dao = null;
 
 			switch (tipologia) {
 			case GIORNALIERA:
 				model = StatisticaGiornaliera.model().STATISTICA_BASE;
-				dao = this.statGiornaliereSearchDAO;
+				this.dao = this.statGiornaliereSearchDAO;
 				break;
 			case MENSILE:
 				model = StatisticaMensile.model().STATISTICA_BASE;
-				dao = this.statMensileSearchDAO;
+				this.dao = this.statMensileSearchDAO;
 				break;
 			case ORARIA:
 				model = StatisticaOraria.model().STATISTICA_BASE;
-				dao = this.statOrariaSearchDAO;
+				this.dao = this.statOrariaSearchDAO;
 				break;
 			case SETTIMANALE:
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
-				dao = this.statSettimanaleSearchDAO;
+				this.dao = this.statSettimanaleSearchDAO;
 				break;
 			}
 			
-			IExpression gByExpr = this.createDistribuzioneServizioExpression(dao, model, false);
+			IExpression gByExpr = this.createDistribuzioneServizioExpression(this.dao, model, false);
 
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
@@ -4059,7 +4304,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String aliasUriApi = "uri_api";
 			
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
-			IExpression fakeExpr = dao.newExpression();
+			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
 			
 			if(this.distribServizioSearch.isDistribuzionePerImplementazioneApi()) {
@@ -4208,8 +4453,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(start != null)
 				union.setLimit(limit);
 
-			List<Map<String, Object>> list = dao.union(union, unionExpr, unionExprFake);
-
+			this.timeoutEvent = false;
+			
+			List<Map<String, Object>> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.dao.union(union, unionExpr, unionExprFake);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				}
+			}
 			if (list != null) {
 
 				// List<Object[]> list = q.getResultList();
@@ -4976,28 +5245,28 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 			StatisticType tipologia = this.distribAzioneSearch.getModalitaTemporale();
 			StatisticaModel model = null;
-			IServiceSearchWithoutId<?> dao = null;
+//			IServiceSearchWithoutId<?> dao = null;
 
 			switch (tipologia) {
 			case GIORNALIERA:
 				model = StatisticaGiornaliera.model().STATISTICA_BASE;
-				dao = this.statGiornaliereSearchDAO;
+				this.dao = this.statGiornaliereSearchDAO;
 				break;
 			case MENSILE:
 				model = StatisticaMensile.model().STATISTICA_BASE;
-				dao = this.statMensileSearchDAO;
+				this.dao = this.statMensileSearchDAO;
 				break;
 			case ORARIA:
 				model = StatisticaOraria.model().STATISTICA_BASE;
-				dao = this.statOrariaSearchDAO;
+				this.dao = this.statOrariaSearchDAO;
 				break;
 			case SETTIMANALE:
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
-				dao = this.statSettimanaleSearchDAO;
+				this.dao = this.statSettimanaleSearchDAO;
 				break;
 			}
 			
-			IExpression gByExpr = this.createDistribuzioneAzioneExpression(dao,	model, false);
+			IExpression gByExpr = this.createDistribuzioneAzioneExpression(this.dao,	model, false);
 
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.AZIONE);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
@@ -5037,7 +5306,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			unionExpr.addSelectField(model.DESTINATARIO, aliasFieldDestinatario);
 
 			// Espressione finta per usare l'ordinamento
-			IExpression fakeExpr = dao.newExpression();
+			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldAzione, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
 					model.AZIONE.getFieldType()), aliasFieldAzione);			
@@ -5166,8 +5435,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(start != null)
 				union.setLimit(limit);
 
-			List<Map<String, Object>> list = dao.union(union, unionExpr, unionExprFake);
-
+			this.timeoutEvent = false;
+			
+			List<Map<String, Object>> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.dao.union(union, unionExpr, unionExprFake);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				}
+			}
 			if (list != null) {
 
 				// List<Object[]> list = q.getResultList();
@@ -5351,24 +5644,24 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 			StatisticType tipologia = this.distribSaSearch.getModalitaTemporale();
 			StatisticaModel model = null;
-			IServiceSearchWithoutId<?> dao = null;
+//			IServiceSearchWithoutId<?> dao = null;
 
 			switch (tipologia) {
 			case GIORNALIERA:
 				model = StatisticaGiornaliera.model().STATISTICA_BASE;
-				dao = this.statGiornaliereSearchDAO;
+				this.dao = this.statGiornaliereSearchDAO;
 				break;
 			case MENSILE:
 				model = StatisticaMensile.model().STATISTICA_BASE;
-				dao = this.statMensileSearchDAO;
+				this.dao = this.statMensileSearchDAO;
 				break;
 			case ORARIA:
 				model = StatisticaOraria.model().STATISTICA_BASE;
-				dao = this.statOrariaSearchDAO;
+				this.dao = this.statOrariaSearchDAO;
 				break;
 			case SETTIMANALE:
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
-				dao = this.statSettimanaleSearchDAO;
+				this.dao = this.statSettimanaleSearchDAO;
 				break;
 			}
 			
@@ -5399,7 +5692,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IField credenzialeFieldGroupBy = this.getCredenzialeFieldGroupBy(this.distribSaSearch, model);
 			if(forceErogazione || forceFruizione){
 				if(forceErogazione){
-					gByExprErogazione = createDistribuzioneServizioApplicativoExpression(dao,model,false,
+					gByExprErogazione = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 							forceErogazione,false);	
 					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
@@ -5419,7 +5712,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 				}
 				if(forceFruizione){
-					gByExprFruizione = createDistribuzioneServizioApplicativoExpression(dao,model,false,
+					gByExprFruizione = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 							false,forceFruizione);	
 					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
@@ -5438,7 +5731,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			else{
 				// Lascio else solo se si vuole tornare indietro come soluzione
-				gByExpr = createDistribuzioneServizioApplicativoExpression(dao,model,false,
+				gByExpr = createDistribuzioneServizioApplicativoExpression(this.dao,model,false,
 						false, false);	
 				gByExpr.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 				
@@ -5485,7 +5778,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				if(unionExprErogatore==null || unionExprFruitore==null){
 					// Espressione finta per usare l'ordinamento
-					fakeExpr = dao.newExpression();
+					fakeExpr = this.dao.newExpression();
 					unionExprFake = new UnionExpression(fakeExpr);
 					unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
 							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 
@@ -5510,7 +5803,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				unionExpr.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 				
 				// Espressione finta per usare l'ordinamento
-				fakeExpr = dao.newExpression();
+				fakeExpr = this.dao.newExpression();
 				unionExprFake = new UnionExpression(fakeExpr);
 				unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
 						StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 
@@ -5756,8 +6049,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(start != null)
 				union.setLimit(limit);
 
-			List<Map<String, Object>> list = dao.union(union, uExpressions);
-
+			this.timeoutEvent = false;
+			
+			List<Map<String, Object>> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.dao.union(union, uExpressions);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, uExpressions)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				}
+			}
 			if (list != null) {
 
 				// List<Object[]> list = q.getResultList();
@@ -6191,7 +6508,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		StatisticaModel model = null;
 		StatisticaContenutiModel modelContenuti = null;
-		IServiceSearchWithoutId<?> dao = null;
+//		IServiceSearchWithoutId<?> dao = null;
 
 		StatisticType tipologia = this.statistichePersonalizzateSearch.getModalitaTemporale(); 
 		try {
@@ -6199,22 +6516,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			case GIORNALIERA:
 				model = StatisticaGiornaliera.model().STATISTICA_BASE;
 				modelContenuti = StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI;
-				dao = this.statGiornaliereSearchDAO;
+				this.dao = this.statGiornaliereSearchDAO;
 				break;
 			case MENSILE:
 				model = StatisticaMensile.model().STATISTICA_BASE;
 				modelContenuti = StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI;
-				dao = this.statMensileSearchDAO;
+				this.dao = this.statMensileSearchDAO;
 				break;
 			case ORARIA:
 				model = StatisticaOraria.model().STATISTICA_BASE;
 				modelContenuti = StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI;
-				dao = this.statOrariaSearchDAO;
+				this.dao = this.statOrariaSearchDAO;
 				break;
 			case SETTIMANALE:
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
 				modelContenuti = StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI;
-				dao = this.statSettimanaleSearchDAO;
+				this.dao = this.statSettimanaleSearchDAO;
 				break;
 
 			}
@@ -6237,7 +6554,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 
-			IExpression gByExpr = createDistribuzionePersonalizzataExpression(dao,
+			IExpression gByExpr = createDistribuzionePersonalizzataExpression(this.dao,
 					model, modelContenuti, isCount);
 
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(modelContenuti.RISORSA_VALORE);
@@ -6252,7 +6569,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			unionExpr.addSelectField(modelContenuti.RISORSA_VALORE, "nome_risorsa");
 
 			// Espressione finta per usare l'ordinamento
-			IExpression fakeExpr = dao.newExpression();
+			IExpression fakeExpr = this.dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
 			unionExprFake.addSelectField(new ConstantField("nome_risorsa", 
 					StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,modelContenuti.RISORSA_VALORE.getFieldType()), "nome_risorsa");
@@ -6358,7 +6675,32 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(isPaginated)
 				union.setLimit(limit);
 
-			List<Map<String, Object>> list = dao.union(union, unionExpr, unionExprFake);
+			this.timeoutEvent = false;
+			
+			List<Map<String, Object>> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.dao.union(union, unionExpr, unionExprFake);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.union(union, unionExpr, unionExprFake)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof NotFoundException) {
+						throw (NotFoundException) e.getCause();
+					}
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					StatisticheGiornaliereService.log.error(e.getMessage(), e);
+				}
+			}
 			List<ResDistribuzione> res = new ArrayList<ResDistribuzione>();
 			//			Hashtable<String, ResDistribuzione> map = new Hashtable<String, ResDistribuzione>();
 			if (list != null) {
@@ -6575,7 +6917,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		StatisticaModel model = null;
 		StatisticaContenutiModel modelContenuti = null;
-		IServiceSearchWithoutId<?> dao = null;
+//		IServiceSearchWithoutId<?> dao = null;
 
 		StatisticType tipologia = this.statistichePersonalizzateSearch.getModalitaTemporale(); 
 		try {
@@ -6583,22 +6925,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			case GIORNALIERA:
 				model = StatisticaGiornaliera.model().STATISTICA_BASE;
 				modelContenuti = StatisticaGiornaliera.model().STATISTICA_GIORNALIERA_CONTENUTI;
-				dao = this.statGiornaliereSearchDAO;
+				this.dao = this.statGiornaliereSearchDAO;
 				break;
 			case MENSILE:
 				model = StatisticaMensile.model().STATISTICA_BASE;
 				modelContenuti = StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI;
-				dao = this.statMensileSearchDAO;
+				this.dao = this.statMensileSearchDAO;
 				break;
 			case ORARIA:
 				model = StatisticaOraria.model().STATISTICA_BASE;
 				modelContenuti = StatisticaOraria.model().STATISTICA_ORARIA_CONTENUTI;
-				dao = this.statOrariaSearchDAO;
+				this.dao = this.statOrariaSearchDAO;
 				break;
 			case SETTIMANALE:
 				model = StatisticaSettimanale.model().STATISTICA_BASE;
 				modelContenuti = StatisticaSettimanale.model().STATISTICA_SETTIMANALE_CONTENUTI;
-				dao = this.statSettimanaleSearchDAO;
+				this.dao = this.statSettimanaleSearchDAO;
 				break;
 
 			}
@@ -6621,7 +6963,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}
 
-			IExpression expr = createAndamentoTemporalePersonalizzatoExpression(dao, model, modelContenuti, isCount);
+			IExpression expr = createAndamentoTemporalePersonalizzatoExpression(this.dao, model, modelContenuti, isCount);
 
 			boolean isLatenza = false;	
 			boolean isLatenza_totale = false;	
@@ -6696,14 +7038,61 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 			
+			this.timeoutEvent = false;
+			
 			List<Map<String, Object>> list = null;
-
 			if (!isPaginated) {
-				list = dao.groupBy(expr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+				if(this.timeoutRicerche == null) {
+					list = this.dao.groupBy(expr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+				} else {
+					try {
+						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(expr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					} catch (ExecutionException e) {
+						if(e.getCause() instanceof NotFoundException) {
+							throw (NotFoundException) e.getCause();
+						}
+						if(e.getCause() instanceof ServiceException) {
+							throw (ServiceException) e.getCause();
+						}
+						if(e.getCause() instanceof NotImplementedException) {
+							throw (NotImplementedException) e.getCause();
+						}
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					} catch (TimeoutException e) {
+						this.timeoutEvent = true;
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						return null;
+					}
+				}
 			} else {
-				IPaginatedExpression pagExpr = dao.toPaginatedExpression(expr);
+				IPaginatedExpression pagExpr = this.dao.toPaginatedExpression(expr);
 				pagExpr.offset(offset).limit(limit);
-				list = dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+				if(this.timeoutRicerche == null) {
+					list = this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]));
+				} else {
+					try {
+						list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.dao.groupBy(pagExpr, listaFunzioni.toArray(new FunctionField[listaFunzioni.size()]))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					} catch (ExecutionException e) {
+						if(e.getCause() instanceof NotFoundException) {
+							throw (NotFoundException) e.getCause();
+						}
+						if(e.getCause() instanceof ServiceException) {
+							throw (ServiceException) e.getCause();
+						}
+						if(e.getCause() instanceof NotImplementedException) {
+							throw (NotImplementedException) e.getCause();
+						}
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+					} catch (TimeoutException e) {
+						this.timeoutEvent = true;
+						StatisticheGiornaliereService.log.error(e.getMessage(), e);
+						return null;
+					}
+				}
 			}
 
 			// supporto
@@ -7803,5 +8192,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 		}
 		return list;
+	}
+	
+	@Override
+	public boolean isTimeoutEvent() {
+		return this.timeoutEvent;
 	}
 }

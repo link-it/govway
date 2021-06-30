@@ -583,9 +583,17 @@ public class ConsoleHelper implements IConsoleHelper {
 					//this.mapParametri.put(partName, bodyPart.getInputStream());
 					list.add(bodyPart.getInputStream());
 					String fileName = getBodyPartFileName(bodyPart);
-					if(fileName != null)
-						this.mapNomiFileParametri.put(partName, Arrays.asList(fileName)); // TODO controllare il contenuto di una post/get multipart con file multipli
-
+					if(fileName != null) {
+						List<String> nomiFiles = null;
+						if(this.mapNomiFileParametri.containsKey(partName)) {
+							nomiFiles = this.mapNomiFileParametri.get(partName);
+						} else {
+							nomiFiles = new ArrayList<String>();
+							this.mapNomiFileParametri.put(partName, nomiFiles);
+						}
+						
+						nomiFiles.add(fileName);
+					}
 					//}
 					//else throw new Exception("Parametro ["+partName+"] Duplicato.");
 				}

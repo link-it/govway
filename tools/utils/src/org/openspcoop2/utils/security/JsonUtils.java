@@ -30,6 +30,7 @@ import java.util.Properties;
 
 import javax.crypto.SecretKey;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
@@ -356,6 +357,36 @@ public class JsonUtils {
 		}
 		return null;
 	}
+	public static final String RSSEC_KEY_STORE_TYPE_SECRET = "secret";
+	public static String getSecret(Properties props, org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algorithm) throws Exception {
+		if(props.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_TYPE)) {
+			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
+			if(RSSEC_KEY_STORE_TYPE_SECRET.equalsIgnoreCase(type)) { // customized
+				if(algorithm!=null) {
+					if(algorithm.name().toLowerCase().startsWith("hs")) {
+						String passwordKey = props.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD);
+						if(passwordKey!=null && StringUtils.isNotEmpty(passwordKey)) {
+							return passwordKey;
+						}
+					}
+				}
+				else {
+					if(props.containsKey(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM)) {
+						
+						String algo = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
+						if(algo!=null && algo.toLowerCase().startsWith("hs")) {
+							String passwordKey = props.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD);
+							if(passwordKey!=null && StringUtils.isNotEmpty(passwordKey)) {
+								return passwordKey;
+							}
+						}
+						
+					}			
+				}
+			}
+		}
+		return null;
+	}
 	
 	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props) throws Exception {
 		String algorithm = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
@@ -387,6 +418,20 @@ public class JsonUtils {
 				throw new Exception("(JCEKS) JwsSignatureProvider init failed; check signature algorithm ("+algorithm+")");
 			}
 			return provider;
+		}
+		else {
+			String secret = getSecret(props, algorithm);
+			if(secret!=null) {
+				if(algorithm==null || "".equals(algorithm)) {
+					throw new Exception("(Secret) Signature Algorithm undefined");
+				}
+				byte[] encoded = secret.getBytes();
+				JwsSignatureProvider provider = JwsUtils.getHmacSignatureProvider(encoded, algorithm);
+				if(provider==null) {
+					throw new Exception("(Secret) JwsSignatureProvider init failed; check signature algorithm ("+algorithm+")");
+				}
+				return provider;
+			}
 		}
 		return null;
 	}
@@ -420,6 +465,20 @@ public class JsonUtils {
 				throw new Exception("(JCEKS) JwsSignatureVerifier init failed; check signature algorithm ("+algorithm+")");
 			}
 			return verifier;
+		}
+		else {
+			String secret = getSecret(props, algorithm);
+			if(secret!=null) {
+				if(algorithm==null || "".equals(algorithm)) {
+					throw new Exception("(Secret) Signature Algorithm undefined");
+				}
+				byte[] encoded = secret.getBytes();
+				JwsSignatureVerifier verifier = JwsUtils.getHmacSignatureVerifier(encoded, algorithm);
+				if(verifier==null) {
+					throw new Exception("(Secret) JwsSignatureVerifier init failed; check signature algorithm ("+algorithm+")");
+				}
+				return verifier;
+			}
 		}
 		return null;
 	}

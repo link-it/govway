@@ -113,4 +113,7 @@ public class DistribuzioneSADM extends BaseDataModel<String, ResDistribuzione, I
 		this.visualizzaComandiExport = visualizzaComandiExport;
 	}
 	
+	public boolean isTimeoutEvent(){
+		return this.getDataProvider().isTimeoutEvent();
+	}
 }

@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -119,6 +122,7 @@ import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.transazioni.bean.DumpMessaggioBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
@@ -135,6 +139,10 @@ import org.slf4j.Logger;
  *
  */
 public class TransazioniService implements ITransazioniService {
+	
+	private boolean timeoutEvent = false;
+	private Integer timeoutRicerche = null;
+	private Integer timeoutRicercheLive = null;
 
 	private transient Logger log = null;
 
@@ -387,6 +395,9 @@ public class TransazioniService implements ITransazioniService {
 			
 			this.initForceIndex(monitorProperties);
 			
+			this.timeoutRicerche = monitorProperties.getIntervalloTimeoutRicercaTransazioniStorico();
+			this.timeoutRicercheLive = monitorProperties.getIntervalloTimeoutRicercaTransazioniLive();
+			
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
@@ -464,6 +475,9 @@ public class TransazioniService implements ITransazioniService {
 			this.isAttivoSqlFilterTransazioniIntegrationManager = monitorProperties.isAttivoSqlFilterTransazioniIntegrationManager();
 			
 			this.initForceIndex(monitorProperties);
+			
+			this.timeoutRicerche = monitorProperties.getIntervalloTimeoutRicercaTransazioniStorico();
+			this.timeoutRicercheLive = monitorProperties.getIntervalloTimeoutRicercaTransazioniLive();
 			
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
@@ -561,7 +575,29 @@ public class TransazioniService implements ITransazioniService {
 			
 			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
 			
-			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
+			this.timeoutEvent = false;
+			
+			List<Transazione> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.transazioniSearchDAO.findAll(pagExpr);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.transazioniSearchDAO.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					this.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					this.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					this.log.error(e.getMessage(), e);
+				}
+			}
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
 					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
@@ -616,7 +652,29 @@ public class TransazioniService implements ITransazioniService {
 			
 			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
 			
-			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
+			this.timeoutEvent = false;
+			
+			List<Transazione> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.transazioniSearchDAO.findAll(pagExpr);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.transazioniSearchDAO.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					this.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					this.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					this.log.error(e.getMessage(), e);
+				}
+			}
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
 					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
@@ -731,7 +789,29 @@ public class TransazioniService implements ITransazioniService {
 			
 			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
 			
-			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
+			this.timeoutEvent = false;
+			
+			List<Transazione> list = null;
+			if(this.timeoutRicerche == null) {
+				list = this.transazioniSearchDAO.findAll(pagExpr);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.transazioniSearchDAO.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					this.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					this.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					this.log.error(e.getMessage(), e);
+				}
+			}
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
 					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
@@ -803,7 +883,29 @@ public class TransazioniService implements ITransazioniService {
 			
 			TransazioniIndexUtils.enableSoloColonneIndicizzateFullIndexSearch(pagExpr);
 			
-			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
+			this.timeoutEvent = false;
+			
+			List<Transazione> list = null;
+			if(this.timeoutRicercheLive == null) {
+				list = this.transazioniSearchDAO.findAll(pagExpr);
+			} else {
+				try {
+					list = ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.transazioniSearchDAO.findAll(pagExpr)).get(this.timeoutRicercheLive.longValue(), TimeUnit.SECONDS);
+				} catch (InterruptedException e) {
+					this.log.error(e.getMessage(), e);
+				} catch (ExecutionException e) {
+					if(e.getCause() instanceof ServiceException) {
+						throw (ServiceException) e.getCause();
+					}
+					if(e.getCause() instanceof NotImplementedException) {
+						throw (NotImplementedException) e.getCause();
+					}
+					this.log.error(e.getMessage(), e);
+				} catch (TimeoutException e) {
+					this.timeoutEvent = true;
+					this.log.error(e.getMessage(), e);
+				}
+			}
 
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
@@ -3885,5 +3987,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		return list;
+	}
+	
+	@Override
+	public boolean isTimeoutEvent() {
+		return this.timeoutEvent;
 	}
 }

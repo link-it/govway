@@ -752,4 +752,8 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		
 		return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_FILE_NAME;
 	}
+	
+	public boolean isTimeoutEvent(){
+		return ((IStatisticheGiornaliere)this.service).isTimeoutEvent();
+	}
 }

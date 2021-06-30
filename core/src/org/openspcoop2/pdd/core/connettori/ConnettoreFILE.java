@@ -306,23 +306,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 
-			// Aggiunga del SoapAction Header in caso di richiesta SOAP
-			if(this.isSoap && this.sbustamentoSoap == false){
-				if(this.debug)
-					this.logger.debug("Impostazione soap action...");
-				this.soapAction = soapMessageRequest.getSoapAction();
-				if(this.soapAction==null){
-					this.soapAction="\"OpenSPCoop\"";
-				}
-				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
-					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
-					setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, this.logger, propertiesTrasportoDebug);
-				}
-				if(this.debug)
-					this.logger.info("SOAP Action inviata ["+this.soapAction+"]",false);
-			}
-			
-					
+				
 			// Impostazione Proprieta del trasporto
 			if(this.debug)
 				this.logger.debug("Impostazione header di trasporto...");
@@ -343,6 +327,37 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 					setRequestHeader(key, values, this.logger, propertiesTrasportoDebug);
 				}
 			}
+			
+			
+			
+			
+			
+			// Aggiunta del SoapAction Header in caso di richiesta SOAP
+			// spostato sotto il forwardHeader per consentire alle trasformazioni di modificarla
+			if(this.isSoap && this.sbustamentoSoap == false){
+				if(this.debug)
+					this.logger.debug("Impostazione soap action...");
+				boolean existsTransportProperties = false;
+				if(TransportUtils.containsKey(this.propertiesTrasporto, Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION)){
+					this.soapAction = TransportUtils.getFirstValue(this.propertiesTrasporto, Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
+					existsTransportProperties = (this.soapAction!=null);
+				}
+				if(!existsTransportProperties) {
+					this.soapAction = soapMessageRequest.getSoapAction();
+				}
+				if(this.soapAction==null){
+					this.soapAction="\"OpenSPCoop\"";
+				}
+				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType()) && !existsTransportProperties){
+					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
+					setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, this.logger, propertiesTrasportoDebug);
+				}
+				if(this.debug)
+					this.logger.info("SOAP Action inviata ["+this.soapAction+"]",false);
+			}
+			
+			
+			
 			
 					
 			// Spedizione byte

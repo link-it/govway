@@ -1495,5 +1495,4 @@ Context, Cloneable {
 	public void setLivelloRicerca(int livelloRicerca) {
 		this.livelloRicerca = livelloRicerca;
 	}
-	
 }

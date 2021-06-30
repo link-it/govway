@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+   <soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+    
+   <soapenv:Header
+xmlns:xsd="http://services.samples/xsd"
+xmlns:xsd2="http://services.samples/xsd"
+xmlns="AltroperTest"   
+   >
+   <xsd:skcotSyub>
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>
+</xsd:skcotSyub>
+</soapenv:Header
+>     
+    <!-- TEST -->
+    
+<soapenv:Body>
+    <!-- TEST -->
+<xsd:skcotSyub
+xmlns:xsd="http://services.samples/xsd"
+xmlns:xsd2="http://services.samples/xsd"
+xmlns="AltroperTest"
+>
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>
+<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>8030</emulov></redro>
+<redro><lobmys>SUN</lobmys><DIreyub>indika</DIreyub><ecirp>14.56</ecirp><emulov>500</emulov></redro>
+</xsd:skcotSyub>
+</soapenv:Body>
+</soapenv:Envelope>

@@ -2386,7 +2386,7 @@ public final class Monitor extends Action {
 												sa = saCore.getServizioApplicativo(idSA);
 											} catch (Exception notFound) {}
 											if(sa!=null) {
-												endpointConnettore = monitorHelper.getLabelConnettore(sa.getInvocazioneServizio());
+												endpointConnettore = monitorHelper.getLabelConnettore(sa.getInvocazioneServizio(),false,false);
 												mapEndpointConnettori.put(keyPorta, endpointConnettore);
 											}
 										}

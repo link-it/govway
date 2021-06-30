@@ -115,7 +115,12 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 							if(AbstractBaseOpenSPCoop2MessageDynamicContent.soapReader) {
 								this.soapStreamReader = new OpenSPCoop2MessageSoapStreamReader(messageFactory,
 										this.contentType, seq, AbstractBaseOpenSPCoop2MessageDynamicContent.soapReaderBufferThresholdKb);
-								seq = this.soapStreamReader.read();
+								try {
+									this.soapStreamReader.read();
+								}finally {
+									// anche in caso di eccezione devo cmq aggiornare is
+									seq = this.soapStreamReader.getBufferedInputStream();
+								}
 							}
 						}
 						else {

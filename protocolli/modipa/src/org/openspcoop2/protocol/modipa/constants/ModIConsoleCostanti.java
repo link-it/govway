@@ -74,6 +74,7 @@ public class ModIConsoleCostanti {
 	
     public static final String MODIPA_KEYSTORE_ARCHIVE_LABEL = "Archivio";
 	public static final String MODIPA_KEYSTORE_ARCHIVE_ID = ModICostanti.MODIPA_KEYSTORE_ARCHIVE;
+	public static final String MODIPA_KEYSTORE_ARCHIVE_NOTE_UPDATE = "<b>Attenzione:</b> Se i parametri di accesso al nuovo archivio differiscono rispetto a quello precedentemente caricato, <BR/> devono essere aggiornati, ritornando alla pagina precente, prima di procedere con il caricamento del nuovo archivio.";
 	
 	public static final String MODIPA_KEYSTORE_PATH_LABEL = "Path";
 	public static final String MODIPA_KEYSTORE_PATH_ID = ModICostanti.MODIPA_KEYSTORE_PATH;

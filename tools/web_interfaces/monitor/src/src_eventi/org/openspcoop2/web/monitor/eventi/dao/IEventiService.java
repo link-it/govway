@@ -33,4 +33,5 @@ import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
  */
 public interface IEventiService extends ISearchFormService<EventoBean,Long,EventiSearchForm> {
 
+	public boolean isTimeoutEvent() ;
 }

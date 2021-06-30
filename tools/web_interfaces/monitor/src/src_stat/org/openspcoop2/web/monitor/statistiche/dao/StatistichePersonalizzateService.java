@@ -23,10 +23,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import org.slf4j.Logger;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.Operation;
+import org.openspcoop2.core.commons.search.PortType;
+import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteSpecificaServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IOperationServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IPortTypeServiceSearch;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.plugins.IdConfigurazioneServizio;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.PluginServizioAzioneCompatibilita;
+import org.openspcoop2.core.plugins.PluginServizioCompatibilita;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.core.plugins.dao.IDBConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
@@ -39,17 +60,12 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
-import org.openspcoop2.core.plugins.IdConfigurazioneServizio;
-import org.openspcoop2.core.plugins.Plugin;
-import org.openspcoop2.core.plugins.PluginServizioAzioneCompatibilita;
-import org.openspcoop2.core.plugins.PluginServizioCompatibilita;
-import org.openspcoop2.core.plugins.constants.TipoPlugin;
-import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
-import org.openspcoop2.core.plugins.dao.IDBConfigurazioneServizioAzioneServiceSearch;
-import org.openspcoop2.core.plugins.dao.IPluginServiceSearch;
+import org.openspcoop2.monitor.engine.config.BasicServiceLibrary;
+import org.openspcoop2.monitor.engine.config.BasicServiceLibraryReader;
+import org.openspcoop2.monitor.engine.config.StatisticsServiceLibrary;
+import org.openspcoop2.monitor.engine.config.StatisticsServiceLibraryReader;
+import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
+import org.openspcoop2.monitor.engine.config.TransactionServiceLibraryReader;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.engine.config.statistiche.IdConfigurazioneServizioAzione;
 import org.openspcoop2.monitor.engine.config.statistiche.IdConfigurazioneStatistica;
@@ -57,28 +73,15 @@ import org.openspcoop2.monitor.engine.config.statistiche.dao.IConfigurazioneStat
 import org.openspcoop2.monitor.engine.config.statistiche.dao.IConfigurazioneStatisticaServiceSearch;
 import org.openspcoop2.monitor.engine.config.statistiche.dao.IDBConfigurazioneStatisticaServiceSearch;
 import org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager;
-import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
-import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.commons.search.Operation;
-import org.openspcoop2.core.commons.search.PortType;
-import org.openspcoop2.core.commons.search.Soggetto;
-import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
-import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteSpecificaServiceSearch;
-import org.openspcoop2.core.commons.search.dao.IOperationServiceSearch;
-import org.openspcoop2.core.commons.search.dao.IPortTypeServiceSearch;
-import org.openspcoop2.monitor.engine.config.BasicServiceLibrary;
-import org.openspcoop2.monitor.engine.config.BasicServiceLibraryReader;
-import org.openspcoop2.monitor.engine.config.StatisticsServiceLibrary;
-import org.openspcoop2.monitor.engine.config.StatisticsServiceLibraryReader;
-import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
-import org.openspcoop2.monitor.engine.config.TransactionServiceLibraryReader;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
-import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
+import org.slf4j.Logger;
 
 /**
  * StatistichePersonalizzateService
@@ -92,6 +95,9 @@ public class StatistichePersonalizzateService implements
 IStatisticaPersonalizzataService {
 
 	private static Logger log = LoggerManager.getPddMonitorSqlLogger(); 
+	
+	private boolean timeoutEvent = false;
+	private Integer timeoutRicerche = null;
 
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
 
@@ -127,8 +133,8 @@ IStatisticaPersonalizzataService {
 			this.confServAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 			this.pluginsServiceSearchDAO = this.basePluginsServiceManager.getPluginServiceSearch();
-			this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((org.openspcoop2.core.plugins.dao.IServiceManager) this.basePluginsServiceManager),
-					((org.openspcoop2.core.commons.search.dao.IServiceManager) this.utilsServiceManager), true);
+			this.basicServiceLibraryReader = new BasicServiceLibraryReader( (this.basePluginsServiceManager),
+					(this.utilsServiceManager), true);
 			
 			// init Service Manager utils
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(StatistichePersonalizzateService.log)
@@ -146,10 +152,9 @@ IStatisticaPersonalizzataService {
 							StatistichePersonalizzateService.log);
 			this.statisticaDAO = this.statistichePluginsServiceManager.getConfigurazioneStatisticaService();
 			this.statisticaSearchDAO = this.statistichePluginsServiceManager.getConfigurazioneStatisticaServiceSearch();
-			this.statisticsServiceLibraryReader = 	new StatisticsServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager)
-					this.statistichePluginsServiceManager), true);
+			this.statisticsServiceLibraryReader = 	new StatisticsServiceLibraryReader( (this.statistichePluginsServiceManager), true);
 			
-			boolean attivoModuloTransazioniPersonalizzate = PddMonitorProperties.getInstance(log).isAttivoModuloTransazioniPersonalizzate();
+			boolean attivoModuloTransazioniPersonalizzate = PddMonitorProperties.getInstance(StatistichePersonalizzateService.log).isAttivoModuloTransazioniPersonalizzate();
 			if(attivoModuloTransazioniPersonalizzate){
 				
 				// init Service Manager plugins transazioni
@@ -157,11 +162,11 @@ IStatisticaPersonalizzataService {
 						.getServiceManager(
 								org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(),
 								StatistichePersonalizzateService.log);
-				this.transactionServiceLibraryReader = 	new TransactionServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager)
-						this.transazioniPluginsServiceManager), true);
+				this.transactionServiceLibraryReader = 	new TransactionServiceLibraryReader( (this.transazioniPluginsServiceManager), true);
 				
 			}
 			
+			this.timeoutRicerche = PddMonitorProperties.getInstance(StatistichePersonalizzateService.log).getIntervalloTimeoutRicercaStatistiche();
 			
 		} catch (Exception e) {
 			StatistichePersonalizzateService.log.error(e.getMessage(), e);
@@ -218,9 +223,31 @@ IStatisticaPersonalizzataService {
 
 				IPaginatedExpression pagExpr = this.statisticaSearchDAO
 						.toPaginatedExpression(expr);
-				return this.statisticaSearchDAO.findAll(pagExpr.offset(start)
-						.limit(limit));
-
+				
+				this.timeoutEvent = false;
+				
+				if(this.timeoutRicerche == null) {
+					return this.statisticaSearchDAO.findAll(pagExpr.offset(start)
+							.limit(limit));
+				} else {
+					try {
+						return ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.statisticaSearchDAO.findAll(pagExpr.offset(start)
+								.limit(limit))).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						StatistichePersonalizzateService.log.error(e.getMessage(), e);
+					} catch (ExecutionException e) {
+						if(e.getCause() instanceof ServiceException) {
+							throw (ServiceException) e.getCause();
+						}
+						if(e.getCause() instanceof NotImplementedException) {
+							throw (NotImplementedException) e.getCause();
+						}
+						StatistichePersonalizzateService.log.error(e.getMessage(), e);
+					} catch (TimeoutException e) {
+						this.timeoutEvent = true;
+						StatistichePersonalizzateService.log.error(e.getMessage(), e);
+					}
+				}
 			}
 
 		} catch (ServiceException e) {
@@ -413,8 +440,29 @@ IStatisticaPersonalizzataService {
 
 				IPaginatedExpression pagExpr = this.statisticaSearchDAO
 						.toPaginatedExpression(expr);
-				return this.statisticaSearchDAO.findAll(pagExpr);
-
+				
+				this.timeoutEvent = false;
+				
+				if(this.timeoutRicerche == null) {
+					return this.statisticaSearchDAO.findAll(pagExpr);
+				} else {
+					try {
+						return ThreadExecutorManager.getClientPoolExecutorRicerche().submit(() -> this.statisticaSearchDAO.findAll(pagExpr)).get(this.timeoutRicerche.longValue(), TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						StatistichePersonalizzateService.log.error(e.getMessage(), e);
+					} catch (ExecutionException e) {
+						if(e.getCause() instanceof ServiceException) {
+							throw (ServiceException) e.getCause();
+						}
+						if(e.getCause() instanceof NotImplementedException) {
+							throw (NotImplementedException) e.getCause();
+						}
+						StatistichePersonalizzateService.log.error(e.getMessage(), e);
+					} catch (TimeoutException e) {
+						this.timeoutEvent = true;
+						StatistichePersonalizzateService.log.error(e.getMessage(), e);
+					}
+				}
 			}
 
 		} catch (ServiceException e) {
@@ -477,7 +525,7 @@ IStatisticaPersonalizzataService {
 			if(basicServiceLibrary!=null){
 				TransactionServiceLibrary transactionServiceLibrary = null;
 				if(this.transactionServiceLibraryReader!=null){
-					transactionServiceLibrary = this.transactionServiceLibraryReader.readConfigurazioneTransazione(basicServiceLibrary, log);
+					transactionServiceLibrary = this.transactionServiceLibraryReader.readConfigurazioneTransazione(basicServiceLibrary, StatistichePersonalizzateService.log);
 				}
 				StatisticsServiceLibrary statsServiceLibrary = 
 						this.statisticsServiceLibraryReader.readConfigurazioneStatistiche(basicServiceLibrary, transactionServiceLibrary, StatistichePersonalizzateService.log);
@@ -936,5 +984,10 @@ IStatisticaPersonalizzataService {
 		}
 		
 		return list;
+	}
+	
+	@Override
+	public boolean isTimeoutEvent() {
+		return this.timeoutEvent;
 	}
 }

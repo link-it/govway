@@ -110,4 +110,8 @@ public class StatsPersonalizzateDM extends BaseDataModel<String, ResDistribuzion
 		this.visualizzaComandiExport = visualizzaComandiExport;
 	}
 	
+	public boolean isTimeoutEvent(){
+		return this.getDataProvider().isTimeoutEvent();
+	}
+	
 }

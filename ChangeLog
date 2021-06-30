@@ -1,3 +1,111 @@
+2021-06-28  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità OP-1206
+	Nelle ricerche in cui è configurabile un intervallo temporale è stata aggiunta una gestione del timeout, 
+	in modo da segnalare all'utente di restringere l'intervallo di ricerca poichè i parametri indicati richiedono un tempo eccessivo di elaborazione.
+	Nell'intervento è stata realizzata anche un'ottimizzazione riguardante la generazione dei report statistici dove sono stati eliminati gli accessi duplicati alla base dati.
+
+2021-06-25  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.4.p2
+
+2021-06-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto bug OP-1221
+	Nei csv esportati tramite la funzionalità di reportistica relativa ai dati delle configurazioni non venivano riportati i soggetti e gli applicativi autorizzati nel controllo degli accessi delle erogazioni.
+	Inoltre in presenza di connettori multipli non veniva riportato il nome del connettore.
+
+2021-06-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto bug OP-1220
+	I connettori multipli, definiti su di un'erogazione, non venivano cancellati dalla base dati in seguito all'eliminazione dell'erogazione.
+	L'anomalia poteva causare il fallimento di una eventuale nuova creazione della medesima erogazione appena eliminata.
+
+2021-06-25  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto bug che visualizzava erroneamente la checkbox di selezione delle consegne avvenute con connettore multiplo.
+
+2021-06-24  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto bug che non consentiva il caricamento degli allegati con struttura xml nelle API e nelle Erogazioni/Fruizioni.
+	Inoltre anche gli allegati di altro tipo, in cui il caricamento veniva completato con successo da console, venivano salvati con un contenuto corrotto.
+
+2021-06-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1218
+	Con l'introduzione della funzionalità di ottimizzazione delle connessioni, 
+	la consegna con connettore multipli 'Più Destinatari' su API Soap con profilo 'oneway' (funzionalità non attiva per default sul prodotto) falliva con un errore simile al seguente:
+	Riscontrato errore durante la gestione del messaggio [EJBUtils.sendToConsegnaContenutiApplicativi(RichiestaApplicativa)]: GESTORE_MESSAGGI, Errore di aggiornamento proprietario Messaggio INBOX/xxxx: null
+
+2021-06-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto bug sulla validazione dei token OAuth utilizzando il parser 'OpenID Connect - ID Token': 
+	gli scope presenti nell'access token non venivano identificati e quindi non erano utilizzabili per un'autorizzazione puntuale basata sugli scope.
+	Nei dettagli sul connettore abilitato nelle erogazioni e nelle fruizioni è stata aggiunta l'informazione sull'eventuale token configurato.
+
+2021-06-22  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto bug OP-1216
+	La console non consentiva l'aggiornamento delle chiavi private registrate in modalità 'Archivio' (caricate su database), 
+	relativamente alla sezione 'sicurezza messaggio' degli applicativi e delle erogazioni nel profilo ModI.
+	Inoltre in caso di installazione Multi-Tenant, gli applicativi interni di un Tenant non venivano identificati sull'erogazione di un altro Tenant, facendo fallire eventuali autorizzazioni configurate.
+
+2021-06-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1214
+	La funzionalità di negoziazione di un token è stata estesa per supportare la modalità descritta nella sezione 2.2 del RFC 7523 (https://datatracker.ietf.org/doc/html/rfc7523#section-2.2).
+	È possibile configurare la policy di negoziazione per firmare l'asserzione JWT tramite un certificato X.509 o tramite un client secret.
+	È stata inoltre aggiunta la possibilità di configurare l'autenticazione server di una token policy per accettare qualsiasi certificato.
+	Infine è stata corretta un'anomalia presente nel connettore https, dove se veniva impostata una configurazione errata (es. path di un keystore inesistente), 
+	veniva segnalato un errore generico 'no SSLSocketFactory specified' invece della motivazione puntuale.
+
+2021-06-18  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.4.p1
+
+2021-06-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1212
+	L'header HTTP SOAPAction non risultava modificabile tramite una trasformazione.
+
+2021-06-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1210
+	Con l'introduzione della funzionalità 'SOAPReader' per la lettura ottimizzata dei messaggi soap, 
+	le richieste che presentavano un ritorno a capo nel rootElement causavano un fallimento del parser il quale riporta erroneamente l'errore:
+		Caused by: org.xml.sax.SAXParseException: The end-tag for element type "rootElementName" must end with a '>' delimiter.
+	Inoltre in questi casi, se si abilitava la registrazione dei messaggi, il contenuto salvato non conteneva la parte letta dal parser e quindi il messaggio salvato risultava incompleto.
+
+2021-06-11  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Se veniva utilizzata la modalità avanzata con ambiente dedicato per la gestione e il monitoraggio e con schema dedicato per le informazioni statistiche, 
+	tra i datasource del runtime non veniva generato quello necessario al Controllo del Traffico per accedere alle informazioni statistiche.
+	Inoltre se nell'installer erano previsti archivi aggiuntivi, la configurazione dei datasource su schemi dedicati non veniva correttamente propagata.
+	Entrambe le problematiche sono state risolte.
+
+2021-06-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1208
+	Aggiunto file 'govway_transazioni_slow.log' utilizzabile per registrare le operazioni effettuate sulla base dati del tracciamento (registrazione log, controllo duplicati) che impiegano un tempo maggiore di una soglia prefissata.
+
+2021-06-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Su un'installazione Tomcat, la sezione 'Runtime' non visualizzava correttamente le informazioni relative alle connessioni attive del database di configurazione
+
 2021-06-09  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

@@ -5698,7 +5698,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										// uuid
 										//String paramIdentificazioneDataSource = tmp[1].split(":")[1];
 										// jndi
-										String paramIdentificazioneDataSource = tmp[2].split(":")[1];
+										//String paramIdentificazioneDataSource = tmp[2].split(":")[1];
+										int indexOf_paramIdentificazioneDataSource = tmp[2].indexOf(":");
+										String paramIdentificazioneDataSource = tmp[2].substring(indexOf_paramIdentificazioneDataSource+1, tmp[2].length());
 										
 										String statoInfo = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
 												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),

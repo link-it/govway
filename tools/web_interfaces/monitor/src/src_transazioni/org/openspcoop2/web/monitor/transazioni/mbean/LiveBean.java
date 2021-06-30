@@ -73,6 +73,10 @@ public class LiveBean extends DynamicPdDBean<Transazione,String,ISearchFormServi
 	@Override
 	public void setSearch(BaseSearchForm search) {
 		this.search = search;
+		
+		if (this.search instanceof TransazioniSearchForm)
+			((TransazioniSearchForm) this.search)
+			.setTransazioniService(((ITransazioniService)this.service));
 	}
 
 	public boolean isPollEnabled() {
@@ -115,5 +119,15 @@ public class LiveBean extends DynamicPdDBean<Transazione,String,ISearchFormServi
 			return this.list;
 		}
 		return new ArrayList<TransazioneBean>();
+	}
+	
+	public boolean isTimeoutEvent(){
+		return (((ITransazioniService)this.service)).isTimeoutEvent();
+	}
+	
+	public String submit() {
+		this.list = null;
+		
+		return "transazioni";
 	}
 }

@@ -24,7 +24,7 @@
 			<property name="policy.retrieveToken.mode" />
 		</item>
 
-		<item type="text" name="endpointURL" label="URL" required="true" default="http://">
+		<item type="textarea" name="endpointURL" label="URL" required="true" default="http://">
 			<property name="policy.retrieveToken.endpoint.url" />
 		</item>
 
@@ -58,7 +58,12 @@
 		</subsection>
 
 		<subsection label="Autenticazione Client">
-
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="usernamePassword"/>
+					<equals name="retrieveTokenMethod" value="clientCredentials"/>
+				</condition>
+			</conditions>
 			<item type="checkbox" name="autenticazioneEndpointBasic" label="Basic" defaultSelected="false" reloadOnChange="true">
 				<!--  non si puo' verificare una condizione successiva. Comunque selezionando basic, sparisce bearer.
 				<conditions>
@@ -104,7 +109,7 @@
 				</conditions>
 			      	<property name="policy.retrieveToken.endpoint.basic.asAuthorizationHeader" />
 			</item>
-			<item type="text" name="autenticazioneEndpointBearerToken" label="Token" required="true">
+			<item type="textarea" name="autenticazioneEndpointBearerToken" label="Token" required="true">
 				<conditions>
 					<condition and="true">
 						<selected name="autenticazioneEndpointBearer"/>
@@ -117,6 +122,84 @@
 				<property name="policy.retrieveToken.endpoint.https.stato" />
 			</item>
 	
+		</subsection>
+
+		<subsection label="JWT Claims">
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="jwtSymmetricSignatureAlgorithm" label="Signature Algorithm" >
+				<conditions>
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.signature.algorithm"/>
+			</item>
+			<item type="select" name="jwtAsymmetricSignatureAlgorithm" label="Signature Algorithm" >
+				<conditions>
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.signature.algorithm"/>
+			</item>
+
+			<item type="text" name="jwtClientId" label="Client ID" required="true">
+			      	<property name="policy.retrieveToken.jwt.clientId" />
+			</item>
+			<item type="text" name="jwtSecret" label="Client Secret" required="true">
+				<conditions>
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_clientSecret"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.clientSecret" />
+			</item>
+
+			<item type="text" name="jwtAudience" label="Audience" required="true">
+			    <property name="policy.retrieveToken.jwt.audience" />
+			</item>
+			<item type="text" name="jwtIssuer" label="Issuer" required="false">
+			    <property name="policy.retrieveToken.jwt.issuer" />
+			</item>			
+			<item type="number" name="jwtExpTtl" label="Time to Live (secondi)" required="true"
+				note="Indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione">
+				<property name="policy.retrieveToken.jwt.expired" />
+			</item>
+		</subsection>
+
+		<subsection label="JWT Signature KeyStore">
+			<conditions>
+				<condition and="false">
+					<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="jwtKeystoreType" label="Tipo" default="jks">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+				</values>
+				<property name="policy.retrieveToken.jwt.signature.keystoreType" />
+			</item>
+			<item type="textarea" name="jwtKeystoreFile" label="File" required="true">
+				<property name="policy.retrieveToken.jwt.signature.keystoreFile" />
+			</item>
+			<item type="text" name="jwtKeystorePassword" label="Password" required="true">
+				<property name="policy.retrieveToken.jwt.signature.keystorePassword" />
+			</item>
+			<item type="text" name="jwtAliasChiavePrivata" label="Alias Chiave Privata" required="true">
+				<property name="policy.retrieveToken.jwt.signature.keyAlias" />
+			</item>
+			<item type="text" name="jwtPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+				<property name="policy.retrieveToken.jwt.signature.keyPassword" />
+			</item>
+
 		</subsection>
 	
 		<subsection label="Configurazione">
@@ -152,8 +235,17 @@
 	
 	
 		<subsection label="Autenticazione Server">
+
+			<item type="checkbox" name="endpointHttpsTrustAllCerts" label="Verifica" defaultSelected="true" reloadOnChange="true">
+				<property name="trustAllCerts" properties="sslConfig" selectedValue="false" unselectedValue="true"/>
+			</item>
 	
 			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
@@ -161,16 +253,36 @@
 				</values>
 				<property name="trustStoreType" properties="sslConfig" />
 			</item>
-			<item type="text" name="endpointHttpsTruststoreFile" label="File" required="true">
-			    <property name="trustStoreLocation" properties="sslConfig" />
+			<item type="textarea" name="endpointHttpsTruststoreFile" label="File" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<property name="trustStoreLocation" properties="sslConfig" />
 			</item>
 			<item type="text" name="endpointHttpsTruststorePassword" label="Password" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
 			      	<property name="trustStorePassword" properties="sslConfig" />
 			</item>
 			<item type="text" name="endpointHttpsTruststoreAlgoritmo" label="Algoritmo" default="PKIX" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
 			      	<property name="trustManagementAlgorithm" properties="sslConfig" />
 			</item>
 			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
 			      	<property name="trustStoreCRLs" />
 			</item>
 			
@@ -204,7 +316,7 @@
 				</values>
 				<property name="keyStoreType" properties="sslClientConfig" />
 			</item>
-			<item type="text" name="endpointHttpsClientKeystoreFile" label="File" required="true">
+			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="File" required="true">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>

@@ -67,4 +67,5 @@ public interface IStatisticaPersonalizzataService extends
 	public List<Map<String, Object>> findElencoServizi(
 			Soggetto erogatore);
 	
+	public boolean isTimeoutEvent() ;
 }

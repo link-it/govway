@@ -68,6 +68,7 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
 /**     
@@ -301,15 +302,42 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 
 	@Override
 	public void invoke(PostOutResponseContext context) throws HandlerException {
-
+		
 		if(this.initialized==false){
 			init();
 		}
 		if(this.openspcoopProperties.isTransazioniEnabled()==false) {
 			return;
 		}
-
-
+		
+		TransazioniProcessTimes times = null;
+		long timeStart = -1;
+		if(this.openspcoopProperties.isTransazioniRegistrazioneSlowLog()) {
+			times = new TransazioniProcessTimes();
+			timeStart = DateManager.getTimeMillis();
+		}
+		try {
+			invoke(context, times);
+		}finally {
+			if(times!=null) {
+				long timeEnd =  DateManager.getTimeMillis();
+				long timeProcess = timeEnd-timeStart;
+				if(timeProcess>=this.openspcoopProperties.getTransazioniRegistrazioneSlowLogThresholdMs()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(timeProcess);
+					if(times.idTransazione!=null) {
+						sb.append(" <").append(times.idTransazione).append(">");
+					}
+					sb.append(" [PostOutResponse]");
+					sb.append(" ").append(times.toString());
+					OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSlowLog().info(sb.toString());
+				}
+			}
+		}
+		
+	}
+	public void invoke(PostOutResponseContext context, TransazioniProcessTimes times) throws HandlerException {
+		
 
 
 		/* ---- Recupero contesto ----- */
@@ -327,7 +355,9 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		//System.out.println("------------- PostOutRequestHandler ("+idTransazione+")("+context.getTipoPorta().getTipo()+") -------------------");
 
 		Transaction transaction = TransactionContext.removeTransaction(idTransazione);
-		
+		if(times!=null) {
+			times.idTransazione = idTransazione;
+		}
 		
 		/* ---- Verifica Esito della Transazione per registrazione nello storico ----- */
 		
@@ -501,7 +531,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			boolean pddStateless = true;
 			PostOutResponseHandler_TransazioneUtilities transazioneUtilities = null;
 			HandlerException he = null;
+			long timeStart = -1;
 			try{
+				if(times!=null) {
+					timeStart = DateManager.getTimeMillis();
+				}
 				
 				// Stateless
 //				if ( (context.getIntegrazione()==null) ||
@@ -539,6 +573,12 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			}
 			finally {	
 
+				if(times!=null) {
+					long timeEnd =  DateManager.getTimeMillis();
+					long timeProcess = timeEnd-timeStart;
+					times.fillTransaction = timeProcess;
+				}
+				
 				// ### Gestione Controllo Congestione ###
 				// Nota: il motivo del perchè viene effettuato qua la "remove"
 				// 	     risiede nel fatto che la risposta al client è già stata data
@@ -546,8 +586,20 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				//		 Se la remove viene messa nel finally del try-catch sottostante prima della remove si "paga" 
 				//	     i tempi di attesa dell'inserimento della transazione sul database
 				if(this.openspcoopProperties.isControlloTrafficoEnabled()){
-					PostOutResponseHandler_GestioneControlloTraffico outHandler = new PostOutResponseHandler_GestioneControlloTraffico();
-					outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.log, idTransazione, transazioneDTO, context);
+					
+					try {
+						if(times!=null) {
+							timeStart = DateManager.getTimeMillis();
+						}
+						PostOutResponseHandler_GestioneControlloTraffico outHandler = new PostOutResponseHandler_GestioneControlloTraffico();
+						outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.log, idTransazione, transazioneDTO, context);
+					}finally {
+						if(times!=null) {
+							long timeEnd =  DateManager.getTimeMillis();
+							long timeProcess = timeEnd-timeStart;
+							times.controlloTraffico = timeProcess;
+						}
+					}
 				}
 				if(he!=null) {
 					throw he;
@@ -589,6 +641,9 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			if(fileTraceEnabled) {
 				FileTraceManager fileTraceManager = null;
 				try {
+					if(times!=null) {
+						timeStart = DateManager.getTimeMillis();
+					}
 					FileTraceConfig config = FileTraceConfig.getConfig(fileTraceConfig, fileTraceConfigGlobal);
 					fileTraceManager = new FileTraceManager(this.log, config);
 					fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction);
@@ -602,6 +657,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						}
 					}catch(Throwable eClean) {
 						this.log.error("["+idTransazione+"] File trace 'clean' fallito: "+eClean.getMessage(),eClean);
+					}
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.fileTrace = timeProcess;
 					}
 				}
 			}
@@ -627,72 +687,84 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	
 				/* ---- Recupero informazioni sulla modalita' di salvataggio delle tracce ----- */
 	
-				// TRACCIA RICHIESTA
 				String informazioneTracciaRichiestaDaSalvare = null;
-				if(this.salvataggioTracceManager!=null) {
-					StatoSalvataggioTracce statoTracciaRichiesta =  
-							this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRichiesta(this.log, context, transaction, transazioneDTO, pddStateless);
-					if(statoTracciaRichiesta!=null) {
-						registraTracciaRichiesta = (statoTracciaRichiesta.isCompresso()==false);
-						informazioneTracciaRichiestaDaSalvare = statoTracciaRichiesta.getInformazioneCompressa();
-					}
-					if(this.debug){
-						this.log.debug("["+idTransazione+"] Emissione traccia richiesta: "+registraTracciaRichiesta);
-						if(statoTracciaRichiesta!=null) {
-							this.log.debug("["+idTransazione+"] Informazioni Salvataggio traccia richiesta (compresso:"+statoTracciaRichiesta.isCompresso()+
-									" errore:"+statoTracciaRichiesta.isErrore()+"): "+statoTracciaRichiesta.getInformazione());
-						}
-					}
-					else{
-						if(statoTracciaRichiesta!=null && statoTracciaRichiesta.isErrore()){
-								this.log.warn("["+idTransazione+"] Informazioni Salvataggio traccia richiesta in errore: "+statoTracciaRichiesta.getInformazione());
-						}
-					}
-				}
-				
-				// TRACCIA RISPOSTA
 				String informazioneTracciaRispostaDaSalvare = null;
-				if(this.salvataggioTracceManager!=null) {
-					StatoSalvataggioTracce statoTracciaRisposta =  
-							this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRisposta(this.log, context, transaction, transazioneDTO, pddStateless);
-					if(statoTracciaRisposta!=null) {
-						registraTracciaRisposta = (statoTracciaRisposta.isCompresso()==false);
-						informazioneTracciaRispostaDaSalvare = statoTracciaRisposta.getInformazioneCompressa();
-					}
-					if(this.debug){
-						this.log.debug("["+idTransazione+"] Emissione traccia risposta: "+registraTracciaRisposta);
-						if(statoTracciaRisposta!=null) {
-							this.log.debug("["+idTransazione+"] Informazioni Salvataggio traccia risposta (compresso:"+statoTracciaRisposta.isCompresso()+
-									" errore:"+statoTracciaRisposta.isErrore()+"): "+statoTracciaRisposta.getInformazione());
-						}
-					}
-					else{
-						if(statoTracciaRisposta!=null && statoTracciaRisposta.isErrore()){
-								this.log.warn("["+idTransazione+"] Informazioni Salvataggio traccia risposta in errore: "+statoTracciaRisposta.getInformazione());
-						}
-					}
-				}
-	
-				// MESSAGGI DIAGNOSTICI
 				HashMap<DiagnosticColumnType, String> informazioniDiagnosticiDaSalvare = null;
-				if(this.salvataggioDiagnosticiManager!=null) {
-					StatoSalvataggioDiagnostici statoDiagnostici =  
-							this.salvataggioDiagnosticiManager.getInformazioniSalvataggioDiagnostici(this.log, context, transaction, transazioneDTO, pddStateless);
-					if(statoDiagnostici!=null) {
-						registrazioneMessaggiDiagnostici = (statoDiagnostici.isCompresso()==false);
-						informazioniDiagnosticiDaSalvare = statoDiagnostici.getInformazioneCompressa();
+				try {
+					if(times!=null) {
+						timeStart = DateManager.getTimeMillis();
 					}
-					if(this.debug){
-						this.log.debug("["+idTransazione+"] Emissione diagnostici: "+registrazioneMessaggiDiagnostici);
+					
+					// TRACCIA RICHIESTA
+					if(this.salvataggioTracceManager!=null) {
+						StatoSalvataggioTracce statoTracciaRichiesta =  
+								this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRichiesta(this.log, context, transaction, transazioneDTO, pddStateless);
+						if(statoTracciaRichiesta!=null) {
+							registraTracciaRichiesta = (statoTracciaRichiesta.isCompresso()==false);
+							informazioneTracciaRichiestaDaSalvare = statoTracciaRichiesta.getInformazioneCompressa();
+						}
+						if(this.debug){
+							this.log.debug("["+idTransazione+"] Emissione traccia richiesta: "+registraTracciaRichiesta);
+							if(statoTracciaRichiesta!=null) {
+								this.log.debug("["+idTransazione+"] Informazioni Salvataggio traccia richiesta (compresso:"+statoTracciaRichiesta.isCompresso()+
+										" errore:"+statoTracciaRichiesta.isErrore()+"): "+statoTracciaRichiesta.getInformazione());
+							}
+						}
+						else{
+							if(statoTracciaRichiesta!=null && statoTracciaRichiesta.isErrore()){
+									this.log.warn("["+idTransazione+"] Informazioni Salvataggio traccia richiesta in errore: "+statoTracciaRichiesta.getInformazione());
+							}
+						}
+					}
+					
+					// TRACCIA RISPOSTA
+					if(this.salvataggioTracceManager!=null) {
+						StatoSalvataggioTracce statoTracciaRisposta =  
+								this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRisposta(this.log, context, transaction, transazioneDTO, pddStateless);
+						if(statoTracciaRisposta!=null) {
+							registraTracciaRisposta = (statoTracciaRisposta.isCompresso()==false);
+							informazioneTracciaRispostaDaSalvare = statoTracciaRisposta.getInformazioneCompressa();
+						}
+						if(this.debug){
+							this.log.debug("["+idTransazione+"] Emissione traccia risposta: "+registraTracciaRisposta);
+							if(statoTracciaRisposta!=null) {
+								this.log.debug("["+idTransazione+"] Informazioni Salvataggio traccia risposta (compresso:"+statoTracciaRisposta.isCompresso()+
+										" errore:"+statoTracciaRisposta.isErrore()+"): "+statoTracciaRisposta.getInformazione());
+							}
+						}
+						else{
+							if(statoTracciaRisposta!=null && statoTracciaRisposta.isErrore()){
+									this.log.warn("["+idTransazione+"] Informazioni Salvataggio traccia risposta in errore: "+statoTracciaRisposta.getInformazione());
+							}
+						}
+					}
+		
+					// MESSAGGI DIAGNOSTICI
+					if(this.salvataggioDiagnosticiManager!=null) {
+						StatoSalvataggioDiagnostici statoDiagnostici =  
+								this.salvataggioDiagnosticiManager.getInformazioniSalvataggioDiagnostici(this.log, context, transaction, transazioneDTO, pddStateless);
 						if(statoDiagnostici!=null) {
-							this.log.debug("["+idTransazione+"] Informazioni Salvataggio diagnostici (compresso:"+statoDiagnostici.isCompresso()+
-									" errore:"+statoDiagnostici.isErrore()+"): "+statoDiagnostici.getInformazione());
+							registrazioneMessaggiDiagnostici = (statoDiagnostici.isCompresso()==false);
+							informazioniDiagnosticiDaSalvare = statoDiagnostici.getInformazioneCompressa();
+						}
+						if(this.debug){
+							this.log.debug("["+idTransazione+"] Emissione diagnostici: "+registrazioneMessaggiDiagnostici);
+							if(statoDiagnostici!=null) {
+								this.log.debug("["+idTransazione+"] Informazioni Salvataggio diagnostici (compresso:"+statoDiagnostici.isCompresso()+
+										" errore:"+statoDiagnostici.isErrore()+"): "+statoDiagnostici.getInformazione());
+							}
+						}
+						else{
+							if(statoDiagnostici!=null && statoDiagnostici.isErrore()){
+									this.log.warn("["+idTransazione+"] Informazioni Salvataggio diagnostici in errore: "+statoDiagnostici.getInformazione());
+							}
 						}
 					}
-					else{
-						if(statoDiagnostici!=null && statoDiagnostici.isErrore()){
-								this.log.warn("["+idTransazione+"] Informazioni Salvataggio diagnostici in errore: "+statoDiagnostici.getInformazione());
-						}
+				}finally {
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.processTransactionInfo = timeProcess;
 					}
 				}
 				
@@ -735,8 +807,19 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 
 				
 				// Ottiene la connessione al db
-				dbManager = DBTransazioniManager.getInstance();
-				resource = dbManager.getResource(idDominio, modulo, idTransazione);
+				try {
+					if(times!=null) {
+						timeStart = DateManager.getTimeMillis();
+					}
+					dbManager = DBTransazioniManager.getInstance();
+					resource = dbManager.getResource(idDominio, modulo, idTransazione);
+				}finally {
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.getConnection = timeProcess;
+					}
+				}
 				if(resource==null){
 					throw new Exception("Risorsa al database non disponibile");
 				}
@@ -766,7 +849,18 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				if(this.debug)
 					this.log.debug("["+idTransazione+"] inserimento transazione in corso ...");
 				
-				transazioneService.create(transazioneDTO);
+				try {
+					if(times!=null) {
+						timeStart = DateManager.getTimeMillis();
+					}
+					transazioneService.create(transazioneDTO);
+				}finally {
+					if(times!=null) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.insertTransaction = timeProcess;
+					}
+				}
 				if(this.debug)
 					this.log.debug("["+idTransazione+"] inserita transazione");
 	
@@ -776,21 +870,35 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	
 				/* ---- Inserimento dati tracce ----- */
 				
-				if( registraTracciaRichiesta && transaction.getTracciaRichiesta()!=null){
-					if(this.debug)
-						this.log.debug("["+idTransazione+"] registrazione traccia richiesta...");
-					this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRichiesta());
-					if(this.debug)
-						this.log.debug("["+idTransazione+"] registrazione traccia richiesta completata");
-				}	
-				if( registraTracciaRisposta && transaction.getTracciaRisposta()!=null){
-					if(this.debug)
-						this.log.debug("["+idTransazione+"] registrazione traccia risposta...");
-					this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRisposta());
-					if(this.debug)
-						this.log.debug("["+idTransazione+"] registrazione traccia risposta completata");
-				}	
-	
+				try {
+					timeStart = -1;
+					if( registraTracciaRichiesta && transaction.getTracciaRichiesta()!=null){
+						if(times!=null) {
+							timeStart = DateManager.getTimeMillis();
+						}
+						if(this.debug)
+							this.log.debug("["+idTransazione+"] registrazione traccia richiesta...");
+						this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRichiesta());
+						if(this.debug)
+							this.log.debug("["+idTransazione+"] registrazione traccia richiesta completata");
+					}	
+					if( registraTracciaRisposta && transaction.getTracciaRisposta()!=null){
+						if(times!=null && timeStart==-1) {
+							timeStart = DateManager.getTimeMillis();
+						}
+						if(this.debug)
+							this.log.debug("["+idTransazione+"] registrazione traccia risposta...");
+						this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRisposta());
+						if(this.debug)
+							this.log.debug("["+idTransazione+"] registrazione traccia risposta completata");
+					}	
+				}finally {
+					if(times!=null && timeStart>0) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.insertTrace = timeProcess;
+					}
+				}
 	
 	
 	
@@ -798,81 +906,104 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	
 				/* ---- Inserimento messaggi diagnostici ----- */
 				
-				if(registrazioneMessaggiDiagnostici){
-					for(int i=0; i<transaction.sizeMsgDiagnostici(); i++){
-						MsgDiagnostico msgDiagnostico = transaction.getMsgDiagnostico(i);
-						if(msgDiagnostico.getIdSoggetto()==null){
-							msgDiagnostico.setIdSoggetto(idDominio);
+				try {
+					timeStart = -1;
+					if(registrazioneMessaggiDiagnostici){
+						if(times!=null && transaction!=null && transaction.sizeMsgDiagnostici()>0) {
+							timeStart = DateManager.getTimeMillis();
 						}
-						if(this.debug)
-							this.log.debug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] ...");
-						this.msgDiagnosticiOpenSPCoopAppender.log(connection,msgDiagnostico);
-						if(this.debug)
-							this.log.debug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] completata");
+						for(int i=0; i<transaction.sizeMsgDiagnostici(); i++){
+							MsgDiagnostico msgDiagnostico = transaction.getMsgDiagnostico(i);
+							if(msgDiagnostico.getIdSoggetto()==null){
+								msgDiagnostico.setIdSoggetto(idDominio);
+							}
+							if(this.debug)
+								this.log.debug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] ...");
+							this.msgDiagnosticiOpenSPCoopAppender.log(connection,msgDiagnostico);
+							if(this.debug)
+								this.log.debug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] completata");
+						}
+					}
+				}finally {
+					if(times!=null && timeStart>0) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.insertDiagnostics = timeProcess;
 					}
 				}
-	
 	
 				
 				
 				
 				/* ---- Inserimento dump ----- */
 				
-				for(int i=0; i<transaction.sizeMessaggi(); i++){
-					Messaggio messaggio = transaction.getMessaggio(i);
-					try {
-						if(messaggio.getProtocollo()==null) {
-							messaggio.setProtocollo(transazioneDTO.getProtocollo());
-						}
-						if(messaggio.getDominio()==null) {
-							messaggio.setDominio(idDominio);
-						}
-						if(messaggio.getTipoPdD()==null) {
-							messaggio.setTipoPdD(context.getTipoPorta());
-						}
-						if(messaggio.getIdFunzione()==null) {
-							messaggio.setIdFunzione(modulo);
-						}
-						if(messaggio.getIdBusta()==null) {
-							if(context.getProtocollo()!=null) {
-								messaggio.setIdBusta(context.getProtocollo().getIdRichiesta());
-							}
-						}
-						if(messaggio.getFruitore()==null) {
-							if(context.getProtocollo()!=null) {
-								messaggio.setFruitore(context.getProtocollo().getFruitore());
-							}
-						}
-						if(messaggio.getServizio()==null) {
-							if(context.getProtocollo()!=null) {
-								IDServizio idServizio = IDServizioFactory.getInstance().
-										getIDServizioFromValuesWithoutCheck(context.getProtocollo().getTipoServizio(), 
-												context.getProtocollo().getServizio(), 
-												context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getTipo() : null, 
-												context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getNome() : null,
-												context.getProtocollo().getVersioneServizio()!=null ? context.getProtocollo().getVersioneServizio() : -1);
-								messaggio.setServizio(idServizio);
-							}
-						}
-						if(this.debug)
-							this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] ...");
-						if(this.dumpOpenSPCoopAppender instanceof org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender) {
-							((org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender)this.dumpOpenSPCoopAppender).dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
-						}
-						else {
-							this.dumpOpenSPCoopAppender.dump(connection,messaggio);
-						}
-						if(this.debug)
-							this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] completata");
-					}finally {
+				try {
+					timeStart = -1;
+					if(times!=null && transaction!=null && transaction.sizeMessaggi()>0) {
+						timeStart = DateManager.getTimeMillis();
+					}
+					for(int i=0; i<transaction.sizeMessaggi(); i++){
+						Messaggio messaggio = transaction.getMessaggio(i);
 						try {
-							if(messaggio.getBody()!=null) {
-								messaggio.getBody().unlock();
-								messaggio.getBody().clearResources();
+							if(messaggio.getProtocollo()==null) {
+								messaggio.setProtocollo(transazioneDTO.getProtocollo());
 							}
-						}catch(Throwable t){
-							this.log.error("["+idTransazione+"] errore durante il rilascio delle risorse del messaggio: "+t.getMessage(),t);
+							if(messaggio.getDominio()==null) {
+								messaggio.setDominio(idDominio);
+							}
+							if(messaggio.getTipoPdD()==null) {
+								messaggio.setTipoPdD(context.getTipoPorta());
+							}
+							if(messaggio.getIdFunzione()==null) {
+								messaggio.setIdFunzione(modulo);
+							}
+							if(messaggio.getIdBusta()==null) {
+								if(context.getProtocollo()!=null) {
+									messaggio.setIdBusta(context.getProtocollo().getIdRichiesta());
+								}
+							}
+							if(messaggio.getFruitore()==null) {
+								if(context.getProtocollo()!=null) {
+									messaggio.setFruitore(context.getProtocollo().getFruitore());
+								}
+							}
+							if(messaggio.getServizio()==null) {
+								if(context.getProtocollo()!=null) {
+									IDServizio idServizio = IDServizioFactory.getInstance().
+											getIDServizioFromValuesWithoutCheck(context.getProtocollo().getTipoServizio(), 
+													context.getProtocollo().getServizio(), 
+													context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getTipo() : null, 
+													context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getNome() : null,
+													context.getProtocollo().getVersioneServizio()!=null ? context.getProtocollo().getVersioneServizio() : -1);
+									messaggio.setServizio(idServizio);
+								}
+							}
+							if(this.debug)
+								this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] ...");
+							if(this.dumpOpenSPCoopAppender instanceof org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender) {
+								((org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender)this.dumpOpenSPCoopAppender).dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
+							}
+							else {
+								this.dumpOpenSPCoopAppender.dump(connection,messaggio);
+							}
+							if(this.debug)
+								this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] completata");
+						}finally {
+							try {
+								if(messaggio.getBody()!=null) {
+									messaggio.getBody().unlock();
+									messaggio.getBody().clearResources();
+								}
+							}catch(Throwable t){
+								this.log.error("["+idTransazione+"] errore durante il rilascio delle risorse del messaggio: "+t.getMessage(),t);
+							}
 						}
+					}
+				}finally {
+					if(times!=null && timeStart>0) {
+						long timeEnd =  DateManager.getTimeMillis();
+						long timeProcess = timeEnd-timeStart;
+						times.insertContents = timeProcess;
 					}
 				}
 				
@@ -883,20 +1014,43 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				/* ---- Inserimento risorse contenuti (library personalizzata) ----- */
 				
 				if(registrazioneRisorse){
-					IDumpMessaggioService dumpMessageService = jdbcServiceManager.getDumpMessaggioService();
-					PostOutResponseHandler_ContenutiUtilities contenutiUtilities = new PostOutResponseHandler_ContenutiUtilities(this.log);
-					contenutiUtilities.insertContenuti(transazioneDTO, 
-							transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(), 
-							transaction.getMsgDiagnostici(),
-							dumpMessageService, transaction.getRisorse(), transaction.getTransactionServiceLibrary(), this.daoFactory);
+					try {
+						if(times!=null) {
+							timeStart = DateManager.getTimeMillis();
+						}
+						IDumpMessaggioService dumpMessageService = jdbcServiceManager.getDumpMessaggioService();
+						PostOutResponseHandler_ContenutiUtilities contenutiUtilities = new PostOutResponseHandler_ContenutiUtilities(this.log);
+						contenutiUtilities.insertContenuti(transazioneDTO, 
+								transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(), 
+								transaction.getMsgDiagnostici(),
+								dumpMessageService, transaction.getRisorse(), transaction.getTransactionServiceLibrary(), this.daoFactory);
+					}finally {
+						if(times!=null) {
+							long timeEnd =  DateManager.getTimeMillis();
+							long timeProcess = timeEnd-timeStart;
+							times.insertResources = timeProcess;
+						}
+					}
 				}
 	
 				
 	
 	
 				// COMMIT
-				if(autoCommit==false)
-					connection.commit();
+				if(autoCommit==false) {
+					try {
+						if(times!=null) {
+							timeStart = DateManager.getTimeMillis();
+						}
+						connection.commit();
+					}finally {
+						if(times!=null) {
+							long timeEnd =  DateManager.getTimeMillis();
+							long timeProcess = timeEnd-timeStart;
+							times.commit = timeProcess;
+						}
+					}
+				}
 	
 	
 			} catch (SQLException sqlEx) {
@@ -988,4 +1142,92 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	}
 	
 	
+}
+
+class TransazioniProcessTimes{
+
+	String idTransazione;
+	long fillTransaction = -1;
+	long controlloTraffico = -1;
+	long fileTrace = -1;
+	long processTransactionInfo = -1;
+	long getConnection = -1;
+	long insertTransaction = -1;
+	long insertDiagnostics = -1;
+	long insertTrace = -1;
+	long insertContents = -1;
+	long insertResources = -1;
+	long commit = -1;
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if(this.fillTransaction>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("buildTransaction:").append(this.fillTransaction);
+		}
+		if(this.controlloTraffico>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("rateLimiting:").append(this.controlloTraffico);
+		}
+		if(this.fileTrace>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("fileTrace:").append(this.fileTrace);
+		}
+		if(this.processTransactionInfo>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("processTransactionInfo:").append(this.processTransactionInfo);
+		}
+		if(this.getConnection>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("getConnection:").append(this.getConnection);
+		}
+		if(this.insertTransaction>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("insertTransaction:").append(this.insertTransaction);
+		}
+		if(this.insertDiagnostics>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("insertDiagnostics:").append(this.insertDiagnostics);
+		}
+		if(this.insertTrace>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("insertTrace:").append(this.insertTrace);
+		}
+		if(this.insertContents>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("insertContents:").append(this.insertContents);
+		}
+		if(this.insertResources>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("insertResources:").append(this.insertResources);
+		}
+		if(this.commit>=0) {
+			if(sb.length()>0) {
+				sb.append(" ");
+			}
+			sb.append("commit:").append(this.commit);
+		}
+		return sb.toString();
+	}
 }

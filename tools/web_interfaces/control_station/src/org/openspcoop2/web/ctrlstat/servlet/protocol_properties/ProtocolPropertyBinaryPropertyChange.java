@@ -173,12 +173,14 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			label = binaryConsoleItem.getLabel();
 			
 			boolean readOnly = false;
+			String noteAggiornamento = null;
 			boolean showContent = true;
 			BinaryConsoleItem b = null;
 			if(binaryConsoleItem instanceof BinaryConsoleItem) {
 				b = (BinaryConsoleItem) binaryConsoleItem;
 				readOnly = b.isReadOnly();
 				showContent = b.isShowContent();
+				noteAggiornamento = b.getNoteUpdate();
 			}
 			
 			// Preparo il menu
@@ -238,7 +240,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						oldContenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
+						oldContenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
 
 				pd.setDati(dati);
 
@@ -297,7 +299,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				}
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						this.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
+						this.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
 				
 				pd.setDati(dati);
 				
@@ -362,7 +364,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			}
 
 			dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-					this.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
+					this.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly, noteAggiornamento);
 
 			pd.setDati(dati);
 			

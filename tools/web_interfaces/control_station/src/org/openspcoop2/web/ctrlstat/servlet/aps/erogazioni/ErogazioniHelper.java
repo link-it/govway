@@ -1670,12 +1670,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				de.setType(DataElementType.TEXT);
 				InvocazioneServizio is = sa.getInvocazioneServizio();
-				String urlConnettore = this.getLabelConnettore(sa,is);
+				String urlConnettore = this.getLabelConnettore(sa,is,true);
 				
 				if(!connettoreMultiploEnabled) {	
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 					de.setValue(urlConnettore);
-					String tooltipConnettore = this.getTooltipConnettore(sa,is);
+					String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 					de.setToolTip(tooltipConnettore);
 				} else {
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI);
@@ -1905,7 +1905,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
 				de.setType(DataElementType.TEXT);
 				org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
-				String urlConnettore = this.getLabelConnettore(connettore);
+				String urlConnettore = this.getLabelConnettore(connettore, true, false);
+				String tooltipConnettore = this.getLabelConnettore(connettore, true, true);
 				
 				// Controllo se richiedere il connettore
 				boolean connettoreStatic = false;
@@ -1916,7 +1917,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				if(!connettoreStatic) {
 					
 					de.setValue(urlConnettore);
-					de.setToolTip(urlConnettore);
+					de.setToolTip(tooltipConnettore);
 					
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(pId);

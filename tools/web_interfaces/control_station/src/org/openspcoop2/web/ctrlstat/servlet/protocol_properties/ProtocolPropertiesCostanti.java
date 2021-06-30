@@ -54,6 +54,7 @@ public class ProtocolPropertiesCostanti {
 	public static final String PARAMETRO_PP_URL_ORIGINALE_CHANGE = "urlOrigChange";
 	public static final String PARAMETRO_PP_SET = "ppSet";
 	public final static String PARAMETRO_PP_CONTENUTO_DOCUMENTO = "contenutoDocumento";
+	public final static String PARAMETRO_PP_CONTENUTO_DOCUMENTO_NOTE = "contenutoDocumentoNote";
 	public final static String PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN = "contenutoDocumentoWarn";
 	public final static String PARAMETRO_PP_PROTOCOLLO = "protocollo";
 	public static final String PARAMETRO_PP_TIPO_ACCORDO = "tipoAccordo";

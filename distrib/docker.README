@@ -1,0 +1,40 @@
+Clonare il progetto govway-docker
+
+Per fare il build del immagine:
+Come utenza root nella radice del progetto govway-docker:
+
+	./build_compose.sh -l <path dell'installer su filesystem>  -t linkitaly/govway:master  -v <indicare una versione con il numero della build>
+	esempio: ./build_compose.sh -l /home/local/GIT_GOV/govway-docker/govway-installer-3.3.4.p1.build-3ada797d9.tgz  -t linkitaly/govway:master  -v 3.3.4.p1.build-3ada797d9
+
+Per usare l'installer prodotto da jenkins
+	cp compose_bin/Dockerfile.jenkins compose_bin/Dockerfile
+	./build_compose.sh -t linkitaly/govway:master -v 3.3.4.p1.build-master
+
+Per provare ad avviare l'immagine creata:
+Come utenza root nel progetto govway-docker: 
+cd target
+NOTA: assicurarsi di non avere avviato localmente un tomcat, altrimenti la verifica con il curl seguente non è fattibile
+docker-compose up &
+
+Per verficare che govway è partito si può fare in diversi modi:
+- basta controllare che dentro il container sia presente il file /tmp/govway_ready
+docker exec -ti $(docker ps -f "ancestor=linkitaly/govway:master" -f 'status=running' --format '{{.ID}}') cat /tmp/govway_ready
+exitcode 0 vuol dire che il file è presente
+- si puo' utilizzare il check di govway con un curl
+curl -v http://localhost:8080/govway/check
+http_code a 200 vuol dire govway avviato
+
+se entro 5 minuti non si ottiene una risposta positiva vuol dire che il container non si è avviato correttamente.
+
+
+se è andato tutto bene:
+- pulizia
+docker-compose stop
+docker-compose down
+
+- caricamente dell'immagine su docker-hub
+Come utenza root:
+
+docker login -u <utente jenkins> -p <password utente jenkins>
+docker push linkitaly/govway:master
+

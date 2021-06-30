@@ -708,4 +708,8 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 		else 
 			return CostantiGrafici.DISTRIBUZIONE_SOGGETTO_LOCALE_FILE_NAME;
 	}
+	
+	public boolean isTimeoutEvent(){
+		return ((IStatisticheGiornaliere)this.service).isTimeoutEvent();
+	}
 }

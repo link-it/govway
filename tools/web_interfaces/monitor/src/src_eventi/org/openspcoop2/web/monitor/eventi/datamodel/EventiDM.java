@@ -59,4 +59,8 @@ public class EventiDM extends BaseDataModelWithSearchForm<Long, EventoBean, IEve
 			return object.getId();
 		return null;
 	}
+	
+	public boolean isTimeoutEvent(){
+		return this.getDataProvider().isTimeoutEvent();
+	}
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
@@ -55,20 +56,28 @@ public class NegoziazioneTokenProvider implements IProvider {
 				throw new ProviderValidationException("Nonostante sia stato indicato un endpoint 'https', non è stata fornita una configurazione dei parametri ssl da utilizzare");
 			}
 			
-			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-			if(location==null || "".equals(location)) {
-				throw new ProviderValidationException("Indicare un path del TrustStore per l'autenticazione server");
-			}
-			if(location.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel path del TrustStore per l'autenticazione server");
+			String trustAllCerts = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+			boolean trustAll = false;
+			if(trustAllCerts!=null && StringUtils.isNotEmpty(trustAllCerts)) {
+				trustAll = Boolean.valueOf(trustAllCerts);
 			}
 			
-			String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
-			if(algo==null || "".equals(algo)) {
-				throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione server");
-			}
-			if(algo.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
+			if(!trustAll) {
+				String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+				if(location==null || "".equals(location)) {
+					throw new ProviderValidationException("Indicare un path del TrustStore per l'autenticazione server");
+				}
+				if(location.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nel path del TrustStore per l'autenticazione server");
+				}
+				
+				String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
+				if(algo==null || "".equals(algo)) {
+					throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione server");
+				}
+				if(algo.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
+				}
 			}
 		}
 		
@@ -238,6 +247,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 			List<String> methodsList = new ArrayList<>();
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET);
 			return methodsList;
 		}
 		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
@@ -249,6 +260,27 @@ public class NegoziazioneTokenProvider implements IProvider {
 			}
 			return tipologie;
 		}
+		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
+				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				if(org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.NONE.equals(tmp[i])) {
+					continue;
+				}
+				if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+					if(tmp[i].name().toLowerCase().startsWith("hs")) {
+						l.add(tmp[i].name());
+					}
+				}
+				else {
+					if(!tmp[i].name().toLowerCase().startsWith("hs")) {
+						l.add(tmp[i].name());
+					}
+				}
+			}
+			return l;
+		}
 		return null;
 	}
 
@@ -258,7 +290,27 @@ public class NegoziazioneTokenProvider implements IProvider {
 			List<String> methodsList = new ArrayList<>();
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL_LABEL);
 			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD_LABEL);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509_LABEL);
+			methodsList.add(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET_LABEL);
 			return methodsList;
+		}
+		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
+				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+			List<String> l = this.getValues(id);
+			List<String> labels = new ArrayList<>();
+			for (String value : l) {
+				if(value.contains("_")) {
+					String t = new String(value);
+					while(t.contains("_")) {
+						t = t.replace("_", "-");
+					}
+					labels.add(t);
+				}
+				else {
+					labels.add(value);
+				}
+			}
+			return labels;
 		}
 		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
@@ -270,6 +322,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 		}
 		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
 			return SSLUtilities.getSafeDefaultProtocol();
+		}
+		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS.equals(id)) {
+			return Costanti.POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE;
+		}
+		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+			return org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.HS256.name();
+		}
+		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+			return org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.RS256.name();
 		}
 		return null;
 	}

@@ -3833,8 +3833,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(mapping.isDefault()) {
 							if(visualizzazioneTabs) {
 								if(!connettoreMultiploEnabled) {								
-									de.setValue(this.getLabelConnettore(sa,is));
-									String tooltipConnettore = this.getTooltipConnettore(sa,is);
+									de.setValue(this.getLabelConnettore(sa,is,true));
+									String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 									de.setToolTip(tooltipConnettore);
 								} else {
 									de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
@@ -3875,10 +3875,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								servletConnettore = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT;
 								if(visualizzazioneTabs) {									
 									if(!connettoreMultiploEnabled && !connettoreMultiploEnabledDefault) {	
-										de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(sa,is));
+										de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(sa,is,true));
 									} 
 									else if(connettoreMultiploEnabledDefault) {
-										de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault));
+										//de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault));
+										de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault)); // comunque i connettori vengono ridefiniti internamente, sono proprio istanze differenti, quindi non ha senso la descrizione 
 										de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociataDefault));
 										// Ci vuole, devo poter ridefinire il connettore visualizzaLinkConfigurazioneConnettore = false;
 									}
@@ -3890,7 +3891,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								else {
 									if(visualizzaLinkConfigurazioneConnettore) {
 										de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT); 
-										String tooltipConnettore = this.getTooltipConnettore(sa, is);
+										String tooltipConnettore = this.getTooltipConnettore(sa, is,true);
 										de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 									} else {
 										de.setType(DataElementType.TEXT);
@@ -3902,7 +3903,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								servletConnettore = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO;
 								if(visualizzazioneTabs) {
 									if(!connettoreMultiploEnabled) {	
-										de.setValue(this.getLabelConnettore(sa,is));
+										de.setValue(this.getLabelConnettore(sa,is,true));
 									} else {
 										de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
 										de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociata));
@@ -3911,7 +3912,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								else {
 									if(visualizzaLinkConfigurazioneConnettore) {
 										de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO);
-										String tooltipConnettore = this.getTooltipConnettore(sa, is);
+										String tooltipConnettore = this.getTooltipConnettore(sa, is,true);
 										de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 									} else {
 										de.setType(DataElementType.TEXT);
@@ -5613,7 +5614,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							String servletConnettore = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE;
 							if(mapping.isDefault()) {
 								if(visualizzazioneTabs) {
-									de.setValue(this.getLabelConnettore(fru.getConnettore()));
+									de.setValue(this.getLabelConnettore(fru.getConnettore(),true,false));
+									de.setToolTip(this.getLabelConnettore(fru.getConnettore(),true,true)); // NEW
 								}
 								else {
 									ServletUtils.setDataElementVisualizzaLabel(de);
@@ -5654,24 +5656,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								if(ridefinito) {
 									servletConnettore = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO;
 									if(visualizzazioneTabs) {
-										de.setValue(this.getLabelConnettore(connettore));
+										de.setValue(this.getLabelConnettore(connettore,true,false));
 									}
 									else {
 										de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO);
 									}
 									de.setUrl(servletConnettore, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-									String tooltipConnettore = this.getLabelConnettore(connettore);
+									String tooltipConnettore = this.getLabelConnettore(connettore,true,true);
 									de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 								} else {
 									servletConnettore = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT;
 									if(visualizzazioneTabs) {
-										de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(fru.getConnettore()));
+										de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(fru.getConnettore(),true,false));
 									}
 									else {
 										de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT);
 									}
 									de.setUrl(servletConnettore, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-									String tooltipConnettore = this.getLabelConnettore(fru.getConnettore());
+									String tooltipConnettore = this.getLabelConnettore(fru.getConnettore(),true,true);
 									de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 									
 									connettore = fru.getConnettore();

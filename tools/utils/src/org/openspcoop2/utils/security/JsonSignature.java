@@ -132,6 +132,23 @@ public class JsonSignature {
 		}
 	}
 
+	public JsonSignature(String secret,  String signatureAlgorithm, JWSOptions options) throws UtilsException{
+		this(secret, signatureAlgorithm, null, options);
+	}
+	public JsonSignature(String secret,  String signatureAlgorithm, JwtHeaders jwtHeaders, JWSOptions options) throws UtilsException{
+		try {
+			
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			this.provider = JwsUtils.getHmacSignatureProvider(secret.getBytes(), algo);
+			if(this.provider==null) {
+				throw new Exception("(Secret) JwsSignatureProvider init failed; check signature algorithm ("+signatureAlgorithm+")");
+			}
+			this.options=options;
+			this.jwtHeaders = jwtHeaders;
+		}catch(Throwable t) {
+			throw JsonUtils.convert(options.getSerialization(), JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
+		}
+	}
 
 	public String sign(String jsonString) throws UtilsException{
 		try {

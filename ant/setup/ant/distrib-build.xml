@@ -152,12 +152,15 @@
 						<delete file="${dist}/datasource/govway_tracciamento-ds.xml"/>
 					</then>
 				</if>
+				<!--
+				Il datasource delle statistiche serve al runtime per il controllo del traffico
 				<if>
 					<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
 					<then>
 						<delete file="${dist}/datasource/govway_statistiche-ds.xml"/>
 					</then>
 				</if>
+				-->
 
 				<!-- copio datasource in runtime -->
 				<move todir="${dist}/datasource/runtime">
@@ -845,7 +848,10 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 					</then>
 				</if>
 				<if>
-					<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+					<and>
+						<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+						<equals arg1="${antinstaller_batchRuntimeRepository}" arg2="true"/>
+					</and>
 					<then>
 						<copy todir="${dist}/batch">
 							<fileset dir="${deploy_sw}/batch">
@@ -880,7 +886,10 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 							</then>
 						</if>
 						<if>
-							<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+							<and>
+								<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+								<equals arg1="${antinstaller_batchRuntimeRepository}" arg2="true"/>
+							</and>
 							<then>
 								<antcall target="replace_token">
 								    <param name="file" value="${dist}/batch/crond/govway_runtime_repository_crond"/>
@@ -902,7 +911,10 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 							</then>
 						</if>
 						<if>
-							<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+							<and>
+								<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+								<equals arg1="${antinstaller_batchRuntimeRepository}" arg2="true"/>
+							</and>
 							<then>
 								<antcall target="replace_token">
 								    <param name="file" value="${dist}/batch/crond/govway_runtime_repository_crond"/>

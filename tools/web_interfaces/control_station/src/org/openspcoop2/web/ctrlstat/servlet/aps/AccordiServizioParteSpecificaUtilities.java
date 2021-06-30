@@ -1522,7 +1522,10 @@ public class AccordiServizioParteSpecificaUtilities {
 					
 					// cancellazione degli applicativi generati automaticamente
 					for (PortaApplicativaServizioApplicativo paSA : paGenerataAutomcaticamente.getServizioApplicativoList()) {
-						if(paSA.getNome().equals(paGenerataAutomcaticamente.getNome())) {
+						
+						boolean connettoreMultiploAggiunto = paSA.getNome().startsWith(paGenerataAutomcaticamente.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX);
+						if(paSA.getNome().equals(paGenerataAutomcaticamente.getNome()) || connettoreMultiploAggiunto) {
+							
 							IDServizioApplicativo idSA = new IDServizioApplicativo();
 							idSA.setIdSoggettoProprietario(soggettoErogatore);
 							idSA.setNome(paSA.getNome());
@@ -1672,7 +1675,10 @@ public class AccordiServizioParteSpecificaUtilities {
 			}
 			
 			for (PortaApplicativaServizioApplicativo paSA : tmpPA.getServizioApplicativoList()) {
-				if(paSA.getNome().equals(tmpPA.getNome())) {
+				
+				boolean connettoreMultiploAggiunto = paSA.getNome().startsWith(tmpPA.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX);
+				if(paSA.getNome().equals(tmpPA.getNome()) || connettoreMultiploAggiunto) {
+					
 					IDServizioApplicativo idSA = new IDServizioApplicativo();
 					idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPA.getTipoSoggettoProprietario(), tmpPA.getNomeSoggettoProprietario()));
 					idSA.setNome(paSA.getNome());

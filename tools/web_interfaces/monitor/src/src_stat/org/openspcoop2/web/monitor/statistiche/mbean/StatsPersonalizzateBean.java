@@ -898,4 +898,8 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 	public String getExportFilename() {
 		return CostantiGrafici.DISTRIBUZIONE_PERSONALIZZATA_FILE_NAME;
 	}
+	
+	public boolean isTimeoutEvent(){
+		return ((IStatisticaPersonalizzataService)this.service).isTimeoutEvent();
+	}
 }

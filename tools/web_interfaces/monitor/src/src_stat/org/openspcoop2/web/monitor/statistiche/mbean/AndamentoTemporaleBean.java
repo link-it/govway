@@ -76,6 +76,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	 */
 	private static final long serialVersionUID = 1L;
 	private boolean visualizzaComandiSelezioneNumeroLabel; 
+	private boolean ricalcoloVisualizzaComandiSelezioneNumeroLabel;
 
 	public AndamentoTemporaleBean() {
 		super();
@@ -92,6 +93,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		this.setMaxCategorie(Integer.MAX_VALUE);
 		this.setMinCategorie(2);
 		this.visualizzaComandiSelezioneNumeroLabel = true;
+		this.ricalcoloVisualizzaComandiSelezioneNumeroLabel = true;
 	}
 	
 	public void setStatisticheGiornaliereService(
@@ -221,17 +223,19 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	@Override
 	public String getData(){
 		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-			return this.getJson();
+			return this._getJson(this.ricalcoloVisualizzaComandiSelezioneNumeroLabel);
 		
 		return this.getXml();
 	}
 	
-	public String getDataNumeroLabel(){
-		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-			return this._getJson(false);
-		
-		return this.getXml();
-	}
+//	public String getDataNumeroLabel(){ TODO togli
+//		log.debug("GetDATANumeroLabel");
+//		
+//		if(((StatsSearchForm)this.search).isUseGraficiSVG())
+//			return this._getJson(false);
+//		
+//		return this.getXml();
+//	}
 
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
@@ -754,5 +758,24 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 
 	public void setVisualizzaComandiSelezioneNumeroLabel(boolean visualizzaComandiSelezioneNumeroLabel) {
 		this.visualizzaComandiSelezioneNumeroLabel = visualizzaComandiSelezioneNumeroLabel;
+	}
+	
+	@Override
+	public void updateChartDateOffset(ActionEvent e) {
+		super.updateChartDateOffset(e);
+		this.ricalcoloVisualizzaComandiSelezioneNumeroLabel = true;
+	}
+	
+	public void updateChartNumeroLabel(ActionEvent e) {
+		this.ricalcoloVisualizzaComandiSelezioneNumeroLabel = false;
+	}
+	
+	@Override
+	public void updateChartDirezioneLabel(ActionEvent e) {
+		this.ricalcoloVisualizzaComandiSelezioneNumeroLabel = true;
+	}
+	
+	public boolean isTimeoutEvent(){
+		return ((IStatisticheGiornaliere)this.service).isTimeoutEvent();
 	}
 }

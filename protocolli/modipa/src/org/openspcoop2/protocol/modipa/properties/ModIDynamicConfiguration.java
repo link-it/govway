@@ -275,7 +275,10 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				}
 				FIX: visualizzo sempre: ho aggiunto un commento. Altrimenti se poi uno modifica la configurazione multitenat, gli applicativi gia' configurati con modalita 'path' vanno in errore
 				*/			
-				this.updateKeystoreConfig(consoleConfiguration, properties, false, hideSceltaArchivioFilePath, true, configurazioneMultitenant);
+				boolean addHiddenSubjectIssuer = true;
+				this.updateKeystoreConfig(consoleConfiguration, properties, false, 
+						hideSceltaArchivioFilePath, addHiddenSubjectIssuer,
+						true, configurazioneMultitenant);
 			}
 			else {
 
@@ -324,23 +327,42 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 		
 		if(isClient) {
-			boolean changeBinary = false;
+			boolean verifyKeystoreConfig = false;
 			if(ConsoleOperationType.CHANGE.equals(consoleOperationType)) {
 				try {
 					String p = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_PP_CHANGE_BINARY);
 					if(Costanti.CONSOLE_PARAMETRO_PP_CHANGE_BINARY_VALUE_TRUE.equalsIgnoreCase(p)) {
-						changeBinary = true;
+						verifyKeystoreConfig = true;
 						BinaryProperty archiveItemValue = (BinaryProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID);
 						if(archiveItemValue==null || archiveItemValue.getValue()==null) {
 							throw new ProtocolException("Archivio non fornito");
+						}
+					}
+					else {
+						// devo verificare se c'e' stato un cambio nella modalita
+						StringProperty selectModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_ID);
+						if(selectModeItemValue!=null && selectModeItemValue.getValue()!=null && !"".equals(selectModeItemValue.getValue())) {
+							String modalita = selectModeItemValue.getValue();
+							if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
+								verifyKeystoreConfig = true;
+							}
 						}
 					}
 				}catch(Exception e) {
 					throw new ProtocolException(e.getMessage(),e);
 				}
 			}
+			else if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
+				StringProperty selectModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_ID);
+				if(selectModeItemValue!=null && selectModeItemValue.getValue()!=null && !"".equals(selectModeItemValue.getValue())) {
+					String modalita = selectModeItemValue.getValue();
+					if(ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(modalita)) {
+						verifyKeystoreConfig = true;
+					}
+				}
+			}
 	
-			if(!esterno && !changeBinary) {
+			if(!esterno && verifyKeystoreConfig) {
 			
 				// NOTA: se si attiva anche la validazione durante il change binary, poi non si riesce a modificarlo poiche' la password o l'alis, o qualche parametro non è compatibile con il nuovo archivio.
 				
@@ -3313,7 +3335,12 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		// KeyStore
 		
 		if(!fruizione && !request) {
-			this.updateKeystoreConfig(consoleConfiguration, properties, true, false, requiredValue, null);
+			
+			boolean hideSceltaArchivioFilePath = false;
+			boolean addHiddenSubjectIssuer = false;
+			this.updateKeystoreConfig(consoleConfiguration, properties, true, 
+					hideSceltaArchivioFilePath, addHiddenSubjectIssuer, 
+					requiredValue, null);
 		}
 		
 	}
@@ -3347,7 +3374,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_ID, 
 						ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_LABEL);
 		((BinaryConsoleItem)archiveItem).setShowContent(false);
-		((BinaryConsoleItem)archiveItem).setReadOnly(true);
+		((BinaryConsoleItem)archiveItem).setReadOnly(false);
+		((BinaryConsoleItem)archiveItem).setRequired(true);
+		((BinaryConsoleItem)archiveItem).setNoteUpdate(ModIConsoleCostanti.MODIPA_KEYSTORE_ARCHIVE_NOTE_UPDATE);
 		configuration.addConsoleItem(archiveItem);
 		
 		AbstractConsoleItem<?> pathItem = 
@@ -3414,7 +3443,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 	}
 	
-	private void updateKeystoreConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, boolean checkRidefinisci, boolean addHiddenSubjectIssuer,
+	private void updateKeystoreConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, boolean checkRidefinisci, 
+			boolean hideSceltaArchivioFilePath, boolean addHiddenSubjectIssuer,
 			boolean requiredValue, ConfigurazioneMultitenant configurazioneMultitenant) throws ProtocolException {
 		
 		boolean ridefinisci = true;
@@ -3441,7 +3471,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		AbstractConsoleItem<?> modeItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_KEYSTORE_MODE_ID);
-		if(ridefinisci && !addHiddenSubjectIssuer) {
+		if(ridefinisci && !hideSceltaArchivioFilePath) {
 			modeItem.setType(ConsoleItemType.SELECT);
 		}
 		else {
