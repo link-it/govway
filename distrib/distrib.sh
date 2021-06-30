@@ -386,7 +386,7 @@ mkdir -p ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/
 /bin/cp -rf ${WORKING_COPY}/lib/antinstaller/ ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/
 
 mkdir -p ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/shared
-/bin/cp -rf ${WORKING_COPY}/lib/shared/xercesImpl-2.12.0.jar ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/shared
+/bin/cp -rf ${WORKING_COPY}/lib/shared/xercesImpl-2.12.1.jar ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/shared
 /bin/cp -rf ${WORKING_COPY}/lib/shared/xml-apis-1.4.01.jar ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/lib/shared
 
 mkdir -p ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/installer/commons 
