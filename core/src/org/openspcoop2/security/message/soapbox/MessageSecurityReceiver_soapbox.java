@@ -93,7 +93,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 
 			String[]actions = ((String)messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim())){
 					decrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
@@ -310,7 +310,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			// Devo rileggerle per eseguire nell'ordine
 			actions = ((String)messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = actions.length-1; i >= 0; i--) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim()) || SecurityConstants.is_ACTION_DECRYPTION(actions[i].trim())){
 					decryptMsgProc.process(securityConfig_decryption, msgSecCtx);
 					//refreshAttachments(message); // per impostare il nuovo contenuto degli attachment, una volta decriptati (non serve se non si imposta il CONTENT_TRANSFER_ENCODING a base64!!)
 				}

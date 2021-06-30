@@ -107,8 +107,8 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/testsuite" >
 			<include name="jcommander-1.78.jar"/>
-			<include name="testng-7.1.0.jar"/>
-			<include name="guice-4.2.2.jar"/>
+			<include name="testng-7.3.0.jar"/>
+			<include name="guice-4.2.3.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>

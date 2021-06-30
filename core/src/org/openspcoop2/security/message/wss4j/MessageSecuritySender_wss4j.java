@@ -225,6 +225,10 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 						msgCtx.put(id, oValue);
 					}
 				}
+				else if(SecurityConstants.ENCRYPT_ACTION_OLD.equals(key)) {
+					// backward compatibility per adeguamento costante rispetto a wss4j 2.3.x
+					msgCtx.put(SecurityConstants.ENCRYPTION_ACTION, value);
+				}
 				else{
 					msgCtx.put(key, value);
 					if(SecurityConstants.MUST_UNDERSTAND.equals(key)){

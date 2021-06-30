@@ -301,6 +301,11 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 						msgCtx.put(id, oValue);
 					}
 				}
+				else if(SecurityConstants.ENCRYPT_ACTION_OLD.equals(key)) {
+					// backward compatibility per adeguamento costante rispetto a wss4j 2.3.x
+					msgCtx.put(SecurityConstants.ENCRYPTION_ACTION, value);
+					interceptor.setProperty(SecurityConstants.ENCRYPTION_ACTION, value);
+				}
 				else{
 					msgCtx.put(key, value);
 					interceptor.setProperty(key, value);

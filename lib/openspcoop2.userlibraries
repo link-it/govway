@@ -264,9 +264,9 @@
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-1.6.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-ui-3.50.0.jar"/>
 	<!-- testsuite-->
-        <archive path="/op2_3.4.dev/lib/testsuite/testng-7.1.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/testsuite/testng-7.3.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/testsuite/jcommander-1.78.jar"/>
-	<archive path="/op2_3.4.dev/lib/testsuite/guice-4.2.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/testsuite/guice-4.2.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/testsuite/junit-4.13.jar"/>
 	<archive path="/op2_3.4.dev/lib/testsuite/karate-core-0.9.6.jar"/>
 	<archive path="/op2_3.4.dev/lib/testsuite/karate-apache-0.9.6.jar"/>
@@ -279,13 +279,13 @@
 	<archive path="/op2_3.4.dev/lib/wadl/wadl-xslt-1.1.6.jar"/>
 	<archive path="/op2_3.4.dev/lib/wadl/localizer-1.0.jar"/>
 	<!-- wss4j -->
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-bindings-2.2.4.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-integration-2.2.4.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-policy-2.2.4.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-common-2.2.4.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-2.2.4.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-policy-stax-2.2.4.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-stax-2.2.4.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-bindings-2.3.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-integration-2.3.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-policy-2.3.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-common-2.3.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-2.3.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-policy-stax-2.3.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-stax-2.3.2.jar"/>
     </library>
     <library name="openspcoop2_3.4_lib_axiom" systemlibrary="false">
 	<archive path="/op2_3.4.dev/lib/axiom/apache-mime4j-core-0.8.3.jar"/>
