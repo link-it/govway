@@ -1,3 +1,9 @@
+2021-07-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto bug OP-1227
+	La console non consentiva di aggiungere credenziali (es. un certificato x.509) ad un soggetto creato precedentemente senza.
+
 2021-06-28  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]
