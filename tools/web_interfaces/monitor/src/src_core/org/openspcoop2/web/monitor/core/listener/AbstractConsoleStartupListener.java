@@ -340,6 +340,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 				this.setLocalCacheProperties(getStringInitParameter(ctx, "localCacheProperties"));
 				this.setLocalCachePropertyName(getStringInitParameter(ctx, "localCachePropertyName"));
 	
+				Cache.setLog4jSystem();
+				
 				isInitializeCache = Cache.initialize(AbstractConsoleStartupListener.log, logCore, 
 						getCacheProperties(),
 						appProperties.getConfigurationDir(), null, 

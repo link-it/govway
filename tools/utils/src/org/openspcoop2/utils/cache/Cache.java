@@ -43,6 +43,7 @@ import org.apache.commons.jcs3.engine.behavior.ICompositeCacheAttributes;
 import org.apache.commons.jcs3.engine.behavior.IElementAttributes;
 import org.apache.commons.jcs3.engine.control.CompositeCache;
 import org.apache.commons.jcs3.engine.memory.behavior.IMemoryCache;
+import org.apache.commons.jcs3.log.LogManager;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.CollectionProperties;
@@ -142,6 +143,7 @@ public class Cache {
 	private String cacheName = null;
 	
 	private Cache() {
+		setLog4jSystem();
 		this.cacheAdmin = new JCSAdminBean();
 	}
 	public Cache(String name) throws UtilsException{
@@ -149,6 +151,7 @@ public class Cache {
 	}
 	@Deprecated
 	private Cache(String name, boolean disableSyncronizedGet) throws UtilsException{
+		setLog4jSystem();
 		try{
 			this.cacheAdmin = new JCSAdminBean();
 			this.cacheName = name;
@@ -160,6 +163,10 @@ public class Cache {
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
+	}
+	
+	public static void setLog4jSystem() {
+		System.setProperty("jcs.logSystem", LogManager.LOGSYSTEM_LOG4J2);
 	}
 	
 	private static boolean DEFAULT_DISABLE_SYNCRONIZED_GET = false;

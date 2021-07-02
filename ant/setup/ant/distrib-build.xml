@@ -1491,17 +1491,17 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="_RELEASE." value="-${antinstaller_versione_attuale_con_p_level}."/>
 
 		<!-- replace jar in cui e' stato corretto il manifest -->
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-impl-2.3.4.jar" value="jaxb-impl-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-impl-2.3.4.jar" value="jaxb-impl-2.3.4.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[jaxb-impl-2.3.2.ja
+			<replacetoken><![CDATA[jaxb-impl-2.3.4.ja
  r]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-impl-2.3.2.gw.jar
+			<replacevalue><![CDATA[jaxb-impl-2.3.4.gw.jar
  ]]></replacevalue>
 		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[jaxb-impl-2.3.2.j
+			<replacetoken><![CDATA[jaxb-impl-2.3.4.j
  ar]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-impl-2.3.2.gw.jar
+			<replacevalue><![CDATA[jaxb-impl-2.3.4.gw.jar
  ]]></replacevalue>
 		</replace>	
 
@@ -1519,17 +1519,18 @@ statoPdD.sonde.standard.IDENTIFICATIVOGRUPPO.url=URLSERVIZIOCHECK]]></replaceval
  ]]></replacevalue>
 		</replace>		
 
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-xjc-2.3.4.jar" value="jaxb-xjc-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-xjc-2.3.4.jar" value="jaxb-xjc-2.3.4.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="xjc-2.3.4.jar" value="xjc-2.3.4.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[jaxb-xjc-2.3.2.ja
+			<replacetoken><![CDATA[jaxb-xjc-2.3.4.ja
  r]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-xjc-2.3.2.gw.jar
+			<replacevalue><![CDATA[jaxb-xjc-2.3.4.gw.jar
  ]]></replacevalue>
 		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[jaxb-xjc-2.3.2.j
+			<replacetoken><![CDATA[jaxb-xjc-2.3.4.j
  ar]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-xjc-2.3.2.gw.jar
+			<replacevalue><![CDATA[jaxb-xjc-2.3.4.gw.jar
  ]]></replacevalue>
 		</replace>		
 
