@@ -21,6 +21,7 @@
 package org.openspcoop2.utils.certificate;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
@@ -95,6 +96,42 @@ public class CertificateInfo implements Serializable {
 		else {
 			return null;
 		}
+	}
+	public String getSerialNumberHex() {
+		if(this.certificate.getSerialNumber()!=null) {
+			return this.certificate.getSerialNumber().toString(16);
+		}
+		else {
+			return null;
+		}
+	}
+	public String getSerialNumberHex(String delimiter) {
+		if(this.certificate.getSerialNumber()!=null) {
+			return formatSerialNumberHex(this.certificate.getSerialNumber(), delimiter);
+		}
+		else {
+			return null;
+		}
+	}
+	public static String formatSerialNumberHex(String serialNumber) {
+		return (new BigInteger(serialNumber)).toString(16);
+	}
+	public static String formatSerialNumberHex(String serialNumber, String delimiter) {
+		return formatSerialNumberHex(new BigInteger(serialNumber), delimiter);
+	}
+	public static String formatSerialNumberHex(BigInteger bi, String delimiter) {
+		byte[] bytes = bi.toByteArray();
+	    StringBuilder sb = new StringBuilder();
+	    for (byte b : bytes) {
+	        sb.append(String.format("%02X"+delimiter, b));
+	    }
+	    String s = sb.toString();
+	    if(s.endsWith(delimiter) && s.length()>delimiter.length()) {
+	    	return s.substring(0, (s.length()-delimiter.length()));
+	    }
+	    else {
+	    	return s;
+	    }
 	}
 	
 	public java.security.cert.X509Certificate getCertificate() {

@@ -67,6 +67,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
@@ -1800,6 +1801,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}
 					de.setSize(this.getSize());
 					dati.add(de);
+					if(verificaCompleta && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSerialNumber)) {
+						String hexValue = null;
+						try {
+							hexValue = CertificateInfo.formatSerialNumberHex(tipoCredenzialiSSLAliasCertificatoSerialNumber,":");
+						}catch(Throwable t) {}
+						if(hexValue!=null && StringUtils.isNotEmpty(hexValue)) {
+							de = new DataElement();
+							de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER_HEX);
+							de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER_HEX);
+							de.setValue(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER_HEX_PREFIX+hexValue);
+							de.setType(DataElementType.TEXT);
+							de.setSize(this.getSize());
+							dati.add(de);
+						}
+					}
 //							SelfSigned:
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SELF_SIGNED);
@@ -5329,6 +5345,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 				de.setSize(this.getSize());
 				dati.add(de);
+				if(verificaCompleta && StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSerialNumber)) {
+					String hexValue = null;
+					try {
+						hexValue = CertificateInfo.formatSerialNumberHex(tipoCredenzialiSSLAliasCertificatoSerialNumber,":");
+					}catch(Throwable t) {}
+					if(hexValue!=null && StringUtils.isNotEmpty(hexValue)) {
+						de = new DataElement();
+						de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER_HEX);
+						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER_HEX);
+						de.setValue(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SERIAL_NUMBER_HEX_PREFIX+hexValue);
+						de.setType(DataElementType.TEXT);
+						de.setSize(this.getSize());
+						dati.add(de);
+					}
+				}
 //							SelfSigned:
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SELF_SIGNED);
