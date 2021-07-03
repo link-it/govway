@@ -1167,7 +1167,15 @@ public final class SoggettiChange extends Action {
 							secret_appId = credenziali.isAppId();
 						}
 						
-						soggettoRegistry.getCredenzialiList().set(0,credenziali); // Sovrascrivo la credenziale principale
+						if(soggettoRegistry.getCredenzialiList()==null) {
+							soggettoRegistry.setCredenzialiList(new ArrayList<CredenzialiSoggetto>());
+						}
+						if(soggettoRegistry.getCredenzialiList().isEmpty()) {
+							soggettoRegistry.getCredenzialiList().add(credenziali);
+						}
+						else {
+							soggettoRegistry.getCredenzialiList().set(0,credenziali); // Sovrascrivo la credenziale principale
+						}
 					}
 					else{
 						soggettoRegistry.getCredenzialiList().clear();

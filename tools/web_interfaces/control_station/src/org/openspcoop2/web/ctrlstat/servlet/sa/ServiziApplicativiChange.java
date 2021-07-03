@@ -1616,7 +1616,15 @@ public final class ServiziApplicativiChange extends Action {
 				else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
 					credenziali.setUser(principalSA);
 				} 
-				ip.getCredenzialiList().set(0,credenziali); // Sovrascrivo la credenziale principale
+				if(ip.getCredenzialiList()==null) {
+					ip.setCredenzialiList(new ArrayList<Credenziali>());
+				}
+				if(ip.getCredenzialiList().isEmpty()) {
+					ip.getCredenzialiList().add(credenziali);
+				}
+				else {
+					ip.getCredenzialiList().set(0,credenziali); // Sovrascrivo la credenziale principale
+				}
 				
 				if(secret) {
 					secret_user = credenziali.getUser();
