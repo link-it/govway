@@ -110,7 +110,7 @@ public class ServerVerificaFunzionalitaAllegaBody extends ServerCore{
 			
 			// forward
 			org.apache.axis.soap.SOAPConnectionImpl connection = new  org.apache.axis.soap.SOAPConnectionImpl(); 	    
-			javax.xml.messaging.URLEndpoint urlConnection = new  javax.xml.messaging.URLEndpoint(urlForward);
+			java.net.URL urlConnection = new java.net.URL(urlForward);
 			Message responseMsg = (org.apache.axis.Message) connection.call(msg,urlConnection);
 			
 			// verifica messaggio di risposta (deve essere presente 1 attach che era il body originale della risposta)

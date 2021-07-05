@@ -110,7 +110,7 @@ public class ServerVerificaFunzionalitaScartaBody extends ServerCore{
 			
 			// forward
 			org.apache.axis.soap.SOAPConnectionImpl connection = new  org.apache.axis.soap.SOAPConnectionImpl(); 	    
-			javax.xml.messaging.URLEndpoint urlConnection = new  javax.xml.messaging.URLEndpoint(urlForward);
+			java.net.URL urlConnection = new java.net.URL(urlForward);
 			Message responseMsg = (org.apache.axis.Message) connection.call(msg,urlConnection);
 			
 

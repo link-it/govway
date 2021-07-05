@@ -59,6 +59,10 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_HTTPCORE="IntegrazioneOnewayHTTPCORE";
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay con integrazione con WSAddressing con connettore HTTPCORE */
 	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_WSADDRESSING_HTTPCORE="IntegrazioneOnewayWithWSAddressingHTTPCORE";
+	/** Porte Delegate per il test dei profili di collaborazione: OneWay con integrazione con connettore HTTPCORE5 */
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_HTTPCORE5="IntegrazioneOnewayHTTPCORE5";
+	/** Porte Delegate per il test dei profili di collaborazione: OneWay con integrazione con WSAddressing con connettore HTTPCORE5 */
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_INTEGRAZIONE_WSADDRESSING_HTTPCORE5="IntegrazioneOnewayWithWSAddressingHTTPCORE5";
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay tramissione risposta completamente vuota */
 	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_RISPOSTA_VUOTA="OnewayCompletamenteNullRisposta";
 	
@@ -78,6 +82,10 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_HTTPCORE="IntegrazioneSincronaHTTPCORE";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione con WSAddressing per connettore HTTPCORE */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING_HTTPCORE="IntegrazioneSincronaWithWSAddressingHTTPCORE";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione per connettore HTTPCORE5 */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_HTTPCORE5="IntegrazioneSincronaHTTPCORE5";
+	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione con WSAddressing per connettore HTTPCORE5 */
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_WSADDRESSING_HTTPCORE5="IntegrazioneSincronaWithWSAddressingHTTPCORE5";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione url based */
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_URL_BASED="IntegrazioneURLBased";
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono con integrazione url-form based  */
@@ -811,6 +819,11 @@ public class CostantiTestSuite {
 	/** Porta delegata per verifica connettore HTTPCORE: sincrono */
 	public static final String PORTA_DELEGATA_HTTPCORE_SINCRONO = "HTTPCORESincrono";
 	
+	/** Porta delegata per verifica connettore HTTPCORE5: oneway */
+	public static final String PORTA_DELEGATA_HTTPCORE5_ONEWAY = "HTTPCORE5Oneway";
+	/** Porta delegata per verifica connettore HTTPCORE5: sincrono */
+	public static final String PORTA_DELEGATA_HTTPCORE5_SINCRONO = "HTTPCORE5Sincrono";
+	
 	/** Porta delegata per verifica url prefix rewriter:  TestUrlPrefixRewriter1*/
 	public static final String PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_1 = "TestUrlPrefixRewriter1";
 	public static final String PORTA_DELEGATA_TEST_URL_PREFIX_REWRITER_2 = "TestUrlPrefixRewriter2";
@@ -1161,6 +1174,10 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_HTTPCORE="testIntegrazioneHTTPCORE";
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione con WSAddressing per connettore HTTPCORE  */
     public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_HTTPCORE="testIntegrazioneWithWSAddressingHTTPCORE";
+    /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione per connettore HTTPCORE5 */
+    public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_HTTPCORE5="testIntegrazioneHTTPCORE5";
+    /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione con WSAddressing per connettore HTTPCORE5  */
+    public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_WSADDRESSING_HTTPCORE5="testIntegrazioneWithWSAddressingHTTPCORE5";
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione per funzione concat */
     public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_INTEGRAZIONE_CONCAT="BEGIN-ID_testIntegrazione_END-ID";
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con ConsegnaInOrdine */
@@ -1193,6 +1210,8 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_ONEWAY_SAAJ = "saaj";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore HTTPCORE */
 	public static final String SPCOOP_SERVIZIO_ONEWAY_HTTPCORE = "httpCore";
+	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay per verifica connettore HTTPCORE5 */
+	public static final String SPCOOP_SERVIZIO_ONEWAY_HTTPCORE5 = "httpCore5";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay risposta vuota */
 	public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_RISPOSTA_VUOTA="OnewayCompletamenteNullRisposta";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay  per il test file: serializeFile */
@@ -1401,6 +1420,10 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_HTTPCORE="testIntegrazioneHTTPCORE";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Integrazione con WSAddressing per connettore HTTPCORE */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_HTTPCORE="testIntegrazioneWithWSAddressingHTTPCORE";
+    /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Integrazione per connettore HTTPCORE5 */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_HTTPCORE5="testIntegrazioneHTTPCORE5";
+    /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Integrazione con WSAddressing per connettore HTTPCORE5 */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_WSADDRESSING_HTTPCORE5="testIntegrazioneWithWSAddressingHTTPCORE5";
     /** ENTITA SPCOOP: Nome Azione del Servizio OneWay con Integrazione PA */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE_LATO_PA="testIntegrazionePA";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con GestioneManifestDisabilitata */
@@ -1439,6 +1462,8 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_SINCRONO_SAAJ = "saaj";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore HTTPCORE */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_HTTPCORE = "httpCore";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica connettore HTTPCORE5 */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_HTTPCORE5 = "httpCore5";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica messaggio malformati nell'header egov */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_XML_MALFORMATO_HEADER_EGOV = "malformazioneXMLHeaderEGov";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per verifica messaggio malformati nel body */

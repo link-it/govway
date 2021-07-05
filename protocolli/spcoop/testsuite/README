@@ -166,6 +166,7 @@ a. Devono essere abilitate le seguenti opzioni nel file govway.properties:
 b. file wsdl/xsd (presenti in protocolli/spcoop/example/server/ValidazioneContenutiWS/deploy/wsdl) dell'applicazione da installare in /etc/govway
 - 'Integrazione' vengono testate le funzionalita di integrazione: header soap, header di trasporto, url, identificazione content/url/input based.
 - 'IntegrazioneConnettoreHTTPCORE': vengono testate le funzionalita di integrazione  header di trasporto, url, header soap e header wsa con connettore httpcore
+- 'IntegrazioneConnettoreHTTPCORE5': vengono testate le funzionalita di integrazione  header di trasporto, url, header soap e header wsa con connettore httpcore5
 - 'IntegrazioneConnettoreSAAJ': vengono testate le funzionalita di integrazione  header di trasporto, url, header soap e header wsa con connettore saaj
 - 'IntegrazioneCorrelazioneApplicativa' viene verificata la funzionalita' di integrazione riguardante la correlazione applicativa
 - 'RichiesteApplicativeScorrette' vengono generate richieste applicative scorrette che la Porta di Dominio deve riconoscere e gestire

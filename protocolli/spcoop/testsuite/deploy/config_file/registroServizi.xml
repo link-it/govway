@@ -33,6 +33,8 @@
         <azione nome="saaj"/>
 	<!-- HTTP-CORE -->
 	<azione nome="httpCore"/>
+	<!-- HTTP-CORE 5 -->
+	<azione nome="httpCore5"/>
         <!-- Altre funzionalita' -->
         <azione nome="Sbustamento"/>
         <azione nome="ConsegnaMultipla"/>
@@ -59,6 +61,8 @@
         <azione nome="testIntegrazioneWithWSAddressingSAAJ"/>
 	<azione nome="testIntegrazioneHTTPCORE"/>
 	<azione nome="testIntegrazioneWithWSAddressingHTTPCORE"/>
+	<azione nome="testIntegrazioneHTTPCORE5"/>
+	<azione nome="testIntegrazioneWithWSAddressingHTTPCORE5"/>
         <!-- Filtro duplicati con riscontro -->
         <azione nome="FiltroDuplicatiConRiscontroStateless" filtro-duplicati="abilitato"
             conferma-ricezione="abilitato"/>
@@ -194,6 +198,8 @@
         <azione nome="testIntegrazioneWithWSAddressingSAAJ"/>
         <azione nome="testIntegrazioneHTTPCORE"/>
         <azione nome="testIntegrazioneWithWSAddressingHTTPCORE"/>
+ 	<azione nome="testIntegrazioneHTTPCORE5"/>
+        <azione nome="testIntegrazioneWithWSAddressingHTTPCORE5"/>
         <azione nome="testIntegrazionePA"/>
         <azione nome="BEGIN-ID_testIntegrazione_END-ID"/>
         <azione nome="gestioneManifestDisabilitata"/>
@@ -231,6 +237,8 @@
         <azione nome="saaj"/>
         <!-- HTTP-CORE -->
         <azione nome="httpCore"/>
+        <!-- HTTP-CORE5 -->
+        <azione nome="httpCore5"/>
         <!-- XML Malformati -->
         <azione nome="malformazioneXMLHeaderEGov"/>
         <azione nome="malformazioneXMLBody"/>

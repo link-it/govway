@@ -81,6 +81,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -581,7 +582,8 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 						}
 						
 						HttpEntity httpEntity = null;
-						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(contentTypeRichiesta);
+						String baseMimeType = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta);
+						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(baseMimeType);
 						if(bout.isSerializedOnFileSystem()) {
 							httpEntity = new FileEntity(bout.getSerializedFile(), ct);
 						}
@@ -601,7 +603,8 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 					// Siamo per forza rest con contenuto non costruito
 					if(hasContentRest) {
 						InputStream isRequest = this.requestMsg.castAsRest().getInputStream();
-						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(contentTypeRichiesta);
+						String baseMimeType = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta);
+						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(baseMimeType);
 						HttpEntity httpEntity = new InputStreamEntity(isRequest, ct);
 						this.httpRequest.setEntity(httpEntity);
 					}

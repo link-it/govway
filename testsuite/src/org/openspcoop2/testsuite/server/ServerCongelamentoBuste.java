@@ -129,7 +129,7 @@ public class ServerCongelamentoBuste extends ServerCore{
 			}
 			
 			SOAPConnection connection = OpenSPCoop2MessageFactory.getDefaultMessageFactory().getSOAPConnectionFactory().createConnection();
-			javax.xml.messaging.URLEndpoint urlConnection = new  javax.xml.messaging.URLEndpoint(urlForward);
+			java.net.URL urlConnection = new java.net.URL(urlForward);
 			Object responseMsgSoapAsObject = connection.call(msg.castAsSoap().getSOAPMessage(),urlConnection);
 			//System.out.println("RESPONSE ["+responseMsgSoapAsObject.getClass().getName()+"] CONNECTION ["+connection.getClass().getName()+"]");
 			SOAPMessage responseMsgSoap = (SOAPMessage) responseMsgSoapAsObject;

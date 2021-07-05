@@ -3358,6 +3358,34 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
         </porta-delegata>
+
+	<!-- Profilo OneWay -->
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneOnewayHTTPCORE5" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="ComunicazioneVariazione" />
+            <azione nome="testIntegrazioneHTTPCORE5" />
+        </porta-delegata>
+        
+        <!-- Profilo Sincrono -->
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneSincronaHTTPCORE5" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazioneHTTPCORE5" />
+        </porta-delegata>
+        
+        <!-- Profilo OneWay (con WSAddressing) -->
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressingHTTPCORE5" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap,wsa">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="ComunicazioneVariazione" />
+            <azione nome="testIntegrazioneWithWSAddressingHTTPCORE5" />
+        </porta-delegata>
+        
+        <!-- Profilo Sincrono (con WSAddressing) -->
+        <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressingHTTPCORE5" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap,wsa">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazioneWithWSAddressingHTTPCORE5" />
+        </porta-delegata>
         
         <!-- URL Based -->
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneURLBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
@@ -4022,6 +4050,18 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="httpCore"/>
+        </porta-delegata>
+
+        <!-- Connettore httpCore5 -->
+        <porta-delegata gestione-manifest="abilitato" nome="HTTPCORE5Oneway" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="ComunicazioneVariazione" />
+            <azione nome="httpCore5"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="HTTPCORE5Sincrono" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="httpCore5"/>
         </porta-delegata>
         
         
@@ -7872,6 +7912,46 @@
 	    </soggetti>
         </porta-applicativa>
         
+	<!-- Profilo OneWay -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneOnewayHTTPCORE5" integrazione="trasporto,urlBased,soap">
+            <servizio tipo="spc" nome="ComunicazioneVariazione" />
+            <azione nome="testIntegrazioneHTTPCORE5" />
+            <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneHTTPCORE5" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        
+        <!-- Profilo Sincrono -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneSincronaHTTPCORE5" integrazione="trasporto,urlBased,soap">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazioneHTTPCORE5" />
+            <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneHTTPCORE5" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
+        </porta-applicativa>
+        
+        <!-- Profilo OneWay (WSAddressing) -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressingHTTPCORE5" integrazione="trasporto,urlBased,soap,wsa">
+            <servizio tipo="spc" nome="ComunicazioneVariazione" />
+            <azione nome="testIntegrazioneWithWSAddressingHTTPCORE5" />
+            <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE5" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+        
+        <!-- Profilo Sincrono  (WSAddressing) -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressingHTTPCORE5" integrazione="trasporto,urlBased,soap,wsa">
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="testIntegrazioneWithWSAddressingHTTPCORE5" />
+            <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE5" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+
         <!-- Test Integrazione PA -->
         <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedPortaApplicativa" integrazione="trasporto,urlBased,soap">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
@@ -8418,6 +8498,26 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
+
+	<!-- HTTPCORE5 -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="HTTPCORE5Oneway">
+            <servizio tipo="spc" nome="ComunicazioneVariazione" />
+            <azione nome="httpCore5"/>
+            <servizio-applicativo nome="HTTPCORE5" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
+
+        <!-- Profilo Sincrono -->
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="HTTPCORE5Sincrono" >
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+            <azione nome="httpCore5"/>
+            <servizio-applicativo nome="HTTPCORE5" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
+        </porta-applicativa>
         
         
         
@@ -8598,6 +8698,20 @@
         <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE" > 
             <invocazione-servizio>
                 <connettore tipo="httpcore" nome="testSuiteOpenSPCoop">
+                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/server_checkInfoIntegrazione?checkWSA=true&#38;checkUserAgent=false"/>
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+	<servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneHTTPCORE5" > 
+            <invocazione-servizio>
+                <connettore tipo="httpcore5" nome="testSuiteOpenSPCoop">
+                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/server_checkInfoIntegrazione?checkUserAgent=false"/>
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE5" > 
+            <invocazione-servizio>
+                <connettore tipo="httpcore5" nome="testSuiteOpenSPCoop">
                     <property nome="location" valore="http://localhost:8080/govwayTestSuite/server_checkInfoIntegrazione?checkWSA=true&#38;checkUserAgent=false"/>
                 </connettore>
             </invocazione-servizio>  
@@ -9232,6 +9346,16 @@
         <servizio-applicativo nome="HTTPCORE" >
             <invocazione-servizio>
                 <connettore tipo="httpcore" nome="httpcore">
+                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/server" />
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+
+
+        <!-- ConnettoreHTTPCORE5 -->
+        <servizio-applicativo nome="HTTPCORE5" >
+            <invocazione-servizio>
+                <connettore tipo="httpcore5" nome="httpcore5">
                     <property nome="location" valore="http://localhost:8080/govwayTestSuite/server" />
                 </connettore>
             </invocazione-servizio>
