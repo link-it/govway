@@ -321,7 +321,7 @@ And match header Authorization == '#notpresent'
 
 
 @informazioni-utente-query
-Scenario: Giro Ok IDAR03 con informazioni utente passate negli header http
+Scenario: Giro Ok IDAR03 con informazioni utente passate nella query
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03InfoUtente/v1"
 And path 'resources', 1, 'M'
@@ -375,7 +375,7 @@ And match header Authorization == '#notpresent'
 
 
 @informazioni-utente-mixed
-Scenario: Giro Ok IDAR03 con informazioni utente passate negli header http
+Scenario: Giro Ok IDAR03 con informazioni utente passate in differenti modalità
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03InfoUtente/v1"
 And path 'resources', 1, 'M'
@@ -429,7 +429,7 @@ And match header Authorization == '#notpresent'
 
 
 @informazioni-utente-static
-Scenario: Giro Ok IDAR03 con informazioni utente passate negli header http
+Scenario: Giro Ok IDAR03 con informazioni utente passate staticamente
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03InfoUtenteStatic/v1"
 And path 'resources', 1, 'M'

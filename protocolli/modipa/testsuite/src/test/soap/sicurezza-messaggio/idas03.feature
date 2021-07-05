@@ -331,7 +331,7 @@ And match response == read("response.xml")
 
 
 @informazioni-utente-query
-Scenario: Giro Ok IDAR03 con informazioni utente passate negli header http
+Scenario: Giro Ok IDAR03 con informazioni utente passate nella query
 
 * def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS03InfoUtente/v1'
 
@@ -388,7 +388,7 @@ And match response == read("response.xml")
 
 
 @informazioni-utente-mixed
-Scenario: Giro Ok IDAR03 con informazioni utente passate negli header http
+Scenario: Giro Ok IDAR03 con informazioni utente passate in differenti modalità
 
 * def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS03InfoUtente/v1'
 
