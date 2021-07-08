@@ -61,27 +61,45 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 
 	/** InputStream Risposta */
 	protected InputStream isResponse = null;
-	
+	public void setInputStreamResponse(InputStream isResponse) {
+		this.isResponse = isResponse;
+	}
+
 	/** MessageType Risposta */
 	protected MessageType messageTypeResponse = null;
 	
 	/** ContentType Risposta */
 	protected String tipoRisposta = null;
-	
+	public void setTipoRisposta(String tipoRisposta) {
+		this.tipoRisposta = tipoRisposta;
+	}
+
 	/** Check ContentType */
 	protected boolean checkContentType = true;
 	
 	/** NotifierInputStreamParams */
 	protected NotifierInputStreamParams notifierInputStreamParams;
-	
+	public void setNotifierInputStreamParams(NotifierInputStreamParams notifierInputStreamParams) {
+		this.notifierInputStreamParams = notifierInputStreamParams;
+	}
+
 	/** Imbustamento SOAP */
 	protected boolean imbustamentoConAttachment;
 	protected String mimeTypeAttachment;
+	public void setImbustamentoConAttachment(boolean imbustamentoConAttachment) {
+		this.imbustamentoConAttachment = imbustamentoConAttachment;
+	}
+	public void setMimeTypeAttachment(String mimeTypeAttachment) {
+		this.mimeTypeAttachment = mimeTypeAttachment;
+	}
 	
 	/** acceptOnlyReturnCode_202_200 SOAP */
 	protected boolean acceptOnlyReturnCode_202_200 = true;
-			
-	protected void normalizeInputStreamResponse(int timeout) throws Exception{
+	public boolean isAcceptOnlyReturnCode_202_200() {
+		return this.acceptOnlyReturnCode_202_200;
+	}
+	
+	public void normalizeInputStreamResponse(int timeout) throws Exception{
 		//Se non e' null, controllo che non sia vuoto.
 		byte[] b = new byte[1];
 		if(this.isResponse!=null){
@@ -116,7 +134,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	protected void initCheckContentTypeConfiguration(){		
+	public void initCheckContentTypeConfiguration(){		
 		this.checkContentType = true;
 		if(this.idModulo!=null){
 			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
@@ -127,7 +145,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	protected void initConfigurationAcceptOnlyReturnCode_202_200(){
+	public void initConfigurationAcceptOnlyReturnCode_202_200(){
 		this.acceptOnlyReturnCode_202_200 = true;
 		if(this.isRest){
 			this.acceptOnlyReturnCode_202_200 = false;

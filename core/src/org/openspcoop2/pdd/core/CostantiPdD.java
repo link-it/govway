@@ -303,6 +303,17 @@ public class CostantiPdD {
     
     /** Dimensione della cache */
     public static final int CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE = 10000;
+   
+    /** Pool Size Applicative Threads */
+    public static final int CONNETTORE_NIO_ASYNC_SERVER_POOL_SIZE = 100;
+    /** Maximum limit of connection on a per route basis */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
+    /** Maximum limit of connection on total */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_TOTAL = 100;
+    /** Close connections that have been idle longer than X sec */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS = 30;
+    /** NIO Streaming buffer size */
+    public static final int CONNETTORE_NIO_ASYNC_BUFFER_SIZE = 61140;
     
     /** Configurazione default per refresh cluster dinamico */
     public static final int CLUSTER_DINAMICO_REFRESH_SECONDS = 60;

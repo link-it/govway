@@ -69,7 +69,7 @@ public class MappingProperties {
 		String urlWithoutContext = null;
 		
 		List<String> paContexts = new ArrayList<String>();
-		if(IDService.PORTA_APPLICATIVA.equals(idService)){
+		if(IDService.PORTA_APPLICATIVA.equals(idService) || IDService.PORTA_APPLICATIVA_NIO.equals(idService)){
 			paContexts.add("/PA");
 			if(customContexts!=null) {
 				List<FunctionContextCustom> list = customContexts.getContexts();

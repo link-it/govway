@@ -1071,9 +1071,9 @@ public class InoltroRisposte extends GenericLib{
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, busta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(responseMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(responseMessage, tipoConnector, connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
-				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
+				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(tipoConnector, connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 				
 				pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_METHOD, httpRequestMethod);
@@ -1114,7 +1114,7 @@ public class InoltroRisposte extends GenericLib{
 			infoConnettoreUscita.setSbustamentoInformazioniProtocollo(connettoreMsg.isSbustamentoInformazioniProtocollo());
 			infoConnettoreUscita.setTipoAutenticazione(connettoreMsg.getAutenticazione());
 			infoConnettoreUscita.setCredenziali(connettoreMsg.getCredenziali());
-			infoConnettoreUscita.setTipoConnettore(connettoreMsg.getTipoConnettore());
+			infoConnettoreUscita.setTipoConnettore(tipoConnector);
 			
 			//	Utilizzo Connettore
 			if(invokerNonSupportato==false){

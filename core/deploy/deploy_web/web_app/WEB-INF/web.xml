@@ -17,21 +17,24 @@
 				  venga elaborata dalla servlet (e quindi consumato l'InputStream)
 	-->
 	<filter>
-	<filter-name>UrlEncodedFilter</filter-name>
-	<filter-class>org.openspcoop2.pdd.services.connector.FormUrlEncodedFilter</filter-class>
+		<filter-name>UrlEncodedFilter</filter-name>
+		<filter-class>org.openspcoop2.pdd.services.connector.FormUrlEncodedFilter</filter-class>
+		<async-supported>true</async-supported>
 	</filter>
 
 	<!-- IntegrationManagerEngine -->
 	<filter>
-    	<filter-name>IntegrationManagerEngineFilter</filter-name>
-    	<filter-class>org.openspcoop2.pdd.services.skeleton.IntegrationManagerEngineFilter</filter-class>
+    		<filter-name>IntegrationManagerEngineFilter</filter-name>
+	    	<filter-class>org.openspcoop2.pdd.services.skeleton.IntegrationManagerEngineFilter</filter-class>
+	    	<async-supported>true</async-supported>
 	</filter>
 	
 	<!-- Se questo filtro viene attivato, vengono utilizzate le regole di rewriter presenti nel file urlrewrite.xml -->	
 	<!--
 	<filter>
-    	<filter-name>UrlRewriteFilter</filter-name>
-    	<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+    		<filter-name>UrlRewriteFilter</filter-name>
+    		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+    		<async-supported>true</async-supported>
 	</filter>
 	-->
 
@@ -98,6 +101,7 @@
         <servlet-name>OpenSPCoop2Servlet</servlet-name>
         <display-name>OpenSPCoop2 Servlet</display-name>
         <servlet-class>org.openspcoop2.pdd.services.connector.OpenSPCoop2Servlet</servlet-class>
+        <async-supported>true</async-supported>
     </servlet>
 
 

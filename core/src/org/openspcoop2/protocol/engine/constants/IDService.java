@@ -37,10 +37,15 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	OPENSPCOOP2_SERVLET ("OpenSPCoop2Servlet"),
 	
 	PORTA_DELEGATA ("RicezioneContenutiApplicativi"),
-	PORTA_DELEGATA_INTEGRATION_MANAGER ("RicezioneContenutiApplicativiIntegrationManager"),
+	PORTA_DELEGATA_NIO ("RicezioneContenutiApplicativiNIO"),
+	
 	PORTA_DELEGATA_XML_TO_SOAP ("RicezioneContenutiApplicativiHTTP"),
+	PORTA_DELEGATA_XML_TO_SOAP_NIO ("RicezioneContenutiApplicativiHTTPNIO"),
+	
+	PORTA_DELEGATA_INTEGRATION_MANAGER ("RicezioneContenutiApplicativiIntegrationManager"),
 	
 	PORTA_APPLICATIVA ("RicezioneBuste"),
+	PORTA_APPLICATIVA_NIO ("RicezioneBusteNIO"),
 	
 	INTEGRATION_MANAGER_SOAP ("IntegrationManager"),
 	
@@ -50,32 +55,55 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	
 	// ID: 7 cifre (parlante)
 	private final static String ID_OPENSPCOOP_SERVLET = "OP20000";
+	
 	private final static String ID_PORTA_DELEGATA = "PD00000";
-	private final static String ID_PORTA_APPLICATIVA = "PA00000";
+	private final static String ID_PORTA_DELEGATA_NIO = "PDNIO00";
+	
 	private final static String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP = "PD2SOAP";
-	private final static String ID_INTEGRATION_MANAGER = "IM00000";
+	private final static String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP_NIO = "PD2SOAN";
+	
 	private final static String ID_PORTA_DELEGATA_INTEGRATION_MANAGER = "PDIM000";
+	
+	private final static String ID_PORTA_APPLICATIVA = "PA00000";
+	private final static String ID_PORTA_APPLICATIVA_NIO = "PANIO00";
+	
+	private final static String ID_INTEGRATION_MANAGER = "IM00000";
+	
 	private final static String ID_CHECK_PDD = "CHKPDD0";
 	private final static String ID_PROXY = "PROXY00";
 	
 	public String getCode() throws ProtocolException{
 		switch (this) {
+		
 		case OPENSPCOOP2_SERVLET:
 			return ID_OPENSPCOOP_SERVLET;
+			
 		case PORTA_DELEGATA:
 			return ID_PORTA_DELEGATA;
+		case PORTA_DELEGATA_NIO:
+			return ID_PORTA_DELEGATA_NIO;
+			
 		case PORTA_DELEGATA_XML_TO_SOAP:
 			return ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP;
+		case PORTA_DELEGATA_XML_TO_SOAP_NIO:
+			return ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP_NIO;
+			
 		case PORTA_DELEGATA_INTEGRATION_MANAGER:
 			return ID_PORTA_DELEGATA_INTEGRATION_MANAGER;
+			
 		case PORTA_APPLICATIVA:
 			return ID_PORTA_APPLICATIVA;
+		case PORTA_APPLICATIVA_NIO:
+			return ID_PORTA_APPLICATIVA_NIO;
+			
 		case INTEGRATION_MANAGER_SOAP:
 			return ID_INTEGRATION_MANAGER;
+			
 		case CHECK_PDD:
 			return ID_CHECK_PDD;
 		case PROXY:
 			return ID_PROXY;
+			
 		}
 		throw new ProtocolException("Service ["+this.name()+"] unsupported");
 	}

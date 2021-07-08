@@ -21,7 +21,6 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +83,6 @@ import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -113,10 +111,10 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 	
 	/* Costruttori */
 	public ConnettoreHTTPCORE5(){
-		this.connettoreHttps = false;
+		super();
 	}
 	public ConnettoreHTTPCORE5(boolean https){
-		this.connettoreHttps = https;
+		super(https);
 	}
 	
 	
@@ -301,7 +299,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 					this.httpRequest = new HttpPatch(url.toString());
 					break;	
 				default:
-					this.httpRequest = new CustomHttp5Entity(this.httpMethod, url.toString());
+					this.httpRequest = new CustomHttpCore5Entity(this.httpMethod, url.toString());
 					break;
 			}
 			if(this.httpMethod==null){
@@ -947,32 +945,6 @@ class ConnectionKeepAliveStrategyCustomHttp5 implements ConnectionKeepAliveStrat
         TimeValue tv = TimeValue.ofMilliseconds(v);
         return tv;
 		
-	}
-	
-}
-
-class CustomHttp5Entity extends HttpUriRequestBase{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	private HttpRequestMethod httpMethod;
-	
-    public CustomHttp5Entity(HttpRequestMethod httpMethod, final URI uri) {
-        super(httpMethod.name(), uri);
-        this.httpMethod = httpMethod;
-    }
-
-    public CustomHttp5Entity(HttpRequestMethod httpMethod, final String uri) {
-    	super(httpMethod.name(), URI.create(uri));
-        this.httpMethod = httpMethod;
-    }
-	
-	@Override
-	public String getMethod() {
-		return this.httpMethod.name();
 	}
 	
 }

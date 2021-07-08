@@ -23,7 +23,10 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.util.Date;
+
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.pdd.services.connector.ConnectorCostanti;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiHTTPtoSOAPConnector;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
@@ -31,6 +34,7 @@ import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessa
 import org.openspcoop2.pdd.services.service.RicezioneContenutiApplicativiHTTPtoSOAPService;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.utils.date.DateManager;
 
 /**
  * Classe utilizzata per effettuare consegne di messaggi Soap, attraverso
@@ -63,7 +67,8 @@ public class ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM extends A
 	@Override
 	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{
 		RicezioneContenutiApplicativiHTTPtoSOAPService soapConnector = new RicezioneContenutiApplicativiHTTPtoSOAPService(null); // il generatore di errori verrà creato direttamente dal servizio
-		soapConnector.process(inMessage, outMessage);
+		Date dataAccettazioneRichiesta = DateManager.getDate();
+		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 	}
 	
 	@Override

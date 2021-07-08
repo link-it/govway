@@ -28,6 +28,7 @@ import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -98,6 +99,13 @@ public abstract class GenericLib {
 		}
 	}
 
+
+	protected IAsyncResponseCallback asyncResponseCallback;
+	public EsitoLib onMessage(IOpenSPCoopState openspcoop_state, IAsyncResponseCallback asyncResponseCallback) throws OpenSPCoopStateException{
+		this.asyncResponseCallback = asyncResponseCallback;
+		return this.onMessage(openspcoop_state);
+	}
+	
 	
 	public EsitoLib onMessage(IOpenSPCoopState openspcoop_state) throws OpenSPCoopStateException{
 		

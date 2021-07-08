@@ -93,12 +93,15 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;
+	public void setResultHTTPMessage(String resultHTTPMessage) {
+		this.resultHTTPMessage = resultHTTPMessage;
+	}
 
 	/** RFC 2047 */
-	boolean encodingRFC2047 = false;
-	Charset charsetRFC2047 = null;
-	RFC2047Encoding encodingAlgorithmRFC2047 = null;
-	boolean validazioneHeaderRFC2047 = false;
+	protected boolean encodingRFC2047 = false;
+	protected Charset charsetRFC2047 = null;
+	protected RFC2047Encoding encodingAlgorithmRFC2047 = null;
+	protected boolean validazioneHeaderRFC2047 = false;
 	
 	
 	/** REST Proxy Pass Reverse */
@@ -114,6 +117,17 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected ForwardProxy forwardProxy;
 	protected String forwardProxy_headerName;
 	protected String forwardProxy_headerValue;
+	
+	
+	
+	/* Costruttori */
+	public ConnettoreBaseHTTP(){
+		this.connettoreHttps = false;
+	}
+	public ConnettoreBaseHTTP(boolean https){
+		this.connettoreHttps = https;
+	}
+	
 	
 	@Override
 	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired, ResponseCachingConfigurazione responseCachingConfig){
@@ -313,7 +327,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+	public boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		
 		if(this.isRest){
 			checkRestProxyPassReverse();
@@ -331,7 +345,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean doSoapResponse() throws Exception{
+	public boolean doSoapResponse() throws Exception{
 
 		// gestione ordinaria via WS/SOAP
 		
@@ -393,7 +407,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean doRestResponse() throws Exception{
+	public boolean doRestResponse() throws Exception{
 		
 		checkRestProxyPassReverse();
 		

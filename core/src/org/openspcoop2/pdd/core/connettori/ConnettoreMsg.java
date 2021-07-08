@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
@@ -120,6 +121,9 @@ public class ConnettoreMsg  {
 	private ForwardProxy forwardProxy;
 	
 	private IDAccordo idAccordo;
+	
+	/** IAsyncResponseCallback */
+	private IAsyncResponseCallback asyncResponseCallback;
 	
 
 
@@ -471,6 +475,13 @@ public class ConnettoreMsg  {
 		return this.generateErrorWithConnectorPrefix;
 	}
 
+	public IAsyncResponseCallback getAsyncResponseCallback() {
+		return this.asyncResponseCallback;
+	}
+	public void setAsyncResponseCallback(IAsyncResponseCallback asyncResponseCallback) {
+		this.asyncResponseCallback = asyncResponseCallback;
+	}
+	
 	public PolicyNegoziazioneToken getPolicyNegoziazioneToken() {
 		return this.policyNegoziazioneToken;
 	}

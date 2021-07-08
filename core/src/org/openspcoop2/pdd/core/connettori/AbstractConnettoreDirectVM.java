@@ -279,6 +279,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
     
 	public abstract boolean validate(ConnettoreMsg request);
 	public abstract String getFunctionParameters();
+	@Override
 	public abstract String getIdModulo();
 	public abstract IDService getIdModuloAsIDService();
 	public abstract String getFunction();

@@ -88,36 +88,54 @@ public class ConnettoreUtils {
 			}
 		}
 		else if(ConnettoreRicezioneBusteDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			try{
-				((ConnettoreRicezioneBusteDirectVM)connector).validate(connettoreMsg);
-				((ConnettoreRicezioneBusteDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
-				location = connector.getLocation();
-				dynamicLocation = true;
-			}catch(Exception e){
-				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
-				location = "N.D.";
+			if(connector!=null) {
+				try{
+					((ConnettoreRicezioneBusteDirectVM)connector).validate(connettoreMsg);
+					((ConnettoreRicezioneBusteDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+					location = connector.getLocation();
+					dynamicLocation = true;
+				}catch(Exception e){
+					log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+					location = "N.D.";
+				}
+			}
+			else {
+				log.debug("Connettore non disponibile"); // caso in cui il tipo indicato o la classe non esiste
+				location = "undefined";
 			}
 		}
 		else if(ConnettoreRicezioneContenutiApplicativiDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			try{
-				((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).validate(connettoreMsg);
-				((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
-				location = connector.getLocation();
-				dynamicLocation = true;
-			}catch(Exception e){
-				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
-				location = "N.D.";
+			if(connector!=null) {
+				try{
+					((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).validate(connettoreMsg);
+					((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+					location = connector.getLocation();
+					dynamicLocation = true;
+				}catch(Exception e){
+					log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+					location = "N.D.";
+				}
+			}
+			else {
+				log.debug("Connettore non disponibile"); // caso in cui il tipo indicato o la classe non esiste
+				location = "undefined";
 			}
 		}
 		else if(ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			try{
-				((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).validate(connettoreMsg);
-				((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
-				location = connector.getLocation();
-				dynamicLocation = true;
-			}catch(Exception e){
-				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
-				location = "N.D.";
+			if(connector!=null) {
+				try{
+					((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).validate(connettoreMsg);
+					((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+					location = connector.getLocation();
+					dynamicLocation = true;
+				}catch(Exception e){
+					log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+					location = "N.D.";
+				}
+			}
+			else {
+				log.debug("Connettore non disponibile"); // caso in cui il tipo indicato o la classe non esiste
+				location = "undefined";
 			}
 		}
 		else{
@@ -138,7 +156,7 @@ public class ConnettoreUtils {
 			
 			// Dynamic
 			// Costruisco Mappa per dynamic name
-			if(dynamicLocation) {
+			if(dynamicLocation && connector!=null) {
 				try {
 					Map<String, Object> dynamicMap = ((ConnettoreBase)connector).buildDynamicMap(connettoreMsg);
 					location = DynamicUtils.convertDynamicPropertyValue(CostantiConnettori.CONNETTORE_LOCATION, location, dynamicMap, pddContext, false);
@@ -260,5 +278,14 @@ public class ConnettoreUtils {
 			}
 		}
 		return location;
+	}
+	
+	public static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, boolean async) {
+		if(tipoConnector!=null) {
+			if(async && props.isNIOConfig_convertToAsyncClient()) {
+				return props.convertToAsyncClientConnector(tipoConnector);
+			}
+		}
+		return tipoConnector;
 	}
 }

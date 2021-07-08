@@ -76,6 +76,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
@@ -114,7 +115,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Msg di richiesta */
 	protected OpenSPCoop2Message requestMsg;	
 	protected boolean isSoap = false;
+	public boolean isSoap() {
+		return this.isSoap;
+	}
 	protected boolean isRest = false;
+	public boolean isRest() {
+		return this.isRest;
+	}
 	
 	/** Indicazione su di un eventuale sbustamento SOAP */
 	protected boolean sbustamentoSoap;
@@ -135,6 +142,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	/** Indicazione se siamo in modalita' debug */
 	protected boolean debug = false;
+	public boolean isDebug() {
+		return this.debug;
+	}
 
 	/** OpenSPCoopProperties */
 	protected OpenSPCoop2Properties openspcoopProperties = null;
@@ -144,30 +154,66 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	/** Logger */
 	protected ConnettoreLogger logger = null;
+	public ConnettoreLogger getLogger() {
+		return this.logger;
+	}
 
 	/** Loader loader */
 	protected Loader loader = null;
 	
 	/** Errore generato con un prefisso del connettore */
 	protected boolean generateErrorWithConnectorPrefix = true;
+	public boolean isGenerateErrorWithConnectorPrefix() {
+		return this.generateErrorWithConnectorPrefix;
+	}
 	
 	/** Identificativo Modulo */
 	protected String idModulo = null;
+	public String getIdModulo() {
+		return this.idModulo;
+	}
 	
 	/** motivo di un eventuale errore */
 	protected String errore = null;
+	public void setErrore(String errore) {
+		this.errore = errore;
+	}
+	
 	/** Messaggio di risposta */
 	protected OpenSPCoop2Message responseMsg = null;
+	
 	/** Codice Operazione Effettuata */
 	protected int codice;
+	public void setCodiceTrasporto(int codice) {
+		this.codice = codice;
+	}
+	
 	/** ContentLength */
 	protected long contentLength = -1;
+	public void setContentLength(long contentLength) {
+		this.contentLength = contentLength;
+	}
+
 	/** File tmp */
 	protected String location = null;
+	public String _getLocationValue() {
+		return this.location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
 	/** Eccezione processamento */
 	protected Exception eccezioneProcessamento = null;
+	public void setEccezioneProcessamento(Exception eccezioneProcessamento) {
+		this.eccezioneProcessamento = eccezioneProcessamento;
+	}
+	
 	/** Proprieta' del trasporto della risposta */
 	protected Map<String, List<String>> propertiesTrasportoRisposta = new HashMap<String, List<String>>();
+	public Map<String, List<String>> getPropertiesTrasportoRisposta() {
+		return this.propertiesTrasportoRisposta;
+	}
+
 	/** CreationDate */
 	protected Date creationDate;
 	
@@ -179,6 +225,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected PostOutRequestContext postOutRequestContext;
 	/** PreInResponseContext */
 	protected PreInResponseContext preInResponseContext;
+	public PreInResponseContext getPreInResponseContext() {
+		return this.preInResponseContext;
+	}
 	
 	/** SOAPAction */
 	protected String soapAction = null;
@@ -223,6 +272,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected boolean useLimitedInputStream = false;
 	protected SogliaDimensioneMessaggio limitBytes = null;
 	
+    protected IAsyncResponseCallback asyncResponseCallback;
+	
+    
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
 	}
@@ -236,6 +288,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
 			return false;
 		}
+		
+		// async context
+		this.asyncResponseCallback = request.getAsyncResponseCallback();
 		
 		// Raccolta parametri per costruttore logger
 		this.properties = request.getConnectorProperties();
@@ -779,23 +834,54 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	protected abstract boolean send(ConnettoreMsg request);
 	
+	protected boolean asynWait = false;
+	protected boolean asyncInvocationSuccess = false;
+	public void setAsyncInvocationSuccess(boolean asyncInvocationSuccess) {
+		this.asyncInvocationSuccess = asyncInvocationSuccess;
+	}
+
 	@Override
 	public boolean send(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request){
 		
-		if(this.initializePreSend(responseCachingConfig, request)==false){
-			return false;
+		try {
+		
+			if(this.initializePreSend(responseCachingConfig, request)==false){
+				return false;
+			}
+			
+			// caching response
+			if(this.responseAlready) {
+				return true;
+			}
+			
+			boolean returnEsitoSend = send(request);
+			if(returnEsitoSend) {
+				saveResponseInCache();
+			}
+			return returnEsitoSend;
+			
+		}finally {
+			if(this.asyncResponseCallback!=null && !this.asynWait) {
+				try {
+					this.asyncResponseCallback.asyncComplete(this.asyncInvocationSuccess);
+				}catch(Exception e) {
+					this.logger.error("AsyncCallback.complete: "+e.getMessage(),e);
+				}
+			}
 		}
 		
-		// caching response
-		if(this.responseAlready) {
-			return true;
+	}
+	
+	public void asyncComplete() {
+		try {
+			if(this.asyncResponseCallback==null) {
+				this.logger.error("Async context not active");
+				this.errore = "Async context not active";
+			}
+			this.asyncResponseCallback.asyncComplete(this.asyncInvocationSuccess);
+		}catch(Throwable e) {
+			this.logger.error("AsyncCallback.complete: "+e.getMessage(),e);
 		}
-		
-		boolean returnEsitoSend = send(request);
-		if(returnEsitoSend) {
-			saveResponseInCache();
-		}
-		return returnEsitoSend;
 	}
 	
 	/**
@@ -930,7 +1016,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     
-    protected void postOutRequest() throws Exception{
+    public void postOutRequest() throws Exception{
     	
     	if(this.registerSendIntoContext && this.getPddContext()!=null) {
     		this.getPddContext().addObject(Costanti.RICHIESTA_INOLTRATA_BACKEND, Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE);
@@ -963,7 +1049,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	
     }
     
-    protected void preInResponse() throws Exception{
+    public void preInResponse() throws Exception{
     	
     	this.dataAccettazioneRisposta = DateManager.getDate();
     	
@@ -999,7 +1085,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	 	
     }
     
-    protected String readExceptionMessageFromException(Throwable e) {
+    public String readExceptionMessageFromException(Throwable e) {
     	return _readExceptionMessageFromException(e);
     }
     protected static String _readExceptionMessageFromException(Throwable e) {
@@ -1131,7 +1217,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	return this.debug || (this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRichiesta()); 
     			//this.logFileTrace;
     }
-    protected boolean isDumpBinarioRisposta() {
+    public boolean isDumpBinarioRisposta() {
     	return this.debug || (this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRisposta()); 
     			//this.logFileTrace;
     }

@@ -107,6 +107,7 @@ import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
+import org.openspcoop2.pdd.core.connettori.nio.ConnettoreHTTPCORE_connectionManager;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
@@ -138,6 +139,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
+import org.openspcoop2.pdd.services.connector.AsyncThreadPool;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
@@ -2134,6 +2136,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/* ----------- Inizializzazione NIO Async Server ------------ */
+			try{
+				if(propertiesReader.isNIOConfig_asyncServer_applicativeThreadPoolEnabled()) {
+					AsyncThreadPool.initialize(propertiesReader.getNIOConfig_asyncServer_applicativeThreadPoolSize());
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione NIO Async Server Manager");
+				return;
+			}
+			
+			
+			
+			
+			
 			/* ----------- Inizializzazione Mailcap Activation per Gestione Attachments ------------ */
 			try{
 				MailcapActivationReader.initDataContentHandler(OpenSPCoop2Startup.log,propertiesReader.isTunnelSOAP_loadMailcap());
@@ -3237,6 +3253,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		OpenSPCoop2Properties properties = null;
 		try {
 			properties = OpenSPCoop2Properties.getInstance();
+		}catch(Throwable e){}
+		
+		// NIO Async Server Manager
+		try{
+			AsyncThreadPool.shutdown();
+		}catch(Throwable e){}
+		// NIO Async Client Manager
+		try{
+			ConnettoreHTTPCORE_connectionManager.stop();
 		}catch(Throwable e){}
 		
 		// ID Cluster

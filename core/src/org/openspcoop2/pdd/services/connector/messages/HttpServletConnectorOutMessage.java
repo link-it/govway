@@ -52,8 +52,8 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
  */
 public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 
-	protected HttpServletResponse res;
-	protected OutputStream outNullable;
+	protected HttpServletResponse _res;
+	protected OutputStream _outNullable;
 	protected IProtocolFactory<?> protocolFactory;
 	protected String idModulo;
 	protected IDService idModuloAsIDService;
@@ -63,7 +63,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	public HttpServletConnectorOutMessage(IProtocolFactory<?> protocolFactory, HttpServletResponse res,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
-			this.res = res;
+			this._res = res;
 			this.protocolFactory = protocolFactory;
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
@@ -72,6 +72,30 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			throw new ConnectorException(e.getMessage(),e);
 		}
 	}
+	
+	protected HttpServletResponse getHttpServletResponse() {
+		return this._res;
+	}
+	private synchronized void initHttpServletResponseOutputStream() throws ConnectorException {
+		if(this._outNullable==null) {
+			try {
+				this._outNullable = this.getHttpServletResponse().getOutputStream();
+			}catch(Exception e){
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
+	}
+	protected OutputStream getHttpServletResponseOutputStream() throws ConnectorException {
+		if(this._outNullable==null) {
+			this.initHttpServletResponseOutputStream();
+		}
+		return this._outNullable;
+	}
+	protected void unsetHttpServletResponseOutputStream() throws ConnectorException {
+		this._outNullable = null;
+	}
+	
+	
 
 	private void _sendHeaders(OpenSPCoop2Message msg) throws Exception {
 		// Propago eventuali header http
@@ -118,9 +142,15 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			}
 			
 			if(hasContent) {
-				this.outNullable = this.res.getOutputStream();
-				msg.writeTo(this.outNullable,consume);
+				this.responseWrite(msg, this.getHttpServletResponseOutputStream(), consume);
 			}
+		}catch(Exception e){
+			throw new ConnectorException(e.getMessage(),e);
+		}
+	}
+	protected void responseWrite(OpenSPCoop2Message msg, OutputStream os, boolean consume) throws ConnectorException {
+		try{
+			msg.writeTo(os,consume);		
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -130,14 +160,22 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	public void sendResponse(DumpByteArrayOutputStream message) throws ConnectorException{
 		try{
 			if(message!=null && message.size()>0) {
-				this.outNullable = this.res.getOutputStream();
+				responseWrite(message, this.getHttpServletResponseOutputStream());
+			}
+		}catch(Exception e){
+			throw new ConnectorException(e.getMessage(),e);
+		}
+	}
+	protected void responseWrite(DumpByteArrayOutputStream message, OutputStream os) throws ConnectorException{
+		try{
+			if(message!=null && message.size()>0) {
 				if(message.isSerializedOnFileSystem()) {
 					try(FileInputStream fin = new FileInputStream(message.getSerializedFile())) {
-						Utilities.copy(fin, this.outNullable);
+						Utilities.copy(fin, os);
 					}
 				}
 				else {
-					this.outNullable.write(message.toByteArray());
+					os.write(message.toByteArray());
 				}
 			}
 		}catch(Exception e){
@@ -219,10 +257,10 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
     		try{
         		RFC2047Utilities.validHeader(key, value);
         		if(add) {
-        			this.res.addHeader(key,value);
+        			this.getHttpServletResponse().addHeader(key,value);
         		}
         		else {
-        			this.res.setHeader(key,value);
+        			this.getHttpServletResponse().setHeader(key,value);
         		}
         	}catch(UtilsException e){
         		if(this.protocolFactory!=null && this.protocolFactory.getLogger()!=null){
@@ -235,10 +273,10 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
     	}
     	else{
     		if(add) {
-    			this.res.addHeader(key,value);
+    			this.getHttpServletResponse().addHeader(key,value);
     		}
     		else {
-    			this.res.setHeader(key,value);
+    			this.getHttpServletResponse().setHeader(key,value);
     		}
     	}
     	
@@ -247,7 +285,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void setContentLength(int length) throws ConnectorException{
 		try{
-			this.res.setContentLength(length);
+			this.getHttpServletResponse().setContentLength(length);
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -256,7 +294,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void setContentType(String type) throws ConnectorException{
 		try{
-			this.res.setContentType(type);
+			this.getHttpServletResponse().setContentType(type);
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -266,7 +304,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void setStatus(int status) throws ConnectorException{
 		try{
-			this.res.setStatus(status);
+			this.getHttpServletResponse().setStatus(status);
 			this.status = status;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
@@ -286,18 +324,18 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			// Ad esempio in tomcat utilizzare (socketBuffer="-1"): 
 			//    <Connector protocol="HTTP/1.1" port="8080" address="${jboss.bind.address}" 
             //       connectionTimeout="20000" redirectPort="8443" socketBuffer="-1" />
-			if(this.res!=null){
+			if(this.getHttpServletResponse()!=null){
 				try{
-					this.res.flushBuffer();
+					this.getHttpServletResponse().flushBuffer();
 				}catch(Exception e){
 					if(throwException){
 						throw e;
 					}
 				}
 			}
-			if(this.outNullable!=null){
+			if(this.getHttpServletResponseOutputStream()!=null){
 				try{
-					this.outNullable.flush();
+					this.getHttpServletResponseOutputStream().flush();
 				}catch(Exception e){
 					if(throwException){
 						throw e;
@@ -312,10 +350,10 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	@Override
 	public void close(boolean throwException) throws ConnectorException{
 		try{
-			if(this.outNullable!=null){
+			if(this.getHttpServletResponseOutputStream()!=null){
 				try{
-					this.outNullable.close();
-					this.outNullable = null;
+					this.getHttpServletResponseOutputStream().close();
+					this.unsetHttpServletResponseOutputStream();
 				}catch(Exception e){
 					if(throwException){
 						throw e;

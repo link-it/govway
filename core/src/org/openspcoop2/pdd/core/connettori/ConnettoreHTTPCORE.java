@@ -21,7 +21,6 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,7 +80,6 @@ import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -110,10 +108,10 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	
 	/* Costruttori */
 	public ConnettoreHTTPCORE(){
-		this.connettoreHttps = false;
+		super();
 	}
 	public ConnettoreHTTPCORE(boolean https){
-		this.connettoreHttps = https;
+		super(https);
 	}
 	
 	
@@ -298,7 +296,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 					this.httpRequest = new HttpPatch(url.toString());
 					break;	
 				default:
-					this.httpRequest = new CustomHttpEntity(this.httpMethod, url.toString());
+					this.httpRequest = new CustomHttpCoreEntity(this.httpMethod, url.toString());
 					break;
 			}
 			if(this.httpMethod==null){
@@ -938,33 +936,6 @@ class ConnectionKeepAliveStrategyCustom implements ConnectionKeepAliveStrategy{
         //System.out.println("RETURN 2 minuti");
         return 2 * 60 * 1000;
 		
-	}
-	
-}
-
-class CustomHttpEntity extends HttpEntityEnclosingRequestBase{
-
-	private HttpRequestMethod httpMethod;
-	public CustomHttpEntity(HttpRequestMethod httpMethod) {
-		super();
-		this.httpMethod = httpMethod;
-	} 
-	
-    public CustomHttpEntity(HttpRequestMethod httpMethod, final URI uri) {
-        super();
-        setURI(uri);
-        this.httpMethod = httpMethod;
-    }
-
-    public CustomHttpEntity(HttpRequestMethod httpMethod, final String uri) {
-        super();
-        setURI(URI.create(uri));
-        this.httpMethod = httpMethod;
-    }
-	
-	@Override
-	public String getMethod() {
-		return this.httpMethod.name();
 	}
 	
 }

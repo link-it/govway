@@ -203,6 +203,13 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
+			else if((idServiceCustom!=null && IDService.PORTA_DELEGATA_NIO.equals(idServiceCustom))
+					){
+					
+				RicezioneContenutiApplicativiConnectorAsync r = new RicezioneContenutiApplicativiConnectorAsync();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
+			}
 			else if(
 					(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) && op2Properties.isEnabledFunctionPDtoSOAP()) 
 					|| 
@@ -213,6 +220,13 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
+			else if((idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(idServiceCustom))
+					){
+					
+				RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync r = new RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
+			}
 			else if(
 					(function.equals(URLProtocolContext.PA_FUNCTION) && op2Properties.isEnabledFunctionPA()) 
 					|| 
@@ -222,7 +236,13 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				RicezioneBusteConnector r = new RicezioneBusteConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 			}
-			
+			else if((idServiceCustom!=null && IDService.PORTA_APPLICATIVA_NIO.equals(idServiceCustom))
+					){
+					
+				RicezioneBusteConnectorAsync r = new RicezioneBusteConnectorAsync();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
+			}
 			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION) || (idServiceCustom!=null && IDService.INTEGRATION_MANAGER_SOAP.equals(idServiceCustom))){
 				
 				if(op2Properties.isIntegrationManagerEnabled()==false) {
