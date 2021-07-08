@@ -469,7 +469,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			newSa.setOldIDServizioApplicativoForUpdate(oldID);
 			
-			List<ExtendedConnettore> listExtendedConnettore = null;	// Non serve alla checkData perchè da Api, gli applicativi sono sempre fruitori
+			List<ExtendedConnettore> listExtendedConnettore = null;	// connettori extended non supportati via API
 			
 			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, env.saHelper, newSa, applicativo, keyInfo, updateKey);
 			env.requestWrapper.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
@@ -480,7 +480,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					oldSa.getIdSoggetto(),
 					newSa.getTipologiaFruizione(),
 					newSa.getTipologiaErogazione(),
-					listExtendedConnettore, oldSa
+					listExtendedConnettore, newSa
 				)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}

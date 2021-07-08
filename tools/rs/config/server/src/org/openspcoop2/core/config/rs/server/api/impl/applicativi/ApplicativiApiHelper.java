@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
@@ -52,12 +53,17 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
+import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
+import org.openspcoop2.core.config.rs.server.model.ApplicativoServer;
+import org.openspcoop2.core.config.rs.server.model.ApplicativoServerItem;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
+import org.openspcoop2.core.config.rs.server.model.OneOfApplicativoServerConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -125,6 +131,120 @@ public class ApplicativiApiHelper {
 			Helper.overrideAuthParams(wrap, consoleHelper, credenzialiApiRest,
 					apiKeyInfo, updateKey);
 		}
+	}
+    
+	public static void overrideSAParametersApplicativoServer(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, ServizioApplicativo sa, boolean updateKey) {
+//		Credenziali credenziali = sa.getInvocazionePorta().getCredenziali(0);
+		
+		wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME, sa.getNome());
+		wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto());
+		wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT, ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP);
+		
+//		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, credenziali.getTipo().toString());
+		
+	}
+    
+	
+	public static ServizioApplicativo applicativoToServizioApplicativo(
+			ApplicativoServer applicativo,
+			String tipo_protocollo,
+			String soggetto,
+			ControlStationCore stationCore) throws UtilsException, Exception {
+
+		ServerProperties serverProperties = ServerProperties.getInstance();
+	
+		
+		ControlStationCore core = new ControlStationCore(true, serverProperties.getConfDirectory(),tipo_protocollo); 
+		SoggettiCore soggettiCore = new SoggettiCore(core);	
+
+		String tipo_soggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(tipo_protocollo);
+		IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto,soggetto);
+		Soggetto soggettoRegistro = soggettiCore.getSoggettoRegistro(idSoggetto);
+		
+	
+		//soggettoRegistro.get
+	    ServizioApplicativo sa = new ServizioApplicativo();
+	
+	    sa.setNome(applicativo.getNome());
+	    sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
+	    sa.setTipo(CostantiConfigurazione.SERVER);
+		sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());	
+		
+	    //Inseriamo il soggetto del registro locale
+	    sa.setIdSoggetto(soggettoRegistro.getId());
+	    sa.setNomeSoggettoProprietario(soggettoRegistro.getNome());
+	    sa.setTipoSoggettoProprietario(soggettoRegistro.getTipo());	    
+	    
+	    // *** risposta asinc ***
+		InvocazioneCredenziali credenzialiInvocazione = new InvocazioneCredenziali();
+		credenzialiInvocazione.setUser("");
+		credenzialiInvocazione.setPassword("");
+		
+		RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
+		rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+		rispostaAsinc.setCredenziali(credenzialiInvocazione);
+		rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
+	
+		sa.setRispostaAsincrona(rispostaAsinc);
+		
+		InvocazioneServizio invServizio = new InvocazioneServizio();
+		invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+		invServizio.setCredenziali(credenzialiInvocazione);
+		invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
+		
+		invServizio.setConnettore(new Connettore());
+		
+		sa.setInvocazioneServizio(invServizio);
+		
+		// *** Invocazione Porta ***
+		InvocazionePorta invocazionePorta = new InvocazionePorta();
+		//		List<Credenziali> credenziali = credenzialiFromAuth(applicativo.getCredenziali(), keyInfo);
+//
+//		invocazionePorta.getCredenzialiList().add(credenziali);
+		
+	    //Imposto i ruoli
+//		FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
+//		filtroRuoli.setContesto(RuoloContesto.QUALSIASI); // gli applicativi possono essere usati anche nelle erogazioni.
+//		filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+//	
+//		List<String> allRuoli = stationCore.getAllRuoli(filtroRuoli);
+//		final ServizioApplicativoRuoli ruoli = invocazionePorta.getRuoli() == null ? new ServizioApplicativoRuoli() : invocazionePorta.getRuoli();
+//		
+//		if (applicativo.getRuoli() != null) {
+//			applicativo.getRuoli().forEach( nome -> {
+//				
+//				if (!allRuoli.contains(nome)) {
+//					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il ruolo di nome " + nome + " non è presente o assegnabile al servizio applicativo.");
+//				}
+//				Ruolo r = new Ruolo();
+//				r.setNome(nome);
+//				ruoli.addRuolo(r);
+//			});
+//		}
+//		invocazionePorta.setRuoli(ruoli);
+			
+		final String fault = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP;
+		
+		InvocazionePortaGestioneErrore ipge = new InvocazionePortaGestioneErrore();
+		ipge.setFault(FaultIntegrazioneTipo.toEnumConstant(fault));
+		invocazionePorta.setGestioneErrore(ipge);
+		
+		invocazionePorta.setSbustamentoInformazioniProtocollo(StatoFunzionalita.toEnumConstant(""));
+
+		sa.setInvocazionePorta(invocazionePorta);
+		
+		// *** proprieta ***
+		if(applicativo.getProprieta()!=null && !applicativo.getProprieta().isEmpty()) {
+			for (Proprieta4000 proprieta : applicativo.getProprieta()) {
+				org.openspcoop2.core.config.Proprieta pConfig = new org.openspcoop2.core.config.Proprieta();
+				pConfig.setNome(proprieta.getNome());
+				pConfig.setValore(proprieta.getValore());
+				sa.addProprieta(pConfig);
+			}
+		}
+		
+	    return sa;
+
 	}
     
 	
@@ -260,6 +380,32 @@ public class ApplicativiApiHelper {
 		return ret;
 	}
 	
+	public static final ApplicativoServer servizioApplicativoToApplicativoServer(ServizioApplicativo sa) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		ApplicativoServer ret = new ApplicativoServer();
+		
+		ret.setNome(sa.getNome());
+
+		
+		ret.setConnettore(getConnettore(sa.getInvocazioneServizio().getConnettore()));
+			
+		if(sa.sizeProprietaList()>0) {
+			for (org.openspcoop2.core.config.Proprieta proprieta : sa.getProprietaList()) {
+				Proprieta4000 p = new Proprieta4000();
+				p.setNome(proprieta.getNome());
+				p.setValore(proprieta.getValore());
+				if(ret.getProprieta()==null) {
+					ret.setProprieta(new ArrayList<Proprieta4000>());
+				}
+				ret.addProprietaItem(p);
+			}
+		}
+		
+		return ret;
+	}
+	
+	private static OneOfApplicativoServerConnettore getConnettore(Connettore connettore) {
+		return ErogazioniApiHelper.buildConnettoreHttp(connettore.getProperties());
+	}
 	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(ServizioApplicativo sa, ApplicativiEnv env) throws Exception {
 
 		ProtocolProperties prop = getProtocolProperties(sa, env);
@@ -379,6 +525,27 @@ public class ApplicativiApiHelper {
 		else {
 			ret.setCountRuoli(saRoles.sizeRuoloList());
 		}
+		
+		return ret;
+	}
+	
+	public static final ApplicativoServerItem servizioApplicativoToApplicativoServerItem(ServizioApplicativo sa) {
+		ApplicativoServerItem ret = new ApplicativoServerItem();
+		
+		ret.setNome(sa.getNome());
+		
+		String tipo_protocollo = null;
+		
+		try {
+			tipo_protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(sa.getTipoSoggettoProprietario());
+		} catch (ProtocolException e) {
+		
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}		
+		
+		ret.setProfilo(BaseHelper.profiloFromTipoProtocollo.get(tipo_protocollo));
+		ret.setSoggetto(sa.getNomeSoggettoProprietario());
 		
 		return ret;
 	}

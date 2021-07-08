@@ -31,6 +31,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
@@ -54,6 +55,8 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazione;
 import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazioneView;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreApplicativoServer;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreErogazione;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreMultiplo;
@@ -67,6 +70,7 @@ import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -92,6 +96,7 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiUtilities;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -142,7 +147,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			if( env.apcCore.isSupportatoSoggettoReferente(env.tipo_protocollo) && idReferente!=null ){
 				referente = " (referente: "+idReferente+")";
 			}
-			
+
 			if (as == null) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(
 						"Nessuna Api registrata con nome " + body.getApiNome() + " e versione " + body.getApiVersione()+referente);
@@ -179,12 +184,12 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
 				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env);
-	
+
 				if(protocolProperties != null) {
 					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
 				}
 			}
-			
+
 
 			ServletUtils.setObjectIntoSession(context.getServletRequest().getSession(),
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
@@ -198,10 +203,10 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, true);
 
 			context.getLogger().info("Invocazione completata con successo");
-			
+
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
-			
+
 		} catch (javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
@@ -235,7 +240,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			ErogazioniApiHelper.createAllegatoAsps(body, env, asps);
 			context.getLogger().info("Invocazione completata con successo");
-			
+
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 
@@ -248,25 +253,25 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		}
 	}
 
-    /**
-     * Aggiunta di un connettore multiplo nell'erogazione di API
-     *
-     * Questa operazione consente di aggiungere un connettore multiplo all'erogazione di API identificata dal nome e dalla versione
-     *
-     */
+	/**
+	 * Aggiunta di un connettore multiplo nell'erogazione di API
+	 *
+	 * Questa operazione consente di aggiungere un connettore multiplo all'erogazione di API identificata dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void createErogazioneConnettoreMultiplo(ConnettoreMultiplo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+	public void createErogazioneConnettoreMultiplo(ConnettoreMultiplo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
+
+			// TODO: Implement...
+
 			context.getLogger().info("Invocazione completata con successo");
-        
+
 			// Bug Fix: altrimenti viene generato 204
 			context.getServletResponse().setStatus(201);
 		}
@@ -278,7 +283,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
 
 	/**
 	 * Elimina un'erogazione di api
@@ -363,26 +368,26 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		}
 	}
 
-    /**
-     * Elimina un connettore multiplo dall&#x27;erogazione
-     *
-     * Questa operazione consente di eliminare un connettore multiplo associato all&#x27;erogazione di API identificata dal nome e dalla versione
-     *
-     */
+	/**
+	 * Elimina un connettore multiplo dall&#x27;erogazione
+	 *
+	 * Questa operazione consente di eliminare un connettore multiplo associato all&#x27;erogazione di API identificata dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void deleteErogazioneConnettoreMultiplo(String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+	public void deleteErogazioneConnettoreMultiplo(String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
+
+			// TODO: Implement...
+
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
+
+
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -392,7 +397,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
 
 	/**
 	 * Restituisce l'allegato di una erogazione
@@ -425,7 +430,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().info("Invocazione completata con successo");
 
 			Helper.setContentType(context, allegato.getFile());
-			
+
 			return allegato.getByteContenuto();
 
 		} catch (javax.ws.rs.WebApplicationException e) {
@@ -464,18 +469,18 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			if(soggettoQualsiasi!=null && soggettoQualsiasi) {
 				ricerca.clearFilter(idLista, Filtri.FILTRO_SOGGETTO);
 			}
-			
+
 			if (tipoApi != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, tipoApi.toString().toLowerCase());
 
 			if(tag!=null) {
 				ricerca.addFilter(idLista, Filtri.FILTRO_GRUPPO, tag);
 			}
-			
+
 			if(uriApiImplementata!=null) {
 				ErogazioniApiHelper.setFiltroApiImplementata(uriApiImplementata, idLista, ricerca, env);
 			}
-			
+
 			List<AccordoServizioParteSpecifica> lista = env.apsCore.soggettiServizioList(null, ricerca, null, false, true);
 
 			if (env.findall_404 && lista.isEmpty()) {
@@ -675,10 +680,23 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
 
-			org.openspcoop2.core.config.Connettore connettore = ErogazioniApiHelper
-					.getConnettoreErogazioneGruppo(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo);
+			final ConnettoreErogazione ret;
+			if(ErogazioniApiHelper.isConnettoreApplicativoServer(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo)) {
 
-			final ConnettoreErogazione ret = ErogazioniApiHelper.buildConnettoreErogazione(connettore.getProperties());
+				ServizioApplicativo sa = ErogazioniApiHelper.getServizioApplicativo(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo);
+				ret = new ConnettoreErogazione();
+				ConnettoreApplicativoServer con = new ConnettoreApplicativoServer();
+				con.setTipo(ConnettoreEnum.APPLICATIVO_SERVER);
+				con.setApplicativo(sa.getNome());
+				ret.setConnettore(con);
+
+			} else {
+				org.openspcoop2.core.config.Connettore connettore = ErogazioniApiHelper
+						.getConnettoreErogazioneGruppo(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo);
+
+				ret = ErogazioniApiHelper.buildConnettoreErogazione(connettore.getProperties());
+
+			}
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -692,26 +710,26 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		}
 	}
 
-    /**
-     * Restituisce il dettaglio di un connettore multiplo
-     *
-     * Questa operazione consente di ottenere il dettaglio di un connettore multiplo dell&#x27;erogazione di API identificata dal nome e dalla versione
-     *
-     */
+	/**
+	 * Restituisce il dettaglio di un connettore multiplo
+	 *
+	 * Questa operazione consente di ottenere il dettaglio di un connettore multiplo dell&#x27;erogazione di API identificata dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public ConnettoreMultiplo getErogazioneConnettoreMultiplo(String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+	public ConnettoreMultiplo getErogazioneConnettoreMultiplo(String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
+
+			// TODO: Implement...
+
 			context.getLogger().info("Invocazione completata con successo");
-        return null;
-     
+			return null;
+
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -721,7 +739,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
 
 	/**
 	 * Restituisce le informazioni generali di un'erogazione di API
@@ -758,22 +776,22 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		}
 	}
 
-   
-    /**
-     * Restituisce le informazioni ModI associate all&#x27;erogazione
-     *
-     * Questa operazione consente di ottenere le informazioni modI associate all&#x27;erogazione identificata dal nome e dalla versione
-     *
-     */
+
+	/**
+	 * Restituisce le informazioni ModI associate all&#x27;erogazione
+	 *
+	 * Questa operazione consente di ottenere le informazioni modI associate all&#x27;erogazione identificata dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public ErogazioneModI getErogazioneModI(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public ErogazioneModI getErogazioneModI(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
+
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
@@ -782,7 +800,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-     
+
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -792,7 +810,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
 
 	/**
 	 * Restituisce le informazioni sull'url di invocazione necessaria ad invocare
@@ -892,7 +910,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			if (!newApc.isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA
-						.toException("Nessuna api " + as.getNome() + " e versione " + body.getApiVersione() + " registrata");
+				.toException("Nessuna api " + as.getNome() + " e versione " + body.getApiVersione() + " registrata");
 			}
 
 			asps.setAccordoServizioParteComune(env.idAccordoFactory.getUriFromAccordo(newApc.get()));
@@ -983,27 +1001,41 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 			IDPortaApplicativa idPaDefault = env.paCore.getIDPortaApplicativaAssociataDefault(idServizio);
 			final PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPaDefault);
-			
+
 			boolean creaNuovoConnettore = false;
 			IDPortaApplicativa idPa = null;
-			PortaApplicativa pa = null;
-			
+			PortaApplicativa pa;
+
 			if(gruppo != null) {
 				idPa = BaseHelper.supplyOrNonValida( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
 				pa = env.paCore.getPortaApplicativa(idPa);
-	
+
 				creaNuovoConnettore = !env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0));
 			} else {
 				idPa = idPaDefault;
 				pa = paDefault;
 			}
 
-			final String nomePA = idPa.getNome();
+			String erogazioneServizioApplicativoServer = null;
+			if(body.getConnettore().getTipo().equals(ConnettoreEnum.APPLICATIVO_SERVER)) {
+				ConnettoreApplicativoServer connAppServer = (ConnettoreApplicativoServer) body.getConnettore();
+
+				erogazioneServizioApplicativoServer = connAppServer.getApplicativo();
+
+				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+				idServizioApplicativo.setIdSoggettoProprietario(env.idSoggetto.toIDSoggetto());
+				idServizioApplicativo.setNome(erogazioneServizioApplicativoServer);
+				ServizioApplicativo sa = env.saCore.getServizioApplicativo(idServizioApplicativo);
+
+				if(!ErogazioniApiHelper.isConnettoreApplicativoServer(sa)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Applicativo ["+connAppServer.getApplicativo()+"] non di tipo server: " + sa.getTipo());
+				}
+			}
 
 			ServizioApplicativo sa = null;
 			if(creaNuovoConnettore) {
 				// crea sa e associa connettore
-				
+
 				List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
 
@@ -1021,26 +1053,23 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
 				rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 				rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
+				Connettore conn = new Connettore();
+				conn.setTipo(TipiConnettore.DISABILITATO.toString());
+				rispostaAsinc.setConnettore(conn);
 				sa.setRispostaAsincrona(rispostaAsinc);
 
 				InvocazioneServizio invServizio = new InvocazioneServizio();
 				invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 				invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
-				Connettore conn = new Connettore();
-				conn.setTipo(TipiConnettore.DISABILITATO.toString());
-				invServizio.setConnettore(conn);
+				Connettore conn1 = new Connettore();
+				conn1.setTipo(TipiConnettore.DISABILITATO.toString());
+				invServizio.setConnettore(conn1);
 				sa.setInvocazioneServizio(invServizio);
 
 				listaOggettiDaCreare.add(sa);
 
 				pa.getServizioApplicativoList().clear();
 
-//				// Scelto un servizio applicativo server, creo il servizio di default e poi associo quello server
-//				if(erogazioneServizioApplicativoServer != null && !"".equals(erogazioneServizioApplicativoServer)) {
-//					portaApplicativa.setServizioApplicativoDefault(nomeServizioApplicativoErogatore);
-//					nomeServizioApplicativoErogatore = erogazioneServizioApplicativoServer;
-//				} 
-				
 				PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
 				paSA.setNome(nomeServizioApplicativoErogatore);
 				pa.getServizioApplicativoList().add(paSA);
@@ -1049,70 +1078,151 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 				env.paCore.performCreateOperation(env.userLogin, false, listaOggettiDaCreare.toArray());
 				env.paCore.performUpdateOperation(env.userLogin, false, listaOggettiDaModificare.toArray());
-
-//			} else {
 			}
 
-			// aggiorna connettore gruppo
-			sa = BaseHelper.supplyOrNotFound(() -> env.saCore
-					.getServizioApplicativo(env.saCore.getIdServizioApplicativo(env.idSoggetto.toIDSoggetto(), nomePA)),
-					"Applicativo");
-
-
-			ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
-			String endpointtype = connettoreHttp.getAutenticazioneHttp() != null ? TipiConnettore.HTTP.getNome()
-					: TipiConnettore.DISABILITATO.getNome();
-			endpointtype = connettoreHttp.getAutenticazioneHttps() != null ? TipiConnettore.HTTPS.getNome() : endpointtype;
-
-			InvocazioneServizio is = sa.getInvocazioneServizio();
-			InvocazioneCredenziali credenziali_is = is.getCredenziali();
-			org.openspcoop2.core.config.Connettore connis = is.getConnettore();
-
-			String oldConnT = connis.getTipo();
-			if ((connis.getCustom() != null && connis.getCustom())
-					&& !connis.getTipo().equals(TipiConnettore.HTTPS.toString())
-					&& !connis.getTipo().equals(TipiConnettore.FILE.toString())) {
-				oldConnT = TipiConnettore.CUSTOM.toString();
+			if(sa == null) {
+				sa = BaseHelper.supplyOrNotFound(() -> env.saCore
+						.getServizioApplicativo(env.saCore.getIdServizioApplicativo(env.idSoggetto.toIDSoggetto(), pa.getServizioApplicativoList().get(0).getNome())),
+						"Applicativo");
 			}
 
-			if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, true)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			String oldErogazioneServizioApplicativoServer = null;
+			if(ErogazioniApiHelper.isConnettoreApplicativoServer(sa)) {
+				oldErogazioneServizioApplicativoServer = sa.getNome();
 			}
+			if(erogazioneServizioApplicativoServer!=null) {
 
-			ErogazioniApiHelper.fillConnettoreConfigurazione(connis, env, connettoreHttp, oldConnT);
+				if(oldErogazioneServizioApplicativoServer == null || !erogazioneServizioApplicativoServer.equals(oldErogazioneServizioApplicativoServer)) {
 
-			if (connettoreHttp.getAutenticazioneHttp() != null) {
-				if (credenziali_is == null) {
-					credenziali_is = new InvocazioneCredenziali();
+					// prelevo l'associazione con il vecchio servizio applicativo
+					PortaApplicativaServizioApplicativo paSAtmp = null;
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						if(paSA.getNome().equals(sa.getNome())) {
+							paSAtmp = paSA;
+							break;
+						}
+					}
+
+					if(paSAtmp!= null) {
+						// se ho modificato il server che sto utilizzando lo rimuovo
+						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
+							pa.getServizioApplicativoList().remove(paSAtmp); 	
+						} else {
+							// SA di default da conservare
+							pa.getServizioApplicativoList().remove(paSAtmp);
+							pa.setServizioApplicativoDefault(sa.getNome());
+						}
+					}
+
+					// nuovo SA da aggiungere
+					PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
+					paSA.setNome(erogazioneServizioApplicativoServer);
+					pa.getServizioApplicativoList().add(paSA);
+
+					env.saHelper.impostaSAServerAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(asps.getId() + "", erogazioneServizioApplicativoServer, pa, sa, Arrays.asList(pa));
+					env.paCore.performUpdateOperation(env.userLogin, false, pa);
+
 				}
-				credenziali_is.setUser(connettoreHttp.getAutenticazioneHttp().getUsername());
-				credenziali_is.setPassword(connettoreHttp.getAutenticazioneHttp().getPassword());
-				is.setCredenziali(credenziali_is);
-				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
-			}
 
-			else {
-				is.setCredenziali(null);
-				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-			}
-
-			is.setConnettore(connis);
-			sa.setInvocazioneServizio(is);
-
-			if (StatoFunzionalita.ABILITATO.equals(is.getGetMessage())
-					|| !TipiConnettore.DISABILITATO.toString().equals(endpointtype)) {
-				sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
 			} else {
-				sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());
+
+				if(oldErogazioneServizioApplicativoServer!=null) {
+					String oldServizioApplicativoDefault = pa.getServizioApplicativoDefault();
+					String oldNomeSA = sa.getNome();
+					String oldTipoSA = sa.getTipo();
+
+					// prelevo l'associazione con il vecchio servizio applicativo server
+					PortaApplicativaServizioApplicativo paSAtmp = null;
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						if(paSA.getNome().equals(oldNomeSA)) {
+							paSAtmp = paSA;
+							break;
+						}
+					}
+
+					if(paSAtmp!= null) {
+						// se ho modificato il server che sto utilizzando lo rimuovo
+						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)){
+							pa.getServizioApplicativoList().remove(paSAtmp); 	
+						}
+					}
+
+					PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
+					paSA.setNome(oldServizioApplicativoDefault);
+					//					paSA.setNome(pa.getNome());
+					pa.getServizioApplicativoList().add(paSA);
+					pa.setServizioApplicativoDefault(null);
+
+					env.saHelper.impostaSADefaultAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(asps.getId() + "", pa, sa, Arrays.asList(pa));
+
+					// rileggo la vecchia configurazione dal db di default
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setNome(oldServizioApplicativoDefault);
+					IDSoggetto idSoggettoProprietario = new IDSoggetto();
+					idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
+					idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
+					idSA.setIdSoggettoProprietario(idSoggettoProprietario );
+					sa = env.saCore.getServizioApplicativo(idSA);
+
+					env.saCore.performUpdateOperation(env.userLogin, false, pa);
+				}
+
+
+				ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
+				String endpointtype = connettoreHttp.getAutenticazioneHttp() != null ? TipiConnettore.HTTP.getNome()
+						: TipiConnettore.DISABILITATO.getNome();
+				endpointtype = connettoreHttp.getAutenticazioneHttps() != null ? TipiConnettore.HTTPS.getNome() : endpointtype;
+
+				InvocazioneServizio is = sa.getInvocazioneServizio();
+				InvocazioneCredenziali credenziali_is = is.getCredenziali();
+				org.openspcoop2.core.config.Connettore connis = is.getConnettore();
+
+				String oldConnT = connis.getTipo();
+				if ((connis.getCustom() != null && connis.getCustom())
+						&& !connis.getTipo().equals(TipiConnettore.HTTPS.toString())
+						&& !connis.getTipo().equals(TipiConnettore.FILE.toString())) {
+					oldConnT = TipiConnettore.CUSTOM.toString();
+				}
+
+				if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, true)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				}
+
+				ErogazioniApiHelper.fillConnettoreConfigurazione(connis, env, connettoreHttp, oldConnT);
+
+				if (connettoreHttp.getAutenticazioneHttp() != null) {
+					if (credenziali_is == null) {
+						credenziali_is = new InvocazioneCredenziali();
+					}
+					credenziali_is.setUser(connettoreHttp.getAutenticazioneHttp().getUsername());
+					credenziali_is.setPassword(connettoreHttp.getAutenticazioneHttp().getPassword());
+					is.setCredenziali(credenziali_is);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+				}
+
+				else {
+					is.setCredenziali(null);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+				}
+
+				is.setConnettore(connis);
+				sa.setInvocazioneServizio(is);
+
+				if (StatoFunzionalita.ABILITATO.equals(is.getGetMessage())
+						|| !TipiConnettore.DISABILITATO.toString().equals(endpointtype)) {
+					sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+				} else {
+					sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());
+				}
+
+				StringBuilder inUsoMessage = new StringBuilder();
+				ServiziApplicativiUtilities.checkStatoConnettore(env.saCore, sa, connis, inUsoMessage, System.lineSeparator());
+
+				if (inUsoMessage.length() > 0)
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+
+				env.saCore.performUpdateOperation(env.userLogin, false, sa);
 			}
-
-			StringBuilder inUsoMessage = new StringBuilder();
-			ServiziApplicativiUtilities.checkStatoConnettore(env.saCore, sa, connis, inUsoMessage, System.lineSeparator());
-
-			if (inUsoMessage.length() > 0)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
-
-			env.saCore.performUpdateOperation(env.userLogin, false, sa);
 
 			context.getLogger().info("Invocazione completata con successo");
 
@@ -1125,26 +1235,26 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		}
 	}
 
-    /**
-     * Modifica i dati di un connettore multiplo dell&#x27;erogazione
-     *
-     * Questa operazione consente di aggiornare i dettagli di un connettore multiplo associato all&#x27;erogazione di API identificata dal nome e dalla versione
-     *
-     */
+	/**
+	 * Modifica i dati di un connettore multiplo dell&#x27;erogazione
+	 *
+	 * Questa operazione consente di aggiornare i dettagli di un connettore multiplo associato all&#x27;erogazione di API identificata dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void updateErogazioneConnettoreMultiplo(ConnettoreMultiplo body, String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
+	public void updateErogazioneConnettoreMultiplo(ConnettoreMultiplo body, String nome, Integer versione, String nomeConnettore, ProfiloEnum profilo, String soggetto, String tipoServizio, String gruppo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-        // TODO: Implement...
-        
+
+			// TODO: Implement...
+
 			context.getLogger().info("Invocazione completata con successo");
-        
-     
+
+
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -1154,7 +1264,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
 
 	/**
 	 * Consente di modificare le informazioni generali di un'erogazione di API
@@ -1190,14 +1300,14 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 		}
 	}
 
-    /**
-     * Consente di modificare le informazioni ModI associate all&#x27;erogazione
-     *
-     * Questa operazione consente di aggiornare le informazioni ModI assocaite all&#x27;erogazione identificata dal nome e dalla versione
-     *
-     */
+	/**
+	 * Consente di modificare le informazioni ModI associate all&#x27;erogazione
+	 *
+	 * Questa operazione consente di aggiornare le informazioni ModI assocaite all&#x27;erogazione identificata dal nome e dalla versione
+	 *
+	 */
 	@Override
-    public void updateErogazioneModI(ErogazioneModI body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
+	public void updateErogazioneModI(ErogazioneModI body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1208,11 +1318,11 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
-			
+
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
 				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(asps, profilo, body.getModi(), env);
-	
+
 				if(protocolProperties != null) {
 					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
 				}
@@ -1237,7 +1347,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
 
 	/**
 	 * Consente di modificare la configurazione utilizzata per identificare l'azione
@@ -1290,7 +1400,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			if (!identModes.contains(PortaApplicativaAzioneIdentificazione.valueOf(body.getModalita().name()))) {
 				throw FaultCode.RICHIESTA_NON_VALIDA
-						.toException("La modalità di identificazione azione deve essere una fra: " + identModes.toString());
+				.toException("La modalità di identificazione azione deve essere una fra: " + identModes.toString());
 			}
 
 			boolean setPattern = true;
@@ -1365,7 +1475,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				}
 				if(pt==null) {
 					throw FaultCode.RICHIESTA_NON_VALIDA
-						.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") è permessa solamente per API di tipo SOAP che definiscono 1 sola operazione: port-type non trovato");
+					.toException("La modalità di identificazione azione indicata ("+body.getModalita().toString()+") è permessa solamente per API di tipo SOAP che definiscono 1 sola operazione: port-type non trovato");
 				}
 				if(pt.getAzione()==null || pt.getAzione().size()<=0) {
 					throw FaultCode.RICHIESTA_NON_VALIDA
@@ -1408,15 +1518,15 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,
 					env.idSoggetto.getId().toString());
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE, "-"); // Come
-																																																													// da
-																																																													// debug.
+			// da
+			// debug.
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO, servizio);
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE,
 					setPattern ? paa.getPattern() : paa.getNome()); // Azione è il contenuto del campo pattern o del campo nome, che vengono settati
-															// nel campo pattern.
+			// nel campo pattern.
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID, null); // Come
-																																																									// da
-																																																									// debug
+			// da
+			// debug
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE,
 					paa.getIdentificazione().toString());
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD, null);
@@ -1426,7 +1536,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			if(idAzione>0) {
 				env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID, idAzione+"");
 			}
-			
+
 			final String oldNomePA = pa.getNome();
 			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti, false)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));

@@ -71,7 +71,9 @@ return expected
 """
 
 @UpdateConnettore204
-Scenario: Erogazioni Update Connettore 204
+Scenario Outline: Erogazioni Update Connettore 204
+
+		* def connettore_update = read ('<nome>')
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
@@ -79,12 +81,170 @@ Scenario: Erogazioni Update Connettore 204
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
     And header Authorization = govwayConfAuth
-    And request connettore
+    And request connettore_update
     And params query_params
     When method put
     Then status 204
     
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|nome|
+|connettore_erogazione_petstore.json|
+
+@UpdateConnettoreApplicativoServer204
+Scenario: Erogazioni Update Connettore 204
+
+		* def connettore_update_noserver = read ('connettore_erogazione_petstore.json')
+		* def app_server = read ('applicativo_server.json')
+		* eval randomize(app_server, ["nome"])
+		* def connettore_update = read ('connettore_applicativo_server_erogazione_petstore.json')
+		* eval connettore_update.connettore.applicativo = app_server.nome
+
+		* def app_server_2 = read ('applicativo_server.json')
+		* eval randomize(app_server_2, ["nome"])
+		* def connettore_update_2 = read ('connettore_applicativo_server_erogazione_petstore.json')
+		* eval connettore_update_2.connettore.applicativo = app_server_2.nome
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+    * call create ({ resourcePath: 'applicativi-server', body: app_server })
+    * call create ({ resourcePath: 'applicativi-server', body: app_server_2 })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == connettore_update
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_2
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == connettore_update_2
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_noserver
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == getExpectedConnettoreHTTPS(connettore_update_noserver)
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: 'applicativi-server/' + app_server.nome })
+    * call delete ({ resourcePath: 'applicativi-server/' + app_server_2.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@UpdateConnettoreGruppoApplicativoServer204	
+Scenario: Erogazioni Update Connettore gruppo ApplicativoServer OK
+
+		* def gruppo_petstore = read ('gruppo_petstore.json')
+		* def query_params = {'gruppo': 'GruppoJson'}
+
+		* def connettore_update_noserver = read ('connettore_erogazione_petstore.json')
+		* def app_server = read ('applicativo_server.json')
+		* eval randomize(app_server, ["nome"])
+		* def connettore_update = read ('connettore_applicativo_server_erogazione_petstore.json')
+		* eval connettore_update.connettore.applicativo = app_server.nome
+
+		* def app_server_2 = read ('applicativo_server.json')
+		* eval randomize(app_server_2, ["nome"])
+		* def connettore_update_2 = read ('connettore_applicativo_server_erogazione_petstore.json')
+		* eval connettore_update_2.connettore.applicativo = app_server_2.nome
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+    * call create ({ resourcePath: 'applicativi-server', body: app_server })
+    * call create ({ resourcePath: 'applicativi-server', body: app_server_2 })
+    * call create ( { resourcePath: erogazione_petstore_path + '/gruppi', body: gruppo_petstore, key: gruppo_petstore.nome})
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == connettore_update
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_2
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == connettore_update_2
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update_noserver
+    And params query_params
+    When method put
+    Then status 204
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    * match response == getExpectedConnettoreHTTPS(connettore_update_noserver)
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: 'applicativi-server/' + app_server.nome })
+    * call delete ({ resourcePath: 'applicativi-server/' + app_server_2.nome })
     * call delete ({ resourcePath: api_petstore_path })
 
 @UpdateConnettoreGruppo204	

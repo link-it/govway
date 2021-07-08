@@ -1,4 +1,5 @@
 /*
+
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
@@ -64,6 +65,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
@@ -2809,26 +2811,30 @@ public class ErogazioniApiHelper {
 	public static final org.openspcoop2.core.config.Connettore getConnettoreErogazioneGruppo(IdServizio idAsps, IDServizio idServizio, ErogazioniEnv env, String gruppo) 
 			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
 	
+		final ServizioApplicativo sa = getServizioApplicativo(idAsps, idServizio, env, gruppo);
+		return sa.getInvocazioneServizio().getConnettore();
+
+	}
+	
+	public static final ServizioApplicativo getServizioApplicativo(IdServizio idAsps, IDServizio idServizio, ErogazioniEnv env, String gruppo) 
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	
 		IDPortaApplicativa idPaDefault = env.paCore.getIDPortaApplicativaAssociataDefault(idServizio);
 		PortaApplicativa paDefault = env.paCore.getPortaApplicativa(idPaDefault);
 
 		final IDPortaApplicativa idPA = (gruppo!=null) ? BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta") : idPaDefault;
 		final PortaApplicativa pa = (gruppo!=null) ? env.paCore.getPortaApplicativa(idPA): paDefault;
 		
-		boolean isConnettoreRidefinito = false;
-		if(gruppo != null) {
-			isConnettoreRidefinito = env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0));
+		final ServizioApplicativo sa;
+		
+		if(gruppo != null && env.apsHelper.isConnettoreRidefinito(paDefault, paDefault.getServizioApplicativoList().get(0), pa, pa.getServizioApplicativoList().get(0))) {
+			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), pa.getServizioApplicativoList().get(0).getNome()));
+		} else {
+			sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), paDefault.getServizioApplicativoList().get(0).getNome()));
 		}
 		
-		if(isConnettoreRidefinito) {
-			final ServizioApplicativo sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPA.getNome()));
-    		
-			return sa.getInvocazioneServizio().getConnettore();
-		} else {
-			final ServizioApplicativo sa = env.saCore.getServizioApplicativo(env.saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPaDefault.getNome()));
-    		
-			return sa.getInvocazioneServizio().getConnettore();
-		}
+		return sa;
+
 	}
 	
 	public static final org.openspcoop2.core.registry.Connettore getConnettoreFruizione(AccordoServizioParteSpecifica asps, IdSoggetto fruitore, ErogazioniEnv env) {
@@ -5503,5 +5509,14 @@ public class ErogazioniApiHelper {
 		}catch(RegExpNotFoundException e) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("La uri fornita '"+uriApiImplementata+"' non rispetta il formato atteso '"+pattern1+"|"+pattern2+"': "+e.getMessage());
 		}
+	}
+	
+	public static boolean isConnettoreApplicativoServer(IdServizio idAsps, IDServizio idServizioFromAccordo, ErogazioniEnv env,
+			String gruppo) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		return isConnettoreApplicativoServer(getServizioApplicativo(idAsps, idServizioFromAccordo, env, gruppo));
+	}
+	
+	public static boolean isConnettoreApplicativoServer(ServizioApplicativo sa) {
+		return sa.getTipo() != null && sa.getTipo().equals(CostantiConfigurazione.SERVER);
 	}
 }
