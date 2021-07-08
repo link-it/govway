@@ -227,6 +227,7 @@ import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
+import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -10662,6 +10663,500 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
+	public void addFilterSubtitle(String subtitle) throws Exception{
+		this.pd.addSubtitleFilter(subtitle);
+	}
+	
+	public void addFilterHidden(String name, String value) throws Exception{
+		this.pd.addHiddenFilter(name, value, this.getSize());
+	}
+	
+	public String addFilterTipoConnettore(ISearch ricerca, int idLista, boolean visualizzaVoceIM) throws Exception{
+		return this.addFilterTipoConnettore(ricerca, idLista, visualizzaVoceIM, true);
+	}
+	public String addFilterTipoConnettore(ISearch ricerca, int idLista, boolean visualizzaVoceIM, boolean postBack) throws Exception{
+		String tipoConnettoreValue = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+		try {
+			
+			
+			List<String> connettoriList = Connettori.getList();
+			// rimozione disabilitato
+			int indexDisabled = -1;
+			for (int i = 0; i < connettoriList.size(); i++) {
+				if(TipiConnettore.DISABILITATO.getNome().equals(connettoriList.get(i))) {
+					indexDisabled = i;
+					break;
+				}
+			}
+			if(indexDisabled>=0) {
+				connettoriList.remove(indexDisabled);
+			}
+			if (!connettoriList.contains(TipiConnettore.HTTPS.toString())) {
+				connettoriList.add(TipiConnettore.HTTPS.toString());
+			}
+			
+			// custom
+			connettoriList.add(TipiConnettore.CUSTOM.toString());
+			
+			List<String> connettoriListLabels = new ArrayList<>();
+			for (String tipoConnettore : connettoriList) {
+				TipiConnettore tipoC = TipiConnettore.toEnumFromName(tipoConnettore);
+				if(tipoC!=null) {
+					connettoriListLabels.add(tipoC.getLabel());
+				}
+				else {
+					connettoriListLabels.add(tipoConnettore);
+				}
+			}
+			
+			// IM 
+			if(visualizzaVoceIM) {
+				if(this.core.isIntegrationManagerEnabled()) {
+					connettoriList.add(ConnettoriCostanti.VALUE_FILTRO_TIPO_CONNETTORE_IM);
+					connettoriListLabels.add(ConnettoriCostanti.LABEL_FILTRO_TIPO_CONNETTORE_IM);
+				}
+			}
+			
+			int length = connettoriList.size() + 1;
+			
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			for (int i =0; i < connettoriList.size() ; i ++) {
+				labels[i+1] = connettoriListLabels.get(i);
+				values[i+1] = connettoriList.get(i);
+			}
+			
+			tipoConnettoreValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
+			
+			this.pd.addFilter(Filtri.FILTRO_CONNETTORE_TIPO, ConnettoriCostanti.LABEL_FILTRO_TIPO_CONNETTORE, tipoConnettoreValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		
+		return tipoConnettoreValue;
+	}
+	
+	public void addFilterConnettoreTokenPolicy(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+		try {
+			if(tipoConnettore != null &&
+				(tipoConnettore.equals("") || 
+						tipoConnettore.equals(TipiConnettore.HTTPS.toString())|| 
+						tipoConnettore.equals(TipiConnettore.HTTP.toString()))) {
+			
+				// controllo esistenza token policy
+				List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, null);
+			
+				if(gestorePolicyTokenList.size() > 0) {
+					int length = gestorePolicyTokenList.size() + 1;
+					
+					String [] values = new String[length];
+					String [] labels = new String[length];
+					labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+					values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+				
+					for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+						GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+						labels[(i+1)] = genericProperties.getNome();
+						values[(i+1)] = genericProperties.getNome();
+					}
+					
+					String tokenPolicyValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
+					
+					this.pd.addFilter(Filtri.FILTRO_CONNETTORE_TOKEN_POLICY, ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_TOKEN_POLICY, tokenPolicyValue, values, labels, false, this.getSize());
+				}
+			}
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterConnettoreEndpoint(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+		try {
+			if(tipoConnettore != null &&
+				(tipoConnettore.equals("") || 
+						tipoConnettore.equals(TipiConnettore.HTTPS.toString())|| 
+						tipoConnettore.equals(TipiConnettore.HTTP.toString())|| 
+						tipoConnettore.equals(TipiConnettore.JMS.toString())|| 
+						tipoConnettore.equals(TipiConnettore.FILE.toString()))) {
+			
+				String endpointValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
+				
+				String filterLabel = ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_ENDPOINT;
+				
+				if(tipoConnettore.equals(TipiConnettore.JMS.toString())) {
+					filterLabel = ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_ENDPOINT_JMS;
+				}
+				
+				if(tipoConnettore.equals(TipiConnettore.FILE.toString())) {
+					filterLabel = ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_ENDPOINT_FILE;
+				}
+					
+				this.pd.addTextFilter(Filtri.FILTRO_CONNETTORE_ENDPOINT, filterLabel, endpointValue, this.getSize());
+			}
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterConnettoreKeystore(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+		try {
+			if(tipoConnettore != null &&
+				(tipoConnettore.equals(TipiConnettore.HTTPS.toString()))) {
+			
+				String keystoreValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+				
+				String filterLabel = ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_KEYSTORE;
+					
+				this.pd.addTextFilter(Filtri.FILTRO_CONNETTORE_KEYSTORE, filterLabel, keystoreValue, this.getSize());
+			}
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	
+	public void addFilterModIKeystore(ISearch ricerca, int idLista) throws Exception{
+		try {
+			String keystoreValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
+			
+			String filterLabel = this.getProfiloModIPAFiltroKeystoreLabel();
+				
+			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE, filterLabel, keystoreValue, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterModIAudience(ISearch ricerca, int idLista) throws Exception{
+		try {
+			String audienceValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
+			
+			String filterLabel = this.getProfiloModIPAFiltroAudienceLabel();
+				
+			this.pd.addTextFilter(Filtri.FILTRO_MODI_AUDIENCE, filterLabel, audienceValue, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterModISicurezzaCanale(ISearch ricerca, int idLista) throws Exception{
+		try {
+			// controllo esistenza token policy
+			List<String> labelsList = this.getProfiloModIPAFiltroSicurezzaCanaleLabels();
+			List<String> valuesList = this.getProfiloModIPAFiltroSicurezzaCanaleValues();
+			int length = valuesList.size() + 1;
+				
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			
+			for (int i = 0; i < valuesList.size(); i++) {
+				labels[(i+1)] = labelsList.get(i);
+				values[(i+1)] = valuesList.get(i);
+			}
+			
+			String sicurezzaCanaleValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
+			
+			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_CANALE, getProfiloModIPAFiltroSicurezzaCanaleLabel(), sicurezzaCanaleValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterModISicurezzaMessaggio(ISearch ricerca, int idLista, String serviceBindingValue) throws Exception{
+		try {
+			// controllo esistenza token policy
+			List<String> labelsList = this.getProfiloModIPAFiltroSicurezzaMessaggioLabels(serviceBindingValue);
+			List<String> valuesList = this.getProfiloModIPAFiltroSicurezzaMessaggioValues();
+			int length = valuesList.size() + 1;
+				
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			
+			for (int i = 0; i < valuesList.size(); i++) {
+				labels[(i+1)] = labelsList.get(i);
+				values[(i+1)] = valuesList.get(i);
+			}
+			
+			String sicurezzaCanaleValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
+			
+			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO, getProfiloModIPAFiltroSicurezzaMessaggioLabel(), sicurezzaCanaleValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterModISicurezzaMessaggioSA(ISearch ricerca, int idLista) throws Exception{
+		try {
+			// controllo esistenza token policy
+			List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			int length = valuesList.size() + 1;
+				
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			
+			for (int i = 0; i < valuesList.size(); i++) {
+				labels[(i+1)] = valuesList.get(i);
+				values[(i+1)] = valuesList.get(i);
+			}
+			
+			String sicurezzaCanaleValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
+			
+			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO, getProfiloModIPAFiltroSicurezzaMessaggioLabel(), sicurezzaCanaleValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterModIDigestRichiesta(ISearch ricerca, int idLista) throws Exception{
+		try {
+			// controllo esistenza token policy
+			List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			int length = valuesList.size() + 1;
+				
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			
+			for (int i = 0; i < valuesList.size(); i++) {
+				labels[(i+1)] = valuesList.get(i);
+				values[(i+1)] = valuesList.get(i);
+			}
+			
+			String digestRichiestaValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
+			
+			this.pd.addFilter(Filtri.FILTRO_MODI_DIGEST_RICHIESTA, getProfiloModIPAFiltroDigestRichiestaLabel(), digestRichiestaValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterModIInfoUtente(ISearch ricerca, int idLista) throws Exception{
+		try {
+			// controllo esistenza token policy
+			List<String> valuesList = Arrays.asList(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			int length = valuesList.size() + 1;
+				
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			
+			for (int i = 0; i < valuesList.size(); i++) {
+				labels[(i+1)] = valuesList.get(i);
+				values[(i+1)] = valuesList.get(i);
+			}
+			
+			String infoUtenteValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
+			
+			this.pd.addFilter(Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE, CostantiControlStation.LABEL_FILTRO_MODIPA_INFO_UTENTE, infoUtenteValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public String getProfiloModIPAFiltroDigestRichiestaLabel() {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			Field f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL");
+			return (String) f.get(null);
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	public String getProfiloModIPAFiltroAudienceLabel() {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			Field f = classCostanti.getDeclaredField("MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_REST_LABEL");
+			return (String) f.get(null);
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	public String getProfiloModIPAFiltroKeystoreLabel() {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			Field f = classCostanti.getDeclaredField("MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL");
+			return (String) f.get(null);
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	public String getProfiloModIPAFiltroSicurezzaCanaleLabel() {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			Field f = classCostanti.getDeclaredField("MODIPA_API_PROFILO_CANALE_LABEL");
+			return (String) f.get(null);
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	public List<String> getProfiloModIPAFiltroSicurezzaCanaleValues() {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			List<String> values = new ArrayList<String>();
+			
+			Field f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01");
+			values.add((String) f.get(null));
+			
+			f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02");
+			values.add((String) f.get(null));
+			
+			return values;
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	public List<String> getProfiloModIPAFiltroSicurezzaCanaleLabels() {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			List<String> labels = new ArrayList<String>();
+			
+			Field f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_NEW");
+			labels.add((String) f.get(null));
+			
+			f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02_NEW");
+			labels.add((String) f.get(null));
+			
+			return labels;
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	public String getProfiloModIPAFiltroSicurezzaMessaggioLabel() {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			Field f = classCostanti.getDeclaredField("MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL");
+			return (String) f.get(null);
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	public List<String> getProfiloModIPAFiltroSicurezzaMessaggioValues() {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			List<String> values = new ArrayList<String>();
+			
+			Field f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01");
+			values.add((String) f.get(null));
+			
+			f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02");
+			values.add((String) f.get(null));
+			
+			f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301");
+			values.add((String) f.get(null));
+			
+			f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302");
+			values.add((String) f.get(null));
+			
+			return values;
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	public List<String> getProfiloModIPAFiltroSicurezzaMessaggioLabels(String serviceBindingValue) {
+		try {
+			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti");
+			List<String> labels = new ArrayList<String>();
+			
+			if(serviceBindingValue == null || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_QUALSIASI.equals(serviceBindingValue) 
+					|| CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SERVICE_BINDING_REST.toLowerCase().equals(serviceBindingValue) ) {
+				Field f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST_NEW");
+				labels.add((String) f.get(null));
+				
+				f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_REST_NEW");
+				labels.add((String) f.get(null));
+				
+				f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_REST_NEW");
+				labels.add((String) f.get(null));
+				
+				f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST_NEW");
+				labels.add((String) f.get(null));
+			} else {
+				Field f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_SOAP_NEW");
+				labels.add((String) f.get(null));
+				
+				f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_SOAP_NEW");
+				labels.add((String) f.get(null));
+				
+				f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_SOAP_NEW");
+				labels.add((String) f.get(null));
+				
+				f = classCostanti.getDeclaredField("MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP_NEW");
+				labels.add((String) f.get(null));
+			}
+			
+			return labels;
+		}catch(Throwable t) {
+			return null;
+		}
+	}
+	
+	
+	public void addFilterProprietaNome(ISearch ricerca, int idLista, List<String> nomiProprieta) throws Exception{
+		try {
+			// controllo esistenza token policy
+			int length = nomiProprieta.size() + 1;
+				
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI;
+			
+			for (int i = 0; i < nomiProprieta.size(); i++) {
+				labels[(i+1)] = nomiProprieta.get(i);
+				values[(i+1)] = nomiProprieta.get(i);
+			}
+			
+			String nomeProprietaValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
+			
+			this.pd.addFilter(Filtri.FILTRO_PROPRIETA_NOME, CostantiControlStation.LABEL_FILTRO_PROPRIETA_NOME, nomeProprietaValue, values, labels, false, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterProprietaValore(ISearch ricerca, int idLista, List<String> nomiProprieta) throws Exception{
+		try {
+			String valoreProprietaValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+			
+			String filterLabel = CostantiControlStation.LABEL_FILTRO_PROPRIETA_VALORE;
+				
+			this.pd.addTextFilter(Filtri.FILTRO_PROPRIETA_VALORE, filterLabel, valoreProprietaValue, this.getSize());
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 	
 	// LABEL PROTOCOLLI
 	

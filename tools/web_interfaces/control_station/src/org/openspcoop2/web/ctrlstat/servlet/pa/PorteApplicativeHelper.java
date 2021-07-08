@@ -35,9 +35,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -7678,6 +7680,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return true;
 	}
 	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, PortaApplicativa pa) throws Exception {
+		this.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, pa, false);
+	}
+	
+	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, PortaApplicativa pa, boolean fromDelete) throws Exception {
 		try {
 			List<PortaApplicativaServizioApplicativo> lista = pa.getServizioApplicativoList();
 			
@@ -7714,35 +7720,32 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+			
+			// filtro tab N.B. impostare sempre come primo! poi aggiornare il valore
+			String tabSelezionato = SearchUtils.getFilter(ricerca, idLista, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO);
+			this.addFilterHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO, tabSelezionato);
+			
+			// nuovi filtri connettore
+			this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+			
+			// filtro tipo connettore con voce IM solo sulle erogazioni
+			String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, true);
+			
+			// filtro token policy
+			this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
+			
+			// filtro endpoint
+			this.addFilterConnettoreEndpoint(ricerca, idLista, filterTipoConnettore);
+			
+			// filtro keystore
+			this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
+			
+			
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
-			this.pd.setSearch("");
-			
-			// applico il filtro per nome
-			String filtroNome = ricerca.getSearchString(idLista);
-			if(lista.size()>1) {
-				PortaApplicativaServizioApplicativo saContenenteNome = getFiltroNomeConnettore(filtroNome, lista);
-				if(saContenenteNome!=null) {
-					int tab = -1;
-					for (int i = 0; i < lista.size(); i++) {
-						if(lista.get(i).getNome().equals(saContenenteNome.getNome())) {
-							tab = i;
-							break;
-						}
-					}
-					if(tab>=0) {
-						ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
-					}
-				}
-				
-				this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_CONNETTORE);
-				//this.pd.setLabelBottoneRipulsci("Ripulisci Selezione");
-			}
-			
-			if(lista.size()<=1) {
-				ServletUtils.disabledPageDataSearch(this.pd);
-			}
+//			this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_CONNETTORE);
 			
 			boolean accessoDaListaAPS = false;
 			
@@ -7806,16 +7809,40 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				lstParam.remove(lstParam.size()-1);
 			}
 			
-			lstParam.add(new Parameter(labelPerPorta,  null));
+			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
+			this.pd.setSearchDescription("");
+			lstParam.add(new Parameter(labelPerPorta,null));
+			
+//			if(search.equals("")){
+//				this.pd.setSearchDescription("");
+//				lstParam.add(new Parameter(labelPerPorta,null));
+//			}else{
+//				List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
+//				listParametersConfigutazioneConnettoriMultipli.add(pIdSogg);
+//				listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
+//				listParametersConfigutazioneConnettoriMultipli.add(pIdAsps);
+//				listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
+//				listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
+//				listParametersConfigutazioneConnettoriMultipli.add(pConnettoreRegistro);
+//				
+//				lstParam.add(new Parameter(labelPerPorta,
+//						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, 
+//						listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
+//				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
+//			}
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(this.pd, lstParam );	
+			
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, search);
+			}
 			
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 			
 			int idTab = 0;
-			
 			
 //			if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
 //				pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro);
@@ -7826,10 +7853,23 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			Parameter pConfigurazioneFiltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneConnettore = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE, Costanti.CHECK_BOX_ENABLED_TRUE);
 			
+			// applico i filtri di ricerca 
+			List<PortaApplicativaServizioApplicativo> listaFiltrata = this.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, lista);
+			
+			// controllo che ci sia almeno un risultato altrimenti visualizzo un messaggio di info/errore
+			if(listaFiltrata.size() == 0) {
+				if(!fromDelete) {
+					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_RICERCA_CONNETTORI_MULTIPLI_NO_RISULTATI);
+				} else {
+					// se passo qui vuol dire che ho eliminato tutti i connettori corrispondenti al filtro di ricerca
+					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_ELIMINATI_CONNETTORI_MULTIPLI_CORRISPONDENTI_AL_FILTRO_RICERCA);
+				}
+			}
+			
 			// Colleziono prima i nomi dei connettori per ordinarli in ordine alfatebito, lasciando in testa il connettore di default
 			HashMap<String, PortaApplicativaServizioApplicativo> paList = new HashMap<String, PortaApplicativaServizioApplicativo>();
 			PortaApplicativaServizioApplicativo paDefault = null;
-			Iterator<PortaApplicativaServizioApplicativo> it = lista.iterator();
+			Iterator<PortaApplicativaServizioApplicativo> it = listaFiltrata.iterator();
 			while (it.hasNext()) {
 				PortaApplicativaServizioApplicativo paSA = it.next();
 				boolean connettoreDefault = this.isConnettoreDefault(paSA);
@@ -7854,6 +7894,54 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					listOrdinata.add(paSA);
 				}
 			}
+			
+			// dopo aver filtrato i risultati evidenzio il tab con il nome contenuto nella ricerca
+			int tab = 0; // primo a sx 
+			ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			if(StringUtils.isBlank(tabSelezionato)) {
+				if(listOrdinata.size() > 0) {
+					tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(0));
+				}
+			} else {
+				// controllo se il tab gia' selezionato e' ancora contenuto nei risultati della ricerca
+				PortaApplicativaServizioApplicativo saContenenteNome = getFiltroNomeConnettore(tabSelezionato, listOrdinata);
+				
+				if(saContenenteNome!=null) {
+					tab = 0;
+					for (int i = 0; i < listOrdinata.size(); i++) {
+						if(listOrdinata.get(i).getNome().equals(saContenenteNome.getNome())) {
+							tab = i;
+							break;
+						}
+					}
+					if(tab>=0) {
+						ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+					}
+				} else {
+					tabSelezionato = "";
+					if(!search.equals("")) {
+						saContenenteNome = getFiltroNomeConnettore(search, listOrdinata);
+						if(saContenenteNome!=null) {
+							tab = 0;
+							for (int i = 0; i < listOrdinata.size(); i++) {
+								if(listOrdinata.get(i).getNome().equals(saContenenteNome.getNome())) {
+									tab = i;
+									tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(i));
+									break;
+								}
+							}
+							if(tab>=0) {
+								ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+							}
+						}
+					} else {
+						tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(0));
+					}
+				}
+			}
+			
+			// imposto il nuovo valore nel campo hidden del filtro
+			this.pd.updateFilter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO, tabSelezionato);
 			
 			for(PortaApplicativaServizioApplicativo paSA: listOrdinata) {
 				
@@ -8148,6 +8236,40 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	private List<PortaApplicativaServizioApplicativo> applicaFiltriRicercaConnettoriMultipli(ISearch ricerca, int idLista, List<PortaApplicativaServizioApplicativo> lista) {
+		
+		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
+		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
+		String filtroConnettoreEndpoint = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
+		String filtroConnettoreKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+		String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+		
+		this.log.debug("filtroNomeConnettore : " + search);
+		this.log.debug("filtroConnettoreTipo : " + filtroConnettoreTipo);
+		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
+		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
+		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		
+		List<PortaApplicativaServizioApplicativo> listaFiltrata = new ArrayList<PortaApplicativaServizioApplicativo>();
+		
+		// filtro nome
+		if(StringUtils.isNotBlank(search)) {
+		for (PortaApplicativaServizioApplicativo paSA : lista) {
+			String nome = this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+			
+			if(nome != null) {
+				if(nome.toLowerCase().contains(search.toLowerCase())) {
+					listaFiltrata.add(paSA);
+				}
+			}
+		}
+		
+			return listaFiltrata;
+		}
+		
+		return lista;
 	}
 	
 	private PortaApplicativaServizioApplicativo getFiltroNomeConnettore(String filtroNome, List<PortaApplicativaServizioApplicativo> lista) {

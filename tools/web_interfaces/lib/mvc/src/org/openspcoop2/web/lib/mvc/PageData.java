@@ -23,6 +23,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -394,6 +395,187 @@ public class PageData {
 		this.filter_values.add(deValue);
 		
 	}
+	
+	public void addTextFilter(String name, String label, String value, int size) throws Exception{
+		if(this.filter_names == null) {
+			this.filter_names = new ArrayList<DataElement>();
+			this.filter_values = new ArrayList<DataElement>();
+		}
+		
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		if(name==null) {
+			throw new Exception("Name not found");
+		}
+		deName.setValue(name);
+		this.filter_names.add(deName);
+		
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.TEXT_EDIT);
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		if(label==null) {
+			throw new Exception("Label not found");
+		}
+		deValue.setLabel(label);
+		deValue.setValue(value);
+		deValue.setSize(size);
+		this.filter_values.add(deValue);
+	}
+	
+	public void addTextAreaFilter(String name, String label, String value, int size, Integer rows, Integer cols) throws Exception{
+		if(this.filter_names == null) {
+			this.filter_names = new ArrayList<DataElement>();
+			this.filter_values = new ArrayList<DataElement>();
+		}
+		
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		if(name==null) {
+			throw new Exception("Name not found");
+		}
+		deName.setValue(name);
+		this.filter_names.add(deName);
+		
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.TEXT_AREA);
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		if(label==null) {
+			throw new Exception("Label not found");
+		}
+		deValue.setLabel(label);
+		deValue.setValue(value);
+		deValue.setSize(size);
+		if(rows != null)
+			deValue.setRows(rows.intValue());
+		if(cols != null)
+			deValue.setCols(cols.intValue());
+		
+		this.filter_values.add(deValue);
+	}
+	
+	public void addNumberFilter(String name, String label, String value, int size, Integer min, Integer max) throws Exception{
+		if(this.filter_names == null) {
+			this.filter_names = new ArrayList<DataElement>();
+			this.filter_values = new ArrayList<DataElement>();
+		}
+		
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		if(name==null) {
+			throw new Exception("Name not found");
+		}
+		deName.setValue(name);
+		this.filter_names.add(deName);
+		
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.NUMBER);
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		if(label==null) {
+			throw new Exception("Label not found");
+		}
+		deValue.setLabel(label);
+		deValue.setValue(value);
+		deValue.setSize(size);
+		deValue.setMinValue(min);
+		deValue.setMaxValue(max);
+		this.filter_values.add(deValue);
+	}
+	
+	public void addCheckboxFilter(String name, String label, String value, int size) throws Exception{
+		if(this.filter_names == null) {
+			this.filter_names = new ArrayList<DataElement>();
+			this.filter_values = new ArrayList<DataElement>();
+		}
+		
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		if(name==null) {
+			throw new Exception("Name not found");
+		}
+		deName.setValue(name);
+		this.filter_names.add(deName);
+		
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.CHECKBOX);
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		if(label==null) {
+			throw new Exception("Label not found");
+		}
+		deValue.setLabel(label);
+		deValue.setValue(value);
+		deValue.setSelected(value);
+		deValue.setSize(size);
+		this.filter_values.add(deValue);
+	}
+	
+	public void addSubtitleFilter(String label) throws Exception{
+		this.addSubtitleFilter("subtitle", label);
+	}
+	public void addSubtitleFilter(String name, String label) throws Exception{
+		if(this.filter_names == null) {
+			this.filter_names = new ArrayList<DataElement>();
+			this.filter_values = new ArrayList<DataElement>();
+		}
+		
+		// devo salvare anche l'elemento name perche' la jsp naviga sia names che values contemporaneamente per posizione.
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		if(name==null) {
+			throw new Exception("Name not found");
+		}
+		deName.setValue(name);
+		this.filter_names.add(deName);
+		
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.SUBTITLE);
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		if(label==null) {
+			throw new Exception("Label not found");
+		}
+		deValue.setLabel(label);
+		this.filter_values.add(deValue);
+	}
+	
+	public void addHiddenFilter(String name, String value, int size) throws Exception{
+		if(this.filter_names == null) {
+			this.filter_names = new ArrayList<DataElement>();
+			this.filter_values = new ArrayList<DataElement>();
+		}
+		
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		if(name==null) {
+			throw new Exception("Name not found");
+		}
+		deName.setValue(name);
+		this.filter_names.add(deName);
+		
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.HIDDEN);
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		deValue.setLabel(deValue.getName());
+		deValue.setValue(value);
+		deValue.setSize(size);
+		this.filter_values.add(deValue);
+	}
+	
+	public void updateFilter(String name, String value) {
+		if(this.filter_names != null) {
+			for (int i = 0; i < this.filter_names.size(); i++) {
+				if(name.equals(this.filter_names.get(i).getValue())) {
+					this.filter_values.get(i).setValue(value);
+					break;
+				}
+			}
+		}
+	}
+	
 	public void removeFilter(String name) {
 		if(this.filter_names != null) {
 			for (int i = 0; i < this.filter_names.size(); i++) {
@@ -582,5 +764,34 @@ public class PageData {
 
 	public void setIncludiMenuLateraleSx(boolean includiMenuLateraleSx) {
 		this.includiMenuLateraleSx = includiMenuLateraleSx;
+	}
+	
+	public DataElement convertiSearchInTextFilterMetadata() throws Exception{
+		DataElement deName = new DataElement();
+		deName.setType(DataElementType.HIDDEN);
+		deName.setName(Costanti.SEARCH_PARAMETER_NAME_FAKE_NAME);
+		deName.setValue(Costanti.SEARCH_PARAMETER_NAME);
+		
+		return deName;
+	}
+	
+	public DataElement convertiSearchInTextFilter() throws Exception{
+		String searchDescription = this.getSearchDescription();
+		String searchLabelName = this.getSearchLabel();
+		boolean searchNote = this.isSearchNote();
+		
+		
+		DataElement deValue = new DataElement();
+		deValue.setType(DataElementType.TEXT_EDIT);
+		deValue.setName(Costanti.SEARCH_PARAMETER_NAME);
+		deValue.setLabel(searchLabelName);
+		deValue.setValue(searchDescription);
+		deValue.setSize(Costanti.SEARCH_PARAMETER_DEFAULT_SIZE);
+		
+		if(searchNote && !searchDescription.equals("")){
+			deValue.setNote(MessageFormat.format(Costanti.SEARCH_PARAMETER_NOTE, searchDescription));
+		}
+		
+		return deValue;
 	}
 }

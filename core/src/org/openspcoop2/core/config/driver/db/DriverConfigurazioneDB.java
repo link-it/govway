@@ -14599,6 +14599,94 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	/**
+	 * Ritorna la lista di nomi delle proprieta registrate
+	 */
+	public List<String> nomiProprietaPA() throws DriverConfigurazioneException {
+		String queryString;
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<String> lista = new ArrayList<String>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("nomiProprietaPA");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::nomiProprietaPA] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_PROP);
+			sqlQueryObject.addSelectCountField("nome", "cont",true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			long count = 0;
+			if (risultato.next())
+				count = risultato.getLong(1);
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (count > 0) { // con search
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_PROP);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addOrderBy("nome"); 
+				sqlQueryObject.setSortType(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				risultato = stmt.executeQuery();
+			
+				while (risultato.next()) {
+					lista.add(risultato.getString("nome"));
+				}
+			}
+			return lista;
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::nomiProprietaPA] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	/**
 	 * Ritorna la lista di proprieta per l'autenticazione custom di una Porta Applicativa
 	 */
 	public List<Proprieta> porteApplicativeAutenticazioneCustomPropList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
@@ -16115,6 +16203,94 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		} catch (Exception qe) {
 			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteDelegatePropList] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	/**
+	 * Ritorna la lista di nomi delle proprieta registrate
+	 */
+	public List<String> nomiProprietaPD() throws DriverConfigurazioneException {
+		String queryString;
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<String> lista = new ArrayList<String>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("nomiProprietaPD");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::nomiProprietaPD] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_PROP);
+			sqlQueryObject.addSelectCountField("nome", "cont",true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			long count = 0;
+			if (risultato.next())
+				count = risultato.getLong(1);
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (count > 0) { // con search
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_PROP);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addOrderBy("nome"); 
+				sqlQueryObject.setSortType(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				risultato = stmt.executeQuery();
+			
+				while (risultato.next()) {
+					lista.add(risultato.getString("nome"));
+				}
+			}
+			return lista;
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::nomiProprietaPD] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			try{
@@ -19829,10 +20005,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
+		
+		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
+		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
 
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
+		this.log.debug("filtroProprietaNome : " + filtroProprietaNome);
+		this.log.debug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
 		boolean error = false;
@@ -20427,6 +20608,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 		
+		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
+		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
+		String filtroConnettoreEndpoint = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
+		String filtroConnettoreKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+		
+		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
+		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
+		String filtroModIKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
+		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
+		
+		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
+		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
@@ -20440,6 +20634,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("filterGruppo : " + filterGruppo);
 		this.log.debug("filterApiContesto : " + filterApiContesto);
 		this.log.debug("filterApiImplementazione : " + filterApiImplementazione);
+		this.log.debug("filtroConnettoreTipo : " + filtroConnettoreTipo);
+		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
+		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
+		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
+		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
+		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);
+		this.log.debug("filtroModIAudience : " + filtroModIAudience);
+		this.log.debug("filtroProprietaNome : " + filtroProprietaNome);
+		this.log.debug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -21402,12 +21606,35 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_TIPO_CREDENZIALI);
 		
+		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
+		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
+		String filtroConnettoreEndpoint = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
+		String filtroConnettoreKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+		
+		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
+		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
+		String filtroModIKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
+		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
+		
+		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
+		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
 		this.log.debug("filterTipoServizioApplicativo : " + filterTipoServizioApplicativo);
 		this.log.debug("filterTipoCredenziali : " + filterTipoCredenziali);
+		this.log.debug("filtroConnettoreTipo : " + filtroConnettoreTipo);
+		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
+		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
+		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
+		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
+		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);
+		this.log.debug("filtroModIAudience : " + filtroModIAudience);
+		this.log.debug("filtroProprietaNome : " + filtroProprietaNome);
+		this.log.debug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -24281,6 +24508,94 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		
 		return lista;
+	}
+	
+	/**
+	 * Ritorna la lista di nomi delle proprieta registrate
+	 */
+	public List<String> nomiProprietaSA() throws DriverConfigurazioneException {
+		String queryString;
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<String> lista = new ArrayList<String>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("nomiProprietaSA");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::nomiProprietaSA] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+			sqlQueryObject.addSelectCountField("nome", "cont",true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			long count = 0;
+			if (risultato.next())
+				count = risultato.getLong(1);
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (count > 0) { // con search
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addSelectField("nome");
+				sqlQueryObject.addOrderBy("nome"); 
+				sqlQueryObject.setSortType(true);
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				risultato = stmt.executeQuery();
+			
+				while (risultato.next()) {
+					lista.add(risultato.getString("nome"));
+				}
+			}
+			return lista;
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::nomiProprietaSA] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
 	}
 	
 	

@@ -1119,6 +1119,18 @@ public class SoggettiHelper extends ConnettoriHelper {
 				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
 			}
 			
+			// filtri proprieta
+			List<String> nomiProprieta = this.soggettiCore.nomiProprietaSoggetti();
+			if(nomiProprieta != null && nomiProprieta.size() >0) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				
+				// filtro nome
+				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
+				
+				// filtro valore
+				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+			}
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -1548,6 +1560,19 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
 			addFilterProtocol(ricerca, idLista);
+			
+			// filtri proprieta
+			List<String> nomiProprieta = this.soggettiCore.nomiProprietaSoggetti();
+			if(nomiProprieta != null && nomiProprieta.size() >0) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				
+				// filtro nome
+				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
+				
+				// filtro valore
+				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+			}
+						
 						
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);

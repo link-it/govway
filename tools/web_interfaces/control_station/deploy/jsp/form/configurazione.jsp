@@ -55,28 +55,8 @@
 	
 	String formatPar = listElement.formatParametersURL();
 	
-	boolean mostraFormHeader = (
-			pd.getSearch().equals("on") || 
-			(pd.getSearch().equals("auto") && (pd.getNumEntries() > pd.getSearchNumEntries()))
-		) || 
-		(
-			pd.getFilterNames() != null &&
-			pd.getFilterValues().size()>0
-		);
-
-	int colFormHeader = (mostraFormHeader ? 2 : 1);
-	String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRicercaNoForm";
-	
-	
 	Vector<?> datiConGruppi = pd.getDati();
 	int n = datiConGruppi.size();
-	
-	Vector<GeneralLink> titlelist = pd.getTitleList();
-	String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
-	if (titlelist != null && titlelist.size() > 0) {
-		GeneralLink l = titlelist.elementAt(titlelist.size() -1);
-		titoloSezione = l.getLabel();
-	} 
 	
 	String classSpanNoEdit="spanNoEdit";
 	String classDivNoEdit="divNoEdit";
@@ -458,118 +438,9 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 <script type="text/javascript" src="js/jquery-on.js"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js"></script>
 <tbody>
-		<tr>
-		<td valign=top>
-			<div class="<%= classPanelTitolo %>" >
-				<table class="tabella" id="panelListaRicercaHeader">
-					<tbody>
-						<tr>
-							<td class="titoloSezione" id="searchFormHeader" colspan="<%= colFormHeader %>">
-								<span class="history"><%=titoloSezione %></span>
-							</td>
-							<% if(mostraFormHeader) { %>
-								<td class="titoloSezione titoloSezione-right">
-									<span class="icon-box" id="iconaPanelListaSpan">
-										<i class="material-icons md-24" id="iconaPanelLista">&#xE8B6;</i>
-									</span>
-								</td>
-							<% }%>
-						</tr>
-						</tbody>
-				</table>
-				<% 
-					if ( mostraFormHeader ) {
-						String visualizzaAjaxStatusFiltra = pd.isShowAjaxStatusBottoneFiltra() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-						String visualizzaAjaxStatusRipulisci = pd.isShowAjaxStatusBottoneRipulisci() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-				%>
-				<table class="tabella" id="searchForm">
-					<tbody>
-						<tr>
-							<td class="spazioSottoTitolo">
-								<span>&nbsp;</span>
-							</td>
-						</tr>
-	
-						<%
-						if (pd.getFilterValues() != null) {
-							for(int iPD=0; iPD<pd.getFilterValues().size(); iPD++){
+	<!-- filtri di ricerca -->
+	<jsp:include page="/jsplib/filtriRicerca.jsp" flush="true"/>
 
-								DataElement filtroName = pd.getFilterNames().get(iPD);
-
-								DataElement filtro = pd.getFilterValues().get(iPD);
-								String filterName = filtro.getName();
-							  	String [] values = filtro.getValues();
-							  	String [] labels = filtro.getLabels();
-							  	String selezionato = filtro.getSelected();
-								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\""+ Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"')\" " ) : " ";
-								String classInput = filtro.getStyleClass();
-								String filterId = filterName + "__id";
-							  	%>
-										<tr>
-											<td>
-												<div class="prop">
-
-													<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-
-													<label><%= filtro.getLabel() %></label>
-												  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
-												  	<%
-												  	for (int i = 0; i < values.length; i++) {
-												  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";
-												  		%><option value="<%= values[i]  %>" <%=optionSel %> ><%= labels[i] %></option><%
-												  	}
-												  	%></select>
-												  	<%
-												  	String abilitaSearch = "false";
-										      		if(filtro.isAbilitaFiltroOpzioniSelect()){
-										      			abilitaSearch = "true";
-										      		} else {
-										      			abilitaSearch = "false";
-										      		}
-										      		%>
-										      		<input type="hidden" id="<%= filterId  %>_hidden_chk" value="<%= abilitaSearch  %>"/>
-												</div>
-											</td>
-										</tr>	
-						<%	}
-						} %>
-
-
-						<%
-						if (pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && (pd.getNumEntries() > pd.getSearchNumEntries()) )) {
-							String searchDescription = pd.getSearchDescription();
-							String searchLabelName = pd.getSearchLabel();
-							boolean searchNote = pd.isSearchNote();
-							%>
-									<tr>
-										<td>
-											<div class="prop">
-												<label><%=searchLabelName %></label>
-												<input type="text" name="search" class="inputLinkLong" value="<%=searchDescription %>"/>
-												<% if(searchNote && !searchDescription.equals("")){ %>
-								      				<p class="note-ricerca">Attenzione! &Egrave; attualmente impostato il filtro di ricerca con la stringa '<%=searchDescription %>'</p>
-								      			<% } %>
-											</div>
-										</td>
-									</tr>	
-						
-						<% } %>
-						
-								<tr>
-									<td class="buttonrow">
-										<div class="buttonrowricerca">
-											<input type="button" onClick="<%=visualizzaAjaxStatusFiltra %>Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
-											<input type="button" onClick="<%=visualizzaAjaxStatusRipulisci %>Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
-										</div>								
-									
-									</td>
-								</tr>
-					</tbody>
-				</table>
-				<% } %>
-			</div>
-		</td>
-	</tr>
 	<!-- spazio -->
 	<tr> 
 		<td valign=top>

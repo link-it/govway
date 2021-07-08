@@ -1987,10 +1987,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String filterSoggetto = null;
 			boolean profiloSelezionato = false;
 			boolean modipa = false;
+			String protocolloS = null;
 			if(!useIdSogg) {
 				filterProtocollo = addFilterProtocol(ricerca, idLista, true);
 
 				String protocollo = filterProtocollo;
+				protocolloS = filterProtocollo;
 				if(protocollo==null) {
 					// significa che e' stato selezionato un protocollo nel menu in alto a destra
 					List<String> protocolli = this.core.getProtocolli(this.session);
@@ -2025,7 +2027,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(this.core.isGestionePddAbilitata(this)==false && multitenant && modipa) {
 				String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
-				addFilterDominio(filterDominio, false);
+				addFilterDominio(filterDominio, true);
 			}
 			
 			if(modalitaCompleta) {
@@ -2034,9 +2036,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			boolean applicativiServerEnabled = this.core.isApplicativiServerEnabled(this); 
+			String filterTipoSA = null;
 			if(applicativiServerEnabled) {
-				String filterTipoSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO);
-				this.addFilterTipoServizioApplicativo(filterTipoSA,false);
+				filterTipoSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO);
+				this.addFilterTipoServizioApplicativo(filterTipoSA, true);
 			}
 			
 			String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_CREDENZIALI);
@@ -2060,6 +2063,84 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			else {
 				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
 			}
+			
+			// filtro sui connettori solo se tipoSA = qualsiasi o server
+			if(applicativiServerEnabled) {
+				if(filterTipoSA ==null || (ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI.equals(filterTipoSA) || 
+						ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(filterTipoSA))) {
+					// nuovi filtri connettore
+					this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+					
+					// filtro tipo connettore con voce IM solo sulle erogazioni
+					String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, true);
+					
+					// filtro token policy
+					this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
+					
+					// filtro endpoint
+					this.addFilterConnettoreEndpoint(ricerca, idLista, filterTipoConnettore);
+					
+					// filtro keystore
+					this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
+				}
+			}
+			
+			// filtri modipa solo se tipoSA = client o qualsiasi
+			if(filterTipoSA ==null || (ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI.equals(filterTipoSA) || 
+					ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(filterTipoSA))) {
+				// filtri MODIPA da visualizzare solo se non e' stato selezionato un protocollo in alto a dx oppure e' selezionato MODIPA
+				// oppure non e' stato selezionato un protocollo in alto e nessun protocollo nei filtri oppure MODIPA nei filtri
+				boolean profiloModipaSelezionato = false;
+				if( (filterProtocollo!=null && 
+						(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo) ||
+								CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA.equals(filterProtocollo)	
+								))
+						||
+					(filterProtocollo==null && protocolloS!=null &&
+							(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(protocolloS) ||
+									CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA.equals(protocolloS)	
+									)
+							)
+						) {
+					// solo se il protocollo modipa e' caricato
+					if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
+						profiloModipaSelezionato = true;
+					} 
+				}
+				
+				if(profiloModipaSelezionato) {
+					// ulteriore condizione per la visualizzazione della sezione e' che il Dominio non deve essere esterno
+					if(this.core.isGestionePddAbilitata(this)==false && multitenant) {
+						String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
+						
+						if(!SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(filterDominio)) {
+							this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
+							
+							// filtro sicurezza messaggio
+							this.addFilterModISicurezzaMessaggioSA(ricerca, idLista);
+							
+							// filtro keystore
+							this.addFilterModIKeystore(ricerca, idLista);
+							
+							// filtro audience
+							this.addFilterModIAudience(ricerca, idLista);
+						}
+					}
+				}
+			}
+			
+			// filtri proprieta
+			List<String> nomiProprieta = this.saCore.nomiProprietaSA();
+			if(nomiProprieta != null && nomiProprieta.size() >0) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				
+				// filtro nome
+				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
+				
+				// filtro valore
+				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+			}
+			
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);

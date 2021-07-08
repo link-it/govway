@@ -145,6 +145,52 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
 				}
 			}
+			
+			String protocolloS = filterProtocol;
+			if(protocolloS==null) {
+				// significa che e' stato selezionato un protocollo nel menu in alto a destra
+				List<String> protocolli = this.core.getProtocolli(this.session);
+				if(protocolli!=null && protocolli.size()==1) {
+					protocolloS = protocolli.get(0);
+				}
+			}
+			// filtri MODIPA da visualizzare solo se non e' stato selezionato un protocollo in alto a dx oppure e' selezionato MODIPA
+			// oppure non e' stato selezionato un protocollo in alto e nessun protocollo nei filtri oppure MODIPA nei filtri
+			boolean profiloModipaSelezionato = false;
+			if( (filterProtocol!=null && 
+					(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocol) ||
+							CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA.equals(filterProtocol)	
+							))
+					||
+				(filterProtocol==null && protocolloS!=null &&
+						(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(protocolloS) ||
+								CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA.equals(protocolloS)	
+								)
+						)
+					) {
+				// solo se il protocollo modipa e' caricato
+				if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
+					profiloModipaSelezionato = true;
+				} 
+			}
+			
+			if(profiloModipaSelezionato) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
+				
+				// filtro sicurezza canale
+				this.addFilterModISicurezzaCanale(ricerca, idLista);
+				
+				// filtro sicurezza messaggio
+				this.addFilterModISicurezzaMessaggio(ricerca, idLista, filterTipoAccordo);
+				
+				// filtro digest richiesta
+				this.addFilterModIDigestRichiesta(ricerca, idLista);
+				
+				// filtro ifo utente
+				this.addFilterModIInfoUtente(ricerca, idLista);
+			}
+			
+			
 									
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);

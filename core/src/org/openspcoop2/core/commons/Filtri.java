@@ -126,6 +126,21 @@ public final class Filtri
 	
 	public final static String FILTRO_PROP_PLUGIN_CLASSI = "filtroPropPluginClassi";
 	
+	public final static String FILTRO_CONNETTORE_TIPO = "filtroConnettoreTipo";
+	public final static String FILTRO_CONNETTORE_TOKEN_POLICY = "filtroConnettoreTokenPolicy";
+	public final static String FILTRO_CONNETTORE_ENDPOINT = "filtroConnettoreEndpoint";
+	public final static String FILTRO_CONNETTORE_KEYSTORE = "filtroConnettoreKeystore";
+	
+	public final static String FILTRO_MODI_SICUREZZA_CANALE = "filtroModiSicCanale";
+	public final static String FILTRO_MODI_SICUREZZA_MESSAGGIO = "filtroModiSicMessaggio";
+	public final static String FILTRO_MODI_KEYSTORE = "filtroModiKeystore";
+	public final static String FILTRO_MODI_AUDIENCE = "filtroModiAudience";
+	public final static String FILTRO_MODI_DIGEST_RICHIESTA = "filtroModiDigestRich";
+	public final static String FILTRO_MODI_INFORMAZIONI_UTENTE = "filtroModiInfoUtente";
+	
+	public final static String FILTRO_PROPRIETA_NOME = "filtroPropNome";
+	public final static String FILTRO_PROPRIETA_VALORE = "filtroPropValore";
+	
 	public static List<String> convertToTipiSoggetti(String filterProtocollo, String filterProtocolli) throws CoreException {
 		List<String> tipoSoggettiProtocollo = null;
 		if(filterProtocollo!=null && !"".equals(filterProtocollo)) {

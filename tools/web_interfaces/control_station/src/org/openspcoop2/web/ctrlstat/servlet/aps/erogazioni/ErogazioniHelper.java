@@ -492,6 +492,76 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
 				}
 			}
+			
+			// nuovi filtri connettore
+			this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+			
+			// filtro tipo connettore con voce IM solo sulle erogazioni
+			String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, !gestioneFruitori);
+			
+			// filtro token policy
+			this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
+			
+			// filtro endpoint
+			this.addFilterConnettoreEndpoint(ricerca, idLista, filterTipoConnettore);
+			
+			// filtro keystore
+			this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
+			
+			// filtri MODIPA da visualizzare solo se non e' stato selezionato un protocollo in alto a dx oppure e' selezionato MODIPA
+			// oppure non e' stato selezionato un protocollo in alto e nessun protocollo nei filtri oppure MODIPA nei filtri
+			boolean profiloModipaSelezionato = false;
+			if( (filterProtocollo!=null && 
+					(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo) ||
+							CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA.equals(filterProtocollo)	
+							))
+					||
+				(filterProtocollo==null && protocolloS!=null &&
+						(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(protocolloS) ||
+								CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA.equals(protocolloS)	
+								)
+						)
+					) {
+				// solo se il protocollo modipa e' caricato
+				if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
+					profiloModipaSelezionato = true;
+				} 
+			}
+			
+			if(profiloModipaSelezionato) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
+				
+				// filtro sicurezza canale
+				this.addFilterModISicurezzaCanale(ricerca, idLista);
+				
+				// filtro sicurezza messaggio
+				this.addFilterModISicurezzaMessaggio(ricerca, idLista, filterTipoAccordo);
+				
+				// filtro keystore
+				this.addFilterModIKeystore(ricerca, idLista);
+				
+				// filtro audience
+				this.addFilterModIAudience(ricerca, idLista);
+			}
+
+			// filtri proprieta
+			List<String> nomiProprieta =null;
+			if(gestioneFruitori) {
+				nomiProprieta = this.porteDelegateCore.nomiProprietaPD();
+			} else {
+				nomiProprieta = this.porteApplicativeCore.nomiProprietaPA();
+			}
+			
+			if(nomiProprieta != null && nomiProprieta.size() >0) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				
+				// filtro nome
+				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
+				
+				// filtro valore
+				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+			}
+			
 
 			boolean showConfigurazionePA = false;
 			boolean showConfigurazionePD = false;

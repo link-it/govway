@@ -759,6 +759,8 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR = "paCMNotActor";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE = "paCMNotMessage";
 	
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO = "paCMTabSelezionato";
+	
 	
 	/* LABEL PARAMETRI */
 	
@@ -1395,5 +1397,8 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_CODICI_NON_VALIDI_NEL_CAMPO_XX = "Inserire solo codici numerici validi separati da '','' nel campo ''{0}''";
 
 	public static final String MESSAGGIO_ERRORE_BEHAVIOUR_CUSTOM_NON_INDICATA = "Non è stato selezionato nessun plugin da utilizzare come modalità di consegna";
+	
+	public static final String MESSAGGIO_ERRORE_RICERCA_CONNETTORI_MULTIPLI_NO_RISULTATI = "Non &egrave; stato trovato nessun connettore che corrisponde ai criteri di ricerca indicati.";
+	public static final String MESSAGGIO_ERRORE_ELIMINATI_CONNETTORI_MULTIPLI_CORRISPONDENTI_AL_FILTRO_RICERCA = "Attenzione, sono stati eliminati tutti i connettori corrispondenti ai criteri di ricerca indicati.";
 	
 }

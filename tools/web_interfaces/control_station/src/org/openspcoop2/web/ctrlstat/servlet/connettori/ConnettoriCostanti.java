@@ -486,4 +486,18 @@ public class ConnettoriCostanti {
 			ConnettoriCostanti.LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL};
 
 	public final static int NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI = 60;
+	
+	
+	/* LABEL FILTRI RICERCA */
+	public final static String LABEL_SUBTITLE_DATI_CONNETTORE = "Dati Connettore";
+	public final static String LABEL_FILTRO_TIPO_CONNETTORE = "Tipo";
+	public final static String LABEL_FILTRO_TIPO_CONNETTORE_IM = "Integration Manager";
+	public final static String LABEL_FILTRO_CONNETTORE_TOKEN_POLICY = "Token Policy";
+	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT = "Endpoint";
+	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT_FILE = "File";
+	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT_JMS = "Parametri Jms";
+	public final static String LABEL_FILTRO_CONNETTORE_KEYSTORE = "Keystore";
+	
+	/* PARMETRI FILTRI RICERCA */
+	public final static String VALUE_FILTRO_TIPO_CONNETTORE_IM = "IM";
 }

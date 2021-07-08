@@ -258,7 +258,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, pa);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, pa, true);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
