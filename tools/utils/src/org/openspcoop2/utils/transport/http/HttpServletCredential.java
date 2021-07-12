@@ -67,18 +67,26 @@ public class HttpServletCredential extends Credential implements Serializable {
 		// Basic (HTTP-Based)
 		if(auth != null && auth.toLowerCase().startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC.toLowerCase())){
 			// Sbustring(6): elimina la parte "Basic "
-			String decodeAuth = new String(Base64Utilities.decode(auth.substring(HttpConstants.AUTHORIZATION_PREFIX_BASIC.length())));
-			String [] decodeAuthSplit = decodeAuth.split(":");
-			if(decodeAuthSplit.length>1){
-				this.username = decodeAuthSplit[0];
-				try {
-					this.password = decodeAuth.substring(decodeAuth.indexOf(":")+1, decodeAuth.length());
-				}catch(Throwable e) {
-					log.error("Password non estraibile dalla stringa ricevuta '"+decodeAuth+"'");
-				}
+			String cValue = auth.substring(HttpConstants.AUTHORIZATION_PREFIX_BASIC.length());
+			String decodeAuth = null;
+			try {
+				decodeAuth = new String(Base64Utilities.decode(cValue));
+			}catch(Throwable e) {
+				log.error("Password non estraibile dalla stringa ricevuta '"+cValue+"', decodifica base-64 non riuscita: "+e.getMessage(),e);
 			}
-			if(debug && log!=null){
-				log.info("BasicAuthentication presente nella richiesta, username ["+this.username+"] e password ["+this.password+"]");
+			if(decodeAuth!=null) {
+				String [] decodeAuthSplit = decodeAuth.split(":");
+				if(decodeAuthSplit.length>1){
+					this.username = decodeAuthSplit[0];
+					try {
+						this.password = decodeAuth.substring(decodeAuth.indexOf(":")+1, decodeAuth.length());
+					}catch(Throwable e) {
+						log.error("Password non estraibile dalla stringa ricevuta '"+decodeAuth+"'");
+					}
+				}
+				if(debug && log!=null){
+					log.info("BasicAuthentication presente nella richiesta, username ["+this.username+"] e password ["+this.password+"]");
+				}
 			}
 		}
 		
