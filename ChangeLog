@@ -1,3 +1,10 @@
+2021-07-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Risolto bug OP-1232
+	Le richieste contenenti credenziali 'http-basic' veicolate all'interno dell'header 'Authorization' in un formato non corretto non venivano registrate nello storico delle transazioni.
+	Il client riceveva un codice http di risposta 404 insieme ad una pagina html contenente il codice di errore 'GovWay-OP20000-0001'.
+
 2021-07-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
