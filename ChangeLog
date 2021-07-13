@@ -1,3 +1,8 @@
+2021-07-13  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloTrasparente]
+	Aggiunti contesti 'api-soap' e 'api-rest' sul profilo 'API Gateway'. Sui due contesti è abilitata solamente la tecnologia indicata nel nome.
+
 2021-07-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

@@ -359,9 +359,20 @@
 
     <web>
     
-		<!-- Contesto proxy supporta sia soap che rest 
+		<!-- Contesto api supporta sia soap che rest 
 		     con il mapping definito a livello generare di binding -->
 	    <context name="api" emptyFunction="PA"/>
+	    
+	   	<!-- Contesto soap supporta solamente il service binding soap 
+	 		(Controllo Runtime) -->
+		<context name="api-soap" binding="soap" emptyFunction="PA"/>
+
+	    <!-- Contesto rest supporta solamente il service binding rest 
+	 	     (Controllo Runtime) -->
+		<context name="api-rest" binding="rest" emptyFunction="PA"/>
+    	    
+		<!-- Contesto vuoto supporta sia soap che rest 
+		     con il mapping definito a livello generare di binding -->    	    
 	    <emptyContext enabled="true" emptyFunction="PA"/>
 	
 		<!-- Contesto soap supporta solamente il service binding soap 
