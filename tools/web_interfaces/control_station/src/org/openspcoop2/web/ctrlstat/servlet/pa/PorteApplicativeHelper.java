@@ -7732,6 +7732,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// filtro tipo connettore con voce IM solo sulle erogazioni
 			String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, true);
 			
+			// filtro plugin
+			this.addFilterConnettorePlugin(ricerca, idLista, filterTipoConnettore);
+			
 			// filtro token policy
 			this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
 			
@@ -8244,6 +8247,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
 		String filtroConnettoreEndpoint = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
 		String filtroConnettoreKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+		String filtroConnettoreTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
 		String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 		
 		this.log.debug("filtroNomeConnettore : " + search);
@@ -8251,6 +8255,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
 		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
 		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
 		
 		List<PortaApplicativaServizioApplicativo> listaFiltrata = new ArrayList<PortaApplicativaServizioApplicativo>();
 		

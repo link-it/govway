@@ -176,7 +176,6 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.slf4j.Logger;
 
 /**
@@ -23639,17 +23638,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String endpointType = null;
 		boolean tipoConnettoreIntegrationManager = false; 
 		if(filtroConnettoreTipo!=null && !"".equals(filtroConnettoreTipo)) {
-			if(ConnettoriCostanti.VALUE_FILTRO_TIPO_CONNETTORE_IM.equals(filtroConnettoreTipo)) {
-				tipoConnettoreIntegrationManager = true;
-			}
-			else {
-				TipiConnettore tipoConnettore = TipiConnettore.toEnumFromName(filtroConnettoreTipo);
-				if(tipoConnettore!=null) {
-					endpointType = (TipiConnettore.CUSTOM.equals(tipoConnettore)) ? filtroConnettoreTipoPlugin : tipoConnettore.getNome();
-				}
-			}
+			// TODO poli costante non buona :)
+//			if(ConnettoriCostanti.VALUE_FILTRO_TIPO_CONNETTORE_IM.equals(filtroConnettoreTipo)) {
+//				tipoConnettoreIntegrationManager = true;
+//			}
+//			else {
+//				TipiConnettore tipoConnettore = TipiConnettore.toEnumFromName(filtroConnettoreTipo);
+//				if(tipoConnettore!=null) {
+//					endpointType = (TipiConnettore.CUSTOM.equals(tipoConnettore)) ? filtroConnettoreTipoPlugin : tipoConnettore.getNome();
+//				}
+//			}
 		}
-		
+		 
 		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
 		String filtroModIKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
@@ -23673,6 +23673,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
 		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
 		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
 		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
 		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
 		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);

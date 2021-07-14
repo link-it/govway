@@ -231,8 +231,10 @@ import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.InUsoType;
+import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedMenuItem;
@@ -10695,8 +10697,19 @@ public class ConsoleHelper implements IConsoleHelper {
 				connettoriList.add(TipiConnettore.HTTPS.toString());
 			}
 			
-			// custom
-			connettoriList.add(TipiConnettore.CUSTOM.toString());
+			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+
+			TipologiaConnettori tipologiaConnettori = null;
+			try {
+				tipologiaConnettori = Utilities.getTipologiaConnettori(this.core);
+			} catch (Exception e) {
+				// default
+				tipologiaConnettori = TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL;
+			}
+			
+			// custom come da schermata configurazione connettore
+			if (confPers && TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL.equals(tipologiaConnettori))
+				connettoriList.add(TipiConnettore.CUSTOM.toString());
 			
 			List<String> connettoriListLabels = new ArrayList<>();
 			for (String tipoConnettore : connettoriList) {
@@ -10738,6 +10751,37 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		return tipoConnettoreValue;
+	}
+	
+	public void addFilterConnettorePlugin(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
+		try {
+			if(tipoConnettore != null && tipoConnettore.equals(TipiConnettore.CUSTOM.toString())) {
+				
+				String pluginValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
+				String pluginLabel = "";
+			
+				Vector<DataElement> dati = new Vector<DataElement>();
+				
+				this.addCustomFieldSearchForm(TipoPlugin.CONNETTORE,
+						null,
+						null,
+						Filtri.FILTRO_CONNETTORE_TIPO,
+						Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN, 
+						pluginLabel, 
+						pluginValue, false, dati,
+						false); 
+				
+				// dentro dati c'e' solo un elemento
+				DataElement dataElement = dati.get(0);
+				
+				if(dataElement.getValues() != null && dataElement.getValues().length > 0) {
+					this.pd.addFilter(Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN, pluginLabel, pluginValue, dataElement.getValues(), dataElement.getLabels(), false, this.getSize());
+				}
+			}
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
 	}
 	
 	public void addFilterConnettoreTokenPolicy(ISearch ricerca, int idLista, String tipoConnettore) throws Exception{
@@ -18221,6 +18265,22 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
+	public void addCustomFieldSearchForm(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST) throws Exception {
+		addCustomField(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				value, null, false, 
+				hidden, dati,
+				postBack_viaPOST, false, null, null, true);
+	}
+	
 	public void addCustomField(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
 			String fase,
@@ -18234,7 +18294,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST, false, null, null);
+				postBack_viaPOST, false, null, null, false);
 	}
 	public void addCustomFieldConValoriDaEscludere(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
@@ -18249,7 +18309,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST, true, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati);
+				postBack_viaPOST, true, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati,false);
 	}
 	
 	public void addMultiSelectCustomField(TipoPlugin tipoPlugin,
@@ -18265,7 +18325,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				null, value, true, 
 				hidden, dati,
-				postBack_viaPOST, false, null, null);
+				postBack_viaPOST, false, null, null, false);
 	}
 	private void addCustomField(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin (o anche configurazione per gli allarmi)
@@ -18274,7 +18334,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametro, String label, 
 			String value, String [] multiValue, boolean multiSelect,
 			boolean hidden, Vector<DataElement> dati,
-			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
+			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, 
+			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch) throws Exception {
 		
 		List<String> values = new ArrayList<String>();
 		List<String> labels = new ArrayList<String>();
@@ -18338,8 +18399,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(plugin.isStato()) {
 						
 						if(values.isEmpty()) {
-							values.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED);
-							labels.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
+							// se uso il componente in una form di ricerca imposto il valore qualsiasi
+							if(isSearch) {
+								values.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI);
+								labels.add(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO_QUALSIASI);
+							} else {
+								values.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_VALORE_UNDEFINED);
+								labels.add(CostantiControlStation.PARAMETRO_TIPO_PERSONALIZZATO_LABEL_UNDEFINED);
+							}
 						}
 						
 						values.add(plugin.getTipo());

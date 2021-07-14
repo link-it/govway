@@ -20639,6 +20639,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
 		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
 		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
 		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
 		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
 		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);
@@ -21631,6 +21632,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
 		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
 		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
 		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
 		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
 		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);

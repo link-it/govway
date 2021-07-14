@@ -499,6 +499,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// filtro tipo connettore con voce IM solo sulle erogazioni
 			String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, !gestioneFruitori);
 			
+			// filtro plugin
+			this.addFilterConnettorePlugin(ricerca, idLista, filterTipoConnettore);
+			
 			// filtro token policy
 			this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
 			
