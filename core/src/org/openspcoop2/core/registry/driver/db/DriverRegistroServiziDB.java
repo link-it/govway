@@ -176,6 +176,7 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.slf4j.Logger;
 
 /**
@@ -23623,9 +23624,31 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 		
 		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
+		String filtroConnettoreTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
 		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
 		String filtroConnettoreEndpoint = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
 		String filtroConnettoreKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+		boolean joinConnettore = 
+				(filtroConnettoreTipo!=null && !"".equals(filtroConnettoreTipo))
+				||
+				(filtroConnettoreTokenPolicy!=null && !"".equals(filtroConnettoreTokenPolicy))
+				||
+				(filtroConnettoreEndpoint!=null && !"".equals(filtroConnettoreEndpoint))
+				||
+				(filtroConnettoreKeystore!=null && !"".equals(filtroConnettoreKeystore));
+		String endpointType = null;
+		boolean tipoConnettoreIntegrationManager = false; 
+		if(filtroConnettoreTipo!=null && !"".equals(filtroConnettoreTipo)) {
+			if(ConnettoriCostanti.VALUE_FILTRO_TIPO_CONNETTORE_IM.equals(filtroConnettoreTipo)) {
+				tipoConnettoreIntegrationManager = true;
+			}
+			else {
+				TipiConnettore tipoConnettore = TipiConnettore.toEnumFromName(filtroConnettoreTipo);
+				if(tipoConnettore!=null) {
+					endpointType = (TipiConnettore.CUSTOM.equals(tipoConnettore)) ? filtroConnettoreTipoPlugin : tipoConnettore.getNome();
+				}
+			}
+		}
 		
 		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
@@ -23756,6 +23779,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 					if(searchCanale) {
 						sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
 					}
+					/*if(joinConnettore) {
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+						sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SA+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_connettore_inv="+CostantiDB.CONNETTORI+".id");
+						
+					}*/
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
