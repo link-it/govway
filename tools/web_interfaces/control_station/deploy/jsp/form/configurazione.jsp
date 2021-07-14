@@ -168,9 +168,9 @@ function CambiaVisualizzazione(newPageSize) {
     index = 0; 
   }
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params;
+    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params;
+    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
 };
 
 function NextPage() {
@@ -180,9 +180,9 @@ function NextPage() {
   nr = 1;
   index += pageSize;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params;
+    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params;
+    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
 };
 
 function PrevPage(pageSize) {
@@ -195,9 +195,9 @@ function PrevPage(pageSize) {
     index = 0;
   }
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params;
+    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params;
+    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
 };
 
 function Search(form) {
@@ -209,6 +209,7 @@ function Search(form) {
   addHidden(form, 'index' , 0);
   addHidden(form, 'iddati' , iddati);
   addHidden(form, 'pageSize' , pageSize);
+  addHidden(form, '_searchDone' , true);
 
   // formatParams
   
@@ -261,6 +262,7 @@ function Reset(form) {
 	  addHidden(form, 'index' , 0);
 	  addHidden(form, 'iddati' , iddati);
 	  addHidden(form, 'pageSize' , pageSize);
+	  addHidden(form, '_searchDone' , true);
 
 	  // formatParams
 	  
@@ -320,7 +322,22 @@ function Esporta(tipo) {
 };
 
 function Change(form,dataElementName) {
+	Change(form,dataElementName,false);
+}
+function Change(form,dataElementName,fromFilters) {
     
+	if( fromFilters ){
+		if(form.action.endsWith('Add.do')){
+			form.action=form.action.replace('Add.do','List.do');
+		}
+		if(form.action.endsWith('Change.do')){
+			form.action=form.action.replace('Change.do','List.do');
+		}
+		if(form.action.endsWith('Del.do')){
+			form.action=form.action.replace('Del.do','List.do');
+		}
+	}
+	
     //aggiungo parametro per indicare che si tratta di postback e azzero idhid
     addHidden(form, 'isPostBack' , true);
     if(dataElementName!=null)
@@ -372,7 +389,7 @@ if (
 ) {
 
 	String searchDescription = pd.getSearchDescription();
-	if (!searchDescription.equals("") || (pd.getFilterNames() != null && pd.hasAlmostOneFilterDefined())){
+	if (!searchDescription.equals("") || (pd.getFilterNames() != null && pd.hasAlmostOneFilterDefined()) || (pd.isPostBackResult())){
 	%>	panelListaRicercaOpen = true; <% 
 	} 
 }%>
