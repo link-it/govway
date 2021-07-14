@@ -253,10 +253,15 @@ function Reset(form) {
 		var name = document.form.elements[k].name;
 		if (name == "search"){
 			document.form.elements[k].value="";
-		}
-		var tipo = document.form.elements[k].type;
-		if (tipo == "select-one" || tipo == "select-multiple") {
-			document.form.elements[k].selectedIndex = 0;
+		} else {
+			var tipo = document.form.elements[k].type;
+			if (tipo == "select-one" || tipo == "select-multiple") {
+				document.form.elements[k].selectedIndex = 0;
+			} else if (tipo == "text" || tipo == "textarea"|| tipo == "number") {
+				document.form.elements[k].value="";
+			} else if (tipo == "checkbox") {
+				document.form.elements[k].checked=false;
+			}
 		}
 	  }
 
