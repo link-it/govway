@@ -596,7 +596,7 @@ public class PageData {
 	public boolean hasAlmostOneFilterDefined() {
 		if(this.filter_values!=null) {
 			for (DataElement de : this.filter_values) {
-				if(de.getValue()!=null && !("".equals(de.value) || Costanti.SA_TIPO_DEFAULT_VALUE.equals(de.value))) {
+				if(!de.getType().equals("hidden") && de.getValue()!=null && !("".equals(de.value) || Costanti.SA_TIPO_DEFAULT_VALUE.equals(de.value))) {
 					return true;
 				}
 			}
