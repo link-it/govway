@@ -10725,7 +10725,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// IM 
 			if(visualizzaVoceIM) {
 				if(this.core.isIntegrationManagerEnabled()) {
-					connettoriList.add(ConnettoriCostanti.VALUE_FILTRO_TIPO_CONNETTORE_IM);
+					connettoriList.add(Filtri.FILTRO_CONNETTORE_TIPO_VALORE_IM);
 					connettoriListLabels.add(ConnettoriCostanti.LABEL_FILTRO_TIPO_CONNETTORE_IM);
 				}
 			}

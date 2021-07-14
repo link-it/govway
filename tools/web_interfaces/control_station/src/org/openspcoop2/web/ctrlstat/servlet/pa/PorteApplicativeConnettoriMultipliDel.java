@@ -242,14 +242,13 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 				
 				if(!listaOggettiDaEliminare.isEmpty())
 					porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray(new Object[listaOggettiDaEliminare.size()]));
-
+				
+				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
+				
 			} 
 
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
-
-			// ricarico la configurazione
-			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -258,7 +257,12 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, pa, true);
+			// ricarico la configurazione
+			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
+						
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, listaFiltrata, pa, true);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

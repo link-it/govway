@@ -40,6 +40,7 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -75,6 +76,8 @@ import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
@@ -7679,13 +7682,18 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		return true;
 	}
-	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, PortaApplicativa pa) throws Exception {
-		this.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, pa, false);
+	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, 
+			List<PortaApplicativaServizioApplicativo> listaFiltrata,
+			PortaApplicativa pa) throws Exception {
+		this.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, 
+				listaFiltrata,
+				pa, false);
 	}
 	
-	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, PortaApplicativa pa, boolean fromDelete) throws Exception {
+	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, 
+			List<PortaApplicativaServizioApplicativo> listaFiltrata,
+			PortaApplicativa pa, boolean fromDelete) throws Exception {
 		try {
-			List<PortaApplicativaServizioApplicativo> lista = pa.getServizioApplicativoList();
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
@@ -7856,9 +7864,6 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			Parameter pConfigurazioneFiltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneConnettore = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE, Costanti.CHECK_BOX_ENABLED_TRUE);
 			
-			// applico i filtri di ricerca 
-			List<PortaApplicativaServizioApplicativo> listaFiltrata = this.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, lista);
-			
 			// controllo che ci sia almeno un risultato altrimenti visualizzo un messaggio di info/errore
 			if(listaFiltrata.size() == 0) {
 				if(!fromDelete) {
@@ -7922,23 +7927,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 				} else {
 					tabSelezionato = "";
-					if(!search.equals("")) {
-						saContenenteNome = getFiltroNomeConnettore(search, listOrdinata);
-						if(saContenenteNome!=null) {
-							tab = 0;
-							for (int i = 0; i < listOrdinata.size(); i++) {
-								if(listOrdinata.get(i).getNome().equals(saContenenteNome.getNome())) {
-									tab = i;
-									tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(i));
-									break;
+					if(!listOrdinata.isEmpty()) {
+						if(!search.equals("")) {
+							saContenenteNome = getFiltroNomeConnettore(search, listOrdinata);
+							if(saContenenteNome!=null) {
+								tab = 0;
+								for (int i = 0; i < listOrdinata.size(); i++) {
+									if(listOrdinata.get(i).getNome().equals(saContenenteNome.getNome())) {
+										tab = i;
+										tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(i));
+										break;
+									}
+								}
+								if(tab>=0) {
+									ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 								}
 							}
-							if(tab>=0) {
-								ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
-							}
+						} else {
+							tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(0));
 						}
-					} else {
-						tabSelezionato =  this.getLabelNomePortaApplicativaServizioApplicativo(listOrdinata.get(0));
 					}
 				}
 			}
@@ -7988,7 +7995,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.addImage(image );
 //					}
 							
-				if(lista.size()>1) {	
+				if(pa.sizeServizioApplicativoList()>1) {	
 					if(!connettoreDefault) 
 						de.setIdToRemove(paSA.getNome());
 					
@@ -8230,7 +8237,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setDati(dati);
 			this.pd.setSelect(true);
 			this.pd.setAddButton(true);
-			if(lista.size() > 1)
+			if(pa.sizeServizioApplicativoList() > 1)
 				this.pd.setRemoveButton(true);
 			else 
 				this.pd.setRemoveButton(false);
@@ -8241,13 +8248,45 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 	}
 	
-	private List<PortaApplicativaServizioApplicativo> applicaFiltriRicercaConnettoriMultipli(ISearch ricerca, int idLista, List<PortaApplicativaServizioApplicativo> lista) {
+	public List<PortaApplicativaServizioApplicativo> applicaFiltriRicercaConnettoriMultipli(ISearch ricerca, int idLista, 
+			List<PortaApplicativaServizioApplicativo> lista, IDSoggetto idSoggettoProprietario) throws DriverConfigurazioneException {
 		
 		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
+		String filtroConnettoreTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
 		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
 		String filtroConnettoreEndpoint = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
 		String filtroConnettoreKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
-		String filtroConnettoreTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
+		if((filtroConnettoreTipo!=null && "".equals(filtroConnettoreTipo))) {
+			filtroConnettoreTipo=null;
+		}
+		if((filtroConnettoreTipoPlugin!=null && "".equals(filtroConnettoreTipoPlugin))) {
+			filtroConnettoreTipoPlugin=null;
+		}
+		if((filtroConnettoreTokenPolicy!=null && "".equals(filtroConnettoreTokenPolicy))) {
+			filtroConnettoreTokenPolicy=null;
+		}
+		if((filtroConnettoreEndpoint!=null && "".equals(filtroConnettoreEndpoint))) {
+			filtroConnettoreEndpoint=null;
+		}
+		if((filtroConnettoreKeystore!=null && "".equals(filtroConnettoreKeystore))) {
+			filtroConnettoreKeystore=null;
+		}
+		boolean joinConnettore =  filtroConnettoreTipo!=null	|| filtroConnettoreTokenPolicy!=null || filtroConnettoreEndpoint!=null || filtroConnettoreKeystore!=null;
+		TipiConnettore tipoConnettore = null;
+		String endpointType = null;
+		boolean tipoConnettoreIntegrationManager = false; 
+		if(filtroConnettoreTipo!=null && !"".equals(filtroConnettoreTipo)) {
+			if(Filtri.FILTRO_CONNETTORE_TIPO_VALORE_IM.equals(filtroConnettoreTipo)) {
+				tipoConnettoreIntegrationManager = true;
+			}
+			else {
+				tipoConnettore = TipiConnettore.toEnumFromName(filtroConnettoreTipo);
+				if(tipoConnettore!=null) {
+					endpointType = (TipiConnettore.CUSTOM.equals(tipoConnettore)) ? filtroConnettoreTipoPlugin : tipoConnettore.getNome();
+				}
+			}
+		}
+		
 		String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 		
 		this.log.debug("filtroNomeConnettore : " + search);
@@ -8259,22 +8298,212 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		List<PortaApplicativaServizioApplicativo> listaFiltrata = new ArrayList<PortaApplicativaServizioApplicativo>();
 		
-		// filtro nome
-		if(StringUtils.isNotBlank(search)) {
-		for (PortaApplicativaServizioApplicativo paSA : lista) {
-			String nome = this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+		if(StringUtils.isNotBlank(search) || joinConnettore) {
 			
-			if(nome != null) {
-				if(nome.toLowerCase().contains(search.toLowerCase())) {
-					listaFiltrata.add(paSA);
-				}
+			List<String> mapSA_ok = null;
+			List<String> mapSA_filtrati = null;
+			if(joinConnettore) {
+				mapSA_ok = new ArrayList<String>();
+				mapSA_filtrati = new ArrayList<String>();
 			}
-		}
-		
+			
+			for (PortaApplicativaServizioApplicativo paSA : lista) {
+			
+				// filtro nome
+				if(StringUtils.isNotBlank(search)) {
+					String nome = this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+					if(nome != null) {
+						if(!nome.toLowerCase().contains(search.toLowerCase())) {
+							continue;
+						}
+					}
+				}
+				
+				if(joinConnettore) {
+				
+					if(mapSA_filtrati.contains(paSA.getNome())) {
+						continue;
+					}
+					if(!mapSA_ok.contains(paSA.getNome())) {
+						
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(paSA.getNome());
+						idSA.setIdSoggettoProprietario(idSoggettoProprietario);
+						ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSA);
+						Connettore connettore = null;
+						if(sa.getInvocazioneServizio()!=null) {
+							connettore = sa.getInvocazioneServizio().getConnettore();
+						}
+						
+						if(connettore==null) {
+							mapSA_filtrati.add(paSA.getNome());
+							continue;
+						}
+						
+						if(endpointType!=null) {
+							if(connettore.getTipo()==null || !connettore.getTipo().equalsIgnoreCase(endpointType)) {
+								mapSA_filtrati.add(paSA.getNome());
+								continue;
+							}
+						}
+						else if(tipoConnettore!=null) {
+							if(TipiConnettore.CUSTOM.equals(tipoConnettore)) {
+								TipiConnettore[] tipi = TipiConnettore.values();
+								boolean find = false;
+								for (TipiConnettore tipiConnettore : tipi) {
+									if(tipiConnettore.getNome().equalsIgnoreCase(connettore.getTipo())) {
+										find=true;
+										break;
+									}
+								}
+								if(!find) {
+									mapSA_filtrati.add(paSA.getNome());
+									continue;
+								}
+							}
+						}
+						
+						if(tipoConnettoreIntegrationManager) {
+							if(sa.getInvocazioneServizio()==null || sa.getInvocazioneServizio().getGetMessage()==null ||
+									!StatoFunzionalita.ABILITATO.equals(sa.getInvocazioneServizio().getGetMessage())) {
+								mapSA_filtrati.add(paSA.getNome());
+								continue;
+							}
+						}
+						
+						if(filtroConnettoreTokenPolicy!=null) {
+							String valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_TOKEN_POLICY);
+							if(!filtroConnettoreTokenPolicy.equalsIgnoreCase(valoreProperty)) {
+								mapSA_filtrati.add(paSA.getNome());
+								continue;
+							}
+						}
+						
+						if(filtroConnettoreEndpoint!=null) {
+							boolean find = false;
+							if((tipoConnettore==null || TipiConnettore.HTTP.equals(tipoConnettore))) {
+								String valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_HTTP_LOCATION);
+								if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+									find=true;
+								}
+							}
+							if(!find) {
+								if((tipoConnettore==null || TipiConnettore.HTTPS.equals(tipoConnettore))) {
+									String valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_HTTPS_LOCATION);
+									if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+										find=true;
+									}
+								}
+							}
+							if(!find) {
+								//if((tipoConnettore==null || TipiConnettore.FILE.equals(tipoConnettore))) {
+								if(tipoConnettore!=null && TipiConnettore.FILE.equals(tipoConnettore)) {
+									String valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);
+									if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+										find=true;
+									}
+									if(!find) {
+										valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);
+										if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+											find=true;
+										}
+									}
+									if(!find) {
+										valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
+										if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+											find=true;
+										}
+									}
+									if(!find) {
+										valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
+										if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+											find=true;
+										}
+									}
+								}
+							}
+							if(!find) {
+								//if((tipoConnettore==null || TipiConnettore.JMS.equals(tipoConnettore))) {
+								if(tipoConnettore!=null && TipiConnettore.JMS.equals(tipoConnettore)) {
+									String valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_JMS_NOME);
+									if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+										find=true;
+									}
+									if(!find) {
+										valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL);
+										if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+											find=true;
+										}
+									}
+									if(!find) {
+										valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY);
+										if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+											find=true;
+										}
+									}
+									if(!find) {
+										valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG);
+										if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+											find=true;
+										}
+									}
+									if(!find) {
+										valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL);
+										if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreEndpoint.toLowerCase())) {
+											find=true;
+										}
+									}
+								}
+							}
+							if(!find) {
+								mapSA_filtrati.add(paSA.getNome());
+								continue;
+							}
+						}
+						
+						if(filtroConnettoreKeystore!=null &&
+								(tipoConnettore==null || TipiConnettore.HTTPS.equals(tipoConnettore))
+								) {
+							boolean find = false;
+							String valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+							if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreKeystore.toLowerCase())) {
+								find=true;
+							}
+							if(!find) {
+								valoreProperty = readValueFromProperties(connettore, CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+								if(valoreProperty!=null && valoreProperty.toLowerCase().contains(filtroConnettoreKeystore.toLowerCase())) {
+									find=true;
+								}
+							}
+							if(!find) {
+								mapSA_filtrati.add(paSA.getNome());
+								continue;
+							}
+						}
+						
+					}
+					
+					mapSA_ok.add(paSA.getNome());
+				}
+								
+				listaFiltrata.add(paSA);
+			}
+			
 			return listaFiltrata;
 		}
 		
 		return lista;
+	}
+	
+	private String readValueFromProperties(Connettore connettore, String nomeProprieta) {
+		for (int i = 0; i < connettore.sizePropertyList(); i++) {
+			String nomeProperty = connettore.getProperty(i).getNome();
+			if (nomeProperty.equals(nomeProprieta)){
+				String valoreProperty = connettore.getProperty(i).getValore();
+				return valoreProperty;
+			}
+		}
+		return null;
 	}
 	
 	private PortaApplicativaServizioApplicativo getFiltroNomeConnettore(String filtroNome, List<PortaApplicativaServizioApplicativo> lista) {

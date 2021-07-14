@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDGruppo;
@@ -46,6 +47,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.JDBCAdapterException;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.LikeConfig;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
@@ -1396,6 +1398,169 @@ public class DBUtils {
 	}
 
 
+	public static void setFiltriConnettoreApplicativo(ISQLQueryObject sqlQueryObject, String tipoDB,
+			TipiConnettore tipoConnettore, String endpointType, boolean tipoConnettoreIntegrationManager,
+			String filtroConnettoreTokenPolicy, String filtroConnettoreEndpoint, String filtroConnettoreKeystore) throws Exception {
+
+		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sql.addFromTable(CostantiDB.CONNETTORI);
+		sql.setANDLogicOperator(true);
+		sql.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_connettore_inv="+CostantiDB.CONNETTORI+".id");
+		setFiltriConnettore(sql, tipoDB,
+				tipoConnettore, endpointType, tipoConnettoreIntegrationManager,
+				filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore,
+				CostantiDB.SERVIZI_APPLICATIVI);
+		sqlQueryObject.addWhereExistsCondition(false, sql);
+		
+	}
+	public static void setFiltriConnettoreErogazione(ISQLQueryObject sqlQueryObject, String tipoDB,
+			TipiConnettore tipoConnettore, String endpointType, boolean tipoConnettoreIntegrationManager,
+			String filtroConnettoreTokenPolicy, String filtroConnettoreEndpoint, String filtroConnettoreKeystore) throws Exception {
+
+		String aliasMAPPING_EROGAZIONE_PA = "c_map";
+		String aliasPORTE_APPLICATIVE = "c_pa";
+		String aliasPORTE_APPLICATIVE_SA = "c_pasa";
+		String aliasSERVIZI_APPLICATIVI = "c_sa";
+		
+		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sql.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA, aliasMAPPING_EROGAZIONE_PA);
+		sql.addFromTable(CostantiDB.PORTE_APPLICATIVE, aliasPORTE_APPLICATIVE);
+		sql.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA, aliasPORTE_APPLICATIVE_SA);
+		sql.addFromTable(CostantiDB.SERVIZI_APPLICATIVI, aliasSERVIZI_APPLICATIVI);
+		sql.addFromTable(CostantiDB.CONNETTORI);
+		sql.setANDLogicOperator(true);
+		sql.addWhereCondition(aliasMAPPING_EROGAZIONE_PA+".id_erogazione="+CostantiDB.SERVIZI+".id");
+		sql.addWhereCondition(aliasMAPPING_EROGAZIONE_PA+".id_porta="+aliasPORTE_APPLICATIVE+".id");
+		sql.addWhereCondition(aliasPORTE_APPLICATIVE_SA+".id_porta="+aliasPORTE_APPLICATIVE+".id");
+		sql.addWhereCondition(aliasPORTE_APPLICATIVE_SA+".id_servizio_applicativo="+aliasSERVIZI_APPLICATIVI+".id");
+		sql.addWhereCondition(aliasSERVIZI_APPLICATIVI+".id_connettore_inv="+CostantiDB.CONNETTORI+".id");
+		setFiltriConnettore(sql, tipoDB,
+				tipoConnettore, endpointType, tipoConnettoreIntegrationManager,
+				filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore,
+				aliasSERVIZI_APPLICATIVI);
+		sqlQueryObject.addWhereExistsCondition(false, sql);
+		
+	}
+	public static void setFiltriConnettoreFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
+			TipiConnettore tipoConnettore, String endpointType, boolean tipoConnettoreIntegrationManager,
+			String filtroConnettoreTokenPolicy, String filtroConnettoreEndpoint, String filtroConnettoreKeystore) throws Exception {
+		
+		ISQLQueryObject sqlConnettoreDefault = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sqlConnettoreDefault.addFromTable(CostantiDB.CONNETTORI);
+		sqlConnettoreDefault.setANDLogicOperator(true);
+		sqlConnettoreDefault.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_connettore="+CostantiDB.CONNETTORI+".id");
+		setFiltriConnettore(sqlConnettoreDefault, tipoDB,
+				tipoConnettore, endpointType, false,
+				filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore,
+				null);
+		
+		ISQLQueryObject sqlGruppiConnettoreRidefinito = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sqlGruppiConnettoreRidefinito.addFromTable(CostantiDB.SERVIZI_FRUITORI_AZIONI);
+		sqlGruppiConnettoreRidefinito.addFromTable(CostantiDB.CONNETTORI);
+		sqlGruppiConnettoreRidefinito.setANDLogicOperator(true);
+		sqlGruppiConnettoreRidefinito.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONI+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
+		sqlGruppiConnettoreRidefinito.addWhereCondition(CostantiDB.SERVIZI_FRUITORI_AZIONI+".id_connettore="+CostantiDB.CONNETTORI+".id");
+		setFiltriConnettore(sqlGruppiConnettoreRidefinito, tipoDB,
+				tipoConnettore, endpointType, false,
+				filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore,
+				null);
+		
+		sqlQueryObject.addWhereCondition(false, 
+				sqlConnettoreDefault.getWhereExistsCondition(false, sqlConnettoreDefault),
+				sqlConnettoreDefault.getWhereExistsCondition(false, sqlGruppiConnettoreRidefinito));
+		
+	}
+	private static void setFiltriConnettore(ISQLQueryObject sqlQueryObject, String tipoDB,
+			TipiConnettore tipoConnettore, String endpointType, boolean tipoConnettoreIntegrationManager,
+			String filtroConnettoreTokenPolicy, String filtroConnettoreEndpoint, String filtroConnettoreKeystore,
+			String aliasTabellaServiziApplicativi) throws Exception {
+		
+		// NOTA: logica inserita anche in PorteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli
+		
+		if(endpointType!=null) {
+			sqlQueryObject.addWhereLikeCondition(CostantiDB.CONNETTORI+".endpointtype", endpointType, false, false, false);
+		}
+		else if(tipoConnettore!=null) {
+			if(TipiConnettore.CUSTOM.equals(tipoConnettore)) {
+				List<String> tipiConosciuti = new ArrayList<String>();
+				TipiConnettore[] tipi = TipiConnettore.values();
+				for (TipiConnettore tipiConnettore : tipi) {
+					tipiConosciuti.add(tipiConnettore.getNome());
+				}
+				ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sql.addFromTable(CostantiDB.CONNETTORI);
+				sql.setANDLogicOperator(true);
+				sql.setNOTBeforeConditions(true);
+				sql.addWhereINCondition(CostantiDB.CONNETTORI+".endpointtype", true, tipiConosciuti.toArray(new String[1]));
+				sqlQueryObject.addWhereCondition(sql.createSQLConditions());
+			}
+		}
+		
+		if(tipoConnettoreIntegrationManager) {
+			sqlQueryObject.addWhereLikeCondition(aliasTabellaServiziApplicativi+".getmsginv", "abilitato", false, false, false);
+		}
+		
+		if(filtroConnettoreTokenPolicy!=null) {
+			sqlQueryObject.addWhereLikeCondition(CostantiDB.CONNETTORI+".token_policy", filtroConnettoreTokenPolicy, false, false, false);
+		}
+		
+		if(filtroConnettoreEndpoint!=null) {
+			List<String> query = new ArrayList<String>();
+			if((tipoConnettore==null || TipiConnettore.HTTP.equals(tipoConnettore))) {
+				query.add(sqlQueryObject.getWhereLikeCondition(CostantiDB.CONNETTORI+".url", filtroConnettoreEndpoint, LikeConfig.contains(true)));
+			}
+			if((tipoConnettore==null || TipiConnettore.HTTPS.equals(tipoConnettore))) {
+				ISQLQueryObject exists = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_HTTP_LOCATION, filtroConnettoreEndpoint);
+				query.add(sqlQueryObject.getWhereExistsCondition(false, exists));
+			}
+			//if((tipoConnettore==null || TipiConnettore.FILE.equals(tipoConnettore))) {
+			if(tipoConnettore!=null && TipiConnettore.FILE.equals(tipoConnettore)) {
+				ISQLQueryObject existsRequest = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE, filtroConnettoreEndpoint);
+				query.add(sqlQueryObject.getWhereExistsCondition(false, existsRequest));
+				ISQLQueryObject existsRequestHeader = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS, filtroConnettoreEndpoint);
+				query.add(sqlQueryObject.getWhereExistsCondition(false, existsRequestHeader));
+				ISQLQueryObject existsResponse = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE, filtroConnettoreEndpoint);
+				query.add(sqlQueryObject.getWhereExistsCondition(false, existsResponse));
+				ISQLQueryObject existsResponseHeader = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS, filtroConnettoreEndpoint);
+				query.add(sqlQueryObject.getWhereExistsCondition(false, existsResponseHeader));
+			}
+			//if((tipoConnettore==null || TipiConnettore.JMS.equals(tipoConnettore))) {
+			if(tipoConnettore!=null && TipiConnettore.JMS.equals(tipoConnettore)) {
+				query.add(sqlQueryObject.getWhereLikeCondition(CostantiDB.CONNETTORI+".nome", filtroConnettoreEndpoint, LikeConfig.contains(true)));
+				query.add(sqlQueryObject.getWhereLikeCondition(CostantiDB.CONNETTORI+".provurl", filtroConnettoreEndpoint, LikeConfig.contains(true)));
+				query.add(sqlQueryObject.getWhereLikeCondition(CostantiDB.CONNETTORI+".connection_factory", filtroConnettoreEndpoint, LikeConfig.contains(true)));
+				query.add(sqlQueryObject.getWhereLikeCondition(CostantiDB.CONNETTORI+".initcont", filtroConnettoreEndpoint, LikeConfig.contains(true)));
+				query.add(sqlQueryObject.getWhereLikeCondition(CostantiDB.CONNETTORI+".urlpkg", filtroConnettoreEndpoint, LikeConfig.contains(true)));
+			}
+			if(!query.isEmpty()) {
+				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+			}
+		}
+		
+		if(filtroConnettoreKeystore!=null &&
+				(tipoConnettore==null || TipiConnettore.HTTPS.equals(tipoConnettore))
+				) {
+			ISQLQueryObject existsKeystore = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION, filtroConnettoreKeystore);
+			ISQLQueryObject existsTruststore = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, filtroConnettoreKeystore);
+			sqlQueryObject.addWhereCondition(false,
+					existsKeystore.getWhereExistsCondition(false, existsKeystore),
+					existsKeystore.getWhereExistsCondition(false, existsTruststore)
+					);
+		}
+		
+	} 
+	private static ISQLQueryObject buildSQLQueryObjectConnettoreCustomPropertyContains(String tipoDB, String nomeProprieta, String valoreProprieta) throws Exception {
+		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sql.addFromTable(CostantiDB.CONNETTORI_CUSTOM);
+		sql.setANDLogicOperator(true);
+		sql.addWhereCondition(CostantiDB.CONNETTORI_CUSTOM+".id_connettore="+CostantiDB.CONNETTORI+".id");
+		sql.addWhereLikeCondition(CostantiDB.CONNETTORI_CUSTOM+".name", nomeProprieta, false, false, false);
+		sql.addWhereLikeCondition(CostantiDB.CONNETTORI_CUSTOM+".value", valoreProprieta, LikeConfig.contains(true));
+		return sql;
+	}
+	
+	
+	
 
 	/**
 	 * Utility per formattare la string sql con i parametri passati, e stamparla per debug

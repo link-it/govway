@@ -127,6 +127,7 @@ public final class Filtri
 	public final static String FILTRO_PROP_PLUGIN_CLASSI = "filtroPropPluginClassi";
 	
 	public final static String FILTRO_CONNETTORE_TIPO = "filtroConnettoreTipo";
+	public final static String FILTRO_CONNETTORE_TIPO_VALORE_IM = "IM";
 	public final static String FILTRO_CONNETTORE_TIPO_PLUGIN = "filtroConnettoreTipoPlugin";
 	public final static String FILTRO_CONNETTORE_TOKEN_POLICY = "filtroConnettoreTokenPolicy";
 	public final static String FILTRO_CONNETTORE_ENDPOINT = "filtroConnettoreEndpoint";

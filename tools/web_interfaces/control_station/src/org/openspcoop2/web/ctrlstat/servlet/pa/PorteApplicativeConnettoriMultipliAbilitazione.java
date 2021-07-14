@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -256,10 +257,10 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-
-			// filtro
-
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, portaApplicativa);
+			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
+						
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, listaFiltrata, portaApplicativa);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

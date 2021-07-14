@@ -491,13 +491,11 @@ public class ConnettoriCostanti {
 	/* LABEL FILTRI RICERCA */
 	public final static String LABEL_SUBTITLE_DATI_CONNETTORE = "Dati Connettore";
 	public final static String LABEL_FILTRO_TIPO_CONNETTORE = "Tipo";
-	public final static String LABEL_FILTRO_TIPO_CONNETTORE_IM = "IntegrationManager/MessageBox";
+	public final static String LABEL_FILTRO_TIPO_CONNETTORE_IM = "im-message-box";
 	public final static String LABEL_FILTRO_CONNETTORE_TOKEN_POLICY = "Token Policy";
 	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT = "Endpoint";
 	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT_FILE = "File";
 	public final static String LABEL_FILTRO_CONNETTORE_ENDPOINT_JMS = "Parametri Jms";
 	public final static String LABEL_FILTRO_CONNETTORE_KEYSTORE = "Keystore";
 	
-	/* PARMETRI FILTRI RICERCA */
-	public final static String VALUE_FILTRO_TIPO_CONNETTORE_IM = "IM";
 }

@@ -58,6 +58,7 @@ import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
@@ -830,9 +831,6 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaCreare.toArray(new Object[listaOggettiDaCreare.size()]));
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaModificare.toArray(new Object[listaOggettiDaModificare.size()]));
 			
-			// ricarico la configurazione
-			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-			
 			// Messaggio 'Please Copy'
 			if(secret) {
 				porteApplicativeHelper.setSecretPleaseCopy(secret_password, secret_user, secret_appId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.CONNETTORE_MULTIPLO, nomeConnettore);
@@ -845,7 +843,12 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 	
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 			
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, pa);
+			// ricarico la configurazione
+			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+			List<PortaApplicativaServizioApplicativo> listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, pa.getServizioApplicativoList(), idSoggettoProprietario);
+									
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, listaFiltrata, pa);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
