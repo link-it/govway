@@ -43,6 +43,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -52,7 +53,6 @@ import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
-import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
@@ -7245,7 +7245,7 @@ public class DriverRegistroServiziDB_LIB {
 	
 
 	public static void CRUDProtocolProperty(int type, List<ProtocolProperty> listPP, long idProprietario,
-			org.openspcoop2.core.mapping.ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
+			org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
 			String tipoDatabase) throws DriverRegistroServiziException {
 		try {
 			DBProtocolPropertiesUtils.CRUDRegistryProtocolProperty(log, type, listPP, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
@@ -7255,7 +7255,7 @@ public class DriverRegistroServiziDB_LIB {
 	}
 	
 	
-	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, org.openspcoop2.core.mapping.ProprietariProtocolProperty tipologiaProprietario, 
+	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietario, 
 			Connection connection,
 			String tipoDatabase) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		try {

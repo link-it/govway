@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -297,7 +298,7 @@ public class DBUtils {
 			stm.setString(3, nomeServizio);
 			stm.setInt(4, versioneServizio);
 			if(testServizioNonCorrelato)
-				stm.setString(5, "disabilitato");
+				stm.setString(5, CostantiDB.STATO_FUNZIONALITA_DISABILITATO);
 
 			rs=stm.executeQuery();
 
@@ -1497,7 +1498,7 @@ public class DBUtils {
 		}
 		
 		if(tipoConnettoreIntegrationManager) {
-			sqlQueryObject.addWhereLikeCondition(aliasTabellaServiziApplicativi+".getmsginv", "abilitato", false, false, false);
+			sqlQueryObject.addWhereLikeCondition(aliasTabellaServiziApplicativi+".getmsginv", CostantiDB.STATO_FUNZIONALITA_ABILITATO, false, false, false);
 		}
 		
 		if(filtroConnettoreTokenPolicy!=null) {
@@ -1543,8 +1544,8 @@ public class DBUtils {
 			ISQLQueryObject existsKeystore = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION, filtroConnettoreKeystore);
 			ISQLQueryObject existsTruststore = buildSQLQueryObjectConnettoreCustomPropertyContains(tipoDB, CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_LOCATION, filtroConnettoreKeystore);
 			sqlQueryObject.addWhereCondition(false,
-					existsKeystore.getWhereExistsCondition(false, existsKeystore),
-					existsKeystore.getWhereExistsCondition(false, existsTruststore)
+					sqlQueryObject.getWhereExistsCondition(false, existsKeystore),
+					sqlQueryObject.getWhereExistsCondition(false, existsTruststore)
 					);
 		}
 		
@@ -1558,6 +1559,223 @@ public class DBUtils {
 		sql.addWhereLikeCondition(CostantiDB.CONNETTORI_CUSTOM+".value", valoreProprieta, LikeConfig.contains(true));
 		return sql;
 	}
+	
+	
+	
+	
+	public static void setFiltriModIApplicativi(ISQLQueryObject sqlQueryObject, String tipoDB,
+			Boolean filtroModISicurezzaMessaggio,
+			String filtroModIKeystore, String filtroModIAudience) throws Exception {
+		
+		ProprietariProtocolProperty proprietario = ProprietariProtocolProperty.SERVIZIO_APPLICATIVO;
+		String tabellaDB = 	CostantiDB.SERVIZI_APPLICATIVI ;
+		
+		if(filtroModISicurezzaMessaggio!=null) {
+			
+			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_SICUREZZA_MESSAGGIO , null, null, filtroModISicurezzaMessaggio);
+			sqlQueryObject.addWhereExistsCondition(false, sql);
+			
+		}
+		
+		if(filtroModIKeystore!=null) {
+			
+			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_KEYSTORE_PATH, null, filtroModIKeystore, null);
+			sqlQueryObject.addWhereExistsCondition(false, sql);
+			
+		}
+		
+		if(filtroModIAudience!=null) {
+			
+			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE , null, filtroModIAudience, null);
+			sqlQueryObject.addWhereExistsCondition(false, sql);
+			
+		}
+		
+	}
+	
+	public static void setFiltriModIErogazione(ISQLQueryObject sqlQueryObject, String tipoDB,
+			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
+			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente,
+			String filtroModIKeystore, String filtroModIAudience) throws Exception {
+		setFiltriModIErogazioneFruizione(sqlQueryObject, tipoDB,
+				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+				filtroModIDigestRichiesta, filtroModIInfoUtente,
+				filtroModIKeystore, filtroModIAudience,
+				true);
+	}
+	public static void setFiltriModIFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
+			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
+			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente,
+			String filtroModIKeystore, String filtroModIAudience) throws Exception {
+		setFiltriModIErogazioneFruizione(sqlQueryObject, tipoDB,
+				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+				filtroModIDigestRichiesta, filtroModIInfoUtente,
+				filtroModIKeystore, filtroModIAudience,
+				false);
+	}
+	private static void setFiltriModIErogazioneFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
+			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
+			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente,
+			String filtroModIKeystore, String filtroModIAudience,
+			boolean erogazione) throws Exception {
+		
+		setFiltriModI(sqlQueryObject, tipoDB,
+				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+				filtroModIDigestRichiesta, filtroModIInfoUtente);
+		
+		ProprietariProtocolProperty proprietario = erogazione ? ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA : ProprietariProtocolProperty.FRUITORE;
+		String tabellaDB = 	erogazione ? CostantiDB.SERVIZI : CostantiDB.SERVIZI_FRUITORI ;
+		
+		if(filtroModIKeystore!=null) {
+			
+			List<String> query = new ArrayList<String>();
+			
+			ISQLQueryObject sqlAccordoKeystore = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_KEYSTORE_PATH, null, filtroModIKeystore, null);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoKeystore));
+			
+			ISQLQueryObject sqlAccordoTruststore = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, null, filtroModIKeystore, null);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoTruststore));
+			
+			ISQLQueryObject sqlAccordoTruststoreCrl = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, null, filtroModIKeystore, null);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoTruststoreCrl));
+			
+			ISQLQueryObject sqlAccordoTruststoreSsl = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH, null, filtroModIKeystore, null);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoTruststoreSsl));
+						
+			if(!query.isEmpty()) {
+				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+			}
+		}
+		
+		if(filtroModIAudience!=null) {
+			
+			ISQLQueryObject sqlAudience = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE , null, filtroModIAudience, null);
+			sqlQueryObject.addWhereExistsCondition(false, sqlAudience);
+			
+		}
+		
+	}
+	
+	public static void setFiltriModI(ISQLQueryObject sqlQueryObject, String tipoDB,
+			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
+			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente) throws Exception {
+		
+		if(filtroModISicurezzaCanale!=null) {
+			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE, filtroModISicurezzaCanale, null, null);
+			sqlQueryObject.addWhereExistsCondition(false, sql);
+		}
+		if(filtroModISicurezzaMessaggio!=null) {
+			
+			List<String> query = new ArrayList<String>();
+			
+			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null, null);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSec));
+			
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null);
+			
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null);
+			
+			if(!query.isEmpty()) {
+				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+			}
+		}
+		if(filtroModIDigestRichiesta!=null) {
+			
+			List<String> query = new ArrayList<String>();
+			
+			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, null, filtroModIDigestRichiesta);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSec));
+			
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, filtroModIDigestRichiesta);
+			
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, filtroModIDigestRichiesta);
+			
+			if(!query.isEmpty()) {
+				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+			}
+		}
+		if(filtroModIInfoUtente!=null) {
+			
+			List<String> query = new ArrayList<String>();
+			
+			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, null, filtroModIInfoUtente);
+			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSec));
+			
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, filtroModIInfoUtente);
+			
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, filtroModIInfoUtente);
+			
+			if(!query.isEmpty()) {
+				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+			}
+			
+		}
+				
+	}
+	private static void addRestCondition(List<String> query, ISQLQueryObject sqlQueryObject, String tipoDB, String nomeProprieta, String valoreProprieta, Boolean valoreProprietaBoolean) throws Exception {
+		String aliasRISORSE = "m_res";
+		ISQLQueryObject sqlREST = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sqlREST.addFromTable(CostantiDB.API_RESOURCES, aliasRISORSE);
+		sqlREST.setANDLogicOperator(true);
+		sqlREST.addWhereCondition(aliasRISORSE+".id_accordo="+CostantiDB.ACCORDI+".id");
+		ISQLQueryObject sqlRestSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.RESOURCE, aliasRISORSE,
+				tipoDB, nomeProprieta, valoreProprieta, null, valoreProprietaBoolean);
+		sqlREST.addWhereExistsCondition(false, sqlRestSec);
+		query.add(sqlQueryObject.getWhereExistsCondition(false, sqlREST));
+	}
+	private static void addSoapCondition(List<String> query, ISQLQueryObject sqlQueryObject, String tipoDB, String nomeProprieta, String valoreProprieta, Boolean valoreProprietaBoolean) throws Exception {
+		String aliasPORTTYPES = "m_pt";
+		String aliasOPERATIONS = "m_op";
+		ISQLQueryObject sqlSOAP = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sqlSOAP.addFromTable(CostantiDB.PORT_TYPE, aliasPORTTYPES);
+		sqlSOAP.addFromTable(CostantiDB.PORT_TYPE_AZIONI, aliasOPERATIONS);
+		sqlSOAP.setANDLogicOperator(true);
+		sqlSOAP.addWhereCondition(aliasPORTTYPES+".id_accordo="+CostantiDB.ACCORDI+".id");
+		sqlSOAP.addWhereCondition(aliasOPERATIONS+".id_port_type="+aliasPORTTYPES+".id");
+		ISQLQueryObject sqlSoapSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.OPERATION, aliasOPERATIONS,
+				tipoDB, nomeProprieta, valoreProprieta, null, valoreProprietaBoolean);
+		sqlSOAP.addWhereExistsCondition(false, sqlSoapSec);
+		query.add(sqlQueryObject.getWhereExistsCondition(false, sqlSOAP));
+	}
+	private static ISQLQueryObject buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty tipoProprietario, String tabellaProprietario,
+			String tipoDB, String nomeProprieta, String valoreProprietaEquals, String valoreProprietaContains, Boolean valoreProprietaBoolean) throws Exception {
+		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sql.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+		sql.setANDLogicOperator(true);
+		sql.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES+".id_proprietario="+tabellaProprietario+".id");
+		sql.addWhereLikeCondition(CostantiDB.PROTOCOL_PROPERTIES+".tipo_proprietario", tipoProprietario.name(), false, false, false);
+		sql.addWhereLikeCondition(CostantiDB.PROTOCOL_PROPERTIES+".name", nomeProprieta, false, false, false);
+		if(valoreProprietaContains!=null) {
+			sql.addWhereLikeCondition(CostantiDB.PROTOCOL_PROPERTIES+".value_string", valoreProprietaContains, LikeConfig.contains(true));
+		}
+		else if(valoreProprietaEquals!=null) {
+			sql.addWhereLikeCondition(CostantiDB.PROTOCOL_PROPERTIES+".value_string", valoreProprietaEquals, false, false, false);
+		}
+		if(valoreProprietaBoolean!=null) {
+			if(valoreProprietaBoolean) {
+				sql.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES+".value_boolean="+CostantiDB.TRUE);
+			}
+			else {
+				sql.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES+".value_boolean="+CostantiDB.FALSE);
+			}
+		}
+		return sql;
+	}
+	
+	
+	
 	
 	
 	

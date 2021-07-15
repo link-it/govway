@@ -458,16 +458,38 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				profiloSelezionato = true;
 			}
 			
+			// filtri MODIPA da visualizzare solo se non e' stato selezionato un protocollo in alto a dx  (opzione pilota da file di proprieta')
+			// oppure e' selezionato MODIPA
+			// oppure non e' stato selezionato un protocollo in alto e nessun protocollo nei filtri  (opzione pilota da file di proprieta')
+			// oppure MODIPA nei filtri
+			boolean profiloModipaSelezionato = false;
+			// solo se il protocollo modipa e' caricato faccio la verifica
+			if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
+				List<String> profiloModipaSelezionato_opzioniAccettate = new ArrayList<String>();
+				profiloModipaSelezionato_opzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA);
+				if(this.core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi()) {
+					profiloModipaSelezionato_opzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI);
+				}
+				if( (filterProtocollo!=null && profiloModipaSelezionato_opzioniAccettate.contains(filterProtocollo))
+						||
+					(filterProtocollo==null && protocolloS!=null && profiloModipaSelezionato_opzioniAccettate.contains(protocolloS))
+					) {
+					profiloModipaSelezionato = true;
+				}
+			}
+			
 			if( profiloSelezionato && 
 					(!this.isSoggettoMultitenantSelezionato())) {
 				String filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
 				this.addFilterSoggetto(filterSoggetto,protocolloS,true,false);
 			}
-			
+						
 			String filterTipoAccordo = null;
 			if(showServiceBinding) {
 				filterTipoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SERVICE_BINDING);
-				boolean postBackServiceBinding = profiloSelezionato; // serve se poi si fa vedere le API
+				boolean postBackServiceBinding = profiloSelezionato // serve se poi si fa vedere le API
+						||
+						profiloModipaSelezionato; // serve per pilotare la label audience e sulla sicurezza messaggio
 				this.addFilterServiceBinding(filterTipoAccordo,postBackServiceBinding,true);
 			}
 			
@@ -510,27 +532,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// filtro keystore
 			this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
-			
-			// filtri MODIPA da visualizzare solo se non e' stato selezionato un protocollo in alto a dx oppure e' selezionato MODIPA
-			// oppure non e' stato selezionato un protocollo in alto e nessun protocollo nei filtri oppure MODIPA nei filtri
-			boolean profiloModipaSelezionato = false;
-			if( (filterProtocollo!=null && 
-					(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo) ||
-							CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA.equals(filterProtocollo)	
-							))
-					||
-				(filterProtocollo==null && protocolloS!=null &&
-						(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(protocolloS) ||
-								CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA.equals(protocolloS)	
-								)
-						)
-					) {
-				// solo se il protocollo modipa e' caricato
-				if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
-					profiloModipaSelezionato = true;
-				} 
-			}
-			
+						
 			if(profiloModipaSelezionato) {
 				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
 				
@@ -550,7 +552,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				this.addFilterModIKeystore(ricerca, idLista);
 				
 				// filtro audience
-				this.addFilterModIAudience(ricerca, idLista);
+				this.addFilterModIAudience(ricerca, idLista, false, filterTipoAccordo, null);
 			}
 
 			// filtri proprieta

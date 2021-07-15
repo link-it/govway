@@ -89,6 +89,7 @@ import org.openspcoop2.core.config.driver.TipologiaServizioApplicativo;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDConnettore;
@@ -104,7 +105,6 @@ import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
-import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -20644,10 +20644,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 		
-		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
 		String filtroModIKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
 		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
+		Boolean filtroModISicurezzaMessaggioEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModISicurezzaMessaggio)) {
+			filtroModISicurezzaMessaggioEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModISicurezzaMessaggio)) {
+			filtroModISicurezzaMessaggioEnabled = false;
+		}
+		if((filtroModIKeystore!=null && "".equals(filtroModIKeystore))) {
+			filtroModIKeystore=null;
+		}
+		if((filtroModIAudience!=null && "".equals(filtroModIAudience))) {
+			filtroModIAudience=null;
+		}
+		boolean filtroModI = filtroModISicurezzaMessaggioEnabled!=null || 
+				filtroModIKeystore!=null || filtroModIAudience!=null;
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
@@ -20670,7 +20684,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
 		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
 		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
-		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
 		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
 		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);
 		this.log.debug("filtroModIAudience : " + filtroModIAudience);
@@ -21269,6 +21282,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 							filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
 				}
+				if(filtroModI) {
+					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
+							filtroModISicurezzaMessaggioEnabled,
+							filtroModIKeystore, filtroModIAudience);
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -21327,6 +21345,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DBUtils.setFiltriConnettoreApplicativo(sqlQueryObject, this.tipoDB, 
 							tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 							filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+				}
+				if(filtroModI) {
+					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
+							filtroModISicurezzaMessaggioEnabled,
+							filtroModIKeystore, filtroModIAudience);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -21451,6 +21474,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 							filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
 				}
+				if(filtroModI) {
+					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
+							filtroModISicurezzaMessaggioEnabled,
+							filtroModIKeystore, filtroModIAudience);
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy(aliasNomeServizioApplicativo);
 				sqlQueryObject.addOrderBy(aliasNomeSoggetto);
@@ -21520,6 +21548,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DBUtils.setFiltriConnettoreApplicativo(sqlQueryObject, this.tipoDB, 
 							tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 							filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+				}
+				if(filtroModI) {
+					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
+							filtroModISicurezzaMessaggioEnabled,
+							filtroModIKeystore, filtroModIAudience);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy(aliasNomeServizioApplicativo);
@@ -21694,10 +21727,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 		
-		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
 		String filtroModIKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
 		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
+		Boolean filtroModISicurezzaMessaggioEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModISicurezzaMessaggio)) {
+			filtroModISicurezzaMessaggioEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModISicurezzaMessaggio)) {
+			filtroModISicurezzaMessaggioEnabled = false;
+		}
+		if((filtroModIKeystore!=null && "".equals(filtroModIKeystore))) {
+			filtroModIKeystore=null;
+		}
+		if((filtroModIAudience!=null && "".equals(filtroModIAudience))) {
+			filtroModIAudience=null;
+		}
+		boolean filtroModI = filtroModISicurezzaMessaggioEnabled!=null || 
+				filtroModIKeystore!=null || filtroModIAudience!=null;
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
@@ -21713,7 +21760,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
 		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
 		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
-		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
 		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
 		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);
 		this.log.debug("filtroModIAudience : " + filtroModIAudience);
@@ -21779,6 +21825,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 							filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
 				}
+				if(filtroModI) {
+					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
+							filtroModISicurezzaMessaggioEnabled,
+							filtroModIKeystore, filtroModIAudience);
+				}
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -21817,6 +21868,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DBUtils.setFiltriConnettoreApplicativo(sqlQueryObject, this.tipoDB, 
 							tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 							filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+				}
+				if(filtroModI) {
+					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
+							filtroModISicurezzaMessaggioEnabled,
+							filtroModIKeystore, filtroModIAudience);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -21903,6 +21959,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 							filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
 				}
+				if(filtroModI) {
+					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
+							filtroModISicurezzaMessaggioEnabled,
+							filtroModIKeystore, filtroModIAudience);
+				}
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -21953,6 +22014,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DBUtils.setFiltriConnettoreApplicativo(sqlQueryObject, this.tipoDB, 
 							tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 							filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+				}
+				if(filtroModI) {
+					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
+							filtroModISicurezzaMessaggioEnabled,
+							filtroModIKeystore, filtroModIAudience);
 				}
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);

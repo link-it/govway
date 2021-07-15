@@ -8310,11 +8310,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		List<PortaApplicativaServizioApplicativo> listaFiltrata = new ArrayList<PortaApplicativaServizioApplicativo>();
 		
-		if(StringUtils.isNotBlank(filtroConnettoreNome) || joinConnettore) {
+		if(StringUtils.isNotBlank(filtroConnettoreNome) || StringUtils.isNotBlank(filtroConnettoreFiltro) || joinConnettore) {
 			
 			List<String> mapSA_ok = null;
 			List<String> mapSA_filtrati = null;
-			if(joinConnettore) {
+			if(StringUtils.isNotBlank(filtroConnettoreFiltro) || joinConnettore) {
 				mapSA_ok = new ArrayList<String>();
 				mapSA_filtrati = new ArrayList<String>();
 			}
@@ -8328,6 +8328,24 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						if(!nome.toLowerCase().contains(filtroConnettoreNome.toLowerCase())) {
 							continue;
 						}
+					}
+				}
+				
+				// filtro
+				if(StringUtils.isNotBlank(filtroConnettoreFiltro)) {
+					if(paSA.getDatiConnettore()==null || paSA.getDatiConnettore().sizeFiltroList()<=0) {
+						mapSA_filtrati.add(paSA.getNome());
+						continue;
+					}
+					boolean find = false;
+					for (String filtro : paSA.getDatiConnettore().getFiltroList()) {
+						if(filtro!=null && filtro.toLowerCase().contains(filtroConnettoreFiltro.toLowerCase())) {
+							find=true;
+						}
+					}
+					if(!find) {
+						mapSA_filtrati.add(paSA.getNome());
+						continue;
 					}
 				}
 				

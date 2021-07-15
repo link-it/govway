@@ -30,7 +30,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;

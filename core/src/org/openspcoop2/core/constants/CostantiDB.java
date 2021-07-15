@@ -564,6 +564,67 @@ public final class CostantiDB {
 	public static final String CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ;
 	public static final String CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME;
 	
+	
+    /**
+     * PROPRIETA MODI
+     */
+	
+	public static final String MODIPA_VALUE_UNDEFINED = "-";
+	
+	public static final String MODIPA_PROFILO_INTERAZIONE = "modipaInteractionProfile";
+	public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD = "crud";
+	public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE = "bloccante";
+	public static final String MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE = "nonBloccante";
+	
+	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA = "modipaInteractionAsyncProfile";
+	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH = "PUSH";
+	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL = "PULL";
+	
+	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO = "modipaInteractionAsyncRole";
+	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA = "Richiesta";
+	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA_STATO = "RichiestaStato";
+	public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA = "Risposta";
+	
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA = "modipaInteractionAsyncApiRequest";
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA = "modipaInteractionAsyncServiceRequest";
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = "modipaInteractionAsyncActionRequest";
+	
+    public static final String MODIPA_PROFILO_SICUREZZA_CANALE = "modipaSecurityChannelProfile";
+    public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01 = "idac01";
+    public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02 = "idac02";
+    
+	public static final String MODIPA_SICUREZZA_MESSAGGIO = "modipaSecurityMessage";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO = "modipaSecurityMessageProfile";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01 = "idam01";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02 = "idam02";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301 = "idam0301";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302 = "idam0302";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA = "modipaSecurityMessageCorniceSicurezza";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST = "modipaSecurityMessageRequestDigest";
+
+    public static final String MODIPA_KEYSTORE_PATH = "modipaKeystorePath";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH = "modipaTruststorePath";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS = "modipaTruststoreCRLs";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH = "modipaSslTruststorePath";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE = "modipaSecurityMessageRequestAud";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE = "modipaSecurityMessageResponseAud";
+    
+    
+    /**
+     * STATO FUNZIONALITA
+     */
+    
+    public static final String STATO_FUNZIONALITA_ABILITATO = "abilitato";
+    public static final String STATO_FUNZIONALITA_DISABILITATO = "disabilitato";
+    
+	
     public static final String COMPONENTE_SERVIZIO_PD = "pd";
     public static final String COMPONENTE_SERVIZIO_PA = "pa";
     public static final String COMPONENTE_SERVIZIO_IM = "im";

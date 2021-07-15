@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
@@ -70,7 +71,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
-import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -15628,6 +15628,27 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
 		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
 		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
+		if((filtroModISicurezzaCanale!=null && "".equals(filtroModISicurezzaCanale))) {
+			filtroModISicurezzaCanale=null;
+		}
+		if((filtroModISicurezzaMessaggio!=null && "".equals(filtroModISicurezzaMessaggio))) {
+			filtroModISicurezzaMessaggio=null;
+		}
+		Boolean filtroModIDigestRichiestaEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIDigestRichiesta)) {
+			filtroModIDigestRichiestaEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDigestRichiesta)) {
+			filtroModIDigestRichiestaEnabled = false;
+		}
+		Boolean filtroModIInfoUtenteEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIInfoUtente)) {
+			filtroModIInfoUtenteEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIInfoUtente)) {
+			filtroModIInfoUtenteEnabled = false;
+		}
+		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null || filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtenteEnabled!=null;
 		
 		boolean searchCanale = false;
 		boolean canaleDefault = false;
@@ -15735,6 +15756,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}
 			
+			if(filtroModI) {
+				DBUtils.setFiltriModI(sqlQueryObject, this.tipoDB,
+						filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+						filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled);
+			}
+			
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -15814,6 +15841,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				else {
 					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".canale = ?");
 				}
+			}
+			
+			if(filtroModI) {
+				DBUtils.setFiltriModI(sqlQueryObject, this.tipoDB,
+						filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+						filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled);
 			}
 			
 			sqlQueryObject.setANDLogicOperator(true);
@@ -23664,6 +23697,35 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
 		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
 		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
+		if((filtroModISicurezzaCanale!=null && "".equals(filtroModISicurezzaCanale))) {
+			filtroModISicurezzaCanale=null;
+		}
+		if((filtroModISicurezzaMessaggio!=null && "".equals(filtroModISicurezzaMessaggio))) {
+			filtroModISicurezzaMessaggio=null;
+		}
+		Boolean filtroModIDigestRichiestaEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIDigestRichiesta)) {
+			filtroModIDigestRichiestaEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDigestRichiesta)) {
+			filtroModIDigestRichiestaEnabled = false;
+		}
+		Boolean filtroModIInfoUtenteEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIInfoUtente)) {
+			filtroModIInfoUtenteEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIInfoUtente)) {
+			filtroModIInfoUtenteEnabled = false;
+		}
+		if((filtroModIKeystore!=null && "".equals(filtroModIKeystore))) {
+			filtroModIKeystore=null;
+		}
+		if((filtroModIAudience!=null && "".equals(filtroModIAudience))) {
+			filtroModIAudience=null;
+		}
+		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null ||
+				filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtenteEnabled!=null ||
+				filtroModIKeystore!=null || filtroModIAudience!=null;
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
@@ -23752,7 +23814,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI
 						|| !search.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
 					) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
@@ -23787,6 +23849,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
 					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -23802,6 +23870,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriConnettoreErogazione(sqlQueryObject, this.tipoDB, 
 								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
 					}
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
@@ -23892,7 +23966,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 					if(filterGruppo!=null) {
@@ -23925,6 +23999,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
 					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -23940,6 +24020,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriConnettoreErogazione(sqlQueryObject, this.tipoDB, 
 								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
 					}
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
@@ -24056,7 +24142,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI
 						|| !search.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
 					) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
@@ -24091,6 +24177,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
 					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -24106,6 +24198,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriConnettoreErogazione(sqlQueryObject, this.tipoDB, 
 								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
 					}
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
@@ -24226,7 +24324,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 					if(filterGruppo!=null) {
@@ -24259,6 +24357,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
 					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -24274,6 +24378,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 						DBUtils.setFiltriConnettoreErogazione(sqlQueryObject, this.tipoDB, 
 								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
 								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
 					}
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");

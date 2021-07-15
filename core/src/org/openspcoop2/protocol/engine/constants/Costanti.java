@@ -22,6 +22,8 @@
 
 package org.openspcoop2.protocol.engine.constants;
 
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica, 
@@ -149,20 +151,26 @@ public class Costanti {
     
     public final static String REQUISITI_INPUT_RACCOLTI = "[[InformationMissingRequisiti]]";
     
-    public static final String TRASPARENTE_PROTOCOL_NAME = "trasparente";
-    public static final String TRASPARENTE_PROTOCOL_LABEL = "API Gateway";
+    public static final String TRASPARENTE_PROTOCOL_NAME = CostantiLabel.TRASPARENTE_PROTOCOL_NAME;
+    public static final String TRASPARENTE_PROTOCOL_LABEL = CostantiLabel.TRASPARENTE_PROTOCOL_LABEL;
     
-    public static final String SPCOOP_PROTOCOL_NAME = "spcoop";
-    public static final String SPCOOP_PROTOCOL_LABEL = "SPCoop";
+    public static final String SPCOOP_PROTOCOL_NAME = CostantiLabel.SPCOOP_PROTOCOL_NAME;
+    public static final String SPCOOP_PROTOCOL_LABEL = CostantiLabel.SPCOOP_PROTOCOL_LABEL;
     
-    public static final String MODIPA_PROTOCOL_NAME = "modipa";
-    public static final String MODIPA_PROTOCOL_LABEL = "ModI";
+    public static final String MODIPA_PROTOCOL_NAME = CostantiLabel.MODIPA_PROTOCOL_NAME;
+    public static final String MODIPA_PROTOCOL_LABEL = CostantiLabel.MODIPA_PROTOCOL_LABEL;
     
-    public static final String MODIPA_VALUE_UNDEFINED = "-";
+    public static final String SDI_PROTOCOL_NAME = CostantiLabel.SDI_PROTOCOL_NAME;
+    public static final String SDI_PROTOCOL_LABEL = CostantiLabel.SDI_PROTOCOL_LABEL;
     
-    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA = "modipaInteractionAsyncApiRequest";
-    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA = "modipaInteractionAsyncServiceRequest";
-    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = "modipaInteractionAsyncActionRequest";
+    public static final String AS4_PROTOCOL_NAME = CostantiLabel.AS4_PROTOCOL_NAME;
+    public static final String AS4_PROTOCOL_LABEL = CostantiLabel.AS4_PROTOCOL_LABEL;
+    
+    public static final String MODIPA_VALUE_UNDEFINED = CostantiDB.MODIPA_VALUE_UNDEFINED;
+    
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA = CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA;
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA = CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA;
+    public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA = CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA;
     
     
 	public final static String CONSOLE_PARAMETRO_SOGGETTO_DOMINIO = "dominio";
