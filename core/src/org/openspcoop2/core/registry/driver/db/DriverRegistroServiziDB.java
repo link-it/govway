@@ -23885,6 +23885,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
 								filtroModIKeystore, filtroModIAudience);
 					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -23906,6 +23910,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
 								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
 					}
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
@@ -23990,11 +23998,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 				}
 				
-				if(filtroProprieta) {
-					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
-							filtroProprietaNome, filtroProprietaValore);
-				}
-				
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -24040,6 +24043,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
 								filtroModIKeystore, filtroModIAudience);
 					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -24061,6 +24068,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
 								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
 					}
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
@@ -24129,11 +24140,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 								(tabellaPorta+".canale = ?"),
 								("( "+ tabellaPorta+".canale is null AND "+CostantiDB.ACCORDI+".canale = ? )"));
 					}
-				}
-				
-				if(filtroProprieta) {
-					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
-							filtroProprietaNome, filtroProprietaValore);
 				}
 				
 				sqlQueryObject.setANDLogicOperator(true);
@@ -24223,6 +24229,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
 								filtroModIKeystore, filtroModIAudience);
 					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -24244,6 +24254,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
 								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
 					}
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
@@ -24344,11 +24358,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 				}
 				
-				if(filtroProprieta) {
-					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
-							filtroProprietaNome, filtroProprietaValore);
-				}
-				
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nomeServizio");
 				sqlQueryObject.addOrderBy("versioneServizio");
@@ -24408,6 +24417,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
 								filtroModIKeystore, filtroModIAudience);
 					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -24429,6 +24442,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
 								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
 								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
 					}
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
@@ -24515,11 +24532,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 								(tabellaPorta+".canale = ?"),
 								("( "+ tabellaPorta+".canale is null AND "+CostantiDB.ACCORDI+".canale = ? )"));
 					}
-				}
-				
-				if(filtroProprieta) {
-					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
-							filtroProprietaNome, filtroProprietaValore);
 				}
 				
 				sqlQueryObject.setANDLogicOperator(true);
