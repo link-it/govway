@@ -10865,6 +10865,36 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
+	public String addFilterNomeConnettoreMultiplo(ISearch ricerca, int idLista) throws Exception{
+		try {
+			String nomeValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_MULTIPLO_NOME);
+			
+			String filterLabel = ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_MULTIPLO_NOME;
+				
+			this.pd.addTextFilter(Filtri.FILTRO_CONNETTORE_MULTIPLO_NOME, filterLabel, nomeValue, this.getSize());
+			
+			return nomeValue;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterFiltroConnettoreMultiplo(ISearch ricerca, int idLista, boolean behaviourConFiltri) throws Exception{
+		try {
+			if(behaviourConFiltri) {
+			
+				String filtroValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_MULTIPLO_FILTRO);
+				
+				String filterLabel = ConnettoriCostanti.LABEL_FILTRO_CONNETTORE_MULTIPLO_FILTRO;
+					
+				this.pd.addTextFilter(Filtri.FILTRO_CONNETTORE_MULTIPLO_FILTRO, filterLabel, filtroValue, this.getSize());
+			}
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 	
 	public void addFilterModIKeystore(ISearch ricerca, int idLista) throws Exception{
 		try {

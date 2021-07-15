@@ -133,6 +133,9 @@ public final class Filtri
 	public final static String FILTRO_CONNETTORE_ENDPOINT = "filtroConnettoreEndpoint";
 	public final static String FILTRO_CONNETTORE_KEYSTORE = "filtroConnettoreKeystore";
 	
+	public final static String FILTRO_CONNETTORE_MULTIPLO_NOME = "filtroConnettoreMulNome";
+	public final static String FILTRO_CONNETTORE_MULTIPLO_FILTRO = "filtroConnettoreMulFiltro";
+	
 	public final static String FILTRO_MODI_SICUREZZA_CANALE = "filtroModiSicCanale";
 	public final static String FILTRO_MODI_SICUREZZA_MESSAGGIO = "filtroModiSicMessaggio";
 	public final static String FILTRO_MODI_KEYSTORE = "filtroModiKeystore";

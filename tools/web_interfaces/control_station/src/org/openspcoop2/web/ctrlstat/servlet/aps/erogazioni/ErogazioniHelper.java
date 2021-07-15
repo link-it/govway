@@ -540,6 +540,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				// filtro sicurezza messaggio
 				this.addFilterModISicurezzaMessaggio(ricerca, idLista, filterTipoAccordo);
 				
+				// filtro sicurezza canale
+				this.addFilterModIDigestRichiesta(ricerca, idLista);
+				
+				// filtro sicurezza canale
+				this.addFilterModIInfoUtente(ricerca, idLista);
+				
 				// filtro keystore
 				this.addFilterModIKeystore(ricerca, idLista);
 				

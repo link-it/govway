@@ -23662,6 +23662,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
 		String filtroModIKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
 		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
+		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
+		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
@@ -23687,6 +23689,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
 		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);
 		this.log.debug("filtroModIAudience : " + filtroModIAudience);
+		this.log.debug("filtroModIInfoUtente : " + filtroModIInfoUtente);
+		this.log.debug("filtroModIDigestRichiesta : " + filtroModIDigestRichiesta);
 		this.log.debug("filtroProprietaNome : " + filtroProprietaNome);
 		this.log.debug("filtroProprietaValore : " + filtroProprietaValore);
 		

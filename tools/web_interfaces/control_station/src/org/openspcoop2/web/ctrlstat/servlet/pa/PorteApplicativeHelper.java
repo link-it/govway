@@ -7728,11 +7728,20 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
-			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+			ServletUtils.disabledPageDataSearch(this.pd); // disabilito il campo search sostituito dal filtro nome
+//			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 			
 			// filtro tab N.B. impostare sempre come primo! poi aggiornare il valore
 			String tabSelezionato = SearchUtils.getFilter(ricerca, idLista, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO);
 			this.addFilterHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRO_HIDDEN_TAB_SELEZIONATO, tabSelezionato);
+			
+			// nuovo filtro nome al posto della search
+			String filtroNomeConnettore = this.addFilterNomeConnettoreMultiplo(ricerca, idLista);
+			
+			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, this.log);
+		
+			// nuovo filtro filtro
+			this.addFilterFiltroConnettoreMultiplo(ricerca, idLista, behaviourConFiltri);
 			
 			// nuovi filtri connettore
 			this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
@@ -7768,7 +7777,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
 			
 			//PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, this.log);
+			
 			TipoBehaviour behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
 			
 			LoadBalancerType loadBalancerType = null;
@@ -7846,9 +7855,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam );	
 			
 			// controllo eventuali risultati ricerca
-			if (!search.equals("")) {
-				ServletUtils.enabledPageDataSearch(this.pd, ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, search);
-			}
+//			if (!search.equals("")) {
+//				ServletUtils.enabledPageDataSearch(this.pd, ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, search);
+//			}
 			
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
@@ -7928,8 +7937,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				} else {
 					tabSelezionato = "";
 					if(!listOrdinata.isEmpty()) {
-						if(!search.equals("")) {
-							saContenenteNome = getFiltroNomeConnettore(search, listOrdinata);
+						if(!filtroNomeConnettore.equals("")) {
+							saContenenteNome = getFiltroNomeConnettore(filtroNomeConnettore, listOrdinata);
 							if(saContenenteNome!=null) {
 								tab = 0;
 								for (int i = 0; i < listOrdinata.size(); i++) {
@@ -8251,6 +8260,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	public List<PortaApplicativaServizioApplicativo> applicaFiltriRicercaConnettoriMultipli(ISearch ricerca, int idLista, 
 			List<PortaApplicativaServizioApplicativo> lista, IDSoggetto idSoggettoProprietario) throws DriverConfigurazioneException {
 		
+		String filtroConnettoreNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_MULTIPLO_NOME);
+		String filtroConnettoreFiltro = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_MULTIPLO_FILTRO);
 		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
 		String filtroConnettoreTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
 		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
@@ -8287,9 +8298,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 		}
 		
-		String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+//		String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 		
-		this.log.debug("filtroNomeConnettore : " + search);
+		this.log.debug("filtroConnettoreNome : " + filtroConnettoreNome);
+		this.log.debug("filtroConnettoreFiltro : " + filtroConnettoreFiltro);
 		this.log.debug("filtroConnettoreTipo : " + filtroConnettoreTipo);
 		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
 		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
@@ -8298,7 +8310,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		List<PortaApplicativaServizioApplicativo> listaFiltrata = new ArrayList<PortaApplicativaServizioApplicativo>();
 		
-		if(StringUtils.isNotBlank(search) || joinConnettore) {
+		if(StringUtils.isNotBlank(filtroConnettoreNome) || joinConnettore) {
 			
 			List<String> mapSA_ok = null;
 			List<String> mapSA_filtrati = null;
@@ -8310,10 +8322,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			for (PortaApplicativaServizioApplicativo paSA : lista) {
 			
 				// filtro nome
-				if(StringUtils.isNotBlank(search)) {
+				if(StringUtils.isNotBlank(filtroConnettoreNome)) {
 					String nome = this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
 					if(nome != null) {
-						if(!nome.toLowerCase().contains(search.toLowerCase())) {
+						if(!nome.toLowerCase().contains(filtroConnettoreNome.toLowerCase())) {
 							continue;
 						}
 					}
