@@ -1663,7 +1663,6 @@ public class DBUtils {
 		}
 		
 	}
-	
 	public static void setFiltriModI(ISQLQueryObject sqlQueryObject, String tipoDB,
 			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
 			Boolean filtroModIDigestRichiesta, Boolean filtroModIInfoUtente) throws Exception {
@@ -1775,8 +1774,95 @@ public class DBUtils {
 	}
 	
 	
-	
-	
+	public static void setFiltriProprietaApplicativo(ISQLQueryObject sqlQueryObject, String tipoDB, 
+			String nomeProprieta, String valoreProprieta) throws Exception {
+		setFiltriProprieta(sqlQueryObject, tipoDB, 
+				ProprietariProtocolProperty.SERVIZIO_APPLICATIVO, null,
+				nomeProprieta, valoreProprieta);
+	}
+	public static void setFiltriProprietaSoggetto(ISQLQueryObject sqlQueryObject, String tipoDB, 
+			String nomeProprieta, String valoreProprieta) throws Exception {
+		setFiltriProprieta(sqlQueryObject, tipoDB, 
+				ProprietariProtocolProperty.SOGGETTO, null,
+				nomeProprieta, valoreProprieta);
+	}
+	public static void setFiltriProprietaErogazione(ISQLQueryObject sqlQueryObject, String tipoDB, 
+			String nomeProprieta, String valoreProprieta) throws Exception {
+		
+		String aliasMAPPING_EROGAZIONE_PA = "c_map";
+		String aliasPORTE_APPLICATIVE = "c_pa";
+		
+		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sql.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA, aliasMAPPING_EROGAZIONE_PA);
+		sql.addFromTable(CostantiDB.PORTE_APPLICATIVE, aliasPORTE_APPLICATIVE);
+		sql.setANDLogicOperator(true);
+		sql.addWhereCondition(aliasMAPPING_EROGAZIONE_PA+".id_erogazione="+CostantiDB.SERVIZI+".id");
+		sql.addWhereCondition(aliasMAPPING_EROGAZIONE_PA+".id_porta="+aliasPORTE_APPLICATIVE+".id");
+		setFiltriProprieta(sql, tipoDB, 
+				ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, aliasPORTE_APPLICATIVE,
+				nomeProprieta, valoreProprieta);
+		sqlQueryObject.addWhereExistsCondition(false, sql);
+		
+	}
+	public static void setFiltriProprietaFruizione(ISQLQueryObject sqlQueryObject, String tipoDB, 
+			String nomeProprieta, String valoreProprieta) throws Exception {
+		
+		String aliasMAPPING_FRUIZIONE_PD = "c_map";
+		String aliasPORTE_DELEGATE = "c_pd";
+		
+		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		sql.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD, aliasMAPPING_FRUIZIONE_PD);
+		sql.addFromTable(CostantiDB.PORTE_DELEGATE, aliasPORTE_DELEGATE);
+		sql.setANDLogicOperator(true);
+		sql.addWhereCondition(aliasMAPPING_FRUIZIONE_PD+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
+		sql.addWhereCondition(aliasMAPPING_FRUIZIONE_PD+".id_porta="+aliasPORTE_DELEGATE+".id");
+		setFiltriProprieta(sql, tipoDB, 
+				ProprietariProtocolProperty.FRUITORE, aliasPORTE_DELEGATE,
+				nomeProprieta, valoreProprieta);
+		sqlQueryObject.addWhereExistsCondition(false, sql);
+		
+	}
+	private static void setFiltriProprieta(ISQLQueryObject sqlQueryObject, String tipoDB, 
+			ProprietariProtocolProperty tipoProprietario, String tabellaAlias,
+			String nomeProprieta, String valoreProprieta) throws Exception {
+		ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(tipoDB);
+		String nomeTabellaPrincipale = null;
+		String nomeTabellaProprieta = null;
+		String colonnaJoin = null;
+		if(ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.equals(tipoProprietario)) {
+			nomeTabellaPrincipale = CostantiDB.SERVIZI_APPLICATIVI;
+			nomeTabellaProprieta = CostantiDB.SERVIZI_APPLICATIVI_PROPS;
+			colonnaJoin = "id_servizio_applicativo";
+		}
+		else if(ProprietariProtocolProperty.SOGGETTO.equals(tipoProprietario)) {
+			nomeTabellaPrincipale = CostantiDB.SOGGETTI;
+			nomeTabellaProprieta = CostantiDB.SOGGETTI_PROPS;
+			colonnaJoin = "id_soggetto";
+		}
+		else if(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.equals(tipoProprietario)) {
+			nomeTabellaPrincipale = tabellaAlias;
+			nomeTabellaProprieta = CostantiDB.PORTE_APPLICATIVE_PROP;
+			colonnaJoin = "id_porta";
+		}
+		else if(ProprietariProtocolProperty.FRUITORE.equals(tipoProprietario)) {
+			nomeTabellaPrincipale = tabellaAlias;
+			nomeTabellaProprieta = CostantiDB.PORTE_DELEGATE_PROP;
+			colonnaJoin = "id_porta";
+		}
+		else {
+			throw new Exception("Tipo proprietario '"+tipoProprietario+"' non gestito");
+		}
+		sql.addFromTable(nomeTabellaProprieta);
+		sql.setANDLogicOperator(true);
+		sql.addWhereCondition(nomeTabellaProprieta+"."+colonnaJoin+"="+nomeTabellaPrincipale+".id");
+		if(nomeProprieta!=null) {
+			sql.addWhereLikeCondition(nomeTabellaProprieta+".nome", nomeProprieta, false, false, false);
+		}
+		if(valoreProprieta!=null) {
+			sql.addWhereLikeCondition(nomeTabellaProprieta+".valore", valoreProprieta, LikeConfig.contains(true));
+		}
+		sqlQueryObject.addWhereExistsCondition(false, sql);
+	}
 	
 	
 

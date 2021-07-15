@@ -20008,6 +20008,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		if((filtroProprietaNome!=null && "".equals(filtroProprietaNome))) {
+			filtroProprietaNome=null;
+		}
+		if((filtroProprietaValore!=null && "".equals(filtroProprietaValore))) {
+			filtroProprietaValore=null;
+		}
+		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
@@ -20050,6 +20057,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereLikeCondition("nome_soggetto", search, true, true);
 				if(this.useSuperUser && superuser!=null && !superuser.equals(""))
 					sqlQueryObject.setANDLogicOperator(true);
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -20060,6 +20071,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				if(this.useSuperUser && superuser!=null && !superuser.equals(""))
 					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
@@ -20089,6 +20104,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				if(this.useSuperUser && superuser!=null && !superuser.equals(""))
 					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.addWhereLikeCondition("nome_soggetto", search, true, true);
 				if(this.useSuperUser && superuser!=null && !superuser.equals(""))
 					sqlQueryObject.setANDLogicOperator(true);
@@ -20114,6 +20133,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				if(this.useSuperUser && superuser!=null && !superuser.equals(""))
 					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.addOrderBy("nome_soggetto");
 				sqlQueryObject.addOrderBy("tipo_soggetto");
 				sqlQueryObject.setSortType(true);
@@ -20665,6 +20688,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		if((filtroProprietaNome!=null && "".equals(filtroProprietaNome))) {
+			filtroProprietaNome=null;
+		}
+		if((filtroProprietaValore!=null && "".equals(filtroProprietaValore))) {
+			filtroProprietaValore=null;
+		}
+		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
@@ -21287,6 +21317,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModISicurezzaMessaggioEnabled,
 							filtroModIKeystore, filtroModIAudience);
 				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -21350,6 +21384,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
 							filtroModISicurezzaMessaggioEnabled,
 							filtroModIKeystore, filtroModIAudience);
+				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -21479,6 +21517,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModISicurezzaMessaggioEnabled,
 							filtroModIKeystore, filtroModIAudience);
 				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy(aliasNomeServizioApplicativo);
 				sqlQueryObject.addOrderBy(aliasNomeSoggetto);
@@ -21553,6 +21595,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
 							filtroModISicurezzaMessaggioEnabled,
 							filtroModIKeystore, filtroModIAudience);
+				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy(aliasNomeServizioApplicativo);
@@ -21748,6 +21794,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		if((filtroProprietaNome!=null && "".equals(filtroProprietaNome))) {
+			filtroProprietaNome=null;
+		}
+		if((filtroProprietaValore!=null && "".equals(filtroProprietaValore))) {
+			filtroProprietaValore=null;
+		}
+		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
+		
 		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
@@ -21830,6 +21884,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModISicurezzaMessaggioEnabled,
 							filtroModIKeystore, filtroModIAudience);
 				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -21873,6 +21931,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
 							filtroModISicurezzaMessaggioEnabled,
 							filtroModIKeystore, filtroModIAudience);
+				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -21964,6 +22026,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModISicurezzaMessaggioEnabled,
 							filtroModIKeystore, filtroModIAudience);
 				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
 				sqlQueryObject.setOffset(offset);
@@ -22019,6 +22085,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					DBUtils.setFiltriModIApplicativi(sqlQueryObject, this.tipoDB,
 							filtroModISicurezzaMessaggioEnabled,
 							filtroModIKeystore, filtroModIAudience);
+				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);

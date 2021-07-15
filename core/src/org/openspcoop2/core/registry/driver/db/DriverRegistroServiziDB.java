@@ -18406,6 +18406,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		if((filtroProprietaNome!=null && "".equals(filtroProprietaNome))) {
+			filtroProprietaNome=null;
+		}
+		if((filtroProprietaValore!=null && "".equals(filtroProprietaValore))) {
+			filtroProprietaValore=null;
+		}
+		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
@@ -19012,6 +19019,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
 				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -19049,6 +19060,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
+				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -19147,6 +19162,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
 				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_soggetto");
 				sqlQueryObject.addOrderBy("tipo_soggetto");
@@ -19197,6 +19216,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
+				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -23729,6 +23752,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		if((filtroProprietaNome!=null && "".equals(filtroProprietaNome))) {
+			filtroProprietaNome=null;
+		}
+		if((filtroProprietaValore!=null && "".equals(filtroProprietaValore))) {
+			filtroProprietaValore=null;
+		}
+		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
 		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
@@ -23960,6 +23990,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 				}
 				
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
+				
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -24094,6 +24129,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 								(tabellaPorta+".canale = ?"),
 								("( "+ tabellaPorta+".canale is null AND "+CostantiDB.ACCORDI+".canale = ? )"));
 					}
+				}
+				
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				
 				sqlQueryObject.setANDLogicOperator(true);
@@ -24304,6 +24344,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 				}
 				
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
+				
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nomeServizio");
 				sqlQueryObject.addOrderBy("versioneServizio");
@@ -24470,6 +24515,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 								(tabellaPorta+".canale = ?"),
 								("( "+ tabellaPorta+".canale is null AND "+CostantiDB.ACCORDI+".canale = ? )"));
 					}
+				}
+				
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				
 				sqlQueryObject.setANDLogicOperator(true);
