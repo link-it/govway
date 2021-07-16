@@ -82,9 +82,9 @@ import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CRUDType;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
-import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
@@ -14294,7 +14294,7 @@ public class DriverConfigurazioneDB_LIB {
 	
 	
 	public static void CRUDProtocolProperty(int type, List<ProtocolProperty> listPP, long idProprietario,
-			org.openspcoop2.core.mapping.ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
+			org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
 			String tipoDatabase) throws DriverConfigurazioneException {
 		try {
 			DBProtocolPropertiesUtils.CRUDConfigProtocolProperty(log, type, listPP, idProprietario, tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
@@ -14304,7 +14304,7 @@ public class DriverConfigurazioneDB_LIB {
 	}
 	
 	
-	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, org.openspcoop2.core.mapping.ProprietariProtocolProperty tipologiaProprietario, 
+	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, org.openspcoop2.core.constants.ProprietariProtocolProperty tipologiaProprietario, 
 			Connection connection,
 			String tipoDatabase) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		try {

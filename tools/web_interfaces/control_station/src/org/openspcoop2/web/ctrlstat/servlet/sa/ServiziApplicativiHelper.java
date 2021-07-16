@@ -55,6 +55,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -851,13 +852,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				visualizzaTipoAutenticazione = false;
 				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
 				
-				String label = this.getProfiloModIPASectionTitle();
+				String label = CostantiLabel.MODIPA_PROTOCOL_LABEL;
 				if(label!=null && !"".equals(label)) {
 					showLabelCredenzialiAccesso = false;
 					titleConfigSslCredenziali = label;
 				}
 				
-				subtitleConfigSslCredenziali = this.getProfiloModIPASectionSicurezzaMessaggioSubTitle();
+				subtitleConfigSslCredenziali = CostantiLabel.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL;
 			}
 			
 			if(!dominioEsternoProfiloModIPA) {
@@ -1987,23 +1988,24 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String filterSoggetto = null;
 			boolean profiloSelezionato = false;
 			boolean modipa = false;
+			String protocolloS = null;
 			if(!useIdSogg) {
 				filterProtocollo = addFilterProtocol(ricerca, idLista, true);
 
-				String protocollo = filterProtocollo;
-				if(protocollo==null) {
+				protocolloS = filterProtocollo;
+				if(protocolloS==null) {
 					// significa che e' stato selezionato un protocollo nel menu in alto a destra
 					List<String> protocolli = this.core.getProtocolli(this.session);
 					if(protocolli!=null && protocolli.size()==1) {
-						protocollo = protocolli.get(0);
+						protocolloS = protocolli.get(0);
 					}
 				}
-				modipa = isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere tutti i soggetti, anche quelli esterni.
+				modipa = isProfiloModIPA(protocolloS);  // in modipa devono essere fatti vedere tutti i soggetti, anche quelli esterni.
 				
 				if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
 						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
 						||
-					(filterProtocollo==null && protocollo!=null)
+					(filterProtocollo==null && protocolloS!=null)
 						) {
 					profiloSelezionato = true;
 				}
@@ -2016,16 +2018,17 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						soloSoggettiOperativi = false;
 					}
 					filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
-					this.addFilterSoggetto(filterSoggetto,protocollo,soloSoggettiOperativi,true);
+					this.addFilterSoggetto(filterSoggetto,protocolloS,soloSoggettiOperativi,true);
 				}
 			}
 			if(this.isSoggettoMultitenantSelezionato()){
 				filterSoggetto = getSoggettoMultitenantSelezionato();
 			}
 			
+			String filterDominio = null;
 			if(this.core.isGestionePddAbilitata(this)==false && multitenant && modipa) {
-				String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
-				addFilterDominio(filterDominio, false);
+				filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
+				addFilterDominio(filterDominio, true);
 			}
 			
 			if(modalitaCompleta) {
@@ -2034,9 +2037,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			boolean applicativiServerEnabled = this.core.isApplicativiServerEnabled(this); 
+			String filterTipoSA = null;
 			if(applicativiServerEnabled) {
-				String filterTipoSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO);
-				this.addFilterTipoServizioApplicativo(filterTipoSA,false);
+				filterTipoSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO);
+				this.addFilterTipoServizioApplicativo(filterTipoSA, true);
 			}
 			
 			String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_CREDENZIALI);
@@ -2060,6 +2064,117 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			else {
 				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
 			}
+			
+			// filtro sui connettori solo se tipoSA = qualsiasi o server
+			if(applicativiServerEnabled) {
+				if(filterTipoSA ==null || (ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI.equals(filterTipoSA) || 
+						ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(filterTipoSA))) {
+					// nuovi filtri connettore
+					this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+					
+					// filtro tipo connettore con voce IM solo sulle erogazioni
+					String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, true);
+					
+					// filtro plugin
+					this.addFilterConnettorePlugin(ricerca, idLista, filterTipoConnettore);
+					
+					// filtro token policy
+					this.addFilterConnettoreTokenPolicy(ricerca, idLista, filterTipoConnettore);
+					
+					// filtro endpoint
+					this.addFilterConnettoreEndpoint(ricerca, idLista, filterTipoConnettore);
+					
+					// filtro keystore
+					this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
+				}
+			}
+			
+			// filtri modipa solo se tipoSA = client o qualsiasi
+			if(filterTipoSA ==null || (ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI.equals(filterTipoSA) || 
+					ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(filterTipoSA))) {
+				// filtri MODIPA da visualizzare solo se non e' stato selezionato un protocollo in alto a dx  (opzione pilota da file di proprieta')
+				// oppure e' selezionato MODIPA
+				// oppure non e' stato selezionato un protocollo in alto e nessun protocollo nei filtri  (opzione pilota da file di proprieta')
+				// oppure MODIPA nei filtri
+				boolean profiloModipaSelezionato = false;
+				// solo se il protocollo modipa e' caricato faccio la verifica
+				if(this.core.getProtocolli().contains(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA)) {
+					List<String> profiloModipaSelezionato_opzioniAccettate = new ArrayList<String>();
+					profiloModipaSelezionato_opzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA);
+					if(this.core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi()) {
+						profiloModipaSelezionato_opzioniAccettate.add(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI);
+					}
+					if( (filterProtocollo!=null && profiloModipaSelezionato_opzioniAccettate.contains(filterProtocollo))
+							||
+						(filterProtocollo==null && protocolloS!=null && profiloModipaSelezionato_opzioniAccettate.contains(protocolloS))
+						) {
+						profiloModipaSelezionato = true;
+					}
+				}
+				
+				if(profiloModipaSelezionato) {
+					
+					this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
+					
+					// ulteriore condizione per la visualizzazione della sezione e' che il Dominio non deve essere esterno
+					if(this.core.isGestionePddAbilitata(this)==false && multitenant) {
+						
+						if(!SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(filterDominio)) {
+							
+							// filtro sicurezza messaggio
+							String sicurezzaMessaggio = this.addFilterModISicurezzaMessaggioSA(ricerca, idLista, true);
+							
+							if(sicurezzaMessaggio==null || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(sicurezzaMessaggio) ||
+									StatoFunzionalita.ABILITATO.getValue().equals(sicurezzaMessaggio)) {
+							
+								// filtro keystore
+								this.addFilterModIKeystore(ricerca, idLista);
+								
+							}
+																
+						}
+					}
+					
+					// filtro audience
+					this.addFilterModIAudience(ricerca, idLista, true, null, filterDominio);
+				}
+			}
+			
+			String protocolloPerFiltroProprieta = protocolloS;
+			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
+			if(protocolloPerFiltroProprieta == null) {
+				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+					protocolloPerFiltroProprieta = null;
+				} else {
+					protocolloPerFiltroProprieta = filterProtocollo;
+				}
+			}
+			
+			String soggettoPerFiltroProprieta = null;
+			if(profiloSelezionato) {
+				// soggetto non selezionato nel menu' in alto a dx
+				if(!this.isSoggettoMultitenantSelezionato()) {
+					soggettoPerFiltroProprieta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
+					if("".equals(soggettoPerFiltroProprieta) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(soggettoPerFiltroProprieta)) {
+						soggettoPerFiltroProprieta = null;
+					}
+				} else {
+					soggettoPerFiltroProprieta = this.getSoggettoMultitenantSelezionato();
+				}
+			}
+			
+			// filtri proprieta
+			List<String> nomiProprieta = this.nomiProprietaSA(protocolloPerFiltroProprieta,soggettoPerFiltroProprieta);
+			if(nomiProprieta != null && nomiProprieta.size() >0) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				
+				// filtro nome
+				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
+				
+				// filtro valore
+				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+			}
+			
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);

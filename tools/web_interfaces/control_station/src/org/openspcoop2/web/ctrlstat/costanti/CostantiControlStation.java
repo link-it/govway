@@ -797,6 +797,12 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_METADATI = "Metadati";
 	public final static String LABEL_PARAMETRO_PORTE_METADATI_GRUPPO = "";
 	
+	public final static String LABEL_SUBTITLE_FILTRI_MODIPA = "Dati Profilo ModI";
+	public final static String LABEL_FILTRO_MODIPA_INFO_UTENTE = "Informazioni Utente";
+	
+	public final static String LABEL_SUBTITLE_PROPRIETA = "Dati Propriet&agrave;";
+	public final static String LABEL_FILTRO_PROPRIETA_NOME = "Nome";
+	public final static String LABEL_FILTRO_PROPRIETA_VALORE = "Valore";
 	
 	// POLICY RISORSA TIPO
 	
@@ -1160,6 +1166,7 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_TIPO_VALIDAZIONE_OPENSPCOOP = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.toString();
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI = "";
+	public final static String DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_MODIPA = "modipa";
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI = "";
 	public final static String LABEL_PARAMETRO_SOGGETTO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;

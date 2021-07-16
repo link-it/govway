@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.modipa.constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -38,7 +39,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 
 public class ModIConsoleCostanti {
    
-	public static final String MODIPA_TITLE_LABEL = Costanti.MODIPA_PROTOCOL_LABEL; // utilizzata tramite reflection in govwayConsole
+	public static final String MODIPA_TITLE_LABEL = Costanti.MODIPA_PROTOCOL_LABEL;
 	@SuppressWarnings("unused")
 	private static final String MODIPA_PREFIX_TITLE_LABEL = Costanti.MODIPA_PROTOCOL_LABEL+" - ";
 	
@@ -57,7 +58,7 @@ public class ModIConsoleCostanti {
     
 	// Condivise
 	
-	public static final String MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL = "Sicurezza Messaggio";
+	public static final String MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL = CostantiLabel.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL;
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_ID = "modipaSicurezzaSubTitleId";
 	
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_ID = ModICostanti.MODIPA_SICUREZZA_MESSAGGIO;
@@ -112,8 +113,8 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_APPLICATIVI_ID = "modipaApplicativiTitleId";
 	
 	//public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL = "Reply Audience/WSA-To";
-	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL = "Identificativo Client";
-	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_LABEL = "Reply Audience/WSA-To";
+	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL = CostantiLabel.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL;
+	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_LABEL = CostantiLabel.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_LABEL;
 	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE;
 	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_NOTE = "Identificativo dell'Applicativo scambiato nei token di sicurezza";
 	public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_NOTE = "Identificativo dell'Applicativo indicato nel token di sicurezza della risposta";
@@ -140,17 +141,17 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_LABEL = MODIPA_TITLE_LABEL;
 	public static final String MODIPA_API_ID = "modipaAPITitleId";
 		
-	public static final String MODIPA_API_PROFILO_CANALE_LABEL = "Sicurezza Canale";
+	public static final String MODIPA_API_PROFILO_CANALE_LABEL = CostantiLabel.MODIPA_API_PROFILO_CANALE_LABEL;
 	public static final String MODIPA_API_PROFILO_CANALE_ID = "modipaAPIProfiloSicurezzaSubTitleId";
         
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL = "Pattern";
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE;
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01 = ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01;
-    public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_NEW = "ID_AUTH_CHANNEL_01";
+    public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01;
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_OLD = "IDAC01";
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01_NOTE = "Direct Trust Transport-Level Security";
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02 = ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02;
-    public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02_NEW = "ID_AUTH_CHANNEL_02"; 
+    public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02;
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02_OLD = "IDAC02";
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02_NOTE = "Direct Trust mutual Transport-Level Security"; 
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_DEFAULT_VALUE = MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01;
@@ -207,7 +208,7 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_CORRELATA_A_AZIONE_LABEL = "Azione";
     public static final String MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_CORRELATA_A_RISORSA_LABEL = "Risorsa";
     
-	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Sicurezza Messaggio";
+	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL = CostantiLabel.MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL;
 	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_ID = "modipaProfiloSicurezzaSubTitleId";
     	
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Pattern";
@@ -216,32 +217,32 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_UNDEFINED = MODIPA_LABEL_UNDEFINED;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST_OLD = "IDAR01";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST_NEW = "ID_AUTH_REST_01";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_REST_NOTE = "Direct Trust con certificato X.509";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_SOAP_OLD = "IDAS01";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_SOAP_NEW = "ID_AUTH_SOAP_01";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_SOAP_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_SOAP;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM01_SOAP_NOTE = "Direct Trust con certificato X.509";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_REST_OLD = "IDAR02";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_REST_NEW = "ID_AUTH_REST_02";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_REST_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_REST;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_REST_NOTE = "Direct Trust con certificato X.509 con unicità del token";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_SOAP_OLD = "IDAS02";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_SOAP_NEW = "ID_AUTH_SOAP_02";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_SOAP_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_SOAP;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM02_SOAP_NOTE = "Direct Trust con certificato X.509 con unicità del messaggio";
 
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_REST_OLD = "IDAR03 con IDAR01";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_REST_NEW = "INTEGRITY_REST_01 con ID_AUTH_REST_01";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_REST_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_REST;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_REST_NOTE = "Integrità payload del messaggio";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_SOAP_OLD = "IDAS03 con IDAS01";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_SOAP_NEW = "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_01";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_SOAP_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_SOAP;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0301_SOAP_NOTE = "Integrità payload del messaggio";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST_OLD = "IDAR03 con IDAR02";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST_NEW = "INTEGRITY_REST_01 con ID_AUTH_REST_02";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_REST_NOTE = "Integrità payload del messaggio + unicità del token";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP_OLD = "IDAS03 con IDAS02";
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP_NEW = "INTEGRITY_SOAP_01 con ID_AUTH_SOAP_02";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP_NEW = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_LABEL_IDAM0302_SOAP_NOTE = "Integrità payload del messaggio + unicità del messaggio";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DEFAULT_VALUE = MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED;
     
@@ -254,7 +255,7 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_IDAM03_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_IDAM03_DEFAULT_VALUE;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_NOT_IDAM03_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_NOT_IDAM03_DEFAULT_VALUE;
     
-	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL = "Digest Richiesta"; // Ho levato Includi come prefisso perche' nel caso di fruizione, l'header deve essere ripulito, quindi sarebbe piu' gestisci
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL; // Ho levato Includi come prefisso perche' nel caso di fruizione, l'header deve essere ripulito, quindi sarebbe piu' gestisci
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_LABEL_RIGHT = "Non ripudiabilità della trasmissione";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST;
 	public static final boolean MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REQUEST_DIGEST_DEFAULT = false;
@@ -476,8 +477,8 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_EXPIRED_NOTE_RESPONSE = "Indica la validità temporale, in secondi, a partire dalla data di creazione del security token della risposta";
 	public static final long MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_EXPIRED_DEFAULT_VALUE = 300l;
 	
-	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_REST_LABEL = "Audience";
-	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_SOAP_LABEL = "WSAddressing To";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_REST_LABEL = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_REST_LABEL; 
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_SOAP_LABEL = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_SOAP_LABEL;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_FRUIZIONE_NOTE = "Indica a chi è riferito il security token; se non viene fornito un valore verrà utilizzata la url del connettore";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_EROGAZIONE_NOTE = "Se non viene fornito un valore, il valore atteso all'interno del security token corrisponderà all'url di invocazione";
@@ -575,7 +576,7 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS_NOTE = "Elencare più file separandoli con la ','";
 			
-	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL = "KeyStore";
+	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE;
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_DEFAULT;
 
