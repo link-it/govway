@@ -1337,7 +1337,10 @@ public class OpenSPCoop2Properties {
 			}
 			this.getNIOConfig_asyncClient_maxPerRoute();
 			this.getNIOConfig_asyncClient_maxTotal();
-			this.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds();
+			if(this.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds()!=null) {
+				getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds();
+				isNIOConfig_asyncClient_closeIdleConnectionsDebug();
+			}
 			if(this.isNIOConfig_asyncServer_doStream()) {
 				this.getNIOConfig_asyncServer_buffer();
 			}
@@ -12582,26 +12585,72 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Integer getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds = null;
-	public int getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds() {	
-		if(OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds==null){
+	private static Boolean getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds_read = null;
+	public Integer getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds() {	
+		if(OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds_read==null){
 			String pName = "org.openspcoop2.pdd.connettori.asyncClient.closeIdleConnectionsAfterSeconds";
 			try{ 
 				String v = null;
 				v = this.reader.getValue_convertEnvProperties(pName);
-				if(v!=null){
+				if(v!=null && !"".equalsIgnoreCase(v.trim())){
 					v = v.trim();
 					OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds = java.lang.Integer.parseInt(v);
-				}else{
-					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
-					OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
 				}
+				// se non definita viene disabilitata
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS+", errore:"+e.getMessage(),e);
 				OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
 			}  
+			getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds_read = true;
 		}
 
 		return OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds;
+	}
+	
+	private static Integer getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds = null;
+	public Integer getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds() {	
+		if(OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.closeIdleConnectionsCheckIntervalSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties(pName);
+				if(v!=null && !"".equalsIgnoreCase(v.trim())){
+					v = v.trim();
+					OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds = java.lang.Integer.parseInt(v);
+				}
+				else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_CHECK_INTERVAL_SECONDS);
+					OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_CHECK_INTERVAL_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_CHECK_INTERVAL_SECONDS+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_CHECK_INTERVAL_SECONDS;
+			} 
+		}
+
+		return OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds;
+	}
+	private static Boolean isNIOConfig_asyncClient_closeIdleConnectionsDebug = null;
+	public boolean isNIOConfig_asyncClient_closeIdleConnectionsDebug() {	
+		if(OpenSPCoop2Properties.isNIOConfig_asyncClient_closeIdleConnectionsDebug==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.closeIdleConnections.debug";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isNIOConfig_asyncClient_closeIdleConnectionsDebug = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.isNIOConfig_asyncClient_closeIdleConnectionsDebug = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isNIOConfig_asyncClient_closeIdleConnectionsDebug = false;
+			}  
+		}
+
+		return OpenSPCoop2Properties.isNIOConfig_asyncClient_closeIdleConnectionsDebug;
 	}
 	
 	

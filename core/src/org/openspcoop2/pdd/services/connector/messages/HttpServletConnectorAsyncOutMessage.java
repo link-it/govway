@@ -25,6 +25,7 @@ import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -121,15 +122,17 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 	}
 	
 	@Override
-	public void close(boolean throwException) throws ConnectorException{
+	public void close(AsyncResponseCallbackClientEvent clientEvent, boolean throwException) throws ConnectorException{
 		
-		super.close(throwException);
+		super.close(clientEvent, throwException);
 		
 		try{
 			//if(this._ac!=null && !this.bufferingResponse){
 			if(this._ac!=null) {
 				try{
+					//if(!AsyncResponseCallbackClientEvent.FAILED.equals(clientEvent)) { 
 					this._ac.complete();
+					//}
 				}catch(Exception e){
 					if(throwException){
 						throw e;

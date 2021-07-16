@@ -312,6 +312,8 @@ public class CostantiPdD {
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_TOTAL = 100;
     /** Close connections that have been idle longer than X sec */
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS = 30;
+    /** Controllo effettuato ogni X secondi */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_CHECK_INTERVAL_SECONDS = 60;
     /** NIO Streaming buffer size */
     public static final int CONNETTORE_NIO_ASYNC_BUFFER_SIZE = 61140;
     

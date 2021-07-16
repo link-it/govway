@@ -30,8 +30,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -41,9 +43,11 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.nio.entity.NByteArrayEntity;
 import org.apache.http.nio.entity.NFileEntity;
+import org.apache.http.protocol.BasicHttpContext;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -83,7 +87,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 
 
 	/** Connessione */
-	protected ConnettoreHTTPCORE_connection httpClient = null;
+	//protected ConnettoreHTTPCORE_connection httpClient = null;
 	protected HttpRequestBase httpRequest = null;
 	protected ConnectionConfiguration httpConnectionConfig = null;
 	public ConnectionConfiguration getHttpConnectionConfig() {
@@ -173,7 +177,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 
 			// Creazione Connessione
 			StringBuilder bfDebug =new StringBuilder();
-			this.httpClient = ConnettoreHTTPCORE_connectionManager.getConnettoreNIO(this.httpConnectionConfig, this.loader, this.logger, bfDebug);
+			ConnettoreHTTPCORE_connection httpClient = ConnettoreHTTPCORE_connectionManager.getConnettoreNIO(this.httpConnectionConfig, this.loader, this.logger, bfDebug);
 			if(this.debug) {
 				this.logger.debug("Creazione Connessione ...");
 				this.logger.debug(bfDebug.toString());
@@ -503,7 +507,8 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			if(this.debug)
 				this.logger.debug("Spedizione byte...");
 			ConnettoreHTTPCORE_responseCallback responseCallback = new ConnettoreHTTPCORE_responseCallback(this, request, httpBody);
-			this.httpClient.getHttpclient().execute(this.httpRequest, responseCallback);
+			//System.out.println("CLIENT ["+httpClient.getHttpclient().getClass().getName()+"]");
+			httpClient.getHttpclient().execute(this.httpRequest, HttpClientContext.create(), responseCallback);
 			
 			// CAPIRE SE SERVE E SEMMAI BUTTARE VIA LE PROPERTIES AGGIUNTE!
 //			

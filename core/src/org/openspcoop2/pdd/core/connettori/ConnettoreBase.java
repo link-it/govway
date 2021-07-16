@@ -76,6 +76,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -863,7 +864,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		}finally {
 			if(this.asyncResponseCallback!=null && !this.asynWait) {
 				try {
-					this.asyncResponseCallback.asyncComplete(this.asyncInvocationSuccess);
+					this.asyncResponseCallback.asyncComplete(AsyncResponseCallbackClientEvent.NONE, this.asyncInvocationSuccess);
 				}catch(Exception e) {
 					this.logger.error("AsyncCallback.complete: "+e.getMessage(),e);
 				}
@@ -872,13 +873,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		
 	}
 	
-	public void asyncComplete() {
+	public void asyncComplete(AsyncResponseCallbackClientEvent clientEvent) {
 		try {
 			if(this.asyncResponseCallback==null) {
 				this.logger.error("Async context not active");
 				this.errore = "Async context not active";
 			}
-			this.asyncResponseCallback.asyncComplete(this.asyncInvocationSuccess);
+			this.asyncResponseCallback.asyncComplete(clientEvent, this.asyncInvocationSuccess);
 		}catch(Throwable e) {
 			this.logger.error("AsyncCallback.complete: "+e.getMessage(),e);
 		}

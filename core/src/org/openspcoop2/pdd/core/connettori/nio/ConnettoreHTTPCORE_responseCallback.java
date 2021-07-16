@@ -33,6 +33,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -292,7 +293,7 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 			
 		} finally {
 			
-			this.notifyCallbackFinished();
+			this.notifyCallbackFinished(AsyncResponseCallbackClientEvent.COMPLETED);
 			
 		}
 
@@ -312,7 +313,7 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 			
 		} finally {
 			
-			this.notifyCallbackFinished();
+			this.notifyCallbackFinished(AsyncResponseCallbackClientEvent.FAILED);
 			
 		}
 	}
@@ -327,13 +328,13 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 			
 		} finally {
 			
-			this.notifyCallbackFinished();
+			this.notifyCallbackFinished(AsyncResponseCallbackClientEvent.CANCELLED);
 			
 		}
 		
 	}
 	
-	private void notifyCallbackFinished() {
+	private void notifyCallbackFinished(AsyncResponseCallbackClientEvent clientEvent) {
 //		if(connettore_debug) {
 //			connettore_logger.debug("NIO - Sync Notify ...");
 //		}
@@ -344,7 +345,7 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 //			}
 //			this.connettore.httpRequest.notify(); // risveglio gestione ferma sul connettore	
 //		}
-		this.connettore.asyncComplete();
+		this.connettore.asyncComplete(clientEvent);
 		if(this.connettore_debug) {
 			this.connettore_logger.debug("NIO - Callback Response finished");
 		}

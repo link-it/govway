@@ -20,16 +20,18 @@
 
 package org.openspcoop2.pdd.core.connettori.nio;
 
+import java.io.IOException;
+import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
+import org.apache.http.Consts;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.ConnectionConfig;
@@ -44,9 +46,11 @@ import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.nio.conn.SchemeIOSessionStrategy;
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
 import org.apache.http.nio.reactor.ConnectingIOReactor;
+import org.apache.http.nio.reactor.IOReactorExceptionHandler;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -64,41 +68,72 @@ public class ConnettoreHTTPCORE_connectionManager {
 
 	// ******** STATIC **********
 
-	private static ConnectingIOReactor ioReactor;
-	private static Map<String, PoolingNHttpClientConnectionManager> cmMap = new HashMap<String, PoolingNHttpClientConnectionManager>();
-	private static Map<String, IdleConnectionEvictor> ceMap = new HashMap<String, IdleConnectionEvictor>();
-	private static synchronized void initialize(String key, SSLContext sslContext, HostnameVerifier hostnameVerifier) throws ConnettoreException {
+	static Map<String, ConnectingIOReactor> mapIoReactor = new HashMap<String, ConnectingIOReactor>();
+	static Map<String, PoolingNHttpClientConnectionManager> mapPoolingConnectionManager = new HashMap<String, PoolingNHttpClientConnectionManager>();
+	static Map<String, ConnettoreHTTPCORE_connection> mapConnection = new HashMap<String, ConnettoreHTTPCORE_connection>();
+	
+	private static ConnettoreHTTPCORE_connectionEvictor idleConnectionEvictor;
 		
-		if(!ConnettoreHTTPCORE_connectionManager.cmMap.containsKey(key)){
-		
-			if(ConnettoreHTTPCORE_connectionManager.ioReactor==null) {
-				try {
-					IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
-			//				 .setIoThreadCount(Runtime.getRuntime().availableProcessors())
-							 .build();
-					ConnettoreHTTPCORE_connectionManager.ioReactor = new DefaultConnectingIOReactor(ioReactorConfig);
-				}catch(Throwable t) {
-					throw new ConnettoreException(t.getMessage(),t);
+	public static synchronized void initialize() throws ConnettoreException {
+		try {
+			if(ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor==null) {
+				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+				Integer closeIdleConnectionsAfterSeconds = op2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds();
+				boolean idleConnectionEvictorEnabled = (closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0);
+				if(idleConnectionEvictorEnabled) {
+					int sleepTimeSeconds = op2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds();
+					boolean debug = op2Properties.isNIOConfig_asyncClient_closeIdleConnectionsDebug();
+					ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor = 
+							new ConnettoreHTTPCORE_connectionEvictor(debug, sleepTimeSeconds, closeIdleConnectionsAfterSeconds);
+					idleConnectionEvictor.start();
 				}
 			}
-			
+		}catch(Throwable t) {
+			throw new ConnettoreException(t.getMessage(),t);
+		}
+	}
+	
+	private static synchronized void initialize(String key, SSLContext sslContext, HostnameVerifier hostnameVerifier) throws ConnettoreException {
+		
+		if(!ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.containsKey(key)){
+		
 			try {
-				PoolingNHttpClientConnectionManager cm = null;
+				IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
+						//				 .setIoThreadCount(Runtime.getRuntime().availableProcessors())
+										 .build();
+				ConnectingIOReactor ioReactor = new DefaultConnectingIOReactor(ioReactorConfig);
+				if(ioReactor instanceof DefaultConnectingIOReactor) {
+					((DefaultConnectingIOReactor) ioReactor).setExceptionHandler(new IOReactorExceptionHandler() {
+						@Override
+						public boolean handle(RuntimeException runtimeException) {
+							OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("[HTTPCore] IOReactor ("+key+") runtimeException: "+runtimeException.getMessage(),runtimeException);
+							return false;
+						}
+						@Override
+						public boolean handle(IOException ioException) {
+							OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("[IOException] IOReactor ("+key+") ioException: "+ioException.getMessage(),ioException);
+							return false;
+						}
+					});
+				}
+				
+				PoolingNHttpClientConnectionManager poolingConnectionManager = null;
 				if(sslContext!=null) {
 					Registry<SchemeIOSessionStrategy> sessionStrategyRegistry = RegistryBuilder.
 							<SchemeIOSessionStrategy> create().register("https", new SSLIOSessionStrategy(sslContext, hostnameVerifier)).build();
-					cm = new PoolingNHttpClientConnectionManager(ConnettoreHTTPCORE_connectionManager.ioReactor, sessionStrategyRegistry);
+					poolingConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor, sessionStrategyRegistry);
 				}
 				else {
-					cm = new PoolingNHttpClientConnectionManager(ConnettoreHTTPCORE_connectionManager.ioReactor);
+					poolingConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
 				}
 				
 				ConnectionConfig connectionConfig =
 						ConnectionConfig.custom()
-	//										.setMalformedInputAction(CodingErrorAction.IGNORE)
-	//										.setUnmappableInputAction(CodingErrorAction.IGNORE)
-										.build();
-				cm.setDefaultConnectionConfig(connectionConfig);
+							.setMalformedInputAction(CodingErrorAction.IGNORE)
+							.setUnmappableInputAction(CodingErrorAction.IGNORE)
+							.setCharset(Consts.UTF_8)
+							.build();
+				poolingConnectionManager.setDefaultConnectionConfig(connectionConfig);
 				
 				// PoolingNHttpClientConnectionManager maintains a maximum limit of connection on a per route basis and in total. 
 				// Per default this implementation will create no more than than 2 concurrent connections per given route and no more 20 connections in total.
@@ -107,20 +142,15 @@ public class ConnettoreHTTPCORE_connectionManager {
 				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 				Integer defaultMaxPerRoute = op2Properties.getNIOConfig_asyncClient_maxPerRoute();
 				Integer maxTotal = op2Properties.getNIOConfig_asyncClient_maxTotal();
-				Integer closeIdleConnectionsAfterSeconds = op2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds();
 				if(defaultMaxPerRoute!=null && defaultMaxPerRoute>0) {
-					cm.setDefaultMaxPerRoute( defaultMaxPerRoute ); // 2 default
+					poolingConnectionManager.setDefaultMaxPerRoute( defaultMaxPerRoute ); // 2 default
 				}
 				if(maxTotal!=null && maxTotal>0) {
-					cm.setMaxTotal( maxTotal ); // 20 default
+					poolingConnectionManager.setMaxTotal( maxTotal ); // 20 default
 				}
 				
-				int closeIdleConnectionsAfterSecondsValue = closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0 ? closeIdleConnectionsAfterSeconds : 30;
-				IdleConnectionEvictor ce = new IdleConnectionEvictor(cm, closeIdleConnectionsAfterSecondsValue);
-				ce.start();
-				
-				ConnettoreHTTPCORE_connectionManager.cmMap.put(key, cm);
-				ConnettoreHTTPCORE_connectionManager.ceMap.put(key, ce);
+				ConnettoreHTTPCORE_connectionManager.mapIoReactor.put(key, ioReactor);
+				ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.put(key, poolingConnectionManager);
 				
 			}catch(Throwable t) {
 				throw new ConnettoreException(t.getMessage(),t);
@@ -130,16 +160,26 @@ public class ConnettoreHTTPCORE_connectionManager {
 		
 	}
 	public static synchronized void stop() throws ConnettoreException {
-		if(ConnettoreHTTPCORE_connectionManager.ioReactor!=null) {
+		if(ConnettoreHTTPCORE_connectionManager.mapIoReactor!=null && !ConnettoreHTTPCORE_connectionManager.mapIoReactor.isEmpty()) {
 			
 			List<Throwable> listT = new ArrayList<Throwable>();
 			
+			// Shut down the evictor thread
+			if(ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor!=null) {
+				try {			
+					ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor.setStop(true);
+					idleConnectionEvictor.waitShutdown();
+				}catch(Throwable t) {
+					listT.add(t);
+				}	
+			}
+			
 			// close client
-			if(map!=null && !map.isEmpty()) {
-				Iterator<String> it = map.keySet().iterator();
+			if(mapConnection!=null && !mapConnection.isEmpty()) {
+				Iterator<String> it = mapConnection.keySet().iterator();
 				while (it.hasNext()) {
 					String key = (String) it.next();
-					ConnettoreHTTPCORE_connection connection = map.get(key);
+					ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
 					if(connection.getHttpclient().isRunning()) {
 						try {
 							connection.getHttpclient().close();
@@ -149,29 +189,12 @@ public class ConnettoreHTTPCORE_connectionManager {
 					}
 				}
 			}
-
-			// Shut down the evictor thread
-			if(ConnettoreHTTPCORE_connectionManager.ceMap!=null && ConnettoreHTTPCORE_connectionManager.ceMap.isEmpty()) {
-				for (String key : ConnettoreHTTPCORE_connectionManager.ceMap.keySet()) {
-					if(key!=null) {
-						IdleConnectionEvictor ie = ConnettoreHTTPCORE_connectionManager.ceMap.get(key);
-						if(ie!=null) {
-							try {			
-								ie.shutdown();
-								ie.join();
-							}catch(Throwable t) {
-								listT.add(t);
-							}	
-						}
-					}
-				}
-			}
 			
 			// Shut down connManager
-			if(ConnettoreHTTPCORE_connectionManager.cmMap!=null && ConnettoreHTTPCORE_connectionManager.cmMap.isEmpty()) {
-				for (String key : ConnettoreHTTPCORE_connectionManager.cmMap.keySet()) {
+			if(ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager!=null && ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.isEmpty()) {
+				for (String key : ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.keySet()) {
 					if(key!=null) {
-						PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.cmMap.get(key);
+						PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.get(key);
 						if(cm!=null) {
 							try {			
 								cm.shutdown();
@@ -184,12 +207,19 @@ public class ConnettoreHTTPCORE_connectionManager {
 			}
 			
 			// Shut down ioReactor
-			try {		
-				if(ConnettoreHTTPCORE_connectionManager.ioReactor!=null) {
-					ConnettoreHTTPCORE_connectionManager.ioReactor.shutdown();
+			if(ConnettoreHTTPCORE_connectionManager.mapIoReactor!=null && ConnettoreHTTPCORE_connectionManager.mapIoReactor.isEmpty()) {
+				for (String key : ConnettoreHTTPCORE_connectionManager.mapIoReactor.keySet()) {
+					if(key!=null) {
+						ConnectingIOReactor ioReactor = ConnettoreHTTPCORE_connectionManager.mapIoReactor.get(key);
+						if(ioReactor!=null) {
+							try {			
+								ioReactor.shutdown();
+							}catch(Throwable t) {
+								listT.add(t);
+							}
+						}
+					}
 				}
-			}catch(Throwable t) {
-				listT.add(t);
 			}
 			
 			if(listT!=null && !listT.isEmpty()) {
@@ -204,67 +234,13 @@ public class ConnettoreHTTPCORE_connectionManager {
 			
 		}
 	}
+		
 	
-	public static class IdleConnectionEvictor extends Thread {
-
-        private final PoolingNHttpClientConnectionManager connMgr;
-
-        private volatile boolean shutdown;
-        private int closeIdleConnectionsAfterSeconds; 
-
-        public IdleConnectionEvictor(PoolingNHttpClientConnectionManager connMgr, int closeIdleConnectionsAfterSeconds) {
-            super();
-            this.connMgr = connMgr;
-            this.closeIdleConnectionsAfterSeconds = closeIdleConnectionsAfterSeconds;
-        }
-
-        @Override
-        public void run() {
-            try {
-                while (!this.shutdown) {
-                    synchronized (this) {
-                        wait(5000);
-                        
-                        // DEBUG
-                        System.out.println("Connessioni attive: "+map.size());
-                        Iterator<String> it = map.keySet().iterator();
-                        int index = 1;
-        				while (it.hasNext()) {
-        					String key = (String) it.next();
-        					ConnettoreHTTPCORE_connection connection = map.get(key);
-        					System.out.println("- "+index+" ("+key+"): isRunning: "+connection.getHttpclient().isRunning());
-        					index++;
-        				}
-
-                        // Close expired connections
-                        this.connMgr.closeExpiredConnections();
-                        // Optionally, close connections
-                        // that have been idle longer than 5 sec
-                        this.connMgr.closeIdleConnections(this.closeIdleConnectionsAfterSeconds, TimeUnit.SECONDS);
-                    }
-                }
-            } catch (InterruptedException ex) {
-                // terminate
-            }
-        }
-
-        public void shutdown() {
-            this.shutdown = true;
-            synchronized (this) {
-                notify();
-            }
-        }
-
-    }
-
-	
-	
-	private static Map<String, ConnettoreHTTPCORE_connection> map = new HashMap<String, ConnettoreHTTPCORE_connection>();
 	private static void init(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException {
 		String key = connectionConfig.toString();
-		synchronized(map) {
-			if(!map.containsKey(key)) {
+		synchronized(mapConnection) {
+			if(!mapConnection.containsKey(key)) {
 				
 				try {				
 					ConnettoreHTTPCORE_connection resource = new ConnettoreHTTPCORE_connection();
@@ -319,7 +295,7 @@ public class ConnettoreHTTPCORE_connectionManager {
 					RequestConfig requestConfig = requestConfigBuilder.build();
 					
 					// Pool
-					if(!ConnettoreHTTPCORE_connectionManager.cmMap.containsKey(key)){
+					if(!ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.containsKey(key)){
 						
 						SSLContext sslContext = null;
 						HostnameVerifier hostnameVerifier = null;
@@ -334,11 +310,12 @@ public class ConnettoreHTTPCORE_connectionManager {
 						
 						ConnettoreHTTPCORE_connectionManager.initialize(key, sslContext, hostnameVerifier);
 					}
-					PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.cmMap.get(key);
+					PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.get(key);
 					
 					HttpAsyncClientBuilder clientBuilder = 
 							HttpAsyncClients.custom(); // Qua si gestisce il pipe (ci sono i metodi che gestiscono le richieste una dopo l'altra o prima tutte le richieste e poi le risposte ...)
 					clientBuilder.setConnectionManager( cm );
+					//clientBuilder.setConnectionManagerShared(true);
 					clientBuilder.setDefaultRequestConfig(requestConfig);
 						
 					clientBuilder.disableAuthCaching();
@@ -354,7 +331,7 @@ public class ConnettoreHTTPCORE_connectionManager {
 					resource.setHttpclient(clientBuilder.build());
 					resource.getHttpclient().start();
 					
-					map.put(key, resource);
+					mapConnection.put(key, resource);
 					
 				} catch ( Throwable t ) {
 					throw new ConnettoreException( t.getMessage(),t );
@@ -363,28 +340,28 @@ public class ConnettoreHTTPCORE_connectionManager {
 		}
 	}
 	
-	private static void reInit(ConnectionConfiguration connectionConfig) {
-		String key = connectionConfig.toString();
-		synchronized(map) {
-			if(map.containsKey(key)) {
-				ConnettoreHTTPCORE_connection connection = map.get(key);
-				if(!connection.getHttpclient().isRunning()) {
-					connection.getHttpclient().start();
-				}
-			}
-		}
-	}
+//	private static void reInit(ConnectionConfiguration connectionConfig) {
+//		String key = connectionConfig.toString();
+//		synchronized(mapConnection) {
+//			if(mapConnection.containsKey(key)) {
+//				ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
+//				if(!connection.getHttpclient().isRunning()) {
+//					connection.getHttpclient().start();
+//				}
+//			}
+//		}
+//	}
 	
 	public static ConnettoreHTTPCORE_connection getConnettoreNIO(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException  {
 		String key = connectionConfig.toString();
-		if(!map.containsKey(key)) {
+		if(!mapConnection.containsKey(key)) {
 			init(connectionConfig, loader, logger, bf);
 		}
-		ConnettoreHTTPCORE_connection connection = map.get(key);
-		if(!connection.getHttpclient().isRunning()) {
-			reInit(connectionConfig);
-		}
+		ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
+//		if(!connection.getHttpclient().isRunning()) {
+//			reInit(connectionConfig);
+//		}
 		return connection;
 	}
 	

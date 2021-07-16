@@ -2145,6 +2145,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				msgDiag.logStartupError(e,"Inizializzazione NIO Async Server Manager");
 				return;
 			}
+			/* ----------- Inizializzazione NIO Async Client ------------ */
+			try{
+				ConnettoreHTTPCORE_connectionManager.initialize();
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione NIO Async Client Manager");
+				return;
+			}
 			
 			
 			

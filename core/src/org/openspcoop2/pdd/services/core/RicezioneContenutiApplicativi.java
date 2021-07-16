@@ -147,6 +147,7 @@ import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
@@ -371,13 +372,13 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 			this._process(params);
 		}finally {
 			if(this.asyncResponseCallback!=null && !this.asynWait) {
-				this.asyncResponseCallback.asyncComplete();
+				this.asyncResponseCallback.asyncComplete(AsyncResponseCallbackClientEvent.NONE);
 			}
 		}
 	}
 	
 	@Override
-	public void asyncComplete(Object ... args) throws ConnectorException { // Questo metodo verrà chiamato dalla catena di metodi degli oggetti (IAsyncResponseCallback) fatta scaturire dal response callback dell'Async Client NIO
+	public void asyncComplete(AsyncResponseCallbackClientEvent clientEvent, Object ... args) throws ConnectorException { // Questo metodo verrà chiamato dalla catena di metodi degli oggetti (IAsyncResponseCallback) fatta scaturire dal response callback dell'Async Client NIO
 		
 		if(this.asyncResponseCallback==null) {
 			throw new ConnectorException("Async context not active");
@@ -394,7 +395,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		
 		this._statelessComplete(true);
 		
-		this.asyncResponseCallback.asyncComplete();
+		this.asyncResponseCallback.asyncComplete(clientEvent);
 	}
 	
 

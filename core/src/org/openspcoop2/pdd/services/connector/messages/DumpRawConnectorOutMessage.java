@@ -38,6 +38,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -356,9 +357,9 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	}
 
 	@Override
-	public void close(boolean throwException) throws ConnectorException {
+	public void close(AsyncResponseCallbackClientEvent clientEvent, boolean throwException) throws ConnectorException {
 		// wrapped method
-		this.connectorOutMessage.close(throwException);
+		this.connectorOutMessage.close(clientEvent, throwException);
 	}
 
 }

@@ -128,6 +128,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
@@ -400,7 +401,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		}finally {
 			if(this.asyncResponseCallback!=null && !this.asynWait) {
 				try {
-					this.asyncResponseCallback.asyncComplete(esitoLib);
+					this.asyncResponseCallback.asyncComplete(AsyncResponseCallbackClientEvent.NONE, esitoLib);
 				}catch(Exception e) {
 					throw new OpenSPCoopStateException(e.getMessage(),e);
 				}
@@ -409,7 +410,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	}
 	
 	@Override
-	public void asyncComplete(Object ... args) throws ConnectorException { // Questo metodo verrà chiamato dalla catena di metodi degli oggetti (IAsyncResponseCallback) fatta scaturire dal response callback dell'Async Client NIO
+	public void asyncComplete(AsyncResponseCallbackClientEvent clientEvent, Object ... args) throws ConnectorException { // Questo metodo verrà chiamato dalla catena di metodi degli oggetti (IAsyncResponseCallback) fatta scaturire dal response callback dell'Async Client NIO
 		
 		if(this.asyncResponseCallback==null) {
 			throw new ConnectorException("Async context not active");
@@ -426,7 +427,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		
 		EsitoLib esitoLib = this._complete();
 		
-		this.asyncResponseCallback.asyncComplete(esitoLib);
+		this.asyncResponseCallback.asyncComplete(clientEvent, esitoLib);
 	}
 	
 	public EsitoLib _process(IOpenSPCoopState openspcoopstateParam,

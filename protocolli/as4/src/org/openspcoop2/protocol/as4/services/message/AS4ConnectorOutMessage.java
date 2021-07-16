@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -135,7 +136,7 @@ public class AS4ConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	@Override
-	public void close(boolean throwException) throws ConnectorException{
+	public void close(AsyncResponseCallbackClientEvent clientEvent, boolean throwException) throws ConnectorException{
 		// nop
 	}
 }

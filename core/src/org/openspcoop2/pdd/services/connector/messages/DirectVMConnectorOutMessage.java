@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -141,7 +142,7 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	@Override
-	public void close(boolean throwException) throws ConnectorException{
+	public void close(AsyncResponseCallbackClientEvent clientEvent, boolean throwException) throws ConnectorException{
 		// nop
 	}
 }

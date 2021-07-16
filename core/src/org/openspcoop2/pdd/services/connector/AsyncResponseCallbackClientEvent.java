@@ -21,14 +21,15 @@
 package org.openspcoop2.pdd.services.connector;
 
 /**
- * IAsyncResponseCallback
+ * AsyncResponseCallbackEventClient
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IAsyncResponseCallback {
+public enum AsyncResponseCallbackClientEvent {
 
-	public void asyncComplete(AsyncResponseCallbackClientEvent clientEvent, Object ... args) throws ConnectorException;
+	NONE, // non e' stato avviato alcun client asincrono 
+	COMPLETED, FAILED, CANCELLED;
 	
 }

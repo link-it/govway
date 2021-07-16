@@ -70,6 +70,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
@@ -786,7 +787,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 		finally{
 			
 			if(!completeProcess || !async) {
-				this._complete(completeProcess);
+				this._complete(AsyncResponseCallbackClientEvent.NONE,completeProcess);
 			}
 
 		}
@@ -794,10 +795,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 	}
 
 	@Override
-	public void asyncComplete(Object ... args) throws ConnectorException { // Questo metodo verrà chiamato dalla catena di metodi degli oggetti (IAsyncResponseCallback) fatta scaturire dal response callback dell'Async Client NIO
-		this._complete(true);
+	public void asyncComplete(AsyncResponseCallbackClientEvent clientEvent, Object ... args) throws ConnectorException { // Questo metodo verrà chiamato dalla catena di metodi degli oggetti (IAsyncResponseCallback) fatta scaturire dal response callback dell'Async Client NIO
+		this._complete(clientEvent, true);
 	}
-	private void _complete(boolean completeProcess) throws ConnectorException {
+	private void _complete(AsyncResponseCallbackClientEvent clientEvent, boolean completeProcess) throws ConnectorException {
 
 		if(completeProcess) {
 			this.responseMessage = this.context.getMessageResponse();
@@ -1348,7 +1349,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 				//    <Connector protocol="HTTP/1.1" port="8080" address="${jboss.bind.address}" 
 	            //       connectionTimeout="20000" redirectPort="8443" socketBuffer="-1" />
 				this.res.flush(true);
-				this.res.close(true);
+				this.res.close(clientEvent, true);
 				
 				// Emetto diagnostico
 				if(erroreConsegnaRisposta!=null){
