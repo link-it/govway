@@ -14601,7 +14601,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	/**
 	 * Ritorna la lista di nomi delle proprieta registrate
 	 */
-	public List<String> nomiProprietaPA() throws DriverConfigurazioneException {
+	public List<String> nomiProprietaPA(String filterSoggettoTipo, String filterSoggettoNome, List<String> tipoServiziProtocollo) throws DriverConfigurazioneException {
 		String queryString;
 
 		Connection con = null;
@@ -14628,31 +14628,45 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_PROP);
-			sqlQueryObject.addSelectCountField("nome", "cont",true);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_PROP + ".nome");
+			sqlQueryObject.addOrderBy(CostantiDB.PORTE_APPLICATIVE_PROP + ".nome"); 
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) || (tipoServiziProtocollo != null && tipoServiziProtocollo.size() > 0)) {
+				sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+				
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_PROP+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione="+CostantiDB.SERVIZI+".id");
+				
+			}
+			
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome))) {
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
+			}
+			
+			if((tipoServiziProtocollo != null && tipoServiziProtocollo.size() > 0)) {
+				String [] tipiServiziProtocolloS = tipoServiziProtocollo.toArray(new String[tipoServiziProtocollo.size()]); 
+				sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipiServiziProtocolloS);
+			}
+				
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome))) {
+				stmt.setString(1, filterSoggettoTipo);
+				stmt.setString(2, filterSoggettoNome);
+			}
 			risultato = stmt.executeQuery();
-			long count = 0;
-			if (risultato.next())
-				count = risultato.getLong(1);
-			risultato.close();
-			stmt.close();
-
-			// ricavo le entries
-			if (count > 0) { // con search
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_PROP);
-				sqlQueryObject.setSelectDistinct(true);
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addOrderBy("nome"); 
-				sqlQueryObject.setSortType(true);
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				risultato = stmt.executeQuery();
-			
-				while (risultato.next()) {
-					lista.add(risultato.getString("nome"));
-				}
+			while (risultato.next()) {
+				lista.add(risultato.getString("nome"));
 			}
 			return lista;
 		} catch (Exception qe) {
@@ -16234,7 +16248,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	/**
 	 * Ritorna la lista di nomi delle proprieta registrate
 	 */
-	public List<String> nomiProprietaPD() throws DriverConfigurazioneException {
+	public List<String> nomiProprietaPD(String filterSoggettoTipo, String filterSoggettoNome, List<String> tipoServiziProtocollo) throws DriverConfigurazioneException {
 		String queryString;
 
 		Connection con = null;
@@ -16242,6 +16256,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<String> lista = new ArrayList<String>();
+		String aliasSoggettiFruitori = "soggettoFruitore";
 
 		if (this.atomica) {
 			try {
@@ -16261,32 +16276,52 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_PROP);
-			sqlQueryObject.addSelectCountField("nome", "cont",true);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_PROP +".nome");
+			sqlQueryObject.addOrderBy(CostantiDB.PORTE_DELEGATE_PROP +".nome"); 
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) || (tipoServiziProtocollo != null && tipoServiziProtocollo.size() > 0)) {
+				sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+				
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_PROP+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
+				
+			}
+			
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome))) {
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI, aliasSoggettiFruitori);
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
+				
+				sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".tipo_soggetto=?");
+				sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".nome_soggetto=?");
+				
+			}
+			
+			if((tipoServiziProtocollo != null && tipoServiziProtocollo.size() > 0)) {
+				String [] tipiServiziProtocolloS = tipoServiziProtocollo.toArray(new String[tipoServiziProtocollo.size()]); 
+				sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipiServiziProtocolloS);
+			}
+			
+			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			risultato = stmt.executeQuery();
-			long count = 0;
-			if (risultato.next())
-				count = risultato.getLong(1);
-			risultato.close();
-			stmt.close();
-
-			// ricavo le entries
-			if (count > 0) { // con search
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_PROP);
-				sqlQueryObject.setSelectDistinct(true);
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addOrderBy("nome"); 
-				sqlQueryObject.setSortType(true);
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				risultato = stmt.executeQuery();
-			
-				while (risultato.next()) {
-					lista.add(risultato.getString("nome"));
-				}
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome))) {
+				stmt.setString(1, filterSoggettoTipo);
+				stmt.setString(2, filterSoggettoNome);
 			}
+			
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				lista.add(risultato.getString("nome"));
+			}
+
 			return lista;
 		} catch (Exception qe) {
 			error = true;
@@ -24753,7 +24788,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	/**
 	 * Ritorna la lista di nomi delle proprieta registrate
 	 */
-	public List<String> nomiProprietaSA() throws DriverConfigurazioneException {
+	public List<String> nomiProprietaSA(String filterSoggettoTipo, String filterSoggettoNome, List<String> tipoSoggettiProtocollo) throws DriverConfigurazioneException {
 		String queryString;
 
 		Connection con = null;
@@ -24780,31 +24815,39 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
-			sqlQueryObject.addSelectCountField("nome", "cont",true);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_PROPS + ".nome");
+			
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) || (tipoSoggettiProtocollo != null && tipoSoggettiProtocollo.size() > 0)) {
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI + ".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_PROPS+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
+			}
+			
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome))) {
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
+			}
+			
+			if((tipoSoggettiProtocollo != null && tipoSoggettiProtocollo.size() > 0)) {
+				String [] tipiServiziProtocolloS = tipoSoggettiProtocollo.toArray(new String[tipoSoggettiProtocollo.size()]); 
+				sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiServiziProtocolloS);
+			}
+			
+			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI_APPLICATIVI_PROPS + ".nome"); 
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
+			if((filterSoggettoNome!=null && !"".equals(filterSoggettoNome))) {
+				stmt.setString(1, filterSoggettoTipo);
+				stmt.setString(2, filterSoggettoNome);
+			}
 			risultato = stmt.executeQuery();
-			long count = 0;
-			if (risultato.next())
-				count = risultato.getLong(1);
-			risultato.close();
-			stmt.close();
-
-			// ricavo le entries
-			if (count > 0) { // con search
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_PROPS);
-				sqlQueryObject.setSelectDistinct(true);
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addOrderBy("nome"); 
-				sqlQueryObject.setSortType(true);
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				risultato = stmt.executeQuery();
-			
-				while (risultato.next()) {
-					lista.add(risultato.getString("nome"));
-				}
+			while (risultato.next()) {
+				lista.add(risultato.getString("nome"));
 			}
 			return lista;
 		} catch (Exception qe) {

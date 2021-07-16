@@ -1120,7 +1120,17 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 			
 			// filtri proprieta
-			List<String> nomiProprieta = this.soggettiCore.nomiProprietaSoggetti();
+			String protocolloPerFiltroProprieta = protocolloSel;
+			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
+			if(protocolloPerFiltroProprieta == null) {
+				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+					protocolloPerFiltroProprieta = null;
+				} else {
+					protocolloPerFiltroProprieta = filterProtocollo;
+				}
+			}
+			
+			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
 				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
 				
@@ -1559,10 +1569,28 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
-			addFilterProtocol(ricerca, idLista);
+			String filterProtocollo = addFilterProtocol(ricerca, idLista, true);
+			String protocolloSel = filterProtocollo;
+			if(protocolloSel==null) {
+				// significa che e' stato selezionato un protocollo nel menu in alto a destra
+				List<String> protocolli = this.core.getProtocolli(this.session);
+				if(protocolli!=null && protocolli.size()==1) {
+					protocolloSel = protocolli.get(0);
+				}
+			}
 			
 			// filtri proprieta
-			List<String> nomiProprieta = this.soggettiCore.nomiProprietaSoggetti();
+			String protocolloPerFiltroProprieta = protocolloSel;
+			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
+			if(protocolloPerFiltroProprieta == null) {
+				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+					protocolloPerFiltroProprieta = null;
+				} else {
+					protocolloPerFiltroProprieta = filterProtocollo;
+				}
+			}
+			
+			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
 				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
 				

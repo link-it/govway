@@ -376,7 +376,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 
 	}
 	
-	public List<String> nomiProprietaPA() throws DriverConfigurazioneException {
+	public List<String> nomiProprietaPA(String filterSoggettoTipo, String filterSoggettoNome, List<String> tipoServiziProtocollo) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "nomiProprietaPA";
 		DriverControlStationDB driver = null;
@@ -387,7 +387,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().nomiProprietaPA();
+			return driver.getDriverConfigurazioneDB().nomiProprietaPA(filterSoggettoTipo, filterSoggettoNome, tipoServiziProtocollo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

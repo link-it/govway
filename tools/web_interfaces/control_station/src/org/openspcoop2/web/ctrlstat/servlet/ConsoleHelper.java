@@ -18773,4 +18773,71 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 	}
+	
+	public List<String> nomiProprietaPD(String protocolloPerFiltroProprieta , String soggettoPerFiltroProprieta) throws DriverRegistroServiziException, DriverConfigurazioneException {
+		List<String> tipoServiziProtocollo = null;
+		String filterSoggettoTipo = null;
+		String filterSoggettoNome = null;
+		if(soggettoPerFiltroProprieta != null) {
+			if(soggettoPerFiltroProprieta!=null && !"".equals(soggettoPerFiltroProprieta)) {
+				filterSoggettoTipo = soggettoPerFiltroProprieta.split("/")[0];
+				filterSoggettoNome = soggettoPerFiltroProprieta.split("/")[1];
+			}
+		} else {
+			try {
+				tipoServiziProtocollo = Filtri.convertToTipiServizi(protocolloPerFiltroProprieta, null);
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}
+		return this.porteDelegateCore.nomiProprietaPD(filterSoggettoTipo, filterSoggettoNome, tipoServiziProtocollo);
+	}
+	
+	public List<String> nomiProprietaPA(String protocolloPerFiltroProprieta , String soggettoPerFiltroProprieta) throws DriverRegistroServiziException, DriverConfigurazioneException {
+		List<String> tipoServiziProtocollo = null;
+		String filterSoggettoTipo = null;
+		String filterSoggettoNome = null;
+		if(soggettoPerFiltroProprieta != null) {
+			if(soggettoPerFiltroProprieta!=null && !"".equals(soggettoPerFiltroProprieta)) {
+				filterSoggettoTipo = soggettoPerFiltroProprieta.split("/")[0];
+				filterSoggettoNome = soggettoPerFiltroProprieta.split("/")[1];
+			}
+		} else {
+			try {
+				tipoServiziProtocollo = Filtri.convertToTipiServizi(protocolloPerFiltroProprieta, null);
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}
+		return this.porteApplicativeCore.nomiProprietaPA(filterSoggettoTipo, filterSoggettoNome, tipoServiziProtocollo);
+	}
+	
+	public List<String> nomiProprietaSA(String protocolloPerFiltroProprieta , String soggettoPerFiltroProprieta) throws DriverRegistroServiziException, DriverConfigurazioneException {
+		List<String> tipoSoggettiProtocollo = null;
+		String filterSoggettoTipo = null;
+		String filterSoggettoNome = null;
+		if(soggettoPerFiltroProprieta != null) {
+			if(soggettoPerFiltroProprieta!=null && !"".equals(soggettoPerFiltroProprieta)) {
+				filterSoggettoTipo = soggettoPerFiltroProprieta.split("/")[0];
+				filterSoggettoNome = soggettoPerFiltroProprieta.split("/")[1];
+			}
+		} else {
+			try {
+				tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(protocolloPerFiltroProprieta, null);
+			}catch(Exception e) {
+				throw new DriverRegistroServiziException(e.getMessage(),e);
+			}
+		}
+		return this.saCore.nomiProprietaSA(filterSoggettoTipo, filterSoggettoNome, tipoSoggettiProtocollo);
+	}
+	
+	public List<String> nomiProprietaSoggetti(String protocolloPerFiltroProprieta) throws DriverRegistroServiziException, DriverConfigurazioneException {
+		List<String> tipoSoggettiProtocollo = null;
+		try {
+			tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(protocolloPerFiltroProprieta, null);
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		return this.soggettiCore.nomiProprietaSoggetti(tipoSoggettiProtocollo);
+	}
 }

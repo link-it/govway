@@ -695,7 +695,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 	
-	public List<String> nomiProprietaSA() throws DriverConfigurazioneException {
+	public List<String> nomiProprietaSA(String filterSoggettoTipo, String filterSoggettoNome, List<String> tipoSoggettiProtocollo) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "nomiProprietaSA";
 		DriverControlStationDB driver = null;
@@ -706,7 +706,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().nomiProprietaSA();
+			return driver.getDriverConfigurazioneDB().nomiProprietaSA(filterSoggettoTipo, filterSoggettoNome, tipoSoggettiProtocollo); 
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

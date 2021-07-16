@@ -1059,7 +1059,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public List<String> nomiProprietaPD() throws DriverConfigurazioneException {
+	public List<String> nomiProprietaPD(String filterSoggettoTipo, String filterSoggettoNome, List<String> tipoServiziProtocollo) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "nomiProprietaPD";
 		DriverControlStationDB driver = null;
@@ -1069,8 +1069,8 @@ public class PorteDelegateCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().nomiProprietaPD();
+			
+			return driver.getDriverConfigurazioneDB().nomiProprietaPD(filterSoggettoTipo, filterSoggettoNome, tipoServiziProtocollo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

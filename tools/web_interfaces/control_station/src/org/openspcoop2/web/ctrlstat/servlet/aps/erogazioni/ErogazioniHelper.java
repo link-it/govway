@@ -458,6 +458,29 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				profiloSelezionato = true;
 			}
 			
+			String protocolloPerFiltroProprieta = protocolloS;
+			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
+			if(protocolloPerFiltroProprieta == null) {
+				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+					protocolloPerFiltroProprieta = null;
+				} else {
+					protocolloPerFiltroProprieta = filterProtocollo;
+				}
+			}
+			
+			String soggettoPerFiltroProprieta = null;
+			if(profiloSelezionato) {
+				// soggetto non selezionato nel menu' in alto a dx
+				if(!this.isSoggettoMultitenantSelezionato()) {
+					soggettoPerFiltroProprieta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
+					if("".equals(soggettoPerFiltroProprieta) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(soggettoPerFiltroProprieta)) {
+						soggettoPerFiltroProprieta = null;
+					}
+				} else {
+					soggettoPerFiltroProprieta = this.getSoggettoMultitenantSelezionato();
+				}
+			}
+			
 			// filtri MODIPA da visualizzare solo se non e' stato selezionato un protocollo in alto a dx  (opzione pilota da file di proprieta')
 			// oppure e' selezionato MODIPA
 			// oppure non e' stato selezionato un protocollo in alto e nessun protocollo nei filtri  (opzione pilota da file di proprieta')
@@ -481,7 +504,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			if( profiloSelezionato && 
 					(!this.isSoggettoMultitenantSelezionato())) {
 				String filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
-				this.addFilterSoggetto(filterSoggetto,protocolloS,true,false);
+				this.addFilterSoggetto(filterSoggetto,protocolloS,true,true);
 			}
 						
 			String filterTipoAccordo = null;
@@ -558,9 +581,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// filtri proprieta
 			List<String> nomiProprieta =null;
 			if(gestioneFruitori) {
-				nomiProprieta = this.porteDelegateCore.nomiProprietaPD();
+				nomiProprieta = this.nomiProprietaPD(protocolloPerFiltroProprieta,soggettoPerFiltroProprieta);
 			} else {
-				nomiProprieta = this.porteApplicativeCore.nomiProprietaPA();
+				nomiProprieta = this.nomiProprietaPA(protocolloPerFiltroProprieta,soggettoPerFiltroProprieta);
 			}
 			
 			if(nomiProprieta != null && nomiProprieta.size() >0) {

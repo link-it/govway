@@ -12348,7 +12348,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	/**
 	 * Ritorna la lista di nomi delle proprieta registrate
 	 */
-	public List<String> nomiProprietaSoggetti() throws DriverConfigurazioneException {
+	public List<String> nomiProprietaSoggetti(List<String> tipoSoggettiProtocollo) throws DriverConfigurazioneException {
 		String queryString;
 
 		Connection con = null;
@@ -12375,31 +12375,25 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_PROPS);
-			sqlQueryObject.addSelectCountField("nome", "cont",true);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS + ".nome");
+			
+			if((tipoSoggettiProtocollo != null && tipoSoggettiProtocollo.size() > 0)) {
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI_PROPS + ".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				String [] tipiServiziProtocolloS = tipoSoggettiProtocollo.toArray(new String[tipoSoggettiProtocollo.size()]); 
+				sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiServiziProtocolloS);
+			}
+			
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_PROPS + ".nome"); 
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
 			risultato = stmt.executeQuery();
-			long count = 0;
-			if (risultato.next())
-				count = risultato.getLong(1);
-			risultato.close();
-			stmt.close();
-
-			// ricavo le entries
-			if (count > 0) { // con search
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_PROPS);
-				sqlQueryObject.setSelectDistinct(true);
-				sqlQueryObject.addSelectField("nome");
-				sqlQueryObject.addOrderBy("nome"); 
-				sqlQueryObject.setSortType(true);
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				risultato = stmt.executeQuery();
-			
-				while (risultato.next()) {
-					lista.add(risultato.getString("nome"));
-				}
+			while (risultato.next()) {
+				lista.add(risultato.getString("nome"));
 			}
 			return lista;
 		} catch (Exception qe) {

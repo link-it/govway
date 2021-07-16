@@ -2140,8 +2140,31 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 			
+			String protocolloPerFiltroProprieta = protocolloS;
+			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
+			if(protocolloPerFiltroProprieta == null) {
+				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+					protocolloPerFiltroProprieta = null;
+				} else {
+					protocolloPerFiltroProprieta = filterProtocollo;
+				}
+			}
+			
+			String soggettoPerFiltroProprieta = null;
+			if(profiloSelezionato) {
+				// soggetto non selezionato nel menu' in alto a dx
+				if(!this.isSoggettoMultitenantSelezionato()) {
+					soggettoPerFiltroProprieta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
+					if("".equals(soggettoPerFiltroProprieta) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(soggettoPerFiltroProprieta)) {
+						soggettoPerFiltroProprieta = null;
+					}
+				} else {
+					soggettoPerFiltroProprieta = this.getSoggettoMultitenantSelezionato();
+				}
+			}
+			
 			// filtri proprieta
-			List<String> nomiProprieta = this.saCore.nomiProprietaSA();
+			List<String> nomiProprieta = this.nomiProprietaSA(protocolloPerFiltroProprieta,soggettoPerFiltroProprieta);
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
 				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
 				
