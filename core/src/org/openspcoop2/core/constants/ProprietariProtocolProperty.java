@@ -19,7 +19,7 @@
  */
 
 
-package org.openspcoop2.core.mapping;
+package org.openspcoop2.core.constants;
 /**
  *
  *

@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplica
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
@@ -119,7 +120,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					filtro.setProtocolProperties(new ArrayList<>());
 					filtro.setTipo(filtroTipoSA);
 					FiltroRicercaProtocolProperty pp = new FiltroRicercaProtocolProperty();
-					pp.setName(porteApplicativeHelper.getProfiloModIPASicurezzaMessaggioPropertyName());
+					pp.setName(CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
 					pp.setValueAsBoolean(true);
 					filtro.getProtocolProperties().add(pp);
 					List<IDServizioApplicativo> list = saCore.getAllIdServiziApplicativi(filtro); 

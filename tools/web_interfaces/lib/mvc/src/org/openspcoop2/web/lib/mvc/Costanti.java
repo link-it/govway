@@ -74,6 +74,10 @@ public class Costanti {
 	public final static String SEARCH_INDEX = "index";
 	public final static String SEARCH = "search";
 	
+	public final static String SEARCH_PARAMETER_NAME = "search";
+	public final static Integer SEARCH_PARAMETER_DEFAULT_SIZE = 50;
+	public final static String SEARCH_PARAMETER_NOTE = "Attenzione! &Egrave; attualmente impostato il filtro di ricerca con la stringa ''${0}''";
+	public final static String SEARCH_PARAMETER_NAME_FAKE_NAME = "__fake__search__";
 	
 	/** POSTBACK FUNCTION */
 	

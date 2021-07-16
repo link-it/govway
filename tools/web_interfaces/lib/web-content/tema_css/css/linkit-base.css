@@ -677,6 +677,19 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
 	padding: 20px 0px;
 }
 
+div.tableNoData div.buttonrow {
+	margin-top: 20px;
+	margin-left: 232px;
+	padding-bottom: 12px;
+}
+
+span.tableNoData {
+	font-family: 'Roboto';
+	font-size: 18px;
+    margin: 8px 0px 8px 12px;
+    font-weight: bold;
+}
+
 
 /* BreadCrumbs */
 

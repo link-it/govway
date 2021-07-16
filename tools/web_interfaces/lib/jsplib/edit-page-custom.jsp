@@ -44,13 +44,15 @@ String customListViewName = pd.getCustomListViewName();
 boolean mime = false;
 
 Vector<?> datiConGruppi = pd.getDati();
-Vector<?> dati = (Vector<?>) datiConGruppi.elementAt(0);
+Vector<?> dati = datiConGruppi.size() >0 ? (Vector<?>) datiConGruppi.elementAt(0) : new Vector<Object>();
 
-for (int i = 0; i < dati.size(); i++) {
-  DataElement de = (DataElement) dati.elementAt(i);
-  if (de.getType().equals("file")) {
-    mime = true;
-  }
+if(dati.size() > 0){
+	for (int i = 0; i < dati.size(); i++) {
+	  DataElement de = (DataElement) dati.elementAt(i);
+	  if (de.getType().equals("file") || de.getType().equals("multi-file")) {
+	    mime = true;
+	  }
+	}
 }
 String encTypeS = "";
 if (mime) {

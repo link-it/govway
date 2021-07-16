@@ -50,9 +50,11 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
@@ -69,7 +71,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBProtocolPropertiesUtils;
-import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -12344,6 +12345,88 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return lista;
 	}
 	
+	/**
+	 * Ritorna la lista di nomi delle proprieta registrate
+	 */
+	public List<String> nomiProprietaSoggetti(List<String> tipoSoggettiProtocollo) throws DriverConfigurazioneException {
+		String queryString;
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<String> lista = new ArrayList<String>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("nomiProprietaSoggetti");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverRegistroServiziDB::nomiProprietaSoggetti] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_PROPS);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI_PROPS + ".nome");
+			
+			if((tipoSoggettiProtocollo != null && tipoSoggettiProtocollo.size() > 0)) {
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI_PROPS + ".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				String [] tipiServiziProtocolloS = tipoSoggettiProtocollo.toArray(new String[tipoSoggettiProtocollo.size()]); 
+				sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipiServiziProtocolloS);
+			}
+			
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI_PROPS + ".nome"); 
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				lista.add(risultato.getString("nome"));
+			}
+			return lista;
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverRegistroServiziDB::nomiProprietaSoggetti] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 	
 	@Override
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
@@ -15534,6 +15617,33 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String filterGruppo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_GRUPPO);
 		
 		String filterCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CANALE);
+		
+		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
+		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
+		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
+		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
+		if((filtroModISicurezzaCanale!=null && "".equals(filtroModISicurezzaCanale))) {
+			filtroModISicurezzaCanale=null;
+		}
+		if((filtroModISicurezzaMessaggio!=null && "".equals(filtroModISicurezzaMessaggio))) {
+			filtroModISicurezzaMessaggio=null;
+		}
+		Boolean filtroModIDigestRichiestaEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIDigestRichiesta)) {
+			filtroModIDigestRichiestaEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDigestRichiesta)) {
+			filtroModIDigestRichiestaEnabled = false;
+		}
+		Boolean filtroModIInfoUtenteEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIInfoUtente)) {
+			filtroModIInfoUtenteEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIInfoUtente)) {
+			filtroModIInfoUtenteEnabled = false;
+		}
+		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null || filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtenteEnabled!=null;
+		
 		boolean searchCanale = false;
 		boolean canaleDefault = false;
 		if(filterCanale!=null && !filterCanale.equals("")) {
@@ -15551,6 +15661,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("filterStatoAccordo : " + filterStatoAccordo);
 		this.log.debug("filterGruppo : " + filterGruppo);
 		this.log.debug("filterCanale : " + filterCanale);
+		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
+		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
+		this.log.debug("filtroModIDigestRichiesta : " + filtroModIDigestRichiesta);
+		this.log.debug("filtroModIInfoUtente : " + filtroModIInfoUtente);
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -15636,6 +15750,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}
 			
+			if(filtroModI) {
+				DBUtils.setFiltriModI(sqlQueryObject, this.tipoDB,
+						filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+						filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled);
+			}
+			
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
@@ -15715,6 +15835,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				else {
 					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".canale = ?");
 				}
+			}
+			
+			if(filtroModI) {
+				DBUtils.setFiltriModI(sqlQueryObject, this.tipoDB,
+						filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+						filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled);
 			}
 			
 			sqlQueryObject.setANDLogicOperator(true);
@@ -18272,6 +18398,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 		}
 		
+		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
+		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		if((filtroProprietaNome!=null && "".equals(filtroProprietaNome))) {
+			filtroProprietaNome=null;
+		}
+		if((filtroProprietaValore!=null && "".equals(filtroProprietaValore))) {
+			filtroProprietaValore=null;
+		}
+		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
@@ -18283,6 +18419,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("filterGruppo : " + filterGruppo);
 		this.log.debug("filterApiContesto : " + filterApiContesto);
 		this.log.debug("filterApiImplementazione : " + filterApiImplementazione);
+		this.log.debug("filtroProprietaNome : " + filtroProprietaNome);
+		this.log.debug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
 		boolean error = false;
@@ -18875,6 +19013,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
 				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -18912,6 +19054,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
+				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -19010,6 +19156,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
 				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_soggetto");
 				sqlQueryObject.addOrderBy("tipo_soggetto");
@@ -19060,6 +19210,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(!existsConditions.isEmpty()) {
 					sqlQueryObject.addWhereCondition(false, existsConditions.toArray(new String[1]));
+				}
+				if(filtroProprieta) {
+					DBUtils.setFiltriProprietaSoggetto(sqlQueryObject, this.tipoDB, 
+							filtroProprietaNome, filtroProprietaValore);
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -23518,6 +23672,88 @@ IDriverWS ,IMonitoraggioRisorsa{
 			filterSoggettoNome = filterSoggettoTipoNome.split("/")[1];
 		}
 		
+		String filtroConnettoreTipo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO);
+		String filtroConnettoreTipoPlugin = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);
+		String filtroConnettoreTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_TOKEN_POLICY);
+		String filtroConnettoreEndpoint = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_ENDPOINT);
+		String filtroConnettoreKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CONNETTORE_KEYSTORE);
+		if((filtroConnettoreTipo!=null && "".equals(filtroConnettoreTipo))) {
+			filtroConnettoreTipo=null;
+		}
+		if((filtroConnettoreTipoPlugin!=null && "".equals(filtroConnettoreTipoPlugin))) {
+			filtroConnettoreTipoPlugin=null;
+		}
+		if((filtroConnettoreTokenPolicy!=null && "".equals(filtroConnettoreTokenPolicy))) {
+			filtroConnettoreTokenPolicy=null;
+		}
+		if((filtroConnettoreEndpoint!=null && "".equals(filtroConnettoreEndpoint))) {
+			filtroConnettoreEndpoint=null;
+		}
+		if((filtroConnettoreKeystore!=null && "".equals(filtroConnettoreKeystore))) {
+			filtroConnettoreKeystore=null;
+		}
+		boolean joinConnettore =  filtroConnettoreTipo!=null	|| filtroConnettoreTokenPolicy!=null || filtroConnettoreEndpoint!=null || filtroConnettoreKeystore!=null;
+		TipiConnettore tipoConnettore = null;
+		String endpointType = null;
+		boolean tipoConnettoreIntegrationManager = false; 
+		if(filtroConnettoreTipo!=null && !"".equals(filtroConnettoreTipo)) {
+			if(Filtri.FILTRO_CONNETTORE_TIPO_VALORE_IM.equals(filtroConnettoreTipo)) {
+				tipoConnettoreIntegrationManager = true;
+			}
+			else {
+				tipoConnettore = TipiConnettore.toEnumFromName(filtroConnettoreTipo);
+				if(tipoConnettore!=null) {
+					endpointType = (TipiConnettore.CUSTOM.equals(tipoConnettore)) ? filtroConnettoreTipoPlugin : tipoConnettore.getNome();
+				}
+			}
+		}
+		 
+		String filtroModISicurezzaCanale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_CANALE);
+		String filtroModISicurezzaMessaggio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
+		String filtroModIKeystore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE);
+		String filtroModIAudience = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_AUDIENCE);
+		String filtroModIInfoUtente = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_INFORMAZIONI_UTENTE);
+		String filtroModIDigestRichiesta = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_DIGEST_RICHIESTA);
+		if((filtroModISicurezzaCanale!=null && "".equals(filtroModISicurezzaCanale))) {
+			filtroModISicurezzaCanale=null;
+		}
+		if((filtroModISicurezzaMessaggio!=null && "".equals(filtroModISicurezzaMessaggio))) {
+			filtroModISicurezzaMessaggio=null;
+		}
+		Boolean filtroModIDigestRichiestaEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIDigestRichiesta)) {
+			filtroModIDigestRichiestaEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIDigestRichiesta)) {
+			filtroModIDigestRichiestaEnabled = false;
+		}
+		Boolean filtroModIInfoUtenteEnabled = null;
+		if(CostantiDB.STATO_FUNZIONALITA_ABILITATO.equals(filtroModIInfoUtente)) {
+			filtroModIInfoUtenteEnabled = true;
+		}
+		else if(CostantiDB.STATO_FUNZIONALITA_DISABILITATO.equals(filtroModIInfoUtente)) {
+			filtroModIInfoUtenteEnabled = false;
+		}
+		if((filtroModIKeystore!=null && "".equals(filtroModIKeystore))) {
+			filtroModIKeystore=null;
+		}
+		if((filtroModIAudience!=null && "".equals(filtroModIAudience))) {
+			filtroModIAudience=null;
+		}
+		boolean filtroModI = filtroModISicurezzaCanale!=null || filtroModISicurezzaMessaggio!=null ||
+				filtroModIDigestRichiestaEnabled!=null || filtroModIInfoUtenteEnabled!=null ||
+				filtroModIKeystore!=null || filtroModIAudience!=null;
+		
+		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
+		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
+		if((filtroProprietaNome!=null && "".equals(filtroProprietaNome))) {
+			filtroProprietaNome=null;
+		}
+		if((filtroProprietaValore!=null && "".equals(filtroProprietaValore))) {
+			filtroProprietaValore=null;
+		}
+		boolean filtroProprieta = filtroProprietaNome!=null || filtroProprietaValore!=null;
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
@@ -23529,6 +23765,20 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("filterStatoAccordo : " + filterStatoAccordo);
 		this.log.debug("filterSoggettoNome : " + filterSoggettoNome);
 		this.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
+		this.log.debug("filtroConnettoreTipo : " + filtroConnettoreTipo);
+		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
+		this.log.debug("filtroConnettoreTokenPolicy : " + filtroConnettoreTokenPolicy);
+		this.log.debug("filtroConnettoreEndpoint : " + filtroConnettoreEndpoint);
+		this.log.debug("filtroConnettoreKeystore : " + filtroConnettoreKeystore);
+		this.log.debug("filtroConnettoreTipoPlugin : " + filtroConnettoreTipoPlugin);
+		this.log.debug("filtroModISicurezzaCanale : " + filtroModISicurezzaCanale);
+		this.log.debug("filtroModISicurezzaMessaggio : " + filtroModISicurezzaMessaggio);
+		this.log.debug("filtroModIKeystore : " + filtroModIKeystore);
+		this.log.debug("filtroModIAudience : " + filtroModIAudience);
+		this.log.debug("filtroModIInfoUtente : " + filtroModIInfoUtente);
+		this.log.debug("filtroModIDigestRichiesta : " + filtroModIDigestRichiesta);
+		this.log.debug("filtroProprietaNome : " + filtroProprietaNome);
+		this.log.debug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		if (this.atomica) {
 			try {
@@ -23588,7 +23838,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI
 						|| !search.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
 					) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
@@ -23618,6 +23868,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
+					if(joinConnettore) {
+						DBUtils.setFiltriConnettoreFruizione(sqlQueryObject, this.tipoDB, 
+								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
+								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -23628,6 +23893,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default=1");
 					if(searchCanale) {
 						sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+					}
+					if(joinConnettore) {
+						DBUtils.setFiltriConnettoreErogazione(sqlQueryObject, this.tipoDB, 
+								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
+								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
 					}
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
@@ -23718,7 +23998,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 					if(filterGruppo!=null) {
@@ -23746,6 +24026,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
+					if(joinConnettore) {
+						DBUtils.setFiltriConnettoreFruizione(sqlQueryObject, this.tipoDB, 
+								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
+								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -23756,6 +24051,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default=1");
 					if(searchCanale) {
 						sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+					}
+					if(joinConnettore) {
+						DBUtils.setFiltriConnettoreErogazione(sqlQueryObject, this.tipoDB, 
+								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
+								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
 					}
 				}
 				sqlQueryObject.addSelectCountField("*", "cont");
@@ -23872,7 +24182,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI
 						|| !search.equals("") // aggiunto per cercare anche sul nome dell'API (parte comune)
 					) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
@@ -23902,6 +24212,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
+					if(joinConnettore) {
+						DBUtils.setFiltriConnettoreFruizione(sqlQueryObject, this.tipoDB, 
+								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
+								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -23912,6 +24237,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default=1");
 					if(searchCanale) {
 						sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+					}
+					if(joinConnettore) {
+						DBUtils.setFiltriConnettoreErogazione(sqlQueryObject, this.tipoDB, 
+								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
+								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
 					}
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
@@ -24032,7 +24372,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale) {
+				if(permessiUtente!=null || filterTipoAPI!=null || filterGruppo!=null || idAccordoApi!=null || searchCanale || filtroModI) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 					if(filterGruppo!=null) {
@@ -24060,6 +24400,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
+					if(joinConnettore) {
+						DBUtils.setFiltriConnettoreFruizione(sqlQueryObject, this.tipoDB, 
+								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
+								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIFruizione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaFruizione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
+					}
 				}
 				if(gestioneErogatori) {
 					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
@@ -24070,6 +24425,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default=1");
 					if(searchCanale) {
 						sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+					}
+					if(joinConnettore) {
+						DBUtils.setFiltriConnettoreErogazione(sqlQueryObject, this.tipoDB, 
+								tipoConnettore, endpointType, tipoConnettoreIntegrationManager, 
+								filtroConnettoreTokenPolicy, filtroConnettoreEndpoint, filtroConnettoreKeystore);
+					}
+					if(filtroModI) {
+						DBUtils.setFiltriModIErogazione(sqlQueryObject, this.tipoDB,
+								filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
+								filtroModIDigestRichiestaEnabled, filtroModIInfoUtenteEnabled,
+								filtroModIKeystore, filtroModIAudience);
+					}
+					if(filtroProprieta) {
+						DBUtils.setFiltriProprietaErogazione(sqlQueryObject, this.tipoDB, 
+								filtroProprietaNome, filtroProprietaValore);
 					}
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");

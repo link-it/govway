@@ -435,6 +435,9 @@ public class ConsoleProperties {
 	public boolean isModipaFruizioniConnettoreCheckHttps() throws UtilsException{
 		return this.readBooleanProperty(true, "modipa.fruizioni.connettore.checkHttps");
 	}
+	public boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi() throws UtilsException{
+		return this.readBooleanProperty(true, "modipa.filtroRicerca.profiloQualsiasi.visualizzaDatiModi");
+	}
 	
 	public Boolean isConfigurazionePluginsEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "plugins.enabled");

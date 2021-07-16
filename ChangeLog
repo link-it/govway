@@ -1,3 +1,20 @@
+2021-07-16  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-1225
+	Nei filtri di ricerca delle Erogazioni, Fruizioni e Applicativi sono stati aggiunti i seguenti criteri di ricerca:
+	- dai sui connettori: è possibile ricercare per tipo di connettore, endpoint, token policy e keystore (solo in https);
+	- dati ModI (solo con profilo selezionato): è possibile effettuare ricerche per pattern di sicurezza canale, sicurezza messaggio, digest della richiesta, informazioni utente, keystore e audience;
+	- proprietà: è possibile selezionare una proprietà tra quelle configurate e/o indicare un valore.
+	Sono stati definiti anche dei criteri di ricerca per quanto concerne i connettori multipli configurabili in una erogazione: è adesso possibile ricercare connettori per nome, filtro e dati del connettore.
+	Anche nei criteri di ricerca sui soggetti è stata aggiunta la possibilità di ricerca per proprietà.
+	Infine nei criteri di ricerca delle API, con profilo ModI, è adesso possibile effettuare ricerche per pattern di sicurezza canale, sicurezza messaggio, digest della richiesta e informazioni utente.
+
+2021-07-13  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloTrasparente]
+	Aggiunti contesti 'api-soap' e 'api-rest' sul profilo 'API Gateway'. Sui due contesti è abilitata solamente la tecnologia indicata nel nome.
+
 2021-07-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

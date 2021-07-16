@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.mapping.ProprietariProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;

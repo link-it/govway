@@ -25,7 +25,6 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -80,6 +79,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
@@ -92,6 +92,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
+import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -118,7 +119,6 @@ import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
 import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
@@ -881,8 +881,12 @@ public class ControlStationCore {
 	
 	/** ModI */
 	private boolean isModipaFruizioniConnettoreCheckHttps;
+	private boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
 	public boolean isModipaFruizioniConnettoreCheckHttps() {
 		return this.isModipaFruizioniConnettoreCheckHttps;
+	}
+	public boolean isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi() {
+		return this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
 	}
 	
 	/** Plugins */
@@ -2429,6 +2433,7 @@ public class ControlStationCore {
 		
 		/** ModI */
 		this.isModipaFruizioniConnettoreCheckHttps = core.isModipaFruizioniConnettoreCheckHttps;
+		this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi = core.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi;
 		
 		/** Plugins */
 		this.configurazionePluginsEnabled = core.configurazionePluginsEnabled;
@@ -2816,6 +2821,7 @@ public class ControlStationCore {
 				this.consegnaNotificaConfigurazionePriorita.put(priorita, consoleProperties.getConsegnaNotificaConfigurazionePriorita(priorita));
 			}
 			this.isModipaFruizioniConnettoreCheckHttps = consoleProperties.isModipaFruizioniConnettoreCheckHttps();
+			this.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi = consoleProperties.isModipaFiltroRicercaProfiloQualsiasiVisualizzaDatiModi();
 			this.configurazionePluginsEnabled = consoleProperties.isConfigurazionePluginsEnabled();
 			this.configurazionePluginsSeconds = consoleProperties.getPluginsSeconds();
 			this.configurazioneHandlersEnabled = consoleProperties.isConfigurazioneHandlersEnabled();
@@ -7757,9 +7763,7 @@ public class ControlStationCore {
 	
 	public boolean isProfiloModIPA(String protocollo) {
 		try {
-			Class<?> classCostanti = Class.forName("org.openspcoop2.protocol.modipa.constants.ModICostanti");
-			Field f = classCostanti.getDeclaredField("MODIPA_PROTOCOL_NAME");
-			return protocollo!=null && protocollo.equals(f.get(null));
+			return protocollo!=null && protocollo.equals(CostantiLabel.MODIPA_PROTOCOL_NAME);
 		}catch(Throwable t) {
 			return false;
 		}

@@ -21,6 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,6 +34,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -77,6 +81,8 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
+			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+						
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 	
@@ -85,13 +91,24 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 	
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 	
+			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
+			List<PortaApplicativaServizioApplicativo> listaFiltrata = null;
+			if(!ServletUtils.isSearchDone(porteApplicativeHelper)) {
+				listaFiltrata = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  PortaApplicativaServizioApplicativo.class);
+			}
+			
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 	
-			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			if(listaFiltrata==null) {
+				IDSoggetto idSoggettoProprietario = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
+				listaFiltrata = porteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli(ricerca, idLista, portaApplicativa.getServizioApplicativoList(), idSoggettoProprietario);
+			}
 			
-			// filtro
-	
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, portaApplicativa);
+			if(!porteApplicativeHelper.isPostBackFilterElement()) {
+				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, listaFiltrata); // salvo poiche' esistono filtri che hanno necessita di postback
+			}
+			
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, listaFiltrata, portaApplicativa);
 	
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

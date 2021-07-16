@@ -1119,6 +1119,28 @@ public class SoggettiHelper extends ConnettoriHelper {
 				SearchUtils.clearFilter(ricerca, idLista, Filtri.FILTRO_API_IMPLEMENTAZIONE);
 			}
 			
+			// filtri proprieta
+			String protocolloPerFiltroProprieta = protocolloSel;
+			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
+			if(protocolloPerFiltroProprieta == null) {
+				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+					protocolloPerFiltroProprieta = null;
+				} else {
+					protocolloPerFiltroProprieta = filterProtocollo;
+				}
+			}
+			
+			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
+			if(nomiProprieta != null && nomiProprieta.size() >0) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				
+				// filtro nome
+				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
+				
+				// filtro valore
+				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+			}
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
@@ -1547,7 +1569,38 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 
-			addFilterProtocol(ricerca, idLista);
+			String filterProtocollo = addFilterProtocol(ricerca, idLista, true);
+			String protocolloSel = filterProtocollo;
+			if(protocolloSel==null) {
+				// significa che e' stato selezionato un protocollo nel menu in alto a destra
+				List<String> protocolli = this.core.getProtocolli(this.session);
+				if(protocolli!=null && protocolli.size()==1) {
+					protocolloSel = protocolli.get(0);
+				}
+			}
+			
+			// filtri proprieta
+			String protocolloPerFiltroProprieta = protocolloSel;
+			// valorizzato con il protocollo nel menu in alto a destra oppure null, controllo se e' stato selezionato nel filtro di ricerca
+			if(protocolloPerFiltroProprieta == null) {
+				if("".equals(filterProtocollo) || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo)) {
+					protocolloPerFiltroProprieta = null;
+				} else {
+					protocolloPerFiltroProprieta = filterProtocollo;
+				}
+			}
+			
+			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
+			if(nomiProprieta != null && nomiProprieta.size() >0) {
+				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				
+				// filtro nome
+				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
+				
+				// filtro valore
+				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+			}
+						
 						
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
