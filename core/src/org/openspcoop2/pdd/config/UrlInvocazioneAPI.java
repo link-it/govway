@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.manifest.WebEmptyContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -422,7 +423,15 @@ public class UrlInvocazioneAPI implements Serializable {
 	private static String getContext(IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceNameNormalizzata) throws DriverConfigurazioneException {
 	
 		try {
-						
+			boolean trasparente = false;
+			if(protocolFactory!=null) {
+				trasparente = Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocolFactory.getProtocol());
+			}
+			boolean forceContextWithoutBinding = false;
+			if(trasparente) {
+				forceContextWithoutBinding = true; // altrimenti vengono usati api-rest e api-soap
+			}
+			
 			String contextWithoutBinding = null;
 			String contextWithRestBinding = null;
 			String contextWithSoapBinding = null;
@@ -465,10 +474,10 @@ public class UrlInvocazioneAPI implements Serializable {
 			}
 			
 			// Assegno i contesti se non trovati altri.
-			if(contextWithRestBinding==null) {
+			if(contextWithRestBinding==null || (forceContextWithoutBinding && contextWithoutBinding!=null)) {
 				contextWithRestBinding = contextWithoutBinding;
 			}
-			if(contextWithSoapBinding==null) {
+			if(contextWithSoapBinding==null || (forceContextWithoutBinding && contextWithoutBinding!=null)) {
 				contextWithSoapBinding = contextWithoutBinding;
 			}
 			if(contextWithoutBinding==null) {
