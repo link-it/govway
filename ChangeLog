@@ -1,3 +1,16 @@
+2021-07-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Risolto bug OP-1236
+	È stato risolto un problema presente nella libreria xPath disponibile tra le funzioni built-in nelle trasformazioni.
+	Quando si estraeva frammenti di elementi xml, eventuali entity reference presenti nei valori degli elementi estratti venivano erroneamente risolti.
+	La risoluzione poteva comportare una generazione di un frammento xml sintatticamente non valido.
+	Ad esempio se nella trasformazione si utilizzava il frammento xml '<descrizione>Esempio con &lt;30</descrizione>' per comporre un nuovo xml, 
+	si otteneva un errore di parsing poichè l'entity reference presente nella descrizione '&lt;30' veniva risolta con il carattere '<' comportando quindi la generazione di un elemento xml malformato: 
+	'<descrizione>Esempio con <30</descrizione>'.
+	Nell'intervento è stata risolta anche la problematica presente nella risoluzione dinamica dell'endpoint dei connettori http/https e dei path sul connettore file: 
+	gli header e i parametri della url erano utilizzabili all'interno dell'endpoint (es. ${header:XXX}) solamente se venivano serializzati verso il backend.
+
 2021-07-16  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
