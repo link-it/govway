@@ -66,6 +66,7 @@ import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.beans.ResourceSintetica;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.ParameterType;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
@@ -2983,39 +2984,44 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			boolean validazioneParteComune = false;
 			boolean validazioneSpecificaConversazione = false;
 
+			FormatoSpecifica formato = null;
+			if(as!=null) {
+				formato = as.getFormatoSpecifica();
+			}
+			
 			if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
 				as.setByteWsdlDefinitorio(tmp);
 				validazioneParteComune = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
 				as.setByteWsdlConcettuale(tmp);
 				validazioneParteComune = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
 				as.setByteWsdlLogicoErogatore(tmp);
 				validazioneParteComune = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
 				as.setByteWsdlLogicoFruitore(tmp);
 				validazioneParteComune = true;
 			}
 
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
 				as.setByteSpecificaConversazioneConcettuale(tmp);
 				validazioneSpecificaConversazione = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
 				as.setByteSpecificaConversazioneErogatore(tmp);
 				validazioneSpecificaConversazione = true;
 			}
 			else if (tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apcCore.getInterfaceAsByteArray(formato, wsdl);
 				as.setByteSpecificaConversazioneFruitore(tmp);
 				validazioneSpecificaConversazione = true;
 			}
@@ -5126,28 +5132,33 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Validazione wsdl/sbl
 			if(validazioneDocumenti && tipoOperazione.equals(TipoOperazione.ADD)){
 
+				FormatoSpecifica formato = null;
+				if(accordoServizioParteComune!=null) {
+					formato = accordoServizioParteComune.getFormatoSpecifica();
+				}
+				
 				// WSDL
 				String wsdlDefinitorioS = wsdldef.getValue() != null ? new String(wsdldef.getValue()) : null; 
-				byte [] wsdlDefinitorio = wsdlDefinitorioS != null && !wsdlDefinitorioS.trim().replaceAll("\n", "").equals("") ? wsdlDefinitorioS.trim().getBytes() : null;
+				byte [] wsdlDefinitorio = this.apcCore.getInterfaceAsByteArray(formato, wsdlDefinitorioS);
 				
 				String wsdlconcS = wsdlconc.getValue() != null ? new String(wsdlconc.getValue()) : null; 
-				byte [] wsdlConcettuale =   wsdlconcS != null && !wsdlconcS.trim().replaceAll("\n", "").equals("") ? wsdlconcS.trim().getBytes() : null;
+				byte [] wsdlConcettuale = this.apcCore.getInterfaceAsByteArray(formato, wsdlconcS);
 				
 				String wsdlLogicoErogatoreS = wsdlserv.getValue() != null ? new String(wsdlserv.getValue()) : null; 
-				byte [] wsdlLogicoErogatore = wsdlLogicoErogatoreS != null && !wsdlLogicoErogatoreS.trim().replaceAll("\n", "").equals("") ? wsdlLogicoErogatoreS.trim().getBytes() : null;
+				byte [] wsdlLogicoErogatore = this.apcCore.getInterfaceAsByteArray(formato, wsdlLogicoErogatoreS);
 				
 				String wsdlLogicoFruitoreS = wsdlservcorr.getValue() != null ? new String(wsdlservcorr.getValue()) : null; 
-				byte [] wsdlLogicoFruitore = wsdlLogicoFruitoreS != null && !wsdlLogicoFruitoreS.trim().replaceAll("\n", "").equals("") ? wsdlLogicoFruitoreS.trim().getBytes() : null;
+				byte [] wsdlLogicoFruitore = this.apcCore.getInterfaceAsByteArray(formato, wsdlLogicoFruitoreS);
 				
 				// WSBL
 				String wsblConcettualeS = wsblconc.getValue() != null ? new String(wsblconc.getValue()) : null; 
-				byte [] wsblConcettuale = wsblConcettualeS != null && !wsblConcettualeS.trim().replaceAll("\n", "").equals("") ? wsblConcettualeS.trim().getBytes() : null;
+				byte [] wsblConcettuale = this.apcCore.getInterfaceAsByteArray(formato, wsblConcettualeS);
 				
 				String wsblLogicoErogatoreS = wsblserv.getValue() != null ? new String(wsblserv.getValue()) : null; 
-				byte [] wsblLogicoErogatore = wsblLogicoErogatoreS != null && !wsblLogicoErogatoreS.trim().replaceAll("\n", "").equals("") ? wsblLogicoErogatoreS.trim().getBytes() : null;
+				byte [] wsblLogicoErogatore = this.apcCore.getInterfaceAsByteArray(formato, wsblLogicoErogatoreS);
 				
 				String wsblLogicoFruitoreS = wsblservcorr.getValue() != null ? new String(wsblservcorr.getValue()) : null;
-				byte [] wsblLogicoFruitore = wsblLogicoFruitoreS != null && !wsblLogicoFruitoreS.trim().replaceAll("\n", "").equals("") ? wsblLogicoFruitoreS.trim().getBytes() : null;
+				byte [] wsblLogicoFruitore = this.apcCore.getInterfaceAsByteArray(formato, wsblLogicoFruitoreS);
 
 				accordoServizioParteComune.setByteWsdlDefinitorio(wsdlDefinitorio);
 				accordoServizioParteComune.setByteWsdlConcettuale(wsdlConcettuale);

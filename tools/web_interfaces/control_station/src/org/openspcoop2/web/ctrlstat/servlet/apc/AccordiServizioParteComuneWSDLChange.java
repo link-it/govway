@@ -449,7 +449,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				//Informo l'utente che potrebbe sovrascrivere i servizi definiti tramite l'aggiornamento del wsdl
 				// Questa Modalita' e' controllata tramite la proprieta' isenabledAutoMappingWsdlIntoAccordo
 				// e se non e' un reset
-				if(enableAutoMapping && (this.wsdl != null) && !this.wsdl.trim().replaceAll("\n", "").equals("") ){
+				if(enableAutoMapping && apcCore.isInterfaceDefined(this.wsdl) ){
 					if(actionConfirm == null){
 						if(as.sizePortTypeList() > 0 || as.sizeResourceList()>0 ){
 							
@@ -529,7 +529,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			List<IDResource> risorseEliminate = new ArrayList<IDResource>();
 			List<IDPortType> portTypeEliminati = new ArrayList<IDPortType>();
 			List<IDPortTypeAzione> operationEliminate = new ArrayList<IDPortTypeAzione>();
-			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(this.tipo, this.wsdl!=null ? this.wsdl.trim() : null, as,
+			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(this.tipo, this.wsdl, as,
 					enableAutoMapping, this.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard,
 					tipoProtocollo, 
 					apcCore,

@@ -1,0 +1,53 @@
+    openapi: 3.0.0
+    info:
+      title: Test Indentazione
+      description: Test Indentazione
+      version: 1.0.0
+      
+    servers:
+      - url: http://petstore.swagger.io/api
+        description: Server
+    
+    paths:  
+      /test:
+        get:
+          summary: sum
+          description: descr
+          security:
+            - bearerAuth: []
+          parameters:
+          - name: param1
+            in: query
+            required: false
+            description: descr1
+            schema:
+              type : string
+          - name: param2
+            in: query
+            required: true
+            description: descr2
+            schema:
+              type : string
+              format: Date
+          responses:
+            '200':
+              description: response
+              
+    components:
+      securitySchemes:
+        basicAuth:
+          type: oauth2
+          flows:
+            clientCredentials: 
+              tokenUrl: https://example
+              scopes:
+                scope: s1
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+    
+    security:
+      - basicAuth: []
+
+

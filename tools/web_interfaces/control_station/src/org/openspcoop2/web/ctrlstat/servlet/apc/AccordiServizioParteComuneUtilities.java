@@ -953,24 +953,34 @@ public class AccordiServizioParteComuneUtilities {
 		
 	}
 	
-	public static void updateInterfacciaAccordoServizioParteComune(String tipoParam, String wsdlParam, AccordoServizioParteComune as,
+	public static void updateInterfacciaAccordoServizioParteComune(String tipoParam, String wsdlS, AccordoServizioParteComune as,
 			boolean enableAutoMapping, boolean validazioneDocumenti, boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes, boolean facilityUnicoWSDL_interfacciaStandard,
 			String tipoProtocollo, 
 			AccordiServizioParteComuneCore apcCore,
 			boolean aggiornaEsistenti, boolean eliminaNonPresentiNuovaInterfaccia,
 			List<IDResource> risorseEliminate,List<IDPortType> portTypeEliminati, List<IDPortTypeAzione> operationEliminate) throws Exception {
+		
+		FormatoSpecifica formato = null;
+		byte [] wsdlBytes = null;
+		if(as!=null) {
+			formato = as.getFormatoSpecifica();
+		}
+		if(wsdlS!=null) {
+			wsdlBytes = apcCore.getInterfaceAsByteArray(formato, wsdlS);
+		}
+		
 		// il wsdl definitorio rimane fuori dal nuovo comportamento quindi il flusso della pagina continua come prima
 		if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
-			as.setByteWsdlDefinitorio(wsdlParam.getBytes());
+			as.setByteWsdlDefinitorio(wsdlBytes);
 		}
 		else {
 			// se sono state definiti dei port type ed e' la prima volta che ho passato i controlli 
 			//Informo l'utente che potrebbe sovrascrivere i servizi definiti tramite l'aggiornamento del wsdl
 			// Questa Modalita' e' controllata tramite la proprieta' isenabledAutoMappingWsdlIntoAccordo
 			// e se non e' un reset
-			if(enableAutoMapping && (wsdlParam != null) && !wsdlParam.trim().replaceAll("\n", "").equals("") ){
+			if(enableAutoMapping){
 				
-				if((wsdlParam != null) && !wsdlParam.trim().replaceAll("\n", "").equals("") ){
+				if( wsdlBytes!=null ){
 					AccordoServizioParteComune asNuovo = new AccordoServizioParteComune();
 					asNuovo.setFormatoSpecifica(as.getFormatoSpecifica());
 					asNuovo.setServiceBinding(as.getServiceBinding());
@@ -980,23 +990,23 @@ public class AccordiServizioParteComuneUtilities {
 					
 					// decodifico quale wsdl/wsbl sto aggiornando
 					if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
-						as.setByteWsdlConcettuale(wsdlParam.getBytes());
+						as.setByteWsdlConcettuale(wsdlBytes);
 
 						asNuovo.setByteSpecificaConversazioneConcettuale(as.getByteSpecificaConversazioneConcettuale());
 						asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
 						asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
-						asNuovo.setByteWsdlConcettuale(wsdlParam.getBytes());
+						asNuovo.setByteWsdlConcettuale(wsdlBytes);
 						
 						fillXsd = true;
 						tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE;
 					}
 					if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
-						as.setByteWsdlLogicoErogatore(wsdlParam.getBytes());
+						as.setByteWsdlLogicoErogatore(wsdlBytes);
 
 						asNuovo.setByteSpecificaConversazioneConcettuale(as.getByteSpecificaConversazioneConcettuale());
 						asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
 						asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
-						asNuovo.setByteWsdlLogicoErogatore(wsdlParam.getBytes());
+						asNuovo.setByteWsdlLogicoErogatore(wsdlBytes);
 						
 						fillXsd = true;
 						if(facilityUnicoWSDL_interfacciaStandard){
@@ -1008,36 +1018,36 @@ public class AccordiServizioParteComuneUtilities {
 						
 					}
 					if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
-						as.setByteWsdlLogicoFruitore(wsdlParam.getBytes());
+						as.setByteWsdlLogicoFruitore(wsdlBytes);
 
 						asNuovo.setByteSpecificaConversazioneConcettuale(as.getByteSpecificaConversazioneConcettuale());
 						asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
 						asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
-						asNuovo.setByteWsdlLogicoFruitore(wsdlParam.getBytes());
+						asNuovo.setByteWsdlLogicoFruitore(wsdlBytes);
 						
 						fillXsd = true;
 						tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_FRUITORE;
 					}
 					if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
-						as.setByteSpecificaConversazioneConcettuale(wsdlParam.getBytes());
+						as.setByteSpecificaConversazioneConcettuale(wsdlBytes);
 
-						asNuovo.setByteSpecificaConversazioneConcettuale(wsdlParam.getBytes());
+						asNuovo.setByteSpecificaConversazioneConcettuale(wsdlBytes);
 						asNuovo.setByteWsdlConcettuale(as.getByteWsdlConcettuale());
 						asNuovo.setByteWsdlLogicoErogatore(as.getByteWsdlLogicoErogatore());
 						asNuovo.setByteWsdlLogicoFruitore(as.getByteWsdlLogicoFruitore());
 					}
 					if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
-						as.setByteSpecificaConversazioneErogatore(wsdlParam.getBytes());
+						as.setByteSpecificaConversazioneErogatore(wsdlBytes);
 
-						asNuovo.setByteSpecificaConversazioneErogatore(wsdlParam.getBytes());
+						asNuovo.setByteSpecificaConversazioneErogatore(wsdlBytes);
 						asNuovo.setByteWsdlConcettuale(as.getByteWsdlConcettuale());
 						asNuovo.setByteWsdlLogicoErogatore(as.getByteWsdlLogicoErogatore());
 						asNuovo.setByteWsdlLogicoFruitore(as.getByteWsdlLogicoFruitore());
 					}
 					if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
-						as.setByteSpecificaConversazioneFruitore(wsdlParam.getBytes());
+						as.setByteSpecificaConversazioneFruitore(wsdlBytes);
 
-						asNuovo.setByteSpecificaConversazioneFruitore(wsdlParam.getBytes());
+						asNuovo.setByteSpecificaConversazioneFruitore(wsdlBytes);
 						asNuovo.setByteWsdlConcettuale(as.getByteWsdlConcettuale());
 						asNuovo.setByteWsdlLogicoErogatore(as.getByteWsdlLogicoErogatore());
 						asNuovo.setByteWsdlLogicoFruitore(as.getByteWsdlLogicoFruitore());
@@ -1059,7 +1069,7 @@ public class AccordiServizioParteComuneUtilities {
 					
 					// popolo gli allegati
 					if(fillXsd && enableAutoMapping_estraiXsdSchemiFromWsdlTypes && FormatoSpecifica.WSDL_11.equals(as.getFormatoSpecifica())){
-						apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, wsdlParam.getBytes(), tipo, new Hashtable<String, byte[]> ());
+						apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, wsdlBytes, tipo, new Hashtable<String, byte[]> ());
 						if(facilityUnicoWSDL_interfacciaStandard){
 							// è stato utilizzato il concettuale. Lo riporto nel logico
 							as.setByteWsdlLogicoErogatore(as.getByteWsdlConcettuale());
@@ -1085,22 +1095,22 @@ public class AccordiServizioParteComuneUtilities {
 				// anche in caso di reset del wsdl
 
 				if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
-					as.setByteWsdlConcettuale(wsdlParam.getBytes());
+					as.setByteWsdlConcettuale(wsdlBytes);
 				}
 				if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
-					as.setByteWsdlLogicoErogatore(wsdlParam.getBytes());
+					as.setByteWsdlLogicoErogatore(wsdlBytes);
 				}
 				if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
-					as.setByteWsdlLogicoFruitore(wsdlParam.getBytes());
+					as.setByteWsdlLogicoFruitore(wsdlBytes);
 				}
 				if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
-					as.setByteSpecificaConversazioneConcettuale(wsdlParam.getBytes());
+					as.setByteSpecificaConversazioneConcettuale(wsdlBytes);
 				}
 				if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
-					as.setByteSpecificaConversazioneErogatore(wsdlParam.getBytes());
+					as.setByteSpecificaConversazioneErogatore(wsdlBytes);
 				}
 				if (tipoParam.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
-					as.setByteSpecificaConversazioneFruitore(wsdlParam.getBytes());
+					as.setByteSpecificaConversazioneFruitore(wsdlBytes);
 				}
 
 			} 

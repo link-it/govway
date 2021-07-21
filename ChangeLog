@@ -1,5 +1,13 @@
 2021-07-21  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto bug OP-1240
+	(https://github.com/link-it/govway/issues/83)
+	Caricando un'interfaccia OpenAPI 3 in cui gli elementi principali (openapi, info, servers, paths ...) non sono posizionati sulla prima colonna, si otteneva il seguente errore:
+	[Interfaccia OpenAPI 3] Documento non valido: org.openspcoop2.utils.rest.ProcessingException: Parse failed: mapping values are not allowed here in 'reader', line 2, column 9: info: ^ at [Source: (StringReader); line: 2, column: 9]
+    
+2021-07-21  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto bug OP-1238
 	Le richieste ricevute prima del corretto startup di GovWay, provocano una inizializzazione non corretta degli handler.

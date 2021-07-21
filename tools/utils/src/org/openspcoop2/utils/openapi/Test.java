@@ -110,6 +110,39 @@ public class Test {
 
 	}
 	
+	public static void testIndentazione(URI uri, String testName, ApiFormats format, String baseUri) throws Exception {
+		
+		IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		byte [] bytes = FileSystemUtilities.readBytesFromFile(new File(uri));
+		ApiReaderConfig config = new ApiReaderConfig();
+		config.setProcessInclude(false);
+		apiReader.init(LoggerWrapperFactory.getLogger(Test.class), bytes, config);
+		if(apiReader instanceof AbstractOpenapiApiReader) {
+			((AbstractOpenapiApiReader)apiReader).setDebug(true);
+		}
+		Api api = apiReader.read();
+		
+		File f = File.createTempFile("test", "");
+		f.delete();
+		if(f.mkdir()==false) {
+			System.out.println("["+testName+"] Creazione dir non riuscita: "+f.getAbsolutePath());
+			return;
+		}
+		System.out.println("["+testName+"] Test scritti nella directory: "+f.getAbsolutePath());
+		
+		File fApi = new File(f,"APIIndentazione.txt");
+		FileSystemUtilities.writeFile(fApi, api.toString().getBytes());
+		System.out.println("["+testName+"] API COMPLESSIVA scritta in: "+fApi.getAbsolutePath());
+
+		System.out.println("["+testName+"] Validazione ... ");
+		api.validate(false);
+		System.out.println("["+testName+"] Validazione effettuata con successo");
+		
+		String test = baseUri+"/test";
+		System.out.println("["+testName+"] API-Op ["+test+"]: "+
+				checkNotNull(api.findOperation(HttpRequestMethod.GET, test), f, "GET_test"));
+	}
+	
 	private static String checkCompleta(ApiOperation api, File f, String nome, ApiFormats apiFormat) throws Exception {
 		String resp = checkNotNull(api, f, nome);
 		

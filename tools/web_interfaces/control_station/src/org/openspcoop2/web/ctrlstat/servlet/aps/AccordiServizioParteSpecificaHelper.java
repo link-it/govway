@@ -78,6 +78,7 @@ import org.openspcoop2.core.registry.beans.AzioneSintetica;
 import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.beans.ResourceSintetica;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -149,15 +150,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			AccordoServizioParteSpecifica aps, AccordoServizioParteComune apc,boolean validazioneDocumenti) throws Exception {
 
 		if(validazioneDocumenti){
-
+			
+			FormatoSpecifica formato = null;
+			if(apc!=null) {
+				formato = apc.getFormatoSpecifica();
+			}
+			
 			boolean  validazioneParteSpecifica = false;
 			if (tipo.equals(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apsCore.getInterfaceAsByteArray(formato, wsdl);
 				aps.setByteWsdlImplementativoErogatore(tmp);
 				validazioneParteSpecifica = true;
 			}
 			else if (tipo.equals(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apsCore.getInterfaceAsByteArray(formato, wsdl);
 				aps.setByteWsdlImplementativoFruitore(tmp);
 				validazioneParteSpecifica = true;
 			}
@@ -180,14 +186,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		if(validazioneDocumenti){
 
+			FormatoSpecifica formato = null;
+			if(apc!=null) {
+				formato = apc.getFormatoSpecifica();
+			}
+			
 			boolean  validazioneParteSpecifica = false;
 			if (tipo.equals(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apsCore.getInterfaceAsByteArray(formato, wsdl);
 				fruitore.setByteWsdlImplementativoErogatore(tmp);
 				validazioneParteSpecifica = true;
 			}
 			else if (tipo.equals(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE)) {
-				byte [] tmp = wsdl != null && !wsdl.trim().replaceAll("\n", "").equals("") ? wsdl.trim().getBytes() : null;
+				byte [] tmp = this.apsCore.getInterfaceAsByteArray(formato, wsdl);
 				fruitore.setByteWsdlImplementativoFruitore(tmp);
 				validazioneParteSpecifica = true;
 			}
@@ -1365,11 +1376,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// Validazione Documenti
 			if(validazioneDocumenti && tipoOp.equals(TipoOperazione.ADD)){
-
+				
+				FormatoSpecifica formato = null;
+				if(as!=null) {
+					formato = as.getFormatoSpecifica();
+				}
+				
 				String wsdlimplerS = wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : null; 
-				byte [] wsdlImplementativoErogatore = wsdlimplerS != null && !wsdlimplerS.trim().replaceAll("\n", "").equals("") ? wsdlimplerS.trim().getBytes() : null;
+				byte [] wsdlImplementativoErogatore = this.apsCore.getInterfaceAsByteArray(formato, wsdlimplerS);
 				String wsdlimplfruS = wsdlimplfru.getValue() != null ? new String(wsdlimplfru.getValue()) : null; 
-				byte [] wsdlImplementativoFruitore = wsdlimplfruS != null && !wsdlimplfruS.trim().replaceAll("\n", "").equals("") ? wsdlimplfruS.trim().getBytes() : null;
+				byte [] wsdlImplementativoFruitore = this.apsCore.getInterfaceAsByteArray(formato, wsdlimplfruS);
 				
 				aps.setByteWsdlImplementativoErogatore(wsdlImplementativoErogatore);
 				aps.setByteWsdlImplementativoFruitore(wsdlImplementativoFruitore);
@@ -1649,10 +1665,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				// Validazione Documenti
 				if(validazioneDocumenti && tipoOp.equals(TipoOperazione.ADD) && this.isModalitaAvanzata() ){
 					
+					FormatoSpecifica formato = null;
+					if(as!=null) {
+						formato = as.getFormatoSpecifica();
+					}
+					
 					String wsdlimplerS = wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : null; 
-					byte [] wsdlImplementativoErogatore = wsdlimplerS != null && !wsdlimplerS.trim().replaceAll("\n", "").equals("") ? wsdlimplerS.trim().getBytes() : null;
+					byte [] wsdlImplementativoErogatore = this.apsCore.getInterfaceAsByteArray(formato, wsdlimplerS);
 					String wsdlimplfruS = wsdlimplfru.getValue() != null ? new String(wsdlimplfru.getValue()) : null; 
-					byte [] wsdlImplementativoFruitore = wsdlimplfruS != null && !wsdlimplfruS.trim().replaceAll("\n", "").equals("") ? wsdlimplfruS.trim().getBytes() : null;
+					byte [] wsdlImplementativoFruitore = this.apsCore.getInterfaceAsByteArray(formato, wsdlimplfruS);
 
 					//aps.setByteWsdlImplementativoErogatore(wsdlImplementativoErogatore);
 					//aps.setByteWsdlImplementativoFruitore(wsdlImplementativoFruitore);

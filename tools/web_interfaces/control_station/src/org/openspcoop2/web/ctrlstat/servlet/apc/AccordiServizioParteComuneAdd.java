@@ -54,6 +54,7 @@ import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
@@ -804,14 +805,16 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			this.profcoll = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneView2DB(this.profcoll);
 			as.setProfiloCollaborazione(ProfiloCollaborazione.toEnumConstant(this.profcoll));
 
+			FormatoSpecifica formato = apcCore.interfaceType2FormatoSpecifica(this.interfaceType);
+			
 			String wsdlconcS = this.wsdlconc.getValue() != null ? new String(this.wsdlconc.getValue()) : null; 
-			as.setByteWsdlConcettuale(wsdlconcS != null && !wsdlconcS.trim().replaceAll("\n", "").equals("") ? wsdlconcS.trim().getBytes() : null);
+			as.setByteWsdlConcettuale(apcCore.getInterfaceAsByteArray(formato, wsdlconcS));
 			String wsdldefS = this.wsdldef.getValue() != null ? new String(this.wsdldef.getValue()) : null; 
-			as.setByteWsdlDefinitorio(wsdldefS != null && !wsdldefS.trim().replaceAll("\n", "").equals("") ? wsdldefS.trim().getBytes() : null);
+			as.setByteWsdlDefinitorio(apcCore.getInterfaceAsByteArray(formato, wsdldefS));
 			String wsdlservS = this.wsdlserv.getValue() != null ? new String(this.wsdlserv.getValue()) : null; 
-			as.setByteWsdlLogicoErogatore(wsdlservS != null && !wsdlservS.trim().replaceAll("\n", "").equals("") ? wsdlservS.trim().getBytes() : null);
+			as.setByteWsdlLogicoErogatore(apcCore.getInterfaceAsByteArray(formato, wsdlservS));
 			String wsdlservcorrS = this.wsdlservcorr.getValue() != null ? new String(this.wsdlservcorr.getValue()) : null; 
-			as.setByteWsdlLogicoFruitore(wsdlservcorrS != null && !wsdlservcorrS.trim().replaceAll("\n", "").equals("") ? wsdlservcorrS.trim().getBytes() : null);
+			as.setByteWsdlLogicoFruitore(apcCore.getInterfaceAsByteArray(formato, wsdlservcorrS));
 
 			// Se un utente ha impostato solo il logico erogatore (avviene automaticamente nel caso non venga visualizzato il campo concettuale)
 			// imposto lo stesso wsdl anche per il concettuale. Tanto Rappresenta la stessa informazione, ma e' utile per lo stato dell'accordo
@@ -832,16 +835,16 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			as.setSuperUser(userLogin);
 			as.setUtilizzoSenzaAzione(true);// default true
 			String wsblconcS = this.wsblconc.getValue() != null ? new String(this.wsblconc.getValue()) : null; 
-			as.setByteSpecificaConversazioneConcettuale((wsblconcS != null) && !wsblconcS.trim().replaceAll("\n", "").equals("") ? wsblconcS.trim().getBytes() : null);
+			as.setByteSpecificaConversazioneConcettuale(apcCore.getInterfaceAsByteArray(formato, wsblconcS));
 			String wsblservS = this.wsblserv.getValue() != null ? new String(this.wsblserv.getValue()) : null;
-			as.setByteSpecificaConversazioneErogatore((wsblservS != null) && !wsblservS.trim().replaceAll("\n", "").equals("") ? wsblservS.trim().getBytes() : null);
+			as.setByteSpecificaConversazioneErogatore(apcCore.getInterfaceAsByteArray(formato, wsblservS));
 			String wsblservcorrS = this.wsblservcorr.getValue() != null ? new String(this.wsblservcorr.getValue()) : null;
-			as.setByteSpecificaConversazioneFruitore((wsblservcorrS != null) && !wsblservcorrS.trim().replaceAll("\n", "").equals("") ? wsblservcorrS.trim().getBytes() : null);
+			as.setByteSpecificaConversazioneFruitore(apcCore.getInterfaceAsByteArray(formato, wsblservcorrS));
 			
 			// servicebinding / messagetype / formatospecifica
 			as.setServiceBinding(apcCore.fromMessageServiceBinding(this.serviceBinding));
 			as.setMessageType(apcCore.fromMessageMessageType(this.messageType));
-			as.setFormatoSpecifica(apcCore.interfaceType2FormatoSpecifica(this.interfaceType));
+			as.setFormatoSpecifica(formato);
 			
 			if(this.referente!=null && !"".equals(this.referente) && !"-".equals(this.referente)){
 				int idRef = 0;
