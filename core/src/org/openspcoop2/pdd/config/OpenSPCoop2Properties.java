@@ -1803,6 +1803,8 @@ public class OpenSPCoop2Properties {
 			this.isConfigurazioneSistema_javaProperties_showPassword();
 			
 			// govway startup
+			this.getStartup_richiesteIngressoTimeout_secondi();
+			this.getStartup_richiesteIngressoCheck_ms();
 			this.getStartup_lockMaxLife();
 			this.getStartup_lockIdleTime();
 			
@@ -17832,6 +17834,53 @@ public class OpenSPCoop2Properties {
 	
 	
 	/* ------------- govway startup ---------------------*/
+	
+	private static Integer getStartup_richiesteIngressoTimeout = null;
+	public int getStartup_richiesteIngressoTimeout_secondi() {	
+		if(OpenSPCoop2Properties.getStartup_richiesteIngressoTimeout==null){
+			String pName = "org.openspcoop2.pdd.startup.richiesteIngresso.timeout";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getStartup_richiesteIngressoTimeout = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS);
+					OpenSPCoop2Properties.getStartup_richiesteIngressoTimeout = CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getStartup_richiesteIngressoTimeout = CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS;
+			}
+		}
+
+		return OpenSPCoop2Properties.getStartup_richiesteIngressoTimeout;
+	}
+	private static Integer getStartup_richiesteIngressoCheck = null;
+	public int getStartup_richiesteIngressoCheck_ms() {	
+		if(OpenSPCoop2Properties.getStartup_richiesteIngressoCheck==null){
+			String pName = "org.openspcoop2.pdd.startup.richiesteIngresso.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getStartup_richiesteIngressoCheck = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS);
+					OpenSPCoop2Properties.getStartup_richiesteIngressoCheck = CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getStartup_richiesteIngressoCheck = CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS;
+			}
+		}
+
+		return OpenSPCoop2Properties.getStartup_richiesteIngressoCheck;
+	}
 	
 	private static Integer getStartup_lockMaxLife = null;
 	public int getStartup_lockMaxLife() {	

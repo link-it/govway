@@ -780,7 +780,7 @@ public class RicezioneContenutiApplicativi {
 		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
 		PdDContext pddContext = inRequestContext.getPddContext();
 		if (propertiesReader == null) {
-			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: OpenSPCoopProperties";
+			String msg = "Inizializzazione di GovWay non correttamente effettuata: OpenSPCoopProperties";
 			logCore.error(msg);
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse(this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, 
@@ -831,7 +831,7 @@ public class RicezioneContenutiApplicativi {
 		
 		/* ------------ Controllo inizializzazione OpenSPCoop ------------------ */
 		if (OpenSPCoop2Startup.initialize == false) {
-			String msgErrore = "Inizializzazione di OpenSPCoop non correttamente effettuata";
+			String msgErrore = "Inizializzazione di GovWay non correttamente effettuata";
 			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore);
 			try{
 				// provo ad emetter un diagnostico

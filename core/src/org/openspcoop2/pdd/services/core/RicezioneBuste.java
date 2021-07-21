@@ -892,7 +892,7 @@ public class RicezioneBuste {
 		
 		/* ------------ Controllo inizializzazione OpenSPCoop  ------------------ */
 		if( OpenSPCoop2Startup.initialize == false){
-			String msgErrore = "Inizializzazione di OpenSPCoop non correttamente effettuata";
+			String msgErrore = "Inizializzazione di GovWay non correttamente effettuata";
 			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore);
 			try{
 				// provo ad emetter un diagnostico

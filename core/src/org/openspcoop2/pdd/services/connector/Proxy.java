@@ -45,6 +45,7 @@ import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.core.jmx.MonitoraggioRisorse;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.datasource.JmxDataSource;
@@ -79,6 +80,11 @@ public class Proxy extends HttpServlet {
 		if(log==null)
 			log = LoggerWrapperFactory.getLogger(Proxy.class);
 		
+		if( OpenSPCoop2Startup.initialize == false){
+			CheckStatoPdD.serializeNotInitializedResponse(res, log);
+			return;
+		}
+		
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 		
 		boolean proxyEnabled = false;
@@ -87,7 +93,7 @@ public class Proxy extends HttpServlet {
 		}
 		if(proxyEnabled==false){
 			String msg = "Servizio non abilitato";
-			log.error("[proxy] "+msg);
+			log.error("[Proxy] "+msg);
 			res.setStatus(500);
 			res.getOutputStream().write(msg.getBytes());
 			return;

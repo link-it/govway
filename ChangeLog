@@ -1,3 +1,10 @@
+2021-07-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1238
+	Le richieste ricevute prima del corretto startup di GovWay, provocano una inizializzazione non corretta degli handler.
+	Con la risoluzione della problematica le richieste ricevute prima dello startup rimangono in attesa che il gateway sia completamente inizializzato prima di essere processate.
+
 2021-07-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

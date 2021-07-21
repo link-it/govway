@@ -53,6 +53,7 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -523,6 +524,11 @@ public class RicezioneBusteServiceUtils {
 	public static void emitTransaction(RicezioneBusteContext context,Logger logCore, ConnectorInMessage req, PdDContext pddContext, Date dataAccettazioneRichiesta,
 			ConnectorDispatcherInfo info) {
 		try {
+			if (!OpenSPCoop2Startup.initialize || OpenSPCoop2Properties.getInstance() == null) {
+				logCore.error("emitTransaction, registrazione non effettuata: inizializzazione govway non rilevata");
+				return;
+			}
+			
 			String idModulo = req.getIdModulo();
 			IDService idModuloAsService = req.getIdModuloAsIDService();
 			IProtocolFactory<?> protocolFactory = req.getProtocolFactory();
@@ -554,7 +560,11 @@ public class RicezioneBusteServiceUtils {
 			ConnectorDispatcherInfo info) {
 		
 		try {
-		
+			if (!OpenSPCoop2Startup.initialize || OpenSPCoop2Properties.getInstance() == null) {
+				logCore.error("postOutResponse, registrazione non effettuata: inizializzazione govway non rilevata");
+				return;
+			}
+			
 			if(context==null) {
 				context = new RicezioneBusteContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
 			}

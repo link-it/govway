@@ -144,6 +144,12 @@ public class ConnectorUtils {
 		return bf;
 	}
 	
+	public static String getFullCodeGovWayNotInitialized(IDService idService) {
+		StringBuilder bf = getPrefixCode(idService);
+		bf.append(ConnectorCostanti.GOVWAY_NOT_INITIALIZED);
+		return bf.toString();
+	}
+	
 	public static String getFullCodeProtocolUnsupported(IDService idService) {
 		StringBuilder bf = getPrefixCode(idService);
 		bf.append(ConnectorCostanti.CODE_PROTOCOL_NOT_SUPPORTED);
