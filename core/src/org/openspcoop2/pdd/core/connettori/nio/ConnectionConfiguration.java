@@ -43,21 +43,29 @@ public class ConnectionConfiguration {
 	
 	@Override
 	public String toString() {
+		return this.toString(false);
+	}
+	public String toString(boolean onlyForConnectionManager) {
 		StringBuffer bf = new StringBuffer("nio");
-		bf.append(" ").append("debug:").append(this.debug);
-		if(this.proxyHost!=null) {
-			bf.append(" ").append("proxyHost:").append(this.proxyHost);
-		}
-		if(this.proxyPort!=null) {
-			bf.append(" ").append("proxyPort:").append(this.proxyPort);
-		}
-		if(this.connectionTimeout!=null) {
-			bf.append(" ").append("connectionTimeout:").append(this.connectionTimeout);
-		}
-		if(this.readTimeout!=null) {
-			bf.append(" ").append("readTimeout:").append(this.readTimeout);
+		if(!onlyForConnectionManager) {
+			bf.append(" ").append("debug:").append(this.debug);
+			if(this.proxyHost!=null) {
+				bf.append(" ").append("proxyHost:").append(this.proxyHost);
+			}
+			if(this.proxyPort!=null) {
+				bf.append(" ").append("proxyPort:").append(this.proxyPort);
+			}
+			if(this.connectionTimeout!=null) {
+				bf.append(" ").append("connectionTimeout:").append(this.connectionTimeout);
+			}
+			if(this.readTimeout!=null) {
+				bf.append(" ").append("readTimeout:").append(this.readTimeout);
+			}
 		}
 		if(this.sslContextProperties!=null) {
+			if(onlyForConnectionManager) {
+				bf.append(" ");
+			}
 			bf.append(this.sslContextProperties.toString(false));
 		}
 		return bf.toString();

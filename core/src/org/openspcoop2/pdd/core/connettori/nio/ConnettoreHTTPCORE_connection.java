@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.connettori.nio;
 
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 
 /**
  * ConnettoreHTTPCORE_connection
@@ -29,14 +30,24 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE_connection {
+public class ConnettoreHTTPCORE_connection extends AbstractConnettoreHTTPCORE_connection<CloseableHttpAsyncClient> {
 
-	private CloseableHttpAsyncClient httpclient;
+	public ConnettoreHTTPCORE_connection(String key, CloseableHttpAsyncClient client) {
+		super(key, client);
+	}
 	
-	public CloseableHttpAsyncClient getHttpclient() {
-		return this.httpclient;
+	@Override
+	public String getStatus() {
+		return this.httpclient.isRunning()? "running" : "stopped";
 	}
-	public void setHttpclient(CloseableHttpAsyncClient httpclient) {
-		this.httpclient = httpclient;
+
+	@Override
+	public void close() throws ConnettoreException {
+		try {
+			this.httpclient.close();
+		}catch(Throwable e) {
+			throw new ConnettoreException(e.getMessage(),e);
+		}
 	}
+
 }

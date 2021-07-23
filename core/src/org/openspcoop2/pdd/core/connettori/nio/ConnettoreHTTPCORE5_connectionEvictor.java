@@ -23,9 +23,6 @@ package org.openspcoop2.pdd.core.connettori.nio;
 import org.apache.hc.client5.http.HttpRoute;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.core5.util.TimeValue;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.utils.threads.BaseThread;
-import org.slf4j.Logger;
 
 /**
  * ConnettoreHTTPCORE5_connectionEvictor
@@ -35,22 +32,15 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE5_connectionEvictor extends BaseThread {
-
-    private int closeIdleConnectionsAfterSeconds;
-    private boolean debug;
-    private Logger logConnettori;
+public class ConnettoreHTTPCORE5_connectionEvictor extends AbstractConnettoreHTTPCORE_connectionEvictor {
 
     public ConnettoreHTTPCORE5_connectionEvictor(boolean debug, int sleepTimeSeconds, int closeIdleConnectionsAfterSeconds) {
-        super();
-        this.setTimeout(sleepTimeSeconds);
-        this.debug = debug;
-        this.closeIdleConnectionsAfterSeconds = closeIdleConnectionsAfterSeconds;
-        this.logConnettori = OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori();
+        super(debug, sleepTimeSeconds, closeIdleConnectionsAfterSeconds,
+        		ConnettoreHTTPCORE5_connectionManager.mapConnection, "HTTPCore5");
     }
 
     @Override
-    protected void process() {
+    protected boolean check() {
     	
     	if(ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager!=null && !ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager.isEmpty()) {
     		
@@ -91,7 +81,11 @@ public class ConnettoreHTTPCORE5_connectionEvictor extends BaseThread {
 					
 				}
 			}
+			
+			return true;
 		}
+    	
+    	return false;
     	
     }
 

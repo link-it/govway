@@ -26,10 +26,7 @@ import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.impl.nio.reactor.ExceptionEvent;
 import org.apache.http.nio.reactor.ConnectingIOReactor;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.date.DateUtils;
-import org.openspcoop2.utils.threads.BaseThread;
-import org.slf4j.Logger;
 
 /**
  * ConnettoreHTTPCORE_connectionEvictor
@@ -39,22 +36,15 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE_connectionEvictor extends BaseThread {
-
-    private int closeIdleConnectionsAfterSeconds;
-    private boolean debug;
-    private Logger logConnettori;
+public class ConnettoreHTTPCORE_connectionEvictor extends AbstractConnettoreHTTPCORE_connectionEvictor {
 
     public ConnettoreHTTPCORE_connectionEvictor(boolean debug, int sleepTimeSeconds, int closeIdleConnectionsAfterSeconds) {
-        super();
-        this.setTimeout(sleepTimeSeconds);
-        this.debug = debug;
-        this.closeIdleConnectionsAfterSeconds = closeIdleConnectionsAfterSeconds;
-        this.logConnettori = OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori();
+        super(debug, sleepTimeSeconds, closeIdleConnectionsAfterSeconds,
+        		ConnettoreHTTPCORE_connectionManager.mapConnection, "HTTPCore");
     }
 
     @Override
-    protected void process() {
+    protected boolean check() {
     	
     	if(ConnettoreHTTPCORE_connectionManager.mapIoReactor!=null && !ConnettoreHTTPCORE_connectionManager.mapIoReactor.isEmpty()) {
     		
@@ -101,7 +91,13 @@ public class ConnettoreHTTPCORE_connectionEvictor extends BaseThread {
 					
 				}
 			}
+		
+			// fix
+			//return true;
+			return false; // non dove controllare le connessioni con httpcore 4.x poiche' non e' possibile associare il connection manager a piu' istanze client
 		}
+    	
+    	return false;
     	
     }
 

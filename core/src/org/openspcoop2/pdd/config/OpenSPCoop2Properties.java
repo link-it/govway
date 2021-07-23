@@ -12609,6 +12609,54 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds;
 	}
 	
+	private static Integer getNIOConfig_asyncClient_expireUnusedAfterSeconds = null;
+	public Integer getNIOConfig_asyncClient_expireUnusedAfterSeconds() {	
+		if(OpenSPCoop2Properties.getNIOConfig_asyncClient_expireUnusedAfterSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.expireUnusedAfterSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties(pName);
+				if(v!=null && !"".equalsIgnoreCase(v.trim())){
+					v = v.trim();
+					OpenSPCoop2Properties.getNIOConfig_asyncClient_expireUnusedAfterSeconds = java.lang.Integer.parseInt(v);
+				}
+				else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
+					OpenSPCoop2Properties.getNIOConfig_asyncClient_expireUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getNIOConfig_asyncClient_expireUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
+			} 
+		}
+
+		return OpenSPCoop2Properties.getNIOConfig_asyncClient_expireUnusedAfterSeconds;
+	}
+	
+	private static Integer getNIOConfig_asyncClient_closeUnusedAfterSeconds = null;
+	public Integer getNIOConfig_asyncClient_closeUnusedAfterSeconds() {	
+		if(OpenSPCoop2Properties.getNIOConfig_asyncClient_closeUnusedAfterSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.closeUnusedAfterSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties(pName);
+				if(v!=null && !"".equalsIgnoreCase(v.trim())){
+					v = v.trim();
+					OpenSPCoop2Properties.getNIOConfig_asyncClient_closeUnusedAfterSeconds = java.lang.Integer.parseInt(v);
+				}
+				else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
+					OpenSPCoop2Properties.getNIOConfig_asyncClient_closeUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getNIOConfig_asyncClient_closeUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
+			} 
+		}
+
+		return OpenSPCoop2Properties.getNIOConfig_asyncClient_closeUnusedAfterSeconds;
+	}
+	
 	private static Integer getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds = null;
 	public Integer getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds() {	
 		if(OpenSPCoop2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds==null){

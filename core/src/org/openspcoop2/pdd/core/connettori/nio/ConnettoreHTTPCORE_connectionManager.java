@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -38,6 +39,7 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
@@ -160,79 +162,77 @@ public class ConnettoreHTTPCORE_connectionManager {
 		
 	}
 	public static synchronized void stop() throws ConnettoreException {
-		if(ConnettoreHTTPCORE_connectionManager.mapIoReactor!=null && !ConnettoreHTTPCORE_connectionManager.mapIoReactor.isEmpty()) {
 			
-			List<Throwable> listT = new ArrayList<Throwable>();
-			
-			// Shut down the evictor thread
-			if(ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor!=null) {
-				try {			
-					ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor.setStop(true);
-					idleConnectionEvictor.waitShutdown();
-				}catch(Throwable t) {
-					listT.add(t);
-				}	
-			}
-			
-			// close client
-			if(mapConnection!=null && !mapConnection.isEmpty()) {
-				Iterator<String> it = mapConnection.keySet().iterator();
-				while (it.hasNext()) {
-					String key = (String) it.next();
-					ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
-					if(connection.getHttpclient().isRunning()) {
-						try {
-							connection.getHttpclient().close();
-						}catch(Throwable t) {
-							listT.add(new ConnettoreException("NIO Connection ["+key+"] close error: "+t.getMessage(),t));
-						}
-					}
-				}
-			}
-			
-			// Shut down connManager
-			if(ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager!=null && ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.isEmpty()) {
-				for (String key : ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.keySet()) {
-					if(key!=null) {
-						PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.get(key);
-						if(cm!=null) {
-							try {			
-								cm.shutdown();
-							}catch(Throwable t) {
-								listT.add(t);
-							}
-						}
-					}
-				}
-			}
-			
-			// Shut down ioReactor
-			if(ConnettoreHTTPCORE_connectionManager.mapIoReactor!=null && ConnettoreHTTPCORE_connectionManager.mapIoReactor.isEmpty()) {
-				for (String key : ConnettoreHTTPCORE_connectionManager.mapIoReactor.keySet()) {
-					if(key!=null) {
-						ConnectingIOReactor ioReactor = ConnettoreHTTPCORE_connectionManager.mapIoReactor.get(key);
-						if(ioReactor!=null) {
-							try {			
-								ioReactor.shutdown();
-							}catch(Throwable t) {
-								listT.add(t);
-							}
-						}
-					}
-				}
-			}
-			
-			if(listT!=null && !listT.isEmpty()) {
-				if(listT.size()==1) {
-					throw new ConnettoreException(listT.get(0).getMessage(),listT.get(0));		
-				}
-				else {
-					UtilsMultiException multiExc = new UtilsMultiException(listT.toArray(new Throwable[1]));
-					throw new ConnettoreException(multiExc.getMessage(),multiExc);		
-				}
-			}
-			
+		List<Throwable> listT = new ArrayList<Throwable>();
+		
+		// Shut down the evictor thread
+		if(ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor!=null) {
+			try {			
+				ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor.setStop(true);
+				idleConnectionEvictor.waitShutdown();
+			}catch(Throwable t) {
+				listT.add(t);
+			}	
 		}
+		
+		// close client
+		if(mapConnection!=null && !mapConnection.isEmpty()) {
+			Iterator<String> it = mapConnection.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
+				if(connection.getHttpclient().isRunning()) {
+					try {
+						connection.getHttpclient().close();
+					}catch(Throwable t) {
+						listT.add(new ConnettoreException("NIO Connection ["+key+"] close error: "+t.getMessage(),t));
+					}
+				}
+			}
+		}
+		
+		// Shut down connManager
+		if(ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager!=null && ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.isEmpty()) {
+			for (String key : ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.keySet()) {
+				if(key!=null) {
+					PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.get(key);
+					if(cm!=null) {
+						try {			
+							cm.shutdown();
+						}catch(Throwable t) {
+							listT.add(t);
+						}
+					}
+				}
+			}
+		}
+		
+		// Shut down ioReactor
+		if(ConnettoreHTTPCORE_connectionManager.mapIoReactor!=null && ConnettoreHTTPCORE_connectionManager.mapIoReactor.isEmpty()) {
+			for (String key : ConnettoreHTTPCORE_connectionManager.mapIoReactor.keySet()) {
+				if(key!=null) {
+					ConnectingIOReactor ioReactor = ConnettoreHTTPCORE_connectionManager.mapIoReactor.get(key);
+					if(ioReactor!=null) {
+						try {			
+							ioReactor.shutdown();
+						}catch(Throwable t) {
+							listT.add(t);
+						}
+					}
+				}
+			}
+		}
+		
+		if(listT!=null && !listT.isEmpty()) {
+			if(listT.size()==1) {
+				throw new ConnettoreException(listT.get(0).getMessage(),listT.get(0));		
+			}
+			else {
+				UtilsMultiException multiExc = new UtilsMultiException(listT.toArray(new Throwable[1]));
+				throw new ConnettoreException(multiExc.getMessage(),multiExc);		
+			}
+		}
+		
 	}
 		
 	
@@ -241,127 +241,146 @@ public class ConnettoreHTTPCORE_connectionManager {
 		String key = connectionConfig.toString();
 		synchronized(mapConnection) {
 			if(!mapConnection.containsKey(key)) {
-				
-				try {				
-					ConnettoreHTTPCORE_connection resource = new ConnettoreHTTPCORE_connection();
-								
-					RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-					
-					// Timeout
-					if(bf.length()>0) {
-						bf.append("\n");
-					}
-					int connectionTimeout = -1;
-					if(connectionConfig.getConnectionTimeout()!=null) {
-						connectionTimeout = connectionConfig.getConnectionTimeout();
-						bf.append("Connection Timeout: ").append(connectionTimeout);
-					}
-					else {
-						connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
-						bf.append("Connection Timeout Default: ").append(connectionTimeout);
-					}
-					requestConfigBuilder.setConnectionRequestTimeout( connectionTimeout );  //  timeout in milliseconds used when requesting a connection from the connection manager.
-					requestConfigBuilder.setConnectTimeout( connectionTimeout ); // Determines the timeout in milliseconds until a connection is established.
-					
-					
-					if(bf.length()>0) {
-						bf.append("\n");
-					}
-					int readTimeout = -1;
-					if(connectionConfig.getReadTimeout()!=null) {
-						readTimeout = connectionConfig.getReadTimeout();
-						bf.append("Connection Read Timeout: ").append(readTimeout);
-					}
-					else {
-						readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
-						bf.append("Connection Read Timeout Default: ").append(readTimeout);
-					}
-					requestConfigBuilder.setSocketTimeout( readTimeout ); // // Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets).
-					
-					// Proxy
-					if(connectionConfig.getProxyHost()!=null && connectionConfig.getProxyPort()!=null) {
-						if(bf.length()>0) {
-							bf.append("\n");
-						}
-						bf.append("Proxy: ").append(connectionConfig.getProxyHost()).append(":").append(connectionConfig.getProxyPort());
-						requestConfigBuilder.setProxy(new HttpHost(connectionConfig.getProxyHost(), connectionConfig.getProxyPort()));
-					}
-					
-					// Redirect
-					requestConfigBuilder.setRedirectsEnabled(false);
-	//				requestConfigBuilder.setRedirectsEnabled(redirectsEnabled); // ???
-	//				requestConfigBuilder.setMaxRedirects(maxRedirects); // ?? Altre config
-					
-					RequestConfig requestConfig = requestConfigBuilder.build();
-					
-					// Pool
-					if(!ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.containsKey(key)){
-						
-						SSLContext sslContext = null;
-						HostnameVerifier hostnameVerifier = null;
-						if(connectionConfig.getSslContextProperties()!=null) {
-							if(bf.length()>0) {
-								bf.append("\n");
-							}
-							sslContext = SSLUtilities.generateSSLContext(connectionConfig.getSslContextProperties(), bf);
-							
-							hostnameVerifier = SSLUtilities.generateHostnameVerifier(connectionConfig.getSslContextProperties(), bf, logger.getLogger(), loader);
-						}
-						
-						ConnettoreHTTPCORE_connectionManager.initialize(key, sslContext, hostnameVerifier);
-					}
-					PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.get(key);
-					
-					HttpAsyncClientBuilder clientBuilder = 
-							HttpAsyncClients.custom(); // Qua si gestisce il pipe (ci sono i metodi che gestiscono le richieste una dopo l'altra o prima tutte le richieste e poi le risposte ...)
-					clientBuilder.setConnectionManager( cm );
-					//clientBuilder.setConnectionManagerShared(true);
-					clientBuilder.setDefaultRequestConfig(requestConfig);
-						
-					clientBuilder.disableAuthCaching();
-					
-					DefaultClientConnectionReuseStrategy defaultClientConnectionReuseStrategy = new DefaultClientConnectionReuseStrategy();
-					clientBuilder.setConnectionReuseStrategy(defaultClientConnectionReuseStrategy);
-					
-//					ConnectionKeepAliveStrategy keepAliveStrategy = null; // TODO
-//					if(keepAliveStrategy!=null){
-//						clientBuilder.setKeepAliveStrategy(keepAliveStrategy);
-//					}
-					
-					resource.setHttpclient(clientBuilder.build());
-					resource.getHttpclient().start();
-					
-					mapConnection.put(key, resource);
-					
-				} catch ( Throwable t ) {
-					throw new ConnettoreException( t.getMessage(),t );
-				}
+				ConnettoreHTTPCORE_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key);
+				mapConnection.put(key, resource);
 			}
 		}
 	}
-	
-//	private static void reInit(ConnectionConfiguration connectionConfig) {
-//		String key = connectionConfig.toString();
-//		synchronized(mapConnection) {
-//			if(mapConnection.containsKey(key)) {
-//				ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
-//				if(!connection.getHttpclient().isRunning()) {
-//					connection.getHttpclient().start();
-//				}
+	private static ConnettoreHTTPCORE_connection update(ConnectionConfiguration connectionConfig,
+			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException {
+		String key = connectionConfig.toString();
+		synchronized(mapConnection) {
+			if(mapConnection.containsKey(key)) {
+				ConnettoreHTTPCORE_connection con = mapConnection.remove(key);
+				mapConnection.put("expired_"+key+"_"+UUID.randomUUID().toString(), con);
+			}
+			ConnettoreHTTPCORE_connection resource = buildAsyncClient(connectionConfig, loader, logger, bf, key);
+			mapConnection.put(key, resource);
+			return resource;
+		}
+	}
+	private static ConnettoreHTTPCORE_connection buildAsyncClient(ConnectionConfiguration connectionConfig,
+			Loader loader, ConnettoreLogger logger, StringBuilder bf,
+			String key) throws ConnettoreException {
+		try {				
+			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+			
+			// Timeout
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			int connectionTimeout = -1;
+			if(connectionConfig.getConnectionTimeout()!=null) {
+				connectionTimeout = connectionConfig.getConnectionTimeout();
+				bf.append("Connection Timeout: ").append(connectionTimeout);
+			}
+			else {
+				connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+				bf.append("Connection Timeout Default: ").append(connectionTimeout);
+			}
+			requestConfigBuilder.setConnectionRequestTimeout( connectionTimeout );  //  timeout in milliseconds used when requesting a connection from the connection manager.
+			requestConfigBuilder.setConnectTimeout( connectionTimeout ); // Determines the timeout in milliseconds until a connection is established.
+			
+			
+			if(bf.length()>0) {
+				bf.append("\n");
+			}
+			int readTimeout = -1;
+			if(connectionConfig.getReadTimeout()!=null) {
+				readTimeout = connectionConfig.getReadTimeout();
+				bf.append("Connection Read Timeout: ").append(readTimeout);
+			}
+			else {
+				readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+				bf.append("Connection Read Timeout Default: ").append(readTimeout);
+			}
+			requestConfigBuilder.setSocketTimeout( readTimeout ); // // Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets).
+			
+			// Proxy
+			if(connectionConfig.getProxyHost()!=null && connectionConfig.getProxyPort()!=null) {
+				if(bf.length()>0) {
+					bf.append("\n");
+				}
+				bf.append("Proxy: ").append(connectionConfig.getProxyHost()).append(":").append(connectionConfig.getProxyPort());
+				requestConfigBuilder.setProxy(new HttpHost(connectionConfig.getProxyHost(), connectionConfig.getProxyPort()));
+			}
+			
+			// Redirect
+			requestConfigBuilder.setRedirectsEnabled(false);
+//				requestConfigBuilder.setRedirectsEnabled(redirectsEnabled); // ???
+//				requestConfigBuilder.setMaxRedirects(maxRedirects); // ?? Altre config
+			
+			RequestConfig requestConfig = requestConfigBuilder.build();
+			
+			// Pool
+			//String keyPool = connectionConfig.toString(true);
+			// Non utilizzabile poiche' l'opzione 'setConnectionManagerShared' non funziona
+			String keyPool = key; // uso medesima chiave della connessione
+			if(!ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.containsKey(keyPool)){
+				
+				SSLContext sslContext = null;
+				HostnameVerifier hostnameVerifier = null;
+				if(connectionConfig.getSslContextProperties()!=null) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					sslContext = TlsContextBuilder.buildSSLContext(connectionConfig.getSslContextProperties(), logger, bf);
+					hostnameVerifier = SSLUtilities.generateHostnameVerifier(connectionConfig.getSslContextProperties(), bf, logger.getLogger(), loader);
+				}
+				
+				ConnettoreHTTPCORE_connectionManager.initialize(keyPool, sslContext, hostnameVerifier);
+			}
+			PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.get(keyPool);
+			
+			HttpAsyncClientBuilder clientBuilder = 
+					HttpAsyncClients.custom(); // Qua si gestisce il pipe (ci sono i metodi che gestiscono le richieste una dopo l'altra o prima tutte le richieste e poi le risposte ...)
+			clientBuilder.setConnectionManager( cm );
+			//clientBuilder.setConnectionManagerShared(true);
+			clientBuilder.setDefaultRequestConfig(requestConfig);
+				
+			clientBuilder.disableAuthCaching();
+			
+			DefaultClientConnectionReuseStrategy defaultClientConnectionReuseStrategy = new DefaultClientConnectionReuseStrategy();
+			clientBuilder.setConnectionReuseStrategy(defaultClientConnectionReuseStrategy);
+			
+//			ConnectionKeepAliveStrategy keepAliveStrategy = null; // TODO
+//			if(keepAliveStrategy!=null){
+//				clientBuilder.setKeepAliveStrategy(keepAliveStrategy);
 //			}
-//		}
-//	}
+			
+			CloseableHttpAsyncClient httpclient = clientBuilder.build();
+			httpclient.start();
+			return new ConnettoreHTTPCORE_connection(key, httpclient);
+						
+		} catch ( Throwable t ) {
+			throw new ConnettoreException( t.getMessage(),t );
+		}
+	}
 	
 	public static ConnettoreHTTPCORE_connection getConnettoreNIO(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException  {
-		String key = connectionConfig.toString();
-		if(!mapConnection.containsKey(key)) {
-			init(connectionConfig, loader, logger, bf);
+		boolean usePoolAsyncClient = true; // e' inutilizzabile senza
+		ConnettoreHTTPCORE_connection connection = null;
+		if(usePoolAsyncClient) {
+			String key = connectionConfig.toString();
+			if(!mapConnection.containsKey(key)) {
+				init(connectionConfig, loader, logger, bf);
+				connection = mapConnection.get(key);
+				connection.refresh();
+			}
+			else {
+				connection = mapConnection.get(key);
+				connection.refresh();
+				if(connection.isExpired()) {
+					connection = update(connectionConfig, loader, logger, bf);
+				}
+			}
 		}
-		ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
-//		if(!connection.getHttpclient().isRunning()) {
-//			reInit(connectionConfig);
-//		}
+		else {
+			connection =  buildAsyncClient(connectionConfig, loader, logger, bf,
+					connectionConfig.toString());
+			connection.refresh();
+		}
 		return connection;
 	}
 	
