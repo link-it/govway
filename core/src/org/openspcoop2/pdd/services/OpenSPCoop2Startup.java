@@ -107,6 +107,7 @@ import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
+import org.openspcoop2.pdd.core.connettori.nio.ConnettoreHTTPCORE5_connectionManager;
 import org.openspcoop2.pdd.core.connettori.nio.ConnettoreHTTPCORE_connectionManager;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
@@ -2148,6 +2149,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/* ----------- Inizializzazione NIO Async Client ------------ */
 			try{
 				ConnettoreHTTPCORE_connectionManager.initialize();
+				ConnettoreHTTPCORE5_connectionManager.initialize();
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione NIO Async Client Manager");
 				return;
@@ -3269,6 +3271,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		// NIO Async Client Manager
 		try{
 			ConnettoreHTTPCORE_connectionManager.stop();
+		}catch(Throwable e){}
+		try{
+			ConnettoreHTTPCORE5_connectionManager.stop();
 		}catch(Throwable e){}
 		
 		// ID Cluster

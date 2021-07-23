@@ -22,17 +22,17 @@
 package org.openspcoop2.pdd.core.connettori.nio;
 
 /**
- * ConnettoreHTTPSCORE
+ * ConnettoreHTTPSCORE5
  *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPSCORE extends ConnettoreHTTPCORE {
+public class ConnettoreHTTPSCORE5 extends ConnettoreHTTPCORE5 {
 
 	
-	public ConnettoreHTTPSCORE(){
+	public ConnettoreHTTPSCORE5(){
 		super(true);
 	}
 }

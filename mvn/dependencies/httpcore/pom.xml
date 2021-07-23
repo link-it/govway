@@ -45,6 +45,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.core5</groupId>
+			<artifactId>httpcore5-h2</artifactId>
+			<version>${httpcore5.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>

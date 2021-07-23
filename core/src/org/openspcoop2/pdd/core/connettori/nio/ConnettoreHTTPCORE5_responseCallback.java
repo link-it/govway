@@ -25,9 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.concurrent.FutureCallback;
+import org.apache.hc.core5.concurrent.FutureCallback;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
@@ -39,21 +40,21 @@ import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
- * ConnettoreHTTPCORE_responseCallback
+ * ConnettoreHTTPCORE5_responseCallback
  *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpResponse> {
-	private ConnettoreHTTPCORE connettore;
+public class ConnettoreHTTPCORE5_responseCallback implements FutureCallback<ConnettoreHTTPCORE5_httpResponse> {
+	private ConnettoreHTTPCORE5 connettore;
 	private ConnettoreMsg request;
 	private HttpBodyParameters httpBody;
 	private boolean connettore_debug;
 	private ConnettoreLogger connettore_logger;
 
-	public ConnettoreHTTPCORE_responseCallback(ConnettoreHTTPCORE connettore, ConnettoreMsg request, HttpBodyParameters httpBody ) {
+	public ConnettoreHTTPCORE5_responseCallback(ConnettoreHTTPCORE5 connettore, ConnettoreMsg request, HttpBodyParameters httpBody ) {
 		this.connettore = connettore;
 		this.request = request;
 		this.httpBody = httpBody;
@@ -63,20 +64,23 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 	}
 
 	@Override
-	public void completed(final HttpResponse response) {
+	public void completed(final ConnettoreHTTPCORE5_httpResponse responseParam) {
 
 		OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		
 		Map<String, List<String>> connettore_propertiesTrasportoRisposta = this.connettore.getPropertiesTrasportoRisposta(); 
 		
 		try {
+			HttpResponse response = responseParam.getHttpResponse();
+			HttpEntity httpEntityResponse = responseParam.getEntity();
+			
 			if(this.connettore_debug) {
 				this.connettore_logger.debug("NIO - Callback Response started after 'complete' event ...");
 			}
 			// Analisi MimeType e ContentLocation della risposta
 			if(this.connettore_debug)
 				this.connettore_logger.debug("Analisi risposta...");
-			Header [] hdrRisposta = response.getAllHeaders();
+			Header [] hdrRisposta = response.getHeaders();
 			Map<String, List<String>> mapHeaderHttpResponse = new HashMap<String, List<String>>();
 			if(hdrRisposta!=null){
 				for (int i = 0; i < hdrRisposta.length; i++) {
@@ -122,8 +126,8 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 				this.connettore.setContentLength(Long.parseLong(contentLengthHdr));
 			}
 			else {
-				if(response.getEntity()!=null && response.getEntity().getContentLength()>0) {
-					this.connettore.setContentLength(response.getEntity().getContentLength());
+				if(httpEntityResponse!=null && httpEntityResponse.getContentLength()>0) {
+					this.connettore.setContentLength(httpEntityResponse.getContentLength());
 				}
 			}
 			
@@ -149,11 +153,11 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 
 			
 			// return code
-			this.connettore.setCodiceTrasporto(response.getStatusLine().getStatusCode());
-			this.connettore.setResultHTTPMessage(response.getStatusLine().getReasonPhrase());
+			this.connettore.setCodiceTrasporto(response.getCode());
+			this.connettore.setResultHTTPMessage(response.getReasonPhrase());
 
 			if(this.connettore.getCodiceTrasporto()>=400){
-				this.connettore.setInputStreamResponse(response.getEntity()!=null ? response.getEntity().getContent() : null);
+				this.connettore.setInputStreamResponse(httpEntityResponse!=null ? httpEntityResponse.getContent() : null);
 			}
 			else{
 				if(this.connettore.getCodiceTrasporto()>299){
@@ -215,7 +219,7 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 					    	}
 							
 							if(this.httpBody.isDoInput()){
-								this.connettore.setInputStreamResponse(response.getEntity()!=null ? response.getEntity().getContent() : null);
+								this.connettore.setInputStreamResponse(httpEntityResponse!=null ? httpEntityResponse.getContent() : null);
 							}
 						}
 					}
@@ -227,7 +231,7 @@ public class ConnettoreHTTPCORE_responseCallback implements FutureCallback<HttpR
 						}
 					}
 					if(this.httpBody.isDoInput()){
-						this.connettore.setInputStreamResponse(response.getEntity()!=null ? response.getEntity().getContent() : null);
+						this.connettore.setInputStreamResponse(httpEntityResponse!=null ? httpEntityResponse.getContent() : null);
 					}
 				}
 			}

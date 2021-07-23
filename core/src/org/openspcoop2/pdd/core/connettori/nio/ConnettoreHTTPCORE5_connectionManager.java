@@ -27,26 +27,28 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
-import org.apache.http.Consts;
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.config.ConnectionConfig;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
-import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.nio.conn.SchemeIOSessionStrategy;
-import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
-import org.apache.http.nio.reactor.ConnectingIOReactor;
-import org.apache.http.nio.reactor.IOReactorExceptionHandler;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
+import org.apache.hc.client5.http.impl.async.HttpAsyncClientBuilder;
+import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.core5.function.Callback;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
+import org.apache.hc.core5.io.CloseMode;
+import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
+import org.apache.hc.core5.pool.PoolReusePolicy;
+import org.apache.hc.core5.reactor.DefaultConnectingIOReactor;
+import org.apache.hc.core5.reactor.IOReactor;
+import org.apache.hc.core5.reactor.IOReactorConfig;
+import org.apache.hc.core5.util.TimeValue;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
@@ -57,34 +59,34 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
- * ConnettoreHTTPCORE_connectionManager
+ * ConnettoreHTTPCORE5_connectionManager
  *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE_connectionManager {
+public class ConnettoreHTTPCORE5_connectionManager {
 
 	// ******** STATIC **********
 
-	static Map<String, ConnectingIOReactor> mapIoReactor = new HashMap<String, ConnectingIOReactor>();
-	static Map<String, PoolingNHttpClientConnectionManager> mapPoolingConnectionManager = new HashMap<String, PoolingNHttpClientConnectionManager>();
-	static Map<String, ConnettoreHTTPCORE_connection> mapConnection = new HashMap<String, ConnettoreHTTPCORE_connection>();
+	static Map<String, IOReactor> mapIoReactor = new HashMap<String, IOReactor>();
+	static Map<String, PoolingAsyncClientConnectionManager> mapPoolingConnectionManager = new HashMap<String, PoolingAsyncClientConnectionManager>();
+	static Map<String, ConnettoreHTTPCORE5_connection> mapConnection = new HashMap<String, ConnettoreHTTPCORE5_connection>();
 	
-	private static ConnettoreHTTPCORE_connectionEvictor idleConnectionEvictor;
+	private static ConnettoreHTTPCORE5_connectionEvictor idleConnectionEvictor;
 		
 	public static synchronized void initialize() throws ConnettoreException {
 		try {
-			if(ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor==null) {
+			if(ConnettoreHTTPCORE5_connectionManager.idleConnectionEvictor==null) {
 				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 				Integer closeIdleConnectionsAfterSeconds = op2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds();
 				boolean idleConnectionEvictorEnabled = (closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0);
 				if(idleConnectionEvictorEnabled) {
 					int sleepTimeSeconds = op2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds();
 					boolean debug = op2Properties.isNIOConfig_asyncClient_closeIdleConnectionsDebug();
-					ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor = 
-							new ConnettoreHTTPCORE_connectionEvictor(debug, sleepTimeSeconds, closeIdleConnectionsAfterSeconds);
+					ConnettoreHTTPCORE5_connectionManager.idleConnectionEvictor = 
+							new ConnettoreHTTPCORE5_connectionEvictor(debug, sleepTimeSeconds, closeIdleConnectionsAfterSeconds);
 					idleConnectionEvictor.start();
 				}
 			}
@@ -95,62 +97,80 @@ public class ConnettoreHTTPCORE_connectionManager {
 	
 	private static synchronized void initialize(String key, SSLContext sslContext, HostnameVerifier hostnameVerifier) throws ConnettoreException {
 		
-		if(!ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.containsKey(key)){
+		if(!ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager.containsKey(key)){
 		
 			try {
-				IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
-						//				 .setIoThreadCount(Runtime.getRuntime().availableProcessors())
-										 .build();
-				ConnectingIOReactor ioReactor = new DefaultConnectingIOReactor(ioReactorConfig);
-				if(ioReactor instanceof DefaultConnectingIOReactor) {
-					((DefaultConnectingIOReactor) ioReactor).setExceptionHandler(new IOReactorExceptionHandler() {
-						@Override
-						public boolean handle(RuntimeException runtimeException) {
-							OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("[HTTPCore] IOReactor ("+key+") runtimeException: "+runtimeException.getMessage(),runtimeException);
-							return false;
-						}
-						@Override
-						public boolean handle(IOException ioException) {
-							OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("[IOException] IOReactor ("+key+") ioException: "+ioException.getMessage(),ioException);
-							return false;
-						}
-					});
-				}
+//				IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
+//						//				 .setIoThreadCount(Runtime.getRuntime().availableProcessors())
+//										 .build();
+//				IOReactor ioReactor = new DefaultConnectingIOReactor(ioReactorConfig);
+//				if(ioReactor instanceof DefaultConnectingIOReactor) {
+//					((DefaultConnectingIOReactor) ioReactor).setExceptionHandler(new IOReactorExceptionHandler() {
+//						@Override
+//						public boolean handle(RuntimeException runtimeException) {
+//							OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("[HTTPCore] IOReactor ("+key+") runtimeException: "+runtimeException.getMessage(),runtimeException);
+//							return false;
+//						}
+//						@Override
+//						public boolean handle(IOException ioException) {
+//							OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("[IOException] IOReactor ("+key+") ioException: "+ioException.getMessage(),ioException);
+//							return false;
+//						}
+//					});
+//				}
 				
-				PoolingNHttpClientConnectionManager poolingConnectionManager = null;
+				PoolingAsyncClientConnectionManagerBuilder poolingConnectionManagerBuilder = PoolingAsyncClientConnectionManagerBuilder.create();
+				
 				if(sslContext!=null) {
-					Registry<SchemeIOSessionStrategy> sessionStrategyRegistry = RegistryBuilder.
-							<SchemeIOSessionStrategy> create().register("https", new SSLIOSessionStrategy(sslContext, hostnameVerifier)).build();
-					poolingConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor, sessionStrategyRegistry);
+					ClientTlsStrategyBuilder tlsBuilder = ClientTlsStrategyBuilder.create();
+					tlsBuilder.setSslContext(sslContext);
+					tlsBuilder.setHostnameVerifier(hostnameVerifier);
+					TlsStrategy tlsStrategy = tlsBuilder.build();
+					poolingConnectionManagerBuilder.setTlsStrategy(tlsStrategy);
 				}
 				else {
-					poolingConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
+					poolingConnectionManagerBuilder.useSystemProperties();
 				}
 				
-				ConnectionConfig connectionConfig =
-						ConnectionConfig.custom()
-							.setMalformedInputAction(CodingErrorAction.IGNORE)
-							.setUnmappableInputAction(CodingErrorAction.IGNORE)
-							.setCharset(Consts.UTF_8)
-							.build();
-				poolingConnectionManager.setDefaultConnectionConfig(connectionConfig);
+				//poolingConnectionManagerBuilder.setDnsResolver(null);
+				//poolingConnectionManagerBuilder.setSchemePortResolver(null);
 				
+				// LAX: Higher concurrency but with lax connection max limit guarantees.
+				// STRICT: Strict connection max limit guarantees.
+				poolingConnectionManagerBuilder.setPoolConcurrencyPolicy(PoolConcurrencyPolicy.LAX);
+
+				// FIFO: Re-use all connections equally preventing them from becoming idle and expiring.
+				// LIFO: Re-use as few connections as possible making it possible for connections to become idle and expire.
+				poolingConnectionManagerBuilder.setConnPoolPolicy(PoolReusePolicy.FIFO);
+				
+				// IdleConnection
+				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+				Integer closeIdleConnectionsAfterSeconds = op2Properties.getNIOConfig_asyncClient_closeIdleConnectionsAfterSeconds();
+				boolean idleConnectionEvictorEnabled = (closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0);
+				if(idleConnectionEvictorEnabled) {
+					int sleepTimeSeconds = op2Properties.getNIOConfig_asyncClient_closeIdleConnectionsCheckIntervalSeconds();
+					poolingConnectionManagerBuilder.setConnectionTimeToLive(TimeValue.ofSeconds(closeIdleConnectionsAfterSeconds));
+					poolingConnectionManagerBuilder.setValidateAfterInactivity(TimeValue.ofSeconds(sleepTimeSeconds));
+				}
+				
+							
 				// PoolingNHttpClientConnectionManager maintains a maximum limit of connection on a per route basis and in total. 
 				// Per default this implementation will create no more than than 2 concurrent connections per given route and no more 20 connections in total.
 				// For many real-world applications these limits may prove too constraining, especially if they use HTTP as a transport protocol for their services. 
 				// Connection limits, however, can be adjusted using ConnPoolControl methods.
-				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 				Integer defaultMaxPerRoute = op2Properties.getNIOConfig_asyncClient_maxPerRoute();
 				Integer maxTotal = op2Properties.getNIOConfig_asyncClient_maxTotal();
 				if(defaultMaxPerRoute!=null && defaultMaxPerRoute>0) {
-					poolingConnectionManager.setDefaultMaxPerRoute( defaultMaxPerRoute ); // 2 default
+					poolingConnectionManagerBuilder.setMaxConnPerRoute( defaultMaxPerRoute ); // 2 default
 				}
 				if(maxTotal!=null && maxTotal>0) {
-					poolingConnectionManager.setMaxTotal( maxTotal ); // 20 default
+					poolingConnectionManagerBuilder.setMaxConnTotal( maxTotal ); // 20 default
 				}
 				
-				ConnettoreHTTPCORE_connectionManager.mapIoReactor.put(key, ioReactor);
-				ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.put(key, poolingConnectionManager);
+				PoolingAsyncClientConnectionManager poolingConnectionManager = poolingConnectionManagerBuilder.build();
+												
+				//ConnettoreHTTPCORE5_connectionManager.mapIoReactor.put(key, ioReactor);
+				ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager.put(key, poolingConnectionManager);
 				
 			}catch(Throwable t) {
 				throw new ConnettoreException(t.getMessage(),t);
@@ -160,14 +180,14 @@ public class ConnettoreHTTPCORE_connectionManager {
 		
 	}
 	public static synchronized void stop() throws ConnettoreException {
-		if(ConnettoreHTTPCORE_connectionManager.mapIoReactor!=null && !ConnettoreHTTPCORE_connectionManager.mapIoReactor.isEmpty()) {
+		if(ConnettoreHTTPCORE5_connectionManager.mapIoReactor!=null && !ConnettoreHTTPCORE5_connectionManager.mapIoReactor.isEmpty()) {
 			
 			List<Throwable> listT = new ArrayList<Throwable>();
 			
 			// Shut down the evictor thread
-			if(ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor!=null) {
+			if(ConnettoreHTTPCORE5_connectionManager.idleConnectionEvictor!=null) {
 				try {			
-					ConnettoreHTTPCORE_connectionManager.idleConnectionEvictor.setStop(true);
+					ConnettoreHTTPCORE5_connectionManager.idleConnectionEvictor.setStop(true);
 					idleConnectionEvictor.waitShutdown();
 				}catch(Throwable t) {
 					listT.add(t);
@@ -179,25 +199,23 @@ public class ConnettoreHTTPCORE_connectionManager {
 				Iterator<String> it = mapConnection.keySet().iterator();
 				while (it.hasNext()) {
 					String key = (String) it.next();
-					ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
-					if(connection.getHttpclient().isRunning()) {
-						try {
-							connection.getHttpclient().close();
-						}catch(Throwable t) {
-							listT.add(new ConnettoreException("NIO Connection ["+key+"] close error: "+t.getMessage(),t));
-						}
+					ConnettoreHTTPCORE5_connection connection = mapConnection.get(key);
+					try {
+						connection.getHttpclient().close();
+					}catch(Throwable t) {
+						listT.add(new ConnettoreException("NIO Connection ["+key+"] close error: "+t.getMessage(),t));
 					}
 				}
 			}
 			
 			// Shut down connManager
-			if(ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager!=null && ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.isEmpty()) {
-				for (String key : ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.keySet()) {
+			if(ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager!=null && ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager.isEmpty()) {
+				for (String key : ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager.keySet()) {
 					if(key!=null) {
-						PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.get(key);
+						PoolingAsyncClientConnectionManager cm = ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager.get(key);
 						if(cm!=null) {
 							try {			
-								cm.shutdown();
+								cm.close(CloseMode.GRACEFUL);
 							}catch(Throwable t) {
 								listT.add(t);
 							}
@@ -207,13 +225,13 @@ public class ConnettoreHTTPCORE_connectionManager {
 			}
 			
 			// Shut down ioReactor
-			if(ConnettoreHTTPCORE_connectionManager.mapIoReactor!=null && ConnettoreHTTPCORE_connectionManager.mapIoReactor.isEmpty()) {
-				for (String key : ConnettoreHTTPCORE_connectionManager.mapIoReactor.keySet()) {
+			if(ConnettoreHTTPCORE5_connectionManager.mapIoReactor!=null && ConnettoreHTTPCORE5_connectionManager.mapIoReactor.isEmpty()) {
+				for (String key : ConnettoreHTTPCORE5_connectionManager.mapIoReactor.keySet()) {
 					if(key!=null) {
-						ConnectingIOReactor ioReactor = ConnettoreHTTPCORE_connectionManager.mapIoReactor.get(key);
+						IOReactor ioReactor = ConnettoreHTTPCORE5_connectionManager.mapIoReactor.get(key);
 						if(ioReactor!=null) {
 							try {			
-								ioReactor.shutdown();
+								ioReactor.close(CloseMode.GRACEFUL);
 							}catch(Throwable t) {
 								listT.add(t);
 							}
@@ -243,7 +261,7 @@ public class ConnettoreHTTPCORE_connectionManager {
 			if(!mapConnection.containsKey(key)) {
 				
 				try {				
-					ConnettoreHTTPCORE_connection resource = new ConnettoreHTTPCORE_connection();
+					ConnettoreHTTPCORE5_connection resource = new ConnettoreHTTPCORE5_connection();
 								
 					RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
 					
@@ -260,8 +278,8 @@ public class ConnettoreHTTPCORE_connectionManager {
 						connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 						bf.append("Connection Timeout Default: ").append(connectionTimeout);
 					}
-					requestConfigBuilder.setConnectionRequestTimeout( connectionTimeout );  //  timeout in milliseconds used when requesting a connection from the connection manager.
-					requestConfigBuilder.setConnectTimeout( connectionTimeout ); // Determines the timeout in milliseconds until a connection is established.
+					requestConfigBuilder.setConnectionRequestTimeout( connectionTimeout, TimeUnit.MILLISECONDS );  //  timeout in milliseconds used when requesting a connection from the connection manager.
+					requestConfigBuilder.setConnectTimeout( connectionTimeout, TimeUnit.MILLISECONDS ); // Determines the timeout in milliseconds until a connection is established.
 					
 					
 					if(bf.length()>0) {
@@ -276,7 +294,7 @@ public class ConnettoreHTTPCORE_connectionManager {
 						readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 						bf.append("Connection Read Timeout Default: ").append(readTimeout);
 					}
-					requestConfigBuilder.setSocketTimeout( readTimeout ); // // Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets).
+					requestConfigBuilder.setResponseTimeout( readTimeout, TimeUnit.MILLISECONDS  ); // // Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets).
 					
 					// Proxy
 					if(connectionConfig.getProxyHost()!=null && connectionConfig.getProxyPort()!=null) {
@@ -289,13 +307,14 @@ public class ConnettoreHTTPCORE_connectionManager {
 					
 					// Redirect
 					requestConfigBuilder.setRedirectsEnabled(false);
+	//				requestConfigBuilder.setCircularRedirectsAllowed(false);
 	//				requestConfigBuilder.setRedirectsEnabled(redirectsEnabled); // ???
 	//				requestConfigBuilder.setMaxRedirects(maxRedirects); // ?? Altre config
 					
 					RequestConfig requestConfig = requestConfigBuilder.build();
 					
 					// Pool
-					if(!ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.containsKey(key)){
+					if(!ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager.containsKey(key)){
 						
 						SSLContext sslContext = null;
 						HostnameVerifier hostnameVerifier = null;
@@ -308,9 +327,9 @@ public class ConnettoreHTTPCORE_connectionManager {
 							hostnameVerifier = SSLUtilities.generateHostnameVerifier(connectionConfig.getSslContextProperties(), bf, logger.getLogger(), loader);
 						}
 						
-						ConnettoreHTTPCORE_connectionManager.initialize(key, sslContext, hostnameVerifier);
+						ConnettoreHTTPCORE5_connectionManager.initialize(key, sslContext, hostnameVerifier);
 					}
-					PoolingNHttpClientConnectionManager cm = ConnettoreHTTPCORE_connectionManager.mapPoolingConnectionManager.get(key);
+					PoolingAsyncClientConnectionManager cm = ConnettoreHTTPCORE5_connectionManager.mapPoolingConnectionManager.get(key);
 					
 					HttpAsyncClientBuilder clientBuilder = 
 							HttpAsyncClients.custom(); // Qua si gestisce il pipe (ci sono i metodi che gestiscono le richieste una dopo l'altra o prima tutte le richieste e poi le risposte ...)
@@ -320,15 +339,30 @@ public class ConnettoreHTTPCORE_connectionManager {
 						
 					clientBuilder.disableAuthCaching();
 					
-					DefaultClientConnectionReuseStrategy defaultClientConnectionReuseStrategy = new DefaultClientConnectionReuseStrategy();
-					clientBuilder.setConnectionReuseStrategy(defaultClientConnectionReuseStrategy);
+					//clientBuilder.setProxyAuthenticationStrategy(null);
+					
+//					DefaultClientConnectionReuseStrateg defaultClientConnectionReuseStrategy = new DefaultClientConnectionReuseStrategy();
+//					clientBuilder.setConnectionReuseStrategy(defaultClientConnectionReuseStrategy);
 					
 //					ConnectionKeepAliveStrategy keepAliveStrategy = null; // TODO
 //					if(keepAliveStrategy!=null){
 //						clientBuilder.setKeepAliveStrategy(keepAliveStrategy);
 //					}
 					
-					resource.setHttpclient(clientBuilder.build());
+					//IOReactorConfig.Builder reactorConfigBuilder = IOReactorConfig.custom();
+					//reactorConfigBuilder.setIoThreadCount(ioThreadCount);
+					//clientBuilder.setIOReactorConfig(reactorConfigBuilder.build());
+					clientBuilder.setIoReactorExceptionCallback(new Callback<Exception>() {
+						@Override
+						public void execute(Exception arg0) {
+							System.out.println("ERRORE!!!!!!!!!: "+arg0.getMessage());
+							arg0.printStackTrace(System.out);
+						}
+					});
+					
+					CloseableHttpAsyncClient httpclient = clientBuilder.build();
+					
+					resource.setHttpclient(httpclient);
 					resource.getHttpclient().start();
 					
 					mapConnection.put(key, resource);
@@ -352,13 +386,13 @@ public class ConnettoreHTTPCORE_connectionManager {
 //		}
 //	}
 	
-	public static ConnettoreHTTPCORE_connection getConnettoreNIO(ConnectionConfiguration connectionConfig,
+	public static ConnettoreHTTPCORE5_connection getConnettoreNIO(ConnectionConfiguration connectionConfig,
 			Loader loader, ConnettoreLogger logger, StringBuilder bf) throws ConnettoreException  {
 		String key = connectionConfig.toString();
 		if(!mapConnection.containsKey(key)) {
 			init(connectionConfig, loader, logger, bf);
 		}
-		ConnettoreHTTPCORE_connection connection = mapConnection.get(key);
+		ConnettoreHTTPCORE5_connection connection = mapConnection.get(key);
 //		if(!connection.getHttpclient().isRunning()) {
 //			reInit(connectionConfig);
 //		}

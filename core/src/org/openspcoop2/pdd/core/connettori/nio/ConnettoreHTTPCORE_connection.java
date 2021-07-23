@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.core.connettori.nio;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 
 /**
- * ConnettoreNIO_connection
+ * ConnettoreHTTPCORE_connection
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$

@@ -31,20 +31,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.nio.entity.NByteArrayEntity;
-import org.apache.http.nio.entity.NFileEntity;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.client5.http.classic.methods.HttpOptions;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpTrace;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.nio.AsyncEntityProducer;
+import org.apache.hc.core5.http.nio.AsyncRequestProducer;
+import org.apache.hc.core5.http.nio.AsyncResponseConsumer;
+import org.apache.hc.core5.http.nio.entity.BasicAsyncEntityProducer;
+import org.apache.hc.core5.http.nio.entity.FileEntityProducer;
+import org.apache.hc.core5.http.nio.support.BasicRequestProducer;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -57,11 +58,12 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreExtBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
-import org.openspcoop2.pdd.core.connettori.CustomHttpCoreEntity;
+import org.openspcoop2.pdd.core.connettori.CustomHttpCore5Entity;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -70,14 +72,14 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 
 
 /**
- * ConnettoreHTTPCORE
+ * ConnettoreHTTPCORE5
  *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
+public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
@@ -85,7 +87,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 
 	/** Connessione */
 	//protected ConnettoreHTTPCORE_connection httpClient = null;
-	protected HttpRequestBase httpRequest = null;
+	protected HttpUriRequestBase httpRequest = null;
 	protected ConnectionConfiguration httpConnectionConfig = null;
 	public ConnectionConfiguration getHttpConnectionConfig() {
 		return this.httpConnectionConfig;
@@ -96,10 +98,10 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 
 	
 	/* Costruttori */
-	public ConnettoreHTTPCORE(){
+	public ConnettoreHTTPCORE5(){
 		super();
 	}
-	public ConnettoreHTTPCORE(boolean https){
+	public ConnettoreHTTPCORE5(boolean https){
 		super(https);
 	}
 	
@@ -174,7 +176,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 
 			// Creazione Connessione
 			StringBuilder bfDebug =new StringBuilder();
-			ConnettoreHTTPCORE_connection httpClient = ConnettoreHTTPCORE_connectionManager.getConnettoreNIO(this.httpConnectionConfig, this.loader, this.logger, bfDebug);
+			ConnettoreHTTPCORE5_connection httpClient = ConnettoreHTTPCORE5_connectionManager.getConnettoreNIO(this.httpConnectionConfig, this.loader, this.logger, bfDebug);
 			if(this.debug) {
 				this.logger.debug("Creazione Connessione ...");
 				this.logger.debug(bfDebug.toString());
@@ -213,7 +215,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				case LINK:
 				case UNLINK:
 				default:
-					this.httpRequest = new CustomHttpCoreEntity(this.httpMethod, url.toString());
+					this.httpRequest = new CustomHttpCore5Entity(this.httpMethod, url.toString());
 			}
 			if(this.httpRequest==null){
 				throw new Exception("HttpRequest non definito ?");
@@ -413,6 +415,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			// Preparazione messaggio da spedire
 			// Spedizione byte
+			AsyncEntityProducer entityProducer = null;
 			if(httpBody.isDoOutput()){
 				if(this.debug)
 					this.logger.debug("Spedizione byte...");
@@ -442,34 +445,17 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 							this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 						}
 						
-						HttpEntity httpEntity = null;
+						String baseMimeType = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta);
+						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(baseMimeType);
 						if(bout.isSerializedOnFileSystem()) {
-							httpEntity = new NFileEntity(bout.getSerializedFile());
+							entityProducer = new FileEntityProducer(bout.getSerializedFile(), ct, TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm));
 						}
 						else {
-							httpEntity = new NByteArrayEntity(bout.toByteArray());
-						}
-						
-						// Impostazione transfer-length
-						if(this.debug)
-							this.logger.debug("Impostazione transfer-length...");			
-						if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){	
-							if(bout.isSerializedOnFileSystem()) {
-								((NFileEntity)httpEntity).setChunked(true);
-							}
-							else {
-								((NByteArrayEntity)httpEntity).setChunked(true);
-							}
-						}
+							entityProducer = new BasicAsyncEntityProducer(bout.toByteArray(), ct, TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm));
+						}						
 						if(this.debug)
 							this.logger.info("Impostazione transfer-length effettuata: "+this.tlm,false);
 						
-						if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
-							((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
-						}
-						else{
-							throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
-						}
 					}finally {
 						try {
 							bout.clearResources();
@@ -482,13 +468,11 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 					// Siamo per forza rest con contenuto non costruito
 					if(hasContentRest) {
 						InputStream isRequest = this.requestMsg.castAsRest().getInputStream();
-						HttpEntity httpEntity = new InputStreamEntity(isRequest);
-						if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
-							((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
-						}
-						else{
-							throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
-						}
+						String baseMimeType = ContentTypeUtilities.readBaseTypeFromContentType(contentTypeRichiesta);
+						org.apache.hc.core5.http.ContentType ct = org.apache.hc.core5.http.ContentType.create(baseMimeType);
+						entityProducer = new ConnettoreHTTPCORE5_inputStreamEntityProducer(isRequest, ct, null, TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm));
+						if(this.debug)
+							this.logger.info("Impostazione transfer-length effettuata: "+this.tlm,false);
 					}
 				}
 			}
@@ -503,9 +487,12 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Spedizione byte
 			if(this.debug)
 				this.logger.debug("Spedizione byte...");
-			ConnettoreHTTPCORE_responseCallback responseCallback = new ConnettoreHTTPCORE_responseCallback(this, request, httpBody);
+			ConnettoreHTTPCORE5_responseCallback responseCallback = new ConnettoreHTTPCORE5_responseCallback(this, request, httpBody);
 			//System.out.println("CLIENT ["+httpClient.getHttpclient().getClass().getName()+"]");
-			httpClient.getHttpclient().execute(this.httpRequest, HttpClientContext.create(), responseCallback);
+			AsyncRequestProducer requestProducer = new BasicRequestProducer(this.httpRequest, entityProducer);
+			//SimpleHttpRequest s = new 
+			AsyncResponseConsumer<ConnettoreHTTPCORE5_httpResponse> responseConsumer = new ConnettoreHTTPCORE5_inputStreamEntityConsumer();
+			httpClient.getHttpclient().execute(requestProducer, responseConsumer, HttpClientContext.create(), responseCallback);
 			
 			// CAPIRE SE SERVE E SEMMAI BUTTARE VIA LE PROPERTIES AGGIUNTE!
 //			
@@ -594,6 +581,3 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
     	}
     }
 }
-
-
-

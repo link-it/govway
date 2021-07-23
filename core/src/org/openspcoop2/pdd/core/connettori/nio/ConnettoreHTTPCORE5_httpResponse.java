@@ -18,21 +18,40 @@
  *
  */
 
-
 package org.openspcoop2.pdd.core.connettori.nio;
 
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
+
 /**
- * ConnettoreHTTPSCORE
- *
+ * ConnettoreHTTPCORE5_httpResponse
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPSCORE extends ConnettoreHTTPCORE {
+public class ConnettoreHTTPCORE5_httpResponse {
 
-	
-	public ConnettoreHTTPSCORE(){
-		super(true);
+	private HttpEntity entity;
+	private HttpResponse httpResponse;
+
+	public ConnettoreHTTPCORE5_httpResponse(HttpResponse httpResponse) {
+		this.httpResponse = httpResponse;
+	}
+
+	public HttpEntity getEntity() {
+		return this.entity;
+	}
+
+	public void setEntity(final HttpEntity entity) {
+		this.entity = entity;
+	}
+
+	public HttpResponse getHttpResponse() {
+		return this.httpResponse;
+	}
+
+	public void setHttpResponse(HttpResponse httpResponse) {
+		this.httpResponse = httpResponse;
 	}
 }

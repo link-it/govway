@@ -18,21 +18,25 @@
  *
  */
 
-
 package org.openspcoop2.pdd.core.connettori.nio;
 
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
+
 /**
- * ConnettoreHTTPSCORE
- *
+ * ConnettoreHTTPCORE5_connection
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPSCORE extends ConnettoreHTTPCORE {
+public class ConnettoreHTTPCORE5_connection {
 
+	private CloseableHttpAsyncClient httpclient;
 	
-	public ConnettoreHTTPSCORE(){
-		super(true);
+	public CloseableHttpAsyncClient getHttpclient() {
+		return this.httpclient;
+	}
+	public void setHttpclient(CloseableHttpAsyncClient httpclient) {
+		this.httpclient = httpclient;
 	}
 }
