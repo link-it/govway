@@ -48,6 +48,8 @@ public class ConnectorCostanti {
 	
 	// CODE: 4 cifre
 	
+	public final static String GOVWAY_NOT_INITIALIZED = "9999";
+	
 	public final static String CODE_PROTOCOL_NOT_SUPPORTED = "0001";
 	
 	public final static String CODE_HTTP_METHOD_GET_UNSUPPORTED = "0011";

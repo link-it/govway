@@ -63,6 +63,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
@@ -1877,10 +1878,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				asps.setPrivato(this.privato);
 
 				// Wsdl
+				FormatoSpecifica formato = null;
+				if(as!=null) {
+					formato = as.getFormatoSpecifica();
+				}
 				String wsdlimplerS = this.wsdlimpler.getValue() != null ? new String(this.wsdlimpler.getValue()) : null; 
-				asps.setByteWsdlImplementativoErogatore(((wsdlimplerS != null) && !wsdlimplerS.trim().replaceAll("\n", "").equals("")) ? wsdlimplerS.trim().getBytes() : null);
+				asps.setByteWsdlImplementativoErogatore(apsCore.getInterfaceAsByteArray(formato, wsdlimplerS));
 				String wsdlimplfruS = this.wsdlimplfru.getValue() != null ? new String(this.wsdlimplfru.getValue()) : null; 
-				asps.setByteWsdlImplementativoFruitore(((wsdlimplfruS != null) && !wsdlimplfruS.trim().replaceAll("\n", "").equals("")) ? wsdlimplfruS.trim().getBytes() : null);
+				asps.setByteWsdlImplementativoFruitore(apsCore.getInterfaceAsByteArray(formato, wsdlimplfruS));
 				
 				// PortType
 				if (this.portType != null && !"".equals(this.portType) && !"-".equals(this.portType))

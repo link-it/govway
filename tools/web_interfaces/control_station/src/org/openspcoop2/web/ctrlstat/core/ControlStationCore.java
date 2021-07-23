@@ -105,6 +105,7 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -152,6 +153,7 @@ import org.openspcoop2.utils.crypt.CryptType;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
@@ -7836,5 +7838,28 @@ public class ControlStationCore {
 		if(pluginLoader.isPluginManagerEnabled()) {
 			pluginLoader.updateFromConsoleConfig(log);
 		}
+	}
+	
+	public boolean isInterfaceDefined(String wsdlS) {
+		if(wsdlS == null || wsdlS.trim().replaceAll("\n", "").equals("")) {
+			return false;
+		}
+		return true;
+	}
+	public byte[] getInterfaceAsByteArray(FormatoSpecifica formatoSpecifica,String wsdlS) {
+		if(!isInterfaceDefined(wsdlS)) {
+			return null;
+		}
+		
+		if(FormatoSpecifica.OPEN_API_3.equals(formatoSpecifica) || FormatoSpecifica.SWAGGER_2.equals(formatoSpecifica)){
+			byte [] wsdl = wsdlS.getBytes();
+			if(YAMLUtils.getInstance().isYaml(wsdl)) {
+				// non deve essere effettuato il trim, essendo lo yaml posizionale:
+				return wsdl;
+			}
+		}
+
+		return wsdlS.trim().getBytes();
+		
 	}
 }

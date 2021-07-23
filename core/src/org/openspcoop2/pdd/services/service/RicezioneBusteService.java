@@ -69,6 +69,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.DumpRaw;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
@@ -178,7 +179,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 		/* ------------  PreInHandler (PreInAcceptRequestContext) ------------- */
 		
 		PreInAcceptRequestContext preInAcceptRequestContext = null;
-		if (this.openSPCoopProperties != null) {
+		if (this.openSPCoopProperties != null && OpenSPCoop2Startup.initialize) {
 			// build context
 			preInAcceptRequestContext = new PreInAcceptRequestContext();
 			preInAcceptRequestContext.setTipoPorta(TipoPdD.APPLICATIVA);
@@ -232,8 +233,11 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 		}
 		
 		//	Proprieta' OpenSPCoop
-		if (this.openSPCoopProperties == null) {
-			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: OpenSPCoopProperties";
+		if (!OpenSPCoop2Startup.initialize || this.openSPCoopProperties == null) {
+			String msg = "Inizializzazione di GovWay non correttamente effettuata: OpenSPCoopProperties";
+			if(!OpenSPCoop2Startup.initialize) {
+				msg = "Inizializzazione di GovWay non correttamente effettuata";
+			}
 			this.logCore.error(msg);
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -252,7 +256,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				throw new Exception("ConfigurazionePdDManager not initialized");
 			}
 		}catch(Throwable e){
-			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: ConfigurazionePdDManager";
+			String msg = "Inizializzazione di GovWay non correttamente effettuata: ConfigurazionePdDManager";
 			this.logCore.error(msg);
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -391,7 +395,7 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 						this.openSPCoopProperties.getDumpBinario_inMemoryThreshold(), this.openSPCoopProperties.getDumpBinario_repository());
 			}
 		}catch(Throwable e){
-			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
+			String msg = "Inizializzazione di GovWay non correttamente effettuata: DumpRaw";
 			this.logCore.error(msg,  e);
 			cInfo = ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

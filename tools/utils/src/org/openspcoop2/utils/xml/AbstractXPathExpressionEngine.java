@@ -35,8 +35,11 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.slf4j.Logger;
 import org.w3c.dom.Attr;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.EntityReference;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -744,9 +747,26 @@ public abstract class AbstractXPathExpressionEngine {
 	
 	private void toString(NodeList rootNode,StringBuilder resultBuffer, int livello){
 		
-		if (rootNode.getLength()==1 && rootNode.item(0).getNodeType()==Node.TEXT_NODE && resultBuffer.length()==0){
-			//System.out.println("TEXT ["+rootNode.item(0).getNodeType()+"] confronto con ["+Node.TEXT_NODE+"]");
-			resultBuffer.append(rootNode.item(0).getTextContent());
+//		for(int index = 0; index < rootNode.getLength();index ++){
+//			Node aNode = rootNode.item(index);
+//			try {
+//				System.out.println("DEBUG (livello:"+livello+"): "+getXMLUtils().toString(aNode));
+//			}catch(Exception e) {}
+//		}
+		
+		if (rootNode.getLength()==1 && 
+				(rootNode.item(0).getNodeType()==Node.TEXT_NODE || rootNode.item(0).getNodeType()==Node.ATTRIBUTE_NODE) && 
+				resultBuffer.length()==0){
+			//System.out.println("TEXT ["+rootNode.item(0).getNodeType()+"] confronto con ["+Node.TEXT_NODE+"] or ["+Node.ATTRIBUTE_NODE+"]");
+			// BugEntityReferences: il metodo getTextContent e anche getNodeValue risolve le entity references
+			//String textNodeValue = rootNode.item(0).getTextContent();
+			String textNodeValue = null;
+			try {
+				textNodeValue = _getTextValue_fixEntityReferencies(rootNode.item(0));
+			}catch(Throwable t) {
+				textNodeValue = rootNode.item(0).getTextContent();
+			}
+			resultBuffer.append(textNodeValue);
 			return;
 		}
 		boolean findElementoRisultatoMultiplo = false;
@@ -782,22 +802,64 @@ public abstract class AbstractXPathExpressionEngine {
 						resultBuffer.append("<"+aNode.getNodeName());
 						
 						this.printAttributes(aNode,resultBuffer);
+											
+						// BugEntityReferences: il metodo getTextContent e anche getNodeValue risolve le entity references
+						// String textNodeValue = aNode.getTextContent();
+						String textNodeValue = null;
+						try {
+							textNodeValue = _getTextValue_fixEntityReferencies(aNode);
+						}catch(Throwable t) {
+							textNodeValue = aNode.getTextContent();
+						}
 						
-						resultBuffer.append(">"+aNode.getTextContent()+ "</"+aNode.getNodeName()+">");
+						resultBuffer.append(">")
+							.append(textNodeValue) 
+							.append("</").append(aNode.getNodeName()).append(">");
 					}
 				}
 			}
 			// Risultati multipli per uno stesso elemento
-			else if ( (livello==1) && (aNode.getNodeType() == Node.TEXT_NODE) ){
+			else if ( (livello==1) && (aNode.getNodeType() == Node.TEXT_NODE || aNode.getNodeType() == Node.ATTRIBUTE_NODE) ){
 				if(findElementoRisultatoMultiplo){
 					resultBuffer.append(", ");
 				}
 				else {
 					findElementoRisultatoMultiplo = true;
 				}
-				resultBuffer.append("["+index+"]="+aNode.getTextContent());
+				// BugEntityReferences: il metodo getTextContent e anche getNodeValue risolve le entity references
+				//String textNodeValue = aNode.getTextContent();
+				String textNodeValue = null;
+				try {
+					textNodeValue = _getTextValue_fixEntityReferencies(aNode);
+				}catch(Throwable t) {
+					textNodeValue = aNode.getTextContent();
+				}
+				resultBuffer.append("["+index+"]="+textNodeValue);
 			}
 		}
+	}
+	
+	private String _getTextValue_fixEntityReferencies(Node valueEle) throws Exception {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		if(valueEle.getNodeType()==Node.TEXT_NODE || valueEle.getNodeType()==Node.ATTRIBUTE_NODE) {
+			//sb.append(valueEle.getTextContent());
+			// FIX:
+			sb.append(getXMLUtils().toString(valueEle,true));
+		}
+		else {
+			NodeList nl = valueEle.getChildNodes();
+			for (int i = 0; i < nl.getLength(); i++) {
+				Node item = nl.item(i);
+				if ((item instanceof CharacterData && !(item instanceof Comment)) || item instanceof EntityReference) {
+					//sb.append(item.getNodeValue());
+					// FIX:
+					sb.append(getXMLUtils().toString(item,true));
+				}
+			}
+		}
+		return sb.toString();
 	}
 	
 	private List<String> toList(NodeList rootNode,int livello){
@@ -872,7 +934,14 @@ public abstract class AbstractXPathExpressionEngine {
 				}else{
 					prefix = "";
 				}
-				String value = attribute.getNodeValue();
+				// BugEntityReferences: il metodo getTextContent e anche getNodeValue risolve le entity references
+				//String value = attribute.getNodeValue();
+				String value = null;
+				try {
+					value = _getTextValue_fixEntityReferencies(attribute);
+				}catch(Throwable t) {
+					value = attribute.getNodeValue();
+				}
 				resultBuffer.append(" "+prefix+attribute.getLocalName()+"=\""+value+"\"");
 			}else{
 				resultBuffer.append(" "+item.toString());

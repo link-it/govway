@@ -127,7 +127,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		// Proprieta' OpenSPCoop
 		OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
 		if (openSPCoopProperties == null) {
-			String msgError = "Inizializzazione di OpenSPCoop non correttamente effettuata: OpenSPCoopProperties";
+			String msgError = "Inizializzazione di GovWay non correttamente effettuata: OpenSPCoopProperties";
 			logCore.error(msgError);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -182,7 +182,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				throw new Exception("ConfigurazionePdDManager not initialized");
 			}
 		}catch(Throwable e){
-			String msgError = "Inizializzazione di OpenSPCoop non correttamente effettuata: ConfigurazionePdDManager";
+			String msgError = "Inizializzazione di GovWay non correttamente effettuata: ConfigurazionePdDManager";
 			logCore.error(msgError,e);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -303,7 +303,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					dumpConfigurazione,
 					fileTrace);
 		}catch(Throwable e){
-			String msgError = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
+			String msgError = "Inizializzazione di GovWay non correttamente effettuata: DumpRaw";
 			logCore.error(msgError,e);
 			try{
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

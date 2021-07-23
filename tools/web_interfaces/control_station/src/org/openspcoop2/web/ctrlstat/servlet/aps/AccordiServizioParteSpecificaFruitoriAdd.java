@@ -59,6 +59,7 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -999,10 +1000,14 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			fruitore.setNome(nomeFruitore);
 			fruitore.setConnettore(connettore);
 
+			FormatoSpecifica formato = null;
+			if(as!=null) {
+				formato = as.getFormatoSpecifica();
+			}
 			String wsdlimplerS = this.wsdlimpler.getValue() != null ? new String(this.wsdlimpler.getValue()) : null; 
-			fruitore.setByteWsdlImplementativoErogatore(((wsdlimplerS != null) && !wsdlimplerS.trim().replaceAll("\n", "").equals("")) ? wsdlimplerS.trim().getBytes() : null);
+			fruitore.setByteWsdlImplementativoErogatore(apsCore.getInterfaceAsByteArray(formato, wsdlimplerS));
 			String wsdlimplfruS = this.wsdlimplfru.getValue() != null ? new String(this.wsdlimplfru.getValue()) : null; 
-			fruitore.setByteWsdlImplementativoFruitore(((wsdlimplfruS != null) && !wsdlimplfruS.trim().replaceAll("\n", "").equals("")) ? wsdlimplfruS.trim().getBytes() : null);
+			fruitore.setByteWsdlImplementativoFruitore(apsCore.getInterfaceAsByteArray(formato, wsdlimplfruS));
 
 			AccordoServizioParteSpecifica servsp = apsCore.getAccordoServizioParteSpecifica(idInt);
 

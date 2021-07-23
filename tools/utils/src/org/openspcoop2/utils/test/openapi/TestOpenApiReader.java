@@ -53,4 +53,13 @@ public class TestOpenApiReader {
 		
 	}
 	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
+	public void testOpenApiReaderIndentazione() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+"' (verificaIndentazione) ...");
+		org.openspcoop2.utils.openapi.TestIndentazione.main(null);
+		TestLogger.info("Run test '"+ID_TEST+"' (verificaIndentazione) ok");
+		
+	}
+	
 }

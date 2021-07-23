@@ -30,7 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -38,6 +40,7 @@ import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -172,6 +175,61 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 		OpenSPCoop2Properties op2Properties = null;
 		try {
 			
+			if (!OpenSPCoop2Startup.initialize) {
+				
+				// req.getContextPath()[/govway] req.getRequestURI()[/govway/check]
+				String contextPath = req.getContextPath();
+				String requestUri = req.getRequestURI();
+				if(requestUri!=null && contextPath!=null && requestUri.startsWith(contextPath) && requestUri.length()>contextPath.length()) {
+					String function = requestUri.substring(contextPath.length(), requestUri.length());
+					if(function.startsWith("/") && function.length()>1) {
+						function = function.substring(1);
+					}
+					if(function.equals(URLProtocolContext.Check_FUNCTION) || function.equals(URLProtocolContext.Proxy_FUNCTION)){
+						CheckStatoPdD.serializeNotInitializedResponse(res, (logCore!=null) ? logCore : logOpenSPCoop2Servlet);
+						return;
+					}
+				}
+				
+				// Attendo inizializzazione
+				int max = CostantiPdD.WAIT_STARTUP_TIMEOUT_SECONDS;
+				int sleepCheck = CostantiPdD.WAIT_STARTUP_CHECK_INTERVAL_MS;
+				for (int i = 0; i < 5; i++) { // attendo 5 secondi la presenza delle proprietà
+					if(OpenSPCoop2Properties.getInstance()==null) {
+						Utilities.sleep(1000);
+					}
+					if(OpenSPCoop2Properties.getInstance()!=null) {
+						break;
+					}
+				}
+				if(OpenSPCoop2Properties.getInstance()!=null) {
+					max = OpenSPCoop2Properties.getInstance().getStartup_richiesteIngressoTimeout_secondi();
+					sleepCheck = OpenSPCoop2Properties.getInstance().getStartup_richiesteIngressoCheck_ms();
+				}
+				
+				int maxMs = (max * 1000);
+				int actualMs = 0;
+				while(!OpenSPCoop2Startup.initialize && actualMs<maxMs) {
+					Utilities.sleep(sleepCheck);
+					actualMs = actualMs + sleepCheck;
+				}
+				
+				if (!OpenSPCoop2Startup.initialize) {
+				
+					// log su file core
+					StringBuilder bfLogError = new StringBuilder();
+					ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,bfLogError, "GovWay non inizializzato", true, false);
+					if(logCore!=null){
+						logCore.error(bfLogError.toString());
+					}
+					else{
+						logOpenSPCoop2Servlet.error(bfLogError.toString());
+					}
+					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeGovWayNotInitialized(IDService.OPENSPCOOP2_SERVLET)));
+					return;
+					
+				}
+			}
 			op2Properties = OpenSPCoop2Properties.getInstance();
 			
 			boolean printCertificate = false;

@@ -28,6 +28,8 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 
 /**
  * DynamicInfo
@@ -57,14 +59,43 @@ public class DynamicInfo {
 		if(connettoreMsg!=null && connettoreMsg.getBusta()!=null) {
 			this.busta = connettoreMsg.getBusta();
 		}
+		
+		TransportRequestContext trasportRequestContext = connettoreMsg.getTransportRequestContext(); 
+
+		if(trasportRequestContext!=null) {
+			this.trasporto = trasportRequestContext.getHeaders();
+		}
 		if(connettoreMsg!=null && 
 				connettoreMsg.getPropertiesTrasporto()!=null && !connettoreMsg.getPropertiesTrasporto().isEmpty()) {
-			this.trasporto =  connettoreMsg.getPropertiesTrasporto();
+			if(this.trasporto==null || this.trasporto.isEmpty()) {
+				this.trasporto =  connettoreMsg.getPropertiesTrasporto();
+			}
+			else {
+				Map<String, List<String>> mapNew = connettoreMsg.getPropertiesTrasporto();
+				for (String name : mapNew.keySet()) {
+					TransportUtils.removeObject(this.trasporto, name);
+					this.trasporto.put(name, mapNew.get(name));
+				}			
+			}
+		}
+		
+		if(trasportRequestContext!=null) {
+			this.queryParameters = trasportRequestContext.getParameters();
 		}
 		if(connettoreMsg!=null && 
 				connettoreMsg.getPropertiesUrlBased()!=null && !connettoreMsg.getPropertiesUrlBased().isEmpty()) {
-			this.queryParameters = connettoreMsg.getPropertiesUrlBased();
+			if(this.queryParameters==null || this.queryParameters.isEmpty()) {
+				this.queryParameters =  connettoreMsg.getPropertiesUrlBased();
+			}
+			else {
+				Map<String, List<String>> mapNew = connettoreMsg.getPropertiesUrlBased();
+				for (String name : mapNew.keySet()) {
+					TransportUtils.removeObject(this.queryParameters, name);
+					this.queryParameters.put(name, mapNew.get(name));
+				}			
+			}
 		}
+		
 		this.pddContext = pddContext;
 	}
 	

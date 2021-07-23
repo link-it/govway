@@ -268,6 +268,10 @@ public class CostantiPdD {
     public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_CODA_DEFAULT = CostantiConfigurazione.CODA_DEFAULT;
     public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRIORITA_DEFAULT = CostantiConfigurazione.PRIORITA_DEFAULT;
     
+    /** Tempi di attesa dello startup per le richieste in ingresso */
+    public final static int WAIT_STARTUP_TIMEOUT_SECONDS = 90; 
+    public final static int WAIT_STARTUP_CHECK_INTERVAL_MS = 1000; 
+    
     /** Tempi di gestione dei lock da parte del Timer */
     public final static int TIMER_LOCK_MAX_LIFE = -1; 
     public final static int TIMER_LOCK_IDLE_TIME = -1; 

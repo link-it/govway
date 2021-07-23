@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
  * Classe utilizzata per rappresentare le informazioni utilizzata da un generico connettore.
@@ -339,6 +340,13 @@ public class ConnettoreMsg  {
 		}
 		return this.request;
 	}
+	public TransportRequestContext getTransportRequestContext() {
+		if(this.request!=null) {
+			return this.request.getTransportRequestContext();
+		}
+		return null;
+	}
+	
 	/**
 	 * Ritorna le proprieta' del connettore.
 	 *
