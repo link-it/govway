@@ -69,7 +69,7 @@
 	<classpathentry kind="src" path="example/pdd/client/JMXClient/src"/>
 	<classpathentry excluding="*/jboss*.xml*" kind="src" path="example/pdd/server/testService/src"/>
 	<classpathentry kind="src" path="distrib/check"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk11.0.6">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/openjdk-11.0.2+9_linux-x64">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
