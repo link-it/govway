@@ -2070,7 +2070,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if(filterTipoSA ==null || (ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI.equals(filterTipoSA) || 
 						ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(filterTipoSA))) {
 					// nuovi filtri connettore
-					this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+					this.addFilterSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE, ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE, false);
 					
 					// filtro tipo connettore con voce IM solo sulle erogazioni
 					String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, true);
@@ -2086,6 +2086,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					
 					// filtro keystore
 					this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
+					
+					// imposto apertura sezione
+					this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
 				}
 			}
 			
@@ -2114,7 +2117,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				if(profiloModipaSelezionato) {
 					
-					this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
+					this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA, CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA, false);
 					
 					// ulteriore condizione per la visualizzazione della sezione e' che il Dominio non deve essere esterno
 					if(this.core.isGestionePddAbilitata(this)==false && multitenant) {
@@ -2137,6 +2140,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					
 					// filtro audience
 					this.addFilterModIAudience(ricerca, idLista, true, null, filterDominio);
+					
+					// imposto apertura sezione
+					this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA);
 				}
 			}
 			
@@ -2166,13 +2172,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			// filtri proprieta
 			List<String> nomiProprieta = this.nomiProprietaSA(protocolloPerFiltroProprieta,soggettoPerFiltroProprieta);
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
-				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
 				
 				// filtro nome
 				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
 				
 				// filtro valore
 				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+				
+				// imposto apertura sezione
+				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA);
 			}
 			
 			

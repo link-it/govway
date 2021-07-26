@@ -117,6 +117,8 @@ public class DataElement {
 	
 	private boolean visualizzaLinkApriNuovaFinestra = false;
 	
+	private boolean visualizzaSottosezioneAperta = false;
+	
 	private Dialog dialog = null;
 	
 	public String getIdToRemove() {
@@ -910,4 +912,13 @@ public class DataElement {
 	public void setValoreBoldRed() {
 		this.setStyleClass(Costanti.INPUT_TEXT_BOLD_RED_CSS_CLASS);
 	}
+
+	public boolean isVisualizzaSottosezioneAperta() {
+		return this.visualizzaSottosezioneAperta;
+	}
+
+	public void setVisualizzaSottosezioneAperta(boolean visualizzaSottosezioneAperta) {
+		this.visualizzaSottosezioneAperta = visualizzaSottosezioneAperta;
+	}
+	
 }

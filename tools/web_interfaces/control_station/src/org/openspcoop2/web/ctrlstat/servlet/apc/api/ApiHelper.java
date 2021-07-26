@@ -176,7 +176,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 						
 			if(profiloModipaSelezionato) {
-				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
+				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA, CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA, false);
 				
 				// filtro sicurezza canale
 				this.addFilterModISicurezzaCanale(ricerca, idLista);
@@ -189,6 +189,9 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				
 				// filtro ifo utente
 				this.addFilterModIInfoUtente(ricerca, idLista);
+				
+				// imposto apertura sezione
+				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA);
 			}
 			
 			

@@ -1351,6 +1351,37 @@ div.intervalInnerDiv label {
     color: ${legend.color};
 }
 
+.subtitleAnchor {
+	cursor: pointer;
+	text-decoration: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.subtitleAnchor:hover {
+	cursor: pointer;
+	text-decoration: none;
+	color: ${a.color} !important;
+}
+
+.subtitle span > a.subtitleAnchor {
+	font-size: 16px;
+    font-weight: bold;
+    margin-left: 0px;
+    color: ${legend.color};
+    margin-right: 4px;
+}
+
+.subtitle span > i.material-icons {
+	cursor: pointer;
+    color: ${legend.color};
+}
+
+.subtitle span > i.material-icons:hover {
+	cursor: pointer;
+    color: ${legend.color};
+}
+
 div.prop-slider{
 	width: 410px;
 	background-color: ${input.slider.background.color};	

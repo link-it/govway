@@ -798,9 +798,11 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_METADATI_GRUPPO = "";
 	
 	public final static String LABEL_SUBTITLE_FILTRI_MODIPA = "Dati Profilo ModI";
+	public final static String NAME_SUBTITLE_FILTRI_MODIPA = "subtDatiProfiloModI";
 	public final static String LABEL_FILTRO_MODIPA_INFO_UTENTE = "Informazioni Utente";
 	
 	public final static String LABEL_SUBTITLE_PROPRIETA = "Dati Propriet&agrave;";
+	public final static String NAME_SUBTITLE_PROPRIETA = "subtDatiProp";
 	public final static String LABEL_FILTRO_PROPRIETA_NOME = "Nome";
 	public final static String LABEL_FILTRO_PROPRIETA_VALORE = "Valore";
 	

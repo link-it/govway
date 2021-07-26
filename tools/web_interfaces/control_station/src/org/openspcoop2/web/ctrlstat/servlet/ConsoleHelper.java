@@ -10666,8 +10666,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addFilterSubtitle(String subtitle) throws Exception{
-		this.pd.addSubtitleFilter(subtitle);
+	public void addFilterSubtitle(String subtitleName, String subtitleLabel, boolean visualizzaSottosezioneAperta) throws Exception{
+		this.pd.addSubtitleFilter(subtitleName, subtitleLabel, visualizzaSottosezioneAperta);
+	}
+	
+	public void impostaAperturaSubtitle(String subtitleName) throws Exception{
+		this.pd.impostaAperturaSubtitle(subtitleName, null, this.getPostBackElementName());
+	}
+	
+	public void impostaAperturaSubtitle(String subtitleName, boolean visualizzaSottosezioneAperta) throws Exception{
+		this.pd.impostaAperturaSubtitle(subtitleName, visualizzaSottosezioneAperta, this.getPostBackElementName());
 	}
 	
 	public void addFilterHidden(String name, String value) throws Exception{

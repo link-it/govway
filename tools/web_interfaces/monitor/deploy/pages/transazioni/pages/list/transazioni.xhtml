@@ -40,14 +40,24 @@ xmlns="http://www.w3.org/1999/xhtml"
 			<rich:simpleTogglePanel id="panelTransazioni" opened="#{searchFormTransazioni.visualizzaFiltroAperto}" 
 				label="#{(searchFormTransazioni.periodo eq 'Live') ? 'Visualizza Transazioni (Live)' : searchFormTransazioni.tipoStoricoLabel}" switchType="client">
 				<f:facet name="openMarker">
-					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
-						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
-						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+					<a4j:outputPanel id="openMarkerPnl" styleClass="icon-search-box">
+						<a4j:outputPanel id="openMarkerPnl1" styleClass="" rendered="#{not(searchFormTransazioni.periodo eq 'Live') and 
+															searchFormTransazioni.aggiornamentoDatiAbilitato and
+															searchFormTransazioni.showButtonNuovaRicerca}">
+							<i class="material-icons md-24" id="iconaRefreshOpen">&#xE863;</i>
+							<rich:toolTip for="openMarkerPnl1" value="#{msg['commons.search.filtroRicerca.refresh.tooltip']}" />
+							<a4j:support event="onclick" action="#{searchFormTransazioni.filtra}" process="searchPnl" 
+														reRender="panelPaginaTransazioniCtr" oncomplete="completaRicerca(event)"/>
+						</a4j:outputPanel>
+						<a4j:outputPanel id="openMarkerPnl2" styleClass="">
+							<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+							<rich:toolTip for="openMarkerPnl2" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+						</a4j:outputPanel>
 					</a4j:outputPanel>
 				</f:facet>
 				
 				<f:facet name="closeMarker">
-					<a4j:outputPanel id="closeMarkerPnl" stuleClass="icon-search-box">
+					<a4j:outputPanel id="closeMarkerPnl" styleClass="icon-search-box">
 						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
 						<rich:toolTip for="closeMarkerPnl" value="#{msg['commons.search.filtroRicerca.nascondi.tooltip']}" />
 					</a4j:outputPanel>

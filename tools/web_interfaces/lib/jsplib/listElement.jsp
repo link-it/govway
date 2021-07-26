@@ -482,30 +482,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	}
     	
     	// reinit select del filtro
-    	if($('select[id^=filterValue_]').length > 0){
-    		// elimino eventuali plugin gia' applicati
-    		$('select[id^=filterValue_]').each(function() {
-    			var wrapper = $( this ).parent();
-    			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
-    				$( this ).appendTo($( this ).parent().parent());
-    				wrapper.remove();
-    				$( this ).css('width','');
-    				$( this ).css('height','');
-    			}
-    			
-    			var checkID = $( this ).attr('id') + '_hidden_chk';
-    			if($( '#' + checkID ).length > 0) {
-    				var val = $( '#' + checkID ).attr('value');
-    				if(val && val == 'true'){
-    					$( this ).searchable({disableInput : false});	
-    				} else {
-    					$( this ).searchable({disableInput : true});	
-    				}
-    			} else {
-    				$( this ).searchable({disableInput : true});
-    			}
-			});
-    	}
+    	inizializzaSelectFiltro();
     	
 //     	$("#iconaPanelLista").removeClass('icon-down-white');
 //     	$("#iconaPanelLista").addClass('icon-up-white');
@@ -519,6 +496,33 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 //     	$("#iconaPanelLista").removeClass('icon-up-white');
 //     	$("#iconaPanelLista").addClass('icon-down-white');
     }
+}
+
+function inizializzaSelectFiltro(){
+	if($('select[id^=filterValue_]').length > 0){
+		// elimino eventuali plugin gia' applicati
+		$('select[id^=filterValue_]').each(function() {
+			var wrapper = $( this ).parent();
+			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
+				$( this ).appendTo($( this ).parent().parent());
+				wrapper.remove();
+				$( this ).css('width','');
+				$( this ).css('height','');
+			}
+			
+			var checkID = $( this ).attr('id') + '_hidden_chk';
+			if($( '#' + checkID ).length > 0) {
+				var val = $( '#' + checkID ).attr('value');
+				if(val && val == 'true'){
+					$( this ).searchable({disableInput : false});	
+				} else {
+					$( this ).searchable({disableInput : true});	
+				}
+			} else {
+				$( this ).searchable({disableInput : true});
+			}
+		});
+	}
 }
 
 function mostraDataElementInfoModal(title,body){
