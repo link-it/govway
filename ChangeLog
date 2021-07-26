@@ -1,3 +1,10 @@
+2021-07-26  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto bug OP-1242
+	Utilizzando il browser IE11 quando si selezionava un filtro di ricerca, al momento del reload della pagina, l'applicazione si bloccava.
+	La console del browser indicava il seguente errore: "Errore: L'oggetto non supporta la proprietà o il metodo 'endsWith'"
+
 2021-07-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

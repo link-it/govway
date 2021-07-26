@@ -334,14 +334,21 @@ function Change(form,dataElementName) {
 function Change(form,dataElementName,fromFilters) {
     
 	if( fromFilters ){
-		if(form.action.endsWith('Add.do')){
-			form.action=form.action.replace('Add.do','List.do');
+		var formAction = form.action;
+		
+		// hack actionvuota
+		if(formAction == ''){
+			formAction = document.location.href;
 		}
-		if(form.action.endsWith('Change.do')){
-			form.action=form.action.replace('Change.do','List.do');
+		
+		if(isModificaUrlRicerca(formAction,'Add.do')){
+			form.action=formAction.replace('Add.do','List.do');
 		}
-		if(form.action.endsWith('Del.do')){
-			form.action=form.action.replace('Del.do','List.do');
+		if(isModificaUrlRicerca(formAction,'Change.do')){
+			form.action=formAction.replace('Change.do','List.do');
+		}
+		if(isModificaUrlRicerca(formAction,'Del.do')){
+			form.action=formAction.replace('Del.do','List.do');
 		}
 	}
 	
@@ -371,6 +378,19 @@ function Change(form,dataElementName,fromFilters) {
         
     // form submit
     document.form.submit();
+}
+
+function isModificaUrlRicerca(formAction, urlToCheck){
+	// hack hash documento impostato, la parte di url che contiene la # bisogna eliminarla dal check
+	if(formAction.indexOf('#') > 0) {
+		formAction = formAction.substring(0, formAction.indexOf('#'));
+	}
+	
+	return ieEndsWith(formAction, urlToCheck);
+}
+
+function ieEndsWith(str, suffix){
+	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
 function addHidden(theForm, name, value) {
