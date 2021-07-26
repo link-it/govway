@@ -1467,6 +1467,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			pu = u.getPermessi();
 
 			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			if(singlePdD==null) {
+				singlePdD = this.core!=null ? this.core.isSinglePdD() : true;
+			}
 
 			boolean isModalitaAvanzata = this.isModalitaAvanzata();
 			boolean isModalitaCompleta = this.isModalitaCompleta();
@@ -10707,6 +10710,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+			if(confPers==null) {
+				confPers = this.core!=null ? this.core.isShowConfigurazioniPersonalizzate() : true;
+			}
 
 			TipologiaConnettori tipologiaConnettori = null;
 			try {
@@ -12608,6 +12614,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws Exception {
 		PermessiUtente pu = user.getPermessi();
 		Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+		if(singlePdD==null) {
+			singlePdD = this.core!=null ? this.core.isSinglePdD() : true;
+		}
 
 		String isServizi = (pu.isServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isDiagnostica = (pu.isDiagnostica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
