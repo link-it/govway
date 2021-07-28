@@ -50,33 +50,39 @@ Background:
 
 * def api_info_generali = read('api_info_generali.json')
 
-* def connettore = read('connettore_erogazione_petstore.json')
+* def connettore = read('connettore_fruizione_http.json')
 * def info_generali = read('informazioni_generali_petstore.json')
 * def erogazione_versione = read('api_versione3.json')
 
-* def getExpectedConnettoreHTTPS =
+* def getExpectedConnettore =
 """
 function(connettore) {
-var expected = connettore
-expected.connettore.autenticazione_https.trust_all_server_certs = expected.connettore.autenticazione_https.trust_all_server_certs != null ? expected.connettore.autenticazione_https.trust_all_server_certs : false  
-expected.connettore.autenticazione_https.server.algoritmo = expected.connettore.autenticazione_https.server.algoritmo != null ? expected.connettore.autenticazione_https.server.algoritmo : 'PKIX'  
-expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
-return expected
-} 
-"""
 
-* def getExpectedConnettoreHTTP =
-"""
-function(connettore) {
-var expected = connettore
-expected.connettore.tipo = 'http'
-expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
-return expected
+	var expected = connettore
+	expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
+
+	var tipo = connettore.connettore.tipo
+	if(tipo == 'http') {
+			if(expected.connettore.autenticazione_https != null) {
+				expected.connettore.autenticazione_https.trust_all_server_certs = expected.connettore.autenticazione_https.trust_all_server_certs != null ? expected.connettore.autenticazione_https.trust_all_server_certs : false  
+				expected.connettore.autenticazione_https.server.algoritmo = expected.connettore.autenticazione_https.server.algoritmo != null ? expected.connettore.autenticazione_https.server.algoritmo : 'PKIX'
+			}  
+	} else if (tipo == 'file') {
+		expected.connettore.richiesta.create_parent_dir = expected.connettore.richiesta.create_parent_dir != null ? expected.connettore.richiesta.create_parent_dir : false
+		expected.connettore.richiesta.overwrite_if_exists=expected.connettore.richiesta.overwrite_if_exists != null ? expected.connettore.richiesta.overwrite_if_exists: false
+		if(expected.connettore.risposta != null) {
+		expected.connettore.risposta.delete_after_read = expected.connettore.risposta.delete_after_read != null ? expected.connettore.risposta.delete_after_read: false
+		}
+	}
+	
+	return expected
 } 
 """
 
 @UpdateConnettore204
-Scenario: Update Fruizioni Connettore 204
+Scenario Outline: Update Fruizioni Connettore 204
+
+		* def connettore_update = read ('<nome>')
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
@@ -85,15 +91,82 @@ Scenario: Update Fruizioni Connettore 204
     Given url configUrl
     And path 'fruizioni', petstore_key, 'connettore'
     And header Authorization = govwayConfAuth
-    And request connettore
+    And request connettore_update
     And params query_params
     When method put
     Then status 204
+    
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response == getExpectedConnettore(connettore_update)
+
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key
+    And header Authorization = govwayConfAuth
+    When method get
+    Then status 200
+
+		* match response.connettore == '<connettore>'
     
     
     * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|nome|connettore
+|connettore_fruizione_http.json|https://ginovadifretta.it/petstore
+|connettore_fruizione_echo.json|[echo] govway://echo
+|connettore_fruizione_null.json|[null] govway://dev/null
+|connettore_fruizione_plugin.json|[plugin] custom
+|connettore_fruizione_plugin_con_properties.json|[plugin] custom
+|connettore_fruizione_jms.json|[jms] nome_coda
+|connettore_fruizione_jms_jndi_init_ctx.json|[jms] nome_coda
+|connettore_fruizione_jms_jndi_provider_url.json|[jms] nome_coda
+|connettore_fruizione_jms_jndi_url_pkg.json|[jms] nome_coda
+|connettore_fruizione_jms_send_as_bytes.json|[jms] nome_coda
+|connettore_fruizione_jms_tipo_coda_topic.json|[jms] nome_coda
+|connettore_fruizione_jms_user_password.json|[jms] nome_coda
+|connettore_fruizione_file.json|[file] /tmp/abc.txt
+|connettore_fruizione_file_create_parent.json|[file] /tmp/abc.txt
+|connettore_fruizione_file_headers.json|[file] /tmp/abc.txt
+|connettore_fruizione_file_overwrite.json|[file] /tmp/abc.txt
+|connettore_fruizione_file_response.json|[file] /tmp/abc.txt
+|connettore_fruizione_file_response_delete.json|[file] /tmp/abc.txt
+|connettore_fruizione_file_response_headers.json|[file] /tmp/abc.txt
+|connettore_fruizione_file_response_wait.json|[file] /tmp/abc.txt
+
+@UpdateConnettore400
+Scenario Outline: Erogazioni Update Connettore 400
+
+		* def connettore_update = read ('<nome>')
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+
+    Given url configUrl
+    And path 'fruizioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 400
+    
+    * match response.detail == '<error>' 
+    
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|nome|error
+|connettore_fruizione_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato
 
 @UpdateConnettoreGruppo204
 Scenario: Update Fruizioni Connettore gruppo 204
@@ -129,7 +202,7 @@ Scenario: Update Fruizioni Connettore gruppo 204
     When method get
     Then status 200
     
-    * match response == getExpectedConnettoreHTTPS(connettore)
+    * match response == getExpectedConnettore(connettore)
 
     Given url configUrl
     And path 'fruizioni', petstore_key, 'connettore'
@@ -146,7 +219,7 @@ Scenario: Update Fruizioni Connettore gruppo 204
     When method get
     Then status 200
     
-    * match response == getExpectedConnettoreHTTPS(connettore)
+    * match response == getExpectedConnettore(connettore)
 
     Given url configUrl
     And path 'fruizioni', petstore_key, 'connettore'
@@ -154,8 +227,12 @@ Scenario: Update Fruizioni Connettore gruppo 204
     When method get
     Then status 200
 
-		* match response == getExpectedConnettoreHTTP({connettore: fruizione_petstore.connettore})
 
+		# il connettore in creazione e' solo HTTP
+    * def conn = fruizione_petstore.connettore
+    * eval conn.tipo = 'http'
+    
+		* match response == getExpectedConnettore({connettore: conn})
 
     Given url configUrl
     And path 'fruizioni', petstore_key

@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
+import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.CorsConfigurazione;
@@ -52,9 +54,11 @@ import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
+import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
@@ -86,6 +90,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.StatoDescrizione;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione.ErogazioniConfEnv;
 import org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione.FruizioniConfEnv;
 import org.openspcoop2.core.config.rs.server.model.*;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -107,6 +112,8 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.plugins.Plugin;
+import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
@@ -1507,7 +1514,248 @@ public class ErogazioniApiHelper {
 	}
 	
 	public static final boolean connettoreCheckData(
-			final BaseConnettoreHttp conn,
+			final ConnettoreFile conn,
+			final ErogazioniEnv env,
+			boolean erogazione
+			) throws Exception {
+		
+	    final String endpointtype = TipiConnettore.FILE.getNome();
+	    
+		org.openspcoop2.core.registry.Connettore conTmp = null;
+		List<ExtendedConnettore> listExtendedConnettore = 
+				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
+						null, false, endpointtype);
+
+		String responseInputMode = conn.getRisposta() != null ? StatoFunzionalita.ABILITATO.toString() : StatoFunzionalita.DISABILITATO.toString();
+		
+		String responseInputFileName = null;
+		String responseInputFileNameHeaders = null;
+		boolean responseInputDeleteAfterRead = false;
+		String responseInputWaitTime = null;
+		
+		if(conn.getRisposta() != null) {
+			responseInputFileName = conn.getRisposta().getFile();
+			responseInputFileNameHeaders = conn.getRisposta().getFileHeaders();
+			responseInputDeleteAfterRead = conn.getRisposta().isDeleteAfterRead();
+			responseInputWaitTime = conn.getRisposta().getWaitIfNotExistsMs() != null ? conn.getRisposta().getWaitIfNotExistsMs() + "" : null;
+		}
+		
+		String createParentDir = conn.getRichiesta().isCreateParentDir() != null ? ServletUtils.boolToCheckBoxStatus(conn.getRichiesta().isCreateParentDir()) : ServletUtils.boolToCheckBoxStatus(false);
+		String overwriteIfExists = conn.getRichiesta().isOverwriteIfExists() != null ? ServletUtils.boolToCheckBoxStatus(conn.getRichiesta().isOverwriteIfExists()) : ServletUtils.boolToCheckBoxStatus(false);
+		
+		return env.saHelper.endPointCheckData(
+				env.tipo_protocollo,
+				erogazione,
+				endpointtype,
+				null,
+				null,	// nome
+				null,	// tipo
+				null,	// httpConf.getUsername()
+				null,	// httpConf.getPassword()
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null,	// provurl jms,
+				null, 	// connfact, 
+				null,	// sendas, 
+				null, 													// this.httpsurl,
+				null,	// httpsConf.getTipologia().toString(), 
+				false,		// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,	// this.httpspath
+				null,	// this.httpstipo,
+				null,	// this.httpspwd,
+				null,	// this.httpsalgoritmo
+				false, 
+				null,
+				"",																		// httpspwdprivatekeytrust, 
+				null,	// pathkey
+				null,	// this.httpstipokey
+				null,	// this.httpspwdkey 
+				null,	// this.httpspwdprivatekey,  
+				null,	// this.httpsalgoritmokey, 
+				null,	// httpsKeyAlias
+				null,	// httpsTrustStoreCRLs
+				null,																//	tipoconn (personalizzato)
+				ServletUtils.boolToCheckBoxStatus(false),										 	//autenticazioneHttp,
+				ServletUtils.boolToCheckBoxStatus(false),	
+				null,	// evalnull( () -> proxy.getHostname() ),
+				null,	// evalnull( () -> proxy.getPorta().toString() ),
+				null,	// evalnull( () -> proxy.getUsername() ),
+				null,	// evalnull( () -> proxy.getPassword() ),
+				ServletUtils.boolToCheckBoxStatus(false), //ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
+				null,	// evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
+				null,	// evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
+				null,	// evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
+				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
+				createParentDir,
+				overwriteIfExists,
+				responseInputMode,	// this.responseInputMode, 
+				responseInputFileName,	// this.responseInputFileName, 
+				responseInputFileNameHeaders,	// this.responseInputFileNameHeaders, 
+				ServletUtils.boolToCheckBoxStatus(responseInputDeleteAfterRead),	// this.responseInputDeleteAfterRead, 
+				responseInputWaitTime,	// this.responseInputWaitTime,
+				false,
+				null,
+				listExtendedConnettore,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
+			);
+	}
+	
+	
+	public static final boolean connettoreCheckData(
+			final ConnettoreJms conn,
+			final ErogazioniEnv env,
+			boolean erogazione
+			) throws Exception {
+		
+	    final String endpointtype = TipiConnettore.JMS.getNome();
+	    
+		org.openspcoop2.core.registry.Connettore conTmp = null;
+		List<ExtendedConnettore> listExtendedConnettore = 
+				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
+						null, false, endpointtype);
+
+		String sendAs = conn.getSendAs().equals(ConnettoreJmsSendAsEnum.BYTES) ? CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE : CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE;
+		return env.saHelper.endPointCheckData(
+				env.tipo_protocollo,
+				erogazione,
+				endpointtype,
+				null,
+				conn.getNome(),	// this.nome,
+				conn.getTipoCoda().toString(), 	// this.tipo,
+				conn.getUtente(), 
+				conn.getPassword(), 
+				conn.getJndiInitialContext(),	// this.initcont, 
+				conn.getJndiUrlPgkPrefixes(),	// this.urlpgk,
+				conn.getJndiProviderUrl(),   // this.url, 
+				conn.getConnectionFactory(),	// this.connfact,
+				sendAs, // this.sendas
+				null, 													// this.httpsurl,
+				null,	// httpsConf.getTipologia().toString(), 
+				false,		// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,	// this.httpspath
+				null,	// this.httpstipo,
+				null,	// this.httpspwd,
+				null,	// this.httpsalgoritmo
+				false, 
+				null,
+				"",																		// httpspwdprivatekeytrust, 
+				null,	// pathkey
+				null,	// this.httpstipokey
+				null,	// this.httpspwdkey 
+				null,	// this.httpspwdprivatekey,  
+				null,	// this.httpsalgoritmokey, 
+				null,	// httpsKeyAlias
+				null,	// httpsTrustStoreCRLs
+				null,																//	tipoconn (personalizzato)
+				ServletUtils.boolToCheckBoxStatus(false),										 	//autenticazioneHttp,
+				ServletUtils.boolToCheckBoxStatus(false),	
+				null,	// evalnull( () -> proxy.getHostname() ),
+				null,	// evalnull( () -> proxy.getPorta().toString() ),
+				null,	// evalnull( () -> proxy.getUsername() ),
+				null,	// evalnull( () -> proxy.getPassword() ),
+				ServletUtils.boolToCheckBoxStatus(false), //ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
+				null,	// evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
+				null,	// evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
+				null,	// evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+        		null,	// requestOutputFileName,
+        		null,	// requestOutputFileNameHeaders, 
+        		null,	// requestOutputParentDirCreateIfNotExists, 
+        		null,	// requestOutputOverwriteIfExists,
+        		null,	// responseInputMode,
+        		null,	// responseInputFileName,
+        		null,	// responseInputFileNameHeaders,
+        		null,	// responseInputDeleteAfterRead,
+        		null,	// responseInputWaitTime,
+				false,
+				null,
+				listExtendedConnettore,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
+			);
+	}
+	
+	public static final boolean connettoreCheckData(
+			final OneOfConnettoreErogazioneConnettore conn,
+			final ErogazioniEnv env,
+			boolean erogazione
+			) throws Exception {
+		switch(conn.getTipo()) {
+		case APPLICATIVO_SERVER:
+			break;
+		case ECHO:return true;
+		case FILE: return connettoreCheckData((ConnettoreFile)conn, env, erogazione);
+		case HTTP: return connettoreCheckData((ConnettoreHttp)conn, env, erogazione);
+		case JMS: return connettoreCheckData((ConnettoreJms)conn, env, erogazione);
+		case MESSAGE_BOX:
+			break;
+		case NULL:return true;
+		case PLUGIN:return connettoreCheckData((ConnettorePlugin)conn, env, erogazione);
+		default:
+			break;}
+
+		return false;
+	}
+	
+	public static final boolean connettoreCheckData(
+			final OneOfConnettoreFruizioneConnettore conn,
+			final ErogazioniEnv env,
+			boolean erogazione
+			) throws Exception {
+		switch(conn.getTipo()) {
+		case APPLICATIVO_SERVER:
+			break;
+		case ECHO:return true;
+		case FILE: return connettoreCheckData((ConnettoreFile)conn, env, erogazione);
+		case HTTP: return connettoreCheckData((ConnettoreHttp)conn, env, erogazione);
+		case JMS: return connettoreCheckData((ConnettoreJms)conn, env, erogazione);
+		case MESSAGE_BOX:
+			break;
+		case NULL:return true;
+		case PLUGIN:return connettoreCheckData((ConnettorePlugin)conn, env, erogazione);
+		default:
+			break;}
+
+		return false;
+	}
+	
+	public static final boolean connettoreCheckData(
+			final OneOfApplicativoServerConnettore conn,
+			final ErogazioniEnv env,
+			boolean erogazione
+			) throws Exception {
+		switch(conn.getTipo()) {
+		case APPLICATIVO_SERVER:
+			break;
+		case ECHO:return true;
+		case FILE: return connettoreCheckData((ConnettoreFile)conn, env, erogazione);
+		case HTTP: return connettoreCheckData((ConnettoreHttp)conn, env, erogazione);
+		case JMS: return connettoreCheckData((ConnettoreJms)conn, env, erogazione);
+		case MESSAGE_BOX:
+			break;
+		case NULL:return true;
+		case PLUGIN:return connettoreCheckData((ConnettorePlugin)conn, env, erogazione);
+		default:
+			break;}
+
+		return false;
+	}
+	
+	public static final boolean connettoreCheckData(
+			final ConnettoreHttp conn,
 			final ErogazioniEnv env,
 			boolean erogazione
 			) throws Exception {
@@ -1611,10 +1859,675 @@ public class ErogazioniApiHelper {
 			);
 	}
 		
+	public static final boolean connettoreCheckData(
+			final ConnettorePlugin conn,
+			final ErogazioniEnv env,
+			boolean erogazione
+			) throws Exception {
+		
+
+		Search ricerca = new Search(true);
+		ricerca.addFilter(Liste.CONFIGURAZIONE_PLUGINS_CLASSI,  Filtri.FILTRO_TIPO_PLUGIN_CLASSI, TipoPlugin.CONNETTORE.toString());
+
+		ConfigurazioneCore confCore = new ConfigurazioneCore(env.stationCore);
+
+		List<Plugin> listaTmp = confCore.pluginsClassiList(ricerca);
+
+		if(!listaTmp.stream().anyMatch(p -> p.getTipo().equals(conn.getPlugin()))) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo plugin ["+conn.getPlugin()+"] non trovato");
+		}
+		
+		
+		return env.saHelper.endPointCheckData(
+				env.tipo_protocollo,
+				erogazione,
+				TipiConnettore.CUSTOM.getNome(),
+				null,
+				null,	// nome
+				null,	// tipo
+				null,	// httpConf.getUsername()
+				null,	// httpConf.getPassword()
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null,	// provurl jms,
+				null, 	// connfact, 
+				null,	// sendas, 
+				null, 													// this.httpsurl,
+				null,	// httpsConf.getTipologia().toString(), 
+				false,		// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,	// this.httpspath
+				null,	// this.httpstipo,
+				null,	// this.httpspwd,
+				null,	// this.httpsalgoritmo
+				false, 
+				null,
+				"",																		// httpspwdprivatekeytrust, 
+				null,	// pathkey
+				null,	// this.httpstipokey
+				null,	// this.httpspwdkey 
+				null,	// this.httpspwdprivatekey,  
+				null,	// this.httpsalgoritmokey, 
+				null,	// httpsKeyAlias
+				null,	// httpsTrustStoreCRLs
+				conn.getPlugin(),																//	tipoconn (personalizzato)
+				ServletUtils.boolToCheckBoxStatus(false),										 	//autenticazioneHttp,
+				ServletUtils.boolToCheckBoxStatus(false),	
+				null,	// evalnull( () -> proxy.getHostname() ),
+				null,	// evalnull( () -> proxy.getPorta().toString() ),
+				null,	// evalnull( () -> proxy.getUsername() ),
+				null,	// evalnull( () -> proxy.getPassword() ),
+				ServletUtils.boolToCheckBoxStatus(false), //ServletUtils.boolToCheckBoxStatus( tempiRisposta_enabled ),	
+				null,	// evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
+				null,	// evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
+				null,	// evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				false,
+				null,
+				null,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
+			);
+		
+	}
+		
+	public static final org.openspcoop2.core.registry.Connettore buildConnettoreRegistro(final ErogazioniEnv env, final OneOfConnettoreFruizioneConnettore conn) throws Exception {
+		final org.openspcoop2.core.registry.Connettore regConnettore = new org.openspcoop2.core.registry.Connettore();
+		switch(conn.getTipo()) {
+		case APPLICATIVO_SERVER:
+			break;
+		case ECHO: fillConnettoreRegistro(regConnettore, env, (ConnettoreEcho)conn, "");
+		break;
+	case FILE: fillConnettoreRegistro(regConnettore, env, (ConnettoreFile)conn, "");
+		break;
+	case HTTP: fillConnettoreRegistro(regConnettore, env, (BaseConnettoreHttp)conn, "");
+		break;
+	case JMS: fillConnettoreRegistro(regConnettore, env, (ConnettoreJms)conn, "");
+		break;
+	case MESSAGE_BOX:
+		break;
+	case NULL: fillConnettoreRegistro(regConnettore, env, (ConnettoreNull)conn, "");
+		break;
+	case PLUGIN: fillConnettoreRegistro(regConnettore, env, (ConnettorePlugin)conn, "");
+			break;
+		default:
+			break;}
+		
+		return regConnettore;
+	}
+
 	public static final org.openspcoop2.core.registry.Connettore buildConnettoreRegistro(final ErogazioniEnv env, final BaseConnettoreHttp conn) throws Exception {
 		final org.openspcoop2.core.registry.Connettore regConnettore = new org.openspcoop2.core.registry.Connettore();
 		fillConnettoreRegistro(regConnettore, env, conn, "");
 		return regConnettore;
+	}
+
+	
+	public static final void fillConnettoreRegistro(
+			final org.openspcoop2.core.registry.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final OneOfConnettoreFruizioneConnettore conn,
+			final String oldConnT
+			) throws Exception {
+		switch(conn.getTipo()) {
+		case APPLICATIVO_SERVER:
+			break;
+		case ECHO: fillConnettoreRegistro(regConnettore, env, (ConnettoreEcho)conn, "");
+			break;
+		case FILE: fillConnettoreRegistro(regConnettore, env, (ConnettoreFile)conn, "");
+			break;
+		case HTTP: fillConnettoreRegistro(regConnettore, env, (BaseConnettoreHttp)conn, "");
+			break;
+		case JMS: fillConnettoreRegistro(regConnettore, env, (ConnettoreJms)conn, "");
+			break;
+		case MESSAGE_BOX:
+			break;
+		case NULL: fillConnettoreRegistro(regConnettore, env, (ConnettoreNull)conn, "");
+			break;
+		case PLUGIN: fillConnettoreRegistro(regConnettore, env, (ConnettorePlugin)conn, "");
+			break;
+		default:
+			break;}
+
+	}
+
+	
+	public static final void fillConnettoreRegistro(
+			final org.openspcoop2.core.registry.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettoreEcho conn,
+			final String oldConnT
+			) throws Exception {
+		
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.NULLECHO.getNome(), 			// endpointtype
+				oldConnT,						// oldConnT
+				"",						// tipoConn Personalizzato
+				null, // this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null,
+				null,
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null, // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null, // this.httpsurl, 
+				null,				// this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,				// this.httpspath
+				null,	// this.httpstipo,
+				null,			// this.httpspwd,
+				null,					// this.httpsalgoritmo
+				false,
+				null,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,				// pathkey
+				null, 		// this.httpstipokey
+				null,			// this.httpspwdkey 
+				null,				// this.httpspwdprivatekey,  
+				null,				// this.httpsalgoritmokey,
+				null,					// httpsKeyAlias
+        		null,					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,	// this.tempiRisposta_connectionTimeout, 
+				null, //null,	// this.tempiRisposta_readTimeout, 
+				null,	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null,
+				null);			
+
+	}
+
+	
+	public static final void fillConnettoreRegistro(
+			final org.openspcoop2.core.registry.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettorePlugin conn,
+			final String oldConnT
+			) throws Exception {
+		
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.CUSTOM.getNome(), 			// endpointtype
+				oldConnT,						// oldConnT
+				conn.getPlugin(),						// tipoConn Personalizzato
+				null, // this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null,
+				null,
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null, // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null, // this.httpsurl, 
+				null,				// this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,				// this.httpspath
+				null,	// this.httpstipo,
+				null,			// this.httpspwd,
+				null,					// this.httpsalgoritmo
+				false,
+				null,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,				// pathkey
+				null, 		// this.httpstipokey
+				null,			// this.httpspwdkey 
+				null,				// this.httpspwdprivatekey,  
+				null,				// this.httpsalgoritmokey,
+				null,					// httpsKeyAlias
+        		null,					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,	// this.tempiRisposta_connectionTimeout, 
+				null, //null,	// this.tempiRisposta_readTimeout, 
+				null,	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null,
+				null);
+		
+		if(conn.getProprieta() != null) {
+			for(org.openspcoop2.core.config.rs.server.model.Proprieta prop: conn.getProprieta()) {
+				org.openspcoop2.core.registry.Property property = new org.openspcoop2.core.registry.Property();
+				property.setNome(prop.getNome());
+				property.setValore(prop.getValore());
+				regConnettore.addProperty(property);
+			}
+		}		
+
+
+	}
+
+	public static final void fillConnettoreRegistro(
+			final org.openspcoop2.core.registry.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettoreNull conn,
+			final String oldConnT
+			) throws Exception {
+		
+		
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.NULL.getNome(), 			// endpointtype
+				oldConnT,						// oldConnT
+				"",						// tipoConn Personalizzato
+				null, // this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null,
+				null,
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null, // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null, // this.httpsurl, 
+				null,				// this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,				// this.httpspath
+				null,	// this.httpstipo,
+				null,			// this.httpspwd,
+				null,					// this.httpsalgoritmo
+				false,
+				null,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,				// pathkey
+				null, 		// this.httpstipokey
+				null,			// this.httpspwdkey 
+				null,				// this.httpspwdprivatekey,  
+				null,				// this.httpsalgoritmokey,
+				null,					// httpsKeyAlias
+        		null,					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,	// this.tempiRisposta_connectionTimeout, 
+				null, //null,	// this.tempiRisposta_readTimeout, 
+				null,	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null,
+				null);			
+
+	}
+
+
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.config.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettorePlugin conn,
+			final String oldConnT
+			) throws Exception {
+		
+		
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.CUSTOM.getNome(), 			// endpointtype
+				oldConnT,						// oldConnT
+				conn.getPlugin(),						// tipoConn Personalizzato
+				null, // this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null,
+				null,
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null, // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null, // this.httpsurl, 
+				null,				// this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,				// this.httpspath
+				null,	// this.httpstipo,
+				null,			// this.httpspwd,
+				null,					// this.httpsalgoritmo
+				false,
+				null,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,				// pathkey
+				null, 		// this.httpstipokey
+				null,			// this.httpspwdkey 
+				null,				// this.httpspwdprivatekey,  
+				null,				// this.httpsalgoritmokey,
+				null,					// httpsKeyAlias
+        		null,					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,	// this.tempiRisposta_connectionTimeout, 
+				null, //null,	// this.tempiRisposta_readTimeout, 
+				null,	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null,
+				null);	
+		
+		if(conn.getProprieta() != null) {
+			for(org.openspcoop2.core.config.rs.server.model.Proprieta prop: conn.getProprieta()) {
+				Property property = new Property();
+				property.setNome(prop.getNome());
+				property.setValore(prop.getValore());
+				regConnettore.addProperty(property);
+			}
+		}		
+
+
+
+	}
+
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.config.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettoreEcho conn,
+			final String oldConnT
+			) throws Exception {
+		
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.NULLECHO.getNome(), 			// endpointtype
+				oldConnT,						// oldConnT
+				"",						// tipoConn Personalizzato
+				null, // this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null,
+				null,
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null, // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null, // this.httpsurl, 
+				null,				// this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,				// this.httpspath
+				null,	// this.httpstipo,
+				null,			// this.httpspwd,
+				null,					// this.httpsalgoritmo
+				false,
+				null,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,				// pathkey
+				null, 		// this.httpstipokey
+				null,			// this.httpspwdkey 
+				null,				// this.httpspwdprivatekey,  
+				null,				// this.httpsalgoritmokey,
+				null,					// httpsKeyAlias
+        		null,					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,	// this.tempiRisposta_connectionTimeout, 
+				null, //null,	// this.tempiRisposta_readTimeout, 
+				null,	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null,
+				null);			
+
+	}
+
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.config.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettoreNull conn,
+			final String oldConnT
+			) throws Exception {
+		
+		
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.NULL.getNome(), 			// endpointtype
+				oldConnT,						// oldConnT
+				"",						// tipoConn Personalizzato
+				null, // this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null,
+				null,
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null, // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null, // this.httpsurl, 
+				null,				// this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,				// this.httpspath
+				null,	// this.httpstipo,
+				null,			// this.httpspwd,
+				null,					// this.httpsalgoritmo
+				false,
+				null,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,				// pathkey
+				null, 		// this.httpstipokey
+				null,			// this.httpspwdkey 
+				null,				// this.httpspwdprivatekey,  
+				null,				// this.httpsalgoritmokey,
+				null,					// httpsKeyAlias
+        		null,					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,	// this.tempiRisposta_connectionTimeout, 
+				null, //null,	// this.tempiRisposta_readTimeout, 
+				null,	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null,
+				null);			
+
+	}
+
+
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.registry.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettorePlugin conn,
+			final String oldConnT
+			) throws Exception {
+		
+		
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.CUSTOM.getNome(), 			// endpointtype
+				oldConnT,						// oldConnT
+				"",						// tipoConn Personalizzato
+				null, // this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null,
+				null,
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null, // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null, // this.httpsurl, 
+				null,				// this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,				// this.httpspath
+				null,	// this.httpstipo,
+				null,			// this.httpspwd,
+				null,					// this.httpsalgoritmo
+				false,
+				null,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,				// pathkey
+				null, 		// this.httpstipokey
+				null,			// this.httpspwdkey 
+				null,				// this.httpspwdprivatekey,  
+				null,				// this.httpsalgoritmokey,
+				null,					// httpsKeyAlias
+        		null,					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,	// this.tempiRisposta_connectionTimeout, 
+				null, //null,	// this.tempiRisposta_readTimeout, 
+				null,	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null,
+				null);			
+
 	}
 
 	
@@ -1721,6 +2634,269 @@ public class ErogazioniApiHelper {
 				listExtendedConnettore);			
 	}
 	
+	public static final void fillConnettoreRegistro(
+			final org.openspcoop2.core.registry.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettoreFile conn,
+			final String oldConnT
+			) throws Exception {
+		
+		
+	    final String endpointtype = TipiConnettore.FILE.getNome();
+	    
+	    final Properties parametersPOST = null;
+		org.openspcoop2.core.registry.Connettore conTmp = null;
+		List<ExtendedConnettore> listExtendedConnettore = 
+				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
+							parametersPOST, false, endpointtype);
+
+		String responseInputFileName = null;
+		String responseInputFileNameHeaders = null;
+		boolean responseInputDeleteAfterRead = false;
+		String responseInputWaitTime = null;
+		
+		String responseInputMode = conn.getRisposta() != null ? StatoFunzionalita.ABILITATO.toString() : StatoFunzionalita.DISABILITATO.toString();
+
+		if(conn.getRisposta() != null) {
+			responseInputFileName = conn.getRisposta().getFile();
+			responseInputFileNameHeaders = conn.getRisposta().getFileHeaders();
+			responseInputDeleteAfterRead = conn.getRisposta().isDeleteAfterRead();
+			responseInputWaitTime = conn.getRisposta().getWaitIfNotExistsMs() != null ? conn.getRisposta().getWaitIfNotExistsMs() + "" : null;
+		}
+        			    
+		String createParentDir = conn.getRichiesta().isCreateParentDir() != null ? ServletUtils.boolToCheckBoxStatus(conn.getRichiesta().isCreateParentDir()) : ServletUtils.boolToCheckBoxStatus(false);
+		String overwriteIfExists = conn.getRichiesta().isOverwriteIfExists() != null ? ServletUtils.boolToCheckBoxStatus(conn.getRichiesta().isOverwriteIfExists()) : ServletUtils.boolToCheckBoxStatus(false);
+
+
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				endpointtype, 			// endpointtype
+				oldConnT,						// oldConnT
+				"",						// tipoConn Personalizzato
+				null,		// this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null, //evalnull( () -> httpConf.getUsername() ),
+				null, //evalnull( () -> httpConf.getPassword() ),
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null, // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null, // this.httpsurl, 
+				null, // this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null, //evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				null, //evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				null, //evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
+				null, //evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				false,
+				null, //httpskeystore,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null, //evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				null, //evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				null, //evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
+				null, //evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
+				null, //evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
+				null, //evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
+				null, //evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false),	
+				null, //evalnull( () -> proxy.getHostname() ),
+				null, //evalnull( () -> proxy.getPorta().toString() ),
+				null, //evalnull( () -> proxy.getUsername() ),
+				null, //evalnull( () -> proxy.getPassword() ),
+				
+				ServletUtils.boolToCheckBoxStatus( false),	
+				null, //evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
+				null, //evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
+				null, //evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
+				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
+				createParentDir,	// this.requestOutputParentDirCreateIfNotExists,
+				overwriteIfExists,	// this.requestOutputOverwriteIfExists,
+				responseInputMode,	// this.responseInputMode, 
+				responseInputFileName,	// this.responseInputFileName, 
+				responseInputFileNameHeaders,	// this.responseInputFileNameHeaders, 
+				ServletUtils.boolToCheckBoxStatus(responseInputDeleteAfterRead),	// this.responseInputDeleteAfterRead, 
+				responseInputWaitTime,	// this.responseInputWaitTime,
+				null, //tokenPolicy,
+				listExtendedConnettore);			
+}
+	
+	public static final void fillConnettoreRegistro(
+			final org.openspcoop2.core.registry.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettoreJms conn,
+			final String oldConnT
+			) throws Exception {
+		
+		
+	    final String endpointtype = TipiConnettore.JMS.getNome();
+	    
+	    final Properties parametersPOST = null;
+		org.openspcoop2.core.registry.Connettore conTmp = null;
+		List<ExtendedConnettore> listExtendedConnettore = 
+				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
+							parametersPOST, false, endpointtype);
+
+		String sendAs = conn.getSendAs().equals(ConnettoreJmsSendAsEnum.BYTES) ? CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE : CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE;
+
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				endpointtype, 			// endpointtype
+				oldConnT,						// oldConnT
+				"",						// tipoConn Personalizzato
+				null,		// this.url,
+				conn.getNome(),	// this.nome,
+				conn.getTipoCoda().toString(), 	// this.tipo,
+				conn.getUtente(), 
+				conn.getPassword(), 
+				conn.getJndiInitialContext(),	// this.initcont, 
+				conn.getJndiUrlPgkPrefixes(),	// this.urlpgk,
+				conn.getJndiProviderUrl(),   // this.url, 
+				conn.getConnectionFactory(),	// this.connfact,
+				sendAs, // this.sendas
+				null, // this.httpsurl, 
+				null, // this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null, //evalnull( () -> httpsServer.getTruststorePath() ),				// this.httpspath
+				null, //evalnull( () -> httpsServer.getTruststoreTipo().toString() ),	// this.httpstipo,
+				null, //evalnull( () -> httpsServer.getTruststorePassword() ),			// this.httpspwd,
+				null, //evalnull( () -> httpsServer.getAlgoritmo() ),					// this.httpsalgoritmo
+				false,
+				null, //httpskeystore,			// this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null, //evalnull( () -> httpsClient.getKeystorePath() ),				// pathkey
+				null, //evalnull( () -> httpsClient.getKeystoreTipo().toString() ), 		// this.httpstipokey
+				null, //evalnull( () -> httpsClient.getKeystorePassword() ),			// this.httpspwdkey 
+				null, //evalnull( () -> httpsClient.getKeyPassword() ),				// this.httpspwdprivatekey,  
+				null, //evalnull( () -> httpsClient.getAlgoritmo() ),				// this.httpsalgoritmokey,
+				null, //evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
+				null, //evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false),	
+				null, //evalnull( () -> proxy.getHostname() ),
+				null, //evalnull( () -> proxy.getPorta().toString() ),
+				null, //evalnull( () -> proxy.getUsername() ),
+				null, //evalnull( () -> proxy.getPassword() ),
+				
+				ServletUtils.boolToCheckBoxStatus( false),	
+				null, //evalnull( () -> timeoutConf.getConnectionTimeout().toString()),	// this.tempiRisposta_connectionTimeout, 
+				null, //evalnull( () -> timeoutConf.getConnectionReadTimeout().toString()), //null,	// this.tempiRisposta_readTimeout, 
+				null, //evalnull( () -> timeoutConf.getTempoMedioRisposta().toString()),	// this.tempiRisposta_tempoMedioRisposta,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null, //tokenPolicy,
+				listExtendedConnettore);			
+}
+	
+	
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.config.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final OneOfConnettoreErogazioneConnettore conn,
+			final String oldConnType
+			) throws Exception {
+		switch(conn.getTipo()) {
+		case APPLICATIVO_SERVER:
+			break;
+		case ECHO: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreEcho)conn, "");
+			break;
+		case FILE: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreFile)conn, "");
+			break;
+		case HTTP: fillConnettoreConfigurazione(regConnettore, env, (BaseConnettoreHttp)conn, "");
+			break;
+		case JMS: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreJms)conn, "");
+			break;
+		case MESSAGE_BOX:
+			break;
+		case NULL: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreNull)conn, "");
+			break;
+		case PLUGIN: fillConnettoreConfigurazione(regConnettore, env, (ConnettorePlugin)conn, "");
+			break;
+		default:
+			break;}
+
+	}
+	
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.config.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final OneOfConnettoreFruizioneConnettore conn,
+			final String oldConnType
+			) throws Exception {
+		switch(conn.getTipo()) {
+		case APPLICATIVO_SERVER:
+			break;
+		case ECHO: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreEcho)conn, "");
+		break;
+	case FILE: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreFile)conn, "");
+		break;
+	case HTTP: fillConnettoreConfigurazione(regConnettore, env, (BaseConnettoreHttp)conn, "");
+		break;
+	case JMS: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreJms)conn, "");
+		break;
+	case MESSAGE_BOX:
+		break;
+	case NULL: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreNull)conn, "");
+		break;
+	case PLUGIN: fillConnettoreConfigurazione(regConnettore, env, (ConnettorePlugin)conn, "");
+			break;
+		default:
+			break;}
+
+	}
+	
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.config.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final OneOfApplicativoServerConnettore conn,
+			final String oldConnType
+			) throws Exception {
+		switch(conn.getTipo()) {
+		case APPLICATIVO_SERVER:
+			break;
+		case ECHO: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreEcho)conn, "");
+		break;
+		case FILE: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreFile)conn, "");
+		break;
+		case HTTP: fillConnettoreConfigurazione(regConnettore, env, (BaseConnettoreHttp)conn, "");
+		break;
+		case JMS: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreJms)conn, "");
+		break;
+		case MESSAGE_BOX:
+			break;
+		case NULL: fillConnettoreConfigurazione(regConnettore, env, (ConnettoreNull)conn, "");
+		break;
+		case PLUGIN: fillConnettoreConfigurazione(regConnettore, env, (ConnettorePlugin)conn, "");
+			break;
+		default:
+			break;}
+
+	}
+	
 	
 	/*
 	 * Metodo utilizzato per costruire un connettore del registro dato un connettore della API.
@@ -1730,6 +2906,180 @@ public class ErogazioniApiHelper {
 	 *  @param oldConnType: Nel caso di un connettore da aggiornare, va specificato il tipo del vecchio connettore
 	 */
 	
+	
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.config.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettoreFile conn,
+			final String oldConnType
+			) throws Exception {
+		
+	    final String endpointtype = TipiConnettore.FILE.getNome();
+	    
+		org.openspcoop2.core.registry.Connettore conTmp = null;
+		List<ExtendedConnettore> listExtendedConnettore = 
+				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
+						null, false, endpointtype);
+
+		String responseInputMode = conn.getRisposta() != null ? StatoFunzionalita.ABILITATO.toString() : StatoFunzionalita.DISABILITATO.toString();
+		
+		String responseInputFileName = null;
+		String responseInputFileNameHeaders = null;
+		boolean responseInputDeleteAfterRead = false;
+		String responseInputWaitTime = null;
+		
+		if(conn.getRisposta() != null) {
+			responseInputFileName = conn.getRisposta().getFile();
+			responseInputFileNameHeaders = conn.getRisposta().getFileHeaders();
+			responseInputDeleteAfterRead = conn.getRisposta().isDeleteAfterRead();
+			responseInputWaitTime = conn.getRisposta().getWaitIfNotExistsMs() != null ? conn.getRisposta().getWaitIfNotExistsMs() + "" : null;
+		}
+		
+		
+		String createParentDir = conn.getRichiesta().isCreateParentDir() != null ? ServletUtils.boolToCheckBoxStatus(conn.getRichiesta().isCreateParentDir()) : ServletUtils.boolToCheckBoxStatus(false);
+		String overwriteIfExists = conn.getRichiesta().isOverwriteIfExists() != null ? ServletUtils.boolToCheckBoxStatus(conn.getRichiesta().isOverwriteIfExists()) : ServletUtils.boolToCheckBoxStatus(false);
+
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				endpointtype, 			// endpointtype
+				oldConnType,			// oldConnT
+				"",						// tipoConn Personalizzato
+				null, // this.url,
+				null,	// this.nome,
+				null, 	// this.tipo,
+				null, 
+				null, 
+				null,	// this.initcont, 
+				null,	// this.urlpgk,
+				null,   // this.url, 
+				null,	// this.connfact,
+				null,	// this.sendas,
+				null,												// this.httpsurl, 
+				null,  //this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,  // this.httpspath
+				null,  //this.httpstipo,
+				null,  //this.httpspwd,
+				null,  // this.httpsalgoritmo
+				false,
+				null, // this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,  //pathkey
+				null,  //this.httpstipokey
+				null,  //this.httpspwdkey 
+				null,  //this.httpspwdprivatekey,  
+				null,  //this.httpsalgoritmokey,
+				null,  //httpsKeyAlias
+				null,  //httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
+				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
+				createParentDir,	// this.requestOutputParentDirCreateIfNotExists,
+				overwriteIfExists,	// this.requestOutputOverwriteIfExists,
+				responseInputMode,	// this.responseInputMode, 
+				responseInputFileName,	// this.responseInputFileName, 
+				responseInputFileNameHeaders,	// this.responseInputFileNameHeaders, 
+				ServletUtils.boolToCheckBoxStatus(responseInputDeleteAfterRead),	// this.responseInputDeleteAfterRead, 
+				responseInputWaitTime,	// this.responseInputWaitTime,
+				null,
+				listExtendedConnettore);			
+	}
+	
+	
+	public static final void fillConnettoreConfigurazione(
+			final org.openspcoop2.core.config.Connettore regConnettore,
+			final ErogazioniEnv env,
+			final ConnettoreJms conn,
+			final String oldConnType
+			) throws Exception {
+		
+	    final String endpointtype = TipiConnettore.JMS.getNome();
+	    
+		org.openspcoop2.core.registry.Connettore conTmp = null;
+		List<ExtendedConnettore> listExtendedConnettore = 
+				ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, env.apsHelper, 
+						null, false, endpointtype);
+
+
+		String sendAs = conn.getSendAs().equals(ConnettoreJmsSendAsEnum.BYTES) ? CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE : CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE;
+
+		env.apsHelper.fillConnettore(
+				regConnettore, 
+				conn.isDebug() != null && conn.isDebug() ? "true" : "false",				// this.connettoreDebug,
+				endpointtype, 			// endpointtype
+				oldConnType,			// oldConnT
+				"",						// tipoConn Personalizzato
+				null, // this.url,
+				conn.getNome(),	// this.nome,
+				conn.getTipoCoda().toString(), 	// this.tipo,
+				conn.getUtente(), 
+				conn.getPassword(), 
+				conn.getJndiInitialContext(),	// this.initcont, 
+				conn.getJndiUrlPgkPrefixes(),	// this.urlpgk,
+				conn.getJndiProviderUrl(),   // this.url, 
+				conn.getConnectionFactory(),	// this.connfact,
+				sendAs, // this.sendas
+				null,												// this.httpsurl, 
+				null,  //this.httpstipologia
+				false,	// this.httpshostverify,
+				ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TRUST_VERIFY_CERTS, // httpsTrustVerifyCert
+				null,  // this.httpspath
+				null,  //this.httpstipo,
+				null,  //this.httpspwd,
+				null,  // this.httpsalgoritmo
+				false,
+				null, // this.httpskeystore, 
+				"",																	//  this.httpspwdprivatekeytrust
+				null,  //pathkey
+				null,  //this.httpstipokey
+				null,  //this.httpspwdkey 
+				null,  //this.httpspwdprivatekey,  
+				null,  //this.httpsalgoritmokey,
+				null,  //httpsKeyAlias
+				null,  //httpsTrustStoreCRLs
+			
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				null,
+				ServletUtils.boolToCheckBoxStatus( false ),	
+				null,
+				null,
+				null,
+				"no",	// this.opzioniAvanzate, 
+				"", 	// this.transfer_mode, 
+				"", 	// this.transfer_mode_chunk_size, 
+				"", 	// this.redirect_mode, 
+				"", 	// this.redirect_max_hop,
+				null,	// this.requestOutputFileName,
+				null,	// this.requestOutputFileNameHeaders,
+				null,	// this.requestOutputParentDirCreateIfNotExists,
+				null,	// this.requestOutputOverwriteIfExists,
+				null,	// this.responseInputMode, 
+				null,	// this.responseInputFileName, 
+				null,	// this.responseInputFileNameHeaders, 
+				null,	// this.responseInputDeleteAfterRead, 
+				null,	// this.responseInputWaitTime,
+				null,
+				listExtendedConnettore);			
+	}
 	
 	public static final void fillConnettoreConfigurazione(
 			final org.openspcoop2.core.config.Connettore regConnettore,
@@ -2506,7 +3856,7 @@ public class ErogazioniApiHelper {
 			
 			ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, paDefault, apc, false);
 			
-			String urlConnettore = isRidefinito ? "Connettori ridefiniti nei gruppi" : getConnettoreErogazione(idServizio, env.saCore, env.paCore).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION);
+			String urlConnettore = getUrlConnettore(getInvocazioneServizioErogazione(idServizio, env.saCore, env.paCore).getConnettore(), isRidefinito);
 			fillApiImplViewItemWithAsps(
 					env, 
 					asps, 
@@ -2524,6 +3874,52 @@ public class ErogazioniApiHelper {
 			throw new RuntimeException(e);
 		}
 			
+	}
+
+	private static String getUrlConnettore(org.openspcoop2.core.registry.Connettore connettore, boolean isRidefinito)
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException,
+			DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		if(isRidefinito) {
+			return "Connettori ridefiniti nei gruppi";
+		}
+		
+		if(connettore == null) return null;
+		return getUrlConnettore(connettore.getProperties(), connettore.getTipo(), connettore.getCustom());
+	}
+
+	private static String getUrlConnettore(Connettore connettore, boolean isRidefinito)
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException,
+			DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		if(isRidefinito) {
+			return "Connettori ridefiniti nei gruppi";
+		}
+
+		if(connettore == null) return null;
+		return getUrlConnettore(connettore.getProperties(), connettore.getTipo(), connettore.getCustom());
+	}
+
+	private static String getUrlConnettore(Map<String, String> properties, String tipoConnettore, boolean isCustom)
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException,
+			DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		
+		if(tipoConnettore.equals(TipiConnettore.HTTP.toString())) {
+			return properties.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
+		} else if(tipoConnettore.equals(TipiConnettore.HTTPS.toString())) {
+			return properties.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
+		} else if(tipoConnettore.equals(TipiConnettore.FILE.toString())) {
+			return "[file] " + properties.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);
+		} else if(tipoConnettore.equals(TipiConnettore.JMS.toString())) {
+			return "[jms] " + properties.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
+		} else if(tipoConnettore.equals(TipiConnettore.NULL.toString())) {
+			return "[null] govway://dev/null";
+		} else if(tipoConnettore.equals(TipiConnettore.NULLECHO.toString())) {
+			return "[echo] govway://echo";
+		} else if(isCustom) {
+			return "[plugin] " + tipoConnettore;
+		} else {
+			return null;
+		}
+
 	}
 	
 	public static final StatoDescrizione getStatoDescrizione(int numeroAbilitate, boolean allActionRedefined, int numeroConfigurazioni ) {
@@ -2625,7 +4021,7 @@ public class ErogazioniApiHelper {
 		ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, pdDefault, apc, false);
 		
 		try {
-			String connettore = isRidefinito ? "Connettori ridefiniti nei gruppi" : evalnull( () -> getConnettoreFruizione(asps, fruitore, env).getProperties().get(CostantiDB.CONNETTORE_HTTP_LOCATION) );
+			String connettore = getUrlConnettore(evalnull( () -> getConnettoreFruizione(asps, fruitore, env)), isRidefinito);
 			fillApiImplViewItemWithAsps(
 					env, 
 					asps, 
@@ -2799,20 +4195,20 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final org.openspcoop2.core.config.Connettore getConnettoreErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore) 
+	public static final InvocazioneServizio getInvocazioneServizioErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore) 
 			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
 	
 		final IDPortaApplicativa idPA = paCore.getIDPortaApplicativaAssociataDefault(idServizio);
 		final ServizioApplicativo sa = saCore.getServizioApplicativo(saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPA.getNome()));
 		        		
-		return sa.getInvocazioneServizio().getConnettore();
+		return sa.getInvocazioneServizio();
 	}
 	
-	public static final org.openspcoop2.core.config.Connettore getConnettoreErogazioneGruppo(IdServizio idAsps, IDServizio idServizio, ErogazioniEnv env, String gruppo) 
+	public static final InvocazioneServizio getInvocazioneServizioErogazioneGruppo(IdServizio idAsps, IDServizio idServizio, ErogazioniEnv env, String gruppo) 
 			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
 	
 		final ServizioApplicativo sa = getServizioApplicativo(idAsps, idServizio, env, gruppo);
-		return sa.getInvocazioneServizio().getConnettore();
+		return sa.getInvocazioneServizio();
 
 	}
 	
@@ -3271,16 +4667,210 @@ public class ErogazioniApiHelper {
 
 
 
-	public static final ConnettoreErogazione buildConnettoreErogazione(Map<String, String> props) {
+	public static final ConnettoreErogazione buildConnettoreErogazione(Connettore connettore) {
 		ConnettoreErogazione connettoreErogazione = new ConnettoreErogazione();
-		connettoreErogazione.setConnettore(buildConnettoreHttp(props));
+		connettoreErogazione.setConnettore(getConnettoreErogazione(connettore));
 		return connettoreErogazione;
 	}
-	public static final ConnettoreFruizione buildConnettoreFruizione(Map<String, String> props) {
+	public static final ConnettoreFruizione buildConnettoreFruizione(org.openspcoop2.core.registry.Connettore connettore) {
 		ConnettoreFruizione connettoreFruizione = new ConnettoreFruizione();
-		connettoreFruizione.setConnettore(buildConnettoreHttp(props));
+		connettoreFruizione.setConnettore(getConnettoreFruizione(connettore));
 		return connettoreFruizione;
 	}
+	public static final OneOfConnettoreFruizioneConnettore getConnettoreFruizione(org.openspcoop2.core.registry.Connettore connettore) {
+		
+		String tipoConnettore = connettore.getTipo();
+		Map<String, String> props = connettore.getProperties();
+		
+		if(tipoConnettore.equals(TipiConnettore.HTTP.toString())) {
+			return ErogazioniApiHelper.buildConnettoreHttp(props);
+		} else if(tipoConnettore.equals(TipiConnettore.HTTPS.toString())) {
+			return ErogazioniApiHelper.buildConnettoreHttp(props);
+		} else if(tipoConnettore.equals(TipiConnettore.FILE.toString())) {
+			return ErogazioniApiHelper.buildConnettoreFile(props);
+		} else if(tipoConnettore.equals(TipiConnettore.JMS.toString())) {
+			return ErogazioniApiHelper.buildConnettoreJms(props);
+		} else if(tipoConnettore.equals(TipiConnettore.NULL.toString())) {
+			return ErogazioniApiHelper.buildConnettoreNull(props);
+		} else if(tipoConnettore.equals(TipiConnettore.NULLECHO.toString())) {
+			return ErogazioniApiHelper.buildConnettoreNullEcho(props);
+		} else if(connettore.getCustom()) {
+			return ErogazioniApiHelper.buildConnettorePlugin(props, connettore.getTipo());
+		} else {
+			return null;
+		}
+		
+	}
+	public static final OneOfConnettoreErogazioneConnettore getConnettoreErogazione(Connettore connettore) {
+		
+		String tipoConnettore = connettore.getTipo();
+		Map<String, String> props = connettore.getProperties();
+		
+
+		if(tipoConnettore.equals(TipiConnettore.HTTP.toString())) {
+			return ErogazioniApiHelper.buildConnettoreHttp(props);
+		} else if(tipoConnettore.equals(TipiConnettore.HTTPS.toString())) {
+			return ErogazioniApiHelper.buildConnettoreHttp(props);
+		} else if(tipoConnettore.equals(TipiConnettore.FILE.toString())) {
+			return ErogazioniApiHelper.buildConnettoreFile(props);
+		} else if(tipoConnettore.equals(TipiConnettore.JMS.toString())) {
+			return ErogazioniApiHelper.buildConnettoreJms(props);
+		} else if(tipoConnettore.equals(TipiConnettore.NULL.toString())) {
+			return ErogazioniApiHelper.buildConnettoreNull(props);
+		} else if(tipoConnettore.equals(TipiConnettore.NULLECHO.toString())) {
+			return ErogazioniApiHelper.buildConnettoreNullEcho(props);
+		} else if(connettore.getCustom()) {
+			return ErogazioniApiHelper.buildConnettorePlugin(props, connettore.getTipo());
+		} else {
+			return null;
+		}
+		
+	}
+	public static ConnettoreJms buildConnettoreJms(Map<String, String> props) {
+		
+		ConnettoreJms c = new ConnettoreJms();
+		
+		c.setTipo(ConnettoreEnum.JMS);
+		c.setDebug(Boolean.parseBoolean(props.get(CostantiDB.CONNETTORE_DEBUG)));
+		
+		c.setNome(props.get(CostantiDB.CONNETTORE_HTTP_LOCATION));
+		c.setTipoCoda(ConnettoreJmsTipoEnum.fromValue(props.get(CostantiDB.CONNETTORE_JMS_TIPO)));
+		String jmsSendAs = props.get(CostantiDB.CONNETTORE_JMS_SEND_AS);
+		if(jmsSendAs.equals(CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE)) {
+			c.setSendAs(ConnettoreJmsSendAsEnum.BYTES);
+		} else if(jmsSendAs.equals(CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE)) {
+			c.setSendAs(ConnettoreJmsSendAsEnum.TEXT);
+		}
+		c.setConnectionFactory(props.get(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY));
+		
+		c.setUtente(evalnull( () -> props.get(CostantiDB.CONNETTORE_USER)));
+		c.setPassword(evalnull( () -> props.get(CostantiDB.CONNETTORE_PWD)));
+
+		c.setJndiInitialContext(props.get(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_INITIAL));
+		c.setJndiUrlPgkPrefixes(props.get(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_FACTORY_URL_PKG));
+		c.setJndiProviderUrl(props.get(CostantiDB.CONNETTORE_JMS_CONTEXT_JAVA_NAMING_PROVIDER_URL));
+		
+		return c;
+		
+	}
+	public static ConnettoreNull buildConnettoreNull(Map<String, String> props) {
+		ConnettoreNull c = new ConnettoreNull();
+		
+		c.setTipo(ConnettoreEnum.NULL);
+		c.setDebug(Boolean.parseBoolean(props.get(CostantiDB.CONNETTORE_DEBUG)));
+		
+		return c;
+		
+	}
+	
+	public static ConnettoreEcho buildConnettoreNullEcho(Map<String, String> props) {
+		ConnettoreEcho c = new ConnettoreEcho();
+		
+		c.setTipo(ConnettoreEnum.ECHO);
+		c.setDebug(Boolean.parseBoolean(props.get(CostantiDB.CONNETTORE_DEBUG)));
+		
+		return c;
+		
+	}
+	
+	public static ConnettorePlugin buildConnettorePlugin(Map<String, String> props, String tipo) {
+
+		ConnettorePlugin c = new ConnettorePlugin();
+		
+		c.setTipo(ConnettoreEnum.PLUGIN);
+		c.setDebug(Boolean.parseBoolean(props.get(CostantiDB.CONNETTORE_DEBUG)));
+		
+		c.setPlugin(tipo);
+		
+		List<String> propsExclude = Arrays.asList(CostantiDB.CONNETTORE_DEBUG);
+		
+		List<org.openspcoop2.core.config.rs.server.model.Proprieta> propLst = new ArrayList<>();
+
+		for(Entry<String, String> prop: props.entrySet()) {
+			if(!propsExclude.contains(prop.getKey())) {
+				org.openspcoop2.core.config.rs.server.model.Proprieta p = new org.openspcoop2.core.config.rs.server.model.Proprieta();
+				p.setNome(prop.getKey());
+				p.setValore(prop.getValue());
+				propLst.add(p);
+			}
+		}
+		
+		c.setProprieta(propLst);
+		return c;
+		
+	}
+	
+	public static ConnettoreFile buildConnettoreFile(Map<String, String> props) {
+		ConnettoreFile c = new ConnettoreFile();
+		
+		c.setTipo(ConnettoreEnum.FILE);
+		c.setDebug(Boolean.parseBoolean(props.get(CostantiDB.CONNETTORE_DEBUG)));
+
+		ConnettoreFileRichiesta richiesta = new ConnettoreFileRichiesta();
+		
+		richiesta.setFile(props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE));
+		richiesta.setFileHeaders(props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS));
+		String requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
+		String requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
+		String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+		boolean requestOutputParentDirCreateIfNotExists = false;		
+		if(v!=null && !"".equals(v)){
+			if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+				requestOutputParentDirCreateIfNotExists = true;
+			}
+		}					
+		v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
+		boolean requestOutputOverwriteIfExists = false;
+		if(v!=null && !"".equals(v)){
+			if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+				requestOutputOverwriteIfExists = true;
+			}
+		}	
+
+		v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+		boolean responseInputMode = false;
+		if(v!=null && !"".equals(v)){
+			if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+				responseInputMode = true;
+			}
+		}
+		
+		richiesta.setFile(requestOutputFileName);
+		richiesta.setFileHeaders(requestOutputFileNameHeaders);
+		richiesta.setCreateParentDir(requestOutputParentDirCreateIfNotExists);
+		richiesta.setOverwriteIfExists(requestOutputOverwriteIfExists);
+		
+		c.setRichiesta(richiesta);
+
+
+		if(responseInputMode){
+			boolean responseInputDeleteAfterRead = false;
+			String responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
+			String responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
+			v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
+			if(v!=null && !"".equals(v)){
+				if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+					responseInputDeleteAfterRead = true;
+				}
+			}						
+			String responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			
+			ConnettoreFileRisposta risposta = new ConnettoreFileRisposta();
+
+			risposta.setFile(responseInputFileName);
+			risposta.setFileHeaders(responseInputFileNameHeaders);
+			
+			if(responseInputWaitTime != null && !responseInputWaitTime.isEmpty()) {
+				risposta.setWaitIfNotExistsMs(Integer.parseInt(responseInputWaitTime));
+			}
+			risposta.setDeleteAfterRead(responseInputDeleteAfterRead);
+			
+			c.setRisposta(risposta);
+	}
+
+		return c;
+	}
+
 	public static final ConnettoreHttp buildConnettoreHttp(Map<String, String> props) {
 
 		ConnettoreHttp c = new ConnettoreHttp();

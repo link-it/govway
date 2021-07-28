@@ -31,7 +31,6 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
-import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
@@ -56,6 +55,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazioneView;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreApplicativoServer;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreErogazione;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
@@ -66,6 +66,7 @@ import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaErogazioni;
 import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzioneEnum;
+import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreErogazioneConnettore;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -691,10 +692,10 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				ret.setConnettore(con);
 
 			} else {
-				org.openspcoop2.core.config.Connettore connettore = ErogazioniApiHelper
-						.getConnettoreErogazioneGruppo(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo);
+				InvocazioneServizio is = ErogazioniApiHelper
+						.getInvocazioneServizioErogazioneGruppo(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo);
 
-				ret = ErogazioniApiHelper.buildConnettoreErogazione(connettore.getProperties());
+				ret = ErogazioniApiHelper.buildConnettoreErogazione(is.getConnettore());
 
 			}
 
@@ -1167,35 +1168,33 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 					env.saCore.performUpdateOperation(env.userLogin, false, pa);
 				}
 
-
-				ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
-				String endpointtype = connettoreHttp.getAutenticazioneHttp() != null ? TipiConnettore.HTTP.getNome()
-						: TipiConnettore.DISABILITATO.getNome();
-				endpointtype = connettoreHttp.getAutenticazioneHttps() != null ? TipiConnettore.HTTPS.getNome() : endpointtype;
-
 				InvocazioneServizio is = sa.getInvocazioneServizio();
-				InvocazioneCredenziali credenziali_is = is.getCredenziali();
+				
+				String endpointtype = getEndpointType(body.getConnettore());
+				
 				org.openspcoop2.core.config.Connettore connis = is.getConnettore();
-
 				String oldConnT = connis.getTipo();
 				if ((connis.getCustom() != null && connis.getCustom())
 						&& !connis.getTipo().equals(TipiConnettore.HTTPS.toString())
 						&& !connis.getTipo().equals(TipiConnettore.FILE.toString())) {
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				}
-
-				if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, true)) {
+				if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), env, true)) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 				}
 
-				ErogazioniApiHelper.fillConnettoreConfigurazione(connis, env, connettoreHttp, oldConnT);
-
-				if (connettoreHttp.getAutenticazioneHttp() != null) {
+				ErogazioniApiHelper.fillConnettoreConfigurazione(connis, env, body.getConnettore(), oldConnT);
+				
+				if(body.getConnettore().getTipo().equals(ConnettoreEnum.HTTP) && ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp() != null) {
+					InvocazioneCredenziali credenziali_is = is.getCredenziali();
 					if (credenziali_is == null) {
 						credenziali_is = new InvocazioneCredenziali();
 					}
-					credenziali_is.setUser(connettoreHttp.getAutenticazioneHttp().getUsername());
-					credenziali_is.setPassword(connettoreHttp.getAutenticazioneHttp().getPassword());
+					
+					ConnettoreConfigurazioneHttpBasic authHttp = ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp();
+					credenziali_is.setUser(authHttp.getUsername());
+					credenziali_is.setPassword(authHttp.getPassword());
+
 					is.setCredenziali(credenziali_is);
 					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 				}
@@ -1206,6 +1205,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				}
 
 				is.setConnettore(connis);
+
 				sa.setInvocazioneServizio(is);
 
 				if (StatoFunzionalita.ABILITATO.equals(is.getGetMessage())
@@ -1216,7 +1216,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				}
 
 				StringBuilder inUsoMessage = new StringBuilder();
-				ServiziApplicativiUtilities.checkStatoConnettore(env.saCore, sa, connis, inUsoMessage, System.lineSeparator());
+				ServiziApplicativiUtilities.checkStatoConnettore(env.saCore, sa, is.getConnettore(), inUsoMessage, System.lineSeparator());
 
 				if (inUsoMessage.length() > 0)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
@@ -1233,6 +1233,33 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
+	}
+
+	private String getEndpointType(OneOfConnettoreErogazioneConnettore connettore) {
+		switch(connettore.getTipo()) {
+		case APPLICATIVO_SERVER: 
+			//BOH
+		case ECHO:
+			return TipiConnettore.NULLECHO.getNome();
+		case FILE: return TipiConnettore.FILE.getNome();
+		case HTTP:
+			ConnettoreHttp connettoreHttp = (ConnettoreHttp) connettore;
+			String endpointtype = connettoreHttp.getAutenticazioneHttp() != null ? TipiConnettore.HTTP.getNome()
+			: TipiConnettore.DISABILITATO.getNome();
+			return connettoreHttp.getAutenticazioneHttps() != null ? TipiConnettore.HTTPS.getNome() : endpointtype;
+		case JMS:
+			return TipiConnettore.JMS.getNome();
+		case MESSAGE_BOX:
+			break; //BOH
+		case NULL:
+			return TipiConnettore.NULL.getNome();
+		case PLUGIN:
+			return TipiConnettore.CUSTOM.getNome();
+		default:
+			break;}
+		
+		//TODO definire i tipi di cui non so
+		return TipiConnettore.DISABILITATO.getNome();
 	}
 
 	/**

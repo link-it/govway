@@ -720,9 +720,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 	                       env.idSoggetto, env);
 			}
 	       
-			Map<String, String> props = regConn.getProperties(); // Qui c'è solo la proprietà location.
-
-			ConnettoreFruizione c = ErogazioniApiHelper.buildConnettoreFruizione(props);
+			ConnettoreFruizione c = ErogazioniApiHelper.buildConnettoreFruizione(regConn);
 
 			context.getLogger().info("Invocazione completata con successo");
 			return c;
@@ -1078,11 +1076,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					}
 
-					ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
-					
-					ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, connettoreHttp, oldConnT);
+					ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, body.getConnettore(), oldConnT);
 
-					if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, false)) {
+					if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), env, false)) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 					}
 
@@ -1098,10 +1094,12 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					}
 	
-					ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
-					
-					ErogazioniApiHelper.fillConnettoreRegistro(connettoreN, env, connettoreHttp, oldConnT);
+					ErogazioniApiHelper.fillConnettoreRegistro(connettoreN, env, body.getConnettore(), oldConnT);
 	
+					if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), env, false)) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+					}
+
 					configurazioneAzione.setConnettore(connettoreN);
 					for (int i = 0; i < pd.getAzione().sizeAzioneDelegataList(); i++) {
 						configurazioneAzione.addAzione(pd.getAzione().getAzioneDelegata(i));
@@ -1109,7 +1107,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					fruitore.addConfigurazioneAzione(configurazioneAzione);
 	
 				} 
-			}else {
+			} else {
 				
 				connettore = fruitore.getConnettore();
 				
@@ -1120,15 +1118,13 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				}
 
-				ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
-				
-				ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, connettoreHttp, oldConnT);
+				ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, body.getConnettore(), oldConnT);
 
-				if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, env, false)) {
+				if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), env, false)) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 				}
 
-				fruitore.setConnettore(ErogazioniApiHelper.buildConnettoreRegistro(env, connettoreHttp));
+				fruitore.setConnettore(ErogazioniApiHelper.buildConnettoreRegistro(env, body.getConnettore()));
 			}
 			
 			fruitori.add(fruitore);

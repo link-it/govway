@@ -1,0 +1,16 @@
+{
+	"connettore": {
+		"tipo": "file",
+		"richiesta": {
+			"file": "/tmp/abc.txt",
+			"create_parent_dir": true
+		},
+		"risposta": {
+			"file": "/tmp/response.txt",
+			"wait_if_not_exists_ms": 200
+		}
+	}
+}
+
+
+

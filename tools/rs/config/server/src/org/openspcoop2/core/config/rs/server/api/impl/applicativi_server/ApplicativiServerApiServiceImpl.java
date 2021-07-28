@@ -30,7 +30,6 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.rs.server.api.ApplicativiServerApi;
-import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiApiHelper;
@@ -39,6 +38,8 @@ import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHe
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoServer;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpBasic;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
 import org.openspcoop2.core.config.rs.server.model.ListaApplicativiServer;
 import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
@@ -142,11 +143,6 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 
 			List<ExtendedConnettore> listExtendedConnettore = null;	// connettori extended non supportati via API
 
-			ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
-			String endpointtype = connettoreHttp.getAutenticazioneHttp() != null ? TipiConnettore.HTTP.getNome()
-					: TipiConnettore.DISABILITATO.getNome();
-			endpointtype = connettoreHttp.getAutenticazioneHttps() != null ? TipiConnettore.HTTPS.getNome() : endpointtype;
-
 			InvocazioneServizio is = sa.getInvocazioneServizio();
 			InvocazioneCredenziali credenziali_is = is.getCredenziali();
 			org.openspcoop2.core.config.Connettore connis = is.getConnettore();
@@ -158,23 +154,23 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
 
-			if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, erogEnv, true)) {
+			if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), erogEnv, true)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 
-			ErogazioniApiHelper.fillConnettoreConfigurazione(connis, erogEnv, connettoreHttp, oldConnT);
+			ErogazioniApiHelper.fillConnettoreConfigurazione(connis, erogEnv, body.getConnettore(), oldConnT);
 
-			if (connettoreHttp.getAutenticazioneHttp() != null) {
-				if (credenziali_is == null) {
-					credenziali_is = new InvocazioneCredenziali();
-				}
-				credenziali_is.setUser(connettoreHttp.getAutenticazioneHttp().getUsername());
-				credenziali_is.setPassword(connettoreHttp.getAutenticazioneHttp().getPassword());
-				is.setCredenziali(credenziali_is);
-				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
-			}
-
-			else {
+			if(body.getConnettore().getTipo().equals(ConnettoreEnum.HTTP) && ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp() != null) {
+					if (credenziali_is == null) {
+						credenziali_is = new InvocazioneCredenziali();
+					}
+					
+					ConnettoreConfigurazioneHttpBasic authHttp = ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp();
+					credenziali_is.setUser(authHttp.getUsername());
+					credenziali_is.setPassword(authHttp.getPassword());
+					is.setCredenziali(credenziali_is);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+			} else {
 				is.setCredenziali(null);
 				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 			}
@@ -428,11 +424,6 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 				}
 			}
 			
-			ConnettoreHttp connettoreHttp = (ConnettoreHttp) body.getConnettore();
-			String endpointtype = connettoreHttp.getAutenticazioneHttp() != null ? TipiConnettore.HTTP.getNome()
-					: TipiConnettore.DISABILITATO.getNome();
-			endpointtype = connettoreHttp.getAutenticazioneHttps() != null ? TipiConnettore.HTTPS.getNome() : endpointtype;
-
 			InvocazioneServizio is = newSa.getInvocazioneServizio();
 			InvocazioneCredenziali credenziali_is = is.getCredenziali();
 			org.openspcoop2.core.config.Connettore connis = is.getConnettore();
@@ -444,18 +435,20 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
 
-			if (!ErogazioniApiHelper.connettoreCheckData(connettoreHttp, erogEnv, true)) {
+			if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), erogEnv, true)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 
-			ErogazioniApiHelper.fillConnettoreConfigurazione(connis, erogEnv, connettoreHttp, oldConnT);
+			ErogazioniApiHelper.fillConnettoreConfigurazione(connis, erogEnv, body.getConnettore(), oldConnT);
 
-			if (connettoreHttp.getAutenticazioneHttp() != null) {
+			if(body.getConnettore().getTipo().equals(ConnettoreEnum.HTTP) && ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp() != null) {
 				if (credenziali_is == null) {
 					credenziali_is = new InvocazioneCredenziali();
 				}
-				credenziali_is.setUser(connettoreHttp.getAutenticazioneHttp().getUsername());
-				credenziali_is.setPassword(connettoreHttp.getAutenticazioneHttp().getPassword());
+				
+				ConnettoreConfigurazioneHttpBasic authHttp = ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp();
+				credenziali_is.setUser(authHttp.getUsername());
+				credenziali_is.setPassword(authHttp.getPassword());
 				is.setCredenziali(credenziali_is);
 				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 			}

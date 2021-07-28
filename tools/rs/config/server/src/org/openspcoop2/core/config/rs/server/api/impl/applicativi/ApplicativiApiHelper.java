@@ -61,11 +61,11 @@ import org.openspcoop2.core.config.rs.server.model.ApplicativoServer;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoServerItem;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfApplicativoServerConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -386,7 +386,7 @@ public class ApplicativiApiHelper {
 		ret.setNome(sa.getNome());
 
 		
-		ret.setConnettore(getConnettore(sa.getInvocazioneServizio().getConnettore()));
+		ret.setConnettore(buildConnettore(sa.getInvocazioneServizio().getConnettore()));
 			
 		if(sa.sizeProprietaList()>0) {
 			for (org.openspcoop2.core.config.Proprieta proprieta : sa.getProprietaList()) {
@@ -403,9 +403,31 @@ public class ApplicativiApiHelper {
 		return ret;
 	}
 	
-	private static OneOfApplicativoServerConnettore getConnettore(Connettore connettore) {
-		return ErogazioniApiHelper.buildConnettoreHttp(connettore.getProperties());
+	private static final OneOfApplicativoServerConnettore buildConnettore(Connettore connettore) {
+		
+		String tipoConnettore = connettore.getTipo();
+		Map<String, String> props = connettore.getProperties();
+
+		if(tipoConnettore.equals(TipiConnettore.HTTP.toString())) {
+			return ErogazioniApiHelper.buildConnettoreHttp(props);
+		} else if(tipoConnettore.equals(TipiConnettore.HTTPS.toString())) {
+			return ErogazioniApiHelper.buildConnettoreHttp(props);
+		} else if(tipoConnettore.equals(TipiConnettore.FILE.toString())) {
+			return ErogazioniApiHelper.buildConnettoreFile(props);
+		} else if(tipoConnettore.equals(TipiConnettore.JMS.toString())) {
+			return ErogazioniApiHelper.buildConnettoreJms(props);
+		} else if(tipoConnettore.equals(TipiConnettore.NULL.toString())) {
+			return ErogazioniApiHelper.buildConnettoreNull(props);
+		} else if(tipoConnettore.equals(TipiConnettore.NULLECHO.toString())) {
+			return ErogazioniApiHelper.buildConnettoreNullEcho(props);
+		} else if(connettore.getCustom()) {
+			return ErogazioniApiHelper.buildConnettorePlugin(props, tipoConnettore);
+		} else {
+			return null;
+		}
+		
 	}
+
 	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(ServizioApplicativo sa, ApplicativiEnv env) throws Exception {
 
 		ProtocolProperties prop = getProtocolProperties(sa, env);

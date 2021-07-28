@@ -1,0 +1,12 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"tipo_coda": "topic",
+		"connection_factory": "connFactory",
+		"send_as": "text"
+	}
+}
+
+
+

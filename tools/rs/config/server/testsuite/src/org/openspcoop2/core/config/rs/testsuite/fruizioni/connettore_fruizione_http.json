@@ -3,11 +3,6 @@
 	    "tipo": "http",
 	    "endpoint": "https://ginovadifretta.it/petstore",
 
-	    "autenticazione_http": {
-		"username": "mario",
-		"password": "perbene"
-	    },
-
 	    "autenticazione_https": {
 		"tipologia": "SSLv3",
 		"hostname_verifier": false,
@@ -31,7 +26,7 @@
 		"connection_read_timeout": 150200,
 		"tempo_medio_risposta": 134
 	    }
-    }
+     }
 
 }
 

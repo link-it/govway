@@ -44,29 +44,35 @@ Background:
 * def api_soap_piu_azioni_path = 'api/' + soap_piu_azioni_key
 * def erogazione_soap_piu_azioni_path = 'erogazioni/' + soap_piu_azioni_key
 
-* def connettore = read('connettore_erogazione_petstore.json')
+* def connettore = read('connettore_erogazione_http.json')
 * def info_generali = read('informazioni_generali_petstore.json')
 * eval randomize(info_generali, ["nome"])
 * def erogazione_versione = read('api_versione3.json')
 
-* def getExpectedConnettoreHTTPS =
+* def getExpectedConnettore =
 """
 function(connettore) {
-var expected = connettore
-expected.connettore.autenticazione_https.trust_all_server_certs = expected.connettore.autenticazione_https.trust_all_server_certs != null ? expected.connettore.autenticazione_https.trust_all_server_certs : false  
-expected.connettore.autenticazione_https.server.algoritmo = expected.connettore.autenticazione_https.server.algoritmo != null ? expected.connettore.autenticazione_https.server.algoritmo : 'PKIX'  
-expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
-return expected
-} 
-"""
 
-* def getExpectedConnettoreHTTP =
-"""
-function(connettore) {
-var expected = connettore
-expected.connettore.tipo = 'http'
-expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
-return expected
+	var expected = connettore
+	expected.connettore.debug =expected.connettore.debug != null ? expected.connettore.debug : false 
+
+	var tipo = connettore.connettore.tipo
+	if(tipo == 'http') {
+			if(expected.connettore.autenticazione_https != null) {
+				expected.connettore.autenticazione_https.trust_all_server_certs = expected.connettore.autenticazione_https.trust_all_server_certs != null ? expected.connettore.autenticazione_https.trust_all_server_certs : false  
+				expected.connettore.autenticazione_https.server.algoritmo = expected.connettore.autenticazione_https.server.algoritmo != null ? expected.connettore.autenticazione_https.server.algoritmo : 'PKIX'
+			}  
+	} else if (tipo == 'file') {
+		expected.connettore.richiesta.create_parent_dir = expected.connettore.richiesta.create_parent_dir != null ? expected.connettore.richiesta.create_parent_dir : false
+		expected.connettore.richiesta.overwrite_if_exists=expected.connettore.richiesta.overwrite_if_exists != null ? expected.connettore.richiesta.overwrite_if_exists: false
+		if(expected.connettore.risposta != null) {
+		expected.connettore.risposta.delete_after_read = expected.connettore.risposta.delete_after_read != null ? expected.connettore.risposta.delete_after_read: false
+		}
+	} else if (tipo == 'plugin') {
+		expected.connettore.proprieta = expected.connettore.proprieta != null ? expected.connettore.proprieta: new Array()
+	}
+	
+	return expected
 } 
 """
 
@@ -86,17 +92,81 @@ Scenario Outline: Erogazioni Update Connettore 204
     When method put
     Then status 204
     
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    * match response == getExpectedConnettore(connettore_update)
+    
+    Given url configUrl
+    And path 'erogazioni', petstore_key
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+		* match response.connettore == '<connettore>'
+    
+    
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: api_petstore_path })
 
 Examples:
-|nome|
-|connettore_erogazione_petstore.json|
+|nome|connettore
+|connettore_erogazione_http.json|https://ginovadifretta.it/petstore
+|connettore_erogazione_echo.json|[echo] govway://echo
+|connettore_erogazione_null.json|[null] govway://dev/null
+|connettore_erogazione_plugin.json|[plugin] custom 
+|connettore_erogazione_plugin_con_properties.json|[plugin] custom
+|connettore_erogazione_jms.json|[jms] nome_coda
+|connettore_erogazione_jms_jndi_init_ctx.json|[jms] nome_coda
+|connettore_erogazione_jms_jndi_provider_url.json|[jms] nome_coda
+|connettore_erogazione_jms_jndi_url_pkg.json|[jms] nome_coda
+|connettore_erogazione_jms_send_as_bytes.json|[jms] nome_coda
+|connettore_erogazione_jms_tipo_coda_topic.json|[jms] nome_coda
+|connettore_erogazione_jms_user_password.json|[jms] nome_coda
+|connettore_erogazione_file.json|[file] /tmp/abc.txt
+|connettore_erogazione_file_create_parent.json|[file] /tmp/abc.txt
+|connettore_erogazione_file_headers.json|[file] /tmp/abc.txt
+|connettore_erogazione_file_overwrite.json|[file] /tmp/abc.txt
+|connettore_erogazione_file_response.json|[file] /tmp/abc.txt
+|connettore_erogazione_file_response_delete.json|[file] /tmp/abc.txt
+|connettore_erogazione_file_response_headers.json|[file] /tmp/abc.txt
+|connettore_erogazione_file_response_wait.json|[file] /tmp/abc.txt
+
+
+@UpdateConnettore400
+Scenario Outline: Erogazioni Update Connettore 400
+
+		* def connettore_update = read ('<nome>')
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key, 'connettore'
+    And header Authorization = govwayConfAuth
+    And request connettore_update
+    And params query_params
+    When method put
+    Then status 400
+    
+    * match response.detail == '<error>' 
+    
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
+    * call delete ({ resourcePath: api_petstore_path })
+
+Examples:
+|nome|error
+|connettore_erogazione_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato
+
 
 @UpdateConnettoreApplicativoServer204
 Scenario: Erogazioni Update Connettore 204
 
-		* def connettore_update_noserver = read ('connettore_erogazione_petstore.json')
+		* def connettore_update_noserver = read ('connettore_erogazione_http.json')
 		* def app_server = read ('applicativo_server.json')
 		* eval randomize(app_server, ["nome"])
 		* def connettore_update = read ('connettore_applicativo_server_erogazione_petstore.json')
@@ -128,6 +198,15 @@ Scenario: Erogazioni Update Connettore 204
     Then status 200
 
     * match response == connettore_update
+
+    Given url configUrl
+    And path 'erogazioni', petstore_key
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+		* match response.connettore == 'https://ginovadifretta.it/petstore'
     
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
@@ -161,7 +240,7 @@ Scenario: Erogazioni Update Connettore 204
     When method get
     Then status 200
 
-    * match response == getExpectedConnettoreHTTPS(connettore_update_noserver)
+    * match response == getExpectedConnettore(connettore_update_noserver)
     
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: 'applicativi-server/' + app_server.nome })
@@ -174,7 +253,7 @@ Scenario: Erogazioni Update Connettore gruppo ApplicativoServer OK
 		* def gruppo_petstore = read ('gruppo_petstore.json')
 		* def query_params = {'gruppo': 'GruppoJson'}
 
-		* def connettore_update_noserver = read ('connettore_erogazione_petstore.json')
+		* def connettore_update_noserver = read ('connettore_erogazione_http.json')
 		* def app_server = read ('applicativo_server.json')
 		* eval randomize(app_server, ["nome"])
 		* def connettore_update = read ('connettore_applicativo_server_erogazione_petstore.json')
@@ -240,7 +319,7 @@ Scenario: Erogazioni Update Connettore gruppo ApplicativoServer OK
     When method get
     Then status 200
 
-    * match response == getExpectedConnettoreHTTPS(connettore_update_noserver)
+    * match response == getExpectedConnettore(connettore_update_noserver)
     
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key })
     * call delete ({ resourcePath: 'applicativi-server/' + app_server.nome })
@@ -282,7 +361,7 @@ Scenario: Erogazioni Update Connettore gruppo OK
     When method get
     Then status 200
 
-    * match response == getExpectedConnettoreHTTPS(connettore)
+    * match response == getExpectedConnettore(connettore)
 
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
@@ -299,7 +378,7 @@ Scenario: Erogazioni Update Connettore gruppo OK
     When method get
     Then status 200
 
-		* match response == getExpectedConnettoreHTTPS(connettore)
+		* match response == getExpectedConnettore(connettore)
     
     Given url configUrl
     And path 'erogazioni', petstore_key, 'connettore'
@@ -307,7 +386,11 @@ Scenario: Erogazioni Update Connettore gruppo OK
     When method get
     Then status 200
 
-		* match response == getExpectedConnettoreHTTP({connettore: erogazione_petstore.connettore})
+		# il connettore in creazione e' solo HTTP
+    * def conn = erogazione_petstore.connettore
+    * eval conn.tipo = 'http'
+    
+		* match response == getExpectedConnettore({connettore: conn})
 
     Given url configUrl
     And path 'erogazioni', petstore_key

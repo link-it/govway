@@ -1,0 +1,12 @@
+{
+	"connettore": {
+		"tipo": "plugin",
+		"plugin": "custom",
+		"proprieta": [
+		{ "nome": "a", "valore": "b"}
+		]
+	}
+}
+
+
+

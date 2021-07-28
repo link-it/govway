@@ -1,0 +1,13 @@
+{
+	"connettore": {
+		"tipo": "jms",
+		"nome": "nome_coda",
+		"jndi_initial_context": "initial_context",
+		"connection_factory": "connFactory",
+		"tipo_coda": "queue",
+		"send_as": "text"
+	}
+}
+
+
+
