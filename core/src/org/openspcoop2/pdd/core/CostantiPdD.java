@@ -786,6 +786,9 @@ public class CostantiPdD {
     
     public final static String PREFIX_LIMITED_REQUEST = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_REQUEST;
     public final static String PREFIX_LIMITED_RESPONSE = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE;
+    
+    
+    public final static String CONNETTORE_MULTIPLO_SELEZIONATO = "CONNETTORE_MULTIPLO_SELEZIONATO";
 }
 
 

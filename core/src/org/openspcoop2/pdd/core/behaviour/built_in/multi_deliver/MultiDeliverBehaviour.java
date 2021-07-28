@@ -33,6 +33,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.AbstractBehaviour;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
@@ -165,6 +166,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				if(connettoriPerNotifiche) {
 					this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONA_CONFIGURAZIONE, configurazione);
 				}	
+				this.getPddContext().addObject(CostantiPdD.CONNETTORE_MULTIPLO_SELEZIONATO, idServizioApplicativoResponder.getNome());
 			}
 						
 			
@@ -181,6 +183,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 					idSA = idServizioApplicativoResponder;
 				}else {
 					idSA = listaServiziApplicativi_consegnaSenzaRisposta.get(0);
+					this.getPddContext().addObject(CostantiPdD.CONNETTORE_MULTIPLO_SELEZIONATO, idSA.getNome());
 				}
 				ServizioApplicativo sa = null;
 				boolean uniqueSA_integrationManager = false;

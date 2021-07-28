@@ -888,26 +888,38 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				transactionDTO.setIdCorrelazioneApplicativa(context.getIntegrazione().getIdCorrelazioneApplicativa());
 				transactionDTO.setIdCorrelazioneApplicativaRisposta(transaction.getCorrelazioneApplicativaRisposta());
 				transactionDTO.setServizioApplicativoFruitore(context.getIntegrazione().getServizioApplicativoFruitore());
-				// in caso di porta applicativa si salva l'elenco dei servizi applicativi erogatori
-				if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
-					StringBuilder sa_erogatori = new StringBuilder();
-					for (int i=0; i<context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
-						if (i>0){
-							sa_erogatori.append(",");
+				if(context!=null && context.getPddContext()!=null &&
+						context.getPddContext().containsKey(CostantiPdD.CONNETTORE_MULTIPLO_SELEZIONATO)) {
+					Object o = context.getPddContext().getObject(CostantiPdD.CONNETTORE_MULTIPLO_SELEZIONATO);
+					if(o!=null && o instanceof String) {
+						String sa = (String) o;
+						if(sa!=null && !"".equals(sa)) {
+							transactionDTO.setServizioApplicativoErogatore(sa);
 						}
-						sa_erogatori.append( context.getIntegrazione().getServizioApplicativoErogatore(i) );
 					}
-					transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString());
 				}
-				else if(transaction.getServiziApplicativiErogatore()!=null && transaction.getServiziApplicativiErogatore().size()>0){
-					StringBuilder sa_erogatori = new StringBuilder();
-					for (int i=0; i<transaction.getServiziApplicativiErogatore().size(); i++) {
-						if (i>0){
-							sa_erogatori.append(",");
+				if(transactionDTO.getServizioApplicativoErogatore()==null) {
+					// in caso di porta applicativa si salva l'elenco dei servizi applicativi erogatori
+					if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
+						StringBuilder sa_erogatori = new StringBuilder();
+						for (int i=0; i<context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
+							if (i>0){
+								sa_erogatori.append(",");
+							}
+							sa_erogatori.append( context.getIntegrazione().getServizioApplicativoErogatore(i) );
 						}
-						sa_erogatori.append( transaction.getServiziApplicativiErogatore().get(i) );
+						transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString().length()>2000 ? sa_erogatori.toString().substring(0, 1999) : sa_erogatori.toString());
 					}
-					transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString());
+					else if(transaction.getServiziApplicativiErogatore()!=null && transaction.getServiziApplicativiErogatore().size()>0){
+						StringBuilder sa_erogatori = new StringBuilder();
+						for (int i=0; i<transaction.getServiziApplicativiErogatore().size(); i++) {
+							if (i>0){
+								sa_erogatori.append(",");
+							}
+							sa_erogatori.append( transaction.getServiziApplicativiErogatore().get(i) );
+						}
+						transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString().length()>2000 ? sa_erogatori.toString().substring(0, 1999) : sa_erogatori.toString());
+					}
 				}
 			}
 			

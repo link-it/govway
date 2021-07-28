@@ -1,3 +1,10 @@
+2021-07-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1248
+	La registrazione della transazione falliva, con l'errore riportato di seguito, se l'erogazione era configurata con molti connettori multipli:
+	org.openspcoop2.generic_project.exception.ServiceException: ERRORE: il valore è troppo lungo per il tipo character varying(2000)
+
 2021-07-26  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
