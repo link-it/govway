@@ -1,3 +1,10 @@
+2021-07-29  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto bug OP-1250
+	Nel caso di fatture P7M, nel formato PEM, contenenti i prefissi -----BEGIN e -----END il software non era in grado di parsare la fattura se si abilitavano i controlli che lo richiedevano
+	(ad esempio abilitando la proprietà 'org.openspcoop2.protocol.sdi.accesso.campiFattura.enable' nel file esterno 'sdi_local.properties'.
+
 2021-07-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
