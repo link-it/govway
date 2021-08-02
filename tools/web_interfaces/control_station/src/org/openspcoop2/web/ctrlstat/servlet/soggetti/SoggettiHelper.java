@@ -1132,7 +1132,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
-				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
+				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
 				
 				// filtro nome
 				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);

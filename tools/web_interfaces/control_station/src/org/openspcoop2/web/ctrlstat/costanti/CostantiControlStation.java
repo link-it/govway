@@ -926,6 +926,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO = "autorizzazioneModIPAStato";
 	public final static String PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "saServerEnabled";
 	public final static String PARAMETRO_ID_APPLICATIVO_SERVER = "saServer";
+	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE = "authContenutiStatoTitle";
 	
 	public final static String PARAMETRO_RESET_SEARCH = "resetSearch";
 	

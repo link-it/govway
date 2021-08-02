@@ -262,8 +262,8 @@ public class Costanti {
 	public final static String TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "Visualizza Sezione";
 	public final static String TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA = "Nascondi Sezione";
 	
-	public final static String ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "add_circle_outline";
-	public final static String ICON_NASCONDI_SEZIONE_FILTRI_RICERCA = "remove_circle_outline";
+	public final static String ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "expand_more";
+	public final static String ICON_NASCONDI_SEZIONE_FILTRI_RICERCA = "expand_less";
 	
 	public final static String INFO_BUTTON_ICON = "&#xE88E;";
 	public final static String INFO_BUTTON_ICON_WHITE = "&#xE88F;";

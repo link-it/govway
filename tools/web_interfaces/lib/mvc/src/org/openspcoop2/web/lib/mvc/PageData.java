@@ -29,6 +29,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
+
 /**
  * PageData
  * 
@@ -535,7 +537,7 @@ public class PageData {
 			throw new Exception("Label not found");
 		}
 		deValue.setLabel(label);
-		deValue.setVisualizzaSottosezioneAperta(visualizzaSottosezioneAperta);
+		deValue.setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
 		this.filter_values.add(deValue);
 	}
 	
@@ -587,7 +589,7 @@ public class PageData {
 		if(this.filter_names != null) {
 			for (int i = 0; i < this.filter_names.size(); i++) {
 				if(name.equals(this.filter_names.get(i).getValue())) {
-					this.filter_values.get(i).setVisualizzaSottosezioneAperta(visualizzaSottosezioneAperta);
+					this.filter_values.get(i).setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
 					break;
 				}
 			}

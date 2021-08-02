@@ -45,6 +45,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class DataElement {
 	
+	public enum STATO_APERTURA_SEZIONI { APERTO, CHIUSO, DISABILITATO }
+	
 	private static Map<String, String> escapeMap = null;
 	
 	private static int DATA_ELEMENT_SIZE = 50;
@@ -117,7 +119,9 @@ public class DataElement {
 	
 	private boolean visualizzaLinkApriNuovaFinestra = false;
 	
-	private boolean visualizzaSottosezioneAperta = false;
+	private STATO_APERTURA_SEZIONI statoSottosezione = STATO_APERTURA_SEZIONI.CHIUSO;
+	
+	private String valoreDefault = null;
 	
 	private Dialog dialog = null;
 	
@@ -236,7 +240,10 @@ public class DataElement {
 		if(DataElementType.CHECKBOX.toString().equals(s)) {
 			this.styleClass = null;
 		}
-		
+		// Fieldset per default non sono chiudibili dall'utente
+		if(DataElementType.TITLE.toString().equals(s)) {
+			this.statoSottosezione = STATO_APERTURA_SEZIONI.DISABILITATO;
+		}
 	}
 	public String getType() {
 		return DataElement.checkNull(this.type);
@@ -913,12 +920,66 @@ public class DataElement {
 		this.setStyleClass(Costanti.INPUT_TEXT_BOLD_RED_CSS_CLASS);
 	}
 
-	public boolean isVisualizzaSottosezioneAperta() {
-		return this.visualizzaSottosezioneAperta;
+	public boolean isVisualizzaSezioneAperta() {
+		return STATO_APERTURA_SEZIONI.APERTO.equals(this.statoSottosezione);
 	}
 
-	public void setVisualizzaSottosezioneAperta(boolean visualizzaSottosezioneAperta) {
-		this.visualizzaSottosezioneAperta = visualizzaSottosezioneAperta;
+	public void setStatoAperturaSezioni(STATO_APERTURA_SEZIONI stato) {
+		this.statoSottosezione = stato;
 	}
 	
+	public STATO_APERTURA_SEZIONI getStatoSottosezione() {
+		return this.statoSottosezione;
+	}
+
+	public String getValoreDefault() {
+		return this.valoreDefault;
+	}
+
+	public void setValoreDefault(String valoreDefault) {
+		this.valoreDefault = valoreDefault;
+	}
+
+	public void setValoreDefaultCheckbox(boolean valoreDefault) {
+		this.valoreDefault = ServletUtils.boolToCheckBoxStatus(valoreDefault);
+	}
+	
+	public boolean getValoreDefaultCheckbox() {
+		return this.valoreDefault != null ? ServletUtils.isCheckBoxEnabled(this.valoreDefault) : false;
+	}
+	
+	public void setValoreDefaultSelect(String valoreDefault) {
+		this.valoreDefault = valoreDefault;
+	}
+	
+	public void setValoreDefaultMultiSelect(String[] valoriDefault) {
+		if(valoriDefault !=null  && valoriDefault.length  > 0){
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < valoriDefault.length; i++) {
+				if(sb.length() > 0)
+					sb.append(", ");
+				
+				sb.append(DataElement.checkNull(valoriDefault[i]));
+			}
+			
+			this.valoreDefault = sb.toString();
+		}
+	}
+	
+	public boolean isElementoDaControllarePerCheckDefaultNelleForm() {
+		if(!DataElementType.HIDDEN.toString().equals(this.getType()) 
+				&& !DataElementType.SUBTITLE.toString().equals(this.getType())
+				&& !DataElementType.TITLE.toString().equals(this.getType())
+				&& !DataElementType.LINK.toString().equals(this.getType())
+				&& !DataElementType.FILE.toString().equals(this.getType())
+				&& !DataElementType.MULTI_FILE.toString().equals(this.getType())
+				&& !DataElementType.CRYPT.toString().equals(this.getType())
+				&& !DataElementType.NOTE.toString().equals(this.getType())
+				&& !DataElementType.IMAGE.toString().equals(this.getType())
+				&& !DataElementType.BUTTON.toString().equals(this.getType())) {
+			return true;
+		}
+		
+		return false;
+	}
 }

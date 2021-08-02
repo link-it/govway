@@ -289,6 +289,7 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Dialog;
@@ -5911,6 +5912,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE);
+		de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
 		dati.addElement(de);
 		
 		List<String> authContenutiLabels = new ArrayList<>();
@@ -5932,6 +5935,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 		de.setPostBack(true);
+		de.setValoreDefaultSelect(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO); 
 		dati.addElement(de);
 		
 		if(!autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO)) {
@@ -5959,7 +5963,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				else {
 					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI);
 				}
-				
+				de.setValoreDefault("");
 				de.setInfo(info );
 				dati.addElement(de);
 			}
@@ -6002,6 +6006,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 		}
+		
+		this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE);
 	}
 	
 	public boolean controlloAccessiCheck(TipoOperazione tipoOperazione, 
@@ -18178,7 +18184,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST, false, null, null, true);
+				postBack_viaPOST, false, null, null, true, null, null);
 	}
 	
 	public void addCustomField(TipoPlugin tipoPlugin,
@@ -18187,6 +18193,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
 			boolean postBack_viaPOST) throws Exception {
+		this.addCustomFieldConValoreDefault(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				value, 
+				hidden, dati,
+				postBack_viaPOST, null);
+	}
+	
+	public void addCustomFieldConValoreDefault(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST, String valoreDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -18194,7 +18216,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST, false, null, null, false);
+				postBack_viaPOST, false, null, null, false, valoreDefault, null);
 	}
 	public void addCustomFieldConValoriDaEscludere(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
@@ -18202,6 +18224,15 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
 			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
+		this.addCustomFieldConValoriDaEscludereConValoreDefault(tipoPlugin,ruolo,fase,nomeParametroSelezioneTipo,nomeParametro, label,
+				value, hidden, dati,postBack_viaPOST, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati, null);
+	}
+	public void addCustomFieldConValoriDaEscludereConValoreDefault(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati, String valoreDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -18209,7 +18240,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST, true, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati,false);
+				postBack_viaPOST, true, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati,false, valoreDefault, null);
 	}
 	
 	public void addMultiSelectCustomField(TipoPlugin tipoPlugin,
@@ -18218,6 +18249,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String [] value, boolean hidden, Vector<DataElement> dati,
 			boolean postBack_viaPOST) throws Exception {
+		addMultiSelectCustomFieldConValoreDefault(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				value, 
+				hidden, dati,
+				postBack_viaPOST, null);
+	}
+	
+	public void addMultiSelectCustomFieldConValoreDefault(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String [] value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST, String [] valoriDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -18225,7 +18272,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				null, value, true, 
 				hidden, dati,
-				postBack_viaPOST, false, null, null, false);
+				postBack_viaPOST, false, null, null, false, null, valoriDefault);
 	}
 	private void addCustomField(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin (o anche configurazione per gli allarmi)
@@ -18235,7 +18282,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String value, String [] multiValue, boolean multiSelect,
 			boolean hidden, Vector<DataElement> dati,
 			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, 
-			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch) throws Exception {
+			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch, String valoreDefault, String[] valoriDefault) throws Exception {
 		
 		List<String> values = new ArrayList<String>();
 		List<String> labels = new ArrayList<String>();
@@ -18375,6 +18422,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!customValidType) {
 				de.setLabel(label);
 				de.setType(DataElementType.TEXT_EDIT);
+				de.setValoreDefault(valoreDefault);
 			}
 			else {
 				if(multiSelect) {
@@ -18388,9 +18436,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(labels);
 				if(multiSelect) {
 					de.setSelezionati(multiValue);
+					de.setValoreDefaultMultiSelect(valoriDefault);
 				}
 				else {
 					de.setSelected(value);
+					de.setValoreDefaultSelect(valoreDefault);
 				}
 				de.setNote(note);
 				if(postBack_viaPOST) {
@@ -18856,5 +18906,87 @@ public class ConsoleHelper implements IConsoleHelper {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		return this.soggettiCore.nomiProprietaSoggetti(tipoSoggettiProtocollo);
+	}
+	
+	private boolean hasAlmostOneFormElementDefined(List<DataElement> form_elements_to_check) {
+		if(form_elements_to_check!=null) {
+			for (DataElement de : form_elements_to_check) {
+				// solo i tipi di elemento da controllare
+				if(de.isElementoDaControllarePerCheckDefaultNelleForm()) {
+					// valgono solo gli elementi con il default definito
+					if(de.getValoreDefault() != null) {
+						if(DataElementType.CHECKBOX.toString().equals(de.getType())) {
+							if(ServletUtils.isCheckBoxEnabled(de.getSelected()) != de.getValoreDefaultCheckbox()) {
+								return true;
+							}
+						} else if(DataElementType.SELECT.toString().equals(de.getType())) {
+							if(!de.getValoreDefault().equals(de.getSelected())) {
+								return true;
+							}
+						} else if(DataElementType.MULTI_SELECT.toString().equals(de.getType())) {
+							if(!de.getValoreDefault().equals(de.getSelezionatiAsString()))
+								return true;
+						} else { // text, textarea, numerici e radio
+							if(!de.getValoreDefault().equals(de.getValue())) {
+								return true;
+							}
+						}
+						
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName) throws Exception{
+		this.impostaAperturaTitle(dati, titleName, null, this.getPostBackElementName());
+	}
+	
+	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
+		this.impostaAperturaTitle(dati, titleName, visualizzaSottosezioneAperta, this.getPostBackElementName());
+	}
+	
+	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
+		if(dati != null) {
+			int idxSubtitle = -1;
+			for (int i = 0; i < dati.size(); i++) {
+				if(titleName.equals(dati.get(i).getName())) {
+					idxSubtitle = i;
+					break;
+				}
+			}
+			
+			if(visualizzaSottosezioneAperta == null) {
+				// se ho trovato il subtitle allora prendo i filtri successivi
+				// finche non trovo un altro subtitle o finisce la lista
+				if(idxSubtitle > -1) {
+					List<DataElement> filter_values_to_check = new ArrayList<DataElement>();
+					
+					for (int i = idxSubtitle + 1; i < dati.size(); i++) {
+						DataElement de = dati.get(i);
+						if(de.getType().equals("title")) {
+							// ho trovato un'altra sezione mi fermo
+							break;
+						} else {
+							filter_values_to_check.add(de);
+						}
+					}
+					visualizzaSottosezioneAperta = this.hasAlmostOneFormElementDefined(filter_values_to_check);
+					
+					// se c'e' stata una postback la sezione dell'elemento che ha provocato il reload deve restare aperta 
+					if(postbackElementName != null) {
+						for (int i = 0; i < filter_values_to_check.size(); i++) {
+							if(filter_values_to_check.get(i).getName().equals(postbackElementName)) {
+								visualizzaSottosezioneAperta = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			dati.get(idxSubtitle).setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
+		}
 	}
 }

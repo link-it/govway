@@ -274,6 +274,37 @@ function CheckDati() {
                 
                 scrollToPostBackElement(destElement);
         });
+        
+        function inizializzaSelectSezione(idDiv){
+        	var divElem = $('#'+ idDiv + '');
+        	
+        	if(divElem.length > 0){
+	        	if(divElem.find("select" ).length > 0){
+	        		// elimino eventuali plugin gia' applicati
+	        		divElem.find("select" ).each(function() {
+	        			var wrapper = $( this ).parent();
+	        			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
+	        				$( this ).appendTo($( this ).parent().parent());
+	        				wrapper.remove();
+	        				$( this ).css('width','');
+	        				$( this ).css('height','');
+	        			}
+	        			
+	        			var checkID = $( this ).attr('id') + '_hidden_chk';
+	        			if($( '#' + checkID ).length > 0) {
+	        				var val = $( '#' + checkID ).attr('value');
+	        				if(val && val == 'true'){
+	        					$( this ).searchable({disableInput : false});	
+	        				} else {
+	        					$( this ).searchable({disableInput : true});	
+	        				}
+	        			} else {
+	        				$( this ).searchable({disableInput : true});
+	        			}
+	        		});
+	        	}
+        	}
+        }
 </script>
 
 <jsp:include page="/jsp/addElementCustom.jsp" flush="true" />
