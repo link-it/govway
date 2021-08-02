@@ -414,7 +414,9 @@ public class GestoreConsegnaMultipla {
 					org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
 							(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
 									con, autoCommit,
-									daoFactoryServiceManagerPropertiesTransazioni, daoFactoryLoggerTransazioniSql);
+									daoFactoryServiceManagerPropertiesTransazioni,
+									daoFactoryLoggerTransazioniDevNull);
+									//daoFactoryLoggerTransazioniSql);
 					jdbcServiceManager.getJdbcProperties().setShowSql(this.debug);
 					ITransazioneApplicativoServerService transazioneService = jdbcServiceManager.getTransazioneApplicativoServerService();
 	
@@ -452,6 +454,7 @@ public class GestoreConsegnaMultipla {
 					
 					long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
 					
+					Throwable lastT = null;
 					while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
 	
 						try{
@@ -466,7 +469,8 @@ public class GestoreConsegnaMultipla {
 	
 							updateEffettuato = true;
 	
-						} catch(Exception e) {
+						} catch(Throwable e) {
+							lastT = e;
 							//System.out.println("Serializable error:"+e.getMessage());
 							try{
 								con.rollback();
@@ -486,6 +490,13 @@ public class GestoreConsegnaMultipla {
 						// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
 					} catch(Exception er) {
 						throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
+					}
+					if(lastT!=null && !updateEffettuato) {
+						// registro ultimo errore avvenuto durante il ciclo
+						String msgError = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'updateTransazioneSA' failed: "+lastT.getMessage();
+						daoFactoryLoggerTransazioniSql.error(msgError,lastT);
+						this.log.error(msgError,lastT);
+						throw lastT;
 					}
 				}finally {	
 					if(times!=null) {
@@ -682,9 +693,12 @@ public class GestoreConsegnaMultipla {
 
 	private void _safe_aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection con, EsitiProperties esitiProperties) {
 		
-		DAOFactory daoF = this.debug ? daoFactory : daoFactoryDevNull;
-		Logger logFactory = this.debug ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;
-		ServiceManagerProperties smp = this.debug ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
+		boolean debug = this.debug;
+		debug = true; // un eventuale errore deve essere sempre registrato
+		
+		DAOFactory daoF = debug ? daoFactory : daoFactoryDevNull;
+		Logger logFactory = debug ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;
+		ServiceManagerProperties smp = debug ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
 		
 		int esitoConsegnaMultipla = -1;
 		int esitoConsegnaMultiplaFallita = -1;
@@ -700,7 +714,7 @@ public class GestoreConsegnaMultipla {
 		}catch(Exception er) {
 			// errore che non dovrebbe succedere
 			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server '"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"': (readEsiti) " + er.getMessage();
-			this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"] "+msg,er);
+			this.log.error("[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] "+msg,er);
 		}
 		
 		if(esitiLetti) {
