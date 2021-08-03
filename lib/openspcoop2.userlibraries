@@ -23,7 +23,7 @@
 	<archive path="/op2_3.3.dev/lib/commons/commons-cli-1.4.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-csv-1.8.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-validator-1.6.jar"/>
-	<archive path="/op2_3.3.dev/lib/commons/commons-compress-1.20.jar"/>
+	<archive path="/op2_3.3.dev/lib/commons/commons-compress-1.21.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-math3-3.6.1.jar"/>
 	<!-- cxf -->
         <archive path="/op2_3.3.dev/lib/cxf/cxf-core-3.3.5-gov4j-1.jar"/>
