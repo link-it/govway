@@ -797,7 +797,7 @@
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.12.0.jar"/>
-				<include name="commons-compress-1.20.jar"/>
+				<include name="commons-compress-1.21.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
 				<include name="bcprov-ext-jdk15on-1.69.jar"/>

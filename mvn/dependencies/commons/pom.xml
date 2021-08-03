@@ -23,7 +23,7 @@
 		<commons.codec.version>1.15</commons.codec.version>
 		<commons.collections.version>3.2.2</commons.collections.version>
 		<commons.collections4.version>4.4</commons.collections4.version>
-		<commons.compress.version>1.20</commons.compress.version>
+		<commons.compress.version>1.21</commons.compress.version>
 		<commons.csv.version>1.8</commons.csv.version>
 		<commons.dbcp2.version>2.8.0</commons.dbcp2.version>
 		<commons.digester.version>2.1</commons.digester.version>

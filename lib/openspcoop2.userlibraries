@@ -23,7 +23,7 @@
 	<archive path="/op2_3.4.dev/lib/commons/commons-cli-1.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/commons/commons-csv-1.8.jar"/>
 	<archive path="/op2_3.4.dev/lib/commons/commons-validator-1.7.jar"/>
-	<archive path="/op2_3.4.dev/lib/commons/commons-compress-1.20.jar"/>
+	<archive path="/op2_3.4.dev/lib/commons/commons-compress-1.21.jar"/>
 	<archive path="/op2_3.4.dev/lib/commons/commons-math3-3.6.1.jar"/>
 	<!-- cxf -->
         <archive path="/op2_3.4.dev/lib/cxf/cxf-core-3.4.4-gov4j-1.jar"/>
@@ -75,6 +75,7 @@
 	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-cache-5.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpclient5-fluent-5.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-5.1.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-h2-5.1.1.jar"/>
 	<!-- jackson -->
 	<archive path="/op2_3.4.dev/lib/jackson/jackson-annotations-2.12.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/jackson/jackson-core-2.12.3.jar"/>
