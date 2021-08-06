@@ -16158,18 +16158,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		try {
 			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
 
+			String infoType = this.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			if(infoType==null) {
+				infoType = ServletUtils.getObjectFromSession(this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			}
+			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
+			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
+			
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
 			
-			PropertiesSourceConfiguration propertiesSourceConfiguration = this.confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			PropertiesSourceConfiguration propertiesSourceConfiguration = attributeAuthority ?
+					this.confCore.getAttributeAuthorityPropertiesSourceConfiguration() :
+					this.confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
 			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 			List<String> nomiConfigurazioniPolicyGestioneToken = configManager.getNomiConfigurazioni(propertiesSourceConfiguration);
 			List<String> labelConfigurazioniPolicyGestioneToken = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniPolicyGestioneToken);
 			
-			String filterTipoTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_TOKEN_POLICY);
-			addFilterTipoTokenPolicy(filterTipoTokenPolicy, false, nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken);
+			if(!attributeAuthority) {
+				String filterTipoTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_TOKEN_POLICY);
+				addFilterTipoTokenPolicy(filterTipoTokenPolicy, false, nomiConfigurazioniPolicyGestioneToken, labelConfigurazioniPolicyGestioneToken);
+			}
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -16178,7 +16189,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, null));
+			String label = attributeAuthority ?
+					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
+					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+			
+			lstParam.add(new Parameter(label, null));
 			
 			this.pd.setSearchLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
 			if(search.equals("")){
@@ -16197,7 +16212,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<String> lstLabels = new ArrayList<>();
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
 			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
-			if(!this.core.isTokenPolicyForceIdEnabled()) {
+			boolean forceId = attributeAuthority ?
+					this.core.isAttributeAuthorityForceIdEnabled() :
+					this.core.isTokenPolicyForceIdEnabled();
+			if(!forceId) {
 				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
 			}
 			lstLabels.add(CostantiControlStation.LABEL_IN_USO_COLONNA_HEADER); // inuso
@@ -16218,7 +16236,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + ""); 
 
 					DataElement de = new DataElement();
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pPolicyId);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pInfoType, pPolicyId);
 					de.setValue(policy.getNome());
 					de.setIdToRemove(""+policy.getId());
 					e.addElement(de);
@@ -16227,7 +16245,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(policy.getDescrizione());
 					e.addElement(de);
 					
-					if(!this.core.isTokenPolicyForceIdEnabled()) {
+					if(!forceId) {
 						de = new DataElement();
 						if(nomiConfigurazioniPolicyGestioneToken!=null && nomiConfigurazioniPolicyGestioneToken.contains(policy.getTipo())) {
 							boolean found = false;
@@ -16249,7 +16267,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						e.addElement(de);
 					}
 					
-					this.addInUsoButtonVisualizzazioneClassica(e, policy.getNome(), policy.getId()+"", InUsoType.TOKEN_POLICY);
+					InUsoType inUsoType = attributeAuthority ? InUsoType.ATTRIBUTE_AUTHORITY : InUsoType.TOKEN_POLICY;
+					this.addInUsoButtonVisualizzazioneClassica(e, policy.getNome(), policy.getId()+"", inUsoType);
 					
 					dati.addElement(e);
 				}
@@ -16263,15 +16282,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY, this.session)){
+					org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType = attributeAuthority ?
+							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
+							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
+					if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
 						AreaBottoni ab = new AreaBottoni();
 						Vector<DataElement> otherbott = new Vector<DataElement>();
 						DataElement de = new DataElement();
-						de.setValue(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI);
-						de.setOnClick(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+						if(attributeAuthority) {
+							de.setValue(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI);
+							de.setOnClick(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI_ONCLICK);
+						}
+						else {
+							de.setValue(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI);
+							de.setOnClick(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK);
+						}
 						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
@@ -16290,7 +16318,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 
-	public Vector<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList) throws Exception {
+	public Vector<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList,
+			boolean attributeAuthority) throws Exception {
+		
+		boolean forceIdEnabled = attributeAuthority ? 
+				this.confCore.isAttributeAuthorityForceIdEnabled() :
+				this.confCore.isTokenPolicyForceIdEnabled() ;
 		
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
@@ -16310,7 +16343,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
-		if(!this.core.isTokenPolicyForceIdEnabled()) {
+		if(!forceIdEnabled) {
 			if(tipoOperazione.equals(TipoOperazione.ADD)) {
 				de.setType(DataElementType.SELECT);
 				de.setPostBack(true);
@@ -16391,6 +16424,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
+			
 			// Tipo
 			if(StringUtils.isEmpty(tipo)  || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tipo)){
 				String messaggio = "Deve essere indicato un valore in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO+"'";
@@ -16398,6 +16432,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 		
+			// Lunghezze
 			if(this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME)==false) {
 				return false;
 			}
@@ -16409,7 +16444,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			try {
 				// check duplicati per tipologia
-				this.confCore.getGenericProperties(nome, tipologia);
+				this.confCore.getGenericProperties(nome, tipologia,false);
 				String messaggio = "&Egrave; gi&agrave; presente un Policy, del tipo indicato, con nome " + nome ;
 				this.pd.setMessage(messaggio);
 				return false;

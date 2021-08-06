@@ -162,6 +162,10 @@ public class PorteDelegateControlloAccessi extends Action {
 			
 			BinaryParameter allegatoXacmlPolicy = porteDelegateHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
+			String identificazioneAttributiStato = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = porteDelegateHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+			
 			String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
@@ -275,6 +279,7 @@ public class PorteDelegateControlloAccessi extends Action {
 			
 			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI;
 			
+			// Token Policy
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
@@ -296,6 +301,16 @@ public class PorteDelegateControlloAccessi extends Action {
 				if(portaDelegata.getXacmlPolicy()!=null && !"".equals(portaDelegata.getXacmlPolicy())) {
 					allegatoXacmlPolicy.setValue(portaDelegata.getXacmlPolicy().getBytes());
 				}
+			}
+			
+			// AttributeAuthority
+			List<GenericProperties> attributeAuthorityList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY, null);
+			String [] attributeAuthorityLabels = new String[attributeAuthorityList.size()];
+			String [] attributeAuthorityValues = new String[attributeAuthorityList.size()];
+			for (int i = 0; i < attributeAuthorityList.size(); i++) {
+				GenericProperties genericProperties = attributeAuthorityList.get(i);
+				attributeAuthorityLabels[i] = genericProperties.getNome();
+				attributeAuthorityValues[i] = genericProperties.getNome();
 			}
 			
 			// postback
@@ -512,6 +527,14 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazioneScopeMatch = portaDelegata.getScope().getMatch().getValue();
 					}
 				}
+				
+				if(identificazioneAttributiStato==null) {
+					identificazioneAttributiStato = portaDelegata.sizeAttributeAuthorityList()>0 ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+					if(portaDelegata.sizeAttributeAuthorityList()>0) {
+						attributeAuthoritySelezionate = porteDelegateCore.buildAuthorityArrayString(portaDelegata.getAttributeAuthorityList());
+						attributeAuthorityAttributi = porteDelegateCore.buildAttributesStringFromAuthority(portaDelegata.getAttributeAuthorityList());
+					}
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -538,7 +561,8 @@ public class PorteDelegateControlloAccessi extends Action {
 						gestioneToken, gestioneTokenPolicy, 
 						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 						null, 0,
-						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
@@ -564,7 +588,8 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-						protocollo);
+						protocollo,
+						identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 			if (!isOk) {
 				// preparo i campi
@@ -593,7 +618,8 @@ public class PorteDelegateControlloAccessi extends Action {
 						gestioneToken, gestioneTokenPolicy, 
 						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 						null, 0,
-						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
@@ -738,6 +764,15 @@ public class PorteDelegateControlloAccessi extends Action {
 				portaDelegata.getGestioneToken().setOptions(null);
 				if(portaDelegata.getGestioneToken().getAutenticazione()!=null) {
 					portaDelegata.getGestioneToken().setAutenticazione(null);
+				}
+			}
+			
+			while (portaDelegata.sizeAttributeAuthorityList()>0) {
+				portaDelegata.removeAttributeAuthority(0);
+			}
+			if(StatoFunzionalita.ABILITATO.getValue().equals(identificazioneAttributiStato) && attributeAuthoritySelezionate!=null && attributeAuthoritySelezionate.length>0) {
+				for (String aaName : attributeAuthoritySelezionate) {
+					portaDelegata.addAttributeAuthority(porteDelegateCore.buildAttributeAuthority(attributeAuthoritySelezionate.length, aaName, attributeAuthorityAttributi));
 				}
 			}
 			
@@ -967,6 +1002,14 @@ public class PorteDelegateControlloAccessi extends Action {
 				}
 			}
 			
+			if(identificazioneAttributiStato==null) {
+				identificazioneAttributiStato = portaDelegata.sizeAttributeAuthorityList()>0 ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				if(portaDelegata.sizeAttributeAuthorityList()>0) {
+					attributeAuthoritySelezionate = porteDelegateCore.buildAuthorityArrayString(portaDelegata.getAttributeAuthorityList());
+					attributeAuthorityAttributi = porteDelegateCore.buildAttributesStringFromAuthority(portaDelegata.getAttributeAuthorityList());
+				}
+			}
+			
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps),true);
 			
 			porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
@@ -990,7 +1033,8 @@ public class PorteDelegateControlloAccessi extends Action {
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 					null, 0,
-					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 					old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,

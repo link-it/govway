@@ -21,6 +21,8 @@ package org.openspcoop2.pdd.core.token.parser;
 
 import java.util.Map;
 
+import org.openspcoop2.pdd.core.token.TokenUtilities;
+
 /**     
  * BasicTokenUserInfoParser
  *
@@ -48,9 +50,9 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 	public String getFullName() {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_NAME);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_NAME);
 		case GOOGLE:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_NAME);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_NAME);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
@@ -63,9 +65,9 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 	public String getFirstName() {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_GIVE_NAME);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_GIVE_NAME);
 		case GOOGLE:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_GIVE_NAME);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_GIVE_NAME);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
@@ -78,9 +80,9 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 	public String getMiddleName() {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_MIDDLE_NAME);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_MIDDLE_NAME);
 		case GOOGLE:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_MIDDLE_NAME);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_MIDDLE_NAME);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
@@ -94,13 +96,13 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 	public String getFamilyName() {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
-			String tmp = BasicTokenParser.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_FAMILY_NAME);
+			String tmp = TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_FAMILY_NAME);
 			if(tmp==null) {
-				tmp = BasicTokenParser.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_LAST_NAME);
+				tmp = TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_LAST_NAME);
 			}
 			return tmp;
 		case GOOGLE:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_FAMILY_NAME);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_FAMILY_NAME);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
@@ -114,9 +116,9 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 	public String getEMail() {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_EMAIL);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_EMAIL);
 		case GOOGLE:
-			return BasicTokenParser.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_EMAIL);
+			return TokenUtilities.getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_EMAIL);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:

@@ -216,7 +216,7 @@ public class ConfigBean {
 //		System.out.println("Update Sezioni da nascondere completato	.");
 	}
 
-	public void validazioneInputUtente(Config config) throws UserInputValidationException, ClassNotFoundException, InstantiationException, IllegalAccessException, 
+	public void validazioneInputUtente(String nome, String descrizione, Config config) throws UserInputValidationException, ClassNotFoundException, InstantiationException, IllegalAccessException, 
 		IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ProviderException, ProviderValidationException {
 		List<BaseItemBean<?>> listaItem = this.getListaItem();
 
@@ -231,6 +231,8 @@ public class ConfigBean {
 			}catch(Exception e) {
 				throw new ProviderException("Errore durante l'istanziazione del provider ["+config.getProvider()+"]: "+e.getMessage(),e);
 			}
+			provider.validateId(nome);
+			provider.validateDescription(descrizione);
 			provider.validate(this.getPropertiesMap());
 		}
 	}

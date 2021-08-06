@@ -328,7 +328,10 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					asps, 
 					env.userLogin,
 					env.apsCore,
-					env.apsHelper
+					env.apsHelper,
+					null, // identificazioneAttributiStato
+	        		null, //String [] attributeAuthoritySelezionate
+	        		null // attributeAuthorityAttributi
 				);
 
 

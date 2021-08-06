@@ -92,6 +92,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAttributeAuthority;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
@@ -463,6 +464,18 @@ public class ZIPReadUtils  {
 							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_RETRIEVE_DIR+File.separatorChar)){
 								bin = new ByteArrayInputStream(xml);
 								this.readTokenRetrievePolicy(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+							}
+							else {
+								throw new ProtocolException("Elemento ["+entryName+"] non atteso");
+							}
+						}
+						
+						// ********** attribute authority ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_ATTRIBUTE_AUTHORITY_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_ATTRIBUTE_AUTHORITY_RETRIEVE_DIR+File.separatorChar)){
+								bin = new ByteArrayInputStream(xml);
+								this.readAttributeAuthority(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
 							}
 							else {
 								throw new ProtocolException("Elemento ["+entryName+"] non atteso");
@@ -1361,6 +1374,24 @@ public class ZIPReadUtils  {
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (token-policy) non valida rispetto allo schema (ConfigurazionePdD): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readAttributeAuthority(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			org.openspcoop2.core.config.GenericProperties policy = this.jaxbConfigDeserializer.readGenericProperties(xml);
+			String key = ArchiveAttributeAuthority.buildKey(policy.getTipo(), policy.getNome());
+			if(archivio.getAttributeAuthorities().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una attribute authority con key ["+key+"]");
+			}
+			archivio.getAttributeAuthorities().add(key,new ArchiveAttributeAuthority(policy,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (attribute authority) non valida rispetto allo schema (ConfigurazionePdD): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}

@@ -52,6 +52,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.utils.AzioniUtils;
@@ -1920,13 +1921,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		try {
 			ConsoleItemInfo c = new ConsoleItemInfo(label);
 			
-			Class<?> costantiConsole = Class.forName("org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation");
-			
 			c.setHeaderBody(ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_RICHIESTA_O_RISPOSTA_CONTENT_TYPE_MODE_ID_INFO_CONTENT_TYPE);
 			
-			@SuppressWarnings("unchecked")
-			List<String> l = (List<String>) costantiConsole.getField("LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI").get(null);
-			c.setListBody(l);
+			c.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
 			
 			return c;
 			
@@ -2690,20 +2687,13 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		try {
 			ConsoleItemInfo c = new ConsoleItemInfo(intestazione);
 			
-			Class<?> costantiConsole = Class.forName("org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation");
-			
-			String v = (String) costantiConsole.getField("LABEL_CONFIGURAZIONE_INFO_TRASPORTO").get(null);
-			c.setHeaderBody(v);
+			c.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			
 			if(rest) {
-				@SuppressWarnings("unchecked")
-				List<String> l = (List<String>) costantiConsole.getField("LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI").get(null);
-				c.setListBody(l);
+				c.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
 			}
 			else {
-				@SuppressWarnings("unchecked")
-				List<String> l = (List<String>) costantiConsole.getField("LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI").get(null);
-				c.setListBody(l);
+				c.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
 			}
 			
 			return c;

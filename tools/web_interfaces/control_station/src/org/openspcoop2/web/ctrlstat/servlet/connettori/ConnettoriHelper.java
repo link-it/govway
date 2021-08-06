@@ -1135,7 +1135,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if(tokenPolicy==null || "".equals(tokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
 			return false;
 		}
-		GenericProperties gestorePolicyToken = this.confCore.getGenericProperties(tokenPolicy,  ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+		GenericProperties gestorePolicyToken = this.confCore.getGenericProperties(tokenPolicy,  ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, true);
 		for (org.openspcoop2.core.config.Property p : gestorePolicyToken.getPropertyList()) {
 			if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE.equals(p.getNome())) {
 				if(org.openspcoop2.pdd.core.token.Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_RFC6750_HEADER.equals(p.getValore())) {

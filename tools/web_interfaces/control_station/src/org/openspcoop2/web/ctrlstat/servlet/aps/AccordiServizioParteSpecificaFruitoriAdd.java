@@ -248,7 +248,11 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
 			
-			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);	
+			
+			String identificazioneAttributiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = apsHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
 			
 			this.endpointtype = apsHelper.readEndPointType();
 			this.tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
@@ -571,6 +575,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				forceHttpsClient = apsHelper.forceHttpsClientProfiloModiPA(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), asps.getPortType());
 			}
 			
+			// Token Policy
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
@@ -582,6 +587,16 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 				policyLabels[(i+1)] = genericProperties.getNome();
 				policyValues[(i+1)] = genericProperties.getNome();
+			}
+			
+			// AttributeAuthority
+			List<GenericProperties> attributeAuthorityList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY, null);
+			String [] attributeAuthorityLabels = new String[attributeAuthorityList.size()];
+			String [] attributeAuthorityValues = new String[attributeAuthorityList.size()];
+			for (int i = 0; i < attributeAuthorityList.size(); i++) {
+				GenericProperties genericProperties = attributeAuthorityList.get(i);
+				attributeAuthorityLabels[i] = genericProperties.getNome();
+				attributeAuthorityValues[i] = genericProperties.getNome();
 			}
 			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
@@ -704,6 +719,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					if(autorizzazioneScope ==null)
 						autorizzazioneScope = "";
 	
+					if(identificazioneAttributiStato==null) {
+						identificazioneAttributiStato = StatoFunzionalita.DISABILITATO.getValue();
+					}
+					
 					// default
 					if(this.httpsalgoritmo==null || "".equals(this.httpsalgoritmo)){
 						this.httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
@@ -763,7 +782,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_token, autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 	
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
@@ -907,7 +927,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, 
 						dati,null
@@ -1068,7 +1089,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_token, autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
@@ -1183,7 +1205,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.fruizioneAutorizzazione, this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						this.fruizioneServizioApplicativo, this.fruizioneRuolo,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 				
 				porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,

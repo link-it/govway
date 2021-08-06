@@ -441,6 +441,9 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_VALIDATION_DIR = "validation";
 	public static final String OPENSPCOOP2_ARCHIVE_TOKEN_POLICIES_RETRIEVE_DIR = "retrieve"; 
 	
+	public static final String OPENSPCOOP2_ARCHIVE_ATTRIBUTE_AUTHORITY_DIR = "attributeAuthority";
+	public static final String OPENSPCOOP2_ARCHIVE_ATTRIBUTE_AUTHORITY_RETRIEVE_DIR = "retrieve";
+	
 	public static final String OPENSPCOOP2_ARCHIVE_PLUGINS_DIR = "plugins";
 	public static final String OPENSPCOOP2_ARCHIVE_PLUGINS_CLASSI_DIR = "classi";
 	public static final String OPENSPCOOP2_ARCHIVE_PLUGINS_ARCHIVI_DIR = "archivi"; 

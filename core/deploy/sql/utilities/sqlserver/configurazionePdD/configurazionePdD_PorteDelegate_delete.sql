@@ -1,3 +1,4 @@
+DELETE FROM pd_aa;
 DELETE FROM pd_handlers;
 DELETE FROM pd_transform_risp_hdr;
 DELETE FROM pd_transform_risp;

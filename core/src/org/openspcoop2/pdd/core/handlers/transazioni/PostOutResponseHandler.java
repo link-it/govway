@@ -115,6 +115,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	private boolean transazioniRegistrazioneTracceHeaderRawEnabled = false;
 	private boolean transazioniRegistrazioneTracceDigestEnabled = false;
 	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate = false;
+	private boolean transazioniRegistrazioneAttributiInformazioniNormalizzate = false;
 	private boolean transazioniRegistrazioneTempiElaborazione = false;
 	private ISalvataggioTracceManager salvataggioTracceManager = null;
 	private ISalvataggioDiagnosticiManager salvataggioDiagnosticiManager = null;
@@ -284,6 +285,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				Transazioni configTransazioni = this.configPdDManager.getTransazioniConfigurazione();
 				this.transazioniRegistrazioneTempiElaborazione = StatoFunzionalita.ABILITATO.equals(configTransazioni.getTempiElaborazione());
 				this.transazioniRegistrazioneTokenInformazioniNormalizzate = StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken());
+				this.transazioniRegistrazioneAttributiInformazioniNormalizzate = StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
+						this.openspcoopProperties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate(); // per adesso la configurazione avviene via govway.properties
 				
 				// salvataggio
 				this.salvataggioTracceManager = this.openspcoopProperties.getTransazioniRegistrazioneTracceManager();
@@ -558,6 +561,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						this.transazioniRegistrazioneTracceDigestEnabled,
 						this.transazioniRegistrazioneTracceProtocolPropertiesEnabled,
 						this.transazioniRegistrazioneTokenInformazioniNormalizzate,
+						this.transazioniRegistrazioneAttributiInformazioniNormalizzate,
 						this.transazioniRegistrazioneTempiElaborazione);
 				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 	

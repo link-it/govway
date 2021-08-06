@@ -1,3 +1,4 @@
+DELETE FROM pa_aa;
 DELETE FROM pa_handlers;
 DELETE FROM pa_transform_risp_hdr;
 DELETE FROM pa_transform_risp;

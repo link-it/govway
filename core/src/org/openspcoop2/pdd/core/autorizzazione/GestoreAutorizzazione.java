@@ -790,6 +790,8 @@ public class GestoreAutorizzazione {
     	return esito;
     }
 
+    private static final String ATTRIBUTE_AUTHORITY_PREFIX = "aa.";
+    private static final String ATTRIBUTE_PREFIX = "attribute.";
     private static EsitoAutorizzazione autorizzazioneTokenOptions(String tokenOptions, EsitoAutorizzazione esito, 
     		PdDContext pddContext, AbstractDatiInvocazione datiInvocazione,
     		Logger log, OpenSPCoop2Message message) throws Exception {
@@ -823,26 +825,105 @@ public class GestoreAutorizzazione {
 		    		while (en.hasMoreElements()) {
 						String key = (String) en.nextElement();
 						
+						String attributeAuthorityName = null;
+						String attributeName = null;
+						boolean findAttribute = false;
+						Object valueAttributeObject = null; 
+						
 						// verifica presenza claim nel token
 						log.debug("Verifico presenza '"+key+"' nel token ...");
 						if(informazioniTokenNormalizzate.getClaims().containsKey(key)==false) {
-							autorizzato = false;
-			    			errorMessage = "Token without claim '"+key+"'";
-							break;
+							
+							if(key.startsWith(ATTRIBUTE_AUTHORITY_PREFIX) && key.length()>ATTRIBUTE_AUTHORITY_PREFIX.length()) {
+								String tmp = key.substring(ATTRIBUTE_AUTHORITY_PREFIX.length());
+								//System.out.println("DEBUG ["+tmp+"]");
+								if(tmp!=null && tmp.contains(".")) {
+									int indexOf = tmp.indexOf(".");
+									if(indexOf>0 && indexOf<tmp.length()) {
+										attributeAuthorityName = tmp.substring(0, indexOf);
+										tmp = tmp.substring(indexOf);
+										//System.out.println("DEBUG attributeAuthorityName["+attributeAuthorityName+"] tmp["+tmp+"]");
+										if(tmp.startsWith(("."+ATTRIBUTE_PREFIX)) && tmp.length()>("."+ATTRIBUTE_PREFIX).length()) {
+											indexOf = tmp.indexOf(".",1); // ho appurato che iniza con '.'
+											if(indexOf>0 && indexOf<tmp.length()) {
+												attributeName = tmp.substring(indexOf);
+												if(attributeName.startsWith(".") && attributeName.length()>1) {
+													attributeName = attributeName.substring(1);
+												}
+												//System.out.println("DEBUG attributeName["+attributeName+"]");
+											}
+										}
+									}
+								}
+							}
+							else if(key.startsWith(ATTRIBUTE_PREFIX) && key.length()>ATTRIBUTE_PREFIX.length()) {
+								attributeName = key.substring(ATTRIBUTE_PREFIX.length());
+							}
+							
+							if(attributeAuthorityName!=null && attributeName!=null) {
+								if(informazioniTokenNormalizzate.getAa()!=null && 
+										informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()!=null && informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities() &&
+										informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
+										informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeAuthorityName)) {
+									Object o = informazioniTokenNormalizzate.getAa().getAttributes().get(attributeAuthorityName);
+									if(o instanceof Map) {
+										@SuppressWarnings("unchecked")
+										Map<String, Object> map = (Map<String, Object>) o;
+										if(map.containsKey(attributeName)) {
+											findAttribute = true;
+											valueAttributeObject = map.get(attributeName);
+										}
+									}
+								}
+							}
+							else if(attributeName!=null) {
+								if(informazioniTokenNormalizzate.getAa()!=null && 
+										(informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()==null || !informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()) &&
+										informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
+										informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeName)) {
+									findAttribute = true;
+									valueAttributeObject = informazioniTokenNormalizzate.getAa().getAttributes().get(attributeName);
+								}
+							}
+							
+							if(!findAttribute) {
+								autorizzato = false;
+								if(attributeName!=null) {
+									errorMessage = "Token without attribute '"+key+"'";
+								}
+								else {
+									errorMessage = "Token without claim '"+key+"'";
+								}
+								break;
+							}
 						}
-						Object valueClaimObject = informazioniTokenNormalizzate.getClaims().get(key);
-						List<String> lClaimValues = TokenUtilities.getClaimValues(valueClaimObject); 
+						
+						List<String> lClaimValues =null;
+						if(findAttribute && valueAttributeObject!=null) {
+							lClaimValues = TokenUtilities.getClaimValues(valueAttributeObject);
+						}
+						else {
+							Object valueClaimObject = informazioniTokenNormalizzate.getClaims().get(key);
+							lClaimValues = TokenUtilities.getClaimValues(valueClaimObject);
+						}
+						String nomeClaimAttribute = (attributeName!=null) ? attributeName : key;
 						if(lClaimValues==null || lClaimValues.isEmpty()) {
 							autorizzato = false;
-			    			errorMessage = "Token with claim '"+key+"' without value";
+							if(attributeName!=null) {
+								errorMessage = "Token with attribute '"+nomeClaimAttribute+"' without value";
+							}
+							else {
+								errorMessage = "Token with claim '"+nomeClaimAttribute+"' without value";
+							}
 							break;
 						}
 						
 						// verifica valore atteso per il claim
+						String object = (attributeName!=null) ? "Attribute" : "Claim";
 						String expectedValue = properties.getProperty(key);
-						log.debug("Verifico valore '"+expectedValue+"' per claim '"+key+"' nel token ...");
+						log.debug("Verifico valore '"+expectedValue+"' per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' nel token ...");
 						if(expectedValue==null) {
-							throw new Exception("Claim '"+key+"' configuration without expected value");
+							throw new Exception(object+" '"+nomeClaimAttribute+"' without expected value");
 						}
 						expectedValue = expectedValue.trim();
 						
@@ -850,7 +931,7 @@ public class GestoreAutorizzazione {
 							
 							/** ANY VALUE */
 							
-							log.debug("Verifico valore del claim '"+key+"' non sia null e non sia vuoto ...");
+							log.debug("Verifico valore "+object.toLowerCase()+" '"+nomeClaimAttribute+"' che non sia null e non sia vuoto ...");
 							
 							// basta che abbia un valore not null
 							boolean ok = false;
@@ -862,7 +943,7 @@ public class GestoreAutorizzazione {
 							}
 							if(!ok) {
 								autorizzato = false;
-								errorMessage = "Token claim '"+key+"' with unexpected empty value";
+								errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected empty value";
 								break;
 							}
 						}
@@ -881,18 +962,18 @@ public class GestoreAutorizzazione {
 							String regexpPattern = null;
 							if(match) {
 								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length()+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
-									throw new Exception("Claim '"+key+"' configuration without expected regexp match");
+									throw new Exception(object+" '"+nomeClaimAttribute+"' without expected regexp match");
 								}
 								regexpPattern = expectedValue.substring(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
 							}
 							else {
 								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length()+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
-									throw new Exception("Claim '"+key+"' configuration without expected regexp find");
+									throw new Exception(object+" '"+nomeClaimAttribute+"' without expected regexp find");
 								}
 								regexpPattern = expectedValue.substring(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
 							}
 							regexpPattern = regexpPattern.trim();
-							log.debug("Verifico valore del claim '"+key+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");
+							log.debug("Verifico valore del "+object.toLowerCase()+" '"+nomeClaimAttribute+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");
 							
 							// basta che un valore abbia match
 							boolean ok = false;
@@ -905,7 +986,7 @@ public class GestoreAutorizzazione {
 							if(!ok) {
 								autorizzato = false;
 								String tipo = match ? "match" : "find";
-								errorMessage = "Token claim '"+key+"' with unexpected value (regExpr "+tipo+" failed)";
+								errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value (regExpr "+tipo+" failed)";
 								break;
 							}
 							
@@ -917,7 +998,7 @@ public class GestoreAutorizzazione {
 							try {
 								expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext, true);
 							}catch(Exception e) {
-								throw new Exception("Conversione valore per claim '"+key+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage(),e);
+								throw new Exception("Conversione valore per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage(),e);
 							}
 							
 							if(expectedValue.contains(",")) {
@@ -932,14 +1013,14 @@ public class GestoreAutorizzazione {
 								}
 								if(!ok) {
 									autorizzato = false;
-									errorMessage = "Token claim '"+key+"' with unexpected value";
+									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value";
 									break;
 								}
 							}
 							else {
 								if(lClaimValues.contains(expectedValue)==false) {
 									autorizzato = false;
-									errorMessage = "Token claim '"+key+"' with unexpected value";
+									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value";
 									break;
 								}
 							}
@@ -953,7 +1034,7 @@ public class GestoreAutorizzazione {
     	
     	if(!autorizzato) {
     		
-			String realm = "OpenSPCoop";
+			String realm = "GovWay";
 			Object oRealm = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_REALM);
     		if(oRealm!=null) {
     			realm = (String) oRealm;

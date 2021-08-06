@@ -166,6 +166,10 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 			BinaryParameter allegatoXacmlPolicy = porteApplicativeHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 
+			String identificazioneAttributiStato = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = porteApplicativeHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+			
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
@@ -231,7 +235,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			Search searchForCountSAAutorizzati = new Search(true,1);
 			porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(idInt, searchForCountSAAutorizzati);
 			int numErogazioneApplicativiAutenticati = searchForCountSAAutorizzati.getNumEntries(Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
-
+			
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoSoggettoProprietario = null;
 			if(porteApplicativeCore.isRegistroServiziLocale()){
@@ -325,6 +329,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 
 			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI;
 
+			// Token Policy
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
@@ -345,6 +350,15 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 			}
 			
+			// AttributeAuthority
+			List<GenericProperties> attributeAuthorityList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY, null);
+			String [] attributeAuthorityLabels = new String[attributeAuthorityList.size()];
+			String [] attributeAuthorityValues = new String[attributeAuthorityList.size()];
+			for (int i = 0; i < attributeAuthorityList.size(); i++) {
+				GenericProperties genericProperties = attributeAuthorityList.get(i);
+				attributeAuthorityLabels[i] = genericProperties.getNome();
+				attributeAuthorityValues[i] = genericProperties.getNome();
+			}
 			
 			// postback
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
@@ -560,6 +574,14 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
 					}
 				}
+				
+				if(identificazioneAttributiStato==null) {
+					identificazioneAttributiStato = pa.sizeAttributeAuthorityList()>0 ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+					if(pa.sizeAttributeAuthorityList()>0) {
+						attributeAuthoritySelezionate = porteApplicativeCore.buildAuthorityArrayString(pa.getAttributeAuthorityList());
+						attributeAuthorityAttributi = porteApplicativeCore.buildAttributesStringFromAuthority(pa.getAttributeAuthorityList());
+					}
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -585,7 +607,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 						confPers, isSupportatoAutenticazione, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
-						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
@@ -610,7 +633,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazione_token,autorizzazione_tokenOptions,
 					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-					protocollo);
+					protocollo,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 			if(isOk) {
 
@@ -674,7 +698,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
-						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
@@ -822,7 +847,16 @@ public class PorteApplicativeControlloAccessi extends Action {
 					pa.getGestioneToken().setAutenticazione(null);
 				}
 			}
-
+			
+			while (pa.sizeAttributeAuthorityList()>0) {
+				pa.removeAttributeAuthority(0);
+			}
+			if(StatoFunzionalita.ABILITATO.getValue().equals(identificazioneAttributiStato) && attributeAuthoritySelezionate!=null && attributeAuthoritySelezionate.length>0) {
+				for (String aaName : attributeAuthoritySelezionate) {
+					pa.addAttributeAuthority(porteApplicativeCore.buildAttributeAuthority(attributeAuthoritySelezionate.length, aaName, attributeAuthorityAttributi));
+				}
+			}
+			
 			if(porteApplicativeHelper.isProfiloModIPA(protocollo)) {
 				
 				String statoAutorizzazioneModiPA = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO);
@@ -1109,6 +1143,14 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 			}
 
+			if(identificazioneAttributiStato==null) {
+				identificazioneAttributiStato = pa.sizeAttributeAuthorityList()>0 ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				if(pa.sizeAttributeAuthorityList()>0) {
+					attributeAuthoritySelezionate = porteApplicativeCore.buildAuthorityArrayString(pa.getAttributeAuthorityList());
+					attributeAuthorityAttributi = porteApplicativeCore.buildAttributesStringFromAuthority(pa.getAttributeAuthorityList());
+				}
+			}
+			
 			porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,protocollo,false);
@@ -1130,7 +1172,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 					,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 					urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
-					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList);
+					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 					old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,

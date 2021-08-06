@@ -79,6 +79,12 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 			// Preparo il menu
 			confHelper.makeMenu();
 
+			String infoType = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			if(infoType==null) {
+				infoType = ServletUtils.getObjectFromSession(session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			}
+			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
+			
 			String objToRemove =confHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE); 
 
 			// Elimino i filtri dal db
@@ -105,134 +111,6 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				} else {
 					confCore.performDeleteOperation(userLogin, confHelper.smista(), policy); 
 				}
-				
-				/*
-				boolean delete = true;
-				boolean addMsg = false;
-				
-				// controllo che la policy non sia utilizzata in alcuna PD o PA o connettori
-				List<PortaApplicativa> listaPA= confCore.listaPorteApplicativeUtilizzateDaPolicyGestioneToken(policy.getNome());
-				List<PortaDelegata> listaPD = confCore.listaPorteDelegateUtilizzateDaPolicyGestioneToken(policy.getNome());
-				boolean usedInConnettore = confCore.isPolicyNegoziazioneTokenUsedInConnettore(policy.getNome());
-				boolean usedInPA = listaPA != null && listaPA.size() > 0;
-				boolean usedInPD = listaPD != null && listaPD.size() > 0;
-				
-				StringBuilder bf = new StringBuilder();
-				if(usedInPA || usedInPD || usedInConnettore) {
-					
-					delete = false;
-					addMsg = true;
-					
-					// NOTA: se utilizzato nel connettore, non e' usata in fruizioni o erogazioni, sono policy differenti
-					
-					bf.append("La policy '"+policy.getNome()+"' risulta utilizzata");
-					
-					if(usedInPA) {
-						bf.append(" in ");
-						bf.append(listaPA.size());
-						if(listaPA.size()==1){
-							bf.append(" Erogazione");
-						}else{
-							bf.append(" Erogazioni");
-						}
-						if(usedInPD) {
-							bf.append(" e");
-						}
-					}
-					if(usedInPD) {
-						bf.append(" in ");
-						bf.append(listaPD.size());
-						if(listaPD.size()==1){
-							bf.append(" Fruizione");
-						}else{
-							bf.append(" Fruizioni");
-						}
-					}
-				}
-				
-				
-//				if(listaPA != null && listaPA.size() > 0) {
-//					bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).append(listaPA.size());
-//					if(listaPA.size()<2){
-//						bf.append(" Erogazione ");
-//					}else{
-//						bf.append(" Porte Applicative: ");
-//					}
-//					for (int j = 0; j < listaPA.size(); j++) {
-//						if(j>0){
-//							bf.append(", ");
-//						}
-//						bf.append(listaPA.get(j).getNome());
-//					}
-//					
-//					delete = false;
-//					addMsg = true;
-//				}
-//				
-//				if(listaPD != null && listaPD.size() > 0) {
-//					bf.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE).append(listaPD.size());
-//					if(listaPD.size()<2){
-//						bf.append(" Porta Delegata: ");
-//					}else{
-//						bf.append(" Porte Delegate: ");
-//					}
-//					for (int j = 0; j < listaPD.size(); j++) {
-//						if(j>0){
-//							bf.append(", ");
-//						}
-//						bf.append(listaPD.get(j).getNome());
-//					}
-//					
-//					delete = false;
-//					addMsg = true;
-//				}
-				
-				if(addMsg) {
-					if(delMsg.length()>0){
-						delMsg.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-					}
-					delMsg.append("- "+bf.toString());
-				}
-				
-				if(delete) {
-					// aggiungo elemento alla lista di quelli da cancellare
-					elemToRemove.add(policy);
-				}
-			}
-			
-			
-			String msgErrore = "";
-			if(delMsg.length()>0){
-				if(elemToRemove.size()>0){
-					msgErrore = "Non è stato possibile completare l'eliminazione di tutti gli elementi selezionati:<br/>"+delMsg.toString();
-				}
-				else{
-					msgErrore = "Non è stato possibile eliminare gli elementi selezionati:<br/>"+delMsg.toString();
-				}
-			}
-			
-			if(elemToRemove .size() > 0) {
-//			 	eseguo delete
-				confCore.performDeleteOperation(userLogin, confHelper.smista(), (Object[]) elemToRemove.toArray(new GenericProperties[1])); 
-			}
-			
-			
-			String msgCompletato = ConfigurazioneCostanti.MESSAGGIO_CONFERMA_ELIMINAZIONE_POLICY_GESTIONE_TOKEN_OK;
-			
-			if(msgErrore!=null && !"".equals(msgErrore)){
-				if(elemToRemove.size()>0){
-					msgCompletato = msgCompletato+"<br/><br/>"+msgErrore;
-				}
-				else{
-					msgCompletato = msgErrore;
-				}
-			}
-			
-			if(msgErrore!=null && !"".equals(msgErrore))
-				pd.setMessage(msgCompletato);
-			else
-				pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
-				*/
 
 			}// chiudo for
 
@@ -243,13 +121,18 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
-
+			int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
 			List<String> tipologie = new ArrayList<>();
-			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
-			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+			if(attributeAuthority) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY);
+			}
+			else {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+			}
 			
 			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
 			

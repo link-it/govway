@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 
@@ -58,7 +59,7 @@ public class IntegrationContext {
 	 * Tipo di gestione token utilizzato
 	 */
 	private String tipoGestioneToken;
-	
+		
 	/**
 	 * Autenticazione opzionale
 	 */
@@ -113,6 +114,11 @@ public class IntegrationContext {
 	 * Azioni intraprese per autenticare il token;
 	 */
 	private String tokenPolicy_authn;
+	
+	/**
+	 * Lista di AttributeAuthority utilizzate
+	 */
+	private List<String> attributeAuthorities;
 	
 	/**
 	 * Identificativo della Porta Applicativa
@@ -265,5 +271,23 @@ public class IntegrationContext {
 	}
 	public void setTokenPolicy_authn(String tokenPolicy_authn) {
 		this.tokenPolicy_authn = tokenPolicy_authn;
+	}
+	
+	public List<String> getAttributeAuthorities() {
+		return this.attributeAuthorities;
+	}
+	public void setAttributeAuthoritiesFromObjectList(List<AttributeAuthority> attributeAuthorities) {
+		if(attributeAuthorities==null) {
+			this.attributeAuthorities = null;
+		}
+		this.attributeAuthorities = new ArrayList<String>();
+		if(!attributeAuthorities.isEmpty()) {
+			for (AttributeAuthority attributeAuthority : attributeAuthorities) {
+				this.attributeAuthorities.add(attributeAuthority.getNome());
+			}
+		}
+	}
+	public void setAttributeAuthorities(List<String> attributeAuthorities) {
+		this.attributeAuthorities = attributeAuthorities;
 	}
 }

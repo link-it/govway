@@ -153,6 +153,8 @@ import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -5604,6 +5606,24 @@ public class ConfigurazionePdDReader {
 		PolicyNegoziazioneToken policy = null;
 		try {
 			policy = TokenUtilities.convertTo(gp);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
+		return policy;
+	}
+	
+	protected PolicyAttributeAuthority getPolicyAttributeAuthority(Connection connectionPdD, boolean forceNoCache, String policyName) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+
+		if(policyName==null){
+			throw new DriverConfigurazioneException("Policy non fornita");
+		}
+
+		GenericProperties gp = this.configurazionePdD.getGenericProperties(connectionPdD, forceNoCache, org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY, policyName);
+
+		PolicyAttributeAuthority policy = null;
+		try {
+			policy = AttributeAuthorityUtilities.convertTo(gp);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

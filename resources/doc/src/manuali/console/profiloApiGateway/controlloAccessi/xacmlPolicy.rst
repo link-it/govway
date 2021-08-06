@@ -41,8 +41,8 @@ effettuare la verifica all'interno di una XACML-Policy, sono i seguenti:
    org:govway:action:protocol                                    Modalità associata al servizio richiesto (es. spcoop)                                                                      
    org:govway:action:token:audience                              Destinatario del token                                                                                                     
    org:govway:action:token:scope                                 Lista di scopes                                                                                                            
-   org:govway:action:token:jwt:claim:<nome>=<valore>             Tutti i claims presenti nel jwt validato                                                                                   
-   org:govway:action:token:introspection:claim:<nome>=<valore>   Tutti i claims presenti nella risposta del servizio di introspection                                                       
+   org:govway:action:token:jwt:claim:<nome>                      Tutti i claims presenti nel jwt validato                                                                                   
+   org:govway:action:token:introspection:claim:<nome>            Tutti i claims presenti nella risposta del servizio di introspection                                                       
    *Sezione 'Subject'*
    org:govway:subject:organization                               Indica il soggetto fruitore                                                                                                
    org:govway:subject:client                                     Identificativo del servizio applicativo client                                                                             
@@ -57,7 +57,10 @@ effettuare la verifica all'interno di una XACML-Policy, sono i seguenti:
    org:govway:subject:token:userInfo:middleName                  Secondo nome (o nomi aggiuntivi) dell'utente cui è associato il token                                                      
    org:govway:subject:token:userInfo:familyName                  Cognome dell'utente cui è associato il token                                                                               
    org:govway:subject:token:userInfo:eMail                       Email dell'utente cui è associato il token
-   org:govway:subject:token:userInfo:claim:<nome>=<valore>       Tutti i claims presenti nella risposta del servizio di UserInfo
+   org:govway:subject:token:userInfo:claim:<nome>                Tutti i claims presenti nella risposta del servizio di UserInfo
+   org:govway:subject:attributes                                 Elenco dei nomi degli attributi recuperati interagendo con gli Attribute Authority configurati
+   org:govway:subject:attribute:<nome>                           In caso sia configurato un unico Attribute Authority, tutti gli attributi recuperati saranno inseriti nella XACMLRequest con questo formato
+   org:govway:subject:aa:<attributeAuthority>:attribute:<nome>   In caso siano configurate più Attribute Authority, tutti gli attributi recuperati saranno inseriti nella XACMLRequest con questo formato
    ============================================================  ===========
 
 Di seguito un esempio di XACMLPolicy che autorizza le richieste dei

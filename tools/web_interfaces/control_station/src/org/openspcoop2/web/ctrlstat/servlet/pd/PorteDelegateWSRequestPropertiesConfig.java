@@ -177,7 +177,7 @@ public class PorteDelegateWSRequestPropertiesConfig  extends Action {
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = porteDelegateHelper.checkPropertiesConfigurationData(tipoOperazione, configurazioneBean, configurazione);
+			boolean isOk = porteDelegateHelper.checkPropertiesConfigurationData(tipoOperazione, configurazioneBean, null, null, configurazione);
 			if(!isOk){
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);

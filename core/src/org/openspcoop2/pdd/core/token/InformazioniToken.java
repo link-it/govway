@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.utils.json.JSONUtils;
 
@@ -284,12 +285,12 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 
 	// UserInfo
 	private InformazioniTokenUserInfo userInfo;
-	
+		
 	// Claims
 	private Map<String,Object> claims = new HashMap<String,Object>();
-	
+		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
-	
+
 	// RawResponse
 	private String rawResponse;
 	
@@ -299,6 +300,9 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	// Multiple Source
 	private List<SorgenteInformazioniToken> sourceTypes = null;
 	private Map<SorgenteInformazioniToken,String> sourcesTokenInfo = null;
+	
+	// Attributes Authority (ulteriore informazione valorizzata con la funzionalità specifica)
+	private InformazioniAttributi aa;
 	
 	public boolean isValid() {
 		return this.valid;
@@ -418,5 +422,11 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	public List<SorgenteInformazioniToken> getSourceTypes() {
 		return this.sourceTypes;
 	}
-	
+
+	public InformazioniAttributi getAa() {
+		return this.aa;
+	}
+	public void setAa(InformazioniAttributi aa) {
+		this.aa = aa;
+	}
 }

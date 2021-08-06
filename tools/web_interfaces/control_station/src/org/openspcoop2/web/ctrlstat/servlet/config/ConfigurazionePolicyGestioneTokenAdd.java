@@ -91,9 +91,30 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			String descrizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
 			String tipo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
 			
+			String infoType = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			if(infoType==null) {
+				infoType = ServletUtils.getObjectFromSession(session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			}
+			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
-			PropertiesSourceConfiguration propertiesSourceConfiguration = confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			boolean forceIdEnabled = attributeAuthority ? 
+					confCore.isAttributeAuthorityForceIdEnabled() :
+					confCore.isTokenPolicyForceIdEnabled() ;
+			Properties mapId = attributeAuthority ?
+					confCore.getAttributeAuthorityTipologia() :
+					confCore.getTokenPolicyTipologia();
+			String forceId = null;
+			if(forceIdEnabled) {
+				forceId = attributeAuthority ? 
+						confCore.getAttributeAuthorityForceId() :
+						confCore.getTokenPolicyForceId();
+			} 
+			
+			PropertiesSourceConfiguration propertiesSourceConfiguration = attributeAuthority ? 
+					confCore.getAttributeAuthorityPropertiesSourceConfiguration() :
+					confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			
 			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
 			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
@@ -118,13 +139,13 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			ConfigBean configurazioneBean = null;
 			
 			if(tipo == null) {
-				if(confCore.isTokenPolicyForceIdEnabled())
-					tipo = confCore.getTokenPolicyForceId();
+				if(forceIdEnabled)
+					tipo = forceId;
 			}
 			
 			String tipologia = null;
-			if(confCore.isTokenPolicyForceIdEnabled()) {
-				tipologia = confCore.getTokenPolicyTipologia().getProperty(confCore.getTokenPolicyForceId());
+			if(forceIdEnabled) {
+				tipologia = mapId.getProperty(forceId);
 			}
 			if(tipo != null && !tipo.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 				configurazione = configManager.getConfigurazione(propertiesSourceConfiguration, tipo);
@@ -141,8 +162,8 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				configurazioneBean.updateConfigurazione(configurazione);
 				ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
 			
-				if(!confCore.isTokenPolicyForceIdEnabled()) {
-					tipologia = confCore.getTokenPolicyTipologia().getProperty(tipo);
+				if(!forceIdEnabled) {
+					tipologia = mapId.getProperty(tipo);
 					if(tipologia==null) {
 						throw new Exception("Mapping tipologia token per tipo '"+tipo+"' inesistente");
 					}
@@ -152,7 +173,11 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST));
+			String label = attributeAuthority ?
+					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
+					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+			
+			lstParam.add(new Parameter(label, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST));
 			lstParam.add(ServletUtils.getParameterAggiungi());
 			
 			// Se tipo = null, devo visualizzare la pagina per l'inserimento
@@ -165,10 +190,10 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 					descrizione = "";
 					
 					if(tipo == null) {
-						if(!confCore.isTokenPolicyForceIdEnabled())
+						if(!forceIdEnabled)
 							tipo = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
 						else
-							tipo = confCore.getTokenPolicyForceId();
+							tipo = forceId;
 					}
 				}
 				
@@ -176,7 +201,8 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList);
+				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
+						attributeAuthority);
 				
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -193,7 +219,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			boolean isOk = confHelper.policyGestioneTokenCheckData(tipoOperazione, nome,descrizione,tipo,tipologia);
 			
 			if (isOk) {
-				isOk = confHelper.checkPropertiesConfigurationData(tipoOperazione, configurazioneBean, configurazione);
+				isOk = confHelper.checkPropertiesConfigurationData(tipoOperazione, configurazioneBean, nome,descrizione,configurazione);
 			}
 			if (!isOk) {
 				
@@ -203,7 +229,8 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList);
+				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
+						attributeAuthority);
 						
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -237,13 +264,18 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+			int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
 			List<String> tipologie = new ArrayList<>();
-			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
-			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);		
+			if(attributeAuthority) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY);
+			}
+			else {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+			}
 			
 			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
 			

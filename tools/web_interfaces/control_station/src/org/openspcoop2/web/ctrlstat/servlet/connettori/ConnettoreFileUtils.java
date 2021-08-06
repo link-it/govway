@@ -23,7 +23,7 @@ import java.util.Vector;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -198,10 +198,6 @@ public class ConnettoreFileUtils {
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
 
-		DataElementInfo dInfoPattern = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
-		dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
-		dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
-		
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT);
 		de.setType(DataElementType.TITLE);
@@ -215,7 +211,10 @@ public class ConnettoreFileUtils {
 		de.setRequired(true);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 		de.setSize(pageSize);
-		de.setInfo(dInfoPattern);
+		DataElementInfo dInfoPatternFileName = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+		dInfoPatternFileName.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+		dInfoPatternFileName.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+		de.setInfo(dInfoPatternFileName);
 		dati.addElement(de);
 		
 		de = new DataElement();
@@ -226,7 +225,10 @@ public class ConnettoreFileUtils {
 		de.setRequired(false);	
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		de.setSize(pageSize);
-		de.setInfo(dInfoPattern);
+		DataElementInfo dInfoPatternFileNameHdr = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+		dInfoPatternFileNameHdr.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+		dInfoPatternFileNameHdr.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+		de.setInfo(dInfoPatternFileNameHdr);
 		dati.addElement(de);
 		
 		de = new DataElement();
@@ -272,7 +274,10 @@ public class ConnettoreFileUtils {
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_SIZE);
 			de.setRequired(true);
-			de.setInfo(dInfoPattern);
+			DataElementInfo dInfoPatternFileNameResponse = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+			dInfoPatternFileNameResponse.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			dInfoPatternFileNameResponse.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+			de.setInfo(dInfoPatternFileNameResponse);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -287,7 +292,10 @@ public class ConnettoreFileUtils {
 		if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
 			de.setType(DataElementType.TEXT_AREA);
 			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS_SIZE);
-			de.setInfo(dInfoPattern);
+			DataElementInfo dInfoPatternFileNameResponseHdr = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+			dInfoPatternFileNameResponseHdr.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			dInfoPatternFileNameResponseHdr.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+			de.setInfo(dInfoPatternFileNameResponseHdr);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);

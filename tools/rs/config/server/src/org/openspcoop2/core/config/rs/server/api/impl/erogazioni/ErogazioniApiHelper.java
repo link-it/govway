@@ -2023,7 +2023,10 @@ public class ErogazioniApiHelper {
 				env.apsCore, 
 				env.erogazioniHelper,
         		null, // nomeSAServer TODO quando si aggiunge applicativo server
-        		canaleStato, canale, gestioneCanaliEnabled
+        		canaleStato, canale, gestioneCanaliEnabled,
+        		null, // identificazioneAttributiStato, 
+        		null, //String [] attributeAuthoritySelezionate
+        		null // attributeAuthorityAttributi
 			);
 
 		
@@ -3693,6 +3696,14 @@ public class ErogazioniApiHelper {
 			autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 		}
 		
+		String identificazioneAttributiStato = newPd.sizeAttributeAuthorityList()>0 ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+		String [] attributeAuthoritySelezionate = null; 
+		String attributeAuthorityAttributi = null;
+		if(newPd.sizeAttributeAuthorityList()>0) {
+			attributeAuthoritySelezionate = newPd.getAttributeAuthorityList().toArray(new String[1]);
+			attributeAuthorityAttributi = env.apsCore.buildAttributesStringFromAuthority(newPd.getAttributeAuthorityList());
+		}
+		
 		return env.paHelper.controlloAccessiCheck(
 				TipoOperazione.OTHER, 
 				newPd.getAutenticazione(),				// Autenticazione
@@ -3722,7 +3733,8 @@ public class ErogazioniApiHelper {
 				evalnull( () -> newPd.getScope().getMatch().toString() ),
 				allegatoXacmlPolicy,
 				autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-				env.tipo_protocollo);
+				env.tipo_protocollo,
+				identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 	}
 
 
@@ -3774,6 +3786,14 @@ public class ErogazioniApiHelper {
 			autorizzazioneContenutiStato = CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_CUSTOM;
 		}
 		
+		String identificazioneAttributiStato = newPa.sizeAttributeAuthorityList()>0 ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+		String [] attributeAuthoritySelezionate = null; 
+		String attributeAuthorityAttributi = null;
+		if(newPa.sizeAttributeAuthorityList()>0) {
+			attributeAuthoritySelezionate = newPa.getAttributeAuthorityList().toArray(new String[1]);
+			attributeAuthorityAttributi = env.apsCore.buildAttributesStringFromAuthority(newPa.getAttributeAuthorityList());
+		}
+		
 		return env.paHelper.controlloAccessiCheck(
 				TipoOperazione.OTHER, 
 				newPa.getAutenticazione(),				// Autenticazione
@@ -3803,7 +3823,8 @@ public class ErogazioniApiHelper {
 				evalnull( () -> newPa.getScope().getMatch().toString() ),
 				allegatoXacmlPolicy,
 				autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-				env.tipo_protocollo);
+				env.tipo_protocollo,
+				identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 		
 	}
 	

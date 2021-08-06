@@ -64,6 +64,7 @@ import java.util.List;
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="trasformazioni" type="{http://www.openspcoop2.org/core/config}trasformazioni" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="configurazione-handler" type="{http://www.openspcoop2.org/core/config}configurazione-porta-handler" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="attribute-authority" type="{http://www.openspcoop2.org/core/config}attribute-authority" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
@@ -124,7 +125,8 @@ import java.util.List;
   	"gestioneCors",
   	"responseCaching",
   	"trasformazioni",
-  	"configurazioneHandler"
+  	"configurazioneHandler",
+  	"attributeAuthority"
   }
 )
 
@@ -450,6 +452,30 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setConfigurazioneHandler(ConfigurazionePortaHandler configurazioneHandler) {
     this.configurazioneHandler = configurazioneHandler;
+  }
+
+  public void addAttributeAuthority(AttributeAuthority attributeAuthority) {
+    this.attributeAuthority.add(attributeAuthority);
+  }
+
+  public AttributeAuthority getAttributeAuthority(int index) {
+    return this.attributeAuthority.get( index );
+  }
+
+  public AttributeAuthority removeAttributeAuthority(int index) {
+    return this.attributeAuthority.remove( index );
+  }
+
+  public List<AttributeAuthority> getAttributeAuthorityList() {
+    return this.attributeAuthority;
+  }
+
+  public void setAttributeAuthorityList(List<AttributeAuthority> attributeAuthority) {
+    this.attributeAuthority=attributeAuthority;
+  }
+
+  public int sizeAttributeAuthorityList() {
+    return this.attributeAuthority.size();
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -1011,6 +1037,36 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="configurazione-handler",required=false,nillable=false)
   protected ConfigurazionePortaHandler configurazioneHandler;
+
+  @XmlElement(name="attribute-authority",required=true,nillable=false)
+  protected List<AttributeAuthority> attributeAuthority = new ArrayList<AttributeAuthority>();
+
+  /**
+   * @deprecated Use method getAttributeAuthorityList
+   * @return List&lt;AttributeAuthority&gt;
+  */
+  @Deprecated
+  public List<AttributeAuthority> getAttributeAuthority() {
+  	return this.attributeAuthority;
+  }
+
+  /**
+   * @deprecated Use method setAttributeAuthorityList
+   * @param attributeAuthority List&lt;AttributeAuthority&gt;
+  */
+  @Deprecated
+  public void setAttributeAuthority(List<AttributeAuthority> attributeAuthority) {
+  	this.attributeAuthority=attributeAuthority;
+  }
+
+  /**
+   * @deprecated Use method sizeAttributeAuthorityList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeAttributeAuthority() {
+  	return this.attributeAuthority.size();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

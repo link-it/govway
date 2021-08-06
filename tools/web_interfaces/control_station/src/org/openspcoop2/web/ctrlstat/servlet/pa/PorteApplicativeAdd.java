@@ -205,6 +205,12 @@ public final class PorteApplicativeAdd extends Action {
 			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			
 			BinaryParameter allegatoXacmlPolicy = porteApplicativeHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+			
+			String identificazioneAttributiStato = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = porteApplicativeHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+			
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -432,6 +438,7 @@ public final class PorteApplicativeAdd extends Action {
 				}
 			}
 			
+			// Token Policy
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
@@ -443,6 +450,16 @@ public final class PorteApplicativeAdd extends Action {
 			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 				policyLabels[(i+1)] = genericProperties.getNome();
 				policyValues[(i+1)] = genericProperties.getNome();
+			}
+			
+			// AttributeAuthority
+			List<GenericProperties> attributeAuthorityList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY, null);
+			String [] attributeAuthorityLabels = new String[attributeAuthorityList.size()];
+			String [] attributeAuthorityValues = new String[attributeAuthorityList.size()];
+			for (int i = 0; i < attributeAuthorityList.size(); i++) {
+				GenericProperties genericProperties = attributeAuthorityList.get(i);
+				attributeAuthorityLabels[i] = genericProperties.getNome();
+				attributeAuthorityValues[i] = genericProperties.getNome();
 			}
 			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
@@ -536,6 +553,9 @@ public final class PorteApplicativeAdd extends Action {
 				if(autorizzazioneContenutiStato == null)
 					autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
 				
+				if(identificazioneAttributiStato==null) {
+					identificazioneAttributiStato = StatoFunzionalita.DISABILITATO.getValue();
+				}
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList, serviziListLabel, azione, azioniList, azioniListLabel,
@@ -555,7 +575,8 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						null,null); 
+						null,null,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi); 
 
 				pd.setDati(dati);
 
@@ -603,7 +624,8 @@ public final class PorteApplicativeAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						null,null);
+						null,null,
+						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				pd.setDati(dati);
 

@@ -64,6 +64,7 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.DumpUtility;
@@ -100,6 +101,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 	private boolean transazioniRegistrazioneTracceDigestEnabled;
 	private boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled;
 	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate;
+	private boolean transazioniRegistrazioneAttributiInformazioniNormalizzate;
 	private boolean transazioniRegistrazioneTempiElaborazione;
 	
 	public PostOutResponseHandler_TransazioneUtilities(Logger log, 
@@ -107,6 +109,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			boolean transazioniRegistrazioneTracceDigestEnabled,
 			boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled,
 			boolean transazioniRegistrazioneTokenInformazioniNormalizzate,
+			boolean transazioniRegistrazioneAttributiInformazioniNormalizzate,
 			boolean transazioniRegistrazioneTempiElaborazione){
 		this.logger = log;
 		this.transazioniRegistrazioneTracceHeaderRawEnabled = transazioniRegistrazioneTracceHeaderRawEnabled;
@@ -114,6 +117,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		this.transazioniRegistrazioneTracceProtocolPropertiesEnabled = transazioniRegistrazioneTracceProtocolPropertiesEnabled;
 		this.transazioniRegistrazioneTokenInformazioniNormalizzate = transazioniRegistrazioneTokenInformazioniNormalizzate;
 		this.transazioniRegistrazioneTempiElaborazione = transazioniRegistrazioneTempiElaborazione;
+		this.transazioniRegistrazioneAttributiInformazioniNormalizzate = transazioniRegistrazioneAttributiInformazioniNormalizzate;
 	}
 	
 	public static boolean isConsegnaMultipla(PostOutResponseContext context) {
@@ -1031,7 +1035,19 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			
 			// token info
 			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
+				InformazioniAttributi informazioniAttributi = null;
+				if(!this.transazioniRegistrazioneAttributiInformazioniNormalizzate) {
+					informazioniAttributi = transaction.getInformazioniToken().getAa();
+					transaction.getInformazioniToken().setAa(null);
+				}
 				transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
+				if(informazioniAttributi!=null) {
+					transaction.getInformazioniToken().setAa(informazioniAttributi);
+				}
+			}
+			if(transactionDTO.getTokenInfo()==null && this.transazioniRegistrazioneAttributiInformazioniNormalizzate &&
+					transaction.getInformazioniAttributi()!=null) {
+				transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
 			}
 			
 			// tempi elaborazione

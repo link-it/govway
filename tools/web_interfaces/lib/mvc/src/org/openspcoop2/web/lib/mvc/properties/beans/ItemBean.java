@@ -32,9 +32,11 @@ import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
@@ -109,6 +111,17 @@ public class ItemBean extends BaseItemBean<Item>{
 		de.setRequired(this.getItem().isRequired()); 
 		de.setNote(this.getItem().getNote());
 
+		if(this.provider!=null){
+			ProviderInfo pInfo = this.provider.getProviderInfo(this.name); 
+			if(pInfo!=null) {
+				DataElementInfo dInfo = new DataElementInfo(pInfo.getHeaderFinestraModale()!=null ? pInfo.getHeaderFinestraModale() : this.getItem().getLabel());
+				dInfo.setBody(pInfo.getBody());
+				dInfo.setHeaderBody(pInfo.getHeaderBody());
+				dInfo.setListBody(pInfo.getListBody());
+				de.setInfo(dInfo);
+			}
+		}
+		
 		switch(this.getItem().getType()) {
 		case CHECKBOX:
 			de.setSelected(this.value);

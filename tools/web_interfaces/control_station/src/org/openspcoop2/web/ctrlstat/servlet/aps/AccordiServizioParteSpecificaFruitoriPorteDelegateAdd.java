@@ -180,6 +180,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
+			String identificazioneAttributiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = apsHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+			
 			Properties parametersPOST = null;
 			
 			String endpointtype = apsHelper.readEndPointType();
@@ -418,6 +422,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			lstParm.add(ServletUtils.getParameterAggiungi());
 			
+			// Token Policy
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
@@ -429,6 +434,16 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 				policyLabels[(i+1)] = genericProperties.getNome();
 				policyValues[(i+1)] = genericProperties.getNome();
+			}
+
+			// AttributeAuthority
+			List<GenericProperties> attributeAuthorityList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY, null);
+			String [] attributeAuthorityLabels = new String[attributeAuthorityList.size()];
+			String [] attributeAuthorityValues = new String[attributeAuthorityList.size()];
+			for (int i = 0; i < attributeAuthorityList.size(); i++) {
+				GenericProperties genericProperties = attributeAuthorityList.get(i);
+				attributeAuthorityLabels[i] = genericProperties.getNome();
+				attributeAuthorityValues[i] = genericProperties.getNome();
 			}
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
@@ -503,6 +518,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						scope = "-";
 					if(autorizzazioneScope ==null)
 						autorizzazioneScope = "";
+					if(identificazioneAttributiStato==null) {
+						identificazioneAttributiStato = StatoFunzionalita.DISABILITATO.getValue();
+					}
 					// solo in modalita' nuova
 					if(initConnettore) {
 						tipoconn = "";
@@ -610,7 +628,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_token,autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 					
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -698,7 +717,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -788,7 +808,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					idSoggettoFruitore, asps, 
 					userLogin,
-					apsCore, apsHelper);
+					apsCore, apsHelper,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

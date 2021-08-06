@@ -123,6 +123,7 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pa_transform_risp_init_seq";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER = "pa_transform_risp_hdr";
     public static final String PORTE_APPLICATIVE_HANDLERS = "pa_handlers";
+    public static final String PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY = "pa_aa";
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
     public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP = "pd_auth_properties";
@@ -152,6 +153,7 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pd_transform_risp_init_seq";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER = "pd_transform_risp_hdr";
     public static final String PORTE_DELEGATE_HANDLERS = "pd_handlers";
+    public static final String PORTE_DELEGATE_ATTRIBUTE_AUTHORITY = "pd_aa";
     public static final String REGISTRI = "registri";
     public static final String SERVIZI_PDD = "servizi_pdd";
     public static final String SERVIZI_PDD_FILTRI = "servizi_pdd_filtri";

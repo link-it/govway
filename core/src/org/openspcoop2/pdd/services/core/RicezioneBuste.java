@@ -34,6 +34,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
@@ -132,6 +133,10 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
+import org.openspcoop2.pdd.core.token.attribute_authority.EsitoRecuperoAttributi;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
+import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
+import org.openspcoop2.pdd.core.token.attribute_authority.pd.GestioneAttributeAuthority;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.GestioneToken;
@@ -3903,6 +3908,159 @@ public class RicezioneBuste {
 			openspcoopstate.releaseResource();
 			return;
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/* ------------ Gestione Attribute Authority ------------- */
+		
+		msgDiag.mediumDebug("Gestione Attribute Authority...");
+		List<AttributeAuthority> attributeAuthorities = null;
+		if(pa!=null) {
+			attributeAuthorities = pa.getAttributeAuthorityList();
+		}
+		else if(pd!=null) {
+			attributeAuthorities = pd.getAttributeAuthorityList();
+		}
+		this.msgContext.getIntegrazione().setAttributeAuthoritiesFromObjectList(attributeAuthorities);
+		
+		if (attributeAuthorities == null || attributeAuthorities.isEmpty()) {
+
+			if(!asincronoSimmetricoRisposta) {
+				msgDiag.logPersonalizzato("gestioneAADisabilitata");
+			}
+			
+		} else {
+
+			transaction.getTempiElaborazione().startAttributeAuthority();
+			
+			try {
+				msgDiag.logPersonalizzato("gestioneAAInCorso");
+				
+				org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa datiInvocazione = new org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa();
+				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
+				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setMessage(requestMessage);
+				datiInvocazione.setBusta(bustaRichiesta);
+				datiInvocazione.setRequestInfo(requestInfo);
+				datiInvocazione.setIdPA(idPA);
+				datiInvocazione.setPa(pa);	
+				datiInvocazione.setIdPD(idPD);
+				datiInvocazione.setPd(pd);		
+				
+				GestioneAttributeAuthority gestioneAAEngine = new GestioneAttributeAuthority(logCore, idTransazione, pddContext, protocolFactory);
+				List<InformazioniAttributi> esitiValidiRecuperoAttributi = new ArrayList<InformazioniAttributi>();
+				
+				for (AttributeAuthority aa : attributeAuthorities) {
+					
+					try {
+						msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_NAME, aa.getNome());
+						msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_ENDPOINT, "-");
+						
+						PolicyAttributeAuthority policyAttributeAuthority = configurazionePdDReader.getPolicyAttributeAuthority(false, aa.getNome());
+						datiInvocazione.setPolicyAttributeAuthority(policyAttributeAuthority);
+				
+						GestoreToken.validazioneConfigurazione(policyAttributeAuthority); // assicura che la configurazione sia corretta
+						
+						msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_ENDPOINT, policyAttributeAuthority.getEndpoint());
+						
+						msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve");
+						
+						EsitoRecuperoAttributi esitoRecuperoAttributi = gestioneAAEngine.readAttributes(datiInvocazione);
+						if(esitoRecuperoAttributi.isValido()) {
+							
+							StringBuilder attributiRecuperati = new StringBuilder();
+							if(esitoRecuperoAttributi.getInformazioniAttributi()!=null && 
+									esitoRecuperoAttributi.getInformazioniAttributi().getAttributes()!=null &&
+									!esitoRecuperoAttributi.getInformazioniAttributi().getAttributes().isEmpty()) {
+								for (String attrName : esitoRecuperoAttributi.getInformazioniAttributi().getAttributesNames()) {
+									if(attributiRecuperati.length()>0) {
+										attributiRecuperati.append(",");
+									}
+									attributiRecuperati.append(attrName);
+								}
+							}
+							msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTES, attributiRecuperati.toString());
+							
+							if(esitoRecuperoAttributi.isInCache()) {
+								msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.completataSuccesso.inCache");
+							}
+							else {
+								msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.completataSuccesso");
+							}
+							
+							esitiValidiRecuperoAttributi.add(esitoRecuperoAttributi.getInformazioniAttributi());
+						}
+						else {
+							
+							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoRecuperoAttributi.getDetails());
+							msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.fallita");
+		
+							String msgErrore = "processo di gestione dell'attribute authority ["+ aa.getNome() + "] fallito: " + esitoRecuperoAttributi.getDetails();
+							if(esitoRecuperoAttributi.getEccezioneProcessamento()!=null) {
+								logCore.error(msgErrore,esitoRecuperoAttributi.getEccezioneProcessamento());
+							}
+							else {
+								logCore.error(msgErrore);
+							}							
+						}
+						
+					} catch (Throwable e) {
+						
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+						msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.fallita");
+						String msgErrore = "processo di gestione dell'attribute authority ["+ aa.getNome() + "] fallito: " + e.getMessage();
+						logCore.error(msgErrore,e);
+						
+					}
+					
+				}
+				
+				InformazioniAttributi informazioniAttributiNormalizzati = null;
+				if(esitiValidiRecuperoAttributi!=null && esitiValidiRecuperoAttributi.size()>0) {
+					informazioniAttributiNormalizzati = GestoreToken.normalizeInformazioniAttributi(esitiValidiRecuperoAttributi, attributeAuthorities);
+					informazioniAttributiNormalizzati.setValid(true);
+				}
+				if(informazioniAttributiNormalizzati!=null) {
+					pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE, informazioniAttributiNormalizzati);
+					
+					InformazioniToken informazioniTokenNormalizzate = null;
+					if(pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+						informazioniTokenNormalizzate = (InformazioniToken) pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+					}
+					
+					if(informazioniTokenNormalizzate!=null) {
+						informazioniTokenNormalizzate.setAa(informazioniAttributiNormalizzati);
+					}
+					else {
+						transaction.setInformazioniAttributi(informazioniAttributiNormalizzati);
+					}
+				}
+				
+				msgDiag.logPersonalizzato("gestioneAACompletata");
+
+			} catch (Throwable e) {
+				
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+				msgDiag.logPersonalizzato("gestioneAAFallita");
+				logCore.error("processo di gestione delle attribute authorities fallito: " + e.getMessage(),e);
+				
+			}
+			finally {
+				transaction.getTempiElaborazione().endAttributeAuthority();
+			}
+			
+		}
+		
+		
+		
+		
 		
 		
 		

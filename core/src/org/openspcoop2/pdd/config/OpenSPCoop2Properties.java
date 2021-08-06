@@ -1912,6 +1912,11 @@ public class OpenSPCoop2Properties {
 			this.getGestioneTokenHeaderIntegrazioneTrasporto_scopeSeparator();
 			this.getGestioneTokenHeaderIntegrazioneTrasporto_roleSeparator();
 			
+			// Gestione AttributeAuthority
+			this.isGestioneAttributeAuthority_debug();
+			this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo();
+			this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate();
+			
 			// Statistiche via jmx Console
 			this.isStatisticheViaJmx();
 			
@@ -19301,6 +19306,88 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA.get(claimName);
 	}
+	
+	
+	
+	/* ------------- Gestione Attribute Authority ---------------------*/
+	
+	private static Boolean isGestioneAttributeAuthority_debug = null;
+	public boolean isGestioneAttributeAuthority_debug(){
+
+		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.debug";
+		if(OpenSPCoop2Properties.isGestioneAttributeAuthority_debug==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneAttributeAuthority_debug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isGestioneAttributeAuthority_debug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneAttributeAuthority_debug = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneAttributeAuthority_debug;
+	}
+	
+	private static Boolean isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = null;
+	public boolean isGestioneAttributeAuthority_saveSourceAttributeResponseInfo(){
+
+		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.saveSourceAttributeResponseInfo";
+		if(OpenSPCoop2Properties.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo;
+	}
+	
+	private static Boolean isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate = null;
+	public boolean isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate(){
+
+		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.transazioniRegistrazioneAttributiInformazioniNormalizzate";
+		if(OpenSPCoop2Properties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate;
+	}
+	
+	
+	
 	
 	
 	

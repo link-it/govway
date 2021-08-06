@@ -7308,6 +7308,94 @@ public class DBOggettiInUsoUtils  {
 			}
 			
 			
+			if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
+				
+				List<String> aaPA_list = whereIsInUso.get(ErrorsHandlerCostant.ATTRIBUTE_AUTHORITY_PA);
+				List<String> aaPD_list = whereIsInUso.get(ErrorsHandlerCostant.ATTRIBUTE_AUTHORITY_PD);
+				
+				List<String> mapping_aaPA_list = whereIsInUso.get(ErrorsHandlerCostant.ATTRIBUTE_AUTHORITY_MAPPING_PA);
+				List<String> mapping_aaPD_list = whereIsInUso.get(ErrorsHandlerCostant.ATTRIBUTE_AUTHORITY_MAPPING_PD);
+				
+				if (aaPA_list == null) {
+					aaPA_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PA, aaPA_list);
+				}
+				if (aaPD_list == null) {
+					aaPD_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PD, aaPD_list);
+				}
+				
+				if (mapping_aaPA_list == null) {
+					mapping_aaPA_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PA, mapping_aaPA_list);
+				}
+				if (mapping_aaPD_list == null) {
+					mapping_aaPD_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PD, mapping_aaPD_list);
+				}
+				
+				// Controllo che non sia in uso nelle porte applicative
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY+".nome = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idGP.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String nome = risultato.getString("nome_porta");
+					ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+					if(resultPorta.mapping) {
+						mapping_aaPA_list.add(resultPorta.label);
+					}
+					else {
+						aaPA_list.add(resultPorta.label);
+					}
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+				
+				
+				// Controllo che il ruolo non sia in uso nelle porte delegate
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY+".nome = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idGP.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String nome = risultato.getString("nome_porta");
+					ResultPorta resultPorta = formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+					if(resultPorta.mapping) {
+						mapping_aaPD_list.add(resultPorta.label);
+					}
+					else {
+						aaPD_list.add(resultPorta.label);
+					}
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();				
+				
+			}
+			
+			
 			return isInUso;
 
 		} catch (Exception se) {
@@ -7339,7 +7427,11 @@ public class DBOggettiInUsoUtils  {
 	}
 	public static String toString(IDGenericProperties idGP, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, String intestazione){
 		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
-		String msg = "Token Policy '"+idGP.getNome()+"'" + intestazione+separator;
+		String object = "Token Policy";
+		if(idGP!=null && CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
+			object = "Attribute Authority";
+		}
+		String msg = object+" '"+idGP.getNome()+"'" + intestazione+separator;
 		if(prefix==false){
 			msg = "";
 		}
@@ -7395,6 +7487,27 @@ public class DBOggettiInUsoUtils  {
 			case CONNETTORE_PA:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Porte Inbound (Connettore): " + formatList(messages,separator) + separator;
+				}
+				break;
+				
+			case ATTRIBUTE_AUTHORITY_MAPPING_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzata nel controllo degli accessi per le Fruizioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case ATTRIBUTE_AUTHORITY_PD:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case ATTRIBUTE_AUTHORITY_MAPPING_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nel controllo degli accessi per le Erogazioni: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case ATTRIBUTE_AUTHORITY_PA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi): " + formatList(messages,separator) + separator;
 				}
 				break;
 				

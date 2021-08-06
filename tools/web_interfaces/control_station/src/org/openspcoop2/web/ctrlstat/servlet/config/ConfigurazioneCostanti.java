@@ -525,6 +525,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN = "Token Policy";
 	
+	public final static String LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY = "Attribute Authority";
+	
 	public final static String VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI = "-*-";
 	public final static String LABEL_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
@@ -1993,6 +1995,7 @@ public class ConfigurazioneCostanti {
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN;
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN;
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY;
 		
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE = TipoErrore.FAULT.getValue();
 	
@@ -2282,6 +2285,16 @@ public class ConfigurazioneCostanti {
 			ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPO_PERIODO_ORARIO,
 			ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPO_PERIODO_GIORNALIERO
 	};
+	
+	
+	
+	public final static String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE = "infoType";
+	public final static String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN = "token";
+	public final static String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY = "aa";
+	public static boolean isConfigurazioneAttributeAuthority(String v) {
+		return PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY.equals(v);
+	}
+	
 		
 	
 	public final static String LABEL_ALLARMI_ESPORTA_SELEZIONATI = "Esporta";
@@ -2289,6 +2302,9 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI = "Esporta";
 	public final static String LABEL_TOKEN_POLICY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_TOKEN_POLICY.name()+"')";
+	
+	public final static String LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI = "Esporta";
+	public final static String LABEL_ATTRIBUTE_AUTHORITY_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY.name()+"')";
 	
 	public final static String LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI = "Esporta";
 	public final static String LABEL_PLUGIN_CLASSE_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE.name()+"')";
@@ -2387,6 +2403,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PLUGIN_CLASSE_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il plugin non risulta utilizzato in alcuna configurazione";
 	
 	public final static String LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "La policy non risulta utilizzata in alcuna configurazione";
+	
+	public final static String LABEL_ATTRIBUTE_AUTHORITY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "L'Attribute Authority non risulta utilizzata in alcuna configurazione";
 	
 	public final static String LABEL_RATE_LIMITING_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "La policy non risulta utilizzata in alcuna configurazione";
 	

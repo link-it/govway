@@ -69,6 +69,7 @@ public class TempiElaborazione implements Serializable {
 	protected TempiElaborazioneFunzionalita responseCachingSaveInCache;
 	protected TempiElaborazioneFunzionalita trasformazioneRichiesta;
 	protected TempiElaborazioneFunzionalita trasformazioneRisposta;
+	protected TempiElaborazioneFunzionalita attributeAuthority;
 	
 	
 	public TempiElaborazioneFunzionalita getToken() {
@@ -527,5 +528,19 @@ public class TempiElaborazione implements Serializable {
 	}
 	public void endTrasformazioneRisposta() {
 		this.trasformazioneRisposta.setDataUscita(DateManager.getDate());
+	}
+	
+	public TempiElaborazioneFunzionalita getAttributeAuthority() {
+		return this.attributeAuthority;
+	}
+	public void setAttributeAuthority(TempiElaborazioneFunzionalita attributeAuthority) {
+		this.attributeAuthority = attributeAuthority;
+	}
+	public void startAttributeAuthority() {
+		this.attributeAuthority = new TempiElaborazioneFunzionalita();
+		this.attributeAuthority.setDataIngresso(DateManager.getDate());
+	}
+	public void endAttributeAuthority() {
+		this.attributeAuthority.setDataUscita(DateManager.getDate());
 	}
 }

@@ -191,6 +191,10 @@ public final class PorteDelegateAdd extends Action {
 			
 			BinaryParameter allegatoXacmlPolicy = porteDelegateHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
+			String identificazioneAttributiStato = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = porteDelegateHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+			
 			if(sp == null) {
 				tiposp = "";
 				sp = "";
@@ -408,6 +412,7 @@ public final class PorteDelegateAdd extends Action {
 			if (azioniList != null)
 				numAzioni = azioniList.length;
 			
+			// Token Policy
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
@@ -421,6 +426,16 @@ public final class PorteDelegateAdd extends Action {
 				policyValues[(i+1)] = genericProperties.getNome();
 			}
 
+			// AttributeAuthority
+			List<GenericProperties> attributeAuthorityList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY, null);
+			String [] attributeAuthorityLabels = new String[attributeAuthorityList.size()];
+			String [] attributeAuthorityValues = new String[attributeAuthorityList.size()];
+			for (int i = 0; i < attributeAuthorityList.size(); i++) {
+				GenericProperties genericProperties = attributeAuthorityList.get(i);
+				attributeAuthorityLabels[i] = genericProperties.getNome();
+				attributeAuthorityValues[i] = genericProperties.getNome();
+			}
+			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (porteDelegateHelper.isEditModeInProgress()) {
@@ -533,6 +548,10 @@ public final class PorteDelegateAdd extends Action {
 				if(autorizzazioneContenutiStato == null)
 					autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
 
+				if(identificazioneAttributiStato==null) {
+					identificazioneAttributiStato = StatoFunzionalita.DISABILITATO.getValue();
+				}
+				
 				// i pattern sono i nomi
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.ADD, 
 						PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID,
@@ -561,7 +580,8 @@ public final class PorteDelegateAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						null, null);
+						null, null,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				pd.setDati(dati);
 
@@ -617,7 +637,8 @@ public final class PorteDelegateAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						null, null);
+						null, null,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				pd.setDati(dati);
 

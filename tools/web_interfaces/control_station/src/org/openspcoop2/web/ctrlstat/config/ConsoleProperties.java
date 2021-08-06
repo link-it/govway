@@ -300,6 +300,12 @@ public class ConsoleProperties {
 				"policyGestioneToken.builtIn", "policyGestioneToken.builtIn.refresh");
 	}
 	
+	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() throws UtilsException {
+		return _getSourceConfiguration("attributeAuthority", 
+				"attributeAuthority.dir", "attributeAuthority.dir.refresh", 
+				"attributeAuthority.builtIn", "attributeAuthority.builtIn.refresh");
+	}
+	
 	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() throws UtilsException{
 		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.groupBy.api");
 	}
@@ -1206,6 +1212,14 @@ public class ConsoleProperties {
 	
 	public Properties getTokenPolicyTipologia() throws UtilsException{
 		return this.reader.readProperties_convertEnvProperties("console.tokenPolicy.mapping.");
+	}
+	
+	public String getAttributeAuthorityForceId() throws UtilsException{
+		return this.readProperty(false, "console.attributeAuthority.forceId");
+	}
+	
+	public Properties getAttributeAuthorityTipologia() throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("console.attributeAuthority.mapping.");
 	}
 	
 	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{

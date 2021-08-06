@@ -1857,6 +1857,9 @@ public abstract class AbstractArchiveEngine {
 	public List<IDGenericProperties> getAllIdGenericProperties_retrieve() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return _getAllIdGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE);
 	}
+	public List<IDGenericProperties> getAllIdGenericProperties_attributeAuthorities() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY);
+	}
 	private List<IDGenericProperties> _getAllIdGenericProperties(String tipologia) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try {
 			List<GenericProperties> l = this.driverConfigurazione.getGenericProperties(tipologia);
@@ -1895,6 +1898,9 @@ public abstract class AbstractArchiveEngine {
 	public GenericProperties getGenericProperties_retrieve(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return _getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nome);
 	}
+	public GenericProperties getGenericProperties_attributeAuthority(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY, nome);
+	}
 	private GenericProperties _getGenericProperties(String tipologia, String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try {
 			GenericProperties gp = this.driverConfigurazione.getGenericProperties(tipologia, nome);
@@ -1920,6 +1926,9 @@ public abstract class AbstractArchiveEngine {
 	}
 	public boolean existsGenericProperties_retrieve(String nome) throws DriverConfigurazioneException{
 		return _existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nome);
+	}
+	public boolean existsGenericProperties_attributeAuthority(String nome) throws DriverConfigurazioneException{
+		return _existsGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY, nome);
 	}
 	private boolean _existsGenericProperties(String tipologia, String nome) throws DriverConfigurazioneException{
 		try {

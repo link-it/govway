@@ -28,23 +28,12 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ArchiveTokenPolicy implements IArchiveObject {
+public class ArchiveTokenPolicy extends AbstractArchiveGenericProperties {
 
 	public static String buildKey(String tipologiaPolicy, String nomePolicy) throws ProtocolException{
 		
-		if(tipologiaPolicy==null){
-			throw new ProtocolException("tipologiaPolicy non fornito");
-		}
-		if(nomePolicy==null){
-			throw new ProtocolException("nomePolicy non fornito");
-		}
+		return AbstractArchiveGenericProperties.buildKey("TokenPolicy", tipologiaPolicy, nomePolicy);
 		
-		StringBuilder bf = new StringBuilder();
-		bf.append("TokenPolicy_");
-		bf.append(tipologiaPolicy);
-		bf.append("_");
-		bf.append(nomePolicy);
-		return bf.toString();
 	}
 	
 	@Override
@@ -52,45 +41,9 @@ public class ArchiveTokenPolicy implements IArchiveObject {
 		return ArchiveTokenPolicy.buildKey(this.tipologiaPolicy, this.idPolicy);
 	}
 	
-	
-	
-	private String tipologiaPolicy; // validazione/negoziazione
-	private String idPolicy;
-	private org.openspcoop2.core.config.GenericProperties policy;
-	
-	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
-
 	public ArchiveTokenPolicy(org.openspcoop2.core.config.GenericProperties policy, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		super(policy, idCorrelazione);
 		
-		if(policy==null){
-			throw new ProtocolException("Policy non fornito");
-		}
-		if(policy.getTipologia()==null){
-			throw new ProtocolException("Policy.tipologia non definito");
-		}
-		if(policy.getNome()==null){
-			throw new ProtocolException("Policy.nome non definito");
-		}
-		this.tipologiaPolicy = policy.getTipologia();
-		this.idPolicy = policy.getNome();
-		this.policy = policy;
-		
-		this.idCorrelazione = idCorrelazione;
-		
-	}
-	
-	public String getTipologiaPolicy() {
-		return this.tipologiaPolicy;
-	}
-	public String getNomePolicy() {
-		return this.idPolicy;
-	}
-	public org.openspcoop2.core.config.GenericProperties getPolicy() {
-		return this.policy;
-	}
-	
-	public ArchiveIdCorrelazione getIdCorrelazione() {
-		return this.idCorrelazione;
 	}
 
 }

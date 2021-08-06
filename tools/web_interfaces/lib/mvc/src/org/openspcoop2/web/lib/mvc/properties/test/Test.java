@@ -48,7 +48,7 @@ public class Test {
 		try {
 			System.out.println("TEST CONFIG 1");
 			
-			File f = new File(Test.class.getResource("WSSecurity.xml").toURI());
+			File f = new File(Test.class.getResource("Test.xml").toURI());
 			
 			System.out.println("Validazione XSD del file in corso...");
 			
@@ -118,7 +118,7 @@ public class Test {
 			
 			System.out.println("Simulazione EDIT FINALE ADD ---> Validazione Input utente");
 			
-			configurazioneAdd.validazioneInputUtente(configDaFile);
+			configurazioneAdd.validazioneInputUtente("nome", "descrizione", configDaFile);
 			
 			System.out.println("----------------------");
 			
@@ -192,7 +192,7 @@ public class Test {
 						
 			System.out.println("Simulazione EDIT FINALE CHANGE ---> Validazione Input utente");
 			
-			configurazioneChange.validazioneInputUtente(configDaFile);
+			configurazioneChange.validazioneInputUtente("nome", "descrizione", configDaFile);
 			
 			System.out.println("----------------------");
 			

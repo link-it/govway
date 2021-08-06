@@ -1,3 +1,9 @@
+2021-07-27  Andrea Poli <apoli@link.it>
+
+	Aggiunte tabelle che consentono la registrazione delle attribute authority:
+	pd_aa
+	pa_aa
+
 2021-05-21  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonne che possono gestire un secondo valore di soglia per le policy:

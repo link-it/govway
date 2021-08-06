@@ -58,6 +58,7 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.FaseMessageHandler;
 import org.openspcoop2.core.config.constants.FaseServiceHandler;
 import org.openspcoop2.core.config.constants.PluginSorgenteArchivio;
@@ -2119,7 +2120,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public GenericProperties getGenericProperties(String nome, String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public GenericProperties getGenericProperties(String nome, String tipologia, boolean logNotFoundError) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		Connection con = null;
 		String nomeMetodo = "getGenericProperties";
 		DriverControlStationDB driver = null;
@@ -2131,7 +2132,12 @@ public class ConfigurazioneCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			return driver.getDriverConfigurazioneDB().getGenericProperties(tipologia,nome);
 		} catch (DriverConfigurazioneNotFound e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			if(logNotFoundError) {
+				ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			}
+			else {
+				ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			}
 			throw e;
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -2357,7 +2363,12 @@ public class ConfigurazioneCore extends ControlStationCore {
 			inUsoMessage.append(s);
 			inUsoMessage.append("\n");
 		} else {
-			inUsoMessage.append(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+			if(idGP!=null && CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
+				inUsoMessage.append(ConfigurazioneCostanti.LABEL_ATTRIBUTE_AUTHORITY_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+			}
+			else {
+				inUsoMessage.append(ConfigurazioneCostanti.LABEL_TOKEN_POLICY_IN_USO_BODY_HEADER_NESSUN_RISULTATO);
+			}
 		}
 		
 		return inUsoMessage.toString();

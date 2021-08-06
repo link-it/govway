@@ -111,6 +111,9 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="configurazione-handler" type="configurazione-porta-handler">
 				
 			</xsd:element>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="attribute-authority" type="attribute-authority">
+				
+			</xsd:element>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -254,6 +257,9 @@
 				
 			</xsd:element>
 			<xsd:element maxOccurs="1" minOccurs="0" name="configurazione-handler" type="configurazione-porta-handler">
+				
+			</xsd:element>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="attribute-authority" type="attribute-authority">
 				
 			</xsd:element>
 		</xsd:sequence>
@@ -675,7 +681,14 @@
 		<xsd:attribute name="envelope-body-conversione-tipo" type="xsd:string"/>
 	</xsd:complexType>
 	
-
+	<!-- AttributeAuthority -->
+	<xsd:complexType name="attribute-authority">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="attributo" type="xsd:string"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
 	<!-- Proprieta -->
 	<xsd:complexType name="proprieta">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>

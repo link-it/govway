@@ -418,6 +418,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
 			
 			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+			
+			String identificazioneAttributiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = apsHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
 
 			if(apsHelper.isMultipart()){
 				this.decodeRequestValidazioneDocumenti = true;
@@ -1202,6 +1206,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 			
+			// Token Policy
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
@@ -1213,6 +1218,16 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 				policyLabels[(i+1)] = genericProperties.getNome();
 				policyValues[(i+1)] = genericProperties.getNome();
+			}
+			
+			// AttributeAuthority
+			List<GenericProperties> attributeAuthorityList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY, null);
+			String [] attributeAuthorityLabels = new String[attributeAuthorityList.size()];
+			String [] attributeAuthorityValues = new String[attributeAuthorityList.size()];
+			for (int i = 0; i < attributeAuthorityList.size(); i++) {
+				GenericProperties genericProperties = attributeAuthorityList.get(i);
+				attributeAuthorityLabels[i] = genericProperties.getNome();
+				attributeAuthorityValues[i] = genericProperties.getNome();
 			}
 			
 			String servletList = null;
@@ -1513,6 +1528,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if(autorizzazioneScope ==null)
 					autorizzazioneScope = "";
 				
+				if(identificazioneAttributiStato==null) {
+					identificazioneAttributiStato = StatoFunzionalita.DISABILITATO.getValue();
+				}
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
@@ -1549,7 +1568,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
-						this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled);
+						this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				// Controllo se richiedere il connettore
 				
@@ -1762,7 +1782,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
-						this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled);
+						this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				if(!connettoreStatic) {
 					boolean forceEnableConnettore = false;
@@ -2019,7 +2040,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_token,autorizzazione_tokenOptions,
 							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
-							this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled);
+							this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled,
+							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 					if(!connettoreStatic) {
 					
@@ -2177,7 +2199,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, 
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail, 
 					this.protocolProperties, this.consoleOperationType, 
-					apsCore, apsHelper, this.erogazioneServizioApplicativoServer, this.canaleStato, this.canale, gestioneCanaliEnabled);
+					apsCore, apsHelper, this.erogazioneServizioApplicativoServer, this.canaleStato, this.canale, gestioneCanaliEnabled,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 			// cancello i file temporanei
 			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);

@@ -26,6 +26,7 @@ import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.monitor.engine.config.TransactionResource;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -145,6 +146,9 @@ public class Transaction {
 	
 	/** InformazioniToken */
 	private InformazioniToken informazioniToken;
+	
+	/** InformazioniAttributi */
+	private InformazioniAttributi informazioniAttributi;
 	
 	/** CredenzialiMittente */
 	private CredenzialiMittente credenzialiMittente;
@@ -284,6 +288,10 @@ public class Transaction {
 	
 	public InformazioniToken getInformazioniToken() {
 		return this.informazioniToken;
+	}
+	
+	public InformazioniAttributi getInformazioniAttributi() {
+		return this.informazioniAttributi;
 	}
 	
 	public CredenzialiMittente getCredenzialiMittente() {
@@ -640,6 +648,19 @@ public class Transaction {
 		}
 	}
 	
+	public void setInformazioniAttributi(InformazioniAttributi informazioniAttributi) throws TransactionDeletedException {
+		if(this.gestioneStateful){
+			synchronized (this.semaphore) {
+				if(this.deleted){
+					throw new TransactionDeletedException("Transaction eliminata");
+				}
+				this.informazioniAttributi = informazioniAttributi;
+			}
+		}else{
+			this.informazioniAttributi = informazioniAttributi;
+		}
+	}
+	
 	public void setCredenzialiMittente(CredenzialiMittente credenzialiMittente) throws TransactionDeletedException {
 		if(this.gestioneStateful){
 			synchronized (this.semaphore) {
@@ -874,6 +895,10 @@ public class Transaction {
 			if(this.informazioniToken.getIss()!=null) {
 				sb.append("\n").append("informazioniToken.iss: ").append(this.informazioniToken.getIss());
 			}
+		}
+		
+		if(this.informazioniAttributi!=null) {
+			sb.append("\n").append("informazioniAttributi: presente");
 		}
 		
 		if(this.credenzialiMittente!=null) {

@@ -183,6 +183,10 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			
 			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
+			String identificazioneAttributiStato = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = apsHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+			
 			Properties parametersPOST = null;
 			
 			String endpointtype = apsHelper.readEndPointType();
@@ -449,6 +453,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idSoggettoErogatoreDelServizio, idAsps);
 			
+			// Token Policy
 			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
 			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
 			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
@@ -460,6 +465,16 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 				policyLabels[(i+1)] = genericProperties.getNome();
 				policyValues[(i+1)] = genericProperties.getNome();
+			}
+			
+			// AttributeAuthority
+			List<GenericProperties> attributeAuthorityList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY, null);
+			String [] attributeAuthorityLabels = new String[attributeAuthorityList.size()];
+			String [] attributeAuthorityValues = new String[attributeAuthorityList.size()];
+			for (int i = 0; i < attributeAuthorityList.size(); i++) {
+				GenericProperties genericProperties = attributeAuthorityList.get(i);
+				attributeAuthorityLabels[i] = genericProperties.getNome();
+				attributeAuthorityValues[i] = genericProperties.getNome();
 			}
 
 			lstParm.add(ServletUtils.getParameterAggiungi());
@@ -561,7 +576,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						scope = "-";
 					if(autorizzazioneScope ==null)
 						autorizzazioneScope = "";
-					
+					if(identificazioneAttributiStato==null) {
+						identificazioneAttributiStato = StatoFunzionalita.DISABILITATO.getValue();
+					}
 					// solo in modalita' nuova
 					if(initConnettore) {
 						tipoconn = "";
@@ -668,7 +685,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_token,autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 					
 //					apsHelper.isModalitaCompleta()?null:(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX)
 					
@@ -759,7 +777,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -848,7 +867,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					asps, 
 					protocollo, userLogin,
-					apsCore, apsHelper,erogazioneServizioApplicativoServer);
+					apsCore, apsHelper,erogazioneServizioApplicativoServer,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 			
 			// Preparo la lista

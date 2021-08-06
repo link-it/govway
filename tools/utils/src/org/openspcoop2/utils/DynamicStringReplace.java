@@ -71,7 +71,7 @@ public class DynamicStringReplace {
 		}
 		
 		StringBuilder keyword = new StringBuilder();
-		boolean separator = false;
+		boolean keywordInCorso = false;
 		for(int i=0; i<messaggioWithPlaceHolder.length(); i++){
 			char ch = messaggioWithPlaceHolder.charAt(i);
 			boolean checkPossibleStart = false;
@@ -90,13 +90,13 @@ public class DynamicStringReplace {
 			if( 
 					( (checkPossibleStart && '{' == ch) ) 
 					|| 
-					('}' == ch) 
+					( (keywordInCorso && '}' == ch) ) 
 				){
 				//char separatorChar = ch;
-				if(separator==false){
+				if(keywordInCorso==false){
 					// inizio keyword
 					//keyword.append(separatorChar);
-					separator = true;
+					keywordInCorso = true; // siamo nel caso di apertura, inizio keyword
 				}
 				else{
 					// fine keyword
@@ -118,10 +118,11 @@ public class DynamicStringReplace {
 					}
 					
 					keyword.delete(0, keyword.length());
-					separator=false;
+					keywordInCorso=false;
+					checkPossibleStart=false;
 				}
 			}else{
-				if(separator){
+				if(keywordInCorso){
 					// sto scrivendo la keyword
 					keyword.append(ch);
 				}
@@ -154,7 +155,7 @@ public class DynamicStringReplace {
 		
 		StringBuilder bf = new StringBuilder();
 		StringBuilder keyword = new StringBuilder();
-		boolean separator = false;
+		boolean keywordInCorso = false;
 		for(int i=0; i<messaggioWithPlaceHolder.length(); i++){
 			char ch = messaggioWithPlaceHolder.charAt(i);
 			boolean checkPossibleStart = false;
@@ -173,13 +174,13 @@ public class DynamicStringReplace {
 			if( 
 					( (checkPossibleStart && '{' == ch) ) 
 					|| 
-					('}' == ch) 
+					( (keywordInCorso && '}' == ch) ) 
 				){
 				//char separatorChar = ch;
-				if(separator==false){
+				if(keywordInCorso==false){
 					// inizio keyword
 					//keyword.append(separatorChar);
-					separator = true;
+					keywordInCorso = true;  // siamo nel caso di apertura, inizio keyword
 				}
 				else{
 					// fine keyword
@@ -210,10 +211,11 @@ public class DynamicStringReplace {
 						bf.append(valoreRimpiazzato);
 					}
 					keyword.delete(0, keyword.length());
-					separator=false;
+					keywordInCorso=false;
+					checkPossibleStart=false;
 				}
 			}else{
-				if(separator){
+				if(keywordInCorso){
 					// sto scrivendo la keyword
 					keyword.append(ch);
 				}else{
@@ -290,7 +292,7 @@ public class DynamicStringReplace {
 				oInternal = get(map, position);
 			}	
 			
-			if(newValue.contains(".")){
+			if(newValue.contains(".") || (newValue.contains("[") && newValue.contains("]"))){
 				if(oInternal==null){
 					throw new UtilsException("Placeholder [{"+key+"}] resolution failed: object ["+object.getClass().getName()+"]["+position+"] return null object");
 				}
@@ -335,14 +337,32 @@ public class DynamicStringReplace {
 	private static String readValueInObject(String key, Object o,String name, boolean complexField) throws UtilsException{
 		//System.out.println("Invocato con oggetto["+o.getClass().getName()+"] nome["+name+"]");
 		String fieldName = name;
-		String position = null;
+		//String position = null;
+		List<String> arrayMapPosition = new ArrayList<String>();
 		if(name.contains(".") && complexField){
 			fieldName = name.substring(0, name.indexOf("."));
 		}
 		String methodName = new String(fieldName);
 		if(fieldName.endsWith("]") && fieldName.contains("[")){
 			try{
-				position = fieldName.substring(fieldName.indexOf("[")+1,fieldName.length()-1);
+				// fix [][]
+				//position = fieldName.substring(fieldName.indexOf("[")+1,fieldName.length()-1);
+				String tmp = new String(fieldName);
+				//System.out.println("DEBUG ["+tmp+"]");
+				while(tmp.endsWith("]") && tmp.contains("[")){
+					int firstOpen = tmp.indexOf("[")+1;
+					int lastOpen = tmp.indexOf("]", firstOpen);
+					String position = tmp.substring(firstOpen, lastOpen);
+					arrayMapPosition.add(position);
+					//System.out.println("DEBUG ADD ["+position+"]");
+					if(tmp.length()>(lastOpen+1)) {
+						tmp = tmp.substring(lastOpen+1,tmp.length());
+					}
+					else {
+						tmp="";
+					}
+					//System.out.println("DEBUG NUOVO VALORE ["+tmp+"]");
+				}
 				methodName = fieldName.substring(0, fieldName.indexOf("["));
 			}catch(Exception e){
 				throw new UtilsException("Placeholder [{"+key+"}] resolution failed: position error in field ["+fieldName+"]: "+e.getMessage(),e);
@@ -438,41 +458,44 @@ public class DynamicStringReplace {
 		
 		if(ret!=null){
 			if(ret instanceof List<?> || ret instanceof Map<?,?> || ret instanceof Object[]){
-				if(position==null){
+				if(arrayMapPosition==null || arrayMapPosition.isEmpty()){
 					throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object without position");
 				}
-				//System.out.println("ARRAY ["+ret.getClass().getName()+"]");
-				if(ret instanceof List<?> || ret instanceof Object[]){
-					int index = -1;
-					try{
-						index = Integer.parseInt(position);
-					}catch(Exception e){
-						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value (not integer?): "+e.getMessage()+" )");
-					}
-					if(ret instanceof List<?>){
-						List<?> list = (List<?>) ret;
-						if(list.size()<=index){
-							throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (list size:"+list.size()+") )");
+				while(!arrayMapPosition.isEmpty()) {
+					String position = arrayMapPosition.remove(0);
+					//System.out.println("ARRAY ["+ret.getClass().getName()+"]");
+					if(ret instanceof List<?> || ret instanceof Object[]){
+						int index = -1;
+						try{
+							index = Integer.parseInt(position);
+						}catch(Exception e){
+							throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value (not integer?): "+e.getMessage()+" )");
 						}
-						ret = list.get(index);
-					}
-					else if(ret instanceof Object[]){
-						Object[] arrayObj = (Object[]) ret;
-						if(arrayObj.length<=index){
-							throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (array size:"+arrayObj.length+") )");
+						if(ret instanceof List<?>){
+							List<?> list = (List<?>) ret;
+							if(list.size()<=index){
+								throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (list size:"+list.size()+") )");
+							}
+							ret = list.get(index);
 						}
-						ret = arrayObj[index];
+						else if(ret instanceof Object[]){
+							Object[] arrayObj = (Object[]) ret;
+							if(arrayObj.length<=index){
+								throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position value "+index+" (array size:"+arrayObj.length+") )");
+							}
+							ret = arrayObj[index];
+						}
 					}
+					else if(ret instanceof Map<?,?>){
+						Map<?,?> map = (Map<?,?>) ret;
+						//if(map.containsKey(position)==false){
+						if(containsKey(map, position)==false) {
+							throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position ["+position+"] not exists as key in map )");
+						}
+						//ret = map.get(position);
+						ret = get(map, position);
+					}		
 				}
-				else if(ret instanceof Map<?,?>){
-					Map<?,?> map = (Map<?,?>) ret;
-					//if(map.containsKey(position)==false){
-					if(containsKey(map, position)==false) {
-						throw new UtilsException("Placeholder [{"+key+"}] resolution failed: method ["+o.getClass().getName()+"."+getMethod+"()] return "+ret.getClass().getName()+" object, wrong position ["+position+"] not exists as key in map )");
-					}
-					//ret = map.get(position);
-					ret = get(map, position);
-				}				
 			}
 		}
 		if(name.contains(".") && complexField){

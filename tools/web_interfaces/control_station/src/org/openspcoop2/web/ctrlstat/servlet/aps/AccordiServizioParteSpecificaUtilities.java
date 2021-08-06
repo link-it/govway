@@ -256,7 +256,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType,
-			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled,
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 		
 		List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 		if(!alreadyExists) {
@@ -277,7 +278,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					gestioneTokenPolicy,  gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					apsCore, apsHelper, nomeSAServer, canaleStato, canale, gestioneCanaliEnabled);
+					apsCore, apsHelper, nomeSAServer, canaleStato, canale, gestioneCanaliEnabled,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 					
 		}
 		
@@ -295,7 +297,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					gestioneTokenPolicy,  gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					apsCore, canaleStato, canale, gestioneCanaliEnabled);
+					apsCore, canaleStato, canale, gestioneCanaliEnabled,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 		}
 
@@ -332,7 +335,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
-			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled,
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			
@@ -423,7 +427,8 @@ public class AccordiServizioParteSpecificaUtilities {
 				erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
 				nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
 				autorizzazione_tokenOptions,
-				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+				identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 		
 		porteApplicativeCore.configureControlloAccessiGestioneToken(portaApplicativa, gestioneToken, 
 				gestioneTokenPolicy,  gestioneTokenOpzionale,
@@ -464,7 +469,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
-			AccordiServizioParteSpecificaCore apsCore, String canaleStato, String canale, boolean gestioneCanaliEnabled) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, String canaleStato, String canale, boolean gestioneCanaliEnabled,
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 		
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 		
@@ -483,7 +489,8 @@ public class AccordiServizioParteSpecificaUtilities {
 				fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 				fruizioneServizioApplicativo, fruizioneRuolo,
 				autorizzazione_tokenOptions,
-				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+				identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 		
 		porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, 
 				gestioneTokenPolicy,  gestioneTokenOpzionale,
@@ -1933,7 +1940,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			AccordoServizioParteSpecifica asps, 
 			String protocollo, String userLogin,
-			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, String nomeSAServer) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, String nomeSAServer,
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 	
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
@@ -2087,7 +2095,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
 					nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
 					autorizzazione_tokenOptions,
-					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 			porteApplicativeCore.configureControlloAccessiGestioneToken(portaApplicativa, gestioneToken, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -2468,7 +2477,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			IDSoggetto idSoggettoFruitore, AccordoServizioParteSpecifica asps, 
 			String userLogin,
-			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 	
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
@@ -2612,7 +2622,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 					fruizioneServizioApplicativo, fruizioneRuolo,
 					autorizzazione_tokenOptions,
-					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 			porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
