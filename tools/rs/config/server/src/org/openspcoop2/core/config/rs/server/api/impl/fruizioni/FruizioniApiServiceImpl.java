@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.rs.server.api.FruizioniApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
+import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ConnettoreAPIHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ModiErogazioniApiHelper;
@@ -46,8 +47,10 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazione;
 import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazioneView;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreApplicativoServer;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreFruizione;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreMessageBox;
 import org.openspcoop2.core.config.rs.server.model.Fruizione;
 import org.openspcoop2.core.config.rs.server.model.FruizioneModI;
 import org.openspcoop2.core.config.rs.server.model.FruizioneViewItem;
@@ -720,7 +723,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 	                       env.idSoggetto, env);
 			}
 	       
-			ConnettoreFruizione c = ErogazioniApiHelper.buildConnettoreFruizione(regConn);
+			ConnettoreFruizione c = ConnettoreAPIHelper.buildConnettoreFruizione(regConn);
 
 			context.getLogger().info("Invocazione completata con successo");
 			return c;
@@ -1011,6 +1014,12 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			BaseHelper.throwIfNull(body);
 
+			if(body.getConnettore() instanceof ConnettoreMessageBox) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile associare a una fruizione il connettore di tipo message-box");
+			}
+			if(body.getConnettore() instanceof ConnettoreApplicativoServer) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile associare a una fruizione il connettore di tipo applicativo server");
+			}
 			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 			final IDSoggetto idErogatore = new IDSoggetto(env.tipo_soggetto, erogatore);
 
@@ -1076,9 +1085,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					}
 
-					ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, body.getConnettore(), oldConnT);
+					ConnettoreAPIHelper.fillConnettoreRegistro(connettore, env, body.getConnettore(), oldConnT);
 
-					if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), env, false)) {
+					if (!ConnettoreAPIHelper.connettoreCheckData(body.getConnettore(), env, false)) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 					}
 
@@ -1094,9 +1103,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					}
 	
-					ErogazioniApiHelper.fillConnettoreRegistro(connettoreN, env, body.getConnettore(), oldConnT);
+					ConnettoreAPIHelper.fillConnettoreRegistro(connettoreN, env, body.getConnettore(), oldConnT);
 	
-					if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), env, false)) {
+					if (!ConnettoreAPIHelper.connettoreCheckData(body.getConnettore(), env, false)) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 					}
 
@@ -1118,13 +1127,13 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				}
 
-				ErogazioniApiHelper.fillConnettoreRegistro(connettore, env, body.getConnettore(), oldConnT);
+				ConnettoreAPIHelper.fillConnettoreRegistro(connettore, env, body.getConnettore(), oldConnT);
 
-				if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), env, false)) {
+				if (!ConnettoreAPIHelper.connettoreCheckData(body.getConnettore(), env, false)) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
 				}
 
-				fruitore.setConnettore(ErogazioniApiHelper.buildConnettoreRegistro(env, body.getConnettore()));
+				fruitore.setConnettore(ConnettoreAPIHelper.buildConnettoreRegistro(env, body.getConnettore()));
 			}
 			
 			fruitori.add(fruitore);

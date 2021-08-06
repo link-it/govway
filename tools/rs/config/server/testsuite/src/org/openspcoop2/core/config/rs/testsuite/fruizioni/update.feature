@@ -119,27 +119,27 @@ Scenario Outline: Update Fruizioni Connettore 204
     * call delete ({ resourcePath: api_petstore_path })
 
 Examples:
-|nome|connettore
-|connettore_fruizione_http.json|https://ginovadifretta.it/petstore
-|connettore_fruizione_echo.json|[echo] govway://echo
-|connettore_fruizione_null.json|[null] govway://dev/null
-|connettore_fruizione_plugin.json|[plugin] custom
-|connettore_fruizione_plugin_con_properties.json|[plugin] custom
-|connettore_fruizione_jms.json|[jms] nome_coda
-|connettore_fruizione_jms_jndi_init_ctx.json|[jms] nome_coda
-|connettore_fruizione_jms_jndi_provider_url.json|[jms] nome_coda
-|connettore_fruizione_jms_jndi_url_pkg.json|[jms] nome_coda
-|connettore_fruizione_jms_send_as_bytes.json|[jms] nome_coda
-|connettore_fruizione_jms_tipo_coda_topic.json|[jms] nome_coda
-|connettore_fruizione_jms_user_password.json|[jms] nome_coda
-|connettore_fruizione_file.json|[file] /tmp/abc.txt
-|connettore_fruizione_file_create_parent.json|[file] /tmp/abc.txt
-|connettore_fruizione_file_headers.json|[file] /tmp/abc.txt
-|connettore_fruizione_file_overwrite.json|[file] /tmp/abc.txt
-|connettore_fruizione_file_response.json|[file] /tmp/abc.txt
-|connettore_fruizione_file_response_delete.json|[file] /tmp/abc.txt
-|connettore_fruizione_file_response_headers.json|[file] /tmp/abc.txt
-|connettore_fruizione_file_response_wait.json|[file] /tmp/abc.txt
+|nome|connettore|
+|connettore_fruizione_http.json|https://ginovadifretta.it/petstore|
+|connettore_fruizione_echo.json|[echo] govway://echo|
+|connettore_fruizione_null.json|[null] govway://dev/null|
+|connettore_fruizione_plugin.json|[plugin] custom|
+|connettore_fruizione_plugin_con_properties.json|[plugin] custom|
+|connettore_fruizione_jms.json|[jms] nome_coda|
+|connettore_fruizione_jms_jndi_init_ctx.json|[jms] nome_coda|
+|connettore_fruizione_jms_jndi_provider_url.json|[jms] nome_coda|
+|connettore_fruizione_jms_jndi_url_pkg.json|[jms] nome_coda|
+|connettore_fruizione_jms_send_as_bytes.json|[jms] nome_coda|
+|connettore_fruizione_jms_tipo_coda_topic.json|[jms] nome_coda|
+|connettore_fruizione_jms_user_password.json|[jms] nome_coda|
+|connettore_fruizione_file.json|[file] /tmp/abc.txt|
+|connettore_fruizione_file_create_parent.json|[file] /tmp/abc.txt|
+|connettore_fruizione_file_headers.json|[file] /tmp/abc.txt|
+|connettore_fruizione_file_overwrite.json|[file] /tmp/abc.txt|
+|connettore_fruizione_file_response.json|[file] /tmp/abc.txt|
+|connettore_fruizione_file_response_delete.json|[file] /tmp/abc.txt|
+|connettore_fruizione_file_response_headers.json|[file] /tmp/abc.txt|
+|connettore_fruizione_file_response_wait.json|[file] /tmp/abc.txt|
 
 @UpdateConnettore400
 Scenario Outline: Erogazioni Update Connettore 400
@@ -165,8 +165,8 @@ Scenario Outline: Erogazioni Update Connettore 400
     * call delete ({ resourcePath: api_petstore_path })
 
 Examples:
-|nome|error
-|connettore_fruizione_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato
+|nome|error|
+|connettore_fruizione_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato|
 
 @UpdateConnettoreGruppo204
 Scenario: Update Fruizioni Connettore gruppo 204

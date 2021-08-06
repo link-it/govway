@@ -17,6 +17,7 @@ function fn() {
 
   var config = {
       basicCred: { username: 'amministratore', password: '123456' },
+      configUrl: govwayUrl + '/govway/ENTE/api-config/v1',
       configUrl: govwayUrl + '/govwayAPIConfig',
       soggettoDefault: 'ENTE'
   };

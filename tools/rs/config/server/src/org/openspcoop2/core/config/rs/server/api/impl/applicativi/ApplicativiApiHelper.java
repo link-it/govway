@@ -53,7 +53,7 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.rs.server.api.impl.ApiKeyInfo;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
-import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
+import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ConnettoreAPIHelper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
@@ -62,10 +62,8 @@ import org.openspcoop2.core.config.rs.server.model.ApplicativoServerItem;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
 import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
-import org.openspcoop2.core.config.rs.server.model.OneOfApplicativoServerConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.config.rs.server.model.Proprieta4000;
-import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -380,13 +378,13 @@ public class ApplicativiApiHelper {
 		return ret;
 	}
 	
-	public static final ApplicativoServer servizioApplicativoToApplicativoServer(ServizioApplicativo sa) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public static final ApplicativoServer servizioApplicativoToApplicativoServer(ServizioApplicativo sa) throws Exception {
 		ApplicativoServer ret = new ApplicativoServer();
 		
 		ret.setNome(sa.getNome());
 
 		
-		ret.setConnettore(buildConnettore(sa.getInvocazioneServizio().getConnettore()));
+		ret.setConnettore(ConnettoreAPIHelper.getConnettoreApplicativoServer(sa));
 			
 		if(sa.sizeProprietaList()>0) {
 			for (org.openspcoop2.core.config.Proprieta proprieta : sa.getProprietaList()) {
@@ -403,31 +401,6 @@ public class ApplicativiApiHelper {
 		return ret;
 	}
 	
-	private static final OneOfApplicativoServerConnettore buildConnettore(Connettore connettore) {
-		
-		String tipoConnettore = connettore.getTipo();
-		Map<String, String> props = connettore.getProperties();
-
-		if(tipoConnettore.equals(TipiConnettore.HTTP.toString())) {
-			return ErogazioniApiHelper.buildConnettoreHttp(props);
-		} else if(tipoConnettore.equals(TipiConnettore.HTTPS.toString())) {
-			return ErogazioniApiHelper.buildConnettoreHttp(props);
-		} else if(tipoConnettore.equals(TipiConnettore.FILE.toString())) {
-			return ErogazioniApiHelper.buildConnettoreFile(props);
-		} else if(tipoConnettore.equals(TipiConnettore.JMS.toString())) {
-			return ErogazioniApiHelper.buildConnettoreJms(props);
-		} else if(tipoConnettore.equals(TipiConnettore.NULL.toString())) {
-			return ErogazioniApiHelper.buildConnettoreNull(props);
-		} else if(tipoConnettore.equals(TipiConnettore.NULLECHO.toString())) {
-			return ErogazioniApiHelper.buildConnettoreNullEcho(props);
-		} else if(connettore.getCustom()) {
-			return ErogazioniApiHelper.buildConnettorePlugin(props, tipoConnettore);
-		} else {
-			return null;
-		}
-		
-	}
-
 	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(ServizioApplicativo sa, ApplicativiEnv env) throws Exception {
 
 		ProtocolProperties prop = getProtocolProperties(sa, env);

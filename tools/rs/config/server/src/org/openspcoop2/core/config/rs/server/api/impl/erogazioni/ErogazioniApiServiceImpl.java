@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.rs.server.api.ErogazioniApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
+import org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.ApiImplAllegato;
 import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGenerali;
@@ -59,6 +60,7 @@ import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpB
 import org.openspcoop2.core.config.rs.server.model.ConnettoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreErogazione;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreHttp;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreMessageBox;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreMultiplo;
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModI;
@@ -73,6 +75,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
@@ -85,6 +88,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -692,10 +696,10 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				ret.setConnettore(con);
 
 			} else {
-				InvocazioneServizio is = ErogazioniApiHelper
-						.getInvocazioneServizioErogazioneGruppo(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo);
+				ServizioApplicativo sa = ErogazioniApiHelper
+						.getServizioApplicativo(idAsps, env.idServizioFactory.getIDServizioFromAccordo(asps), env, gruppo);
 
-				ret = ErogazioniApiHelper.buildConnettoreErogazione(is.getConnettore());
+				ret = ConnettoreAPIHelper.buildConnettoreErogazione(sa);
 
 			}
 
@@ -1017,6 +1021,19 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				pa = paDefault;
 			}
 
+			if(this.isConnettoreMessageBox(body.getConnettore(), profilo, soggetto, context)) {
+
+				// permesso solo su API SOAP e su PA con tutte e sole azioni oneway
+				AccordoServizioParteComuneSintetico apc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+				
+				org.openspcoop2.message.constants.ServiceBinding serviceBinding = env.apcCore.toMessageServiceBinding(apc.getServiceBinding());
+				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = env.paCore.getMappingErogazionePortaApplicativa(pa);
+				boolean isSoapOneWay = env.saHelper.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
+				if(!isSoapOneWay) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile associare un connettore di tipo message-box a una erogazione (o gruppo) che non sia composto da tutte e sole Operation SOAP OneWay");
+				}
+			}
+
 			String erogazioneServizioApplicativoServer = null;
 			if(body.getConnettore().getTipo().equals(ConnettoreEnum.APPLICATIVO_SERVER)) {
 				ConnettoreApplicativoServer connAppServer = (ConnettoreApplicativoServer) body.getConnettore();
@@ -1179,11 +1196,11 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 						&& !connis.getTipo().equals(TipiConnettore.FILE.toString())) {
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				}
-				if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), env, true)) {
+				if (!ConnettoreAPIHelper.connettoreCheckData(body.getConnettore(), env, true)) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 				}
 
-				ErogazioniApiHelper.fillConnettoreConfigurazione(connis, env, body.getConnettore(), oldConnT);
+				ConnettoreAPIHelper.fillConnettoreConfigurazione(sa, env, body.getConnettore(), oldConnT);
 				
 				if(body.getConnettore().getTipo().equals(ConnettoreEnum.HTTP) && ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp() != null) {
 					InvocazioneCredenziali credenziali_is = is.getCredenziali();
@@ -1233,6 +1250,33 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
+	}
+
+	private boolean isConnettoreMessageBox(OneOfConnettoreErogazioneConnettore connettore, ProfiloEnum profilo, String soggetto, IContext context) throws UtilsException, Exception {
+		if(connettore instanceof ConnettoreMessageBox) return true;
+		
+		if(!(connettore instanceof ConnettoreApplicativoServer)) return false;
+		
+		ApplicativiEnv env = new ApplicativiEnv(context.getServletRequest(), profilo, soggetto, context);
+		
+		ServizioApplicativo sa = null;			
+		ConnettoreApplicativoServer cas = (ConnettoreApplicativoServer) connettore;
+		try {
+			
+			IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+			idServizioApplicativo.setIdSoggettoProprietario(env.idSoggetto.toIDSoggetto());
+			idServizioApplicativo.setNome(cas.getApplicativo());
+			sa = env.saCore.getServizioApplicativo(idServizioApplicativo);
+			
+			if(!sa.getTipo().equals(CostantiConfigurazione.SERVER)) {
+				throw new Exception("Applicativo non di tipo server: " + sa.getTipo());
+			}
+			
+			return sa.getInvocazioneServizio().getGetMessage().equals(StatoFunzionalita.ABILITATO);
+		} catch ( Exception e) {
+			throw FaultCode.NOT_FOUND.toException("Applicativo server con nome: " + cas.getApplicativo() + " non trovato.");
+		}
+
 	}
 
 	private String getEndpointType(OneOfConnettoreErogazioneConnettore connettore) {

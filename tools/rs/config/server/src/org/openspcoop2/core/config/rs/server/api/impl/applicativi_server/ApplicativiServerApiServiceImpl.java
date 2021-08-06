@@ -34,7 +34,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiEnv;
-import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
+import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ConnettoreAPIHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoServer;
@@ -154,11 +154,11 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
 
-			if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), erogEnv, true)) {
+			if (!ConnettoreAPIHelper.connettoreCheckData(body.getConnettore(), erogEnv, true)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 
-			ErogazioniApiHelper.fillConnettoreConfigurazione(connis, erogEnv, body.getConnettore(), oldConnT);
+			ConnettoreAPIHelper.fillConnettoreConfigurazione(sa, erogEnv, body.getConnettore(), oldConnT);
 
 			if(body.getConnettore().getTipo().equals(ConnettoreEnum.HTTP) && ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp() != null) {
 					if (credenziali_is == null) {
@@ -435,11 +435,11 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
 
-			if (!ErogazioniApiHelper.connettoreCheckData(body.getConnettore(), erogEnv, true)) {
+			if (!ConnettoreAPIHelper.connettoreCheckData(body.getConnettore(), erogEnv, true)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 
-			ErogazioniApiHelper.fillConnettoreConfigurazione(connis, erogEnv, body.getConnettore(), oldConnT);
+			ConnettoreAPIHelper.fillConnettoreConfigurazione(newSa, erogEnv, body.getConnettore(), oldConnT);
 
 			if(body.getConnettore().getTipo().equals(ConnettoreEnum.HTTP) && ((ConnettoreHttp) body.getConnettore()).getAutenticazioneHttp() != null) {
 				if (credenziali_is == null) {

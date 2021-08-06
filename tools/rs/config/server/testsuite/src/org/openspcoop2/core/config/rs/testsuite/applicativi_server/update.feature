@@ -52,6 +52,48 @@ Examples:
 |applicativo_proprieta.json|
 
 
+@UpdateConnettoreMessageBox
+Scenario: Applicativi Server Aggiornamento Connettore Message Box
+
+    * def applicativo = read('applicativo.json') 
+    * eval randomize(applicativo, ["nome"]);
+
+    * def applicativo_key = applicativo.nome
+    * def applicativo_update = read('applicativo.json')
+    * eval applicativo_update.nome = applicativo.nome
+    * def connettore_update = read('connettore_message_box.json').connettore
+    * eval applicativo_update.connettore = connettore_update
+    
+    * call create ( { resourcePath: 'applicativi-server', body: applicativo,  key: applicativo_key } )
+    * call put ( { resourcePath: 'applicativi-server/'+applicativo_key, body: applicativo_update } )
+		* call get ( { resourcePath: 'applicativi-server', key: applicativo_key } )
+    * match response.connettore.tipo == 'message-box'
+    * match response.connettore.autenticazione_http.username == connettore_update.autenticazione_http.username
+
+    * def applicativo2 = read('applicativo.json') 
+    * eval randomize(applicativo2, ["nome"]);
+
+    * def applicativo_key2 = applicativo2.nome
+    * def applicativo_update2 = read('applicativo.json')
+    * eval applicativo_update2.nome = applicativo2.nome
+    * def connettore_update2 = read('connettore_message_box.json').connettore
+    * eval applicativo_update2.connettore = connettore_update2
+
+    * call create ( { resourcePath: 'applicativi-server', body: applicativo2,  key: applicativo_key2 } )
+    
+    Given url configUrl
+    And path 'applicativi-server', applicativo_key2
+    And header Authorization = govwayConfAuth
+    And request applicativo_update2
+    And params query_params
+    When method put
+    Then status 400
+    
+    * match response.detail contains 'possiede già l\'utente (http-basic) indicato' 
+    
+    * call delete ({ resourcePath: 'applicativi-server/' + applicativo_key2 } )
+    * call delete ({ resourcePath: 'applicativi-server/' + applicativo_key } )
+
 @UpdateConnettore204
 Scenario Outline: Applicativi Server Aggiornamento Connettore 204 OK
 
@@ -121,5 +163,5 @@ Scenario Outline: Applicativi Server Aggiornamento Connettore 400
     * call delete ({ resourcePath: 'applicativi-server/' + applicativo_key } )
 
 Examples:
-|nome|error
-|connettore_applicativo_server_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato
+|nome|error|
+|connettore_applicativo_server_plugin_tipo_non_trovato.json|Tipo plugin [tipo_non_trovato] non trovato|
