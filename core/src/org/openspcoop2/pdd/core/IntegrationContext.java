@@ -277,14 +277,16 @@ public class IntegrationContext {
 		return this.attributeAuthorities;
 	}
 	public void setAttributeAuthoritiesFromObjectList(List<AttributeAuthority> attributeAuthorities) {
-		if(attributeAuthorities==null) {
-			this.attributeAuthorities = null;
-		}
-		this.attributeAuthorities = new ArrayList<String>();
-		if(!attributeAuthorities.isEmpty()) {
-			for (AttributeAuthority attributeAuthority : attributeAuthorities) {
-				this.attributeAuthorities.add(attributeAuthority.getNome());
+		if(attributeAuthorities!=null) {
+			this.attributeAuthorities = new ArrayList<String>();
+			if(!attributeAuthorities.isEmpty()) {
+				for (AttributeAuthority attributeAuthority : attributeAuthorities) {
+					this.attributeAuthorities.add(attributeAuthority.getNome());
+				}
 			}
+		}
+		else {
+			this.attributeAuthorities = null;
 		}
 	}
 	public void setAttributeAuthorities(List<String> attributeAuthorities) {
