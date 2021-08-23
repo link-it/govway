@@ -1385,6 +1385,10 @@ div.intervalInnerDiv label {
 	padding: 20px 20px 4px 5px;
 }
 
+.subtitleOpen {
+	padding: 20px 20px 4px 5px;
+}
+
 .subtitle span{
 	font-size: 16px;
     font-weight: bold;

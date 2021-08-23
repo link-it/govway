@@ -284,7 +284,9 @@ function CheckDati() {
 	        		divElem.find("select" ).each(function() {
 	        			var wrapper = $( this ).parent();
 	        			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
-	        				$( this ).appendTo($( this ).parent().parent());
+	        				// appendo la select come secondo elemento dopo la label
+	        				var labelProp = $( this ).parent().parent().children().first();
+	        				labelProp.after($( this ));
 	        				wrapper.remove();
 	        				$( this ).css('width','');
 	        				$( this ).css('height','');
