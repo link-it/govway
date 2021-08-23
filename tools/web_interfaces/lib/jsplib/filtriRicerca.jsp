@@ -168,7 +168,7 @@ boolean inserisciSearch = true;
 					        			String cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleCollapsed";
 					        			
 					    				if(filtro.isVisualizzaSezioneAperta()){
-					    					cssClassSubtitle = "subtitle " + labelStyleClass;
+					    					cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleOpen";
 					    				}
 					    				%>
 					        			<div class="<%= cssClassSubtitle %>" id="<%= filterName  %>__divEsterno">
@@ -192,11 +192,13 @@ boolean inserisciSearch = true;
 								      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
+								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
 								      			} else {
 								      				$("#<%= filterId  %>").hide();
 								      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 								      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
 								      			}
 									      		
@@ -209,12 +211,14 @@ boolean inserisciSearch = true;
 									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
+									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
 									      				inizializzaSelectFiltro();
 									      			} else {
 									      				$("#<%= filterId  %>").hide();
 									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
 									      			}
 									      		});
@@ -228,12 +232,14 @@ boolean inserisciSearch = true;
 									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
+									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
 									      				inizializzaSelectFiltro();
 									      			} else {
 									      				$("#<%= filterId  %>").hide();
 									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
 									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
 									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
 									      			}
 									      		});
