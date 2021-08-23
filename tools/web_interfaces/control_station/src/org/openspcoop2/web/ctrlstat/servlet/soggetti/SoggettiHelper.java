@@ -1130,16 +1130,23 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 			}
 			
+			// **** filtro proprieta ****
+			
 			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
-				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
 				
 				// filtro nome
 				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
 				
 				// filtro valore
 				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+				
+				// imposto apertura sezione
+				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA);
 			}
+			
+			// **** fine filtro proprieta ****
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
@@ -1590,16 +1597,23 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 			}
 			
+			// **** filtro proprieta ****
+			
 			List<String> nomiProprieta = this.nomiProprietaSoggetti(protocolloPerFiltroProprieta); 
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
-				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
 				
 				// filtro nome
 				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
 				
 				// filtro valore
 				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+				
+				// imposto apertura sezione
+				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA);
 			}
+			
+			// **** fine filtro proprieta ****
 						
 						
 			this.pd.setIndex(offset);

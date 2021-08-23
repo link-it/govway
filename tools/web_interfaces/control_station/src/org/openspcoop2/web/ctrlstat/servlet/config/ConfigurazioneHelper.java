@@ -16326,7 +16326,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.confCore.isTokenPolicyForceIdEnabled() ;
 		
 		DataElement de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+		de.setLabel(attributeAuthority ?
+				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
+				ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		

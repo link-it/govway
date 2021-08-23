@@ -19,6 +19,7 @@
 
 
 
+<%@page import="org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI"%>
 <%@page import="org.openspcoop2.utils.crypt.PasswordGenerator"%>
 <%@ page session="true" import="java.util.Vector, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
@@ -185,17 +186,116 @@ for (int i = 0; i < dati.size(); i++) {
     		%><input type="hidden" name="<%= deName  %>" value="<%= de.getValue()  %>"/><%
     	} else { // else hidden
     		if (type.equals("title")){
+    			// gestion apertura e chiusura.
+    			STATO_APERTURA_SEZIONI statoAperturaSezione = de.getStatoSottosezione();
+    			boolean gestioneAperturaFieldset = !STATO_APERTURA_SEZIONI.DISABILITATO.equals(statoAperturaSezione);
+    			String titleDivId = deName + "__id";
+    			
+    			String cssClassTitle = "navigatorAnchor";
+    			String titoloComandoApertura = "";
+    			String cssClassLegend = "";
+    			String cssClassFieldset = "";
+    			if(gestioneAperturaFieldset) {
+    				titoloComandoApertura = " title=\""+ Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA +"\"";
+    				cssClassTitle = "navigatorAnchorClosable";
+    				cssClassLegend = "navigatorAnchorClosable";
+    				
+    				cssClassFieldset = "fieldsetCollapsed";
+    				if(de.isVisualizzaSezioneAperta()){
+    					cssClassFieldset = "";
+    				}
+    			}
+    			
     			// se c'e' un altro field set aperto viene chiuso
     			if(fieldsetOpen){
     				%>
+    					</div>
     				</fieldset>
         			<%
         			fieldsetOpen = false;
     			}
     			if(!fieldsetOpen){
 	    			%>
-	    				<fieldset>
-	    					<legend><a name="<%=rowName %>" class="navigatorAnchor"><%=deLabel %></a></legend>
+	    				<fieldset id="<%= deName  %>__fieldset" class="<%=cssClassFieldset %>">
+	    					<legend class="<%=cssClassLegend %>">
+	    						<%
+	    							if(gestioneAperturaFieldset){
+	    						%>
+	    							<span class="<%=cssClassTitle %>">
+	    								<i class="material-icons md-16" id="<%= deName  %>__icon" style="" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+	    							</span>
+	    						<%
+	    							}
+	    						%>
+	    						<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
+	    					</legend>
+	    						<%
+	    							if(gestioneAperturaFieldset){
+	    						%>
+	    							<script type="text/javascript">
+			        					$(document).ready(function() {
+       									<%
+       										boolean sub = de.isVisualizzaSezioneAperta();
+							      		%>
+							      		var subtitle_<%= deName  %>_aperto = <%=sub %>; 
+							      		
+							      		if(subtitle_<%= deName  %>_aperto){
+						      				$("#<%= titleDivId  %>").show();
+						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+						      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
+						      			} else {
+						      				$("#<%= titleDivId  %>").hide();
+						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+						      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
+						      			}
+							      		
+							      		$("#<%= deName  %>__anchor").click(function(){
+							      			subtitle_<%= deName  %>_aperto = !subtitle_<%= deName  %>_aperto;
+							      			
+							      			if(subtitle_<%= deName  %>_aperto){
+							      				$("#<%= titleDivId  %>").show();
+							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+							      				inizializzaSelectSezione('<%= titleDivId  %>');
+							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
+							      			} else {
+							      				$("#<%= titleDivId  %>").hide();
+							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
+							      			}
+							      		});
+							      		
+							      		$("#<%= deName  %>__icon").click(function(){
+							      			subtitle_<%= deName  %>_aperto = !subtitle_<%= deName  %>_aperto;
+							      			
+							      			if(subtitle_<%= deName  %>_aperto){
+							      				$("#<%= titleDivId  %>").show();
+							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+							      				inizializzaSelectSezione('<%= titleDivId  %>');
+							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
+							      			} else {
+							      				$("#<%= titleDivId  %>").hide();
+							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
+							      			}
+							      		});
+        										});
+			        				</script>
+	    						<%
+	    							}
+	    						%>
+	    					<div id="<%= titleDivId  %>">
 	    			<%
 	    			fieldsetOpen = true;
     			}
@@ -639,14 +739,21 @@ for (int i = 0; i < dati.size(); i++) {
 		                          									<script>
 			                          									$(document).ready(function() {
 			                          									<%
+			                          										String abilitaSearch = "false";
 			                          										String disabilitaSearch= "{disableInput : false}";
-															      			if(!de.isAbilitaFiltroOpzioniSelect()){
-															      				disabilitaSearch = "{disableInput : true}";
-															      			}
+			                          										
+			                          										if(de.isAbilitaFiltroOpzioniSelect()){
+																      			abilitaSearch = "true";
+																      			disabilitaSearch= "{disableInput : false}";
+																      		} else {
+																      			abilitaSearch = "false";
+																      			disabilitaSearch = "{disableInput : true}";
+																      		}
 															      		%> 
 															      		$("#<%= selId %>").searchable(<%= disabilitaSearch %>);
 		                          										});
 		                          									</script>
+		                          									<input type="hidden" id="<%= selId  %>_hidden_chk" value="<%= abilitaSearch  %>"/>
 		                          									<%
 														      		if(deInfo != null){
 														      			String idDivIconInfo = "divIconInfo_"+i;
@@ -914,6 +1021,7 @@ for (int i = 0; i < dati.size(); i++) {
 
 	if(fieldsetOpen){ // se c'e' un fieldset aperto ed ho finito gli elementi devo chiudere
 		%>
+			</div>
 		</fieldset>
 		<%
 	}

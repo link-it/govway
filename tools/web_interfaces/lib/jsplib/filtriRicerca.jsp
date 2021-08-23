@@ -134,6 +134,7 @@ boolean inserisciSearch = true;
 								
 							}
 							
+							boolean subtitleOpen = false;
 							for(int iPD=0; iPD<pd.getFilterValues().size(); iPD++){
 	
 								DataElement filtroName = pd.getFilterNames().get(iPD);
@@ -148,25 +149,110 @@ boolean inserisciSearch = true;
 								String deLabelId = "de_label_"+iPD;
 								String deNote = filtro.getNote();
 								DataElementInfo deInfo = filtro.getInfo();
-								
-								%>
-									<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
-								<%
+																
 								if (type.equals("hidden")) {
 						    		%>
+						    		<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 						    		<input type="hidden" id="<%= filterId  %>" name="<%= filterName  %>" value="<%= filtro.getValue()  %>"/>
 				        			<%
 				        		} else { // else subtitle
 									if (type.equals("subtitle")){
+										// se c'e' un altro field set aperto viene chiuso
+					        			if(subtitleOpen){
+					        				%>
+					        				</div>
+					            			<%
+					            			subtitleOpen = false;
+					        			}
+										
+					        			String cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleCollapsed";
+					        			
+					    				if(filtro.isVisualizzaSezioneAperta()){
+					    					cssClassSubtitle = "subtitle " + labelStyleClass;
+					    				}
 					    				%>
-					        			<div class="subtitle <%= labelStyleClass %>">
-					        				<span class="subtitle"><a name="<%=rowName %>" class="navigatorAnchor"><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
+					        			<div class="<%= cssClassSubtitle %>" id="<%= filterName  %>__divEsterno">
+					        				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
+					        				<span class="subtitleGroup">
+					        					<span class="subtitleAnchor">
+					        						<i class="material-icons md-16" id="<%= filterName  %>__icon" style="" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+					        					</span>
+					        					<a id="<%= filterName  %>__anchor" name="<%=rowName %>" class="subtitleAnchor" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%=deLabel %></a>
+					        				</span>
+					        				<script type="text/javascript">
+					        					$(document).ready(function() {
+              									<%
+              										boolean sub = filtro.isVisualizzaSezioneAperta();
+									      		%>
+									      		var subtitle_<%= filterName  %>_aperto = <%=sub %>; 
+									      		
+									      		if(subtitle_<%= filterName  %>_aperto){
+								      				$("#<%= filterId  %>").show();
+								      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
+								      			} else {
+								      				$("#<%= filterId  %>").hide();
+								      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
+								      			}
+									      		
+									      		$("#<%= filterName  %>__anchor").click(function(){
+									      			subtitle_<%= filterName  %>_aperto = !subtitle_<%= filterName  %>_aperto;
+									      			
+									      			if(subtitle_<%= filterName  %>_aperto){
+									      				$("#<%= filterId  %>").show();
+									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
+									      				inizializzaSelectFiltro();
+									      			} else {
+									      				$("#<%= filterId  %>").hide();
+									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
+									      			}
+									      		});
+									      		
+									      		$("#<%= filterName  %>__icon").click(function(){
+									      			subtitle_<%= filterName  %>_aperto = !subtitle_<%= filterName  %>_aperto;
+									      			
+									      			if(subtitle_<%= filterName  %>_aperto){
+									      				$("#<%= filterId  %>").show();
+									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
+									      				inizializzaSelectFiltro();
+									      			} else {
+									      				$("#<%= filterId  %>").hide();
+									      				$("#<%= filterName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
+									      			}
+									      		});
+          										});
+					        				</script>
 					        			</div>
 					        			<%
+					        			
+					        			if(!subtitleOpen){
+					    	    			%>
+					    	    				<div id="<%= filterId  %>">
+					    	    			<%
+					    	    			subtitleOpen = true;
+					        			}
 					        		} else { // else subtitle
 					        			if (type.equals("textedit")){
 			                				%>
 			                    			<div class="prop">
+			                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 			                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 			                    				<input id="<%= filterId  %>" type="text" name="<%= filterName %>" value="<%= filtro.getValue() %>" class="<%= classInput %>">
 			                    				<% if(!deNote.equals("")){ %>
@@ -178,6 +264,7 @@ boolean inserisciSearch = true;
 						        			if (type.equals("number")){
 				                				%>
 				                    			<div class="prop">
+				                    				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 				                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 				                    				<%
 				                    				String minvalue = filtro.getMinValue() != null ? " min=\"" + filtro.getMinValue() + "\"" : "";
@@ -191,6 +278,7 @@ boolean inserisciSearch = true;
 						        				if (type.equals("textarea")){
 			                        				%>
 			                            			<div class="prop">
+			                            				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 			                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 							     						<div class="txtA_div">
 							     							<textarea id="<%=filterId %>" rows='<%= filtro.getRows() %>' cols='<%= filtro.getCols() %>' name="<%= filterName  %>" class="<%= classInput %>"><%= filtro.getValue() %></textarea>
@@ -207,7 +295,7 @@ boolean inserisciSearch = true;
 			            								%>
 			    										
 														<div class="prop">
-			
+															<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 															<label><%= filtro.getLabel() %></label>
 														  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
 															  	<%
@@ -232,6 +320,7 @@ boolean inserisciSearch = true;
 			                            				if (type.equals("checkbox")){
 	                                        				%>
 	                                            			<div class="prop">
+	                                            				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 	                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 	                                            				<%
 	                                            				String visualizzaAjaxStatus = filtro.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
@@ -272,6 +361,7 @@ boolean inserisciSearch = true;
 	                                            			if(type.equals("interval-number")){
 	                                            				%>
 	                                            					<div class="prop">
+	                                            						<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 									                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 									                    				<%
 																    		String minvalue = filtro.getMinValue() != null ? " min=\"" + filtro.getMinValue() + "\"" : "";
@@ -306,6 +396,11 @@ boolean inserisciSearch = true;
 				        		} // end else hidden
 			        		} // end for
 							
+							if(subtitleOpen){ // se c'e' un fieldset aperto ed ho finito gli elementi devo chiudere
+								%>
+								</div>
+								<%
+							}
 							// valutare se dopo aver disegnato tutto in pagina convenga eliminare le search dai filters
 							
 						} // if filtri

@@ -29,6 +29,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
+
 /**
  * PageData
  * 
@@ -512,10 +514,7 @@ public class PageData {
 		this.filter_values.add(deValue);
 	}
 	
-	public void addSubtitleFilter(String label) throws Exception{
-		this.addSubtitleFilter("subtitle", label);
-	}
-	public void addSubtitleFilter(String name, String label) throws Exception{
+	public void addSubtitleFilter(String name, String label, boolean visualizzaSottosezioneAperta) throws Exception{
 		if(this.filter_names == null) {
 			this.filter_names = new ArrayList<DataElement>();
 			this.filter_values = new ArrayList<DataElement>();
@@ -538,7 +537,63 @@ public class PageData {
 			throw new Exception("Label not found");
 		}
 		deValue.setLabel(label);
+		deValue.setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
 		this.filter_values.add(deValue);
+	}
+	
+	
+	public void impostaAperturaSubtitle(String name, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
+		if(this.filter_names != null) {
+			int idxSubtitle = -1;
+			for (int i = 0; i < this.filter_names.size(); i++) {
+				if(name.equals(this.filter_names.get(i).getValue())) {
+					idxSubtitle = i;
+					break;
+				}
+			}
+			
+			if(visualizzaSottosezioneAperta == null) {
+				// se ho trovato il subtitle allora prendo i filtri successivi
+				// finche non trovo un altro subtitle o finisce la lista
+				if(idxSubtitle > -1) {
+					List<DataElement> filter_values_to_check = new ArrayList<DataElement>();
+					
+					for (int i = idxSubtitle + 1; i < this.filter_names.size(); i++) {
+						DataElement de = this.filter_values.get(i);
+						if(de.getType().equals("subtitle")) {
+							// ho trovato un'altra sezione mi fermo
+							break;
+						} else {
+							filter_values_to_check.add(de);
+						}
+					}
+					visualizzaSottosezioneAperta = this.hasAlmostOneFilterDefined(filter_values_to_check);
+					
+					// se c'e' stata una postback la sezione dell'elemento che ha provocato il reload deve restare aperta 
+					if(postbackElementName != null) {
+						for (int i = 0; i < filter_values_to_check.size(); i++) {
+							if(filter_values_to_check.get(i).getName().equals(postbackElementName)) {
+								visualizzaSottosezioneAperta = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			this.updateSubtitleFilter(name, visualizzaSottosezioneAperta);
+		}
+	}
+	
+	public void updateSubtitleFilter(String name, boolean visualizzaSottosezioneAperta) {
+		if(this.filter_names != null) {
+			for (int i = 0; i < this.filter_names.size(); i++) {
+				if(name.equals(this.filter_names.get(i).getValue())) {
+					this.filter_values.get(i).setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
+					break;
+				}
+			}
+		}
 	}
 	
 	public void addHiddenFilter(String name, String value, int size) throws Exception{
@@ -594,8 +649,12 @@ public class PageData {
 		return this.filter_values;
 	}
 	public boolean hasAlmostOneFilterDefined() {
-		if(this.filter_values!=null) {
-			for (DataElement de : this.filter_values) {
+		return this.hasAlmostOneFilterDefined(this.filter_values);
+	}
+	
+	private boolean hasAlmostOneFilterDefined(List<DataElement> filter_values_to_check) {
+		if(filter_values_to_check!=null) {
+			for (DataElement de : filter_values_to_check) {
 				if(!de.getType().equals("hidden") && de.getValue()!=null && !("".equals(de.value) || Costanti.SA_TIPO_DEFAULT_VALUE.equals(de.value))) {
 					return true;
 				}

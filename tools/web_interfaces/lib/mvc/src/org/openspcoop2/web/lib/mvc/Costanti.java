@@ -259,6 +259,12 @@ public class Costanti {
 	public final static String TOOLTIP_NASCONDI_FILTRI_RICERCA = "Nascondi Filtri di Ricerca";
 	public final static String TOOLTIP_ICONA_COPIA = "Copia {0}";
 	
+	public final static String TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "Visualizza Sezione";
+	public final static String TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA = "Nascondi Sezione";
+	
+	public final static String ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "expand_more";
+	public final static String ICON_NASCONDI_SEZIONE_FILTRI_RICERCA = "expand_less";
+	
 	public final static String INFO_BUTTON_ICON = "&#xE88E;";
 	public final static String INFO_BUTTON_ICON_WHITE = "&#xE88F;";
 	public final static String ICON_DIALOG_HEADER = "&#xE8B2;";

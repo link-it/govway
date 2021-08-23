@@ -802,9 +802,11 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_METADATI_GRUPPO = "";
 	
 	public final static String LABEL_SUBTITLE_FILTRI_MODIPA = "Dati Profilo ModI";
+	public final static String NAME_SUBTITLE_FILTRI_MODIPA = "subtDatiProfiloModI";
 	public final static String LABEL_FILTRO_MODIPA_INFO_UTENTE = "Informazioni Utente";
 	
 	public final static String LABEL_SUBTITLE_PROPRIETA = "Dati Propriet&agrave;";
+	public final static String NAME_SUBTITLE_PROPRIETA = "subtDatiProp";
 	public final static String LABEL_FILTRO_PROPRIETA_NOME = "Nome";
 	public final static String LABEL_FILTRO_PROPRIETA_VALORE = "Valore";
 	
@@ -886,6 +888,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_SCOPE_MATCH = "scopeMatch";
 	public final static String PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO = "controlloAccessiStato";
 	
+	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_TITLE = "autenticazioneTitle";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE = "autenticazione";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO = "autenticazionePrincipalTipo";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST = "autenticazioneParametro";
@@ -897,10 +900,12 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME = "autenticazioneUsername";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL = "autenticazioneEMail";
 	
+	public final static String PARAMETRO_PORTE_ATTRIBUTI_STATO_TITLE = "attrStatoTitle";
 	public final static String PARAMETRO_PORTE_ATTRIBUTI_STATO = "attrStato";
 	public final static String PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY = "attrAuthority";
 	public final static String PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI = "AAttr";
 	
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_TITLE = "autorizzazioneTitle";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE = "autorizzazione";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "autorizzazioneCustom";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE = "autorizzazioneAutenticazione";
@@ -923,6 +928,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_APPLICA_MTOM = PARAMETRO_APPLICA_MTOM_RICHIESTA;
 	public final static String PARAMETRO_PROVIDER = "provider";
 	public final static String PARAMETRO_CONTROLLO_FIRST_TIME = "paramFirstTime";
+	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE = "gestioneTokenTitle";
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN = "gestioneToken";
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY = "gtPolicy";
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE = "gtOpzionale";
@@ -932,9 +938,11 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD = "gtTokenForward";
 	public final static String PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY = "docSicXacmlPol";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA = "autorizzazioneModIPA";
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO_TITLE = "autorizzazioneModIPAStatoTitle";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO = "autorizzazioneModIPAStato";
 	public final static String PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "saServerEnabled";
 	public final static String PARAMETRO_ID_APPLICATIVO_SERVER = "saServer";
+	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE = "authContenutiStatoTitle";
 	
 	public final static String PARAMETRO_RESET_SEARCH = "resetSearch";
 	

@@ -7751,8 +7751,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// nuovo filtro filtro
 			this.addFilterFiltroConnettoreMultiplo(ricerca, idLista, behaviourConFiltri);
 			
+			
+			// **** filtro connettore ****
+			
 			// nuovi filtri connettore
-			this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+			this.addFilterSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE, ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE, false);
 			
 			// filtro tipo connettore con voce IM solo sulle erogazioni
 			String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, true);
@@ -7769,6 +7772,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// filtro keystore
 			this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
 			
+			// imposto apertura sezione
+			this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
+
+			// **** fine filtro connettore ****
 			
 			
 			this.pd.setIndex(offset);
