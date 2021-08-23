@@ -538,7 +538,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 			}
 			
-			// nuovi filtri connettore
+			
+			// **** filtro connettore ****
+			
 			this.addFilterSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE, ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE, false);
 			
 			// filtro tipo connettore con voce IM solo sulle erogazioni
@@ -559,6 +561,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// imposto apertura sezione
 			this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
 						
+			// **** fine filtro connettore ****
+			
+			
+			// **** filtro modi ****
+			
 			if(profiloModipaSelezionato) {
 				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA, CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA, false);
 				
@@ -583,8 +590,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				// imposto apertura sezione
 				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA);
 			}
+			
+			// **** fine filtro modi ****
 
-			// filtri proprieta
+			
+			// **** filtro proprieta ****
+			
 			List<String> nomiProprieta =null;
 			if(gestioneFruitori) {
 				nomiProprieta = this.nomiProprietaPD(protocolloPerFiltroProprieta,soggettoPerFiltroProprieta);
@@ -604,6 +615,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				// imposto apertura sezione
 				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA);
 			}
+			
+			// **** fine filtro proprieta ****
 			
 
 			boolean showConfigurazionePA = false;

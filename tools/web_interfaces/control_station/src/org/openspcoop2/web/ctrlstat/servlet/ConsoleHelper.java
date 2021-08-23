@@ -4435,15 +4435,18 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 			}
 			
-			if(!allHidden && isSupportatoAutenticazioneSoggetti) {
+			boolean addTitle = !allHidden && isSupportatoAutenticazioneSoggetti;
+			if(addTitle) {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE); //SUBTITLE);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TITLE);
 				if(modipa && !isPortaDelegata) {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE+" "+CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_CANALE);
 				}
 				else {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE+" "+CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TRASPORTO);
 				}
+				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.APERTO);
 				dati.addElement(de);
 			}
 			
@@ -4489,6 +4492,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
 						de.setType(DataElementType.TEXT);
 						de.setValue(TipoAutenticazione.SSL.getLabel());
+						de.setValoreDefault(TipoAutenticazione.DISABILITATO.getLabel());
 					}
 					else if(existsAutorizzazioniPuntuali) {
 						de.setType(DataElementType.HIDDEN);
@@ -4507,6 +4511,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							}
 						}
 						de.setValue(labelAutenticazione!=null ? labelAutenticazione : autenticazione);
+						de.setValoreDefault(TipoAutenticazione.DISABILITATO.getLabel());
 					}
 					else {
 						de.setType(DataElementType.SELECT);
@@ -4515,6 +4520,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						//		de.setOnChange("CambiaTipoAuth('" + tipoOp + "', " + numCorrApp + ")");
 						de.setPostBack(true);
 						de.setSelected(autenticazione);
+						de.setValoreDefaultSelect(TipoAutenticazione.DISABILITATO.getValue());
 					}
 				}
 				dati.addElement(de);
@@ -4985,7 +4991,9 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 			}
 			
-			
+			if(addTitle) {
+				this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TITLE);
+			}
 			
 		} else {
 			DataElement de = new DataElement();
@@ -5026,7 +5034,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE); //SUBTITLE);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
+			de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
 			dati.addElement(de);
 			
 			String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
@@ -5037,6 +5047,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			de.setValues(valoriAbilitazione);
+			de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 			de.setPostBack(true);
 			de.setSelected(gestioneToken);
 			dati.addElement(de);
@@ -5127,6 +5138,9 @@ public class ConsoleHelper implements IConsoleHelper {
 					dati.addElement(de);
 				}
 			}
+			
+			this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
+			
 		} else {
 			// stato abilitazione
 			DataElement de = new DataElement();
@@ -5220,15 +5234,19 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(mostraSezione) {
 			
+			boolean addTitle = false;
 			if(!allHidden) {
+				addTitle = true;
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE); //SUBTITLE);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TITLE);
 				if(profiloModi && !isPortaDelegata) {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE);
 				}
 				else {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
 				}
+				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.APERTO);
 				dati.addElement(de);
 			}
 			
@@ -5259,6 +5277,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(tipoAutorizzazione_label);
 				de.setPostBack(true);
 				de.setSelected(autorizzazione);
+				de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 			}
 			dati.addElement(de);
 			
@@ -5814,6 +5833,11 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 				}
 			}
+			
+			if(addTitle) {
+				this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TITLE);
+			}
+			
 		} else {
 			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
@@ -5829,8 +5853,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO_TITLE);
 			//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE+" "+this.getProfiloModIPASectionTitle());
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO);
+			de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
 			dati.addElement(de);
 			
 //			de = new DataElement();
@@ -5853,6 +5879,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValues(valoriAbilitazione);
 			de.setPostBack(true);
 			de.setSelected(stato);
+			de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 			dati.addElement(de);
 			
 			if(StatoFunzionalita.ABILITATO.getValue().equals(stato)) {
@@ -5900,6 +5927,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 			}
+			
+			this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO_TITLE);
 		}
 		
 	}

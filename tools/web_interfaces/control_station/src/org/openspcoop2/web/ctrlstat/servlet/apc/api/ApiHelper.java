@@ -174,7 +174,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
 				}
 			}
-						
+				
+			
+			// **** filtro modi ****
+			
 			if(profiloModipaSelezionato) {
 				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA, CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA, false);
 				
@@ -194,6 +197,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA);
 			}
 			
+			// **** fine filtro modi ****
 			
 									
 			this.pd.setIndex(offset);

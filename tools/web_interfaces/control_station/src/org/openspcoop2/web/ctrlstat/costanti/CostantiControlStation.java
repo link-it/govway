@@ -883,6 +883,8 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_SCOPE = "scope";
 	public final static String PARAMETRO_SCOPE_MATCH = "scopeMatch";
 	public final static String PARAMETRO_PORTE_CONTROLLO_ACCESSI_STATO = "controlloAccessiStato";
+	
+	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_TITLE = "autenticazioneTitle";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE = "autenticazione";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO = "autenticazionePrincipalTipo";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST = "autenticazioneParametro";
@@ -893,6 +895,8 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT = "autenticazioneSubject";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME = "autenticazioneUsername";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL = "autenticazioneEMail";
+	
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_TITLE = "autorizzazioneTitle";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE = "autorizzazione";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "autorizzazioneCustom";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE = "autorizzazioneAutenticazione";
@@ -900,6 +904,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE = "autorizzazioneScope";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN = "autorizzazioneToken";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS = "autorizzazioneTokenOptions";
+	
 	public final static String PARAMETRO_PORTE_TRACCIAMENTO_ESITO = "portaEsiti";
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO = "authContenutiStato";
@@ -914,6 +919,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_APPLICA_MTOM = PARAMETRO_APPLICA_MTOM_RICHIESTA;
 	public final static String PARAMETRO_PROVIDER = "provider";
 	public final static String PARAMETRO_CONTROLLO_FIRST_TIME = "paramFirstTime";
+	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE = "gestioneTokenTitle";
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN = "gestioneToken";
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY = "gtPolicy";
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE = "gtOpzionale";
@@ -923,6 +929,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD = "gtTokenForward";
 	public final static String PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY = "docSicXacmlPol";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA = "autorizzazioneModIPA";
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO_TITLE = "autorizzazioneModIPAStatoTitle";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO = "autorizzazioneModIPAStato";
 	public final static String PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "saServerEnabled";
 	public final static String PARAMETRO_ID_APPLICATIVO_SERVER = "saServer";
