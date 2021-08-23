@@ -19,7 +19,7 @@ vuole modificare (:numref:`controlloAccessiFig`).
 
     Controllo degli Accessi
 
-Le tre sezioni seguenti descrivono le modalità per configurare i tre
+Le sezioni seguenti descrivono le modalità per configurare gli
 aspetti che compongono il controllo degli accessi.
 
 .. toctree::
@@ -27,6 +27,7 @@ aspetti che compongono il controllo degli accessi.
 
    gestioneToken
    autenticazione
+   identificazioneAttributi
    autorizzazione
    autorizzazioneContenuti
    creazioneSoggetto

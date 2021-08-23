@@ -15,6 +15,7 @@ per modificare i parametri di configurazione del gateway.
     controlloTraffico/index
     rateLimiting/index
     tokenPolicy/index
+    attributeAuthority/index
     tags
     utenti
     importa

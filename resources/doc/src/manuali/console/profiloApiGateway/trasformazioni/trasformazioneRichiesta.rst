@@ -51,7 +51,7 @@ Per la modifica del contenuto della richiesta devono essere forniti i seguenti d
 
     - HTTP Payload Vuoto: opzione presente nel caso REST. Il contenuto della richiesta diventa un payload http vuoto.
     - SOAP Body Vuoto: opzione presente nel caso SOAP. Il contenuto della richiesta diventa un messaggio SOAP con SoapBody vuoto.
-    - Template: il contenuto della richiesta viene assegnato utilizzando il template fornito in configurazione.
+    - Template: il contenuto della richiesta viene assegnato utilizzando il template fornito in configurazione, che può contenere parti dinamiche definite tramite una sintassi proprietaria di GovWay.
     - Freemarker Template: il contenuto della richiesta viene assegnato utilizzando il template "Freemarker" (https://freemarker.apache.org/) fornito in configurazione.
     - Freemarker Template (Archivio Zip): il file fornito deve essere un archivio zip contenenti dei files che rispettano la sintassi del template engine 'Freemarker'. Viene richiesta la presenza, all'interno dell'archivio zip, di un file indice che possieda il nome 'index.ftl'.
     - Velocity Template: il contenuto della richiesta viene assegnato utilizzando il template "Velocity" (http://velocity.apache.org/) fornito in configurazione.

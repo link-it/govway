@@ -5,19 +5,20 @@ Valori dinamici
 
 Le regole di trasformazione possono avvalersi di un contesto di risorse, con valori aggiornati dinamicamente dal gateway, cui attingere per le trasformazioni da attuare. Tali risorse sono utilizzabili quando si procede con la definizione di una regola di trasformazione. Elenchiamo le risorse disponibili:
 
--   header.NAME: valore dell'header http, corrispondente all'identificativo NAME, della richiesta.
--   query.NAME: valore di un parametro della url di invocazione, corrispondente all'identificativo NAME.
--   form.NAME: valore di un parametro della form, corrispondente all'identificativo NAME.
--   urlRegExp.EXPR: applicazione di un’espressione regolare, rappresentata dal valore EXPR, alla url di invocazione.
--   xPath.EXPR: applicazione di un'espressione XPath, rappresentata dal valore EXPR, alla richiesta xml (o soap).
--   jsonPath.EXPR: applicazione di un'espressione jsonPath, rappresentata dal valore EXPR, alla richiesta json.
--   transaction.id: l'identificativo UUID della transazione corrente.
--   date.FORMAT: la data di elaborazione del messaggio; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})
--   busta.FIELD: accesso alle informazioni proprie del profilo di interoperabilità utilizzato; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.Busta' (ad es. per il mittente usare *busta.mittente*)
--   property.NAME: accesso alle proprietà contenute nella traccia (ad esempio l'identificativo SDI); Il valore 'NAME' indica il nome della proprietà da utilizzare.
--   tokenInfo:FIELD: accesso ai claim di un token precedentemente validato; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.InformazioniToken' (es. per ottenere il valore del claim 'sub' usare ${tokenInfo:sub})
--   transportContext:FIELD: accesso ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})
--   config:NAME: accesso alle proprietà configurate per l'API; il valore 'NAME' indica la proprietà desiderata
+-   *header:NAME* : valore dell'header http, corrispondente all'identificativo NAME, della richiesta.
+-   *query:NAME* : valore di un parametro della url di invocazione, corrispondente all'identificativo NAME.
+-   *form:NAME* : valore di un parametro della form, corrispondente all'identificativo NAME.
+-   *urlRegExp:EXPR* : applicazione di un’espressione regolare, rappresentata dal valore EXPR, alla url di invocazione.
+-   *xPath:EXPR* : applicazione di un'espressione XPath, rappresentata dal valore EXPR, alla richiesta xml (o soap).
+-   *jsonPath:EXPR* : applicazione di un'espressione jsonPath, rappresentata dal valore EXPR, alla richiesta json.
+-   *transaction:id* : l'identificativo UUID della transazione corrente.
+-   *date:FORMAT* : la data di elaborazione del messaggio; il formato fornito deve essere conforme a quanto richiesto dalla classe java 'java.text.SimpleDateFormat' (es. ${date:yyyyMMdd_HHmmssSSS})
+-   *busta:FIELD* : accesso alle informazioni proprie del profilo di interoperabilità utilizzato; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.Busta' (ad es. per il mittente usare *busta.mittente*)
+-   *property:NAME*: accesso alle proprietà contenute nella traccia (ad esempio l'identificativo SDI); Il valore 'NAME' indica il nome della proprietà da utilizzare.
+-   *tokenInfo:FIELD* : accesso ai claim di un token precedentemente validato; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.InformazioniToken' (es. per ottenere il valore del claim 'sub' usare ${tokenInfo:sub})
+-   *aa:FIELD* : consente di accedere agli attributi recuperati tramite Attribute Authority; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi' (es. per ottenere il valore dell'attributo 'attr1' usare ${aa:attributes[attr1]}, se configurata solamente 1 A.A., altrimenti usare ${aa:attributes[nomeAttributeAuthority][attr1]} )
+-   *transportContext:FIELD* : accesso ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})
+-   *config:NAME* : accesso alle proprietà configurate per l'API; il valore 'NAME' indica la proprietà desiderata
 
 Per le risposte sono inoltre disponibili anche le seguenti risorse:
 
@@ -41,6 +42,7 @@ La sintassi per accedere le proprietà dinamiche sopraelencate è differente in 
 - ${busta:FIELD}
 - ${property:NAME}
 - ${tokenInfo:FIELD}
+- ${aa:FIELD}
 - ${transportContext:FIELD}
 - ${config:NAME}
 
@@ -57,6 +59,7 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - busta (org.openspcoop2.protocol.sdk.Busta)
 - property (java.util.Map<String, String>)
 - tokenInfo (org.openspcoop2.pdd.core.token.InformazioniToken)
+- aa (org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi)
 - transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext)
 - config (java.util.Map<String, String>)
 

@@ -38,3 +38,12 @@ Di seguito alcuni esempi:
 - client_id=${xPath:EXPR} : viene verificato che il claim 'client_id' possieda lo stesso valore estratto dalla richiesta xml tramite l'espressione XPath EXPR.
 - client_id=${jsonPath:EXPR} : viene verificato che il claim 'client_id' possieda lo stesso valore estratto dalla richiesta json tramite l'espressione jsonPath EXPR.
 
+Per verificare un attributo indicarlo con il prefisso 'attribute.' nella forma 'attribute.nome=valore'. Di seguito alcuni esempi
+
+- attribute.sesso=m : viene verificato che l'attributo 'sesso' possieda il valore m
+- attribute.stato=3,5,6 : viene verificato che l'attributo 'stato' possieda il valore 3 o 5 o 6
+
+Nel caso la configurazione relativa all':ref:`apiGwIdentificazioneAttributi` prevede più AA, la verifica di un attributo prelevato da un authority va indicato con i prefissi 'aa.' e 'attribute.' nella forma 'aa.nomeAuthority.attribute.nomeAttributo=valore'.
+
+- aa.AA2.attribute.sesso=m : viene verificato che l'attributo 'sesso', prelevato tramite l'Attribute Authority 'AA2', possia il valore m
+- aa.AA2.attribute.stato=3,5,6 : viene verificato che l'attributo 'stato', prelevato tramite l'Attribute Authority 'AA2', possia il valore 3 o 5 o 6
