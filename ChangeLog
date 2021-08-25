@@ -1,3 +1,10 @@
+2021-08-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1246
+	È adesso possibile censire Attribute Authority che consentono di definire politiche di controllo degli accessi basate sugli attributi.
+	Nell'intervento è stato aggiunto il tipo di errore 'ConnectorNotFound' utilizzato per identificare la casistica in cui non è stato possibile individuare il connettore che implementa l'API.
+
 2021-08-23  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole, GovWayMonitor]

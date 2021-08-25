@@ -3274,6 +3274,18 @@ public class RicezioneBuste {
 							}
 							detailsSet = true;
 							credenzialeTrasporto = esito.getCredential();
+							if(esito.isClientAuthenticated() && credenzialeTrasporto!=null && esito.isEnrichPrincipal()) {
+								// Aggiorno Principal
+						    	if(datiInvocazioneAutenticazione.getInfoConnettoreIngresso()!=null && datiInvocazioneAutenticazione.getInfoConnettoreIngresso().getUrlProtocolContext()!=null && 
+						    			datiInvocazioneAutenticazione.getInfoConnettoreIngresso().getUrlProtocolContext().getCredential()!=null &&
+						    					datiInvocazioneAutenticazione.getInfoConnettoreIngresso().getUrlProtocolContext().getCredential().getPrincipal()==null) {
+						    		datiInvocazioneAutenticazione.getInfoConnettoreIngresso().getUrlProtocolContext().getCredential().setPrincipal(credenzialeTrasporto);
+						    	}
+						    	if(datiInvocazioneAutenticazione.getInfoConnettoreIngresso()!=null && datiInvocazioneAutenticazione.getInfoConnettoreIngresso().getCredenziali()!=null &&
+						    			datiInvocazioneAutenticazione.getInfoConnettoreIngresso().getCredenziali().getPrincipal()==null) {
+						    		datiInvocazioneAutenticazione.getInfoConnettoreIngresso().getCredenziali().setPrincipal(credenzialeTrasporto);
+						    	}
+							}
 							
 							if(credenzialeTrasporto!=null) {
 								pddContext.addObject(org.openspcoop2.core.constants.Costanti.IDENTIFICATIVO_AUTENTICATO, credenzialeTrasporto);

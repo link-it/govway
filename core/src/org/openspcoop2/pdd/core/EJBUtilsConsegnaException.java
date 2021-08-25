@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core;
 
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 
 /**	
  * Contiene la definizione di una eccezione lanciata dalla classe EJBUtils
@@ -43,7 +44,8 @@ public class EJBUtilsConsegnaException extends EJBUtilsException {
 	private String messaggio;
 	private int livello;
 	private String codice;
-
+	private IntegrationFunctionError integrationFunctionError;
+	
 	public EJBUtilsConsegnaException(MsgDiagnostico msgDiag,String idFunzioneDiagnostica,String idDiagnostico){
 		this(msgDiag.getMessaggio_replaceKeywords(idFunzioneDiagnostica,idDiagnostico),
 				msgDiag.getLivello(idFunzioneDiagnostica,idDiagnostico),
@@ -83,5 +85,12 @@ public class EJBUtilsConsegnaException extends EJBUtilsException {
 		return this.codice;
 	}
 
+	public IntegrationFunctionError getIntegrationFunctionError() {
+		return this.integrationFunctionError;
+	}
+
+	public void setIntegrationFunctionError(IntegrationFunctionError integrationFunctionError) {
+		this.integrationFunctionError = integrationFunctionError;
+	}
 }
 

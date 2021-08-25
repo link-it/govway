@@ -202,3 +202,8 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'errori', verifica che, su API SOAP, eventuali risposte di errore senza un payload o con un payload html vengano gestite correttamente. 
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.errori
+
+Di seguito vengono descritti i test del package 'token':
+
+- 'attribute_authority', verifica l'interazione con le AttributeAuthority
+   ant run_test -Ddelete=false -Dload=false -Dpackage=token.attribute_authority

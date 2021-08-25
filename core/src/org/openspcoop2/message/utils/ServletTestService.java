@@ -50,6 +50,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -1278,6 +1279,8 @@ public class ServletTestService extends HttpServlet {
 					fileResponse = getParameter_checkWhiteList(req, this.whitePropertiesList, "op"); // alias per response, in modo da rendere meno evidente l'operazione
 				}
 				String responseContent = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContent");
+				String responseContentByHeader = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContentByHeader");
+				String responseContentByParameter = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContentByParameter");
 				ByteArrayOutputStream boutStaticFile = null;
 				if(fileDestinazione!=null || fileResponse!=null){
 					
@@ -1352,9 +1355,27 @@ public class ServletTestService extends HttpServlet {
 					}
 									
 				}
-				else if(responseContent!=null) {
+				else if(responseContent!=null || responseContentByHeader!=null || responseContentByParameter!=null) {
 					boutStaticFile = new ByteArrayOutputStream();
-					boutStaticFile.write(responseContent.getBytes());
+					if(responseContent!=null) {
+						boutStaticFile.write(responseContent.getBytes());
+					}
+					else if(responseContentByParameter!=null) {
+						String v = TransportUtils.getParameterFirstValue(req, responseContentByParameter);
+						boutStaticFile.write(v.getBytes());
+					}
+					else {
+						String v = TransportUtils.getHeaderFirstValue(req, responseContentByHeader);
+						if(v==null || StringUtils.isEmpty(v)) {
+							throw new Exception("Header '"+responseContentByHeader+"' not found");
+						}
+						if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(responseContentByHeader)) {
+							if(v.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BEARER)) {
+								v = v.substring(HttpConstants.AUTHORIZATION_PREFIX_BEARER.length());
+							}
+						}
+						boutStaticFile.write(v.getBytes());
+					}
 					boutStaticFile.flush();
 					boutStaticFile.close();
 					

@@ -54,6 +54,7 @@ public enum IntegrationFunctionError implements Serializable {
 	MESSAGE_SECURITY_REQUEST_FAILED(true),
 	INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED(true),
 	TRANSFORMATION_RULE_REQUEST_FAILED(true),
+	CONNECTOR_NOT_FOUND(true),
 	// Wrap
 	WRAP_400_INTERNAL_BAD_REQUEST(true),
 	
@@ -158,7 +159,8 @@ public enum IntegrationFunctionError implements Serializable {
 	
 	public boolean isWrapBadRequest() {
 		return ATTACHMENTS_PROCESSING_REQUEST_FAILED.equals(this) || MESSAGE_SECURITY_REQUEST_FAILED.equals(this) || 
-				INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED.equals(this) || TRANSFORMATION_RULE_REQUEST_FAILED.equals(this);
+				INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED.equals(this) || TRANSFORMATION_RULE_REQUEST_FAILED.equals(this) ||
+				CONNECTOR_NOT_FOUND.equals(this);
 	}
 	public boolean isWrapInternalError() {
 		return GOVWAY_NOT_INITIALIZED.equals(this) || GOVWAY_RESOURCES_NOT_AVAILABLE.equals(this) || 

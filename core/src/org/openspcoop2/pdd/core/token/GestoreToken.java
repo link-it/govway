@@ -3338,6 +3338,10 @@ public class GestoreToken {
 			bout.flush();
 			bout.close();
 			request = bout.toString();
+			
+			if(policyAttributeAuthority.isRequestJws()) {
+				request = normalizeJwtPayload(request);
+			}
 		}
 		else if(policyAttributeAuthority.isRequestDynamicPayloadVelocityTemplate()) {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -3345,12 +3349,22 @@ public class GestoreToken {
 			bout.flush();
 			bout.close();
 			request = bout.toString();
+			
+			if(policyAttributeAuthority.isRequestJws()) {
+				request = normalizeJwtPayload(request);
+			}
 		}
 		if(request==null || "".equals(request)) {
 			throw new Exception("Request undefined");
 		}
 		
 		return request;
+	}
+	
+	private static String normalizeJwtPayload(String payload) throws Exception {
+		JSONUtils jsonUtils = JSONUtils.getInstance(false);
+		JsonNode jwtPayload = jsonUtils.getAsNode(payload);
+		return jsonUtils.toString(jwtPayload);
 	}
 	
 	private static String buildAAJwt(PolicyAttributeAuthority policyAttributeAuthority, 
@@ -3667,14 +3681,23 @@ public class GestoreToken {
 			requestPayload = signAAJwt(policyAttributeAuthority, request);
 		}
 		if(policyAttributeAuthority.isRequestPositionBearer()) {
+			if(transportRequestContext.getHeaders()==null) {
+				transportRequestContext.setHeaders(new HashMap<String, List<String>>());
+			}
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+requestPayload;
 			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
 		}
 		else if(policyAttributeAuthority.isRequestPositionHeader()) {
+			if(transportRequestContext.getHeaders()==null) {
+				transportRequestContext.setHeaders(new HashMap<String, List<String>>());
+			}
 			String headerName = policyAttributeAuthority.getRequestPositionHeaderName();
 			TransportUtils.setHeader(transportRequestContext.getHeaders(),headerName, requestPayload);
 		}
 		else if(policyAttributeAuthority.isRequestPositionQuery()) {
+			if(transportRequestContext.getParameters()==null) {
+				transportRequestContext.setParameters(new HashMap<String, List<String>>());
+			}
 			String queryParameterName = policyAttributeAuthority.getRequestPositionQueryParameterName();
 			TransportUtils.setParameter(transportRequestContext.getParameters(), queryParameterName, requestPayload);
 		}

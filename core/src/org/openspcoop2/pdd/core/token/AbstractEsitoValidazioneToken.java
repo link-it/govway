@@ -94,7 +94,7 @@ public abstract class AbstractEsitoValidazioneToken extends EsitoToken implement
 		bf.append("token valido: ");
 		bf.append(this.valido);
 		
-		bf.append("date valide: ");
+		bf.append(" date valide: ");
 		bf.append(this.dateValide);
 		
 		bf.append(" info in cache: ");

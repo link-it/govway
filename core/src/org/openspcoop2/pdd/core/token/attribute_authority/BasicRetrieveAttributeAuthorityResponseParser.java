@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.token.attribute_authority;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -150,13 +151,40 @@ public class BasicRetrieveAttributeAuthorityResponseParser implements IRetrieveA
 								else if(selectedClaim instanceof ArrayNode) {
 									ArrayNode array = (ArrayNode) selectedClaim;
 									if(array.size()>0) {
-										for (int i = 0; i < array.size(); i++) {
-											JsonNode arrayChildNode = array.get(i);
-											Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(arrayChildNode);
-											if(readClaims!=null && readClaims.size()>0) {
-												for (String claim : readClaims.keySet()) {
-													Object value = readClaims.get(claim);
-													_addAttribute(attributes, claim, value);
+										JsonNode arrayFirstChildNode = array.get(0);
+										if(arrayFirstChildNode instanceof ValueNode) {
+											List<Object> l = new ArrayList<Object>();
+											for (int i = 0; i < array.size(); i++) {
+												JsonNode arrayChildNode = array.get(i);
+												Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(arrayChildNode);
+												if(readClaims!=null && readClaims.size()>0) {
+													if(readClaims.size()==1) {
+														for (String claim : readClaims.keySet()) {
+															Object value = readClaims.get(claim);
+															l.add(value);
+														}
+													}
+													else {
+														for (String claim : readClaims.keySet()) {
+															Object value = readClaims.get(claim);
+															_addAttribute(attributes, claim==null ? field : claim, value);
+														}
+													}
+												}
+											}
+											if(!l.isEmpty()) {
+												_addAttribute(attributes, field, l);
+											}
+										}
+										else {
+											for (int i = 0; i < array.size(); i++) {
+												JsonNode arrayChildNode = array.get(i);
+												Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(arrayChildNode);
+												if(readClaims!=null && readClaims.size()>0) {
+													for (String claim : readClaims.keySet()) {
+														Object value = readClaims.get(claim);
+														_addAttribute(attributes, claim, value);
+													}
 												}
 											}
 										}

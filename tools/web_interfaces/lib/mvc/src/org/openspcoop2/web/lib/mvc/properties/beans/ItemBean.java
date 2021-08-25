@@ -386,6 +386,12 @@ public class ItemBean extends BaseItemBean<Item>{
 				if(itemValue!=null && itemValue.length()>4000) {
 					throw new UserInputValidationException("Il Campo "+this.getLabel()+" non deve contenere più di 4000 caratteri");
 				}
+				if(itemValue!=null && (itemValue.startsWith(" ") || itemValue.startsWith("\t"))) {
+					throw new UserInputValidationException("Il valore inserito nel Campo "+this.getLabel()+" non può iniziare con uno spazio");
+				}
+				if(itemValue!=null && (itemValue.endsWith(" ") || itemValue.endsWith("\t"))) {
+					throw new UserInputValidationException("Il valore inserito nel Campo "+this.getLabel()+" non può terminare con uno spazio");
+				}
 				break;
 			case CHECKBOX:
 			case HIDDEN:

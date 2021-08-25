@@ -11,7 +11,7 @@ Inoltre le singole AA definiscono nelle proprie specifiche di integrazione quali
 .. note::
    Gli attributi che possono essere richiesti ad una AA si suddividono tra quelli senza necessità di consenso dell'utente e quelli che ne richiedono un consenso. Le AA configurabili su GovWay consentiranno di richiedere attributi che non necessitano di consenso dell'utente.
 
-Per poter definire politiche di controllo degli accessi basate sugli attributi o per poterne spedire uno verso l'endpoint associato ad un connettore è necessario registrare uno o più AA che dovranno poi essere riferite nella configurazione degli specifici servizi.
+Per poter definire politiche di controllo degli accessi basate sugli attributi è necessario registrare uno o più AA che dovranno poi essere riferite nella configurazione degli specifici servizi.
 
 La gestione delle AA si effettua andando alla sezione *Configurazione > Attribute Authority* della govwayConsole. Per registrarne una nuova si utilizza il pulsante *Aggiungi*. Il form di creazione appare inizialmente come quello
 illustrato in :numref:`aaFig`.

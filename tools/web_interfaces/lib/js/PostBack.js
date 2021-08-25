@@ -145,6 +145,10 @@ function scrollToPostBackElement(destElement) {
 			if(elemPosiz.length == 0) {
 				elemPosiz = elem.closest("fieldset").find('legend > a.navigatorAnchor');
 			}
+			
+			if(elemPosiz.length == 0) {
+				elemPosiz = elem.closest("fieldset").find('legend > a.navigatorAnchorClosable');
+			}
 			 
 			if(elemPosiz.length > 0){
 				var baseUrl = elemPosiz[0].name; //navAnc.attr('name');

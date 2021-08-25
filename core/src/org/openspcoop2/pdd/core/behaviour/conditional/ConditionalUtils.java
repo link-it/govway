@@ -51,6 +51,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -322,8 +323,10 @@ public class ConditionalUtils  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
 				
 				if(config.getCondizioneNonIdentificata().isAbortTransaction()) {
-					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+					BehaviourEmitDiagnosticException be = new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 							"connettoriMultipli.consegnaCondizionale.identificazioneFallita.error", e);
+					be.setIntegrationFunctionError(IntegrationFunctionError.CONNECTOR_NOT_FOUND);
+					throw be;
 				}
 				else {
 					if(config.getCondizioneNonIdentificata().isEmitDiagnosticError()) {
@@ -417,8 +420,10 @@ public class ConditionalUtils  {
 			
 			if(TipoBehaviour.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
 				if(l.size()>1) {
-					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+					BehaviourEmitDiagnosticException be = new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 							"connettoriMultipli.servizioSincrono.consegnaVersoNServiziApplicativi");
+					be.setIntegrationFunctionError(IntegrationFunctionError.CONNECTOR_NOT_FOUND);
+					throw be;
 				}
 			}
 			
@@ -428,12 +433,16 @@ public class ConditionalUtils  {
 		else {
 			if(config.getNessunConnettoreTrovato().isAbortTransaction()) {
 				if(config.isByFilter()) {
-					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+					BehaviourEmitDiagnosticException be = new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 							"connettoriMultipli.consegnaCondizionale.connettoreNonEsistente.filtro.error");
+					be.setIntegrationFunctionError(IntegrationFunctionError.CONNECTOR_NOT_FOUND);
+					throw be;
 				}
 				else {
-					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+					BehaviourEmitDiagnosticException be = new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 							"connettoriMultipli.consegnaCondizionale.connettoreNonEsistente.nomeConnettore.error");
+					be.setIntegrationFunctionError(IntegrationFunctionError.CONNECTOR_NOT_FOUND);
+					throw be;
 				}
 			}
 			else {
