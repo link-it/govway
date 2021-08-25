@@ -33,6 +33,8 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.info.DatiEsitoTransazione;
 import org.openspcoop2.pdd.logger.info.DatiMittente;
@@ -64,6 +66,7 @@ public class Info {
 	private org.openspcoop2.core.transazioni.Transazione transazione;
 	private EsitiProperties esitiProperties;
 	private CredenzialiMittente credenzialiMittente;
+	private InformazioniAttributi informazioniAttributi;
 	
 	private Traccia tracciaRichiesta;
 	private Traccia tracciaRisposta;
@@ -96,6 +99,7 @@ public class Info {
 	public Info(Logger log,
 			org.openspcoop2.core.transazioni.Transazione transazione, 
 			CredenzialiMittente credenzialiMittente,
+			InformazioniAttributi informazioniAttributi,
 			Traccia tracciaRichiesta, Traccia tracciaRisposta,
 			List<MsgDiagnostico> msgDiagnostici,
 			Messaggio richiestaIngresso, Messaggio richiestaUscita,
@@ -106,6 +110,7 @@ public class Info {
 		this.transazione = transazione;
 		this.esitiProperties = EsitiProperties.getInstance(log, transazione.getProtocollo());
 		this.credenzialiMittente = credenzialiMittente;
+		this.informazioniAttributi = informazioniAttributi;
 		this.tracciaRichiesta = tracciaRichiesta;
 		this.tracciaRisposta = tracciaRisposta;
 		this.msgDiagnostici = msgDiagnostici;
@@ -1157,7 +1162,53 @@ public class Info {
 	public java.lang.String getTokenMail(String defaultValue) {
 		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_eMail()!=null ? this.credenzialiMittente.getToken_eMail().getCredenziale() : null, defaultValue);
 	}
-		 
+	
+	public java.lang.String getAttribute(String attributeName) {
+		return getAttribute(attributeName, null);
+	}
+	public java.lang.String getAttribute(String attributeName, String defaultValue) {
+		String v = null;
+		if(attributeName!=null &&
+				this.informazioniAttributi!=null && 
+				(this.informazioniAttributi.isMultipleAttributeAuthorities()==null || !this.informazioniAttributi.isMultipleAttributeAuthorities()) &&
+				this.informazioniAttributi.getAttributes()!=null && 
+				this.informazioniAttributi.getAttributes().containsKey(attributeName)) {
+			Object valueAttributeObject = this.informazioniAttributi.getAttributes().get(attributeName);
+			if(valueAttributeObject!=null) {
+				List<String> lClaimValues = TokenUtilities.getClaimValues(valueAttributeObject);
+				v = TokenUtilities.getClaimValuesAsString(lClaimValues);
+			}
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getAttributeByAA(String attributeAuthorityName, String attributeName) {
+		return getAttributeByAA(attributeAuthorityName, attributeName, null);
+	}
+	public java.lang.String getAttributeByAA(String attributeAuthorityName, String attributeName, String defaultValue) {
+		String v = null;
+		if(attributeAuthorityName!=null && attributeName!=null) {
+			if(this.informazioniAttributi!=null && 
+					this.informazioniAttributi.isMultipleAttributeAuthorities()!=null && this.informazioniAttributi.isMultipleAttributeAuthorities() &&
+					this.informazioniAttributi.getAttributes()!=null && 
+					this.informazioniAttributi.getAttributes().containsKey(attributeAuthorityName)) {
+				Object o = this.informazioniAttributi.getAttributes().get(attributeAuthorityName);
+				if(o instanceof Map) {
+					@SuppressWarnings("unchecked")
+					Map<String, Object> map = (Map<String, Object>) o;
+					if(map.containsKey(attributeName)) {
+						Object valueAttributeObject = map.get(attributeName);
+						if(valueAttributeObject!=null) {
+							List<String> lClaimValues = TokenUtilities.getClaimValues(valueAttributeObject);
+							v = TokenUtilities.getClaimValuesAsString(lClaimValues);
+						}
+					}
+				}
+			}
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
 	public java.lang.String getClientIP() {
 		return getClientIP(null);
 	}

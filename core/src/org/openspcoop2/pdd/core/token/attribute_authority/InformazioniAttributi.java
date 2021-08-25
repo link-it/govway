@@ -49,6 +49,9 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 	private static final long serialVersionUID = 1L;
 	
 	public InformazioniAttributi() {} // per serializzatore
+	public InformazioniAttributi(String sourceAttributeAuthority) {
+		this.sourceAttributeAuthority = sourceAttributeAuthority;
+	} // per test
 	public InformazioniAttributi(String sourceAttributeAuthority, String rawResponse, IRetrieveAttributeAuthorityResponseParser responseParser) throws Exception {
 		this(null,sourceAttributeAuthority, rawResponse,responseParser);
 	}

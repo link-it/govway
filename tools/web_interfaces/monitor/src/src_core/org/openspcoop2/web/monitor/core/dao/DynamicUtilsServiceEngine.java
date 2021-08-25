@@ -68,6 +68,7 @@ import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -1137,8 +1138,12 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 				
 			}
 			
-			expr.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE).and().notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO);
-
+			IExpression exprClient = this.serviziApplicativiDAO.newExpression();
+			exprClient.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE).and().notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO);
+			IExpression exprServerUseAsClient = this.serviziApplicativiDAO.newExpression();
+			exprServerUseAsClient.isNotNull(ServizioApplicativo.model().AS_CLIENT).and().equals(ServizioApplicativo.model().AS_CLIENT, CostantiDB.TRUE);
+			expr.or(exprClient, exprServerUseAsClient);
+			
 			if(tipoProtocollo != null)
 				expr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.serviziApplicativiDAO, ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoProtocollo));
 

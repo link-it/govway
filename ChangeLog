@@ -1,5 +1,11 @@
 2021-08-25  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole, GovWayMonitor]
+	Risolto bug che non consentiva l'associazione di ruoli ad un applicativo server in cui era stata abilitata l'opzione 'Utilizzabile come Client'.
+	Gli applicativi server, utilizzabili anche come client, non venivano inoltre riportati nemmeno nella lista degli applicativi fornita dalla tipologia di ricerca per applicativo nella console di monitoraggio.
+
+2021-08-25  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-1246
 	È adesso possibile censire Attribute Authority che consentono di definire politiche di controllo degli accessi basate sugli attributi.

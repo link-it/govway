@@ -242,6 +242,10 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - tokenMail: eMail presente nel token;
 
+- attribute(nomeAttributo): valore dell'attributo indicato come parametro (informazione disponibile solamente se nell'erogazione/fruizione è stata configurata una sola A.A.);
+
+- attributeByAA(nomeAttributeAuthority,nomeAttributo): valore dell'attributo recuperato tramite l'AttributeAuthority indicata come parametro (informazione disponibile solamente se nell'erogazione/fruizione è stata configurata più di una A.A.);
+
 - clientIP: indirizzo IP del client;
 
 - forwardedIP: indirizzo IP presente nella richiesta in uno degli header http appartenente alla classe "Forwarded-For" o "Client-IP";
