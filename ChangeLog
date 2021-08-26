@@ -3,6 +3,8 @@
 	* [GovWayConsole]
 	Nella maschera di dettaglio di una erogazione o fruizione, in presenza di un connettore di lunghezza superiore ai 150 caratteri viene visualizzata una informazione troncata contenente il suffisso ' ...'.
 	Lo stesso accorgimento è stato adottato nelle liste degli header HTTP e dei parametri della URL configurabili nelle trasformazioni.
+	La creazione di un nuovo gruppo, in una erogazione non andava a buon fine se durante la creazione veniva scelto di ereditare le configurazioni di un gruppo non predefinito, 
+	configurato per utilizzare un connettore ridefinito con consegna multipla.
 
 2021-08-26  Andrea Poli <apoli@link.it>
 

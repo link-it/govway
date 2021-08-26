@@ -2112,7 +2112,9 @@ public class AccordiServizioParteSpecificaUtilities {
 			org.openspcoop2.core.config.Connettore connettorePDClonato = null;
 			InvocazioneServizioTipoAutenticazione tipoAutenticazioneClonata = null;
 			InvocazioneCredenziali invocazioneCredenzialiClonata = null;
-			if(!ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) && portaApplicativaDaCopiare!=null && !mappingSelezionato.isDefault()) {
+			if(!ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) && portaApplicativaDaCopiare!=null && !mappingSelezionato.isDefault() && 
+					portaApplicativaDaCopiare.getServizioApplicativoList().size()<2 // se ho clonato una porta applicativa multi connettore devo clonare tutti i connettori associati (vedo cpdoce sottostante)
+					) {
 				PortaApplicativaServizioApplicativo portaApplicativaDaCopiareServizioApplicativo = portaApplicativaDaCopiare.getServizioApplicativoList().get(0);
 				if(portaApplicativaDaCopiareServizioApplicativo.getNome().equals(portaApplicativaDaCopiare.getNome())) { 
 					// ridefinito
