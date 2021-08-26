@@ -1,3 +1,9 @@
+2021-08-26  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1246
+	È adesso possibile censire Attribute Authority anche attraverso le API di configurazione.
+
 2021-08-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, GovWayMonitor]

@@ -1,0 +1,12 @@
+{
+  "abilitato" : true,
+  "attributeAuthority" : [ {
+    "nome" : "AuthorizationBearer",
+    "attributi" : [ "a1", "a2", "a3", "a4" ]
+  },{
+    "nome" : "HeaderHTTP",
+    "attributi" : [ "a1", "a2" ]
+  },{
+    "nome" : "ParametroURL"
+  }]
+}

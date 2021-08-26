@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Configurazione;
@@ -3700,7 +3701,11 @@ public class ErogazioniApiHelper {
 		String [] attributeAuthoritySelezionate = null; 
 		String attributeAuthorityAttributi = null;
 		if(newPd.sizeAttributeAuthorityList()>0) {
-			attributeAuthoritySelezionate = newPd.getAttributeAuthorityList().toArray(new String[1]);
+			List<String> l = new ArrayList<String>();
+			for (AttributeAuthority aa : newPd.getAttributeAuthorityList()) {
+				l.add(aa.getNome());
+			}
+			attributeAuthoritySelezionate = l.toArray(new String[1]);
 			attributeAuthorityAttributi = env.apsCore.buildAttributesStringFromAuthority(newPd.getAttributeAuthorityList());
 		}
 		
@@ -3790,7 +3795,11 @@ public class ErogazioniApiHelper {
 		String [] attributeAuthoritySelezionate = null; 
 		String attributeAuthorityAttributi = null;
 		if(newPa.sizeAttributeAuthorityList()>0) {
-			attributeAuthoritySelezionate = newPa.getAttributeAuthorityList().toArray(new String[1]);
+			List<String> l = new ArrayList<String>();
+			for (AttributeAuthority aa : newPa.getAttributeAuthorityList()) {
+				l.add(aa.getNome());
+			}
+			attributeAuthoritySelezionate = l.toArray(new String[1]);
 			attributeAuthorityAttributi = env.apsCore.buildAttributesStringFromAuthority(newPa.getAttributeAuthorityList());
 		}
 		

@@ -33,12 +33,14 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.CorsConfigurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
@@ -57,6 +59,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.config.rs.server.api.ErogazioniConfigurazioneApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Enums;
@@ -77,6 +80,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplStato;
 import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
 import org.openspcoop2.core.config.rs.server.model.ConfigurazioneApiCanale;
 import org.openspcoop2.core.config.rs.server.model.ConfigurazioneCanaleEnum;
+import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAttributeAuthority;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazioneToken;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazione;
@@ -90,6 +94,7 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiErogazioneAutorizzazioneApplicativi;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiErogazioneAutorizzazioneApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
+import org.openspcoop2.core.config.rs.server.model.ControlloAccessiIdentificazioneAttributi;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaEnum;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaItem;
@@ -1916,6 +1921,57 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
+
+   /**
+     * Restituisce la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+     *
+     * Questa operazione consente di ottenere la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+     *
+     */
+	@Override
+    public ControlloAccessiIdentificazioneAttributi getErogazioneControlloAccessiIdentificazioneAttributi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+        
+			final ControlloAccessiIdentificazioneAttributi ret = new ControlloAccessiIdentificazioneAttributi();
+			if(pa.sizeAttributeAuthorityList()>0) {
+				ret.setAbilitato(true);
+				ret.setAttributeAuthority(new ArrayList<ControlloAccessiAttributeAuthority>());
+				for (AttributeAuthority aa : pa.getAttributeAuthorityList()) {
+					ControlloAccessiAttributeAuthority attributeAuthorityItem = new ControlloAccessiAttributeAuthority();
+					attributeAuthorityItem.setNome(aa.getNome());
+					if(aa.sizeAttributoList()>0) {
+						attributeAuthorityItem.setAttributi(new ArrayList<String>());
+						for (String attributeName : aa.getAttributoList()) {
+							attributeAuthorityItem.addAttributiItem(attributeName);
+						}
+					}
+					ret.addAttributeAuthorityItem(attributeAuthorityItem);
+				}
+			}
+			else {
+				ret.setAbilitato(false);
+			}
+
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
     
     /**
      * Restituisce le proprietà di configurazione attivate
@@ -2582,6 +2638,79 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			context.getLogger().info("Invocazione completata con successo");
      
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    /**
+     * Consente di modificare la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+     *
+     * Questa operazione consente di aggiornare la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+     *
+     */
+	@Override
+    public void updateErogazioneControlloIdentificazioneAttributi(ControlloAccessiIdentificazioneAttributi body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa oldPa = env.paCore.getPortaApplicativa(env.idPa);
+			final PortaApplicativa newPa = env.paCore.getPortaApplicativa(env.idPa);
+        
+			if (body.isAbilitato() && body.getAttributeAuthority()!=null && !body.getAttributeAuthority().isEmpty()) {
+				if(newPa.getAttributeAuthorityList()==null) {
+					newPa.setAttributeAuthorityList(new ArrayList<AttributeAuthority>());
+				}
+				else {
+					newPa.getAttributeAuthorityList().clear();
+				}
+				for (ControlloAccessiAttributeAuthority controlloAccessiAttributeAuthority : body.getAttributeAuthority()) {
+					
+					GenericProperties gp = null;
+					try {
+						gp = env.confCore.getGenericProperties(controlloAccessiAttributeAuthority.getNome(), org.openspcoop2.pdd.core.token.Costanti.ATTRIBUTE_AUTHORITY, false);
+					}catch(DriverConfigurazioneNotFound notFound) {}
+					if(gp==null) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("AttributeAuthority '"+controlloAccessiAttributeAuthority.getNome()+"' non esistente");
+					}
+					
+					AttributeAuthority aa = new AttributeAuthority();
+					aa.setNome(controlloAccessiAttributeAuthority.getNome());
+					if(controlloAccessiAttributeAuthority.getAttributi()!=null && !controlloAccessiAttributeAuthority.getAttributi().isEmpty()) {
+						aa.setAttributoList(controlloAccessiAttributeAuthority.getAttributi());
+					}
+					newPa.addAttributeAuthority(aa);
+				}
+			}
+			else {
+				if(newPa.getAttributeAuthorityList()!=null) {
+					newPa.getAttributeAuthorityList().clear();
+				}
+				else {
+					newPa.setAttributeAuthorityList(new ArrayList<AttributeAuthority>());
+				}
+			}
+			
+			if ( !ErogazioniApiHelper.controlloAccessiCheckPA(env, oldPa, newPa) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+			}
+			
+			env.paCore.performUpdateOperation(env.userLogin, false, newPa);
+			
+			context.getLogger().info("Invocazione completata con successo");
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());

@@ -2166,6 +2166,33 @@ components:
           type: boolean
           default: false   
 
+    ControlloAccessiIdentificazioneAttributi:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            required:
+            - abilitato
+            properties:
+              abilitato:
+                description: indica se la gestione del token è abilitata o meno
+                type: boolean
+              attributeAuthority:
+               type: array
+               items:
+                 $ref: '#/components/schemas/ControlloAccessiAttributeAuthority'
+    ControlloAccessiAttributeAuthority:
+      type: object
+      required:
+      - nome
+      properties:
+        nome:
+          $ref: '#/components/schemas/AAName'
+        attributi:
+          type: array
+          items:
+            type: string
+
     ControlloAccessiAutorizzazioneView:
        type: object
        allOf:
@@ -2776,6 +2803,12 @@ components:
         valore:
           type: string
           maxLength: 4000
+
+    AAName:
+      type: string
+      pattern: ^[_A-Za-z][\-_A-Za-z0-9]*$
+      maxLength: 255
+      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' e '-'
           
     # Base: Enumeration
     FormatoSoapEnum:

@@ -109,6 +109,7 @@
 				<!-- config -->
 				<include name="StatoApiDescrizione.java"/>
 				<include name="IdCanale.java"/>
+				<include name="AAName.java"/>
 
 			</fileset>
 		</delete>
@@ -145,6 +146,8 @@
 			token="^[_A-Za-z][\-\._A-Za-z0-9]*$" value="^[_A-Za-z][\\-\\._A-Za-z0-9]*$" includes="*.java"/>
 		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model"
 			token="^[^\s]+$" value="^[^\\s]+$" includes="*.java"/>
+		<replace dir="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/model"
+			token="^[_A-Za-z][\-_A-Za-z0-9]*$" value="^[_A-Za-z][\\-_A-Za-z0-9]*$" includes="*.java"/>
 
 		<replace file="${src_govwayConfigApiRS}/org/openspcoop2/core/config/rs/server/api/StatusApi.java"
 			token="ProblemTeamDigitale" value="Problem"/>
