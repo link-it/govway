@@ -19204,4 +19204,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			dati.get(idxSubtitle).setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
 		}
 	}
+	
+	public String formatInfoForView(String info) {
+		if(info==null) {
+			return null;
+		}
+		if(info.length()>this.core.getViewLunghezzaMassimaInformazione()) {
+			return info.substring(0, this.core.getViewLunghezzaMassimaInformazione()) + " ...";
+		}
+		else {
+			return info;
+		}
+	}
 }

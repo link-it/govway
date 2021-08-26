@@ -1234,6 +1234,10 @@ public class ConsoleProperties {
 		return this.readIntegerProperty(true, "console.selectListSoggettiOperativi.lunghezzaMassimaLabel");
 	}
 	
+	public Integer getLunghezzaMassimaInformazioneView() throws Exception{
+		return this.readIntegerProperty(true, "console.view.lunghezzaMassimaInformazione");
+	}
+	
 	public boolean isSetSearchAfterAdd() throws UtilsException{
 		return this.readBooleanProperty(true, "console.setSearchAfterAdd");
 	}

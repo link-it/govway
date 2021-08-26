@@ -5273,7 +5273,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -5411,7 +5414,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -5549,7 +5555,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);

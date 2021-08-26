@@ -1800,7 +1800,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				if(!connettoreMultiploEnabled) {	
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
-					de.setValue(urlConnettore);
+					de.setValue(formatInfoForView(urlConnettore));
 					String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 					de.setToolTip(tooltipConnettore);
 				} else {
@@ -2042,7 +2042,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				if(!connettoreStatic) {
 					
-					de.setValue(urlConnettore);
+					de.setValue(formatInfoForView(urlConnettore));
 					de.setToolTip(tooltipConnettore);
 					
 					List<Parameter> listParametersConnettore = new ArrayList<>();

@@ -1,5 +1,11 @@
 2021-08-26  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Nella maschera di dettaglio di una erogazione o fruizione, in presenza di un connettore di lunghezza superiore ai 150 caratteri viene visualizzata una informazione troncata contenente il suffisso ' ...'.
+	Lo stesso accorgimento è stato adottato nelle liste degli header HTTP e dei parametri della URL configurabili nelle trasformazioni.
+
+2021-08-26  Andrea Poli <apoli@link.it>
+
 	* [ApiRsConfigurazione]
 	Aggiunta funzionalità OP-1246
 	È adesso possibile censire Attribute Authority anche attraverso le API di configurazione.
