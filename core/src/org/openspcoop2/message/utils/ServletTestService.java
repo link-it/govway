@@ -1058,7 +1058,7 @@ public class ServletTestService extends HttpServlet {
 			String contentTypeRichiesta = req.getContentType();
 			StringBuilder sb = new StringBuilder();
 			if(debug || logMessage || saveMessageDir!=null ) {
-				sb.append("--------  Messaggio ricevuto il : "+(new Date()).toString()+" [ct:"+contentTypeRichiesta+"] -------------\n\n");
+				sb.append("--------  Messaggio ricevuto il : "+(new Date()).toString()+" [ct:"+contentTypeRichiesta+"] [httpVersion:"+req.getProtocol()+"] -------------\n\n");
 			}
 			if(logMessage){
 				if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {

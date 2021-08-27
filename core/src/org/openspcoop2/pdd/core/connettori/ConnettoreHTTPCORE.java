@@ -93,7 +93,7 @@ import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
+public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 
 	public static final String ENDPOINT_TYPE = "httpcore";
 	
@@ -225,17 +225,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	}
 	
 	@Override
-	protected boolean send(ConnettoreMsg request) {
-		
-		// HTTPS
-		try{
-			this.setSSLContext();
-		}catch(Exception e){
-			this.eccezioneProcessamento = e;
-			this.logger.error("[HTTPS error]"+ this.readExceptionMessageFromException(e),e);
-			this.errore = "[HTTPS error]"+ this.readExceptionMessageFromException(e);
-			return false;
-		}
+	protected boolean sendHTTP(ConnettoreMsg request) {
 		
 		try{
 			
@@ -834,64 +824,10 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 		
 	
 	
-    /**
-     * Ritorna l'informazione su dove il connettore sta spedendo il messaggio
-     * 
-     * @return location di inoltro del messaggio
-     */
-    @Override
-	public String getLocation(){
-    	if(this.location==null){
-    		// può darsi che per un errore non sia ancora stata inizializzata la location
-    		try{
-    			this.buildLocation();
-    		}catch(Throwable t){}
-    	}
-    	if(this.location!=null){
-    		String l = new String(this.location);
-//	    	if(this.forwardProxy!=null && this.forwardProxy.isEnabled()) {
-//	    		l = l+" [govway-proxy]";
-//	    	}
-	    	return l;
-    	}
-    	return null;
-    }
-    private void buildLocation() throws ConnettoreException {
-    	this.location = TransportUtils.getObjectAsString(this.properties,CostantiConnettori.CONNETTORE_LOCATION);	
-    	NameValue nv = this.getTokenQueryParameter();
-    	if(nv!=null) {
-    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-    			this.requestMsg.getTransportRequestContext().removeParameter(nv.getName()); // Fix: senno sovrascriveva il vecchio token
-    		}
-    		if(this.propertiesUrlBased==null) {
-    			this.propertiesUrlBased = new HashMap<String,List<String>>();
-    		}
-    		TransportUtils.setParameter(this.propertiesUrlBased, nv.getName(), nv.getValue());
-    	}
-		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, 
-				ConnettoreHTTPCORE.ENDPOINT_TYPE, 
-				this.propertiesUrlBased, this.location,
-				this.getProtocolFactory(), this.idModulo);
-		
-		this.updateLocation_forwardProxy(this.location);
-    }
-	
-	
-	
-    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, List<String> values, ConnettoreLogger logger, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
-    	if(validazioneHeaderRFC2047){
-    		try{
-        		RFC2047Utilities.validHeader(key, values);
-        		setRequestHeader(key, values, propertiesTrasportoDebug);
-        	}catch(UtilsException e){
-        		logger.error(e.getMessage(),e);
-        	}
-    	}
-    	else{
-    		setRequestHeader(key, values, propertiesTrasportoDebug);
-    	}
-    	
-    }
+	@Override
+	protected String _getTipoConnettore() {
+		return this.connettoreHttps ? ConnettoreHTTPSCORE.ENDPOINT_TYPE : ConnettoreHTTPCORE.ENDPOINT_TYPE;
+	}
     
     @Override
 	protected void setRequestHeader(String key, List<String> values) throws Exception {

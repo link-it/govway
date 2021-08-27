@@ -146,6 +146,10 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				this.httpConnectionConfig.setProxyHost(this.proxyHostname);
 				this.httpConnectionConfig.setProxyPort(this.proxyPort);
 			}
+			if(this.followRedirects && this.isRest()) {
+				this.httpConnectionConfig.setFollowRedirect(this.followRedirects);
+				this.httpConnectionConfig.setMaxNumberRedirects(this.maxNumberRedirects);
+			}
 			int connectionTimeout = -1;
 			int readConnectionTimeout = -1;
 			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){

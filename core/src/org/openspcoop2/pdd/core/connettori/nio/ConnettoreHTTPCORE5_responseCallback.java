@@ -204,7 +204,12 @@ public class ConnettoreHTTPCORE5_responseCallback implements FutureCallback<Conn
 							}
 						}
 
-						this.connettore.setAsyncInvocationSuccess(this.connettore.send(this.request)); // caching ricorsivo non serve
+						org.openspcoop2.pdd.core.connettori.ConnettoreHTTPCORE5 connettoreySyncRedirect = new org.openspcoop2.pdd.core.connettori.ConnettoreHTTPCORE5();
+						connettoreySyncRedirect.init(this.connettore.getPddContext(), this.connettore.getProtocolFactory());
+						connettoreySyncRedirect.setHttpMethod(this.connettore.getHttpMethod());
+						boolean success = connettoreySyncRedirect.send(null, this.request); // caching ricorsivo non serve
+						
+						this.connettore.setAsyncInvocationSuccess(success);
 						return;
 
 					}else{

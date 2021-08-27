@@ -306,9 +306,10 @@ public class ConnettoreHTTPCORE_connectionManager {
 			}
 			
 			// Redirect
-			requestConfigBuilder.setRedirectsEnabled(false);
-//				requestConfigBuilder.setRedirectsEnabled(redirectsEnabled); // ???
-//				requestConfigBuilder.setMaxRedirects(maxRedirects); // ?? Altre config
+			//requestConfigBuilder.setRedirectsEnabled(false);
+			requestConfigBuilder.setRedirectsEnabled(connectionConfig.isFollowRedirect());
+			requestConfigBuilder.setCircularRedirectsAllowed(false); // da file properties
+			requestConfigBuilder.setMaxRedirects(connectionConfig.getMaxNumberRedirects());
 			
 			RequestConfig requestConfig = requestConfigBuilder.build();
 			

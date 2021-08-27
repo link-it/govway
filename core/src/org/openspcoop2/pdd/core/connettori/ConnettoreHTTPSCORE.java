@@ -32,6 +32,7 @@ package org.openspcoop2.pdd.core.connettori;
  */
 public class ConnettoreHTTPSCORE extends ConnettoreHTTPCORE {
 
+	public static final String ENDPOINT_TYPE = "httpscore";
 	
 	public ConnettoreHTTPSCORE(){
 		super(true);

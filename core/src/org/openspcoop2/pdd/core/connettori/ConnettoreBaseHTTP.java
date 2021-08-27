@@ -71,6 +71,9 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	public HttpRequestMethod getHttpMethod() {
 		return this.httpMethod;
 	}
+	public void setHttpMethod(HttpRequestMethod httpMethod) {
+		this.httpMethod = httpMethod;
+	}
 	public void setHttpMethod(OpenSPCoop2Message msg) throws ConnettoreException {
 		// HttpMethod
 		if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){

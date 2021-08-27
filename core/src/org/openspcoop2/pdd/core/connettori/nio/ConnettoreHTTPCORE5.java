@@ -148,6 +148,10 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 				this.httpConnectionConfig.setProxyHost(this.proxyHostname);
 				this.httpConnectionConfig.setProxyPort(this.proxyPort);
 			}
+//			if(this.followRedirects && this.isRest()) {
+//				this.httpConnectionConfig.setFollowRedirect(this.followRedirects);
+//				this.httpConnectionConfig.setMaxNumberRedirects(this.maxNumberRedirects);
+//			}
 			int connectionTimeout = -1;
 			int readConnectionTimeout = -1;
 			if(this.properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
@@ -417,8 +421,12 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 			// Spedizione byte
 			AsyncEntityProducer entityProducer = null;
 			if(httpBody.isDoOutput()){
+				boolean consumeRequestMessage = true;
+				if(this.followRedirects){
+					consumeRequestMessage = false;
+				}
 				if(this.debug)
-					this.logger.debug("Spedizione byte...");
+					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
 				boolean hasContentRestBuilded = false;
 				boolean hasContentRest = false;
 				OpenSPCoop2RestMessage<?> restMessage = null;
@@ -428,7 +436,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 					hasContentRestBuilded = restMessage.isContentBuilded();
 				}
 				if(this.isDumpBinarioRichiesta() || this.isSoap || hasContentRestBuilded ||
-						TransferLengthModes.CONTENT_LENGTH.equals(this.tlm)) {
+						TransferLengthModes.CONTENT_LENGTH.equals(this.tlm) || !consumeRequestMessage) {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
@@ -437,7 +445,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 								this.logger.debug("Sbustamento...");
 							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
 						}else{
-							this.requestMsg.writeTo(bout, true);
+							this.requestMsg.writeTo(bout, consumeRequestMessage);
 						}
 						bout.flush();
 						bout.close();
@@ -482,7 +490,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 					this.dumpBinarioRichiestaUscita(null, null, null, this.location, propertiesTrasportoDebug);
 				}
 			}
-			
+
 		
 			// Spedizione byte
 			if(this.debug)

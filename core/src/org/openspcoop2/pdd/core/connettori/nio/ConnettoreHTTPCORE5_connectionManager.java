@@ -33,6 +33,7 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClientBuilder;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
@@ -42,6 +43,8 @@ import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.core5.function.Callback;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
+import org.apache.hc.core5.http2.HttpVersionPolicy;
+import org.apache.hc.core5.http2.config.H2Config;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
@@ -286,10 +289,10 @@ public class ConnettoreHTTPCORE5_connectionManager {
 			//requestConfigBuilder.setDefaultKeepAlive(readTimeout, null);
 			
 			// Redirect
-			requestConfigBuilder.setRedirectsEnabled(false);
-//				requestConfigBuilder.setCircularRedirectsAllowed(false);
-//				requestConfigBuilder.setRedirectsEnabled(redirectsEnabled); // ???
-//				requestConfigBuilder.setMaxRedirects(maxRedirects); // ?? Altre config
+			//requestConfigBuilder.setRedirectsEnabled(false);
+			requestConfigBuilder.setRedirectsEnabled(connectionConfig.isFollowRedirect());
+			requestConfigBuilder.setCircularRedirectsAllowed(false); // da file properties
+			requestConfigBuilder.setMaxRedirects(connectionConfig.getMaxNumberRedirects());
 			
 			RequestConfig requestConfig = requestConfigBuilder.build();
 			
@@ -319,6 +322,10 @@ public class ConnettoreHTTPCORE5_connectionManager {
 				
 			clientBuilder.disableAuthCaching();
 			
+			//clientBuilder.setH2Config(H2Config.DEFAULT);
+			//clientBuilder.setVersionPolicy(HttpVersionPolicy.FORCE_HTTP_2);
+			clientBuilder.setVersionPolicy(HttpVersionPolicy.NEGOTIATE);
+			
 			//clientBuilder.setProxyAuthenticationStrategy(null);
 			
 //			DefaultClientConnectionReuseStrateg defaultClientConnectionReuseStrategy = new DefaultClientConnectionReuseStrategy();
@@ -329,6 +336,10 @@ public class ConnettoreHTTPCORE5_connectionManager {
 //				clientBuilder.setKeepAliveStrategy(keepAliveStrategy);
 //			}
 			clientBuilder.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy());
+			
+			if(connectionConfig.isFollowRedirect()) {
+				clientBuilder.setRedirectStrategy(DefaultRedirectStrategy.INSTANCE);
+			}
 			
 			//IOReactorConfig.Builder reactorConfigBuilder = IOReactorConfig.custom();
 			//reactorConfigBuilder.setIoThreadCount(ioThreadCount);

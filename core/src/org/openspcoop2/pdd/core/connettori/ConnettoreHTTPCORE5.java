@@ -96,7 +96,7 @@ import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
+public class ConnettoreHTTPCORE5 extends ConnettoreExtBaseHTTP {
 
 	public static final String ENDPOINT_TYPE = "httpcore5";
 	
@@ -228,17 +228,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 	}
 	
 	@Override
-	protected boolean send(ConnettoreMsg request) {
-		
-		// HTTPS
-		try{
-			this.setSSLContext();
-		}catch(Exception e){
-			this.eccezioneProcessamento = e;
-			this.logger.error("[HTTPS error]"+ this.readExceptionMessageFromException(e),e);
-			this.errore = "[HTTPS error]"+ this.readExceptionMessageFromException(e);
-			return false;
-		}
+	protected boolean sendHTTP(ConnettoreMsg request) {
 		
 		try{
 			
@@ -552,8 +542,12 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 			// Preparazione messaggio da spedire
 			// Spedizione byte
 			if(httpBody.isDoOutput()){
+				boolean consumeRequestMessage = true;
+				if(this.followRedirects){
+					consumeRequestMessage = false;
+				}
 				if(this.debug)
-					this.logger.debug("Spedizione byte...");
+					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
 				boolean hasContentRestBuilded = false;
 				boolean hasContentRest = false;
 				OpenSPCoop2RestMessage<?> restMessage = null;
@@ -562,7 +556,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 					hasContentRest = restMessage.hasContent();
 					hasContentRestBuilded = restMessage.isContentBuilded();
 				}
-				if(this.isDumpBinarioRichiesta() || this.isSoap || hasContentRestBuilded) {
+				if(this.isDumpBinarioRichiesta() || this.isSoap || hasContentRestBuilded || !consumeRequestMessage) {
 					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
@@ -571,7 +565,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 								this.logger.debug("Sbustamento...");
 							TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
 						}else{
-							this.requestMsg.writeTo(bout, true);
+							this.requestMsg.writeTo(bout, consumeRequestMessage);
 						}
 						bout.flush();
 						bout.close();
@@ -838,65 +832,10 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
     }
 		
 	
-	
-    /**
-     * Ritorna l'informazione su dove il connettore sta spedendo il messaggio
-     * 
-     * @return location di inoltro del messaggio
-     */
-    @Override
-	public String getLocation(){
-    	if(this.location==null){
-    		// può darsi che per un errore non sia ancora stata inizializzata la location
-    		try{
-    			this.buildLocation();
-    		}catch(Throwable t){}
-    	}
-    	if(this.location!=null){
-    		String l = new String(this.location);
-//	    	if(this.forwardProxy!=null && this.forwardProxy.isEnabled()) {
-//	    		l = l+" [govway-proxy]";
-//	    	}
-	    	return l;
-    	}
-    	return null;
-    }
-    private void buildLocation() throws ConnettoreException {
-    	this.location = TransportUtils.getObjectAsString(this.properties,CostantiConnettori.CONNETTORE_LOCATION);	
-    	NameValue nv = this.getTokenQueryParameter();
-    	if(nv!=null) {
-    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-    			this.requestMsg.getTransportRequestContext().removeParameter(nv.getName()); // Fix: senno sovrascriveva il vecchio token
-    		}
-    		if(this.propertiesUrlBased==null) {
-    			this.propertiesUrlBased = new HashMap<String,List<String>>();
-    		}
-    		TransportUtils.setParameter(this.propertiesUrlBased, nv.getName(), nv.getValue());
-    	}
-		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, 
-				ConnettoreHTTPCORE5.ENDPOINT_TYPE, 
-				this.propertiesUrlBased, this.location,
-				this.getProtocolFactory(), this.idModulo);
-		
-		this.updateLocation_forwardProxy(this.location);
-    }
-	
-	
-	
-    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, List<String> values, ConnettoreLogger logger, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
-    	if(validazioneHeaderRFC2047){
-    		try{
-        		RFC2047Utilities.validHeader(key, values);
-        		setRequestHeader(key, values, propertiesTrasportoDebug);
-        	}catch(UtilsException e){
-        		logger.error(e.getMessage(),e);
-        	}
-    	}
-    	else{
-    		setRequestHeader(key, values, propertiesTrasportoDebug);
-    	}
-    	
-    }
+	@Override
+	protected String _getTipoConnettore() {
+		return this.connettoreHttps ? ConnettoreHTTPSCORE5.ENDPOINT_TYPE : ConnettoreHTTPCORE5.ENDPOINT_TYPE;
+	}
     
     @Override
 	protected void setRequestHeader(String key, List<String> values) throws Exception {
@@ -906,6 +845,7 @@ public class ConnettoreHTTPCORE5 extends ConnettoreBaseHTTP {
 			}
     	}
     }
+
 }
 
 class ConnectionKeepAliveStrategyCustomHttp5 implements ConnectionKeepAliveStrategy{

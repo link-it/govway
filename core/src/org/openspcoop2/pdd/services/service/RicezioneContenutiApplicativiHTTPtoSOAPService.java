@@ -159,10 +159,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 	private PostOutResponseContext postOutResponseContext = null;
 
 	@Override
-	public void process(ConnectorInMessage req, ConnectorOutMessage res, Date dataAccettazioneRichiesta, boolean async) throws ConnectorException {
+	public void process(ConnectorInMessage reqParam, ConnectorOutMessage resParam, Date dataAccettazioneRichiesta, boolean async) throws ConnectorException {
 		
-		this.req = req;
-		this.res = res;
+		this.req = reqParam;
+		this.res = resParam;
 		this.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
 		
 		// IDModulo
@@ -208,7 +208,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			}catch(Throwable t) {
 				this.logCore.error(t.getMessage(),t);
 			}
-			preInAcceptRequestContext.setReq(req);
+			preInAcceptRequestContext.setReq(this.req);
 			
 			// invocazione handler
 			GestoreHandlers.preInRequest(preInAcceptRequestContext, this.logCore, this.logCore);
@@ -229,9 +229,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+					IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, this.res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, this.req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -245,9 +245,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, null, null, res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, null, null, this.res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, this.req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -264,9 +264,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, this.res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, this.req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 			
@@ -292,9 +292,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			ConnectorDispatcherErrorInfo cInfo =  ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
-						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, this.res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 	
@@ -332,12 +332,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 				this.logCore, this.logCore);
 		
 		// Aggiorno RequestInfo
-		ConnectorDispatcherInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(this.requestInfo, this.logCore, req, res,
+		ConnectorDispatcherInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(this.requestInfo, this.logCore, this.req, this.res,
 				this.generatoreErrore, serviceIdentificationReader, this.msgDiag, 
 				context!=null ? this.context.getPddContext(): null);
 		if(cInfo!=null){
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(context, this.logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(context, this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 		this.req.updateRequestInfo(this.requestInfo);	
@@ -393,12 +393,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 					dumpConfigurazione,
 					fileTrace);
 			if(this.dumpRaw.isActiveDumpRichiesta()) {
-				req = new DumpRawConnectorInMessage(this.logCore, req, 
+				this.req = new DumpRawConnectorInMessage(this.logCore, this.req, 
 						(context!=null ? this.context.getPddContext(): null), 
 						this.openSPCoopProperties.getDumpBinario_inMemoryThreshold(), this.openSPCoopProperties.getDumpBinario_repository());
 			}
 			if(this.dumpRaw.isActiveDumpRisposta()) {
-				res = new DumpRawConnectorOutMessage(this.logCore, res, 
+				this.res = new DumpRawConnectorOutMessage(this.logCore, this.res, 
 						(context!=null ? this.context.getPddContext(): null), 
 						this.openSPCoopProperties.getDumpBinario_inMemoryThreshold(), this.openSPCoopProperties.getDumpBinario_repository());
 			}
@@ -408,9 +408,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			cInfo = ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+						IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, e, null, this.res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -420,9 +420,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			this.logCore.error(msg);
 			ConnectorDispatcherErrorInfo cInfoError =  ConnectorDispatcherUtils.doError(this.requestInfo, this.generatoreErrore,
 					ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErrore439_FunzionalitaNotSupportedByProtocol(msg, protocolFactory),
-					IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL, null, null, res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+					IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL, null, null, this.res, this.logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 			this.res.close(false);
-			RicezioneContenutiApplicativiServiceUtils.emitTransaction(context, this.logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(context, this.logCore, this.req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
 			return;
 		}
 		
@@ -486,12 +486,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			}
 			
 			DirectVMConnectorInMessage vm = null;
-			if(req instanceof DirectVMConnectorInMessage){
-				vm = (DirectVMConnectorInMessage) req;
+			if(this.req instanceof DirectVMConnectorInMessage){
+				vm = (DirectVMConnectorInMessage) this.req;
 			}
-			else if(req instanceof DumpRawConnectorInMessage){
-				if( ((DumpRawConnectorInMessage)req).getWrappedConnectorInMessage() instanceof DirectVMConnectorInMessage ){
-					vm = (DirectVMConnectorInMessage) ((DumpRawConnectorInMessage)req).getWrappedConnectorInMessage();
+			else if(this.req instanceof DumpRawConnectorInMessage){
+				if( ((DumpRawConnectorInMessage)this.req).getWrappedConnectorInMessage() instanceof DirectVMConnectorInMessage ){
+					vm = (DirectVMConnectorInMessage) ((DumpRawConnectorInMessage)this.req).getWrappedConnectorInMessage();
 				}
 			}
 			if(vm!=null && vm.getDirectVMProtocolInfo()!=null){
@@ -522,8 +522,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			preInRequestContext.setProtocolFactory(protocolFactory);
 			preInRequestContext.setRequestInfo(this.requestInfo);
 			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
-			transportContext.put(PreInRequestContext.SERVLET_REQUEST, req);
-			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, res);
+			transportContext.put(PreInRequestContext.SERVLET_REQUEST, this.req);
+			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, this.res);
 			preInRequestContext.setTransportContext(transportContext);	
 			preInRequestContext.setLogCore(this.logCore);
 			
@@ -538,7 +538,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			this.context.setNotifierInputStreamParams(notifierInputStreamParams);
 			
 			if(this.dumpRaw!=null && this.dumpRaw.isActiveDumpRichiesta()){
-				this.dumpRaw.serializeRequest(((DumpRawConnectorInMessage)req), false, notifierInputStreamParams);
+				this.dumpRaw.serializeRequest(((DumpRawConnectorInMessage)this.req), false, notifierInputStreamParams);
 				this.dataIngressoRichiesta = this.req.getDataIngressoRichiesta();
 				this.context.setDataIngressoRichiesta(this.dataIngressoRichiesta);
 			}
@@ -675,7 +675,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			// Invocazione...
 			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context, this.generatoreErrore, 
 					async ? this : null);
-			gestoreRichiesta.process(req);
+			gestoreRichiesta.process(this.req);
 			completeProcess = true;
 						
 		} catch (Throwable e) {

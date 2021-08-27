@@ -37,6 +37,9 @@ public class ConnectionConfiguration {
 	private Integer connectionTimeout;
 	private Integer readTimeout;
 	
+	private boolean followRedirect = false;
+	private int maxNumberRedirects = 5;
+	
 	private ConnettoreHTTPSProperties sslContextProperties;
 	
 	private boolean debug;
@@ -60,6 +63,9 @@ public class ConnectionConfiguration {
 			}
 			if(this.readTimeout!=null) {
 				bf.append(" ").append("readTimeout:").append(this.readTimeout);
+			}
+			if(this.followRedirect) {
+				bf.append(" ").append("followRedirect max:").append(this.maxNumberRedirects);
 			}
 		}
 		if(this.sslContextProperties!=null) {
@@ -100,6 +106,18 @@ public class ConnectionConfiguration {
 	}
 	public void setSslContextProperties(ConnettoreHTTPSProperties sslConfig) {
 		this.sslContextProperties = sslConfig;
+	}
+	public boolean isFollowRedirect() {
+		return this.followRedirect;
+	}
+	public void setFollowRedirect(boolean followRedirect) {
+		this.followRedirect = followRedirect;
+	}
+	public int getMaxNumberRedirects() {
+		return this.maxNumberRedirects;
+	}
+	public void setMaxNumberRedirects(int maxNumberRedirects) {
+		this.maxNumberRedirects = maxNumberRedirects;
 	}
 	public boolean isDebug() {
 		return this.debug;
