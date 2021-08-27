@@ -58,6 +58,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.sdk.archive.AbstractArchiveGenericProperties;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
@@ -65,6 +66,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAttributeAuthority;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoDelete;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
@@ -560,6 +562,19 @@ public class DeleterArchiveUtils {
 				esito.getToken_retrieve_policies().add(detail);
 			}
 			
+			// AttributeAuthority (Retrieve)
+			for (int i = 0; i < archive.getAttributeAuthorities().size(); i++) {
+				ArchiveAttributeAuthority archiveAttributeAuthority = archive.getAttributeAuthorities().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAttributeAuthority);
+				try{
+					this.deleteAttributeAuthority(archiveAttributeAuthority, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getAttributeAuthorities().add(detail);
+			}
+			
 			// Plugin (Classi)
 			for (int i = 0; i < archive.getPlugin_classi().size(); i++) {
 				ArchivePluginClasse archiveClasse = archive.getPlugin_classi().get(i);
@@ -803,9 +818,15 @@ public class DeleterArchiveUtils {
 	}
 	
 	public void deleteTokenPolicy(ArchiveTokenPolicy archivePolicy,ArchiveEsitoImportDetail detail){
+		_deleteGenericProperties("Token Policy",archivePolicy, detail);
+	}
+	public void deleteAttributeAuthority(ArchiveAttributeAuthority archiveAA,ArchiveEsitoImportDetail detail){
+		_deleteGenericProperties("Attribute Authority", archiveAA, detail);
+	}
+	public void _deleteGenericProperties(String oggetto, AbstractArchiveGenericProperties archiveGenericProperties,ArchiveEsitoImportDetail detail){
 		
-		String nomePolicy = archivePolicy.getNomePolicy();
-		String tipologiaPolicy = archivePolicy.getTipologiaPolicy();
+		String nomePolicy = archiveGenericProperties.getNomePolicy();
+		String tipologiaPolicy = archiveGenericProperties.getTipologiaPolicy();
 		try{
 			
 			// --- check abilitazione ---
@@ -839,13 +860,13 @@ public class DeleterArchiveUtils {
 			
 			
 			// --- delete ---
-			this.importerEngine.deleteGenericProperties(archivePolicy.getPolicy());
+			this.importerEngine.deleteGenericProperties(archiveGenericProperties.getPolicy());
 			detail.setState(ArchiveStatoImport.DELETED);				
 
 						
 		}			
 		catch(Exception e){
-			this.log.error("Errore durante l'eliminazione della token policy ["+nomePolicy+"] (tipo: '"+tipologiaPolicy+"'): "+e.getMessage(),e);
+			this.log.error("Errore durante l'eliminazione della configurazione '"+oggetto+")' ["+nomePolicy+"] (tipo: '"+tipologiaPolicy+"'): "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}

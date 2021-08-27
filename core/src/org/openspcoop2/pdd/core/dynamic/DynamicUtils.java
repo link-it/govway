@@ -51,6 +51,7 @@ import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -238,6 +239,13 @@ public class DynamicUtils {
 	    			InformazioniToken informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
 	    			dynamicMap.put(Costanti.MAP_TOKEN_INFO, informazioniTokenNormalizzate);
 	    			dynamicMap.put(Costanti.MAP_TOKEN_INFO.toLowerCase(), informazioniTokenNormalizzate);
+	    		}
+			}
+			if(dynamicMap.containsKey(Costanti.MAP_ATTRIBUTES)==false) {
+				Object oInformazioniAttributiNormalizzati = dynamicInfo.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE);
+	    		if(oInformazioniAttributiNormalizzati!=null) {
+	    			InformazioniAttributi informazioniAttributiNormalizzati = (InformazioniAttributi) oInformazioniAttributiNormalizzati;
+	    			dynamicMap.put(Costanti.MAP_ATTRIBUTES, informazioniAttributiNormalizzati);
 	    		}
 			}
 

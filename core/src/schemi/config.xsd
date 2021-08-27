@@ -80,6 +80,7 @@
 			<xsd:element name="response-caching" type="response-caching-configurazione" minOccurs="0"/>
 			<xsd:element name="trasformazioni" type="trasformazioni" minOccurs="0"/>
 			<xsd:element name="configurazione-handler" type="configurazione-porta-handler" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="attribute-authority" type="attribute-authority" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -163,6 +164,7 @@
 			<xsd:element name="trasformazioni" type="trasformazioni" minOccurs="0"/>
 			<xsd:element name="behaviour" type="porta-applicativa-behaviour" minOccurs="0"/>
 			<xsd:element name="configurazione-handler" type="configurazione-porta-handler" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="attribute-authority" type="attribute-authority" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -479,7 +481,14 @@
 		<xsd:attribute name="envelope-body-conversione-tipo" type="xsd:string" />
 	</xsd:complexType>
 	
-
+	<!-- AttributeAuthority -->
+	<xsd:complexType name="attribute-authority">
+		<xsd:sequence>
+			<xsd:element name="attributo" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
 	<!-- Proprieta -->
 	<xsd:complexType name="proprieta">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>

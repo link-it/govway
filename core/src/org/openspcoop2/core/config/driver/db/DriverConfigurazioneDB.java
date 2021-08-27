@@ -23491,6 +23491,33 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				
 				
+				
+				// attributeAuthority
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					String nome = rs.getString("nome");
+					String attributi = rs.getString("attributi");
+					AttributeAuthority aa = new AttributeAuthority();
+					aa.setNome(nome);
+					aa.setAttributoList(DBUtils.convertToList(attributi));
+					pa.addAttributeAuthority(aa);
+				
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
+				
 				// *** Aggiungo extInfo ***
 				
 				this.log.debug("ExtendedInfo ... ");
@@ -24426,6 +24453,33 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 
 				
+				
+				// Attribute Authority
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					String nome = rs.getString("nome");
+					String attributi = rs.getString("attributi");
+					AttributeAuthority aa = new AttributeAuthority();
+					aa.setNome(nome);
+					aa.setAttributoList(DBUtils.convertToList(attributi));
+					pd.addAttributeAuthority(aa);
+				
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
+				
 				// *** Aggiungo extInfo ***
 				
 				this.log.debug("ExtendedInfo ...");
@@ -24916,6 +24970,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_HANDLERS);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -25097,6 +25158,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.executeUpdate();
 			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_HANDLERS);
 			updateString = sqlQueryObject.createSQLDelete();

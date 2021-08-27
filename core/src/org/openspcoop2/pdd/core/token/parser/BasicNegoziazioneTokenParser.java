@@ -54,25 +54,6 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		this.now = DateManager.getDate();
 	}
 
-	public static String getClaimAsString(Map<String, Object> claims, String claim) {
-		List<String> l = getClaimAsList(claims, claim);
-		if(l==null || l.isEmpty()) {
-			return null;
-		}
-		String claimValue = TokenUtilities.getClaimValuesAsString(l);
-		return claimValue;
-	}
-	public static List<String> getClaimAsList(Map<String, Object> claims, String claim) {
-		Object o = claims.get(claim);
-		if(o==null) {
-			return null;
-		}
-		List<String> l = TokenUtilities.getClaimValues(o);
-		if(l==null || l.isEmpty()) {
-			return null;
-		}
-		return l;
-	}
 	
 	@Override
 	public void checkHttpTransaction(Integer httpResponseCode) throws Exception{
@@ -98,7 +79,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		
 		switch (this.parser) {
 		case OAUTH2_RFC_6749:
-			String claim = getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_ACCESS_TOKEN);
+			String claim = TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_ACCESS_TOKEN);
 			return !StringUtils.isEmpty(claim);
 		case CUSTOM:
 			return true;
@@ -112,7 +93,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 	public String getAccessToken() {
 		switch (this.parser) {
 		case OAUTH2_RFC_6749:
-			String claim = getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_ACCESS_TOKEN);
+			String claim = TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_ACCESS_TOKEN);
 			return claim;
 		case CUSTOM:
 			return null;
@@ -124,7 +105,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 	public String getRefreshToken() {
 		switch (this.parser) {
 		case OAUTH2_RFC_6749:
-			String claim = getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_REFRESH_TOKEN);
+			String claim = TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_REFRESH_TOKEN);
 			return claim;
 		case CUSTOM:
 			return null;
@@ -136,7 +117,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 	public String getTokenType() {
 		switch (this.parser) {
 		case OAUTH2_RFC_6749:
-			String claim = getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_TOKEN_TYPE);
+			String claim = TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_TOKEN_TYPE);
 			return claim;
 		case CUSTOM:
 			return null;
@@ -149,7 +130,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		String tmp = null;
 		switch (this.parser) {
 		case OAUTH2_RFC_6749:
-			tmp =  getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_EXPIRES_IN);
+			tmp =  TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_EXPIRES_IN);
 			break;
 		case CUSTOM:
 			return null;
@@ -171,7 +152,7 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		
 		String tmpScopes = null;
 		if(TipologiaClaimsNegoziazione.OAUTH2_RFC_6749.equals(this.parser)) {
-			tmpScopes = getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_SCOPE);
+			tmpScopes = TokenUtilities.getClaimAsString(this.claims,ClaimsNegoziazione.OAUTH2_RFC_6749_SCOPE);
 		}
 		if(tmpScopes!=null) {
 			String [] tmpArray = tmpScopes.split(" ");

@@ -2422,6 +2422,44 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
+				// AttributeAuthority
+				n=0;
+				if(aPD.sizeAttributeAuthorityList()>0){
+					for (int j = 0; j < aPD.sizeAttributeAuthorityList(); j++) {
+						AttributeAuthority aa = aPD.getAttributeAuthority(j);
+						
+						String attributi = null;
+						if(aa.sizeAttributoList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int aaI = 0; aaI < aa.sizeAttributoList(); aaI++) {
+								if(aaI>0) {
+									bf.append(",");
+								}
+								bf.append(aa.getAttributo(aaI));
+							}
+							attributi = bf.toString();
+						}
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("attributi", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPD.getId());
+						stm.setString(2, aa.getNome());
+						stm.setString(3, attributi);
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " A.A. alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPD.getDump(), aPD.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				
@@ -3388,6 +3426,57 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				// AttributeAuthority
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" A.A. associate alla Porta Delegata "+idPortaDelegata);
+				
+				n=0;
+				if(aPD.sizeAttributeAuthorityList()>0){
+					for (int j = 0; j < aPD.sizeAttributeAuthorityList(); j++) {
+						AttributeAuthority aa = aPD.getAttributeAuthority(j);
+						
+						String attributi = null;
+						if(aa.sizeAttributoList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int aaI = 0; aaI < aa.sizeAttributoList(); aaI++) {
+								if(aaI>0) {
+									bf.append(",");
+								}
+								bf.append(aa.getAttributo(aaI));
+							}
+							attributi = bf.toString();
+						}
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("attributi", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaDelegata);
+						stm.setString(2, aa.getNome());
+						stm.setString(3, attributi);
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta A.A.[" + aa.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " A.A. alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
+				
+				
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				
@@ -3434,6 +3523,17 @@ public class DriverConfigurazioneDB_LIB {
 				// Handlers
 				CRUDConfigurazioneMessageHandlers(type, con, idPortaDelegata, null, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
 				CRUDConfigurazioneMessageHandlers(type, con, idPortaDelegata, null, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
+				
+				// AttributeAuthority
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_ATTRIBUTE_AUTHORITY);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" A.A. associate alla Porta Delegata "+idPortaDelegata);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5888,6 +5988,46 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				// AttributeAuthority
+				n=0;
+				if(aPA.sizeAttributeAuthorityList()>0){
+					for (int j = 0; j < aPA.sizeAttributeAuthorityList(); j++) {
+						AttributeAuthority aa = aPA.getAttributeAuthority(j);
+						
+						String attributi = null;
+						if(aa.sizeAttributoList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int aaI = 0; aaI < aa.sizeAttributoList(); aaI++) {
+								if(aaI>0) {
+									bf.append(",");
+								}
+								bf.append(aa.getAttributo(aaI));
+							}
+							attributi = bf.toString();
+						}
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("attributi", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPA.getId());
+						stm.setString(2, aa.getNome());
+						stm.setString(3, attributi);
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " A.A. alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
+				
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPA.getDump(), aPA.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
@@ -5905,7 +6045,7 @@ public class DriverConfigurazioneDB_LIB {
 						CRUDConfigurazioneMessageHandlers(type, con, null, aPA.getId(), false, configHandlers.getResponse());
 					}
 				}
-						
+			
 				
 				// extendedInfo
 				i=0;
@@ -7120,6 +7260,57 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				// AttributeAuthority
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" A.A. associate alla Porta Applicativa "+idPortaApplicativa);
+				
+				n=0;
+				if(aPA.sizeAttributeAuthorityList()>0){
+					for (int j = 0; j < aPA.sizeAttributeAuthorityList(); j++) {
+						AttributeAuthority aa = aPA.getAttributeAuthority(j);
+						
+						String attributi = null;
+						if(aa.sizeAttributoList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int aaI = 0; aaI < aa.sizeAttributoList(); aaI++) {
+								if(aaI>0) {
+									bf.append(",");
+								}
+								bf.append(aa.getAttributo(aaI));
+							}
+							attributi = bf.toString();
+						}
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("attributi", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaApplicativa);
+						stm.setString(2, aa.getNome());
+						stm.setString(3, attributi);
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto A.A.[" + aa.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " A.A. alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
+				
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
@@ -7131,7 +7322,7 @@ public class DriverConfigurazioneDB_LIB {
 				// Handlers
 				CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
 				CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
-				
+						
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
@@ -7170,6 +7361,17 @@ public class DriverConfigurazioneDB_LIB {
 				// Handlers
 				CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, true, (configHandlers!=null) ? configHandlers.getRequest() : null);
 				CRUDConfigurazioneMessageHandlers(type, con, null, idPortaApplicativa, false, (configHandlers!=null) ? configHandlers.getResponse() : null);
+				
+				// AttributeAuthority
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" A.A. associate alla Porta Applicativa "+idPortaApplicativa);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);

@@ -1027,6 +1027,25 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		return toRet;
 	}
 	
+	public boolean isAttributeInfo() {
+		if(this.dettaglio.getTokenIssuer()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenIssuer())) {
+			return false;
+		}
+		if(this.dettaglio.getTokenSubject()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenSubject())) {
+			return false;
+		}
+		if(this.dettaglio.getTokenUsername()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenUsername())) {
+			return false;
+		}
+		if(this.dettaglio.getTokenClientId()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenClientId())) {
+			return false;
+		}
+		if(this.dettaglio.getTokenMail()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenMail())) {
+			return false;
+		}
+		return true;
+	}
+	
 	public String downloadTokenInfo(){
 		DettagliBean.log.debug("downloading TokenInfo: "+this.dettaglio.getId());
 		try{

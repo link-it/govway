@@ -64,6 +64,7 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.DumpUtility;
@@ -100,6 +101,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 	private boolean transazioniRegistrazioneTracceDigestEnabled;
 	private boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled;
 	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate;
+	private boolean transazioniRegistrazioneAttributiInformazioniNormalizzate;
 	private boolean transazioniRegistrazioneTempiElaborazione;
 	
 	public PostOutResponseHandler_TransazioneUtilities(Logger log, 
@@ -107,6 +109,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			boolean transazioniRegistrazioneTracceDigestEnabled,
 			boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled,
 			boolean transazioniRegistrazioneTokenInformazioniNormalizzate,
+			boolean transazioniRegistrazioneAttributiInformazioniNormalizzate,
 			boolean transazioniRegistrazioneTempiElaborazione){
 		this.logger = log;
 		this.transazioniRegistrazioneTracceHeaderRawEnabled = transazioniRegistrazioneTracceHeaderRawEnabled;
@@ -114,6 +117,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		this.transazioniRegistrazioneTracceProtocolPropertiesEnabled = transazioniRegistrazioneTracceProtocolPropertiesEnabled;
 		this.transazioniRegistrazioneTokenInformazioniNormalizzate = transazioniRegistrazioneTokenInformazioniNormalizzate;
 		this.transazioniRegistrazioneTempiElaborazione = transazioniRegistrazioneTempiElaborazione;
+		this.transazioniRegistrazioneAttributiInformazioniNormalizzate = transazioniRegistrazioneAttributiInformazioniNormalizzate;
 	}
 	
 	public static boolean isConsegnaMultipla(PostOutResponseContext context) {
@@ -888,26 +892,38 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				transactionDTO.setIdCorrelazioneApplicativa(context.getIntegrazione().getIdCorrelazioneApplicativa());
 				transactionDTO.setIdCorrelazioneApplicativaRisposta(transaction.getCorrelazioneApplicativaRisposta());
 				transactionDTO.setServizioApplicativoFruitore(context.getIntegrazione().getServizioApplicativoFruitore());
-				// in caso di porta applicativa si salva l'elenco dei servizi applicativi erogatori
-				if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
-					StringBuilder sa_erogatori = new StringBuilder();
-					for (int i=0; i<context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
-						if (i>0){
-							sa_erogatori.append(",");
+				if(context!=null && context.getPddContext()!=null &&
+						context.getPddContext().containsKey(CostantiPdD.CONNETTORE_MULTIPLO_SELEZIONATO)) {
+					Object o = context.getPddContext().getObject(CostantiPdD.CONNETTORE_MULTIPLO_SELEZIONATO);
+					if(o!=null && o instanceof String) {
+						String sa = (String) o;
+						if(sa!=null && !"".equals(sa)) {
+							transactionDTO.setServizioApplicativoErogatore(sa);
 						}
-						sa_erogatori.append( context.getIntegrazione().getServizioApplicativoErogatore(i) );
 					}
-					transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString());
 				}
-				else if(transaction.getServiziApplicativiErogatore()!=null && transaction.getServiziApplicativiErogatore().size()>0){
-					StringBuilder sa_erogatori = new StringBuilder();
-					for (int i=0; i<transaction.getServiziApplicativiErogatore().size(); i++) {
-						if (i>0){
-							sa_erogatori.append(",");
+				if(transactionDTO.getServizioApplicativoErogatore()==null) {
+					// in caso di porta applicativa si salva l'elenco dei servizi applicativi erogatori
+					if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
+						StringBuilder sa_erogatori = new StringBuilder();
+						for (int i=0; i<context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
+							if (i>0){
+								sa_erogatori.append(",");
+							}
+							sa_erogatori.append( context.getIntegrazione().getServizioApplicativoErogatore(i) );
 						}
-						sa_erogatori.append( transaction.getServiziApplicativiErogatore().get(i) );
+						transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString().length()>2000 ? sa_erogatori.toString().substring(0, 1999) : sa_erogatori.toString());
 					}
-					transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString());
+					else if(transaction.getServiziApplicativiErogatore()!=null && transaction.getServiziApplicativiErogatore().size()>0){
+						StringBuilder sa_erogatori = new StringBuilder();
+						for (int i=0; i<transaction.getServiziApplicativiErogatore().size(); i++) {
+							if (i>0){
+								sa_erogatori.append(",");
+							}
+							sa_erogatori.append( transaction.getServiziApplicativiErogatore().get(i) );
+						}
+						transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString().length()>2000 ? sa_erogatori.toString().substring(0, 1999) : sa_erogatori.toString());
+					}
 				}
 			}
 			
@@ -1019,7 +1035,19 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			
 			// token info
 			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
+				InformazioniAttributi informazioniAttributi = null;
+				if(!this.transazioniRegistrazioneAttributiInformazioniNormalizzate) {
+					informazioniAttributi = transaction.getInformazioniToken().getAa();
+					transaction.getInformazioniToken().setAa(null);
+				}
 				transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
+				if(informazioniAttributi!=null) {
+					transaction.getInformazioniToken().setAa(informazioniAttributi);
+				}
+			}
+			if(transactionDTO.getTokenInfo()==null && this.transazioniRegistrazioneAttributiInformazioniNormalizzate &&
+					transaction.getInformazioniAttributi()!=null) {
+				transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
 			}
 			
 			// tempi elaborazione

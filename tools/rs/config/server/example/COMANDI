@@ -420,6 +420,12 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 ./get erogazioni/EsempioServizioComposto/1/configurazioni/controllo-accessi/autenticazione profilo=SPCoop tipo_servizio=ldap
 
 
+	+ UPDATE IDENTIFICAZIONE ATTRIBUTI
+./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/identificazione-attributi bodies/identificazione_attributi_petstore.json gruppo=GruppoJson
+
+	+ GET IDENTIFICAZIONE ATTRIBUTI
+./get erogazioni/PetStore/2/configurazioni/controllo-accessi/identificazione-attributi
+
 
 	+ UPDATE AUTORIZZAZIONE
 ./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione bodies/ControlloAccessiAutorizzazione.json gruppo=GruppoJson
@@ -707,6 +713,13 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 	+ GET AUTENTICAZIONE
 ./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione gruppo=GruppoJson
 ./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione
+
+
+	+ UPDATE IDENTIFICAZIONE ATTRIBUTI
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/identificazione-attributi bodies/identificazione_attributi_petstore.json gruppo=GruppoJson
+
+	+ GET IDENTIFICAZIONE ATTRIBUTI
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/identificazione-attributi
 
 
 	+ UPDATE AUTORIZZAZIONE

@@ -158,7 +158,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
-			String messageEngine, String canale) throws Exception {
+			String messageEngine, String canale,
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 
 		boolean multitenant = this.pddCore.isMultitenant();
 
@@ -838,7 +839,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					null, 0, null, 0);
+					null, 0, null, 0,
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 				
 			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, true, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
@@ -1823,6 +1825,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 				
+				String identificazioneAttributiStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+				String [] attributeAuthoritySelezionate = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+				String attributeAuthorityAttributi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+				
 				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 						autorizzazioneRuoliTipologia, ruoloMatch, 
@@ -1831,7 +1837,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-						protocollo)==false){
+						protocollo,
+						identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi)==false){
 					return false;
 				}
 			}
@@ -4768,7 +4775,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -4908,7 +4918,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -5048,7 +5061,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);

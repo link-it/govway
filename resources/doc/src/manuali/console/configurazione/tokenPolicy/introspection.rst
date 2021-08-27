@@ -48,12 +48,11 @@ del servizio di Token Introspection:
 
       -  *Autenticazione Bearer*: flag da attivare nel caso in cui il
          servizio di introspection richieda autenticazione tramite un
-         token. Quest'ultimo dovrà essere indicato nel campo seguente.
+         token. Il token dovrà essere indicato nel campo successivo fornito.
 
       -  *Autenticazione Https*: flag da attivare nel caso in cui il
          servizio di introspection richieda autenticazione di tipo
-         Https. In questo caso dovranno essere forniti tutti i dati di
-         configurazione nei campi seguenti.
+         Https. In questo caso dovranno essere forniti tutti i dati di configurazione nei campi presenti nella sezione 'https'.
 
    -  *Google - TokenInfo*: Riferimento al servizio di token
       introspection di Google. L'unico campo da fornire in questo caso è
@@ -94,3 +93,5 @@ I dati da fornire sono:
    necessario indicare con il flag opportuno il tipo di
    autenticazione richiesta dal servizio di introspection
    personalizzato.
+
+Nel caso sia attivato il flag relativo ad un Proxy o una configurazione Https saranno presentate delle sezioni omonime dove poter inserire i dati di configurazione richiesti.

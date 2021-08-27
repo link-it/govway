@@ -101,7 +101,8 @@ public class PorteApplicativeCore extends ControlStationCore {
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			String nomeSA, String erogazioneRuolo, IDSoggetto idErogazioneSoggettoAutenticato, 
 			String erogazioneAutorizzazione_tokenOptions,
-			String erogazioneAutorizzazioneScope, String erogazioneScope, String erogazioneAutorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy) {
+			String erogazioneAutorizzazioneScope, String erogazioneScope, String erogazioneAutorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) {
 		pa.setAutenticazione(erogazioneAutenticazione);
 		if(erogazioneAutenticazioneOpzionale != null){
 			if(ServletUtils.isCheckBoxEnabled(erogazioneAutenticazioneOpzionale))
@@ -191,6 +192,16 @@ public class PorteApplicativeCore extends ControlStationCore {
 					pa.setScope(new AutorizzazioneScope());
 				}
 				pa.getScope().setMatch(scopeTipoMatch);
+			}
+		}
+		
+		// attribute authority
+		while (pa.sizeAttributeAuthorityList()>0) {
+			pa.removeAttributeAuthority(0);
+		}
+		if(StatoFunzionalita.ABILITATO.getValue().equals(identificazioneAttributiStato) && attributeAuthoritySelezionate!=null && attributeAuthoritySelezionate.length>0) {
+			for (String aaName : attributeAuthoritySelezionate) {
+				pa.addAttributeAuthority(this.buildAttributeAuthority(attributeAuthoritySelezionate.length, aaName, attributeAuthorityAttributi));
 			}
 		}
 	}

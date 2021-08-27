@@ -37,7 +37,7 @@
 				</a4j:htmlCommandLink>
 			</li>
 			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
-			<li><h:outputText id="tokenInfoBreadCrumb" value="#{msg['commons.tokenInfo.label']}" styleClass="ultimo-path"/></li>
+			<li><h:outputText id="tokenInfoBreadCrumb" value="#{dettagliBean.attributeInfo ? msg['commons.attributi.label'] : msg['commons.tokenInfo.label']}" styleClass="ultimo-path"/></li>
 		</ul>
 	</ui:define>
 	<ui:define name="body">
@@ -68,7 +68,7 @@
 			</script>
 			<rich:panel id="jsonPnl">
 				<f:facet name="header">
-					<h:outputText id="outXmlFaultIntegrazione" value="#{msg['commons.tokenInfo.label']}"/>
+					<h:outputText id="outXmlFaultIntegrazione" value="#{dettagliBean.attributeInfo ? msg['commons.attributi.label'] : msg['commons.tokenInfo.label']}"/>
 				</f:facet>
 				<a4j:outputPanel layout="block" style="margin: 0px 0px 16px 0px; padding: 0px 0px 24px 0px;">	
 					<h:form id="formTokenInfo">

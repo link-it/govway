@@ -89,10 +89,23 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			String descrizione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
 			String tipo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
 			
+			String infoType = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			if(infoType==null) {
+				infoType = ServletUtils.getObjectFromSession(session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			}
+			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
+			
+			Properties mapId = attributeAuthority ?
+					confCore.getAttributeAuthorityTipologia() :
+					confCore.getTokenPolicyTipologia();
+			
 			GenericProperties genericProperties = confCore.getGenericProperties(Long.parseLong(id));
 			
-			PropertiesSourceConfiguration propertiesSourceConfiguration = confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			PropertiesSourceConfiguration propertiesSourceConfiguration = attributeAuthority ? 
+					confCore.getAttributeAuthorityPropertiesSourceConfiguration() :
+					confCore.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			
 			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
 			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
@@ -122,7 +135,11 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST));
+			String label = attributeAuthority ?
+					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
+					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+			
+			lstParam.add(new Parameter(label, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST));
 			lstParam.add(new Parameter(genericProperties.getNome(),null));
 		
 			// Se tipo = null, devo visualizzare la pagina per l'inserimento
@@ -140,7 +157,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList);
+				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
+						attributeAuthority);
 				
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -152,11 +170,11 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			}
 			
 			// Controlli sui campi immessi
-			String tipologia = confCore.getTokenPolicyTipologia().getProperty(tipo);
+			String tipologia = mapId.getProperty(tipo);
 			boolean isOk = confHelper.policyGestioneTokenCheckData(tipoOperazione, nome,descrizione,tipo,tipologia);
 			
 			if (isOk) {
-				isOk = confHelper.checkPropertiesConfigurationData(tipoOperazione, configurazioneBean, configurazione);
+				isOk = confHelper.checkPropertiesConfigurationData(tipoOperazione, configurazioneBean, nome,descrizione,configurazione);
 			}
 			if (!isOk) {
 				
@@ -166,7 +184,8 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList);
+				dati = confHelper.addPolicyGestioneTokenToDati(tipoOperazione,dati,id,nome,descrizione,tipo,propConfigPolicyGestioneTokenLabelList,propConfigPolicyGestioneTokenList,
+						attributeAuthority);
 						
 				dati = confHelper.addPropertiesConfigToDati(tipoOperazione,dati, tipo, configurazioneBean,false);
 				
@@ -201,13 +220,18 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+			int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
 			List<String> tipologie = new ArrayList<>();
-			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
-			tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);		
+			if(attributeAuthority) {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_ATTRIBUTE_AUTHORITY);
+			}
+			else {
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+				tipologie.add(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN);
+			}
 			
 			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologie, ricerca);
 			

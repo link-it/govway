@@ -109,6 +109,7 @@ public class TempiElaborazioneUtils implements Serializable {
 		bf.append(_convertToDBValue(tempiElaborazione.responseCachingSaveInCache)).append(TEMPI_SEPARATOR);
 		bf.append(_convertToDBValue(tempiElaborazione.trasformazioneRichiesta)).append(TEMPI_SEPARATOR);
 		bf.append(_convertToDBValue(tempiElaborazione.trasformazioneRisposta)).append(TEMPI_SEPARATOR);
+		bf.append(_convertToDBValue(tempiElaborazione.attributeAuthority)).append(TEMPI_SEPARATOR);
 		
 		return bf.toString();
 	}
@@ -264,6 +265,9 @@ public class TempiElaborazioneUtils implements Serializable {
 			}
 			else if(i==30) {
 				tempiElaborazione.trasformazioneRisposta = funzionalita;
+			}
+			else if(i==31) {
+				tempiElaborazione.attributeAuthority = funzionalita;
 			}
 
 		}

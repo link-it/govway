@@ -69,6 +69,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAttributeAuthority;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
@@ -378,6 +379,20 @@ public class ZIPWriteUtils {
 					org.openspcoop2.core.config.GenericProperties policy = archiveTP.getPolicy();
 					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
 					write(zipOut, "TokenPolicy_Retrieve", archiveTP.getNomePolicy(), SerializationType.CONFIG, policy);
+				}
+			}
+			
+			// attribute authority
+			if(archive.getAttributeAuthorities()!=null && archive.getAttributeAuthorities().size()>0){
+				for (int i = 0; i < archive.getAttributeAuthorities().size(); i++) {
+					ArchiveAttributeAuthority archiveAA = archive.getAttributeAuthorities().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ATTRIBUTE_AUTHORITY_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_ATTRIBUTE_AUTHORITY_RETRIEVE_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveAA.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.config.GenericProperties policy = archiveAA.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsConfig.clean(policy);
+					write(zipOut, "AttributeAuthority_Retrieve", archiveAA.getNomePolicy(), SerializationType.CONFIG, policy);
 				}
 			}
 			

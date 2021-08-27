@@ -915,7 +915,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,null,
-							null,null,null,null);
+							null,null,null,null,
+							null,null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
@@ -1069,7 +1070,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 						null,null,null,null,null,
 						null,null,
-						null,null,null,null);
+						null,null,null,null,
+						null,null,null,null,null);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1166,7 +1168,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,null,
-							null,null,null,null);
+							null,null,null,null,
+							null,null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1389,7 +1392,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,null,
-							null,null,null,null);
+							null,null,null,null,
+							null,null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,

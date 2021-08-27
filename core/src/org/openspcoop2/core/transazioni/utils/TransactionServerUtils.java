@@ -45,6 +45,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.Case;
 import org.openspcoop2.utils.sql.CastColumnType;
@@ -331,8 +332,8 @@ public class TransactionServerUtils {
 					esitoConsegnaMultipla, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 					gestioneSerializableDB_AttesaAttiva, gestioneSerializableDB_CheckInterval);
 		}catch(Throwable e){
-			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server '"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"': " + e.getLocalizedMessage();
-			logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"] "+msg,e);
+			String msg = "Errore durante l'aggiornamento delle transazione relativamente all'informazione del server: " + e.getLocalizedMessage();
+			logCore.error("[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] "+msg,e);
 		}
 	}
 	
@@ -361,6 +362,7 @@ public class TransactionServerUtils {
 //			else {
 //				System.out.println("DATA REGISTRAZIONE '"+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(transazioneApplicativoServer.getDataRegistrazione())+"'");
 //			}
+			int row = -1;
 			for (; i < 3; i++) {
 				
 				// primo test: finestra di 5 minuti
@@ -381,7 +383,7 @@ public class TransactionServerUtils {
 				}
 			
 				boolean USE_SERIALIZABLE = true;
-				int row = _aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connectionDB,
+				row = _aggiornaInformazioneConsegnaTerminata(transazioneApplicativoServer, connectionDB,
 						tipoDatabase, logCore,
 						daoFactory, logFactory, smpFactory,
 						debug,
@@ -394,7 +396,12 @@ public class TransactionServerUtils {
 				}
 				
 			}
-			
+			if(row<=0) {
+				// registro ultimo errore avvenuto durante il ciclo in entrambi i log
+				String msgError = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'aggiornaInformazioneConsegnaTerminata' non riuscta. Tutti gli intervalli di update non hanno comportato un aggiornamento della transazione";
+				logFactory.error(msgError);
+				logCore.error(msgError);
+			}
 		}
 		
 	}
@@ -432,6 +439,7 @@ public class TransactionServerUtils {
 			long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
 			
 			int row = -1;
+			Throwable lastT = null;
 			while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
 
 				try{
@@ -444,7 +452,8 @@ public class TransactionServerUtils {
 
 					updateEffettuato = true;
 
-				} catch(Exception e) {
+				} catch(Throwable e) {
+					lastT = e;
 					//System.out.println("Serializable error:"+e.getMessage());
 				}
 
@@ -461,6 +470,27 @@ public class TransactionServerUtils {
 				// già effettuato fuori dal metodo connectionDB.setAutoCommit(true);
 			} catch(Exception er) {
 				throw new CoreException("(ripristinoIsolation) "+er.getMessage(),er);
+			}
+			if(lastT!=null && !updateEffettuato) {
+				// registro ultimo errore avvenuto durante il ciclo in entrambi i log
+				String date = "";
+				if(leftValue!=null || rightValue!=null) {
+					StringBuilder sb = new StringBuilder(" [");
+					if(leftValue!=null) {
+						sb.append(DateUtils.getSimpleDateFormatMs().format(leftValue));
+						if(rightValue!=null) {
+							sb.append(" - ");
+						}
+					}
+					if(rightValue!=null) {
+						sb.append(DateUtils.getSimpleDateFormatMs().format(rightValue));
+					}
+					sb.append("]");
+					date = sb.toString();
+				}
+				String msgError = "[id:"+transazioneApplicativoServer.getIdTransazione()+"][sa:"+transazioneApplicativoServer.getServizioApplicativoErogatore()+"]["+transazioneApplicativoServer.getConnettoreNome()+"] 'aggiornaInformazioneConsegnaTerminata'"+date+" failed: "+lastT.getMessage();
+				logFactory.error(msgError,lastT);
+				logCore.error(msgError,lastT);
 			}
 			
 			return row;

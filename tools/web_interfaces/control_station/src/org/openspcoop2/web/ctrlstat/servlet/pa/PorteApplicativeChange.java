@@ -472,6 +472,10 @@ public final class PorteApplicativeChange extends Action {
 			String autorizzazione_tokenOptions = null;
 			String autorizzazione_token = null;
 			
+			String identificazioneAttributiStato = null;
+			String [] attributeAuthoritySelezionate = null;
+			String attributeAuthorityAttributi = null;
+			
 			if(pa.getGestioneToken() != null) {
 				gestioneTokenPolicy = pa.getGestioneToken().getPolicy();
 				if(gestioneTokenPolicy == null) {
@@ -598,6 +602,14 @@ public final class PorteApplicativeChange extends Action {
 				}
 			} else {
 				autorizzazioneScope = "";
+			}
+			
+			if(identificazioneAttributiStato==null) {
+				identificazioneAttributiStato = pa.sizeAttributeAuthorityList()>0 ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				if(pa.sizeAttributeAuthorityList()>0) {
+					attributeAuthoritySelezionate = porteApplicativeCore.buildAuthorityArrayString(pa.getAttributeAuthorityList());
+					attributeAuthorityAttributi = porteApplicativeCore.buildAttributesStringFromAuthority(pa.getAttributeAuthorityList());
+				}
 			}
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
@@ -1096,7 +1108,8 @@ public final class PorteApplicativeChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine, pa.getCanale());
+						messageEngine, pa.getCanale(),
+						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				pd.setDati(dati);
 
@@ -1269,7 +1282,8 @@ public final class PorteApplicativeChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine, pa.getCanale());
+						messageEngine, pa.getCanale(),
+						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				pd.setDati(dati);
 

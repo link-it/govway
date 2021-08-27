@@ -538,8 +538,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				}
 			}
 			
-			// nuovi filtri connettore
-			this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+			
+			// **** filtro connettore ****
+			
+			this.addFilterSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE, ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE, false);
 			
 			// filtro tipo connettore con voce IM solo sulle erogazioni
 			String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, !gestioneFruitori);
@@ -555,9 +557,17 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			// filtro keystore
 			this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
+			
+			// imposto apertura sezione
+			this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
 						
+			// **** fine filtro connettore ****
+			
+			
+			// **** filtro modi ****
+			
 			if(profiloModipaSelezionato) {
-				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
+				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA, CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA, false);
 				
 				// filtro sicurezza canale
 				this.addFilterModISicurezzaCanale(ricerca, idLista);
@@ -576,9 +586,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				// filtro audience
 				this.addFilterModIAudience(ricerca, idLista, false, filterTipoAccordo, null);
+				
+				// imposto apertura sezione
+				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA);
 			}
+			
+			// **** fine filtro modi ****
 
-			// filtri proprieta
+			
+			// **** filtro proprieta ****
+			
 			List<String> nomiProprieta =null;
 			if(gestioneFruitori) {
 				nomiProprieta = this.nomiProprietaPD(protocolloPerFiltroProprieta,soggettoPerFiltroProprieta);
@@ -587,14 +604,19 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 			
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
-				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
 				
 				// filtro nome
 				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
 				
 				// filtro valore
 				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+				
+				// imposto apertura sezione
+				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA);
 			}
+			
+			// **** fine filtro proprieta ****
 			
 
 			boolean showConfigurazionePA = false;
@@ -1778,7 +1800,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				if(!connettoreMultiploEnabled) {	
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
-					de.setValue(urlConnettore);
+					de.setValue(formatInfoForView(urlConnettore));
 					String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 					de.setToolTip(tooltipConnettore);
 				} else {
@@ -2020,7 +2042,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				if(!connettoreStatic) {
 					
-					de.setValue(urlConnettore);
+					de.setValue(formatInfoForView(urlConnettore));
 					de.setToolTip(tooltipConnettore);
 					
 					List<Parameter> listParametersConnettore = new ArrayList<>();

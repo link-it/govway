@@ -248,6 +248,26 @@ public class TokenUtilities {
 		return claimValue;
 	}
 	
+	public static String getClaimAsString(Map<String, Object> claims, String claim) {
+		List<String> l = getClaimAsList(claims, claim);
+		if(l==null || l.isEmpty()) {
+			return null;
+		}
+		String claimValue = TokenUtilities.getClaimValuesAsString(l);
+		return claimValue;
+	}
+	public static List<String> getClaimAsList(Map<String, Object> claims, String claim) {
+		Object o = claims.get(claim);
+		if(o==null) {
+			return null;
+		}
+		List<String> l = TokenUtilities.getClaimValues(o);
+		if(l==null || l.isEmpty()) {
+			return null;
+		}
+		return l;
+	}
+	
 	
 	public static PolicyNegoziazioneToken convertTo(GenericProperties gp) throws Exception { 
 		

@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
@@ -154,6 +155,7 @@ import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.YAMLUtils;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
@@ -772,6 +774,12 @@ public class ControlStationCore {
 		return this.policyGestioneTokenPropertiesSourceConfiguration;
 	}
 	
+	/** AttributeAuthority PropertiesSourceConfiguration */
+	private PropertiesSourceConfiguration attributeAuthorityPropertiesSourceConfiguration = null;
+	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() {
+		return this.attributeAuthorityPropertiesSourceConfiguration;
+	}
+	
 	/** ControlloTraffico */
 	private boolean isControlloTrafficoPolicyGlobaleGroupByApi;
 	private boolean isControlloTrafficoPolicyGlobaleFiltroApi;
@@ -1002,9 +1010,13 @@ public class ControlStationCore {
 	private String tokenPolicyForceId = null;
 	private boolean tokenPolicyForceIdEnabled = false;
 	private Properties tokenPolicyTipologia = null;
+	private String attributeAuthorityForceId = null;
+	private boolean attributeAuthorityForceIdEnabled = false;
+	private Properties attributeAuthorityTipologia = null;
 	private boolean showServiziVisualizzaModalitaElenco = false;
 	private Integer selectListSoggettiOperativi_numeroMassimoSoggetti = null;
 	private Integer selectListSoggettiOperativi_dimensioneMassimaLabel = null;
+	private Integer viewLunghezzaMassimaInformazione = null;
 	private boolean isSetSearchAfterAdd = false;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
@@ -1100,6 +1112,15 @@ public class ControlStationCore {
 	public Properties getTokenPolicyTipologia() {
 		return this.tokenPolicyTipologia;
 	}
+	public String getAttributeAuthorityForceId() {
+		return this.attributeAuthorityForceId;
+	}
+	public boolean isAttributeAuthorityForceIdEnabled() {
+		return this.attributeAuthorityForceIdEnabled;
+	}
+	public Properties getAttributeAuthorityTipologia() {
+		return this.attributeAuthorityTipologia;
+	}
 	public boolean isShowServiziVisualizzaModalitaElenco() {
 		return this.showServiziVisualizzaModalitaElenco;
 	}
@@ -1108,6 +1129,9 @@ public class ControlStationCore {
 	}
 	public Integer getLunghezzaMassimaLabelSoggettiOperativiMenuUtente() {
 		return this.selectListSoggettiOperativi_dimensioneMassimaLabel;
+	}
+	public Integer getViewLunghezzaMassimaInformazione() {
+		return this.viewLunghezzaMassimaInformazione;
 	}
 	public boolean isSetSearchAfterAdd() {
 		return this.isSetSearchAfterAdd;
@@ -2390,6 +2414,9 @@ public class ControlStationCore {
 		/** PolicyGestioneToken PropertiesSourceConfiguration */
 		this.policyGestioneTokenPropertiesSourceConfiguration = core.policyGestioneTokenPropertiesSourceConfiguration;
 		
+		/** AttributeAuthority PropertiesSourceConfiguration */
+		this.attributeAuthorityPropertiesSourceConfiguration = core.attributeAuthorityPropertiesSourceConfiguration;
+		
 		/** ControlloTraffico */
 		this.isControlloTrafficoPolicyGlobaleGroupByApi = core.isControlloTrafficoPolicyGlobaleGroupByApi;
 		this.isControlloTrafficoPolicyGlobaleFiltroApi = core.isControlloTrafficoPolicyGlobaleFiltroApi;
@@ -2498,9 +2525,13 @@ public class ControlStationCore {
 		this.tokenPolicyForceId = core.tokenPolicyForceId;
 		this.tokenPolicyForceIdEnabled = core.tokenPolicyForceIdEnabled;
 		this.tokenPolicyTipologia = core.tokenPolicyTipologia;
+		this.attributeAuthorityForceId = core.attributeAuthorityForceId;
+		this.attributeAuthorityForceIdEnabled = core.attributeAuthorityForceIdEnabled;
+		this.attributeAuthorityTipologia = core.attributeAuthorityTipologia;
 		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
 		this.selectListSoggettiOperativi_numeroMassimoSoggetti = core.selectListSoggettiOperativi_numeroMassimoSoggetti;
 		this.selectListSoggettiOperativi_dimensioneMassimaLabel = core.selectListSoggettiOperativi_dimensioneMassimaLabel;
+		this.viewLunghezzaMassimaInformazione = core.viewLunghezzaMassimaInformazione;
 		this.isSetSearchAfterAdd = core.isSetSearchAfterAdd;
 
 		/** Motori di Sincronizzazione */
@@ -2797,6 +2828,7 @@ public class ControlStationCore {
 			this.soggettiApiKeyLunghezzaPasswordGenerate = consoleProperties.getConsoleSoggettiApiKeyLunghezzaPasswordGenerate();			
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			this.attributeAuthorityPropertiesSourceConfiguration = consoleProperties.getAttributeAuthorityPropertiesSourceConfiguration();
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApi = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
@@ -2890,9 +2922,13 @@ public class ControlStationCore {
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
 			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
 			this.tokenPolicyTipologia = consoleProperties.getTokenPolicyTipologia();
+			this.attributeAuthorityForceId = consoleProperties.getAttributeAuthorityForceId();
+			this.attributeAuthorityForceIdEnabled = StringUtils.isNotEmpty(this.attributeAuthorityForceId);
+			this.attributeAuthorityTipologia = consoleProperties.getAttributeAuthorityTipologia();
 			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
 			this.selectListSoggettiOperativi_numeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
 			this.selectListSoggettiOperativi_dimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();
+			this.viewLunghezzaMassimaInformazione = consoleProperties.getLunghezzaMassimaInformazioneView();
 			this.isSetSearchAfterAdd = consoleProperties.isSetSearchAfterAdd();
 			
 			// Gestione govwayConsole centralizzata
@@ -7861,5 +7897,83 @@ public class ControlStationCore {
 
 		return wsdlS.trim().getBytes();
 		
+	}
+	
+	public AttributeAuthority buildAttributeAuthority(int sizeAA, String aaName, String attributeAuthorityAttributi) {
+		
+		Properties properties = null;
+		if(attributeAuthorityAttributi!=null && StringUtils.isNotEmpty(attributeAuthorityAttributi)) {
+			properties = PropertiesUtilities.convertTextToProperties(attributeAuthorityAttributi);
+		}
+		
+		AttributeAuthority aa = new AttributeAuthority();
+		aa.setNome(aaName);
+		if(properties!=null && properties.size()>0) {
+			String p = properties.getProperty(aaName);
+			List<String> attributi = DBUtils.convertToList(p);
+			if(attributi!=null && !attributi.isEmpty()) {
+				aa.setAttributoList(attributi);
+			}
+		}
+		
+		if(aa.sizeAttributoList()<=0 && sizeAA==1) {
+			// sono stati forniti direttamente i valori
+			List<String> attributi = DBUtils.convertToList(attributeAuthorityAttributi);
+			if(attributi!=null && !attributi.isEmpty()) {
+				aa.setAttributoList(attributi);
+			}
+		}
+		
+		return aa;
+	}
+	
+	public String[] buildAuthorityArrayString(List<AttributeAuthority> list){
+		if(list==null || list.isEmpty()) {
+			return null;
+		}
+		List<String> l = new ArrayList<String>();
+		for (AttributeAuthority attributeAuthority : list) {
+			l.add(attributeAuthority.getNome());
+		}
+		return l.toArray(new String[1]);
+	}
+	
+	public String buildAttributesStringFromAuthority(List<AttributeAuthority> list) {
+		if(list==null || list.isEmpty()) {
+			return null;
+		}
+		StringBuilder sb = new StringBuilder();
+		if(list.size()==1) {
+			AttributeAuthority attributeAuthority = list.get(0);
+			if(attributeAuthority.sizeAttributoList()>0) {
+				for (int i = 0; i < attributeAuthority.sizeAttributoList(); i++) {
+					if(i>0) {
+						sb.append(",");
+					}
+					sb.append(attributeAuthority.getAttributo(i));
+				}
+			}
+		}
+		else {
+			for (AttributeAuthority attributeAuthority : list) {
+				if(attributeAuthority.sizeAttributoList()>0) {
+					if(sb.length()>0) {
+						sb.append("\n");
+					}
+					sb.append(attributeAuthority.getNome());
+					sb.append("=");
+					for (int i = 0; i < attributeAuthority.sizeAttributoList(); i++) {
+						if(i>0) {
+							sb.append(",");
+						}
+						sb.append(attributeAuthority.getAttributo(i));
+					}
+				}
+			}
+		}
+		if(sb.length()>0) {
+			return sb.toString();
+		}
+		return null;
 	}
 }

@@ -380,6 +380,9 @@ public class ExporterUtils {
 		return idsCanali;
 	}
 	
+	public List<?> getIdsAttributeAuthority(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return getIdsTokenPolicy(ids); // è uguale
+	}
 	public List<?> getIdsTokenPolicy(String ids) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		List<IDGenericProperties> idsTokenPolicy = new ArrayList<IDGenericProperties>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);

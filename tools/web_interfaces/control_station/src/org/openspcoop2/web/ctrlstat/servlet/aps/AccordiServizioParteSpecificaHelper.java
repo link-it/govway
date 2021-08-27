@@ -1415,6 +1415,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 				String autorizzazioneContenutiProperties = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 				
+				String identificazioneAttributiStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+				String [] attributeAuthoritySelezionate = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+				String attributeAuthorityAttributi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+				
 				if(gestioneFruitori) {
 					
 					if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, 
@@ -1425,7 +1429,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							autorizzazione_token,autorizzazione_tokenOptions,
 							autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 							autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-							protocollo)==false){
+							protocollo,
+							identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi)==false){
 						return false;
 					}
 				}
@@ -1440,7 +1445,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							autorizzazione_token,autorizzazione_tokenOptions,
 							autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 							autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-							protocollo)==false){
+							protocollo,
+							identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi)==false){
 						return false;
 					}
 				}
@@ -1705,6 +1711,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 				String autorizzazioneContenutiProperties = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 				
+				String identificazioneAttributiStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+				String [] attributeAuthoritySelezionate = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+				String attributeAuthorityAttributi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+				
 				if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, 
 						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
@@ -1713,7 +1723,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-						protocollo)==false){
+						protocollo,
+						identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi)==false){
 					return false;
 				}
 			}
@@ -6256,7 +6267,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
-			boolean moreThenOneImplementation, String canaleStato, String canaleAPI, String canale, List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled) throws Exception{
+			boolean moreThenOneImplementation, String canaleStato, String canaleAPI, String canale, List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled,
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception{
 
 		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
@@ -7584,7 +7596,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					null, 0, null, 0);
+					null, 0, null, 0,
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 		}
 		
@@ -7618,7 +7631,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					false, true, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					null, 0, null, 0);
+					null, 0, null, 0,
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 		}
 
@@ -8368,7 +8382,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
-			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy) throws Exception {
+			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 		
 		boolean isRuoloNormale = !(correlato != null && correlato.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO));
 
@@ -8509,7 +8524,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						false, true, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 						gestioneToken, gestioneTokenPolicy, 
 						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-						null, 0, null, 0);
+						null, 0, null, 0,
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 	
 			}
 
@@ -9316,7 +9332,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
-			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy) throws Exception {
+			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 		
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -9444,7 +9461,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					null, 0, null, 0);
+					null, 0, null, 0,
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 		}
 		
 		
@@ -9555,6 +9573,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			BinaryParameter allegatoXacmlPolicy = this.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 			
+			String identificazioneAttributiStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+			
 			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
@@ -9563,7 +9585,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					autorizzazione_token,autorizzazione_tokenOptions,
 					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-					protocollo)==false){
+					protocollo,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi)==false){
 				return false;
 			}
 		}
@@ -9674,6 +9697,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			BinaryParameter allegatoXacmlPolicy = this.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 			
+			String identificazioneAttributiStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+			String [] attributeAuthoritySelezionate = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			String attributeAuthorityAttributi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+			
 			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
@@ -9682,7 +9709,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					autorizzazione_token,autorizzazione_tokenOptions,
 					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-					protocollo)==false){
+					protocollo,
+					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi)==false){
 				return false;
 			}
 		}
@@ -9707,7 +9735,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
-			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy) throws Exception{
+			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception{
 		
 		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
@@ -9829,7 +9858,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,
 				gestioneToken, gestioneTokenPolicy, 
 				autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-				null, 0 , null, 0);
+				null, 0 , null, 0,
+				identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 		}
 		
 		return dati;

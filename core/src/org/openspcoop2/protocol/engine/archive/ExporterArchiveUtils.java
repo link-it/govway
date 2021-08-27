@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.IdAllarme;
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazione;
 import org.openspcoop2.core.config.ConfigurazioneUrlInvocazioneRegola;
@@ -102,6 +103,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAttributeAuthority;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
@@ -278,6 +280,11 @@ public class ExporterArchiveUtils {
 				this.readTokenPolicy(archive, (IDGenericProperties) object, cascadeConfig, exportSourceArchiveType);
 			}
 			break;
+		case CONFIGURAZIONE_ATTRIBUTE_AUTHORITY:
+			for (Object object : listObject) {
+				this.readAttributeAuthority(archive, (IDGenericProperties) object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
 		case CONFIGURAZIONE_PLUGIN_CLASSE:
 			for (Object object : listObject) {
 				this.readPlugin_classe(archive, (IdPlugin) object, cascadeConfig, exportSourceArchiveType);
@@ -300,6 +307,7 @@ public class ExporterArchiveUtils {
 			readControlloTrafficoConfigurazione(archive, true, false, exportSourceArchiveType);
 			readAllarmiConfigurazione(archive, true, false, exportSourceArchiveType);
 			readTokenPolicyConfigurazione(archive, exportSourceArchiveType);
+			readAttributeAuthorityConfigurazione(archive, exportSourceArchiveType);
 			readPluginConfigurazione(archive, exportSourceArchiveType);
 			
 			setConfigurazione(archive);
@@ -350,6 +358,7 @@ public class ExporterArchiveUtils {
 				readControlloTrafficoConfigurazione(archive, true, loadActivePolicyFruizioneErogazione, exportSourceArchiveType);
 				readAllarmiConfigurazione(archive, true, loadAllarmiErogazioneFruizione, exportSourceArchiveType);
 				readTokenPolicyConfigurazione(archive, exportSourceArchiveType);
+				readAttributeAuthorityConfigurazione(archive, exportSourceArchiveType);
 				readPluginConfigurazione(archive, exportSourceArchiveType);
 				setConfigurazione(archive);
 			}
@@ -841,6 +850,46 @@ public class ExporterArchiveUtils {
 			}
 			else{
 				archive.getToken_retrieve_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_retrieve(nomePolicy), this.idCorrelazione));
+			}
+			
+		}
+		
+	}
+	
+	
+	private void readAttributeAuthorityConfigurazione(Archive archive, ArchiveType provenienza) throws Exception {
+		
+		ArchiveCascadeConfiguration cascadeConfigPolicy = new ArchiveCascadeConfiguration();
+		cascadeConfigPolicy.setCascadePolicyConfigurazione(true);
+		
+		List<IDGenericProperties> listAttributeAuthorities = null;
+		try {
+			listAttributeAuthorities = this.archiveEngine.getAllIdGenericProperties_attributeAuthorities();
+		}catch(DriverConfigurazioneNotFound notFound) {}
+		if(listAttributeAuthorities!=null && listAttributeAuthorities.size()>0) {
+			for (IDGenericProperties idGP : listAttributeAuthorities) {
+				readAttributeAuthority(archive,idGP.getNome(), cascadeConfigPolicy, provenienza);
+			}
+		}
+		
+	}
+	
+	private void readAttributeAuthority(Archive archive,IDGenericProperties idGP, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
+			readAttributeAuthority(archive, idGP.getNome(), cascadeConfig, provenienza);
+		}
+	}
+	
+	private void readAttributeAuthority(Archive archive, String nomePolicy, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception {
+		
+		if(cascadeConfig.isCascadePolicyConfigurazione() || ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY.equals(provenienza)) {
+		
+			String key = ArchiveAttributeAuthority.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY, nomePolicy);
+			if(archive.getAttributeAuthorities().containsKey(key)){
+				// gia gestito
+			}
+			else{
+				archive.getAttributeAuthorities().add(new ArchiveAttributeAuthority(this.archiveEngine.getGenericProperties_attributeAuthority(nomePolicy), this.idCorrelazione));
 			}
 			
 		}
@@ -2183,6 +2232,18 @@ public class ExporterArchiveUtils {
 						}
 					}
 					
+					// attribute authority
+					if(cascadeConfig.isCascadePolicyConfigurazione()) {
+						if(pd!=null && pd.sizeAttributeAuthorityList()>0) {
+							for (AttributeAuthority aa : pd.getAttributeAuthorityList()) {
+								String nomeAA = aa.getNome();
+								if(nomeAA!=null && !"".equals(nomeAA)) {
+									this.readAttributeAuthority(archive, nomeAA, cascadeConfig, provenienza);
+								}
+							}
+						}
+					}
+					
 					// trasformazioni
 					if(pd!=null && pd.getTrasformazioni()!=null &&
 							pd.getTrasformazioni().sizeRegolaList()>0) {
@@ -2405,6 +2466,18 @@ public class ExporterArchiveUtils {
 					if(cascadeConfig.isCascadePolicyConfigurazione()) {
 						if(pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && !"".equals(pa.getGestioneToken().getPolicy())) {
 							this.readTokenPolicy_validation(archive, pa.getGestioneToken().getPolicy(), cascadeConfig, provenienza);
+						}
+					}
+					
+					// attribute authority
+					if(cascadeConfig.isCascadePolicyConfigurazione()) {
+						if(pa!=null && pa.sizeAttributeAuthorityList()>0) {
+							for (AttributeAuthority aa : pa.getAttributeAuthorityList()) {
+								String nomeAA = aa.getNome();
+								if(nomeAA!=null && !"".equals(nomeAA)) {
+									this.readAttributeAuthority(archive, nomeAA, cascadeConfig, provenienza);
+								}
+							}
 						}
 					}
 					

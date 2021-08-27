@@ -15,6 +15,7 @@
 	<target name="war_openspcoop2_govwayConsole_resources">	
                 <zip destfile="${build_govwayConsole_resourceDIR}/messageSecurity.zip" basedir="${deploy.dir}" includes="messageSecurity/**/*.xml" />
                 <zip destfile="${build_govwayConsole_resourceDIR}/policyGestioneToken.zip" basedir="${deploy.dir}" includes="policyGestioneToken/**/*.xml" />
+		<zip destfile="${build_govwayConsole_resourceDIR}/attributeAuthority.zip" basedir="${deploy.dir}" includes="attributeAuthority/**/*.xml" />
 	</target>
 
 	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
@@ -452,6 +453,7 @@
 			<classes dir="${build_govwayConsole}/tmp">
 				<include name="messageSecurity.zip" />
 				<include name="policyGestioneToken.zip" />
+				<include name="attributeAuthority.zip" />
 			</classes>
 		</war>
 		<delete dir="${build_govwayConsole}/tmp" />

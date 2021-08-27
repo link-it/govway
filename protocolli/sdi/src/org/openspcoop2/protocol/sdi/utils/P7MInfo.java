@@ -21,7 +21,9 @@
 package org.openspcoop2.protocol.sdi.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 
+import org.bouncycastle.util.io.pem.PemReader;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.slf4j.Logger;
 
@@ -59,11 +61,38 @@ public class P7MInfo {
 			this.xmlDecoded = (byte[]) cmsSignedData.getSignedContent().getContent();
 			
 		}catch(Throwable e){
+			//System.out.println("ERRORE");
 			
 			byte[] decoded = null;
 			try{
-				decoded = Base64Utilities.decode(new String(fattura));
+				String fatturaS = new String(fattura);
+				if(fatturaS.trim().startsWith("-----BEGIN")) {
+					PemReader pemReader = null;
+					StringReader stringReader = null;
+					try {
+						stringReader = new StringReader(fatturaS);
+						pemReader = new PemReader(stringReader);
+						decoded = pemReader.readPemObject().getContent();
+					}catch(Throwable eDecodePEM) {
+						//System.out.println("ERRORE PEM");
+						log.error("DecodificaBase64 via PEMReader non riuscita: "+eDecodePEM.getMessage(), eDecodePEM);
+					}finally {
+						try {
+							pemReader.close();
+						}catch(Throwable eClose) {}
+						try {
+							stringReader.close();
+						}catch(Throwable eClose) {}
+					}
+				}
+//				else {
+//					System.out.println("NO PEM");
+//				}
+				if(decoded==null) {
+					decoded = Base64Utilities.decode(fatturaS);
+				}
 			}catch(Throwable eDecode){
+				//System.out.println("ERRORE BASE64");
 				log.error("DecodificaBase64 non riuscita: "+eDecode.getMessage(), eDecode);
 				throw e; // lancio l'eccezione originale, poiche' piu' interessante. La seconda mi informa solo che non e' una rappresentazione Base64
 			}

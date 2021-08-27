@@ -86,6 +86,7 @@ import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ConfigurazionePortaHandler;
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
@@ -4257,6 +4258,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public ConfigurazionePortaHandler readConfigurazionePortaHandlerFromString(String in) throws DeserializerException {
 		return (ConfigurazionePortaHandler) this.xmlToObj(in.getBytes(), ConfigurazionePortaHandler.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: attribute-authority
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AttributeAuthority readAttributeAuthority(String fileName) throws DeserializerException {
+		return (AttributeAuthority) this.xmlToObj(fileName, AttributeAuthority.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AttributeAuthority readAttributeAuthority(File file) throws DeserializerException {
+		return (AttributeAuthority) this.xmlToObj(file, AttributeAuthority.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AttributeAuthority readAttributeAuthority(InputStream in) throws DeserializerException {
+		return (AttributeAuthority) this.xmlToObj(in, AttributeAuthority.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AttributeAuthority readAttributeAuthority(byte[] in) throws DeserializerException {
+		return (AttributeAuthority) this.xmlToObj(in, AttributeAuthority.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @return Object type {@link org.openspcoop2.core.config.AttributeAuthority}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AttributeAuthority readAttributeAuthorityFromString(String in) throws DeserializerException {
+		return (AttributeAuthority) this.xmlToObj(in.getBytes(), AttributeAuthority.class);
 	}	
 	
 	

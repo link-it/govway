@@ -96,6 +96,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.archive.AbstractArchiveGenericProperties;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
@@ -103,6 +104,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAttributeAuthority;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
@@ -283,6 +285,19 @@ public class ImporterArchiveUtils {
 					detail.setException(e);
 				}
 				esito.getToken_retrieve_policies().add(detail);
+			}
+			
+			// Attribute Authority (Retrieve)
+			for (int i = 0; i < archive.getAttributeAuthorities().size(); i++) {
+				ArchiveAttributeAuthority archiveAttributeAuthority = archive.getAttributeAuthorities().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAttributeAuthority);
+				try{
+					this.importAttributeAuthority(archiveAttributeAuthority, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getAttributeAuthorities().add(detail);
 			}
 			
 			
@@ -3648,9 +3663,15 @@ public class ImporterArchiveUtils {
 	
 	
 	public void importTokenPolicy(ArchiveTokenPolicy archivePolicy,ArchiveEsitoImportDetail detail){
+		_importGenericProperties("Token Policy", archivePolicy, detail);
+	}
+	public void importAttributeAuthority(ArchiveAttributeAuthority archiveAA,ArchiveEsitoImportDetail detail){
+		_importGenericProperties("Attribute Authority", archiveAA, detail);
+	}
+	public void _importGenericProperties(String oggetto, AbstractArchiveGenericProperties archiveGenericProperties,ArchiveEsitoImportDetail detail){
 		
-		String nomePolicy = archivePolicy.getNomePolicy();
-		String tipologiaPolicy = archivePolicy.getTipologiaPolicy();
+		String nomePolicy = archiveGenericProperties.getNomePolicy();
+		String tipologiaPolicy = archiveGenericProperties.getTipologiaPolicy();
 		try{
 			
 			// --- check abilitazione ---
@@ -3693,18 +3714,18 @@ public class ImporterArchiveUtils {
 			if(this.importerEngine.existsGenericProperties(tipologiaPolicy, nomePolicy)){
 				
 				GenericProperties old = this.importerEngine.getGenericProperties(tipologiaPolicy, nomePolicy);
-				archivePolicy.getPolicy().setId(old.getId());
+				archiveGenericProperties.getPolicy().setId(old.getId());
 				
 				// visibilita' oggetto stesso per update
 				// non esistenti
 
 				// update
-				this.importerEngine.updateGenericProperties(archivePolicy.getPolicy());
+				this.importerEngine.updateGenericProperties(archiveGenericProperties.getPolicy());
 				create = false;
 			}
 			// --- create ---
 			else{
-				this.importerEngine.createGenericProperties(archivePolicy.getPolicy());
+				this.importerEngine.createGenericProperties(archiveGenericProperties.getPolicy());
 				create = true;
 			}
 				
@@ -3717,7 +3738,7 @@ public class ImporterArchiveUtils {
 			}
 		}			
 		catch(Exception e){
-			this.log.error("Errore durante l'import token policy ["+nomePolicy+"] (tipo: '"+tipologiaPolicy+"'): "+e.getMessage(),e);
+			this.log.error("Errore durante l'import della configurazione '"+oggetto+"' ["+nomePolicy+"] (tipo: '"+tipologiaPolicy+"'): "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}

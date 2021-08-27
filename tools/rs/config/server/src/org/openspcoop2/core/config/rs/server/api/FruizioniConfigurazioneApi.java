@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneScopes;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneView;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
+import org.openspcoop2.core.config.rs.server.model.ControlloAccessiIdentificazioneAttributi;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ElencoProprieta;
@@ -623,6 +624,27 @@ public interface FruizioniConfigurazioneApi  {
     public ControlloAccessiGestioneToken getFruizioneControlloAccessiGestioneToken(@PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
 
     /**
+     * Restituisce la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+     *
+     * Questa operazione consente di ottenere la configurazione relativa all'identificazione degli attributi
+     *
+     */
+    @GET
+    @Path("/fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/identificazione-attributi")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Restituisce la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi", tags={ "fruizioni-configurazione" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Dettaglio della configurazione restituito con successo", content = @Content(schema = @Schema(implementation = ControlloAccessiIdentificazioneAttributi.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ControlloAccessiIdentificazioneAttributi getFruizioneControlloAccessiIdentificazioneAttributi(@PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
+
+    /**
      * Restituisce le proprietà di configurazione attivate
      *
      * Questa operazione consente di ottenere le proprietà di configurazione
@@ -920,6 +942,28 @@ public interface FruizioniConfigurazioneApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public void updateFruizioneControlloAccessiGestioneToken(@Valid ControlloAccessiGestioneToken body, @PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
+
+    /**
+     * Consente di modificare la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+     *
+     * Questa operazione consente di aggiornare la configurazione relativa all'identificazione degli attributi
+     *
+     */
+    @PUT
+    @Path("/fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/identificazione-attributi")
+    @Consumes({ "application/json" })
+    @Produces({ "application/problem+json" })
+    @Operation(summary = "Consente di modificare la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi", tags={ "fruizioni-configurazione" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "204", description = "Configurazione aggiornata correttamente"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public void updateFruizioneControlloAccessiIdentificazioneAttributi(@Valid ControlloAccessiIdentificazioneAttributi body, @PathParam("erogatore") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String erogatore, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio);
 
     /**
      * Consente di modificare la configurazione CORS associata alla fruizione

@@ -112,6 +112,7 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizione;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
@@ -547,6 +548,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(idSE.getTipo());
 				
+				String identificazioneAttributiStato = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+				String [] attributeAuthoritySelezionate = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+				String attributeAuthorityAttributi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+				
 				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 						autorizzazioneRuoliTipologia, ruoloMatch, 
@@ -555,7 +560,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-						protocollo)==false){
+						protocollo,
+						identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi)==false){
 					return false;
 				}
 			}
@@ -1054,7 +1060,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
-			String messageEngine,String canalePorta) throws Exception {
+			String messageEngine,String canalePorta,
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1739,7 +1746,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
-					urlAutorizzazioneErogazioneApplicativiAutenticati, 0, urlAutorizzazioneErogazioneCustomPropertiesList , 0);
+					urlAutorizzazioneErogazioneApplicativiAutenticati, 0, urlAutorizzazioneErogazioneCustomPropertiesList , 0,
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, false, autorizzazioneContenutiStato, 
 					autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding, 
@@ -5265,7 +5273,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -5403,7 +5414,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -5541,7 +5555,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					// Valore
 					de = new DataElement();
-					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? this.formatInfoForView(parametro.getValore()) :  "&nbsp;" );
+					if(StringUtils.isNotEmpty(parametro.getValore())) {
+						de.setToolTip(parametro.getValore());
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -6857,32 +6874,32 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElementInfo dInfoPattern = null;
 					if(org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore.TEMPLATE.equals(stickyTipoSelettore)) {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
-						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
 						}
 						else {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
 						}
 					}
 					else if(org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore.FREEMARKER_TEMPLATE.equals(stickyTipoSelettore)) {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
-						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
 						}
 						else {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
 						}
 					}
 					else {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
-						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
 						}
 						else {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
 						}
 					}
 					de.setInfo(dInfoPattern);
@@ -7080,32 +7097,32 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElementInfo dInfoPattern = null;
 					if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.equals(identificazioneCondizionale)) {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
-						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
 						}
 						else {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
 						}
 					}
 					else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
-						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
 						}
 						else {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
 						}
 					}
 					else {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
-						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
 						}
 						else {
-							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
 						}
 					}
 					de.setInfo(dInfoPattern);
@@ -7743,8 +7760,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// nuovo filtro filtro
 			this.addFilterFiltroConnettoreMultiplo(ricerca, idLista, behaviourConFiltri);
 			
+			
+			// **** filtro connettore ****
+			
 			// nuovi filtri connettore
-			this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+			this.addFilterSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE, ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE, false);
 			
 			// filtro tipo connettore con voce IM solo sulle erogazioni
 			String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, true);
@@ -7761,6 +7781,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// filtro keystore
 			this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
 			
+			// imposto apertura sezione
+			this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
+
+			// **** fine filtro connettore ****
 			
 			
 			this.pd.setIndex(offset);
@@ -9886,32 +9910,32 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			DataElementInfo dInfoPattern = null;
 			if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.equals(identificazioneCondizionale)) {
 				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
-				dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+				dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
 				}
 				else {
-					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
 				}
 			}
 			else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
 				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
-				dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+				dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
 				}
 				else {
-					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
 				}
 			}
 			else {
 				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
-				dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+				dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
 				}
 				else {
-					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
 				}
 			}
 			de.setInfo(dInfoPattern);

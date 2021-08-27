@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.autorizzazione;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +52,12 @@ import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.InformazioniTokenUserInfo;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.xacml.CachedMapBasedSimplePolicyRepository;
@@ -229,6 +233,20 @@ public class XACMLPolicyUtilities {
 		List<String> tokenRoles = null;
 		if(informazioniTokenNormalizzate!=null) {
 			tokenRoles = informazioniTokenNormalizzate.getRoles();
+		}
+		
+		List<String> attributeNames = null;
+		Map<String, Object> attributes = null;
+		boolean multipleAA = false;
+		InformazioniAttributi informazioniAttributiNormalizzati = null;
+		Object oInformazioniAttributiNormalizzati = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE);
+		if(oInformazioniAttributiNormalizzati!=null) {
+			informazioniAttributiNormalizzati = (InformazioniAttributi) oInformazioniAttributiNormalizzati;
+		}
+		if(informazioniAttributiNormalizzati!=null) {
+			attributeNames = informazioniAttributiNormalizzati.getAttributesNames();
+			attributes = informazioniAttributiNormalizzati.getAttributes();
+			multipleAA = informazioniAttributiNormalizzati.isMultipleAttributeAuthorities()!=null && informazioniAttributiNormalizzati.isMultipleAttributeAuthorities();
 		}
 		
 		HttpServletRequest httpServletRequest = null;
@@ -506,7 +524,7 @@ public class XACMLPolicyUtilities {
 		if(roles!=null && roles.size()>0){
 			xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_ROLE_ATTRIBUTE_ID, roles);
 		}
-		
+				
 		if(informazioniTokenUserInfoNormalizzate!=null) {
 			if(informazioniTokenUserInfoNormalizzate.getFullName()!=null) {
 				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_USER_INFO_FULL_NAME_ATTRIBUTE_ID, informazioniTokenUserInfoNormalizzate.getFullName());
@@ -549,6 +567,14 @@ public class XACMLPolicyUtilities {
 						XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_USERINFO_CLAIMS_PREFIX+key);
 			}
 		}
+		
+		if(attributeNames!=null && !attributeNames.isEmpty()) {
+			setSubjectAttribute(xacmlRequest, attributeNames, 
+					XACMLCostanti.XACML_REQUEST_SUBJECT_ATTRIBUTE_ATTRIBUTE_NAMES_ID);
+		}
+		if(attributes!=null && attributes.size()>0){
+			addAttributes(xacmlRequest, attributes, multipleAA);
+		}
 
 		
 		
@@ -574,6 +600,94 @@ public class XACMLPolicyUtilities {
 		return xacmlRequest;
 
 
+	}
+	
+	private static void addAttributes(XacmlRequest xacmlRequest, Map<String, Object> attributesParam, boolean multipleAA) {
+		if(attributesParam!=null && !attributesParam.isEmpty()) {
+			String logAA = "";
+			if(multipleAA) {
+				// informazioni normalizzate, devo scendere di un livello, senno al primo degli attributi ci sono le attribute authority
+				for (String attrAuthName : attributesParam.keySet()) {
+					Object o = attributesParam.get(attrAuthName);
+					if(o instanceof Map) {
+						try {
+							List<String> attributesNames = new ArrayList<String>();
+							@SuppressWarnings("unchecked")
+							Map<String, Object> attributes = (Map<String, Object>) o;
+							if(attributes!=null && !attributes.isEmpty()) {
+								for (String attrName : attributes.keySet()) {
+									if(!attributesNames.contains(attrName)) {
+										attributesNames.add(attrName);
+									}
+								}
+							}
+							Collections.sort(attributesNames);
+							String xacmlIdPrefix = XACMLCostanti.XACML_REQUEST_SUBJECT_ATTRIBUTE_AUTHORITY_ATTRIBUTE_PREFIX+
+									attrAuthName+
+									XACMLCostanti._XACML_REQUEST_SUBJECT_ATTRIBUTE_ATTRIBUTE_PREFIX;
+							JSONUtils jsonUtils = JSONUtils.getInstance();
+							logAA = " (A.A. "+attrAuthName+")";
+							for (String attributeName : attributesNames) {
+								addAttribute(xacmlRequest, xacmlIdPrefix, attributes, attributeName,
+										jsonUtils, logAA);
+							}
+						}catch(Throwable t) {
+							OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("addAttributes failed (A.A. "+attrAuthName+"): "+t.getMessage(),t);
+						}
+					}
+				}
+				
+			}
+			else {
+				List<String> attributesNames = new ArrayList<String>();
+				for (String attrName : attributesParam.keySet()) {
+					attributesNames.add(attrName);
+				}
+				Collections.sort(attributesNames);
+				String xacmlIdPrefix = XACMLCostanti.XACML_REQUEST_SUBJECT_ATTRIBUTE_ATTRIBUTE_PREFIX;
+				JSONUtils jsonUtils = JSONUtils.getInstance();
+				for (String attributeName : attributesNames) {
+					addAttribute(xacmlRequest, xacmlIdPrefix, attributesParam, attributeName,
+							jsonUtils, logAA);
+				}
+			}
+		}
+	}
+	private static void addAttribute(XacmlRequest xacmlRequest, String xacmlIdPrefix, Map<String, Object> attributes, String attributeName,
+			JSONUtils jsonUtils, String logAA) {
+		Object oValue = attributes.get(attributeName);
+		if(oValue!=null) {
+			try {
+				String key = normalizeKeyClaim(attributeName);
+				setSubjectAttribute(xacmlRequest, oValue, 
+						xacmlIdPrefix+key);
+				
+//				//System.out.println("TIPO: "+oValue.getClass().getName());
+//				if(oValue instanceof String) {
+//					String value = (String) oValue;
+//					xacmlRequest.addSubjectAttribute(xacmlIdPrefix+attributeName, value);
+//				}
+//				else if(oValue instanceof List<?>) {
+//					List<?> list = (List<?>) oValue;
+//					if(list!=null && !list.isEmpty()) {
+//						List<String> lValues = new ArrayList<String>();
+//						for (Object object : list) {
+//							if(object!=null && object instanceof String) {
+//								lValues.add((String)object);
+//							}
+//						}
+//						if(!lValues.isEmpty()) {
+//							xacmlRequest.addSubjectAttribute(xacmlIdPrefix+attributeName, lValues);
+//						}
+//					}
+//				}
+//				else {
+//					throw new Exception("type '"+oValue.getClass().getName()+"' unmanaged");
+//				}
+			}catch(Throwable t) {
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("addAttribute '"+attributeName+"' failed"+logAA+": "+t.getMessage(),t);
+			}
+		}
 	}
 	
 	private static String normalizeKeyClaim(String keyParam) {

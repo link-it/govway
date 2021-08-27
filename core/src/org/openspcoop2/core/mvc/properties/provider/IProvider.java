@@ -33,11 +33,18 @@ import java.util.Properties;
  */
 public interface IProvider {
 
+	public default void validateId(String name) throws ProviderException, ProviderValidationException {	}
+	public default void validateDescription(String description) throws ProviderException, ProviderValidationException {	}
+	
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException;
 	
 	public List<String> getValues(String id) throws ProviderException;
 	public List<String> getLabels(String id) throws ProviderException;
 	
 	public String getDefault(String id) throws ProviderException;
+	
+	public default ProviderInfo getProviderInfo(String id) throws ProviderException{
+		return null;
+	}
 	
 }

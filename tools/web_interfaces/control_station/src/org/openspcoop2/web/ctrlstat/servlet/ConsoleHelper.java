@@ -57,11 +57,13 @@ import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
 import org.openspcoop2.core.allarmi.utils.AllarmiConverterUtils;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
@@ -184,6 +186,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLo
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
@@ -221,6 +224,7 @@ import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -289,6 +293,7 @@ import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Dialog;
@@ -1467,6 +1472,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			pu = u.getPermessi();
 
 			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			if(singlePdD==null) {
+				singlePdD = this.core!=null ? this.core.isSinglePdD() : true;
+			}
 
 			boolean isModalitaAvanzata = this.isModalitaAvanzata();
 			boolean isModalitaCompleta = this.isModalitaCompleta();
@@ -1829,7 +1837,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					int dimensioneEntries = 0;
 
 
-					dimensioneEntries = 5; // configurazione, tracciamento, controllo del traffico, policy e audit
+					dimensioneEntries = 6; // configurazione, tracciamento, controllo del traffico, policy, aa e audit
 					
 					if(this.core.isConfigurazioneAllarmiEnabled())
 						dimensioneEntries++; // configurazione allarmi
@@ -1892,8 +1900,13 @@ public class ConsoleHelper implements IConsoleHelper {
 						index++;	
 					}
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
-					index++;	
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+							ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN;
+					index++;
+					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY;
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+							ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY;
+					index++;
 					
 					entries[index][0] = GruppiCostanti.LABEL_GRUPPI;
 					entries[index][1] = GruppiCostanti.SERVLET_NAME_GRUPPI_LIST;
@@ -2981,7 +2994,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								mappaDB = this.porteApplicativeCore.readMessageSecurityRequestPropertiesConfiguration(idPorta); 
 							}
 							ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
-							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, configurazione);
+							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, null, null, configurazione);
 						}catch(Exception e) {
 							this.log.error(e.getMessage(),e);
 						}
@@ -3077,7 +3090,7 @@ public class ConsoleHelper implements IConsoleHelper {
 								mappaDB = this.porteApplicativeCore.readMessageSecurityResponsePropertiesConfiguration(idPorta); 
 							}
 							ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
-							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, configurazione);
+							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, null, null, configurazione);
 						}catch(Exception e) {
 							this.log.error(e.getMessage(),e);
 						}
@@ -4431,15 +4444,18 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 			}
 			
-			if(!allHidden && isSupportatoAutenticazioneSoggetti) {
+			boolean addTitle = !allHidden && isSupportatoAutenticazioneSoggetti;
+			if(addTitle) {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE); //SUBTITLE);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TITLE);
 				if(modipa && !isPortaDelegata) {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE+" "+CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_CANALE);
 				}
 				else {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE+" "+CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TRASPORTO);
 				}
+				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.APERTO);
 				dati.addElement(de);
 			}
 			
@@ -4485,6 +4501,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE+"__LABEL");
 						de.setType(DataElementType.TEXT);
 						de.setValue(TipoAutenticazione.SSL.getLabel());
+						de.setValoreDefault(TipoAutenticazione.DISABILITATO.getLabel());
 					}
 					else if(existsAutorizzazioniPuntuali) {
 						de.setType(DataElementType.HIDDEN);
@@ -4503,6 +4520,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							}
 						}
 						de.setValue(labelAutenticazione!=null ? labelAutenticazione : autenticazione);
+						de.setValoreDefault(TipoAutenticazione.DISABILITATO.getLabel());
 					}
 					else {
 						de.setType(DataElementType.SELECT);
@@ -4511,6 +4529,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						//		de.setOnChange("CambiaTipoAuth('" + tipoOp + "', " + numCorrApp + ")");
 						de.setPostBack(true);
 						de.setSelected(autenticazione);
+						de.setValoreDefaultSelect(TipoAutenticazione.DISABILITATO.getValue());
 					}
 				}
 				dati.addElement(de);
@@ -4981,7 +5000,9 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 			}
 			
-			
+			if(addTitle) {
+				this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TITLE);
+			}
 			
 		} else {
 			DataElement de = new DataElement();
@@ -5022,7 +5043,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE); //SUBTITLE);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
+			de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
 			dati.addElement(de);
 			
 			String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
@@ -5033,6 +5056,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			de.setValues(valoriAbilitazione);
+			de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 			de.setPostBack(true);
 			de.setSelected(gestioneToken);
 			dati.addElement(de);
@@ -5052,7 +5076,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 					
-					GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+					GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN,true);
 					Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
 					
 					de = new DataElement();
@@ -5123,6 +5147,9 @@ public class ConsoleHelper implements IConsoleHelper {
 					dati.addElement(de);
 				}
 			}
+			
+			this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TITLE);
+			
 		} else {
 			// stato abilitazione
 			DataElement de = new DataElement();
@@ -5143,7 +5170,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean addTitoloSezione,String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_token, String autorizzazione_tokenOptions,BinaryParameter allegatoXacmlPolicy,
 			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati,
-			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList) throws Exception{
+			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList,
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception{
 		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, protocolloParam,
 				autenticazione, autenticazioneCustom,
 				autorizzazione, autorizzazioneCustom, 
@@ -5152,7 +5180,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,
 				gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 				urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati,
-				urlAutorizzazioneCustomPropertiesList, numAutorizzazioneCustomPropertiesList);
+				urlAutorizzazioneCustomPropertiesList, numAutorizzazioneCustomPropertiesList,
+				identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 		
 	}
 	
@@ -5165,7 +5194,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_token, String autorizzazione_tokenOptions, BinaryParameter allegatoXacmlPolicy,
 			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati,
-			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList) throws Exception{
+			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList,
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception{
 		
 		boolean allHidden = false;
 		if(!this.isModalitaCompleta() && TipoOperazione.ADD.equals(tipoOperazione)) {
@@ -5216,15 +5246,88 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(mostraSezione) {
 			
-			if(!allHidden) {
+			if(!tipoOperazione.equals(TipoOperazione.ADD) && attributeAuthorityValues!=null && attributeAuthorityValues.length>0){
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE); //SUBTITLE);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO_TITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_TITLE);
+				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
+				dati.addElement(de);
+			
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_STATO);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO);
+				de.setValue(identificazioneAttributiStato);
+				if(allHidden) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else {
+					de.setType(DataElementType.SELECT);
+					String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
+					de.setValues(valoriAbilitazione);
+					//de.setLabels(valoriAbilitazione);
+					de.setPostBack(true);
+					de.setSelected(identificazioneAttributiStato);
+					de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
+				}
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+				if(allHidden || !StatoFunzionalita.ABILITATO.getValue().equals(identificazioneAttributiStato)) {
+					de.setType(DataElementType.HIDDEN);
+					de.setSelezionati(attributeAuthoritySelezionate);
+				}
+				else {
+					de.setRequired(true);
+					de.setType(DataElementType.MULTI_SELECT);
+					de.setValues(attributeAuthorityValues);
+					de.setLabels(attributeAuthorityLabels);
+					de.setPostBack(true); // cambia la descrizione in autorizzazione per claims
+					de.setSelezionati(attributeAuthoritySelezionate);
+				}
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
+				int sizeAA = 0;
+				if(attributeAuthoritySelezionate!=null) {
+					sizeAA = attributeAuthoritySelezionate.length;
+				}
+				de.setValue(attributeAuthorityAttributi);
+				if(allHidden || !StatoFunzionalita.ABILITATO.getValue().equals(identificazioneAttributiStato)) {
+					de.setType(DataElementType.HIDDEN);
+				}
+				else if(sizeAA>1) {
+					de.setType(DataElementType.TEXT_AREA);
+					de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI_NOTE_MULTIPLE_AA);
+					de.setRows(sizeAA<=10 ? sizeAA : 10);
+				}
+				else {
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI_NOTE_SINGLE_AA);
+				}
+				dati.addElement(de);
+				
+				this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_STATO_TITLE);
+			}
+			
+			
+			boolean addTitle = false;
+			if(!allHidden) {
+				addTitle = true;
+				DataElement de = new DataElement();
+				de.setType(DataElementType.TITLE); //SUBTITLE);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TITLE);
 				if(profiloModi && !isPortaDelegata) {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE);
 				}
 				else {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
 				}
+				de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.APERTO);
 				dati.addElement(de);
 			}
 			
@@ -5255,6 +5358,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(tipoAutorizzazione_label);
 				de.setPostBack(true);
 				de.setSelected(autorizzazione);
+				de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 			}
 			dati.addElement(de);
 			
@@ -5777,7 +5881,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					if(autorizzazioneTokenEnabled) {
 						de = new DataElement();
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
-						de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE);
+						de.setNote(DynamicHelperCostanti.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE);
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 						de.setValue(autorizzazione_tokenOptions);
 						if(allHidden) {
@@ -5795,14 +5899,26 @@ public class ConsoleHelper implements IConsoleHelper {
 							AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 							serviceBinding = aspc.getServiceBinding();
 						}
+						int sizeAA = 0;
+						if(attributeAuthoritySelezionate!=null) {
+							sizeAA = attributeAuthoritySelezionate.length;
+						}
 						
 						DataElementInfo dInfoTokenClaims = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
-						dInfoTokenClaims.setHeaderBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS);
-						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoTokenClaims.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI);
+						if(sizeAA>1) {
+							dInfoTokenClaims.setHeaderBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_MULTI_ATTRIBUTE_AUTHORITY);
+						}
+						else if(sizeAA==1) {
+							dInfoTokenClaims.setHeaderBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SINGLE_ATTRIBUTE_AUTHORITY);
 						}
 						else {
-							dInfoTokenClaims.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI);
+							dInfoTokenClaims.setHeaderBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_NO_ATTRIBUTE_AUTHORITY);
+						}
+						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+							dInfoTokenClaims.setListBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI);
+						}
+						else {
+							dInfoTokenClaims.setListBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI);
 						}
 						de.setInfo(dInfoTokenClaims);
 						
@@ -5810,6 +5926,11 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 				}
 			}
+			
+			if(addTitle) {
+				this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TITLE);
+			}
+			
 		} else {
 			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
@@ -5825,8 +5946,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			DataElement de = new DataElement();
 			de.setType(DataElementType.TITLE);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO_TITLE);
 			//de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE+" "+this.getProfiloModIPASectionTitle());
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO);
+			de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
 			dati.addElement(de);
 			
 //			de = new DataElement();
@@ -5849,6 +5972,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValues(valoriAbilitazione);
 			de.setPostBack(true);
 			de.setSelected(stato);
+			de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
 			dati.addElement(de);
 			
 			if(StatoFunzionalita.ABILITATO.getValue().equals(stato)) {
@@ -5896,6 +6020,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 			}
+			
+			this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO_TITLE);
 		}
 		
 	}
@@ -5908,6 +6034,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE);
+		de.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
 		dati.addElement(de);
 		
 		List<String> authContenutiLabels = new ArrayList<>();
@@ -5929,6 +6057,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO);
 		de.setPostBack(true);
+		de.setValoreDefaultSelect(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO); 
 		dati.addElement(de);
 		
 		if(!autorizzazioneContenutiStato.equals(CostantiControlStation.VALUE_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_STATO_DISABILITATO)) {
@@ -5947,16 +6076,16 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.TEXT_AREA);
 				de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
 				de.setValue(autorizzazioneContenutiProperties);
-				de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CONTENUTI_NOTE);
+				de.setNote(DynamicHelperCostanti.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CONTENUTI_NOTE);
 				DataElementInfo info = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
-				info.setHeaderBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+				info.setHeaderBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI);
+					info.setListBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI);
 				}
 				else {
-					info.setListBody(CostantiControlStation.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI);
+					info.setListBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI);
 				}
-				
+				de.setValoreDefault("");
 				de.setInfo(info );
 				dati.addElement(de);
 			}
@@ -5999,6 +6128,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 		}
+		
+		this.impostaAperturaTitle(dati, CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI_STATO_TITLE);
 	}
 	
 	public boolean controlloAccessiCheck(TipoOperazione tipoOperazione, 
@@ -6011,7 +6142,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
 			String autorizzazioneContenutiStato, String autorizzazioneContenuto, String autorizzazioneContenutiProperties,
-			String protocollo) throws Exception{
+			String protocollo,
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception{
 		try {
 			
 			if(TipoAutenticazione.PRINCIPAL.equals(autenticazione) &&  autenticazionePrincipal!=null) {
@@ -6178,6 +6310,18 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				
+			}
+			
+			// check attribute authority
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(identificazioneAttributiStato)){
+				if(attributeAuthoritySelezionate==null || attributeAuthoritySelezionate.length<=0) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY));
+					return false;
+				}
+				if (!checkAttributes(attributeAuthoritySelezionate, attributeAuthorityAttributi)) {
+					return false;
+				}
 			}
 			
 			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
@@ -6731,6 +6875,47 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
+	private boolean checkAttributes(String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) {
+		if(attributeAuthoritySelezionate!=null && attributeAuthoritySelezionate.length>1) {
+			Properties properties = null;
+			if(attributeAuthorityAttributi!=null && StringUtils.isNotEmpty(attributeAuthorityAttributi)) {
+				properties = PropertiesUtilities.convertTextToProperties(attributeAuthorityAttributi);
+				if(properties!=null && properties.size()>0) {
+					for (Object oKey : properties.keySet()) {
+						if(oKey instanceof String) {
+							String aaName = (String) oKey;
+							boolean find = false;
+							for (String aa : attributeAuthoritySelezionate) {
+								if(aa.equals(aaName)) {
+									find = true;
+									break;
+								}
+							}
+							if(!find) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_ATTRIBUTE_AUTHORITY_NON_ESISTENTE_XX,	
+										aaName, CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI));
+								return false;
+							}
+							String p = properties.getProperty(aaName);
+							List<String> attributi = DBUtils.convertToList(p);
+							if(attributi==null || attributi.isEmpty()) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_ATTRIBUTE_AUTHORITY_VUOTA_XX,	
+										aaName, CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI));
+								return false;
+							}
+						}
+					}
+				}
+				else {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_ATTRIBUTE_AUTHORITY_NON_ESISTENTE_XX,	
+							attributeAuthorityAttributi, CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI));
+					return false;	
+				}
+			}
+		}
+		return true;
+	}
+	
 	
 	// Stato PA
 	
@@ -7086,13 +7271,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
+		List<AttributeAuthority> aa = paAssociata.getAttributeAuthorityList();
+		List<String> attributeAuthority = new ArrayList<String>();
+		if(aa!=null && !aa.isEmpty()) {
+			for (AttributeAuthority a : aa) {
+				attributeAuthority.add(a.getNome());
+			}
+		}
+		
 		if(de!=null) {
 			this.setStatoControlloAccessi(de, false, 
 					gestioneToken, gestioneTokenOpzionale, gestioneTokenPolicy, gestioneTokenConfig,
 					autenticazione,  autenticazioneOpzionale, autenticazioneCustom,
 					autorizzazione, autorizzazioneCustom, sizeApplicativi, sizeSoggetti, sizeRuoli, autorizzazioneScope,
 					autorizzazioneContenuti,
-					protocollo);
+					protocollo,
+					attributeAuthority);
 			return  null;
 		}
 		else {
@@ -7101,7 +7295,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				gestioneToken, gestioneTokenOpzionale, gestioneTokenPolicy, gestioneTokenConfig,
 				autenticazione,  autenticazioneOpzionale, autenticazioneCustom,
 				autorizzazione, autorizzazioneCustom, sizeApplicativi, sizeSoggetti, sizeRuoli, autorizzazioneScope,
-				autorizzazioneContenuti);
+				autorizzazioneContenuti,
+				attributeAuthority);
 		}
 	}
 	
@@ -7372,12 +7567,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 		}
 		
+		List<AttributeAuthority> aa = pdAssociata.getAttributeAuthorityList();
+		List<String> attributeAuthority = new ArrayList<String>();
+		if(aa!=null && !aa.isEmpty()) {
+			for (AttributeAuthority a : aa) {
+				attributeAuthority.add(a.getNome());
+			}
+		}
+		
 		if(de!=null) {
 			this.setStatoControlloAccessi(de, true, 
 					gestioneToken, gestioneTokenOpzionale, gestioneTokenPolicy, gestioneTokenConfig,
 					autenticazione,  autenticazioneOpzionale, autenticazioneCustom,
 					autorizzazione, autorizzazioneCustom, sizeApplicativi, sizeSoggetti, sizeRuoli, autorizzazioneScope,
-					autorizzazioneContenuti, protocollo);
+					autorizzazioneContenuti, protocollo,
+					attributeAuthority);
 			return  null;
 		}
 		else {
@@ -7386,7 +7590,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				gestioneToken, gestioneTokenOpzionale, gestioneTokenPolicy, gestioneTokenConfig,
 				autenticazione,  autenticazioneOpzionale, autenticazioneCustom,
 				autorizzazione, autorizzazioneCustom, sizeApplicativi, sizeSoggetti, sizeRuoli, autorizzazioneScope,
-				autorizzazioneContenuti);
+				autorizzazioneContenuti,
+				attributeAuthority);
 		}
 	}
 	
@@ -7440,7 +7645,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			String gestioneToken, String gestioneTokenOpzionale, String gestioneTokenPolicy, GestioneToken gestioneTokenConfig,
 			String autenticazione, String autenticazioneOpzionale, String autenticazioneCustom,
 			String autorizzazione, String autorizzazioneCustom, int sizeApplicativi, int sizeSoggetti, int sizeRuoli, AutorizzazioneScope autorizzazioneScope,
-			String autorizzazioneContenuti
+			String autorizzazioneContenuti,
+			List<String> attributeAuthority
 			) {
 		
 		if(gestioneToken!=null && StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)) {
@@ -7452,6 +7658,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		if(autenticazioneOpzionale != null && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
 			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		
+		if(attributeAuthority!=null && attributeAuthority.size()>0) {
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		}
 		
 		if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione))
 			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
@@ -7469,7 +7679,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			String autenticazione, String autenticazioneOpzionale, String autenticazioneCustom,
 			String autorizzazione, String autorizzazioneCustom, int sizeApplicativi, int sizeSoggetti, int sizeRuoli, AutorizzazioneScope autorizzazioneScope,
 			String autorizzazioneContenuti,
-			String protocollo) throws DriverControlStationException, DriverControlStationNotFound {
+			String protocollo,
+			List<String> attributeAuthority
+			) throws DriverControlStationException, DriverControlStationNotFound {
 		
 		boolean modipa = this.isProfiloModIPA(protocollo);
 		
@@ -7578,6 +7790,18 @@ public class ConsoleHelper implements IConsoleHelper {
 				statusAutenticazione = CheckboxStatusType.CONFIG_ENABLE;
 			}
 			de.addStatus(bfToolTip.toString(), bf.toString(), statusAutenticazione);
+		}
+		
+		// attribute authority
+		if(attributeAuthority!=null && attributeAuthority.size()>0) {
+			StringBuilder bf = new StringBuilder();
+			StringBuilder bfToolTip = new StringBuilder();
+			bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			bfToolTip.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
+			if(!CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)) {
+				bfToolTip.append(": ").append(attributeAuthority.toString());
+			}
+			de.addStatus(bfToolTip.toString(), bf.toString(), CheckboxStatusType.CONFIG_ENABLE);
 		}
 		
 		// autorizzazione
@@ -10666,8 +10890,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void addFilterSubtitle(String subtitle) throws Exception{
-		this.pd.addSubtitleFilter(subtitle);
+	public void addFilterSubtitle(String subtitleName, String subtitleLabel, boolean visualizzaSottosezioneAperta) throws Exception{
+		this.pd.addSubtitleFilter(subtitleName, subtitleLabel, visualizzaSottosezioneAperta);
+	}
+	
+	public void impostaAperturaSubtitle(String subtitleName) throws Exception{
+		this.pd.impostaAperturaSubtitle(subtitleName, null, this.getPostBackElementName());
+	}
+	
+	public void impostaAperturaSubtitle(String subtitleName, boolean visualizzaSottosezioneAperta) throws Exception{
+		this.pd.impostaAperturaSubtitle(subtitleName, visualizzaSottosezioneAperta, this.getPostBackElementName());
 	}
 	
 	public void addFilterHidden(String name, String value) throws Exception{
@@ -10699,6 +10931,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+			if(confPers==null) {
+				confPers = this.core!=null ? this.core.isShowConfigurazioniPersonalizzate() : true;
+			}
 
 			TipologiaConnettori tipologiaConnettori = null;
 			try {
@@ -12558,20 +12793,20 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public boolean checkPropertiesConfigurationData(TipoOperazione tipoOperazione,ConfigBean configurazioneBean, Config config) throws Exception{
+	public boolean checkPropertiesConfigurationData(TipoOperazione tipoOperazione,ConfigBean configurazioneBean, String nome, String descrizione, Config config) throws Exception{
 		// Controlli sui campi immessi
 		try {
-			configurazioneBean.validazioneInputUtente(config);
+			configurazioneBean.validazioneInputUtente(nome, descrizione, config);
 			return true;
 		}catch(UserInputValidationException e) {
 			this.pd.setMessage(e.getMessage());  
 			return false;
 		}catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione dello Schema Sicurezza, impossibile caricare il plugin di validazione previsto dalla configurazione"); 
+			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione, impossibile caricare il plugin di validazione previsto dalla configurazione"); 
 			return false;		
 		} catch(ProviderException e) {
-			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione dello Schema Sicurezza, impossibile utilizzare il plugin di validazione previsto dalla configurazione"); 
+			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione, impossibile utilizzare il plugin di validazione previsto dalla configurazione"); 
 			return false;
 		} catch(ProviderValidationException e) {
 			this.pd.setMessage(e.getMessage());  
@@ -12600,6 +12835,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws Exception {
 		PermessiUtente pu = user.getPermessi();
 		Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+		if(singlePdD==null) {
+			singlePdD = this.core!=null ? this.core.isSinglePdD() : true;
+		}
 
 		String isServizi = (pu.isServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isDiagnostica = (pu.isDiagnostica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
@@ -14990,8 +15228,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.enableTags();
 //		de.setRequired(true);
 		DataElementInfo dInfoCT = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT);
-		dInfoCT.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE);
-		dInfoCT.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
+		dInfoCT.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE);
+		dInfoCT.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
 		de.setInfo(dInfoCT);
 		dati.addElement(de);
 		
@@ -15771,8 +16009,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.enableTags();
 //		de.setRequired(true);
 		DataElementInfo dInfoCT = new DataElementInfo(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA+" - "+CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CT);
-		dInfoCT.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE);
-		dInfoCT.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
+		dInfoCT.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE);
+		dInfoCT.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_INFO_CONTENT_TYPE_VALORI);
 		de.setInfo(dInfoCT);
 		dati.addElement(de);
 		
@@ -15961,12 +16199,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setRequired(true);
 			
 			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE);
-			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
 			}
 			else {
-				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
 			}
 			de.setInfo(dInfoPattern);
 		}
@@ -16065,12 +16303,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setRequired(true);
 			
 			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE);
-			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
 			}
 			else {
-				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
 			}
 			de.setInfo(dInfoPattern);
 		}
@@ -16176,12 +16414,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setRequired(true);
 			
 			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
-			dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
 			}
 			else {
-				dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
 			}
 			de.setInfo(dInfoPattern);
 		}
@@ -16231,12 +16469,12 @@ public class ConsoleHelper implements IConsoleHelper {
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) throws Exception {
 		
 		DataElementInfo dInfoPatternTrasporto = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
-		dInfoPatternTrasporto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+		dInfoPatternTrasporto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-			dInfoPatternTrasporto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
 		}
 		else {
-			dInfoPatternTrasporto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
 		}
 		
 		// Id trasformazione hidden
@@ -16661,21 +16899,21 @@ public class ConsoleHelper implements IConsoleHelper {
 		switch (trasformazioneContenutoTipo) {
 		case TEMPLATE:
 			DataElementInfo dInfoPatternContenuto = new DataElementInfo(label);
-			dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE);
+			dInfoPatternContenuto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TEMPLATE);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
 				}
 			}
 			else {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);
@@ -16686,25 +16924,25 @@ public class ConsoleHelper implements IConsoleHelper {
 			dInfoPatternContenuto = new DataElementInfo(label);
 			if(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.FREEMARKER_TEMPLATE.equals(trasformazioneContenutoTipo) ||
 					org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(trasformazioneContenutoTipo)) {
-				dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+				dInfoPatternContenuto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
 			}
 			else {
-				dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER_ZIP);
+				dInfoPatternContenuto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER_ZIP);
 			}
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
 				}
 			}
 			else {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);
@@ -16715,25 +16953,25 @@ public class ConsoleHelper implements IConsoleHelper {
 			dInfoPatternContenuto = new DataElementInfo(label);
 			if(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.VELOCITY_TEMPLATE.equals(trasformazioneContenutoTipo) ||
 					org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(trasformazioneContenutoTipo)) {
-				dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+				dInfoPatternContenuto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
 			}
 			else {
-				dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY_ZIP);
+				dInfoPatternContenuto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY_ZIP);
 			}
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
 				}
 			}
 			else {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);
@@ -16742,21 +16980,21 @@ public class ConsoleHelper implements IConsoleHelper {
 		case TGZ:
 		case TAR:
 			dInfoPatternContenuto = new DataElementInfo(label);
-			dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS);
+			dInfoPatternContenuto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI_CON_RISPOSTE);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI_CON_RISPOSTE);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_REST_VALORI);
 				}
 			}
 			else {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI_CON_RISPOSTE);
 				}
 				else {
-					dInfoPatternContenuto.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TEMPLATE_COMPRESS_SOAP_VALORI);
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);
@@ -18161,7 +18399,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST, false, null, null, true);
+				postBack_viaPOST, false, null, null, true, null, null);
 	}
 	
 	public void addCustomField(TipoPlugin tipoPlugin,
@@ -18170,6 +18408,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
 			boolean postBack_viaPOST) throws Exception {
+		this.addCustomFieldConValoreDefault(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				value, 
+				hidden, dati,
+				postBack_viaPOST, null);
+	}
+	
+	public void addCustomFieldConValoreDefault(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST, String valoreDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -18177,7 +18431,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST, false, null, null, false);
+				postBack_viaPOST, false, null, null, false, valoreDefault, null);
 	}
 	public void addCustomFieldConValoriDaEscludere(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
@@ -18185,6 +18439,15 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
 			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati) throws Exception {
+		this.addCustomFieldConValoriDaEscludereConValoreDefault(tipoPlugin,ruolo,fase,nomeParametroSelezioneTipo,nomeParametro, label,
+				value, hidden, dati,postBack_viaPOST, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati, null);
+	}
+	public void addCustomFieldConValoriDaEscludereConValoreDefault(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST, List<String> listaValuesDaEscludere, String messaggioErroreValoriDisponibiliTerminati, String valoreDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -18192,7 +18455,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				value, null, false, 
 				hidden, dati,
-				postBack_viaPOST, true, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati,false);
+				postBack_viaPOST, true, listaValuesDaEscludere, messaggioErroreValoriDisponibiliTerminati,false, valoreDefault, null);
 	}
 	
 	public void addMultiSelectCustomField(TipoPlugin tipoPlugin,
@@ -18201,6 +18464,22 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomeParametroSelezioneTipo,
 			String nomeParametro, String label, String [] value, boolean hidden, Vector<DataElement> dati,
 			boolean postBack_viaPOST) throws Exception {
+		addMultiSelectCustomFieldConValoreDefault(tipoPlugin,
+				ruolo,
+				fase,
+				nomeParametroSelezioneTipo,
+				nomeParametro, label, 
+				value, 
+				hidden, dati,
+				postBack_viaPOST, null);
+	}
+	
+	public void addMultiSelectCustomFieldConValoreDefault(TipoPlugin tipoPlugin,
+			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin
+			String fase,
+			String nomeParametroSelezioneTipo,
+			String nomeParametro, String label, String [] value, boolean hidden, Vector<DataElement> dati,
+			boolean postBack_viaPOST, String [] valoriDefault) throws Exception {
 		addCustomField(tipoPlugin,
 				ruolo,
 				fase,
@@ -18208,7 +18487,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				nomeParametro, label, 
 				null, value, true, 
 				hidden, dati,
-				postBack_viaPOST, false, null, null, false);
+				postBack_viaPOST, false, null, null, false, null, valoriDefault);
 	}
 	private void addCustomField(TipoPlugin tipoPlugin,
 			String ruolo, // applicativa/delegata o richiesta/risposta a seconda del tipo di plugin (o anche configurazione per gli allarmi)
@@ -18218,7 +18497,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String value, String [] multiValue, boolean multiSelect,
 			boolean hidden, Vector<DataElement> dati,
 			boolean postBack_viaPOST, boolean mostraSempreLabel, List<String> listaValuesDaEscludere, 
-			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch) throws Exception {
+			String messaggioErroreValoriDisponibiliTerminati, boolean isSearch, String valoreDefault, String[] valoriDefault) throws Exception {
 		
 		List<String> values = new ArrayList<String>();
 		List<String> labels = new ArrayList<String>();
@@ -18358,6 +18637,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(!customValidType) {
 				de.setLabel(label);
 				de.setType(DataElementType.TEXT_EDIT);
+				de.setValoreDefault(valoreDefault);
 			}
 			else {
 				if(multiSelect) {
@@ -18371,9 +18651,11 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabels(labels);
 				if(multiSelect) {
 					de.setSelezionati(multiValue);
+					de.setValoreDefaultMultiSelect(valoriDefault);
 				}
 				else {
 					de.setSelected(value);
+					de.setValoreDefaultSelect(valoreDefault);
 				}
 				de.setNote(note);
 				if(postBack_viaPOST) {
@@ -18839,5 +19121,99 @@ public class ConsoleHelper implements IConsoleHelper {
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 		return this.soggettiCore.nomiProprietaSoggetti(tipoSoggettiProtocollo);
+	}
+	
+	private boolean hasAlmostOneFormElementDefined(List<DataElement> form_elements_to_check) {
+		if(form_elements_to_check!=null) {
+			for (DataElement de : form_elements_to_check) {
+				// solo i tipi di elemento da controllare
+				if(de.isElementoDaControllarePerCheckDefaultNelleForm()) {
+					// valgono solo gli elementi con il default definito
+					if(de.getValoreDefault() != null) {
+						if(DataElementType.CHECKBOX.toString().equals(de.getType())) {
+							if(ServletUtils.isCheckBoxEnabled(de.getSelected()) != de.getValoreDefaultCheckbox()) {
+								return true;
+							}
+						} else if(DataElementType.SELECT.toString().equals(de.getType())) {
+							if(!de.getValoreDefault().equals(de.getSelected())) {
+								return true;
+							}
+						} else if(DataElementType.MULTI_SELECT.toString().equals(de.getType())) {
+							if(!de.getValoreDefault().equals(de.getSelezionatiAsString()))
+								return true;
+						} else { // text, textarea, numerici e radio
+							if(!de.getValoreDefault().equals(de.getValue())) {
+								return true;
+							}
+						}
+						
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName) throws Exception{
+		this.impostaAperturaTitle(dati, titleName, null, this.getPostBackElementName());
+	}
+	
+	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
+		this.impostaAperturaTitle(dati, titleName, visualizzaSottosezioneAperta, this.getPostBackElementName());
+	}
+	
+	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
+		if(dati != null) {
+			int idxSubtitle = -1;
+			for (int i = 0; i < dati.size(); i++) {
+				if(titleName.equals(dati.get(i).getName())) {
+					idxSubtitle = i;
+					break;
+				}
+			}
+			
+			if(visualizzaSottosezioneAperta == null) {
+				// se ho trovato il subtitle allora prendo i filtri successivi
+				// finche non trovo un altro subtitle o finisce la lista
+				if(idxSubtitle > -1) {
+					List<DataElement> filter_values_to_check = new ArrayList<DataElement>();
+					
+					for (int i = idxSubtitle + 1; i < dati.size(); i++) {
+						DataElement de = dati.get(i);
+						if(de.getType().equals("title")) {
+							// ho trovato un'altra sezione mi fermo
+							break;
+						} else {
+							filter_values_to_check.add(de);
+						}
+					}
+					visualizzaSottosezioneAperta = this.hasAlmostOneFormElementDefined(filter_values_to_check);
+					
+					// se c'e' stata una postback la sezione dell'elemento che ha provocato il reload deve restare aperta 
+					if(postbackElementName != null) {
+						for (int i = 0; i < filter_values_to_check.size(); i++) {
+							if(filter_values_to_check.get(i).getName().equals(postbackElementName)) {
+								visualizzaSottosezioneAperta = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			dati.get(idxSubtitle).setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
+		}
+	}
+	
+	public String formatInfoForView(String info) {
+		if(info==null) {
+			return null;
+		}
+		if(info.length()>this.core.getViewLunghezzaMassimaInformazione()) {
+			return info.substring(0, this.core.getViewLunghezzaMassimaInformazione()) + " ...";
+		}
+		else {
+			return info;
+		}
 	}
 }

@@ -49,6 +49,7 @@ public abstract class EsitoAutenticazione implements java.io.Serializable {
 	/** Credenziale */
 	private String credential; // id autenticato
 	private String fullCredential; // descrizione estesa con nome e valore
+	private boolean enrichPrincipal = false; // serve ad indicare che la credenziale e' un principal
 
 	/** Indicazione se il client e' identificato */
 	private boolean clientIdentified = false;
@@ -93,6 +94,13 @@ public abstract class EsitoAutenticazione implements java.io.Serializable {
 	}
 	public void setFullCredential(String fullCredential) {
 		this.fullCredential = fullCredential;
+	}
+	
+	public boolean isEnrichPrincipal() {
+		return this.enrichPrincipal;
+	}
+	public void setEnrichPrincipal(boolean enrichPrincipal) {
+		this.enrichPrincipal = enrichPrincipal;
 	}
 	
 	public boolean isClientAuthenticated() {

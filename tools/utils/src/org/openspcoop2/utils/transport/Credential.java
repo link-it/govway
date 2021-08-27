@@ -61,6 +61,18 @@ public class Credential implements Serializable {
 		
 	}
 	
+	public String getIdentity() {
+		if(this.principalName!=null) {
+			return this.principalName;
+		}
+		else if(this.subject!=null) {
+			return this.subject;
+		}
+		else if(this.username!=null) {
+			return this.username;
+		}
+		return null;
+	}
 	
 	public Principal getPrincipalObject() {
 		return this.principal;

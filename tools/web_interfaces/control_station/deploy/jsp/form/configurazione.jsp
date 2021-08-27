@@ -327,14 +327,21 @@ function Change(form,dataElementName) {
 function Change(form,dataElementName,fromFilters) {
     
 	if( fromFilters ){
-		if(form.action.endsWith('Add.do')){
-			form.action=form.action.replace('Add.do','List.do');
+		var formAction = form.action;
+		
+		// hack actionvuota
+		if(formAction == ''){
+			formAction = document.location.href;
 		}
-		if(form.action.endsWith('Change.do')){
-			form.action=form.action.replace('Change.do','List.do');
+		
+		if(isModificaUrlRicerca(formAction,'Add.do')){
+			form.action=formAction.replace('Add.do','List.do');
 		}
-		if(form.action.endsWith('Del.do')){
-			form.action=form.action.replace('Del.do','List.do');
+		if(isModificaUrlRicerca(formAction,'Change.do')){
+			form.action=formAction.replace('Change.do','List.do');
+		}
+		if(isModificaUrlRicerca(formAction,'Del.do')){
+			form.action=formAction.replace('Del.do','List.do');
 		}
 	}
 	
@@ -364,6 +371,19 @@ function Change(form,dataElementName,fromFilters) {
         
     // form submit
     document.form.submit();
+}
+
+function isModificaUrlRicerca(formAction, urlToCheck){
+	// hack hash documento impostato, la parte di url che contiene la # bisogna eliminarla dal check
+	if(formAction.indexOf('#') > 0) {
+		formAction = formAction.substring(0, formAction.indexOf('#'));
+	}
+	
+	return ieEndsWith(formAction, urlToCheck);
+}
+
+function ieEndsWith(str, suffix){
+	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
 function addHidden(theForm, name, value) {
@@ -410,30 +430,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	}
     	
     	// reinit select del filtro
-    	if($('select[id^=filterValue_]').length > 0){
-    		// elimino eventuali plugin gia' applicati
-    		$('select[id^=filterValue_]').each(function() {
-    			var wrapper = $( this ).parent();
-    			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
-    				$( this ).appendTo($( this ).parent().parent());
-    				wrapper.remove();
-    				$( this ).css('width','');
-    				$( this ).css('height','');
-    			}
-    			
-    			var checkID = $( this ).attr('id') + '_hidden_chk';
-    			if($( '#' + checkID ).length > 0) {
-    				var val = $( '#' + checkID ).attr('value');
-    				if(val && val == 'true'){
-    					$( this ).searchable({disableInput : false});	
-    				} else {
-    					$( this ).searchable({disableInput : true});	
-    				}
-    			} else {
-    				$( this ).searchable({disableInput : true});
-    			}
-			});
-    	}
+    	inizializzaSelectFiltro();
     } else {
     	$("#searchForm").removeClass('searchFormOn');
     	$("#searchForm").addClass('searchFormOff');
@@ -442,6 +439,33 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
     	}
     }
+}
+
+function inizializzaSelectFiltro(){
+	if($('select[id^=filterValue_]').length > 0){
+		// elimino eventuali plugin gia' applicati
+		$('select[id^=filterValue_]').each(function() {
+			var wrapper = $( this ).parent();
+			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
+				$( this ).appendTo($( this ).parent().parent());
+				wrapper.remove();
+				$( this ).css('width','');
+				$( this ).css('height','');
+			}
+			
+			var checkID = $( this ).attr('id') + '_hidden_chk';
+			if($( '#' + checkID ).length > 0) {
+				var val = $( '#' + checkID ).attr('value');
+				if(val && val == 'true'){
+					$( this ).searchable({disableInput : false});	
+				} else {
+					$( this ).searchable({disableInput : true});	
+				}
+			} else {
+				$( this ).searchable({disableInput : true});
+			}
+		});
+	}
 }
 
 	$(document).ready(function(){

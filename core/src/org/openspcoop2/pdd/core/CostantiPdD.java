@@ -606,6 +606,12 @@ public class CostantiPdD {
     public final static String KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO = "@TOKEN_ENDPOINT_SERVIZIO_USER_INFO@";
     /** Costante che identifica le informazioni di autenticazione controllate nel token */
     public final static String KEY_TOKEN_AUTHN_CHECK = "@TOKEN_AUTHN_CHECK@";
+    /** Costante che identifica il nome del servizio di attribute authority */
+    public final static String KEY_ATTRIBUTE_AUTHORITY_NAME = "@ATTRIBUTE_AUTHORITY_NAME@";
+    /** Costante che identifica l'endpoint del servizio di attribute authority */
+    public final static String KEY_ATTRIBUTE_AUTHORITY_ENDPOINT = "@ATTRIBUTE_AUTHORIY_ENDPOINT@";
+    /** Costante che identifica gli attributi recuperati */
+    public final static String KEY_ATTRIBUTES = "@ATTRIBUTES@";
     /** Costante che identifica il tipo di validazione contenuti */
     public final static String KEY_TIPO_VALIDAZIONE_CONTENUTI = "@TIPO_VALIDAZIONE_CONTENUTI@";
     /** Costante che identifica dettagli ulteriori sulla validazione contenuti */
@@ -803,6 +809,9 @@ public class CostantiPdD {
     
     public final static String PREFIX_LIMITED_REQUEST = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_REQUEST;
     public final static String PREFIX_LIMITED_RESPONSE = org.openspcoop2.core.constants.Costanti.PREFIX_LIMITED_RESPONSE;
+    
+    
+    public final static String CONNETTORE_MULTIPLO_SELEZIONATO = "CONNETTORE_MULTIPLO_SELEZIONATO";
 }
 
 

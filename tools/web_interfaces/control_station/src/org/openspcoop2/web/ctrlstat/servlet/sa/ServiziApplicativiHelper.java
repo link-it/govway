@@ -639,7 +639,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
 				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA+"__LABEL");
 				de.setType(DataElementType.TEXT);
-				de.setValue(this.getTipo(tipoSA));
+				de.setValue(this.getTipo(tipoSA, (applicativiServerEnabled && useAsClient)));
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -938,7 +938,51 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 		}
-
+		else {
+	
+			// Devo far vedere il link dei ruoli anche se il server è utilizzabile come client
+			
+			if (TipoOperazione.CHANGE.equals(tipoOperazione) && applicativiServerEnabled && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA) && useAsClient) {
+				
+				de = new DataElement();
+				de.setLabel(RuoliCostanti.LABEL_RUOLI);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				if(useIdSogg){
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""));
+				}
+				else{
+					if(this.isModalitaCompleta()) {
+						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));	
+					}
+					else {
+						// Imposto Accesso da Change!
+						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE,Costanti.CHECK_BOX_ENABLED));
+					}
+				}
+				if (contaListe) {
+					// BugFix OP-674
+					//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
+					Search searchForCount = new Search(true,1);
+					this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
+					//int numRuoli = lista1.size();
+					int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
+					ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
+				} else
+					ServletUtils.setDataElementVisualizzaLabel(de);
+				dati.addElement(de);
+				
+			}
+			
+		}
 
 
 		boolean avanzatoFruitore = this.isModalitaAvanzata() &&
@@ -1270,6 +1314,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String tipoSA = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
 			boolean isApplicativiServerEnabled = this.saCore.isApplicativiServerEnabled(this);
 			
+			boolean useAsClient = false;
+			if(isApplicativiServerEnabled) {
+				if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
+					String tmp = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					useAsClient = ServletUtils.isCheckBoxEnabled(tmp);
+				}
+			}
+			
 			if(ruoloFruitore==null){
 				ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
 			}
@@ -1413,6 +1465,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 				if (!trovatoProv) {
 					this.pd.setMessage("Il soggetto dev'essere scelto tra quelli definiti nel pannello Soggetti");
+					return false;
+				}
+			}
+			
+			if (tipoOperazione.equals(TipoOperazione.CHANGE)) {
+				if(isApplicativiServerEnabled && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA) && !useAsClient && 
+						saOld.getInvocazionePorta()!=null && saOld.getInvocazionePorta().getRuoli()!=null && saOld.getInvocazionePorta().getRuoli().sizeRuoloList()>0) {
+					this.pd.setMessage("Prima di disabilitare l'opzione '"+ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT+"' devono essere rimossi i ruoli assegnati all'applicativo");
 					return false;
 				}
 			}
@@ -2069,8 +2129,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(applicativiServerEnabled) {
 				if(filterTipoSA ==null || (ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI.equals(filterTipoSA) || 
 						ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(filterTipoSA))) {
+					
+					// **** filtro connettore ****
+					
 					// nuovi filtri connettore
-					this.addFilterSubtitle(ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE);
+					this.addFilterSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE, ConnettoriCostanti.LABEL_SUBTITLE_DATI_CONNETTORE, false);
 					
 					// filtro tipo connettore con voce IM solo sulle erogazioni
 					String filterTipoConnettore = this.addFilterTipoConnettore(ricerca, idLista, true);
@@ -2086,6 +2149,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					
 					// filtro keystore
 					this.addFilterConnettoreKeystore(ricerca, idLista, filterTipoConnettore);
+					
+					// imposto apertura sezione
+					this.impostaAperturaSubtitle(ConnettoriCostanti.NAME_SUBTITLE_DATI_CONNETTORE);
+					
+					// **** fine filtro connettore ****
 				}
 			}
 			
@@ -2114,7 +2182,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 				if(profiloModipaSelezionato) {
 					
-					this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA);
+					// **** filtro modi ****
+					
+					this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA, CostantiControlStation.LABEL_SUBTITLE_FILTRI_MODIPA, false);
 					
 					// ulteriore condizione per la visualizzazione della sezione e' che il Dominio non deve essere esterno
 					if(this.core.isGestionePddAbilitata(this)==false && multitenant) {
@@ -2137,6 +2207,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					
 					// filtro audience
 					this.addFilterModIAudience(ricerca, idLista, true, null, filterDominio);
+					
+					// imposto apertura sezione
+					this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_FILTRI_MODIPA);
+					
+					// **** fine filtro modi ****
 				}
 			}
 			
@@ -2163,17 +2238,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 			
-			// filtri proprieta
+			// **** filtro proprieta ****
+			
 			List<String> nomiProprieta = this.nomiProprietaSA(protocolloPerFiltroProprieta,soggettoPerFiltroProprieta);
 			if(nomiProprieta != null && nomiProprieta.size() >0) {
-				this.addFilterSubtitle(CostantiControlStation.LABEL_SUBTITLE_PROPRIETA);
+				this.addFilterSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA, CostantiControlStation.LABEL_SUBTITLE_PROPRIETA, false);
 				
 				// filtro nome
 				this.addFilterProprietaNome(ricerca, idLista, nomiProprieta);
 				
 				// filtro valore
 				this.addFilterProprietaValore(ricerca, idLista, nomiProprieta);
+				
+				// imposto apertura sezione
+				this.impostaAperturaSubtitle(CostantiControlStation.NAME_SUBTITLE_PROPRIETA);
 			}
+			
+			// **** fine filtro proprieta ****
 			
 			
 			this.pd.setIndex(offset);
@@ -2369,7 +2450,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String tipoLabel = this.getTipo(sa);
 			if(sa.isUseAsClient()) {
 				isServer = false;
-				tipoLabel = tipoLabel+" / "+ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT;
+				// tipoLabel = tipoLabel+" / "+ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT; gia aggiunto in metodo getTipo
 			}
 			de.setValue(tipoLabel);
 			e.addElement(de);
@@ -2540,7 +2621,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				tipoLabel = this.getTipo(sa);
 				if(sa.isUseAsClient()) {
 					isServer = false;
-					tipoLabel = tipoLabel+" / "+ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT;
+					//tipoLabel = tipoLabel+" / "+ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT; gia aggiunto in metodo getTipo
 				}
 				
 				if(showProtocolli) {
@@ -2654,17 +2735,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	}
 	
 	private String getTipo(ServizioApplicativo sa){
-		return getTipo(sa.getTipo());
+		return getTipo(sa.getTipo(),sa.isUseAsClient());
 	}
 	
-	private String getTipo(String tipo){
+	private String getTipo(String tipo, boolean useServerAsClient){
 		if(tipo == null)
 			return ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_NON_CONFIGURATO;
 		
 		if(tipo.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT))
 			return ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT;
-		else if(tipo.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER))
-			return ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_SERVER;
+		else if(tipo.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
+			if(useServerAsClient) {
+				return ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_SERVER+" / "+ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT;
+			}
+			else {
+				return ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_SERVER;
+			}
+		}
 		
 		return tipo;
 	}
@@ -3025,6 +3112,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
 					de.setType(DataElementType.CHECKBOX);
 					de.setSelected(useAsClient);
+					//de.setPostBack(true); Non abilitare senno spunta il link 'ruoli' prima di aver salvata effettivamente l'opzione usaComeClient
 					dati.addElement(de);
 				}
 			}

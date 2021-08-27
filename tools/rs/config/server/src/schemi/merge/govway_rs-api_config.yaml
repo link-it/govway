@@ -2549,6 +2549,77 @@ paths:
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/identificazione-attributi:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce la configurazione relativa all'identificazione degli attributi\
+        \ per quanto concerne il controllo degli accessi"
+      description: "Questa operazione consente di ottenere la configurazione relativa\
+        \ all'identificazione degli attributi per quanto concerne il controllo degli\
+        \ accessi"
+      operationId: "getErogazioneControlloAccessiIdentificazioneAttributi"
+      responses:
+        "200":
+          description: "Dettaglio della configurazione restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlloAccessiIdentificazioneAttributi"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Consente di modificare la configurazione relativa all'identificazione\
+        \ degli attributi per quanto concerne il controllo degli accessi"
+      description: "Questa operazione consente di aggiornare la configurazione relativa\
+        \ all'identificazione degli attributi per quanto concerne il controllo degli\
+        \ accessi"
+      operationId: "updateErogazioneControlloIdentificazioneAttributi"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlloAccessiIdentificazioneAttributi"
+        required: true
+      responses:
+        "204":
+          description: "Configurazione aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     get:
       tags:
@@ -5141,6 +5212,76 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ControlloAccessiAutenticazione"
+        required: true
+      responses:
+        "204":
+          description: "Configurazione aggiornata correttamente"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/identificazione-attributi:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce la configurazione relativa all'identificazione degli attributi\
+        \ per quanto concerne il controllo degli accessi"
+      description: "Questa operazione consente di ottenere la configurazione relativa\
+        \ all'identificazione degli attributi"
+      operationId: "getFruizioneControlloAccessiIdentificazioneAttributi"
+      responses:
+        "200":
+          description: "Dettaglio della configurazione restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlloAccessiIdentificazioneAttributi"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    put:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Consente di modificare la configurazione relativa all'identificazione\
+        \ degli attributi per quanto concerne il controllo degli accessi"
+      description: "Questa operazione consente di aggiornare la configurazione relativa\
+        \ all'identificazione degli attributi"
+      operationId: "updateFruizioneControlloAccessiIdentificazioneAttributi"
+      requestBody:
+        description: "Dati da aggiornare"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlloAccessiIdentificazioneAttributi"
         required: true
       responses:
         "204":
@@ -9794,6 +9935,32 @@ components:
           description: "indica se nel token deve essere obbligatoriamente presente\
             \ l'email dell'utente"
           default: false
+    ControlloAccessiIdentificazioneAttributi:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplConfigurazioneStato"
+      - required:
+        - "abilitato"
+        type: "object"
+        properties:
+          abilitato:
+            type: "boolean"
+            description: "indica se la gestione del token è abilitata o meno"
+          attributeAuthority:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/ControlloAccessiAttributeAuthority"
+    ControlloAccessiAttributeAuthority:
+      required:
+      - "nome"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/AAName"
+        attributi:
+          type: "array"
+          items:
+            type: "string"
     ControlloAccessiAutorizzazioneView:
       type: "object"
       allOf:
@@ -10398,6 +10565,12 @@ components:
         valore:
           maxLength: 4000
           type: "string"
+    AAName:
+      maxLength: 255
+      pattern: "^[_A-Za-z][\\-_A-Za-z0-9]*$"
+      type: "string"
+      description: "Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e\
+        \ dev'essere formato solo da caratteri, cifre, '_' e '-'"
     FormatoSoapEnum:
       type: "string"
       default: "Wsdl1.1"

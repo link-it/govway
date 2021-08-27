@@ -247,6 +247,16 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="attribute-authority" type="attribute-authority" maxOccurs="unbounded" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -575,6 +585,16 @@
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="configurazione-handler" type="configurazione-porta-handler" maxOccurs="1" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="attribute-authority" type="attribute-authority" maxOccurs="unbounded" minOccurs="0">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -1300,7 +1320,14 @@
 		<xsd:attribute name="envelope-body-conversione-tipo" type="xsd:string" />
 	</xsd:complexType>
 	
-
+	<!-- AttributeAuthority -->
+	<xsd:complexType name="attribute-authority">
+		<xsd:sequence>
+			<xsd:element name="attributo" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
 	<!-- Proprieta -->
 	<xsd:complexType name="proprieta">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>

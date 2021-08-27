@@ -308,7 +308,13 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case CONFIGURAZIONE_TOKEN_POLICY:
 				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
-				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN;
+				break;
+			case CONFIGURAZIONE_ATTRIBUTE_AUTHORITY:
+				identificativi = exporterUtils.getIdsAttributeAuthority(objToExport);
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+						ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY;
 				break;
 			case CONFIGURAZIONE_PLUGIN_CLASSE:
 				identificativi = exporterUtils.getIdsPluginClassi(objToExport);
@@ -544,6 +550,16 @@ public class ArchiviExporter extends HttpServlet {
 				}else{
 					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
 					fileName = prefix+"TokenPolicy_"+idPolicy.getTipologia()+"_"+idPolicy.getNome()+"."+extSingleArchive;
+				}
+				break;
+			case CONFIGURAZIONE_ATTRIBUTE_AUTHORITY:
+				if(identificativi.size()>1){
+					fileName = prefix+"AttributeAuthority."+ext;
+				}else{
+					IDGenericProperties idPolicy = ((IDGenericProperties)identificativi.get(0));
+					fileName = prefix+"AttributeAuthority_"+
+							//idPolicy.getTipologia()+"_"+
+							idPolicy.getNome()+"."+extSingleArchive;
 				}
 				break;
 			case CONFIGURAZIONE_PLUGIN_CLASSE:

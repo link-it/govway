@@ -2499,6 +2499,72 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/identificazione-attributi:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"  
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+      operationId: getErogazioneControlloAccessiIdentificazioneAttributi
+      description: Questa operazione consente di ottenere la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+      responses:
+        "200":
+          description: Dettaglio della configurazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiIdentificazioneAttributi"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - erogazioni-configurazione
+      summary: Consente di modificare la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+      operationId: updateErogazioneControlloIdentificazioneAttributi
+      description: Questa operazione consente di aggiornare la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiIdentificazioneAttributi'
+      responses: 
+        "204":
+          description: Configurazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default' 
           
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     parameters:
@@ -5053,7 +5119,74 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
- 
+
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/identificazione-attributi:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+      operationId: getFruizioneControlloAccessiIdentificazioneAttributi
+      description: Questa operazione consente di ottenere la configurazione relativa all'identificazione degli attributi
+      responses:
+        "200":
+          description: Dettaglio della configurazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiIdentificazioneAttributi"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    put:
+      tags:
+        - fruizioni-configurazione
+      summary: Consente di modificare la configurazione relativa all'identificazione degli attributi per quanto concerne il controllo degli accessi
+      operationId: updateFruizioneControlloAccessiIdentificazioneAttributi
+      description: Questa operazione consente di aggiornare la configurazione relativa all'identificazione degli attributi
+      requestBody:
+        description: Dati da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiIdentificazioneAttributi'
+      responses: 
+        "204":
+          description: Configurazione aggiornata correttamente
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"

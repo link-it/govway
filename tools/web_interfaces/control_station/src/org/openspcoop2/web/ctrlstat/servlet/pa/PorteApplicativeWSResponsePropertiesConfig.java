@@ -171,7 +171,7 @@ public class PorteApplicativeWSResponsePropertiesConfig  extends Action {
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.checkPropertiesConfigurationData(tipoOperazione, configurazioneBean,configurazione);
+			boolean isOk = porteApplicativeHelper.checkPropertiesConfigurationData(tipoOperazione, configurazioneBean, null, null, configurazione);
 			if(!isOk){
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam);

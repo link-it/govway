@@ -54,6 +54,7 @@ import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -115,6 +116,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	private boolean transazioniRegistrazioneTracceHeaderRawEnabled = false;
 	private boolean transazioniRegistrazioneTracceDigestEnabled = false;
 	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate = false;
+	private boolean transazioniRegistrazioneAttributiInformazioniNormalizzate = false;
 	private boolean transazioniRegistrazioneTempiElaborazione = false;
 	private ISalvataggioTracceManager salvataggioTracceManager = null;
 	private ISalvataggioDiagnosticiManager salvataggioDiagnosticiManager = null;
@@ -284,6 +286,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				Transazioni configTransazioni = this.configPdDManager.getTransazioniConfigurazione();
 				this.transazioniRegistrazioneTempiElaborazione = StatoFunzionalita.ABILITATO.equals(configTransazioni.getTempiElaborazione());
 				this.transazioniRegistrazioneTokenInformazioniNormalizzate = StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken());
+				this.transazioniRegistrazioneAttributiInformazioniNormalizzate = StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
+						this.openspcoopProperties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate(); // per adesso la configurazione avviene via govway.properties
 				
 				// salvataggio
 				this.salvataggioTracceManager = this.openspcoopProperties.getTransazioniRegistrazioneTracceManager();
@@ -357,6 +361,14 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		Transaction transaction = TransactionContext.removeTransaction(idTransazione);
 		if(times!=null) {
 			times.idTransazione = idTransazione;
+		}
+		
+		InformazioniAttributi informazioniAttributiNormalizzati = null;
+		if(context.getPddContext()!=null) {
+			Object oInformazioniAttributiNormalizzati = context.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE);
+			if(oInformazioniAttributiNormalizzati!=null && oInformazioniAttributiNormalizzati instanceof InformazioniAttributi) {
+				informazioniAttributiNormalizzati = (InformazioniAttributi) oInformazioniAttributiNormalizzati;
+			}
 		}
 		
 		/* ---- Verifica Esito della Transazione per registrazione nello storico ----- */
@@ -558,6 +570,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						this.transazioniRegistrazioneTracceDigestEnabled,
 						this.transazioniRegistrazioneTracceProtocolPropertiesEnabled,
 						this.transazioniRegistrazioneTokenInformazioniNormalizzate,
+						this.transazioniRegistrazioneAttributiInformazioniNormalizzate,
 						this.transazioniRegistrazioneTempiElaborazione);
 				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 	
@@ -646,7 +659,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					}
 					FileTraceConfig config = FileTraceConfig.getConfig(fileTraceConfig, fileTraceConfigGlobal);
 					fileTraceManager = new FileTraceManager(this.log, config);
-					fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction);
+					fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributiNormalizzati);
 					fileTraceManager.invoke(context.getTipoPorta(), context.getPddContext());
 				}catch (Throwable e) {
 					this.log.error("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);

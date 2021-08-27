@@ -54,7 +54,10 @@
 			<a4j:outputPanel layout="block" styleClass="subtitle-nopaddingleft-nomarginleft"
 				rendered="#{not empty dettagliBean.dettaglio.tokenIssuer or not empty dettagliBean.dettaglio.tokenClientId or not empty dettagliBean.dettaglio.tokenSubject or not empty dettagliBean.dettaglio.tokenUsername or not empty dettagliBean.dettaglio.tokenMail or not empty dettagliBean.dettaglio.tokenInfo}"
 			>	
-				<h:outputText id="idTokenInfo" value="#{msg['commons.tokenInfo.label']}" styleClass="subtitle-nopaddingleft-nomarginleft" />
+				<h:outputText id="idTokenInfo" value="#{msg['commons.tokenInfo.label']}" styleClass="subtitle-nopaddingleft-nomarginleft"
+						rendered="#{not dettagliBean.attributeInfo}" />
+				<h:outputText id="idAttributi" value="#{msg['commons.attributi.label']}" styleClass="subtitle-nopaddingleft-nomarginleft"
+						rendered="#{dettagliBean.attributeInfo}" />
 			</a4j:outputPanel>
 	
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenIssuer" value="Issuer" rendered="#{not empty dettagliBean.dettaglio.tokenIssuer}"/>
@@ -72,7 +75,10 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenEmail" value="eMail" rendered="#{not empty dettagliBean.dettaglio.tokenMail}"/>
 			<h:outputText id="outTokenEmail" value="#{dettagliBean.dettaglio.tokenMailLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenMail}"/>
 			
-			<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="#{msg['commons.tokenInfo.label']}" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"/>
+			<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="#{msg['commons.tokenInfo.label']}" 
+				rendered="#{not empty dettagliBean.dettaglio.tokenInfo and not dettagliBean.attributeInfo}"/>
+			<h:outputLabel id="outLabelAttributi" styleClass="outputFieldLabel" value="#{msg['commons.attributi.label']}" 
+				rendered="#{not empty dettagliBean.dettaglio.tokenInfo and dettagliBean.attributeInfo}"/>
 			<h:panelGroup id="panelGroupTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
 				<h:form id="formTokenInfo">
                           <a4j:htmlCommandLink id="tokenInfo-iconLink"

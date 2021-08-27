@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_pd_aa_1 ON pd_aa ;
 -- DROP INDEX index_pd_handlers_1 ON pd_handlers ;
 -- DROP INDEX idx_pd_trasf_resp_2 ON pd_transform_risp ;
 -- DROP INDEX idx_pd_trasf_resp_1 ON pd_transform_risp ;
@@ -26,6 +27,7 @@
 -- DROP INDEX INDEX_PD_SA ON porte_delegate_sa ;
 -- DROP INDEX index_porte_delegate_3 ON porte_delegate ;
 -- DROP INDEX index_porte_delegate_2 ON porte_delegate ;
+DROP TABLE pd_aa;
 DROP TABLE pd_handlers;
 DROP TABLE pd_transform_risp_hdr;
 DROP TABLE pd_transform_risp;

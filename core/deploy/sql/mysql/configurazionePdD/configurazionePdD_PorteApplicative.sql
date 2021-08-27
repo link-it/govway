@@ -698,3 +698,22 @@ CREATE TABLE pa_handlers
 CREATE UNIQUE INDEX index_pa_handlers_1 ON pa_handlers (id_porta,tipologia,tipo);
 
 
+
+CREATE TABLE pa_aa
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	attributi TEXT,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_pa_aa_1 UNIQUE (id_porta,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_aa_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_aa PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE UNIQUE INDEX index_pa_aa_1 ON pa_aa (id_porta,nome);
+
+

@@ -293,6 +293,7 @@ public class CostantiConfigurazione {
     /** Token */
 	public final static String GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION = "gestionePolicyToken";
 	public final static String GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE = "retrievePolicyToken";
+	public final static String GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY = "attributeAuthority";
 	public final static String GENERIC_PROPERTIES_TIPOLOGIA_INSTALLER = "installer";
     
     /** Routing */

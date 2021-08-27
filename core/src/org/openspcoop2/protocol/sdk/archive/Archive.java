@@ -64,6 +64,8 @@ public class Archive {
 	private ArchiveSortedMap<ArchiveTokenPolicy> token_validation_policies = new ArchiveSortedMap<ArchiveTokenPolicy>();
 	private ArchiveSortedMap<ArchiveTokenPolicy> token_retrieve_policies = new ArchiveSortedMap<ArchiveTokenPolicy>();
 	
+	private ArchiveSortedMap<ArchiveAttributeAuthority> attributeAuthorities = new ArchiveSortedMap<ArchiveAttributeAuthority>();
+	
 	private ArchiveSortedMap<ArchivePluginClasse> plugin_classi = new ArchiveSortedMap<ArchivePluginClasse>();
 	private ArchiveSortedMap<ArchivePluginArchivio> plugin_archivi = new ArchiveSortedMap<ArchivePluginArchivio>();
 	
@@ -153,6 +155,9 @@ public class Archive {
 	}
 	public ArchiveSortedMap<ArchiveTokenPolicy> getToken_retrieve_policies() {
 		return this.token_retrieve_policies;
+	}
+	public ArchiveSortedMap<ArchiveAttributeAuthority> getAttributeAuthorities() {
+		return this.attributeAuthorities;
 	}
 	public ArchiveSortedMap<ArchivePluginClasse> getPlugin_classi() {
 		return this.plugin_classi;

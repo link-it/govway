@@ -66,6 +66,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.TRASFORMAZIONI = new org.openspcoop2.core.config.model.TrasformazioniModel(new Field("trasformazioni",org.openspcoop2.core.config.Trasformazioni.class,"porta-applicativa",PortaApplicativa.class));
 		this.BEHAVIOUR = new org.openspcoop2.core.config.model.PortaApplicativaBehaviourModel(new Field("behaviour",org.openspcoop2.core.config.PortaApplicativaBehaviour.class,"porta-applicativa",PortaApplicativa.class));
 		this.CONFIGURAZIONE_HANDLER = new org.openspcoop2.core.config.model.ConfigurazionePortaHandlerModel(new Field("configurazione-handler",org.openspcoop2.core.config.ConfigurazionePortaHandler.class,"porta-applicativa",PortaApplicativa.class));
+		this.ATTRIBUTE_AUTHORITY = new org.openspcoop2.core.config.model.AttributeAuthorityModel(new Field("attribute-authority",org.openspcoop2.core.config.AttributeAuthority.class,"porta-applicativa",PortaApplicativa.class));
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_PORT_TYPE = new Field("id-port-type",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
@@ -124,6 +125,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.TRASFORMAZIONI = new org.openspcoop2.core.config.model.TrasformazioniModel(new ComplexField(father,"trasformazioni",org.openspcoop2.core.config.Trasformazioni.class,"porta-applicativa",PortaApplicativa.class));
 		this.BEHAVIOUR = new org.openspcoop2.core.config.model.PortaApplicativaBehaviourModel(new ComplexField(father,"behaviour",org.openspcoop2.core.config.PortaApplicativaBehaviour.class,"porta-applicativa",PortaApplicativa.class));
 		this.CONFIGURAZIONE_HANDLER = new org.openspcoop2.core.config.model.ConfigurazionePortaHandlerModel(new ComplexField(father,"configurazione-handler",org.openspcoop2.core.config.ConfigurazionePortaHandler.class,"porta-applicativa",PortaApplicativa.class));
+		this.ATTRIBUTE_AUTHORITY = new org.openspcoop2.core.config.model.AttributeAuthorityModel(new ComplexField(father,"attribute-authority",org.openspcoop2.core.config.AttributeAuthority.class,"porta-applicativa",PortaApplicativa.class));
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_PORT_TYPE = new ComplexField(father,"id-port-type",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
@@ -205,6 +207,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public org.openspcoop2.core.config.model.PortaApplicativaBehaviourModel BEHAVIOUR = null;
 	 
 	public org.openspcoop2.core.config.model.ConfigurazionePortaHandlerModel CONFIGURAZIONE_HANDLER = null;
+	 
+	public org.openspcoop2.core.config.model.AttributeAuthorityModel ATTRIBUTE_AUTHORITY = null;
 	 
 	public IField ID_SOGGETTO = null;
 	 

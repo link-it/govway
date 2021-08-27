@@ -274,7 +274,15 @@ public final class Exporter extends Action {
 				break;
 			case CONFIGURAZIONE_TOKEN_POLICY:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, 
-						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST);
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+								ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN);
+				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
+				protocolli = archiviCore.getProtocolli(session);
+				break;
+			case CONFIGURAZIONE_ATTRIBUTE_AUTHORITY:
+				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
+								ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY);
 				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
 				protocolli = archiviCore.getProtocolli(session);
 				break;

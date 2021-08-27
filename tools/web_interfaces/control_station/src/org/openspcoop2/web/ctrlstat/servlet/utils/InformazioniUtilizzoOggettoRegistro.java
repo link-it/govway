@@ -206,6 +206,13 @@ public class InformazioniUtilizzoOggettoRegistro extends HttpServlet{
 					risultatiRicerca.add(confCore.getDettagliTokenPolicyInUso(idGP));
 				}
 				break;
+			case ATTRIBUTE_AUTHORITY:
+				identificativi = exporterUtils.getIdsAttributeAuthority(identificativoOggetto);
+				for (Object object : identificativi) {
+					IDGenericProperties idGP = (IDGenericProperties)object;
+					risultatiRicerca.add(confCore.getDettagliTokenPolicyInUso(idGP));
+				}
+				break;
 			case RATE_LIMITING_POLICY:
 				identificativi = exporterUtils.getIdsControlloTrafficoConfigPolicy(identificativoOggetto);
 				for (Object object : identificativi) {

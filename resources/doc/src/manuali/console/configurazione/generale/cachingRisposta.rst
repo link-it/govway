@@ -45,7 +45,11 @@ La configurazione permette di specificare i seguenti parametri:
 
     Maschera di configurazione per il Caching della Risposta
 
-Dopo aver salvato la configurazione fornita per il caching della risposta, appare la sezione *Configurazione Avanzata* che comprende il link *Regole*. Seguendo tale link è possibile inserire ulteriori criteri avanzati per la gestione della cache.
+Dopo aver salvato la configurazione fornita per il caching della risposta, appare la sezione *Configurazione Avanzata* che comprende il link *Regole*. Seguendo tale link è possibile definire ulteriori criteri avanzati per la gestione della cache.
+
+.. note::
+    In presenza di regole avanzate di configurazione, le risposte salvate in cache saranno solamente quelle che hanno un match con i criteri definiti in una regola.
+
 Come si vede in :numref:`regoleCachingRispostaFig` ciascuna regola è composta dai seguenti campi:
 
 -   *Codice Risposta*: codice HTTP ottenuto in risposta. Sono disponibili per la scelta le seguenti opzioni:

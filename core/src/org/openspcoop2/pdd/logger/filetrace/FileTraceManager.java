@@ -29,6 +29,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -59,7 +60,7 @@ public class FileTraceManager {
 		this.log = log;
 	}
 	
-	public void buildTransazioneInfo(Transazione transazioneDTO, Transaction transaction) throws ProtocolException {
+	public void buildTransazioneInfo(Transazione transazioneDTO, Transaction transaction, InformazioniAttributi informazioniAttributi) throws ProtocolException {
 		
 		Messaggio richiestaIngresso = null;
 		Messaggio richiestaUscita = null;
@@ -92,13 +93,13 @@ public class FileTraceManager {
 		
 		boolean base64 = true;
 		
-		this.t = new Info(this.log, transazioneDTO, credenzialiMittente,
+		this.t = new Info(this.log, transazioneDTO, credenzialiMittente, informazioniAttributi,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
 				rispostaIngresso, rispostaUscita,
 				this.config, !base64);
-		this.tBase64 = new Info(this.log, transazioneDTO, credenzialiMittente,
+		this.tBase64 = new Info(this.log, transazioneDTO, credenzialiMittente, informazioniAttributi,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,

@@ -68,6 +68,8 @@ public class ArchiveEsitoImport {
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> token_validation_policies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> token_retrieve_policies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> attributeAuthorities = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> plugin_classi = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> plugin_archivi = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
@@ -176,7 +178,11 @@ public class ArchiveEsitoImport {
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getToken_retrieve_policies() {
 		return this.token_retrieve_policies;
 	}
-	
+		
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getAttributeAuthorities() {
+		return this.attributeAuthorities;
+	}
+
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPlugin_classi() {
 		return this.plugin_classi;
 	}

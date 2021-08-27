@@ -73,12 +73,14 @@ public class Test {
 	private static final String DATA_INCLUDE_2 = "DATA_INCLUDE_2";
 	
 	private static final String HEADER1 = "Header1";
+	private static final String HEADER1_CASE_INSENTIVE = "header1"; // tomcat
 	private static final String HEADER1_VALORE = "ValoreHeader1";
 	private static final String HEADER2 = "Header2";
 	private static final String HEADER2_VALORE = "ValoreHeader2";
 	private static final String HEADER2_VALORE_POSIZIONE_2 = "ValoreHeaderPosizione2";
 	
 	private static final String HEADER1_RISPOSTA = "ResponseHeader1";
+	private static final String HEADER1_RISPOSTA_CASE_INSENTIVE = "responseheader1"; // tomcat
 	private static final String HEADER1_VALORE_RISPOSTA = "ResponseValoreHeader1";
 	private static final String HEADER2_RISPOSTA = "ResponseHeader2";
 	private static final String HEADER2_VALORE_RISPOSTA = "ResponseValoreHeader2";
@@ -267,7 +269,7 @@ public class Test {
 	
 	private static final String JSON_TEMPLATE_FREEMARKER_BODY = 	   
 			"\""+DATA+"\": \"${date?string('dd.MM.yyyy HH:mm:ss')}\",\n"+
-			"\""+HEADER1+"\": \"${header[\""+HEADER1+"\"]}\",\n"+
+			"\""+HEADER1+"\": \"<#if header[\""+HEADER1+"\"]??>${header[\""+HEADER1+"\"]}<#else>${header[\""+HEADER1+"\"?lower_case]}</#if>\",\n"+ 
 			"\""+HEADER2+"\": \"${headerValues[\""+HEADER2+"\"][0]}\",\n"+
 			"\""+HEADER2+"\": \"${headerValues[\""+HEADER2+"\"][1]}\",\n"+
 			"\""+QUERY1+"\": \"${query[\""+QUERY1+"\"]}\",\n"+
@@ -292,7 +294,7 @@ public class Test {
             "\""+BUSTA_PROPERTY+"\": \"${property[\""+BUSTA_PROPERTY+"\"]}\",\n";
 	private static final String JSON_TEMPLATE_FREEMARKER_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}\",\n"+
-			"\""+HEADER1_RISPOSTA+"\": \"${headerResponse[\""+HEADER1_RISPOSTA+"\"]}\",\n"+
+			"\""+HEADER1_RISPOSTA+"\": \"<#if headerResponse[\""+HEADER1_RISPOSTA+"\"]??>${headerResponse[\""+HEADER1_RISPOSTA+"\"]}<#else>${headerResponse[\""+HEADER1_RISPOSTA+"\"?lower_case]}</#if>\",\n"+
 			"\""+HEADER2_RISPOSTA+"\": \"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][0]}\",\n"+
 			"\""+HEADER2_RISPOSTA+"\": \"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][1]}\",\n"+
             "\""+PATH1_RISPOSTA+"\": \"${xpathResponse.read(\"//"+PATH1_RISPOSTA+"/text()\")}\",\n"+
@@ -334,7 +336,7 @@ public class Test {
 	
 	private static final String XML_TEMPLATE_FREEMARKER_BODY =
 			"<"+DATA+">"+"${date?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA+">\n"+
-			"<"+HEADER1+">"+"${header[\""+HEADER1+"\"]}"+"</"+HEADER1+">\n"+
+			"<"+HEADER1+">"+"<#if header[\""+HEADER1+"\"]??>${header[\""+HEADER1+"\"]}<#else>${header[\""+HEADER1+"\"?lower_case]}</#if>"+"</"+HEADER1+">\n"+
 			"<"+HEADER2+">"+"${headerValues[\""+HEADER2+"\"][0]}"+"</"+HEADER2+">\n"+
 			"<"+HEADER2+">"+"${headerValues[\""+HEADER2+"\"][1]}"+"</"+HEADER2+">\n"+
 			"<"+QUERY1+">"+"${query[\""+QUERY1+"\"]}"+"</"+QUERY1+">\n"+
@@ -355,7 +357,7 @@ public class Test {
 			"<"+BUSTA_PROPERTY+">"+"${property[\""+BUSTA_PROPERTY+"\"]}"+"</"+BUSTA_PROPERTY+">\n";
 	private static final String XML_TEMPLATE_FREEMARKER_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA_RISPOSTA+">\n"+
-			"<"+HEADER1_RISPOSTA+">"+"${headerResponse[\""+HEADER1_RISPOSTA+"\"]}"+"</"+HEADER1_RISPOSTA+">\n"+
+			"<"+HEADER1_RISPOSTA+">"+"<#if headerResponse[\""+HEADER1_RISPOSTA+"\"]??>${headerResponse[\""+HEADER1_RISPOSTA+"\"]}<#else>${headerResponse[\""+HEADER1_RISPOSTA+"\"?lower_case]}</#if>"+"</"+HEADER1_RISPOSTA+">\n"+
 			"<"+HEADER2_RISPOSTA+">"+"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][0]}"+"</"+HEADER2_RISPOSTA+">\n"+
 			"<"+HEADER2_RISPOSTA+">"+"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][1]}"+"</"+HEADER2_RISPOSTA+">\n"+
 			"<"+PATH1_RISPOSTA+">"+"${jsonpathResponse.read(\"$."+PATH1_RISPOSTA+"\")}"+"</"+PATH1_RISPOSTA+">\n"+
@@ -409,7 +411,7 @@ public class Test {
 	
 	private static final String JSON_TEMPLATE_VELOCITY_BODY = 	   
 			"\""+DATA+"\": \"$date\",\n"+
-			"\""+HEADER1+"\": \"${header[\""+HEADER1+"\"]}\",\n"+
+			"\""+HEADER1+"\": \"#if ($header[\""+HEADER1+"\"])${header[\""+HEADER1+"\"]}#else#set($tmp = \""+HEADER1+"\")${header[$tmp.toLowerCase()]}#end\",\n"+
 			"\""+HEADER2+"\": \"${headerValues[\""+HEADER2+"\"][0]}\",\n"+
 			"\""+HEADER2+"\": \"${headerValues[\""+HEADER2+"\"][1]}\",\n"+
 			"\""+QUERY1+"\": \"${query[\""+QUERY1+"\"]}\",\n"+
@@ -434,7 +436,7 @@ public class Test {
             "\""+BUSTA_PROPERTY+"\": \"${property[\""+BUSTA_PROPERTY+"\"]}\",\n";
 	private static final String JSON_TEMPLATE_VELOCITY_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse}\",\n"+
-			"\""+HEADER1_RISPOSTA+"\": \"${headerResponse[\""+HEADER1_RISPOSTA+"\"]}\",\n"+
+			"\""+HEADER1_RISPOSTA+"\": \"#if ($headerResponse[\""+HEADER1_RISPOSTA+"\"])${headerResponse[\""+HEADER1_RISPOSTA+"\"]}#else#set($tmp = \""+HEADER1_RISPOSTA_CASE_INSENTIVE+"\")${headerResponse[$tmp.toLowerCase()]}#end\",\n"+
 			"\""+HEADER2_RISPOSTA+"\": \"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][0]}\",\n"+
 			"\""+HEADER2_RISPOSTA+"\": \"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][1]}\",\n"+
             "\""+PATH1_RISPOSTA+"\": \"${xpathResponse.read(\"//"+PATH1_RISPOSTA+"/text()\")}\",\n"+
@@ -475,7 +477,7 @@ public class Test {
 	
 	private static final String XML_TEMPLATE_VELOCITY_BODY =
 			"<"+DATA+">"+"${date}"+"</"+DATA+">\n"+
-			"<"+HEADER1+">"+"${header[\""+HEADER1+"\"]}"+"</"+HEADER1+">\n"+
+			"<"+HEADER1+">"+"#if ($header[\""+HEADER1+"\"])${header[\""+HEADER1+"\"]}#else#set($tmp = \""+HEADER1+"\")${header[$tmp.toLowerCase()]}#end"+"</"+HEADER1+">\n"+
 			"<"+HEADER2+">"+"${headerValues[\""+HEADER2+"\"][0]}"+"</"+HEADER2+">\n"+
 			"<"+HEADER2+">"+"${headerValues[\""+HEADER2+"\"][1]}"+"</"+HEADER2+">\n"+
 			"<"+QUERY1+">"+"${query[\""+QUERY1+"\"]}"+"</"+QUERY1+">\n"+
@@ -496,7 +498,7 @@ public class Test {
 			"<"+BUSTA_PROPERTY+">"+"${property[\""+BUSTA_PROPERTY+"\"]}"+"</"+BUSTA_PROPERTY+">\n";
 	private static final String XML_TEMPLATE_VELOCITY_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse}"+"</"+DATA_RISPOSTA+">\n"+
-			"<"+HEADER1_RISPOSTA+">"+"${headerResponse[\""+HEADER1_RISPOSTA+"\"]}"+"</"+HEADER1_RISPOSTA+">\n"+
+			"<"+HEADER1_RISPOSTA+">"+"#if ($headerResponse[\""+HEADER1_RISPOSTA+"\"])${headerResponse[\""+HEADER1_RISPOSTA+"\"]}#else#set($tmp = \""+HEADER1_RISPOSTA_CASE_INSENTIVE+"\")${headerResponse[$tmp.toLowerCase()]}#end"+"</"+HEADER1_RISPOSTA+">\n"+
 			"<"+HEADER2_RISPOSTA+">"+"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][0]}"+"</"+HEADER2_RISPOSTA+">\n"+
 			"<"+HEADER2_RISPOSTA+">"+"${headerResponseValues[\""+HEADER2_RISPOSTA+"\"][1]}"+"</"+HEADER2_RISPOSTA+">\n"+
 			"<"+PATH1_RISPOSTA+">"+"${jsonpathResponse.read(\"$."+PATH1_RISPOSTA+"\")}"+"</"+PATH1_RISPOSTA+">\n"+
@@ -676,12 +678,12 @@ public class Test {
 		busta.addProperty(BUSTA_PROPERTY, BUSTA_PROPERTY_VALORE);
 		
 		Map<String, List<String>> parametriTrasporto = new HashMap<String, List<String>>();
-		TransportUtils.addHeader(parametriTrasporto,HEADER1, HEADER1_VALORE);
+		TransportUtils.addHeader(parametriTrasporto,HEADER1_CASE_INSENTIVE, HEADER1_VALORE);
 		TransportUtils.addHeader(parametriTrasporto,HEADER2, HEADER2_VALORE);
 		TransportUtils.addHeader(parametriTrasporto,HEADER2, HEADER2_VALORE_POSIZIONE_2);
 		
 		Map<String, List<String>> parametriTrasportoRisposta = new HashMap<String, List<String>>();
-		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER1_RISPOSTA, HEADER1_VALORE_RISPOSTA);
+		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER1_RISPOSTA_CASE_INSENTIVE, HEADER1_VALORE_RISPOSTA);
 		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER2_RISPOSTA, HEADER2_VALORE_RISPOSTA);
 		TransportUtils.addHeader(parametriTrasportoRisposta,HEADER2_RISPOSTA, HEADER2_VALORE_RISPOSTA_POSIZIONE_2);
 		

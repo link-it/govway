@@ -35,6 +35,7 @@ public class Costanti {
 
 	public final static String TIPOLOGIA = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION;
 	public final static String TIPOLOGIA_RETRIEVE = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE;
+	public final static String ATTRIBUTE_AUTHORITY = CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY;
 	
 	
 	// Context
@@ -47,6 +48,7 @@ public class Costanti {
 	public final static String PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION = "TOKEN_ESITO_INTROSPECTION";
 	public final static String PDD_CONTEXT_TOKEN_ESITO_USER_INFO = "TOKEN_ESITO_USER_INFO";
 	public final static String PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE = "TOKEN_INFORMAZIONI_NORMALIZZATE";
+	public final static String PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE = "ATTRIBUTI_INFORMAZIONI_NORMALIZZATE";
 	public final static String MSG_CONTEXT_TOKEN_FORWARD = "TOKEN_FORWARD"; // per salvarlo con il messaggio
 	
 	

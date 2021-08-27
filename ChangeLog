@@ -1,3 +1,66 @@
+2021-08-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Nella maschera di dettaglio di una erogazione o fruizione, in presenza di un connettore di lunghezza superiore ai 150 caratteri viene visualizzata una informazione troncata contenente il suffisso ' ...'.
+	Lo stesso accorgimento è stato adottato nelle liste degli header HTTP e dei parametri della URL configurabili nelle trasformazioni.
+	La creazione di un nuovo gruppo, in una erogazione non andava a buon fine se durante la creazione veniva scelto di ereditare le configurazioni di un gruppo non predefinito, 
+	configurato per utilizzare un connettore ridefinito con consegna multipla.
+
+2021-08-26  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1246
+	È adesso possibile censire Attribute Authority anche attraverso le API di configurazione.
+
+2021-08-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto bug che non consentiva l'associazione di ruoli ad un applicativo server in cui era stata abilitata l'opzione 'Utilizzabile come Client'.
+	Gli applicativi server, utilizzabili anche come client, non venivano inoltre riportati nemmeno nella lista degli applicativi fornita dalla tipologia di ricerca per applicativo nella console di monitoraggio.
+
+2021-08-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1246
+	È adesso possibile censire Attribute Authority che consentono di definire politiche di controllo degli accessi basate sugli attributi.
+	Nell'intervento è stato aggiunto il tipo di errore 'ConnectorNotFound' utilizzato per identificare la casistica in cui non è stato possibile individuare il connettore che implementa l'API.
+
+2021-08-23  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-1234
+	Realizzati i seguenti miglioramenti per l'usabilità delle console:
+	- Sulla console di monitoraggio, nello storico delle transazioni, dopo aver effettuato una ricerca e aver presentato i risultati viene adesso fornita la possibilità di effettuare una nuova ricerca, 
+	con i medesimi criteri, senza dover riaprire il filtro attraverso un pulsante di refresh posto accanto alla lente che consente di riaprire il filtro di ricerca.
+	- Sulla console di gestione, nei filtri di ricerca, è adesso possibbile espandere o richiudere i criteri di ricerca relative alle sotto-sezioni. 
+	  Il criterio di espandere o richiedere le sezioni è inoltra stata riportata nella maschera di configurazione relativa al Controllo degli Accessi di una erogazione o fruizione di API.
+	
+2021-08-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Migliorati log emessi in casi di errore avvenuto durante l'aggiornamento dell'esito della consegna di un connettore multiplo o durante l'aggiornamento della transazione che raggruppa le varie consegne multiple.
+
+2021-07-29  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto bug OP-1250
+	Nel caso di fatture P7M, nel formato PEM, contenenti i prefissi -----BEGIN e -----END il software non era in grado di parsare la fattura se si abilitavano i controlli che lo richiedevano
+	(ad esempio abilitando la proprietà 'org.openspcoop2.protocol.sdi.accesso.campiFattura.enable' nel file esterno 'sdi_local.properties'.
+
+2021-07-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto bug OP-1248
+	La registrazione della transazione falliva, con l'errore riportato di seguito, se l'erogazione era configurata con molti connettori multipli:
+	org.openspcoop2.generic_project.exception.ServiceException: ERRORE: il valore è troppo lungo per il tipo character varying(2000)
+
+2021-07-26  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto bug OP-1242
+	Utilizzando il browser IE11 quando si selezionava un filtro di ricerca, al momento del reload della pagina, l'applicazione si bloccava.
+	La console del browser indicava il seguente errore: "Errore: L'oggetto non supporta la proprietà o il metodo 'endsWith'"
+
 2021-07-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

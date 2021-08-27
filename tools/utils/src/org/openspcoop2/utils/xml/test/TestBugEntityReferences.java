@@ -32,12 +32,6 @@ import org.w3c.dom.Element;
  * TestBugEntityReferences
  * Il test verifica che se nel xml sono presenti entity referency queste rimangano tali una volta estratte tramite istruzioni xpath e non siano risolte
  * 
- * Character   |   Entity reference  |   Numeric reference   |   Hexadecimal reference
- *    &        |         &amp;       |         &#38;         |          &#x26;
- *    <        |         &lt;        |         &#60;         |          &#x3C;
- *    >        |         &gt;        |         &#62;         |          &#x3E;
- *    "        |         &quot;      |         &#34;         |          &#x22;
- *    '        |         &apos;      |         &#39;         |          &#x27;
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
@@ -45,6 +39,12 @@ import org.w3c.dom.Element;
  */
 public class TestBugEntityReferences {
 
+	// Character   |   Entity reference  |   Numeric reference   |   Hexadecimal reference
+	//    &        |         &amp;       |         &#38;         |          &#x26;
+	//    <        |         &lt;        |         &#60;         |          &#x3C;
+	//    >        |         &gt;        |         &#62;         |          &#x3E;
+	//    "        |         &quot;      |         &#34;         |          &#x22;
+	//    '        |         &apos;      |         &#39;         |          &#x27;
 	
     public static void main(String[] args) throws Exception {
     

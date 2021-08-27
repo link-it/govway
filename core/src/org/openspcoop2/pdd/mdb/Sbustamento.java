@@ -2259,7 +2259,9 @@ public class Sbustamento extends GenericLib{
 
 			}catch(EJBUtilsConsegnaException e){
 				msgDiag.logPersonalizzato(e.getMessaggio(), e.getLivello(), e.getCodice());
-				
+				if(e.getIntegrationFunctionError()!=null) {
+					ejbUtils.setIntegrationFunctionErrorPortaApplicativa(e.getIntegrationFunctionError());
+				}
 				ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),

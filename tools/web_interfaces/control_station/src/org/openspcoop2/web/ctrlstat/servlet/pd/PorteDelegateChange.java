@@ -463,6 +463,10 @@ public final class PorteDelegateChange extends Action {
 			String autorizzazione_token = null;
 			String autorizzazione_tokenOptions = null;
 			
+			String identificazioneAttributiStato = null;
+			String [] attributeAuthoritySelezionate = null;
+			String attributeAuthorityAttributi = null;
+			
 			if(pde.getGestioneToken() != null) {
 				gestioneTokenPolicy = pde.getGestioneToken().getPolicy();
 				if(gestioneTokenPolicy == null) {
@@ -589,6 +593,14 @@ public final class PorteDelegateChange extends Action {
 				}
 			} else {
 				autorizzazioneScope = "";
+			}
+			
+			if(identificazioneAttributiStato==null) {
+				identificazioneAttributiStato = pde.sizeAttributeAuthorityList()>0 ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				if(pde.sizeAttributeAuthorityList()>0) {
+					attributeAuthoritySelezionate = porteDelegateCore.buildAuthorityArrayString(pde.getAttributeAuthorityList());
+					attributeAuthorityAttributi = porteDelegateCore.buildAttributesStringFromAuthority(pde.getAttributeAuthorityList());
+				}
 			}
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
@@ -1070,7 +1082,8 @@ public final class PorteDelegateChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine, pde.getCanale());
+						messageEngine, pde.getCanale(),
+						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -1236,7 +1249,8 @@ public final class PorteDelegateChange extends Action {
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
-						messageEngine, pde.getCanale());
+						messageEngine, pde.getCanale(),
+						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);

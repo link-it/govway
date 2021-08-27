@@ -178,6 +178,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AttributeAuthority }
+     */
+    public AttributeAuthority createAttributeAuthority() {
+        return new AttributeAuthority();
+    }
+
+    /**
      * Create an instance of {@link ConfigurazioneHandler }
      */
     public ConfigurazioneHandler createConfigurazioneHandler() {

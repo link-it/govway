@@ -1,0 +1,751 @@
+<config id="attributeAuthority" 
+	label="AttributeAuthority" 
+	xmlns="http://www.openspcoop2.org/core/mvc/properties" 
+	provider="org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityProvider">
+
+	<properties>
+		<collection name="endpointConfig"/>
+		<collection name="sslConfig"/>
+		<collection name="sslClientConfig"/>
+		<collection name="signatureVerifyPropRefId"/>
+	</properties>
+	
+	<section label="Endpoint">
+		
+		<item type="hidden" name="saveErrorInCache" value="false">
+			<property name="policy.saveErrorInCache"/>
+		</item>
+
+		<item type="textarea" name="endpointURL" label="URL" required="true" default="http://">
+			<property name="policy.endpoint.url" />
+		</item>
+
+		<item type="number" name="endpointConnectionTimeout" label="Connection Timeout" required="true" default="10000" min="1">
+			<property name="connectionTimeout" properties="endpointConfig" />
+		</item>
+		<item type="number" name="endpointReadTimeout" label="Read Timeout" required="true" default="120000" min="1">
+			<property name="readConnectionTimeout" properties="endpointConfig" />
+		</item>
+	
+		<item type="checkbox" name="endpointHttps" label="Https" defaultSelected="false" reloadOnChange="true">
+			<property name="policy.endpoint.https.stato" />
+		</item>	
+		
+		<item type="checkbox" name="endpointProxy" label="Proxy" defaultSelected="false" reloadOnChange="true">
+			<property name="policy.endpoint.proxy.stato" />
+		</item>	
+
+		<subsection label="Autenticazione Client">
+			<item type="checkbox" name="autenticazioneEndpointBasic" label="Basic" defaultSelected="false" reloadOnChange="true">
+				<!--  non si puo' verificare una condizione successiva. Comunque selezionando basic, sparisce bearer.
+				<conditions>
+					<condition not="true" and="true">
+						<selected name="autenticazioneEndpointBearer"/>
+					</condition>
+				</conditions>
+				-->
+				<property name="policy.endpoint.basic.stato" />
+			</item>
+			<item type="checkbox" name="autenticazioneEndpointBearer" label="Bearer" defaultSelected="false" reloadOnChange="true">
+				<conditions and="true">
+					<condition not="true" and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+					</condition>
+				</conditions>
+				<property name="policy.endpoint.bearer.stato" />
+			</item>
+
+			<item type="text" name="autenticazioneEndpointBasicUsername" label="Username" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.endpoint.basic.username" />
+			</item>
+			<item type="text" name="autenticazioneEndpointBasicPassword" label="Password" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBasic"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.endpoint.basic.password" />
+			</item>
+			<item type="textarea" name="autenticazioneEndpointBearerToken" label="Token" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="autenticazioneEndpointBearer"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.endpoint.bearer.token" />
+			</item>
+
+			<item type="checkbox" name="autenticazioneEndpointHttps" label="Https" defaultSelected="false" reloadOnChange="true">
+				<property name="policy.endpoint.https.client.stato" />
+			</item>
+	
+		</subsection>
+
+	</section>
+
+	<section label="Https">
+
+		<conditions>
+			<condition and="false">
+				<selected name="endpointHttps"/>
+				<selected name="autenticazioneEndpointHttps"/>
+			</condition>	
+		</conditions>
+	
+		<item type="select" name="endpointHttpsTipologia" label="Tipologia">
+			<property name="sslType" properties="sslConfig" />
+		</item>
+		<item type="checkbox" name="endpointHttpsHostNameVerifier" label="Hostname Verifier" defaultSelected="true" >
+			<property name="hostnameVerifier" properties="sslConfig" />
+		</item>
+	
+	
+		<subsection label="Autenticazione Server">
+
+			<item type="checkbox" name="endpointHttpsTrustAllCerts" label="Verifica" defaultSelected="true" reloadOnChange="true">
+				<property name="trustAllCerts" properties="sslConfig" selectedValue="false" unselectedValue="true"/>
+			</item>
+	
+			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="trustStoreType" properties="sslConfig" />
+			</item>
+			<item type="textarea" name="endpointHttpsTruststoreFile" label="File" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+				<property name="trustStoreLocation" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsTruststorePassword" label="Password" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+			      	<property name="trustStorePassword" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsTruststoreAlgoritmo" label="Algoritmo" default="PKIX" required="true">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+			      	<property name="trustManagementAlgorithm" properties="sslConfig" />
+			</item>
+			<item type="textarea" name="endpointHttpsTrustStoreCRLs" label="CRL File(s)" required="false" note="Elencare più file separandoli con la ','">
+				<conditions>
+					<condition and="false">
+						<selected name="endpointHttpsTrustAllCerts"/>
+					</condition>	
+				</conditions>
+			      	<property name="trustStoreCRLs" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Autenticazione Client">
+		
+			<conditions>
+				<condition and="false">
+					<selected name="autenticazioneEndpointHttps"/>
+				</condition>
+			</conditions>
+			
+			<item type="select" name="endpointHttpsClientMode" label="Dati Accesso al KeyStore" default="default" reloadOnChange="true">
+				<values>
+					<value value="default" label="Usa valore del TrustStore"/>
+					<value value="ridefinito" label="Ridefinisci"/>
+				</values>
+				<property name="policy.endpoint.ssl.mode" />
+			</item>
+			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks">
+				<conditions>
+					<condition and="true">
+						<equals name="endpointHttpsClientMode" value="ridefinito"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="keyStoreType" properties="sslClientConfig" />
+			</item>
+			<item type="textarea" name="endpointHttpsClientKeystoreFile" label="File" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="endpointHttpsClientMode" value="ridefinito"/>
+					</condition>
+				</conditions>
+			    <property name="keyStoreLocation" properties="sslClientConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientKeystorePassword" label="Password" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="endpointHttpsClientMode" value="ridefinito"/>
+					</condition>
+				</conditions>
+			    <property name="keyStorePassword" properties="sslClientConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+				<property name="keyPassword" properties="sslClientConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientAliasChiavePrivata" label="Alias Chiave Privata" required="false">
+				<property name="keyAlias" properties="sslClientConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
+				<property name="keyManagementAlgorithm" properties="sslClientConfig" />
+			</item>
+		
+		</subsection>
+		
+	</section>
+			
+	<section label="Proxy">
+	
+		<conditions>
+			<condition and="true">
+				<selected name="endpointProxy"/>
+			</condition>
+		</conditions>
+	
+		<item type="hidden" name="endpointProxyType" value="http">
+			<property name="proxyType" properties="endpointConfig" />
+		</item>
+		<item type="text" name="endpointProxyHostname" label="Hostname" required="true">
+			<property name="proxyHostname" properties="endpointConfig" />
+		</item>
+		<item type="number" name="endpointProxyPort" label="Porta" required="true" min="1" max="65535">
+			<property name="proxyPort" properties="endpointConfig" />
+		</item>
+		<item type="text" name="endpointProxyUsername" label="Username" required="false">
+			<property name="proxyUsername" properties="endpointConfig" />
+		</item>
+		<item type="text" name="endpointProxyPassword" label="Password" required="false">
+			<property name="proxyPassword" properties="endpointConfig" />
+		</item>
+		
+	</section>
+
+	<section label="Richiesta">
+
+		<item type="select" name="aaPositionEndpointNotBearer" label="Posizione" default="bearer" reloadOnChange="true">
+			<conditions>
+				<condition and="true" not="true">
+					<selected name="autenticazioneEndpointBearer"/>
+				</condition>
+			</conditions>
+		    	<values>
+				<value value="bearer" label="Authorization Bearer"/>
+				<value value="payload" label="HTTP Payload"/>
+				<value value="header" label="Header HTTP"/>
+				<value value="query" label="Parametro URL"/>
+			</values>
+			<property name="policy.attributeAuthority.request.position" />
+		</item>
+		<item type="select" name="aaPositionEndpointBearer" label="Posizione" default="payload" reloadOnChange="true">
+			<conditions>
+				<condition and="true">
+					<selected name="autenticazioneEndpointBearer"/>
+				</condition>
+			</conditions>
+		    	<values>
+				<value value="payload" label="HTTP Payload"/>
+				<value value="header" label="Header HTTP"/>
+				<value value="query" label="Parametro URL"/>
+			</values>
+			<property name="policy.attributeAuthority.request.position" />
+		</item>
+
+		<item type="text" name="aaHeader" label="Nome Header HTTP" required="true">
+			<conditions>
+				<condition and="false">
+					<equals name="aaPositionEndpointNotBearer" value="header"/>
+					<equals name="aaPositionEndpointBearer" value="header"/>
+				</condition>
+			</conditions>
+		    	<property name="policy.attributeAuthority.request.position.header" />
+		</item>	
+		<item type="text" name="aaQueryParameter" label="Nome Parametro URL" required="true">
+			<conditions>
+				<condition and="false">
+					<equals name="aaPositionEndpointNotBearer" value="query"/>
+					<equals name="aaPositionEndpointBearer" value="query"/>
+				</condition>
+			</conditions>
+		    	<property name="policy.attributeAuthority.request.position.queryParameter" />
+		</item>
+
+		<item type="select" name="aaHttpMethodWithPayload" label="Http Method" default="POST" reloadOnChange="false">
+			<conditions>
+				<condition and="false">
+					<equals name="aaPositionEndpointNotBearer" value="payload"/>
+					<equals name="aaPositionEndpointBearer" value="payload"/>
+				</condition>
+			</conditions>
+		    	<values>
+				<value value="POST" label="POST"/>
+				<value value="PUT" label="PUT"/>
+			</values>
+			<property name="policy.attributeAuthority.httpMethod" />
+		</item>
+		<item type="select" name="aaHttpMethodWithoutPayload" label="Http Method" default="GET" reloadOnChange="false">
+			<conditions>
+				<condition and="false" not="true">
+					<equals name="aaPositionEndpointNotBearer" value="payload"/>
+					<equals name="aaPositionEndpointBearer" value="payload"/>
+				</condition>
+			</conditions>
+		    	<values>
+				<value value="GET" label="GET"/>
+				<value value="OPTIONS" label="OPTIONS"/>
+				<value value="HEAD" label="HEAD"/>
+			</values>
+			<property name="policy.attributeAuthority.httpMethod" />
+		</item>
+
+		<item type="select" name="aaRequestTypeWithPayload" label="Tipo Richiesta" default="jws" reloadOnChange="true">
+			<conditions>
+				<condition and="false">
+					<equals name="aaPositionEndpointNotBearer" value="payload"/>
+					<equals name="aaPositionEndpointBearer" value="payload"/>
+				</condition>
+			</conditions>
+		    	<values>
+				<value value="jws" label="JWS"/>
+				<value value="json" label="JSON"/>
+				<!-- <value value="xml" label="XML"/> -->
+				<value value="custom" label="Personalizzata"/>
+			</values>
+			<property name="policy.attributeAuthority.request.type" />
+		</item>
+		<item type="select" name="aaRequestTypeWithoutPayload" label="Tipo Richiesta" default="jws" reloadOnChange="true">
+			<conditions>
+				<condition and="false" not="true">
+					<equals name="aaPositionEndpointNotBearer" value="payload"/>
+					<equals name="aaPositionEndpointBearer" value="payload"/>
+				</condition>
+			</conditions>
+		    	<values>
+				<value value="jws" label="JWS"/>
+				<value value="custom" label="Personalizzata"/>
+			</values>
+			<property name="policy.attributeAuthority.request.type" />
+		</item>
+
+		<subsection label="JWS KeyStore">
+
+			<conditions and="true">
+				<condition and="false">
+					<equals name="aaRequestTypeWithPayload" value="jws"/>
+					<equals name="aaRequestTypeWithoutPayload" value="jws"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="aaJWSKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
+					<!--  <value value="jwk" label="JWK"/> -->
+				</values>
+				<property name="policy.attributeAuthority.request.jws.keystore.type" />
+			</item>
+			<item type="textarea" name="aaJWSKeystoreFile" label="File" required="true">
+			     <property name="policy.attributeAuthority.request.jws.keystore.file" />
+			</item>
+			<item type="text" name="aaJWSKeystorePassword" label="Password" required="true">
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="aaJWSKeystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+		      		<property name="policy.attributeAuthority.request.jws.keystore.password" />
+			</item>
+			<item type="text" name="aaJWSKeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			    <property name="policy.attributeAuthority.request.jws.key.alias" />
+			</item>
+			<item type="text" name="aaJWSKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			    <property name="policy.attributeAuthority.request.jws.key.password" />
+			</item>
+
+		</subsection>
+
+		<subsection label="JWS Header">
+
+			<conditions and="true">
+				<condition and="false">
+					<equals name="aaRequestTypeWithPayload" value="jws"/>
+					<equals name="aaRequestTypeWithoutPayload" value="jws"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="aaSignatureAlgorithm" label="Signature Algorithm" reloadOnChange="true">
+			      	<property name="policy.attributeAuthority.request.jws.signature.algorithm" />
+			</item>
+
+			<item type="checkbox" name="aaSignatureIncludeKid" label="Key Id (kid)" defaultSelected="false">
+				<property name="policy.attributeAuthority.request.jws.signature.include.key.id" />
+			</item>
+
+			<item type="select" name="aaSignatureIncludeCertMode" label="X.509 Certificate" default="-" reloadOnChange="true" >
+				<conditions>
+					<condition and="false">
+						<equals name="aaJWSKeystoreType" value="jks"/>
+						<equals name="aaJWSKeystoreType" value="pkcs12"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="-" label="-"/>
+					<value value="x5c" label="Include (x5c)"/>
+					<value value="x5u" label="URL (x5u)"/>
+				</values>
+				<property name="aaSignatureIncludeCertMode" />
+			</item>
+			<item type="hidden" name="aaSignatureIncludeCertModeX5C" value="true">
+				<conditions>
+					<condition>
+						<equals name="aaSignatureIncludeCertMode" value="x5c"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.signature.include.cert" />
+			</item>
+			<item type="textarea" name="aaSignatureIncludeCertModeX5U" label="URL" required="true">
+				<conditions>
+					<condition>
+						<equals name="aaSignatureIncludeCertMode" value="x5u"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.signature.include.x509url" />
+			</item>
+			<item type="select" name="aaSignatureIncludeCertShaMode" label="Digest X.509 Certificate" default="-" reloadOnChange="true" >
+				<conditions>
+					<condition and="false">
+						<equals name="aaJWSKeystoreType" value="jks"/>
+						<equals name="aaJWSKeystoreType" value="pkcs12"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="-" label="-"/>
+					<value value="sha1" label="SHA-1 (x5t)"/>
+					<value value="sha256" label="SHA-256 (x5t#S256)"/>
+				</values>
+				<property name="aaSignatureIncludeCertShaMode" />
+			</item>
+			<item type="hidden" name="aaSignatureIncludeCertShaModeSHA1" value="true">
+				<conditions>
+					<condition>
+						<equals name="aaSignatureIncludeCertShaMode" value="sha1"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.signature.include.cert.sha1" />
+			</item>
+			<item type="hidden" name="aaSignatureIncludeCertShaModeSHA256" value="true">
+				<conditions>
+					<condition>
+						<equals name="aaSignatureIncludeCertShaMode" value="sha256"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jws.signature.include.cert.sha256"/>
+			</item>
+
+			<item type="text" name="includeType" label="Type (typ)" required="false" default="JWT">
+				<property name="policy.attributeAuthority.request.jwsHeader.joseType" />
+			</item>
+			<item type="checkbox" name="includeContentType" label="Content Type (cty)" defaultSelected="false">
+				<property name="policy.attributeAuthority.request.jwsHeader.joseContentType"/>
+			</item>
+
+		</subsection>
+
+		<subsection label="JWS Payload">
+
+			<conditions and="true">
+				<condition and="false">
+					<equals name="aaRequestTypeWithPayload" value="jws"/>
+					<equals name="aaRequestTypeWithoutPayload" value="jws"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="aaRichiestaJwsPayloadTemplateType" label="Modalità" default="jwt" reloadOnChange="true">
+				<values>
+					<value value="jwt" label="RFC7515"/>
+					<value value="template" label="Template"/>
+					<value value="freemarker-template" label="Freemarker Template"/>
+					<value value="velocity-template" label="Velocity Template"/>
+				</values>
+				<property name="policy.attributeAuthority.request.templateType" />
+			</item>
+			<item type="textarea" name="aaRichiestaJwsPayloadTemplate" label="Contenuto" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaJwsPayloadTemplateType" value="template"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.template" />
+			</item>
+			<item type="textarea" name="aaRichiestaJwsPayloadTemplateFreemarker" label="Contenuto" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaJwsPayloadTemplateType" value="freemarker-template"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.template" />
+			</item>
+			<item type="textarea" name="aaRichiestaJwsPayloadTemplateVelocity" label="Contenuto" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaJwsPayloadTemplateType" value="velocity-template"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.template" />
+			</item>
+
+			<item type="text" name="aaRichiestaJwsPayloadTemplateContentTypeJwt" label="Content-Type" default="application/jwt" required="true">
+				<conditions and="true">
+					<condition and="true">
+						<equals name="aaRequestTypeWithPayload" value="jws"/>
+					</condition>
+				</conditions>
+			    	<property name="policy.attributeAuthority.request.contentType" />
+			</item>
+
+			<item type="text" name="aaRichiestaPayloadIssuer" label="Issuer" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaJwsPayloadTemplateType" value="jwt"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jwt.issuer" />
+			</item>
+			<item type="text" name="aaRichiestaPayloadSubject" label="Subject" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaJwsPayloadTemplateType" value="jwt"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jwt.subject" />
+			</item>
+			<item type="text" name="aaRichiestaPayloadAudience" label="Audience" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaJwsPayloadTemplateType" value="jwt"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jwt.audience" />
+			</item>
+			<item type="number" name="aaRichiestaPayloadExpTtl" label="Time to Live (secondi)" required="true"
+				note="Indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaJwsPayloadTemplateType" value="jwt"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jwt.expired" />
+			</item>
+
+			<item type="textarea" name="aaRichiestaJwsPayloadClaims" label="Claims" required="false"
+				note="Indicare per riga gli ulteriori claims (nome=valore)">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaJwsPayloadTemplateType" value="jwt"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.jwt.claims" />
+			</item>
+
+		</subsection>
+
+		<subsection label="Payload">
+
+			<conditions and="true">
+				<condition and="false" not="true">
+					<equals name="aaRequestTypeWithPayload" value="jws"/>
+					<equals name="aaRequestTypeWithoutPayload" value="jws"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="aaRichiestaPayloadTemplateType" label="Tipo Template" default="template" reloadOnChange="true">
+				<values>
+					<value value="template" label="Template"/>
+					<value value="freemarker-template" label="Freemarker Template"/>
+					<value value="velocity-template" label="Velocity Template"/>
+				</values>
+				<property name="policy.attributeAuthority.request.templateType" />
+			</item>
+			<item type="textarea" name="aaRichiestaPayloadTemplate" label="Contenuto" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaPayloadTemplateType" value="template"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.template" />
+			</item>
+			<item type="textarea" name="aaRichiestaPayloadTemplateFreemarker" label="Contenuto" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaPayloadTemplateType" value="freemarker-template"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.template" />
+			</item>
+			<item type="textarea" name="aaRichiestaPayloadTemplateVelocity" label="Contenuto" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRichiestaPayloadTemplateType" value="velocity-template"/>
+					</condition>
+				</conditions>
+				<property name="policy.attributeAuthority.request.template" />
+			</item>
+
+			<item type="text" name="aaRichiestaPayloadTemplateContentTypeJson" label="Content-Type" default="application/json" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRequestTypeWithPayload" value="json"/>
+					</condition>
+				</conditions>
+			    	<property name="policy.attributeAuthority.request.contentType" />
+			</item>
+			<item type="text" name="aaRichiestaPayloadTemplateContentTypeCustom" label="Content-Type" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="aaRequestTypeWithPayload" value="custom"/>
+					</condition>
+				</conditions>
+			    	<property name="policy.attributeAuthority.request.contentType" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+	<section label="Risposta">
+
+		<item type="select" name="aaResponse" label="Tipo Risposta" default="jws" reloadOnChange="true">
+		    	<values>
+				<value value="jws" label="JWS"/>
+				<value value="json" label="JSON"/>
+				<!-- <value value="xml" label="XML"/> -->
+				<value value="custom" label="Personalizzata"/>
+			</values>
+			<property name="policy.attributeAuthority.response.type" />
+		</item>
+		<item type="text" name="aaResponseAudience" label="Audience" required="false" note="Se definito viene confrontato con l'audience presente nel token">
+			<conditions>
+				<condition>
+					<equals name="aaResponse" value="jwt"/>
+				</condition>
+			</conditions>
+			<property name="policy.attributeAuthority.response.jwt.audience" />
+		</item>
+		<item type="text" name="aaResponseAttributeClaimsJws" label="Attributi" required="true" note="Indicare il claim che contiene gli attributi.&lt;BR/>È possibile elencare più claims separandoli con la virgola">
+			<conditions>
+				<condition and="false">
+					<equals name="aaResponse" value="jws"/>
+				</condition>
+			</conditions>
+		   	<property name="policy.attributeAuthority.response.jwt.attributes" />
+		</item>
+		<item type="text" name="aaResponseAttributeClaimsJson" label="Attributi" required="false" note="Se gli attributi sono contenuti in uno o più elementi, elencarne i nome separandoli con la virgola.&lt;BR/>Lasciando vuoto questo campo tutti gli elementi ritornati saranno interpretati come attributi">
+			<conditions>
+				<condition and="false">
+					<equals name="aaResponse" value="json"/>
+				</condition>
+			</conditions>
+		   	<property name="policy.attributeAuthority.response.jwt.attributes" />
+		</item>
+		<item type="text" name="aaResponseParserCustom" label="ClassName" required="true">
+			<conditions>
+				<condition>
+					<equals name="aaResponse" value="custom"/>
+				</condition>
+			</conditions>
+		   	<property name="policy.attributeAuthority.claimsParser.className" />
+		</item>
+
+		<subsection label="TrustStore">
+
+			<conditions>
+				<condition>
+					<equals name="aaResponse" value="jws"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="aaJWSTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+					<value value="jwk" label="JWK Set"/>
+				</values>
+				<property name="rs.security.keystore.type" properties="signatureVerifyPropRefId" />
+			</item>
+			<item type="textarea" name="aaJWSTruststoreFile" label="File" required="true">
+				<property name="rs.security.keystore.file" properties="signatureVerifyPropRefId" />
+			</item>
+			<item type="text" name="aaJWSTruststorePassword" label="Password" required="true">
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.password" properties="signatureVerifyPropRefId" />
+			</item>
+			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
+				<conditions>
+					<condition not="true" and="false">
+						<equals name="aaJWSTruststoreType" value="jceks"/>
+						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias" properties="signatureVerifyPropRefId" />
+			</item>
+			<item type="text" name="keystoreKidAlias" label="Kid Certificato" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="aaJWSTruststoreType" value="jwk"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias" properties="signatureVerifyPropRefId" />
+			</item>
+			<item type="text" name="keystoreSecretKeyAlias" label="Alias Chiave Segreta" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="aaJWSTruststoreType" value="jceks"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.keystore.alias" properties="signatureVerifyPropRefId" />
+			</item>
+			<item type="text" name="keystoreSecretKeyPassword" label="Password Chiave Segreta" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="aaJWSTruststoreType" value="jceks"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.key.password" properties="signatureVerifyPropRefId" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

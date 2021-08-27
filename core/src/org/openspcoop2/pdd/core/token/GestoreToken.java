@@ -22,6 +22,9 @@
 package org.openspcoop2.pdd.core.token;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,6 +36,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -46,6 +50,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -55,6 +60,18 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
+import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityProvider;
+import org.openspcoop2.pdd.core.token.attribute_authority.BasicRetrieveAttributeAuthorityResponseParser;
+import org.openspcoop2.pdd.core.token.attribute_authority.EsitoRecuperoAttributi;
+import org.openspcoop2.pdd.core.token.attribute_authority.IRetrieveAttributeAuthorityResponseParser;
+import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
+import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthority;
+import org.openspcoop2.pdd.core.token.attribute_authority.RequiredAttributes;
+import org.openspcoop2.pdd.core.token.attribute_authority.pa.EsitoRecuperoAttributiPortaApplicativa;
+import org.openspcoop2.pdd.core.token.attribute_authority.pd.EsitoRecuperoAttributiPortaDelegata;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.parser.Claims;
@@ -65,7 +82,9 @@ import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaTokenPortaDelegata;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -79,6 +98,7 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JWSOptions;
@@ -87,13 +107,16 @@ import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
 import org.openspcoop2.utils.security.JsonVerifySignature;
+import org.openspcoop2.utils.security.JwtHeaders;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -117,6 +140,7 @@ public class GestoreToken {
 	private static final Boolean semaphoreIntrospection = true;
 	private static final Boolean semaphoreUserInfo = true;
 	private static final Boolean semaphoreNegoziazione = true;
+	private static final Boolean semaphoreAttributeAuthority = true;
 	/** Logger log */
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
@@ -2176,6 +2200,7 @@ public class GestoreToken {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
 			connettore = new ConnettoreHTTP();
 		}
+		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
 		
@@ -2611,6 +2636,7 @@ public class GestoreToken {
 		}
 		connettore.setForceDisable_rest_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
+		connettore.setRegisterSendIntoContext(false);
 		
 		if(basic && basicAsAuthorizationHeader){
 			InvocazioneCredenziali credenziali = new InvocazioneCredenziali();
@@ -2882,5 +2908,943 @@ public class GestoreToken {
 		
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ********* [ATTRIBUTE AUTHORITY] VALIDAZIONE CONFIGURAZIONE ****************** */
+	
+	public static void validazioneConfigurazione(PolicyAttributeAuthority policyAttributeAuthority) throws ProviderException, ProviderValidationException {
+		AttributeAuthorityProvider p = new AttributeAuthorityProvider();
+		p.validate(policyAttributeAuthority.getProperties());
+	}
+	
+	
+	// ********* [ATTRIBUTE AUTHORITY] ENDPOINT TOKEN ****************** */
+	
+	public static EsitoRecuperoAttributi readAttributes(Logger log, org.openspcoop2.pdd.core.token.attribute_authority.AbstractDatiInvocazione datiInvocazione,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			boolean portaDelegata) throws Exception {
+		EsitoRecuperoAttributi esitoRecuperoAttributi = null;
+		boolean riavviaNegoziazione = false;
+			
+		PolicyAttributeAuthority policyAttributeAuthority = datiInvocazione.getPolicyAttributeAuthority();
+		OpenSPCoop2Message message = datiInvocazione.getMessage();
+		Busta busta = datiInvocazione.getBusta();
+		RequestInfo requestInfo = datiInvocazione.getRequestInfo();	
+		
+		if(GestoreToken.cacheToken==null){
+			
+			Map<String, Object> dynamicMap = buildDynamicAAMap(message, busta, requestInfo, pddContext, log,
+					policyAttributeAuthority.getName(), datiInvocazione);
+			
+			boolean addIdAndDate = true;
+			String request = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, addIdAndDate);
+			
+			esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
+					pddContext, protocolFactory,
+					dynamicMap,
+					request, portaDelegata);
+			
+			if(esitoRecuperoAttributi!=null && esitoRecuperoAttributi.isValido()) {
+				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+				_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
+						policyAttributeAuthority.isSaveErrorInCache(),
+						pddContext, protocolFactory,
+						dynamicMap);
+			}
+			
+		}
+    	else{
+    		String funzione = "Negoziazione";
+    		
+    		Map<String, Object> dynamicMap = buildDynamicAAMap(message, busta, requestInfo, pddContext, log,
+					policyAttributeAuthority.getName(), datiInvocazione);
+    		
+    		boolean addIdAndDate = true;
+    		String requestKeyCache = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, !addIdAndDate);
+    		String keyCache = buildCacheKeyRecuperoAttributi(funzione, policyAttributeAuthority.getName(), requestKeyCache);
+
+    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+    		
+    		org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					esitoRecuperoAttributi = (EsitoRecuperoAttributi) response.getObject();
+					esitoRecuperoAttributi.setInCache(true);
+				}else if(response.getException()!=null){
+					GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					throw (Exception) response.getException();
+				}else{
+					GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+				}
+			}
+    		
+			synchronized (GestoreToken.semaphoreAttributeAuthority) {
+
+				response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+						esitoRecuperoAttributi = (EsitoRecuperoAttributi) response.getObject();
+						esitoRecuperoAttributi.setInCache(true);
+					}else if(response.getException()!=null){
+						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+
+				if(esitoRecuperoAttributi==null) {
+					// Effettuo la query
+					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+					
+					String request = null;
+					if(policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
+						request = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, addIdAndDate);
+					}
+					else {
+						request = requestKeyCache;
+					}
+					
+					esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
+							pddContext, protocolFactory,
+							dynamicMap,
+							request, portaDelegata);
+						
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esitoRecuperoAttributi!=null){ // altrimenti lo mettero' in cache al giro dopo.
+						esitoRecuperoAttributi.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+						if(!esitoRecuperoAttributi.isNoCache()){
+							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esitoRecuperoAttributi);
+								GestoreToken.cacheToken.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
+						}
+					}else{
+						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+					}
+					
+					if(esitoRecuperoAttributi.isValido()) {
+						// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+						_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
+								policyAttributeAuthority.isSaveErrorInCache(),
+								pddContext, protocolFactory,
+								dynamicMap);
+					}
+				}
+				else {
+				
+					// l'ho preso in cache
+					
+					if(esitoRecuperoAttributi.isValido()) {
+						// controllo la data qua
+						_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
+								policyAttributeAuthority.isSaveErrorInCache(),
+								pddContext, protocolFactory,
+								dynamicMap);
+						if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
+							// DEVO riavviare la negoziazione poichè è scaduto
+							GestoreToken.cacheToken.remove(keyCache);
+							riavviaNegoziazione = true;
+						}
+					}
+					
+				}
+				
+			} // fine synchronized
+    	}
+		
+		if(riavviaNegoziazione) {
+			return readAttributes(log, datiInvocazione, pddContext, protocolFactory, portaDelegata);
+		}
+		return esitoRecuperoAttributi;
+	}
+	
+	private static EsitoRecuperoAttributi _readAttributes(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			Map<String, Object> dynamicMap,
+			String request, boolean portaDelegata) {
+		EsitoRecuperoAttributi esitoRecuperoAttributi = null;
+		if(portaDelegata) {
+			esitoRecuperoAttributi = new EsitoRecuperoAttributiPortaDelegata();
+		}
+		else {
+			esitoRecuperoAttributi = new EsitoRecuperoAttributiPortaApplicativa();
+		}
+		
+		esitoRecuperoAttributi.setTokenInternalError();
+		
+		try{			
+			String detailsError = null;
+			InformazioniAttributi informazioniAttributi = null;
+			Exception eProcess = null;
+			
+			IRetrieveAttributeAuthorityResponseParser tokenParser = policyAttributeAuthority.getRetrieveAttributeAuthorityResponseParser(log);
+			
+			HttpResponse httpResponse = null;
+			Integer httpResponseCode = null;
+			byte[] risposta = null;
+			try {
+				httpResponse = http(log, policyAttributeAuthority,
+						pddContext, protocolFactory,
+						dynamicMap,
+						request);
+				risposta = httpResponse.getContent();
+				httpResponseCode = httpResponse.getResultHTTPOperation();
+			}catch(Exception e) {
+				detailsError = "(Errore di Connessione) "+ e.getMessage();
+				eProcess = e;
+			}
+			
+			if(detailsError==null) {
+				
+				String decodedPayload = null;
+				byte[] decodedPayloadAsBytes = null;
+				if(policyAttributeAuthority.isResponseJws()) {
+	    			// JWS Compact   			
+	    			JsonVerifySignature jsonCompactVerify = null;
+	    			try {
+	    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
+	    				Properties p = policyAttributeAuthority.getProperties().get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
+	    				JOSEUtils.injectKeystore(p, log); // serve per leggere il keystore dalla cache
+	    				jsonCompactVerify = new JsonVerifySignature(p, options);
+	    				if(jsonCompactVerify.verify(new String(risposta))) {
+	    					if(tokenParser instanceof BasicRetrieveAttributeAuthorityResponseParser) {
+	    						decodedPayload = jsonCompactVerify.getDecodedPayload(); 
+	    					}
+	    					else {
+	    						decodedPayloadAsBytes = jsonCompactVerify.getDecodedPayloadAsByte();
+	    					}
+	    				}
+	    				else {
+	    					detailsError = "Risposta non valida";
+	    				}
+	    			}catch(Exception e) {
+	    				detailsError = "Risposta non valida: "+e.getMessage();
+	    				eProcess = e;
+	    			}
+				}
+				
+				if(detailsError==null) {
+					try {
+						if(tokenParser instanceof BasicRetrieveAttributeAuthorityResponseParser) {
+							informazioniAttributi = new InformazioniAttributi(httpResponseCode, policyAttributeAuthority.getName(),
+									decodedPayload!=null ? decodedPayload : new String(risposta),
+									tokenParser);		
+						}
+						else {
+							informazioniAttributi = new InformazioniAttributi(httpResponseCode, policyAttributeAuthority.getName(), 
+									decodedPayloadAsBytes!=null ? decodedPayloadAsBytes : risposta, 
+									tokenParser);		
+						}
+					}catch(Exception e) {
+						detailsError = "Risposta del servizio di negoziazione token non valida: "+e.getMessage();
+						eProcess = e;
+					}
+				}
+			}
+    		  		
+    		if(informazioniAttributi!=null && informazioniAttributi.isValid()) {
+    			esitoRecuperoAttributi.setTokenValido();
+    			esitoRecuperoAttributi.setInformazioniAttributi(informazioniAttributi);
+    			esitoRecuperoAttributi.setNoCache(false);
+			}
+    		else {
+    			esitoRecuperoAttributi.setTokenValidazioneFallita();
+    			if(policyAttributeAuthority.isSaveErrorInCache()) {
+    				esitoRecuperoAttributi.setNoCache(false);
+    			}
+    			else {
+    				esitoRecuperoAttributi.setNoCache(true);
+    			}
+    			esitoRecuperoAttributi.setEccezioneProcessamento(eProcess);
+    			if(detailsError!=null) {
+    				esitoRecuperoAttributi.setDetails(detailsError);	
+				}
+				else {
+					esitoRecuperoAttributi.setDetails("Attributi non recuperabili");	
+				} 	
+    		}
+    		
+		}catch(Exception e){
+			esitoRecuperoAttributi.setTokenInternalError();
+			esitoRecuperoAttributi.setDetails(e.getMessage());
+			esitoRecuperoAttributi.setEccezioneProcessamento(e);
+    	}
+		
+		return esitoRecuperoAttributi;
+	}
+	
+	
+	
+	
+	
+	// ********* [ATTRIBUTE AUTHORITY]  UTILITIES INTERNE ****************** */
+	
+	public static InformazioniAttributi normalizeInformazioniAttributi(List<InformazioniAttributi> list, List<AttributeAuthority> aaList) throws Exception {
+		
+		//int size = list.size();
+		// Fix: deve basarsi sulle AA configurate e non su quelle da cui si e' ottenuto effettivamente una risposta, altrimenti poi le regole cambiano (prefisso AA presente o meno)
+		int size = aaList.size();
+		if(size==1) {
+			return list.get(0);
+		}
+		else {
+			return new InformazioniAttributi(OpenSPCoop2Properties.getInstance().isGestioneAttributeAuthority_saveSourceAttributeResponseInfo(), list.toArray(new InformazioniAttributi[1]));
+		}
+	}
+	
+	private static String buildCacheKeyRecuperoAttributi(String funzione, String nomePolicy,
+			String request) {
+    	StringBuilder bf = new StringBuilder("AttributeAuthority_"+funzione);
+    	bf.append("_");
+    	bf.append(nomePolicy);
+    	bf.append("_");
+    	bf.append(Base64Utilities.encodeAsString(request.getBytes())); // codifico in base64 la richiesta
+    	return bf.toString();
+    }
+	
+	private static Map<String, Object> buildDynamicAAMap(OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, Logger log,
+			String nomeAttributeAuthority,
+			org.openspcoop2.pdd.core.token.attribute_authority.AbstractDatiInvocazione datiInvocazione) throws Exception {
+	
+		Map<String, Object> dynamicMap = new HashMap<String, Object>();
+		
+		Map<String, List<String>> pTrasporto = null;
+		String urlInvocazione = null;
+		Map<String, List<String>> pQuery = null;
+		Map<String, List<String>> pForm = null;
+		if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+			pTrasporto = requestInfo.getProtocolContext().getHeaders();
+			urlInvocazione = requestInfo.getProtocolContext().getUrlInvocazione_formBased();
+			pQuery = requestInfo.getProtocolContext().getParameters();
+			if(requestInfo.getProtocolContext() instanceof HttpServletTransportRequestContext) {
+				HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) requestInfo.getProtocolContext();
+				HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
+				if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
+					FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
+					if(formServlet.getFormUrlEncodedParametersValues()!=null &&
+							!formServlet.getFormUrlEncodedParametersValues().isEmpty()) {
+						pForm = formServlet.getFormUrlEncodedParametersValues();
+					}
+				}
+			}
+		}
+		
+		MessageContent messageContent = null;
+		boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+		if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+			messageContent = new MessageContent(message.castAsSoap(), bufferMessage_readOnly, pddContext);
+		}
+		else{
+			if(MessageType.XML.equals(message.getMessageType())){
+				messageContent = new MessageContent(message.castAsRestXml(), bufferMessage_readOnly, pddContext);
+			}
+			else if(MessageType.JSON.equals(message.getMessageType())){
+				messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, pddContext);
+			}
+		}
+		
+		ErrorHandler errorHandler = new ErrorHandler();
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
+				message,
+				messageContent, 
+				busta, 
+				pTrasporto, 
+				pQuery,
+				pForm,
+				errorHandler);
+		
+		List<String> listAttributi = null;
+		if(datiInvocazione instanceof org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa) {
+			org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa datiPA = 
+					(org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa) datiInvocazione;
+			if(datiPA.getPa()!=null && datiPA.getPa().sizeAttributeAuthorityList()>0) {
+				for (AttributeAuthority aa : datiPA.getPa().getAttributeAuthorityList()) {
+					if(nomeAttributeAuthority.equals(aa.getNome())) {
+						listAttributi = aa.getAttributoList();
+						break;
+					}
+				}
+			}
+			else if(datiPA.getPd()!=null && datiPA.getPd().sizeAttributeAuthorityList()>0) {
+				for (AttributeAuthority aa : datiPA.getPd().getAttributeAuthorityList()) {
+					if(nomeAttributeAuthority.equals(aa.getNome())) {
+						listAttributi = aa.getAttributoList();
+						break;
+					}
+				}
+			}
+		}
+		else if(datiInvocazione instanceof org.openspcoop2.pdd.core.token.attribute_authority.pd.DatiInvocazionePortaDelegata) {
+			org.openspcoop2.pdd.core.token.attribute_authority.pd.DatiInvocazionePortaDelegata datiPD = 
+					(org.openspcoop2.pdd.core.token.attribute_authority.pd.DatiInvocazionePortaDelegata) datiInvocazione;
+			if(datiPD.getPd()!=null && datiPD.getPd().sizeAttributeAuthorityList()>0) {
+				for (AttributeAuthority aa : datiPD.getPd().getAttributeAuthorityList()) {
+					if(nomeAttributeAuthority.equals(aa.getNome())) {
+						listAttributi = aa.getAttributoList();
+						break;
+					}
+				}
+			}
+		}
+		
+		// Viene messo sempre per facilitare la scrittura delle regole
+		if(listAttributi==null) {
+			listAttributi = new ArrayList<String>();
+		}
+		//if(listAttributi!=null && listAttributi.size()>0) {
+		RequiredAttributes reqAttrs = new RequiredAttributes(listAttributi);
+		dynamicMap.put(org.openspcoop2.pdd.core.dynamic.Costanti.MAP_REQUIRED_ATTRIBUTES, reqAttrs);
+		dynamicMap.put(org.openspcoop2.pdd.core.dynamic.Costanti.MAP_REQUIRED_ATTRIBUTES.toLowerCase(), reqAttrs);
+		//}
+		
+		return dynamicMap;
+	}
+	
+	private static String buildDynamicAARequest(OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, Logger log, 
+			PolicyAttributeAuthority policyAttributeAuthority,
+			Map<String, Object> dynamicMap,
+			boolean addIdAndDate) throws Exception {
+			
+		String dynamicContent = policyAttributeAuthority.getRequestDynamicPayload();
+		String request = null;
+		
+		if(policyAttributeAuthority.isRequestDynamicPayloadTemplate() || policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
+			if(policyAttributeAuthority.isRequestDynamicPayloadTemplate()) {
+				request = DynamicUtils.convertDynamicPropertyValue("AADynamicRequest.gwt", dynamicContent, dynamicMap, pddContext, true);
+			}
+			else {
+				request = buildAAJwt(policyAttributeAuthority, dynamicMap, pddContext, addIdAndDate);
+			}
+		}
+		else if(policyAttributeAuthority.isRequestDynamicPayloadFreemarkerTemplate()) {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			DynamicUtils.convertFreeMarkerTemplate("AADynamicRequest.ftl", dynamicContent.getBytes(), dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			request = bout.toString();
+			
+			if(policyAttributeAuthority.isRequestJws()) {
+				request = normalizeJwtPayload(request);
+			}
+		}
+		else if(policyAttributeAuthority.isRequestDynamicPayloadVelocityTemplate()) {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			DynamicUtils.convertVelocityTemplate("AADynamicRequest.vm", dynamicContent.getBytes(), dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			request = bout.toString();
+			
+			if(policyAttributeAuthority.isRequestJws()) {
+				request = normalizeJwtPayload(request);
+			}
+		}
+		if(request==null || "".equals(request)) {
+			throw new Exception("Request undefined");
+		}
+		
+		return request;
+	}
+	
+	private static String normalizeJwtPayload(String payload) throws Exception {
+		JSONUtils jsonUtils = JSONUtils.getInstance(false);
+		JsonNode jwtPayload = jsonUtils.getAsNode(payload);
+		return jsonUtils.toString(jwtPayload);
+	}
+	
+	private static String buildAAJwt(PolicyAttributeAuthority policyAttributeAuthority, 
+			Map<String, Object> dynamicMap_template, PdDContext pddContext,
+			boolean addIdAndDate) throws Exception {
+		
+		// https://datatracker.ietf.org/doc/html/rfc7523
+		
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		JSONUtils jsonUtils = JSONUtils.getInstance(false);
+		
+		ObjectNode jwtPayload = jsonUtils.newObjectNode();
+
+		// add iat, nbf, exp
+		long nowMs = DateManager.getTimeMillis();
+		long nowSeconds = nowMs/1000;
+		
+		String issuer = policyAttributeAuthority.getRequestJwtIssuer();
+		if(issuer!=null && !"".equals(issuer)) {
+			issuer = DynamicUtils.convertDynamicPropertyValue("issuer.gwt", issuer, dynamicMap_template, pddContext, true);	
+		}
+		if(issuer==null || "".equals(issuer)) {
+			issuer = op2Properties.getIdentitaPortaDefault(null).getNome();
+		}
+		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER, issuer);
+		
+		String subject = policyAttributeAuthority.getRequestJwtSubject();
+		if(subject!=null && !"".equals(subject)) {
+			subject = DynamicUtils.convertDynamicPropertyValue("subject.gwt", subject, dynamicMap_template, pddContext, true);	
+		}
+		if(subject==null) {
+			throw new Exception("JWT-Subject undefined");
+		}
+		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT, subject);
+		
+		// The JWT MUST contain an "aud" (audience) claim containing a value that identifies the authorization server as an intended audience. 
+		String audience = policyAttributeAuthority.getRequestJwtAudience();
+		if(audience!=null && !"".equals(subject)) {
+			audience = DynamicUtils.convertDynamicPropertyValue("audience.gwt", audience, dynamicMap_template, pddContext, true);	
+		}
+		if(audience==null) {
+			throw new Exception("JWT-Audience undefined");
+		}
+		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);
+		
+		// claims
+		String claims = policyAttributeAuthority.getRequestJwtClaims();
+		if(claims!=null && !"".equals(claims)) {
+			claims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", claims, dynamicMap_template, pddContext, true);	
+		}
+		if(claims!=null && !"".equals(claims)) {
+			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(claims);
+			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
+				Enumeration<Object> keys = convertTextToProperties.keys();
+				while (keys.hasMoreElements()) {
+					String nome = (String) keys.nextElement();
+					String valore = convertTextToProperties.getProperty(nome);
+					if(nome!=null && !"".equals(nome) && valore!=null) {
+						if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
+							JsonNode node = jsonUtils.getAsNode(valore);
+							jwtPayload.set(nome, node);
+						}
+						else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
+							JsonNode node = jsonUtils.getAsNode(valore);
+							jwtPayload.set(nome, node);
+						}
+						else {
+							jwtPayload.put(nome, valore);
+						}
+					}
+				}
+			}
+		}
+		
+		if(addIdAndDate) {
+		
+			// The JWT MAY contain an "iat" (issued at) claim that identifies the time at which the JWT was issued. 
+			jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
+			
+			// The JWT MAY contain an "nbf" (not before) claim that identifies the time before which the token MUST NOT be accepted for processing.
+			jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE, nowSeconds);
+			
+			// The JWT MUST contain an "exp" (expiration time) claim that limits the time window during which the JWT can be used.
+			int ttl = -1;
+			try {
+				ttl = policyAttributeAuthority.getJwtTtlSeconds();
+			}catch(Exception e) {
+				throw new Exception("Invalid JWT-TimeToLive value: "+e.getMessage(),e);
+			}
+			long expired = nowSeconds+ttl;
+			jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
+			
+			// The JWT MAY contain a "jti" (JWT ID) claim that provides a unique identifier for the token.
+			String uuid = null;
+			try {
+				uuid = UniqueIdentifierManager.newUniqueIdentifier().toString();
+			}catch(Exception e) {
+				throw new Exception("Invalid JWT-TimeToLive value: "+e.getMessage(),e);
+			}
+			jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, uuid);
+			
+		}
+		
+		return jsonUtils.toString(jwtPayload);
+	}
+	
+	private static void _validazioneInformazioniAttributiRecuperati(EsitoRecuperoAttributi esitoRecuperoAttributi, PolicyAttributeAuthority policyAttributeAuthority, boolean saveErrorInCache,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			Map<String, Object> dynamicMap) throws Exception {
+		
+		Date now = DateManager.getDate();
+		
+		if(esitoRecuperoAttributi.isValido()) {			
+			if(esitoRecuperoAttributi.getInformazioniAttributi().getExp()!=null) {				
+				/*
+				 *  The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
+				 * expire in one hour from the time the response was generated.
+				 * If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value. 
+				 **/
+				if(!now.before(esitoRecuperoAttributi.getInformazioniAttributi().getExp())){
+					esitoRecuperoAttributi.setTokenScaduto();
+					esitoRecuperoAttributi.setDateValide(false);
+					esitoRecuperoAttributi.setDetails("Attributes response expired");	
+				}
+			}
+			
+		}
+			
+		if(esitoRecuperoAttributi.isValido()) {
+			if(esitoRecuperoAttributi.getInformazioniAttributi().getNbf()!=null) {				
+				/*
+				 *   The "nbf" (not before) claim identifies the time before which the JWT MUST NOT be accepted for processing.  
+				 **/
+				if(!esitoRecuperoAttributi.getInformazioniAttributi().getNbf().before(now)){
+					esitoRecuperoAttributi.setTokenNotUsableBefore();
+					esitoRecuperoAttributi.setDateValide(false);
+					SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
+					esitoRecuperoAttributi.setDetails("Attributes response not usable before "+sdf.format(esitoRecuperoAttributi.getInformazioniAttributi().getNbf()));
+				}
+			}
+		}
+		
+		if(esitoRecuperoAttributi.isValido()) {
+			if(esitoRecuperoAttributi.getInformazioniAttributi().getIat()!=null) {				
+				/*
+				 *   The "iat" (issued at) claim identifies the time at which the JWT was issued.  This claim can be used to determine the age of the JWT.
+   				 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
+   				 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
+				 **/
+				Integer old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
+				if(old!=null) {
+					Date oldMax = new Date((DateManager.getTimeMillis() - old.intValue()));
+					if(esitoRecuperoAttributi.getInformazioniAttributi().getIat().before(oldMax)) {
+						esitoRecuperoAttributi.setTokenScaduto();
+						esitoRecuperoAttributi.setDateValide(false);
+						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
+						esitoRecuperoAttributi.setDetails("Attributes response expired; iat time '"+sdf.format(esitoRecuperoAttributi.getInformazioniAttributi().getIat())+"' too old");
+					}
+				}
+			}
+			
+		}
+		
+		if(esitoRecuperoAttributi.isValido()) {		
+			String audience = policyAttributeAuthority.getResponseAudience();
+			if(audience!=null && !"".equals(audience)) {
+				audience = DynamicUtils.convertDynamicPropertyValue("audience.gwt", audience, dynamicMap, pddContext, true);	
+				if( esitoRecuperoAttributi.getInformazioniAttributi().getAud()==null || !esitoRecuperoAttributi.getInformazioniAttributi().getAud().contains(audience) ) {				
+					esitoRecuperoAttributi.setTokenValidazioneFallita();
+	    			if(policyAttributeAuthority.isSaveErrorInCache()) {
+	    				esitoRecuperoAttributi.setNoCache(false);
+	    			}
+	    			else {
+	    				esitoRecuperoAttributi.setNoCache(true);
+	    			}
+					esitoRecuperoAttributi.setDetails("Invalid audience");	
+				}
+			}
+			
+		}
+		
+		if(esitoRecuperoAttributi.isValido()) {		
+			if(esitoRecuperoAttributi.getInformazioniAttributi().getAttributes()==null || esitoRecuperoAttributi.getInformazioniAttributi().getAttributes().isEmpty()) {
+				if(policyAttributeAuthority.isSaveErrorInCache()) {
+    				esitoRecuperoAttributi.setNoCache(false);
+    			}
+    			else {
+    				esitoRecuperoAttributi.setNoCache(true);
+    			}
+				esitoRecuperoAttributi.setDetails("No attributes retrieved");
+			}
+		}
+		
+		if(esitoRecuperoAttributi.isValido()==false) {
+			if(saveErrorInCache) {
+				esitoRecuperoAttributi.setNoCache(false);
+			}
+			else {
+				esitoRecuperoAttributi.setNoCache(true);
+			}
+		}
+	}
+	
+	public static HttpResponse http(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			Map<String, Object> dynamicMap,
+			String request) throws Exception {
+		
+		// *** Raccola Parametri ***
+		
+		String endpoint = policyAttributeAuthority.getEndpoint();
+		if(endpoint!=null && !"".equals(endpoint)) {
+			endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", endpoint, dynamicMap, pddContext, true);	
+		}
+		HttpRequestMethod httpMethod = policyAttributeAuthority.getRequestHttpMethod();
+		
+		
+		// Nell'endpoint config ci finisce i timeout e la configurazione proxy
+		Properties endpointConfig = policyAttributeAuthority.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		
+		boolean https = policyAttributeAuthority.isEndpointHttps();
+		boolean httpsClient = false;
+		Properties sslConfig = null;
+		Properties sslClientConfig = null;
+		if(https) {
+			sslConfig = policyAttributeAuthority.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+			httpsClient = policyAttributeAuthority.isHttpsAuthentication();
+			if(httpsClient) {
+				sslClientConfig = policyAttributeAuthority.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+			}
+		}
+		
+		boolean basic = policyAttributeAuthority.isBasicAuthentication();
+		String username = null;
+		String password = null;
+		if(basic) {
+			username = policyAttributeAuthority.getBasicAuthentication_username();
+			if(username!=null && !"".equals(username)) {
+				username = DynamicUtils.convertDynamicPropertyValue("username.gwt", username, dynamicMap, pddContext, true);	
+			}
+			password = policyAttributeAuthority.getBasicAuthentication_password();
+		}
+		
+		boolean bearer = policyAttributeAuthority.isBearerAuthentication();
+		String bearerToken = null;
+		if(bearer) {
+			bearerToken = policyAttributeAuthority.getBeareAuthentication_token();
+//			if(bearerToken!=null && !"".equals(bearerToken)) {
+//				bearerToken = DynamicUtils.convertDynamicPropertyValue("bearerToken.gwt", bearerToken, dynamicMap, pddContext, true);	
+//			}
+		}
+		
+		
+		
+		// *** Definizione Endpoint ***
+		
+		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
+		ConnettoreBaseHTTP connettore = null;
+		if(https) {
+			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
+			connettore = new ConnettoreHTTPS();
+		}
+		else {
+			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
+			connettore = new ConnettoreHTTP();
+		}
+		connettore.setForceDisable_rest_proxyPassReverse(true);
+		connettore.init(pddContext, protocolFactory);
+		connettore.setRegisterSendIntoContext(false);
+		
+		if(basic){
+			InvocazioneCredenziali credenziali = new InvocazioneCredenziali();
+			credenziali.setUser(username);
+			credenziali.setPassword(password);
+			connettoreMsg.setCredenziali(credenziali);
+		}
+		
+		connettoreMsg.setConnectorProperties(new java.util.Hashtable<String,String>());
+		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
+		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+		boolean debug = properties.isGestioneAttributeAuthority_debug();	
+		if(debug) {
+			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
+		}
+		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE, TransferLengthModes.CONTENT_LENGTH.getNome());
+		addProperties(connettoreMsg, endpointConfig);
+		if(https) {
+			addProperties(connettoreMsg, sslConfig);
+			if(httpsClient) {
+				addProperties(connettoreMsg, sslClientConfig);
+			}
+		}
+		
+		byte[] content = null;
+		
+		TransportRequestContext transportRequestContext = new TransportRequestContext();
+		transportRequestContext.setRequestType(httpMethod.name());
+		transportRequestContext.setHeaders(new HashMap<String, List<String>>());
+		if(bearer) {
+			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
+		}
+		
+		
+		// *** request *** 
+		String contentType = policyAttributeAuthority.getRequestContentType();
+		if(contentType!=null && !"".equals(contentType)) {
+			transportRequestContext.removeHeader(HttpConstants.CONTENT_TYPE);
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentType);
+		}
+		
+		String requestPayload = request;
+		if(policyAttributeAuthority.isRequestJws()) {
+			requestPayload = signAAJwt(policyAttributeAuthority, request);
+		}
+		if(policyAttributeAuthority.isRequestPositionBearer()) {
+			if(transportRequestContext.getHeaders()==null) {
+				transportRequestContext.setHeaders(new HashMap<String, List<String>>());
+			}
+			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+requestPayload;
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.AUTHORIZATION, authorizationHeader);
+		}
+		else if(policyAttributeAuthority.isRequestPositionHeader()) {
+			if(transportRequestContext.getHeaders()==null) {
+				transportRequestContext.setHeaders(new HashMap<String, List<String>>());
+			}
+			String headerName = policyAttributeAuthority.getRequestPositionHeaderName();
+			TransportUtils.setHeader(transportRequestContext.getHeaders(),headerName, requestPayload);
+		}
+		else if(policyAttributeAuthority.isRequestPositionQuery()) {
+			if(transportRequestContext.getParameters()==null) {
+				transportRequestContext.setParameters(new HashMap<String, List<String>>());
+			}
+			String queryParameterName = policyAttributeAuthority.getRequestPositionQueryParameterName();
+			TransportUtils.setParameter(transportRequestContext.getParameters(), queryParameterName, requestPayload);
+		}
+		else if(policyAttributeAuthority.isRequestPositionPayload()) {
+			content = requestPayload.getBytes();
+		}
+		
+			
+		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
+		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
+		connettoreMsg.setRequestMessage(msg);
+		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
+		connettore.setHttpMethod(msg);
+		
+		ResponseCachingConfigurazione responseCachingConfigurazione = new ResponseCachingConfigurazione();
+		responseCachingConfigurazione.setStato(StatoFunzionalita.DISABILITATO);
+		String prefixConnettore = "[EndpointAttributeAuthority: "+endpoint+"] ";
+		if(endpointConfig.containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
+			String hostProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+			String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
+			prefixConnettore = prefixConnettore+" [via Proxy: "+hostProxy+":"+portProxy+"] ";
+		}
+		boolean send = connettore.send(responseCachingConfigurazione, connettoreMsg);
+		if(send==false) {
+			if(connettore.getEccezioneProcessamento()!=null) {
+				throw new Exception(prefixConnettore+connettore.getErrore(), connettore.getEccezioneProcessamento());
+			}
+			else {
+				throw new Exception(prefixConnettore+connettore.getErrore());
+			}
+		}
+		
+		OpenSPCoop2Message msgResponse = connettore.getResponse();
+		ByteArrayOutputStream bout = null;
+		if(msgResponse!=null) {
+			bout = new ByteArrayOutputStream();
+			if(msgResponse!=null) {
+				msgResponse.writeTo(bout, true);
+			}
+			bout.flush();
+			bout.close();
+		}
+		
+		HttpResponse httpResponse = new HttpResponse();
+		httpResponse.setResultHTTPOperation(connettore.getCodiceTrasporto());
+		
+		if(connettore.getCodiceTrasporto() >= 200 &&  connettore.getCodiceTrasporto() < 299) {
+			String msgSuccess = prefixConnettore+"Connessione completata con successo (codice trasporto: "+connettore.getCodiceTrasporto()+")";
+			if(bout!=null && bout.size()>0) {
+				log.debug(msgSuccess);
+				httpResponse.setContent(bout.toByteArray());
+				return httpResponse;
+			}
+			else {
+				throw new Exception(msgSuccess+"; non è pervenuta alcuna risposta");
+			}
+		}
+		else {
+			String msgError = prefixConnettore+"Connessione terminata con errore (codice trasporto: "+connettore.getCodiceTrasporto()+")";
+			if(bout!=null && bout.size()>0) {
+				log.debug(msgError+": "+bout.toString());
+				httpResponse.setContent(bout.toByteArray());
+				return httpResponse;
+			}
+			else {
+				log.error(msgError);
+				throw new Exception(msgError);
+			}
+		}
+		
+		
+	}
+	
+	private static String signAAJwt(PolicyAttributeAuthority policyAttributeAuthority, String payload) throws Exception {
+		
+		String signAlgo = policyAttributeAuthority.getRequestJwtSignAlgorithm();
+		if(signAlgo==null) {
+			throw new Exception("SignAlgorithm undefined");
+		}
+		
+		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+		
+		String keystoreType = policyAttributeAuthority.getRequestJwtSignKeystoreType();
+		if(keystoreType==null) {
+			throw new Exception("JWT Signature keystore type undefined");
+		}
+		String keystoreFile = policyAttributeAuthority.getRequestJwtSignKeystoreFile();
+		if(keystoreFile==null) {
+			throw new Exception("JWT Signature keystore file undefined");
+		}
+		String keystorePassword = policyAttributeAuthority.getRequestJwtSignKeystorePassword();
+		if(keystorePassword==null) {
+			throw new Exception("JWT Signature keystore password undefined");
+		}
+		String keyAlias = policyAttributeAuthority.getRequestJwtSignKeyAlias();
+		if(keyAlias==null) {
+			throw new Exception("JWT Signature key alias undefined");
+		}
+		String keyPassword = policyAttributeAuthority.getRequestJwtSignKeyPassword();
+		if(keyPassword==null) {
+			throw new Exception("JWT Signature key password undefined");
+		}
+					
+		
+		MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
+		if(merlinKs==null) {
+			throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
+		}
+		KeyStore ks = merlinKs.getKeyStore();
+		
+		JwtHeaders jwtHeaders = new JwtHeaders();
+		if(policyAttributeAuthority.isRequestJwtSignIncludeKeyId()) {
+			jwtHeaders.setKid(keyAlias);
+		}
+		if(policyAttributeAuthority.isRequestJwtSignIncludeX509Cert()) {
+			jwtHeaders.setAddX5C(true);
+		}
+		String url = policyAttributeAuthority.getRequestJwtSignIncludeX509URL();
+		if(url!=null && !"".equals(url)) {
+			jwtHeaders.setJwkUrl(new URI(url));
+		}
+		if(policyAttributeAuthority.isRequestJwtSignIncludeX509CertSha1()) {
+			jwtHeaders.setX509IncludeCertSha1(true);
+		}
+		if(policyAttributeAuthority.isRequestJwtSignIncludeX509CertSha256()) {
+			jwtHeaders.setX509IncludeCertSha256(true);
+		}
+		String ct = policyAttributeAuthority.getRequestJwtSignJoseContentType();
+		if(ct!=null && !"".equals(ct)) {
+			jwtHeaders.setContentType(ct);
+		}
+		String type = policyAttributeAuthority.getRequestJwtSignJoseType();
+		if(type!=null && !"".equals(type)) {
+			jwtHeaders.setType(type);
+		}
+		Certificate cert = ks.getCertificate(keyAlias);
+		if(cert!=null && cert instanceof X509Certificate) {
+			jwtHeaders.addX509cert((X509Certificate)cert);
+		}
+		
+		JsonSignature jsonSignature = new JsonSignature(ks, false, keyAlias,  keyPassword, signAlgo, jwtHeaders, options);
+		return jsonSignature.sign(payload);
+		
+	}
 }
 

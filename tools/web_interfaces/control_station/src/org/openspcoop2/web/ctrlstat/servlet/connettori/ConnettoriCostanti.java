@@ -493,6 +493,7 @@ public class ConnettoriCostanti {
 	
 	/* LABEL FILTRI RICERCA */
 	public final static String LABEL_SUBTITLE_DATI_CONNETTORE = "Dati Connettore";
+	public final static String NAME_SUBTITLE_DATI_CONNETTORE = "subtDatiConn";
 	public final static String LABEL_FILTRO_TIPO_CONNETTORE = "Tipo";
 	public final static String LABEL_FILTRO_TIPO_CONNETTORE_IM = "im-message-box";
 	public final static String LABEL_FILTRO_CONNETTORE_TOKEN_POLICY = "Token Policy";

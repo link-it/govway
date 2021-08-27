@@ -25,6 +25,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.AbstractBehaviour;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
@@ -93,6 +94,8 @@ public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehavio
 						filter.getAccessListServiziApplicativi().add(id);
 						behaviour.getForwardTo().add(forwardTo);
 			
+						this.getPddContext().addObject(CostantiPdD.CONNETTORE_MULTIPLO_SELEZIONATO, servizioApplicativo.getNome());
+						
 						BehaviourLoadBalancer c = new BehaviourLoadBalancer();
 						c.setLoadBalancerPool(config.getPool());
 						c.setConnectorName(nomeConnettore);

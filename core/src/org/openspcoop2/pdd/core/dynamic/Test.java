@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.dynamic;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,17 +168,48 @@ public class Test {
 		boolean bufferMessage_readOnly = true;
 		String idTransazione = "xxyy";
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
-		
+				
 		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
 		
 		
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
-		System.out.println("TEST PDD CONTEXT: "+DynamicUtils.convertDynamicPropertyValue("testPddContext", prefix + "{context:TEST1}", dynamicMap, pddContext, forceDollaro));
-	      
-		System.out.println("HEADER: "+DynamicUtils.convertDynamicPropertyValue("testHeader", prefix+"{header:Header1}", dynamicMap, pddContext, forceDollaro));
+		String expr = prefix + "{transaction:id}";
+		DynamicUtils.validate("testTransactionId", expr, forceDollaro, true);
+		String value = DynamicUtils.convertDynamicPropertyValue("testTransactionId", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("TransactionID: "+value+"\n\n");
+		String expected = idTransazione;
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 		
-		System.out.println("URL: "+DynamicUtils.convertDynamicPropertyValue("testUrl", prefix+"{query:P1}", dynamicMap, pddContext, forceDollaro));
+		expr = prefix + "{context:TEST1}";
+		DynamicUtils.validate("testPddContext", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testPddContext", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("testPddContext: "+value+"\n\n");
+		expected = "VALORE DI ESEMPIO";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{header:Header1}";
+		DynamicUtils.validate("testHeader", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testHeader", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("testHeader: "+value+"\n\n");
+		expected = "Valore1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{query:P1}";
+		DynamicUtils.validate("testUrl", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testUrl", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("testUrl: "+value+"\n\n");
+		expected = "Valore1URL";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
 		
 		dynamicMap = new HashMap<>();
 		dInfo = new DynamicInfo(connettoreMsg, pddContext);
@@ -186,11 +218,11 @@ public class Test {
 		dInfo.setMessageContent(messageContent);
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
-		String expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova/text()}";
+		expr = prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova/text()}";
 		DynamicUtils.validate("testXml", expr, forceDollaro, true);
-		String value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext, forceDollaro);
+		value = DynamicUtils.convertDynamicPropertyValue("testXml", expr, dynamicMap, pddContext, forceDollaro);
 		System.out.println("Pattern1: "+value);
-		String expected = "test";
+		expected = "test";
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 		}
@@ -525,6 +557,125 @@ public class Test {
 				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 			}
 		}
+		
+		
+		Map<String, Object> mapLivello1 = new HashMap<String, Object>();
+		Map<String, Object> mapLivello2 = new HashMap<String, Object>();
+		mapLivello1.put("aa", mapLivello2);
+		mapLivello2.put("attr1", "value1");
+		mapLivello2.put("attr2", "value2");
+		Map<String, Object> mapLivello22 = new HashMap<String, Object>();
+		mapLivello1.put("aa2", mapLivello22);
+		mapLivello22.put("attr21", "value21");
+		Map<String, Object> mapLivello3 = new HashMap<String, Object>();
+		mapLivello3.put("attr31", "value31");
+		mapLivello3.put("attr32", "value32");
+		mapLivello2.put("attr3", mapLivello3);
+		List<String> arrayLivello4 = new ArrayList<String>();
+		arrayLivello4.add("41");
+		arrayLivello4.add("42");
+		arrayLivello4.add("43");
+		mapLivello2.put("attr4", arrayLivello4);
+		TestMap multimap = new TestMap();
+		multimap.map = mapLivello1;
+		pddContext.addObject("MULTIMAP", multimap);
+		TestMap map = new TestMap();
+		map.map = mapLivello2;
+		pddContext.addObject("MAP", map);
+		
+		expr = "attribute value: ${context:MAP.map[attr1]}";
+		DynamicUtils.validate("testMAP", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testMAP", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("MapAttr: "+value+"\n\n");
+		expected = "attribute value: value1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "attribute value: ${context:MULTIMAP.map[aa][attr1]}";
+		DynamicUtils.validate("testMULTIMAP", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("MultiMapAttr: "+value+"\n\n");
+		expected = "attribute value: value1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "attribute value: ${context:MULTIMAP.map[aa][attr2]}";
+		DynamicUtils.validate("testMULTIMAP2", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP2", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("MultiMapAttr2: "+value+"\n\n");
+		expected = "attribute value: value2";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "attribute value: ${context:MULTIMAP.map[aa2][attr21]}";
+		DynamicUtils.validate("testMULTIMAP3", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP3", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("MultiMapAttr3: "+value+"\n\n");
+		expected = "attribute value: value21";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "attribute value: ${context:MULTIMAP.map[aa][attr3][attr32]}";
+		DynamicUtils.validate("testMULTIMAP4", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP4", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("MultiMapAttr4: "+value+"\n\n");
+		expected = "attribute value: value32";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "attribute value: ${context:MULTIMAP.map[aa][attr4][2]}";
+		DynamicUtils.validate("testMULTIMAP5", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testMULTIMAP5", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("MultiMapAttr5: "+value+"\n\n");
+		expected = "attribute value: 43";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		
+		
+
+		expr = "Valore da non rimpiazzare {transaction:id} insieme ad altro";
+		DynamicUtils.validate("test1{}DaNonRisolvere", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("test1{}DaNonRisolvere", expr, dynamicMap, pddContext, true); // forceDollaro a true
+		System.out.println("test1{}DaNonRisolvere: "+value+"\n\n");
+		expected = expr;
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "{transaction:id}";
+		DynamicUtils.validate("test2{}DaNonRisolvere", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("test2{}DaNonRisolvere", expr, dynamicMap, pddContext, true); // forceDollaro a true
+		System.out.println("test2{}DaNonRisolvere: "+value+"\n\n");
+		expected = expr;
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "{\n \"transaction\": \"id\"\n}";
+		DynamicUtils.validate("test3{}DaNonRisolvere", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("test3{}DaNonRisolvere", expr, dynamicMap, pddContext, true); // forceDollaro a true
+		System.out.println("test3{}DaNonRisolvere: "+value+"\n\n");
+		expected = expr;
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = "{\n \"transaction\": \"id\",\n \"transaction\": \"${transaction:id}\"\n}";
+		DynamicUtils.validate("test4{}DaNonRisolvere", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("test4{}DaNonRisolvere", expr, dynamicMap, pddContext, true); // forceDollaro a true
+		System.out.println("test4{}DaNonRisolvere: "+value+"\n\n");
+		expected = expr.replace("${transaction:id}", idTransazione);
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
 	}
 	
 }
+

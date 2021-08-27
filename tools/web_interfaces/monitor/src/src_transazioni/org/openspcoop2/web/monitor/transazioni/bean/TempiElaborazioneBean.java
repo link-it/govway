@@ -209,4 +209,8 @@ public class TempiElaborazioneBean extends TempiElaborazione {
 		return this._getInfoTempiElaborazione(this.trasformazioneRisposta);
 	}
 	
+	public String getInfoTempiElaborazioneAttributeAuthority() {
+		return this._getInfoTempiElaborazione(this.attributeAuthority);
+	}
+	
 }

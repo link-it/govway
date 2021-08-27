@@ -94,7 +94,8 @@ public class PorteDelegateCore extends ControlStationCore {
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
 			String fruizioneAutorizzazione_tokenOptions,
-			String fruizioneAutorizzazioneScope, String fruizioneScope, String fruizioneAutorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy) {
+			String fruizioneAutorizzazioneScope, String fruizioneScope, String fruizioneAutorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
+			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) {
 		
 		portaDelegata.setAutenticazione(fruizioneAutenticazione);
 		if(fruizioneAutenticazioneOpzionale != null){
@@ -175,6 +176,16 @@ public class PorteDelegateCore extends ControlStationCore {
 					portaDelegata.setScope(new AutorizzazioneScope());
 				}
 				portaDelegata.getScope().setMatch(scopeTipoMatch);
+			}
+		}
+		
+		// attribute authority
+		while (portaDelegata.sizeAttributeAuthorityList()>0) {
+			portaDelegata.removeAttributeAuthority(0);
+		}
+		if(StatoFunzionalita.ABILITATO.getValue().equals(identificazioneAttributiStato) && attributeAuthoritySelezionate!=null && attributeAuthoritySelezionate.length>0) {
+			for (String aaName : attributeAuthoritySelezionate) {
+				portaDelegata.addAttributeAuthority(this.buildAttributeAuthority(attributeAuthoritySelezionate.length, aaName, attributeAuthorityAttributi));
 			}
 		}
 	}

@@ -326,7 +326,10 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					env.userLogin,
 					env.apsCore,
 					env.apsHelper,
-	        		null // nomeSAServer TODO quando si aggiunge applicativo server
+	        		null, // nomeSAServer TODO quando si aggiunge applicativo server
+	        		null, // identificazioneAttributiStato
+	        		null, //String [] attributeAuthoritySelezionate
+	        		null // attributeAuthorityAttributi
 				);
 
 		        

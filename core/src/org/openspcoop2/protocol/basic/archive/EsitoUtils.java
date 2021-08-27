@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAllarme;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAttributeAuthority;
 import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
@@ -687,6 +688,25 @@ public class EsitoUtils {
 			bfEsito.append("\n");	
 		}
 		
+		// Attribute Authority
+		if(archive.getAttributeAuthorities().size()>0){
+			bfEsito.append("Attribute Authority (").append(archive.getAttributeAuthorities().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getAttributeAuthorities().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveAttributeAuthority = archive.getAttributeAuthorities().get(i);
+				String nomeAA = ((ArchiveAttributeAuthority)archiveAttributeAuthority.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nomeAA).append("] ");
+				serializeStato(archiveAttributeAuthority, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getAttributeAuthorities().size()>0){
+			bfEsito.append("\n");	
+		}
+		
 		// Plugin Classi
 		if(archive.getPlugin_classi().size()>0){
 			bfEsito.append("Plugin - Classi (").append(archive.getPlugin_classi().size()).append(")\n");
@@ -1055,6 +1075,13 @@ public class EsitoUtils {
 			ArchiveEsitoImportDetail archiveTokenPolicy = archive.getToken_retrieve_policies().get(i);
 			ArchiveIdCorrelazione idCorrelazione = ((ArchiveTokenPolicy)archiveTokenPolicy.getArchiveObject()).getIdCorrelazione();
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getToken_retrieve_policies().add(archiveTokenPolicy);
+		}
+		
+		// Attribute Authority
+		for (int i = 0; i < archive.getAttributeAuthorities().size(); i++) {
+			ArchiveEsitoImportDetail archiveAttributeAuthority = archive.getAttributeAuthorities().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveAttributeAuthority)archiveAttributeAuthority.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getAttributeAuthorities().add(archiveAttributeAuthority);
 		}
 		
 		// Plugin Classi
