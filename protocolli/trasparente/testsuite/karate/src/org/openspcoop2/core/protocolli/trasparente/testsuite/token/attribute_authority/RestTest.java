@@ -194,7 +194,8 @@ public class RestTest extends ConfigLoader {
 		
 		_test(TipoServizio.EROGAZIONE, "contenuti_multipleAA",
 				"multipleAA_authzContenuti_errorUsername", 
-				"Resource '${aa:attributes[HeaderHTTP][sub]}' with unexpected value 'Username2'", 
+				//"Resource '${aa:attributes[HeaderHTTP][sub]}' with unexpected value 'Username2'", 
+				"[sub]}' with unexpected value 'Username2'",  // tomcat fix
 				map);
 	}
 	@Test
@@ -216,7 +217,8 @@ public class RestTest extends ConfigLoader {
 		
 		_test(TipoServizio.FRUIZIONE, "contenuti_multipleAA",
 				"multipleAA_authzContenuti_errorUsername", 
-				"Resource '${aa:attributes[HeaderHTTP][sub]}' with unexpected value 'Username2'", 
+				//"Resource '${aa:attributes[HeaderHTTP][sub]}' with unexpected value 'Username2'",
+				"[sub]}' with unexpected value 'Username2'",  // tomcat fix
 				map);
 	}
 	@Test
@@ -238,7 +240,8 @@ public class RestTest extends ConfigLoader {
 		
 		_test(TipoServizio.EROGAZIONE, "contenuti_multipleAA",
 				"multipleAA_authzContenuti_errorAudience", 
-				"Resource '${aa:attributes[HeaderHTTP][aud]}' with unexpected value 'http://AudienceERRATO.example'", 
+				//"Resource '${aa:attributes[HeaderHTTP][aud]}' with unexpected value 'http://AudienceERRATO.example'",
+				"[aud]}' with unexpected value 'http://AudienceERRATO.example'", // tomcat fix
 				map);
 	}
 	@Test
@@ -260,7 +263,8 @@ public class RestTest extends ConfigLoader {
 		
 		_test(TipoServizio.FRUIZIONE, "contenuti_multipleAA",
 				"multipleAA_authzContenuti_errorAudience", 
-				"Resource '${aa:attributes[HeaderHTTP][aud]}' with unexpected value 'http://AudienceERRATO.example'", 
+				//"Resource '${aa:attributes[HeaderHTTP][aud]}' with unexpected value 'http://AudienceERRATO.example'",
+				"[aud]}' with unexpected value 'http://AudienceERRATO.example'", // tomcat fix
 				map);
 	}
 	
