@@ -617,7 +617,11 @@ public final class CostantiDB {
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE = "modipaSecurityMessageRequestAud";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE = "modipaSecurityMessageResponseAud";
-    
+
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_JWT_CLAIMS = "modipaSecurityMessageRequestClaims";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_JWT_CLAIMS = "modipaSecurityMessageResponseClaims";
+
+
     
     /**
      * STATO FUNZIONALITA

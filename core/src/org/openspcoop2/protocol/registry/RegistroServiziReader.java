@@ -26,12 +26,15 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -50,6 +53,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
@@ -2656,6 +2660,26 @@ public class RegistroServiziReader {
 		return id;
 	}
 	
+	
+	
+	/* ********  P R O P R I E T A  ******** */
+	
+	public Map<String, String> getProprietaConfigurazione(Soggetto soggetto) throws DriverConfigurazioneException {
+		if (soggetto == null) {
+			throw new DriverConfigurazioneException("Soggetto non fornito");
+		} else if (soggetto.sizeProprietaList() <= 0) {
+			return null;
+		} else {
+			Map<String, String> properties = new HashMap<String, String>();
+
+			for(int i = 0; i < soggetto.sizeProprietaList(); ++i) {
+				Proprieta p = soggetto.getProprieta(i);
+				properties.put(p.getNome(), p.getValore());
+			}
+
+			return properties;
+		}
+	}
 	
 	
 	

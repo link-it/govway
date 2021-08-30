@@ -370,7 +370,7 @@ Scenario: isTest('riferimento-x509-x5u-x5t-client2')
         },
         payload: { 
             aud: 'testsuite',
-            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient2',
+            client_id: 'http://client2',
             iss: 'DemoSoggettoFruitore',
             sub: 'ApplicativoBlockingIDA01ExampleClient2'
         }
@@ -392,7 +392,7 @@ Scenario: isTest('riferimento-x509-x5u-x5t-client2')
             'x5t#S256': '#present'
         },
         payload: {
-            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient2',
+            aud: 'http://client2',
             client_id: 'RestBlockingIDAR01X5T/v1',
             iss: 'DemoSoggettoErogatore',
             sub: 'RestBlockingIDAR01X5T/v1'
@@ -1987,6 +1987,128 @@ Scenario: isTest('connettivita-base-idar0302-header-bearer')
     ({
         'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['Authorization'][0],
         'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['Authorization'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('custom-claims')
+
+    * def client_token_match_custom_claims = 
+    """
+    ({
+        header: { kid: 'ExampleClient2' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'http://client2',
+            iss: 'customIssSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01ExampleClient2',
+            custom_api: 'customExampleAPIFruizione',
+            custom_fruitore: 'exampleFruitorePCustom',
+            custom_erogatore: 'exampleErogatorePCustom',
+            custom_applicativo: 'exampleClient2PCustom',
+            custom_hdr: 'custom-claims',
+            custom_json: 'RGFuJ3MgVG9vbHMgYXJlIGNvb2wh'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_match_custom_claims, kind: 'Bearer' })
+
+    # Cambia questo
+    * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01CRUDClaimCustom/v1'
+
+    * karate.proceed (url_invocazione_erogazione)
+    
+    # Check claims custom
+    * def server_token_match_claims =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'customAud',
+            client_id: 'customClientId',
+            iss: 'customIssSoggettoErogatore',
+            sub: 'customSubSoggettoErogatore',
+            custom_api: 'customExampleAPIErogazione',
+            custom_fruitore: 'exampleFruitorePCustom',
+            custom_erogatore: 'exampleErogatorePCustom',
+            custom_applicativo: 'exampleClient2PCustom',
+            custom_hdr: 'custom-claims',
+            custom_json: 'Risultato C'
+        }
+    })
+    """
+    
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match_claims, kind: 'Bearer'  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+  
+  
+    
+Scenario: isTest('custom-claims-sub-iss-clientid-empty')
+
+    * def client_token_match_custom_claims2 = 
+    """
+    ({
+        header: { kid: 'ExampleClient2' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: '#notpresent',
+            iss: '#notpresent',
+            sub: '#notpresent',
+            custom_api: 'customExampleAPIFruizione',
+            custom_fruitore: 'exampleFruitorePCustom',
+            custom_erogatore: 'exampleErogatorePCustom',
+            custom_applicativo: 'exampleClient2PCustom',
+            custom_hdr: 'custom-claims-sub-iss-clientid-empty',
+            custom_json: 'RGFuJ3MgVG9vbHMgYXJlIGNvb2wh'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_token_match_custom_claims2, kind: 'Bearer' })
+
+    # Cambia questo
+    * def url_invocazione_erogazione = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01CRUDClaimCustomSubIssNotGenerate/v1'
+
+    * karate.proceed (url_invocazione_erogazione)
+    
+    # Check claims custom
+    * def server_token_match_claims2 =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'customAud',
+            client_id: '#notpresent',
+            iss: '#notpresent',
+            sub: '#notpresent',
+            custom_api: 'customExampleAPIErogazione',
+            custom_fruitore: 'exampleFruitorePCustom',
+            custom_erogatore: 'exampleErogatorePCustom',
+            custom_applicativo: 'exampleClient2PCustom',
+            custom_hdr: 'custom-claims-sub-iss-clientid-empty',
+            custom_json: 'Risultato C'
+        }
+    })
+    """
+    
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match_claims2, kind: 'Bearer'  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)

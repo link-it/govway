@@ -2356,6 +2356,17 @@ public class RicezioneContenutiApplicativi {
 						if(esito.isClientIdentified()) {
 							servizioApplicativo = esito.getIdServizioApplicativo().getNome();
 							msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, ""); // per evitare di visualizzarle anche nei successivi diagnostici
+							
+							IDServizioApplicativo idSAFruitore = new IDServizioApplicativo();
+							idSAFruitore.setIdSoggettoProprietario(soggettoFruitore);
+							idSAFruitore.setNome(servizioApplicativo);
+							try {
+								ServizioApplicativo sa = configurazionePdDReader.getServizioApplicativo(idSAFruitore);
+								Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(sa);
+					            if (configProperties != null && !configProperties.isEmpty()) {
+					            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
+								}	
+							}catch(Throwable t) {}
 						}
 						else {
 							// l'errore puo' non esserci se l'autenticazione utilizzata non prevede una identificazione obbligatoria

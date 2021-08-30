@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.modipa.validator;
 
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
@@ -181,6 +182,14 @@ public class AbstractModIValidazioneSintatticaCommons {
 				busta.setTipoMittente(idSoggettoMittente.getTipo());
 				busta.setMittente(idSoggettoMittente.getNome());
 				busta.setServizioApplicativoFruitore(idServizioApplicativo.getNome());
+				
+				try {
+					ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo);
+					Map<String, String> configProperties = configurazionePdDManager.getProprietaConfigurazione(sa);
+		            if (configProperties != null && !configProperties.isEmpty()) {
+		            	this.context.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
+					}	
+				}catch(Throwable t) {}	
 			}
 			
 		}catch(Exception e) {

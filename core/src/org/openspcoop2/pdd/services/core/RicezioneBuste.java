@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -3204,6 +3205,15 @@ public class RicezioneBuste {
 			soggettoFruitoreIdentificatoTramiteProtocollo = true;
 		}
 		soggettoFruitore = validatore.getSoggettoMittente();
+		if(soggettoFruitore!=null) {
+			try {
+				Soggetto soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null);
+				Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
+	            if (configProperties != null && !configProperties.isEmpty()) {
+	            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+				}	
+			}catch(Throwable t) {}	
+		}
 		boolean soggettoAutenticato = false;
 		boolean supportatoAutenticazioneSoggetti = false;
 		if(functionAsRouter==false){
@@ -3334,6 +3344,17 @@ public class RicezioneBuste {
 										this.generatoreErrore.updateInformazioniCooperazione(servizioApplicativoFruitore);
 										msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
 										this.msgContext.getIntegrazione().setServizioApplicativoFruitore(servizioApplicativoFruitore);
+										
+										IDServizioApplicativo idSAFruitore = new IDServizioApplicativo();
+										idSAFruitore.setIdSoggettoProprietario(soggettoFruitore);
+										idSAFruitore.setNome(servizioApplicativoFruitore);
+										try {
+											ServizioApplicativo sa = configurazionePdDReader.getServizioApplicativo(idSAFruitore);
+											Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(sa);
+								            if (configProperties != null && !configProperties.isEmpty()) {
+								            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
+											}	
+										}catch(Throwable t) {}	
 									}
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
@@ -3727,7 +3748,18 @@ public class RicezioneBuste {
 
 
 		}
-		
+		try {
+			pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
+		}catch(Throwable t) {}	
+		if(soggettoFruitore!=null) {
+			try {
+				Soggetto soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null);
+				Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
+	            if (configProperties != null && !configProperties.isEmpty()) {
+	            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+				}	
+			}catch(Throwable t) {}	
+		}
 		
 		
 		

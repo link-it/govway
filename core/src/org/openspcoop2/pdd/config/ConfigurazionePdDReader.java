@@ -3457,6 +3457,23 @@ public class ConfigurazionePdDReader {
 	public void resetConnettoriConsegnaNotifichePrioritarie(Connection connectionPdD, String queue) throws DriverConfigurazioneException{
 		this.configurazionePdD.resetConnettoriConsegnaNotifichePrioritarie(connectionPdD, queue);
 	}
+	
+	public Map<String, String> getProprietaConfigurazione(ServizioApplicativo sa) throws DriverConfigurazioneException {
+		if (sa == null) {
+			throw new DriverConfigurazioneException("ServizioApplicativo non fornito");
+		} else if (sa.sizeProprietaList() <= 0) {
+			return null;
+		} else {
+			Map<String, String> properties = new HashMap<String, String>();
+
+			for(int i = 0; i < sa.sizeProprietaList(); ++i) {
+				Proprieta p = sa.getProprieta(i);
+				properties.put(p.getNome(), p.getValore());
+			}
+
+			return properties;
+		}
+	}
 
 
 

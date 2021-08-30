@@ -248,6 +248,11 @@ public class XACMLPolicyUtilities {
 			attributes = informazioniAttributiNormalizzati.getAttributes();
 			multipleAA = informazioniAttributiNormalizzati.isMultipleAttributeAuthorities()!=null && informazioniAttributiNormalizzati.isMultipleAttributeAuthorities();
 		}
+
+		Map<String, String> apiImplConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
+		Map<String, String> applicativoConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO);
+		Map<String, String> soggettoFruitoreConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
+		Map<String, String> soggettoErogatoreConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE);
 		
 		HttpServletRequest httpServletRequest = null;
 		if(checkRuoloEsterno){
@@ -267,9 +272,25 @@ public class XACMLPolicyUtilities {
 		String azioneId = urlProtocolContext.getRequestURI();
 		xacmlRequest.addAction(azioneId); // namespace standard xacml
 
-		xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_PROVIDER_ATTRIBUTE_ID, tipoSoggettoErogatore+"/"+nomeSoggettoErogatore);    	
+		xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_PROVIDER_ATTRIBUTE_ID, tipoSoggettoErogatore+"/"+nomeSoggettoErogatore); 
+		if(soggettoErogatoreConfig!=null && !soggettoErogatoreConfig.isEmpty()) {
+			Iterator<String> keys = soggettoErogatoreConfig.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = soggettoErogatoreConfig.get(key);
+				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_PROVIDER_CONFIG_ATTRIBUTE_PREFIX+key, value);
+			}
+		}
 
-		xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_SERVICE_ATTRIBUTE_ID, tipoServizio+"/"+nomeServizio);    	
+		xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_SERVICE_ATTRIBUTE_ID, tipoServizio+"/"+nomeServizio);  
+		if(apiImplConfig!=null && !apiImplConfig.isEmpty()) {
+			Iterator<String> keys = apiImplConfig.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = apiImplConfig.get(key);
+				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_SERVICE_CONFIG_ATTRIBUTE_PREFIX+key, value);
+			}
+		}
 
 		if(azione!=null){
 			xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_ACTION_ATTRIBUTE_ID, azione);
@@ -513,8 +534,25 @@ public class XACMLPolicyUtilities {
 		if(soggettoFruitore!=null){
 			xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_ORGANIZATION_ATTRIBUTE_ID, soggettoFruitore.toString());
 		}
+		if(soggettoFruitoreConfig!=null && !soggettoFruitoreConfig.isEmpty()) {
+			Iterator<String> keys = soggettoFruitoreConfig.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = soggettoFruitoreConfig.get(key);
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_ORGANIZATION_CONFIG_ATTRIBUTE_PREFIX+key, value);
+			}
+		}
+		
 		if(nomeServizioApplicativo!=null){
 			xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_CLIENT_ATTRIBUTE_ID, nomeServizioApplicativo);
+		}
+		if(applicativoConfig!=null && !applicativoConfig.isEmpty()) {
+			Iterator<String> keys = applicativoConfig.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = applicativoConfig.get(key);
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_CLIENT_CONFIG_ATTRIBUTE_PREFIX+key, value);
+			}
 		}
 		
 		if(credential!=null){
@@ -600,6 +638,15 @@ public class XACMLPolicyUtilities {
 		return xacmlRequest;
 
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static Map<String,String> readConfig(PdDContext pddContext, String pName){
+		Object o = pddContext.getObject(pName);
+		if(o!=null && o instanceof Map<?, ?>) {
+			return (Map<String, String>) o;
+		}
+		return null;
 	}
 	
 	private static void addAttributes(XacmlRequest xacmlRequest, Map<String, Object> attributesParam, boolean multipleAA) {

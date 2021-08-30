@@ -10,6 +10,8 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 - :ref:`modipa_sicurezza_avanzate_header`: può essere selezionato l'header http utilizzato per veicolare il token JWT su API REST.
 
+- :ref:`modipa_sicurezza_avanzate_claims`: possono essere configurati ulteriori claims da aggiungere nel payload del JWT su API REST.
+
 - :ref:`modipa_sicurezza_avanzate_header_soap`: possono essere configurati ulteriori header soap da aggiungere agli elementi inclusi nella firma su API SOAP.
 
 - :ref:`modipa_sicurezza_avanzate_sbustamento`: è possibile configurare GovWay al fine di non eliminare il token di sicurezza dai messaggi dopo averli validati.
@@ -20,6 +22,7 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 	applicabilita
 	header
+	claims
 	header_soap
 	sbustamento
 

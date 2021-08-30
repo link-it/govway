@@ -248,8 +248,7 @@ public class DynamicUtils {
 	    			dynamicMap.put(Costanti.MAP_ATTRIBUTES, informazioniAttributiNormalizzati);
 	    		}
 			}
-
-			if (!dynamicMap.containsKey(Costanti.MAP_CONFIG_PROPERTY)) {
+			if (!dynamicMap.containsKey(Costanti.MAP_API_IMPL_CONFIG_PROPERTY)) {
 				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
 				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE)) {
 					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
@@ -257,9 +256,41 @@ public class DynamicUtils {
 				if(configProperties==null) {
 					configProperties = new HashMap<String, String>();
 				}
-				dynamicMap.put(Costanti.MAP_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_API_IMPL_CONFIG_PROPERTY, configProperties);
 			}
-			
+			if (!dynamicMap.containsKey(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO);
+				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY.toLowerCase(), configProperties);
+			}
+			if (!dynamicMap.containsKey(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
+				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY.toLowerCase(), configProperties);
+			}
+			if (!dynamicMap.containsKey(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE);
+				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY.toLowerCase(), configProperties);
+			}
 		}
 		
 		if(dynamicMap.containsKey(Costanti.MAP_BUSTA_OBJECT)==false && dynamicInfo!=null && dynamicInfo.getBusta()!=null) {

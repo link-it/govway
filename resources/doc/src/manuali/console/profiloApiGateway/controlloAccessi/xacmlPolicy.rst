@@ -31,7 +31,9 @@ effettuare la verifica all'interno di una XACML-Policy, sono i seguenti:
    ============================================================  ===========
    *Sezione 'Action'*                                          
    org:govway:action:provider                                    Indica il soggetto erogatore del servizio
-   org:govway:action:service                                     Indica il servizio nel formato tipo/nome                                                                                   
+   org:govway:action:provider:config:<nome>                      Proprietà configurate nel soggetto erogatore del servizio
+   org:govway:action:service                                     Indica il servizio nel formato tipo/nome
+   org:govway:action:service:config:<nome>                       Proprietà configurate nell'erogazione o nella fruizione                                                                                   
    org:govway:action:action                                      Nome dell'operazione del servizio invocata                                                                                 
    org:govway:action:url                                         Url di invocazione utilizzata dal mittente                                                                                 
    org:govway:action:url:parameter:NOME\_PARAM                   Tutti i parametri presenti nell'url di invocazione saranno inseriti nella XACMLRequest con questo formato
@@ -44,8 +46,10 @@ effettuare la verifica all'interno di una XACML-Policy, sono i seguenti:
    org:govway:action:token:jwt:claim:<nome>                      Tutti i claims presenti nel jwt validato                                                                                   
    org:govway:action:token:introspection:claim:<nome>            Tutti i claims presenti nella risposta del servizio di introspection                                                       
    *Sezione 'Subject'*
-   org:govway:subject:organization                               Indica il soggetto fruitore                                                                                                
-   org:govway:subject:client                                     Identificativo del servizio applicativo client                                                                             
+   org:govway:subject:organization                               Indica il soggetto fruitore
+   org:govway:subject:organization:config:<nome>                 Proprietà configurate nel soggetto fruitore                 
+   org:govway:subject:client                                     Identificativo dell'applicativo client
+   org:govway:subject:client:config:<nome>                       Proprietà configurate nell'applicativo client                                                                     
    org:govway:subject:credential                                 Rappresenta la credenziale di accesso (username, subject o il principal) utilizzata dal client per richiedere il servizio
    org:govway:subject:role                                       Elenco dei ruoli che possiede il client che ha richiesto il servizio                                                       
    org:govway:subject:token:issuer                               Issuer del token                                                                                                           

@@ -991,6 +991,10 @@ public class ConfigurazionePdDManager {
 		this.configurazionePdDReader.resetConnettoriConsegnaNotifichePrioritarie(this.getConnection(),queue);
 	}
 	
+	public Map<String, String> getProprietaConfigurazione(ServizioApplicativo sa) throws DriverConfigurazioneException {
+		return this.configurazionePdDReader.getProprietaConfigurazione(sa);
+	}
+	
 
 	/* ********  Servizi Applicativi (InvocazioneServizio)  ******** */
 

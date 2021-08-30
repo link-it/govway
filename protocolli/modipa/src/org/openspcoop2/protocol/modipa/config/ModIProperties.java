@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -1374,6 +1375,71 @@ public class ModIProperties {
     		return ModIProperties.getRestResponseSecurityTokenAudienceDefault;
     	}
 	}	
+	
+	public List<String> getUsedRestSecurityClaims(boolean request, boolean integrita, boolean corniceSicurezza) throws Exception{
+		List<String> l = new ArrayList<String>();
+		
+		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
+		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
+		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
+		l.add(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
+		
+		if(request) {
+			l.add(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE); // si configura sulla fruizione
+			
+			String v = getRestSecurityTokenClaimsClientIdHeader();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				l.add(v); // si configura sull'applicativo
+			}
+		}
+		
+		if(!request) {
+			String v = getRestSecurityTokenClaimRequestDigest();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				l.add(v);
+			}
+		}
+		
+		/*
+		 * Possono sempre essere definiti, poiche' utilizzati per sovrascrivere i default
+		boolean addIss = true;
+		boolean addSub = true;
+		if(corniceSicurezza) {
+			v = getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				if(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER.equals(v)) {
+					addIss = false;
+				}
+				l.add(v);
+			}
+			v = getSicurezzaMessaggio_corniceSicurezza_rest_user();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				if(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT.equals(v)) {
+					addSub = false;
+				}
+				l.add(v);
+			}
+			v = getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				l.add(v);
+			}
+		}
+		if(addIss) {
+			l.add(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER);
+		}
+		if(addSub) {
+			l.add(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT);
+		}*/
+		
+		if(integrita) {
+			String v = getRestSecurityTokenClaimSignedHeaders();
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				l.add(v);
+			}
+		}
+		
+		return l;
+	}
 	
 	private static String getRestCorrelationIdHeader= null;
 	public String getRestCorrelationIdHeader() throws Exception{

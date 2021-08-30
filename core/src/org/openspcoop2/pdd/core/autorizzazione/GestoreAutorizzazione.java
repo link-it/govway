@@ -998,7 +998,12 @@ public class GestoreAutorizzazione {
 							try {
 								expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext, true);
 							}catch(Exception e) {
-								throw new Exception("Conversione valore per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage(),e);
+								String msg = "Conversione valore per "+object.toLowerCase()+" '"+nomeClaimAttribute+"' non riuscita (valore: "+expectedValue+"): "+e.getMessage();
+								//throw new Exception(msg,e);
+								log.error(msg, e);
+								autorizzato = false;
+								errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' not verifiable; unprocessable dynamic value '"+expectedValue+"': "+e.getMessage();
+								break;
 							}
 							
 							if(expectedValue.contains(",")) {

@@ -23,6 +23,7 @@
 package org.openspcoop2.protocol.modipa.constants;
 
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.constants.SignatureAlgorithm;
@@ -81,6 +82,7 @@ public class ModICostanti {
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE = "ProfiloSicurezzaMessaggio-Audience";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_FROM = "ProfiloSicurezzaMessaggio-WSA-From";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_TO = "ProfiloSicurezzaMessaggio-WSA-To";
+    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLAIM_PREFIX = "ProfiloSicurezzaMessaggio-Claim-";
     
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_PREFIX = "ProfiloSicurezzaMessaggioSignedHeader-";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SIGNED_HEADER_MULTIPLE_VALUE_SUFFIX = "___#";
@@ -161,7 +163,7 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_IDAM03_DEFAULT_VALUE = MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_NOT_IDAM03_DEFAULT_VALUE = MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION;
     
-    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL = "Informazioni Utente";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL = CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_LABEL;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_LABEL = "Codice Ente";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_LABEL = "UserID Utente";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_LABEL = "Indirizzo IP Utente";
@@ -262,6 +264,9 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE;
     
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_JWT_CLAIMS = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_JWT_CLAIMS;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_JWT_CLAIMS = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REST_JWT_CLAIMS;
+        
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST;
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST = "modipaSecurityMessageHttpHeaders";

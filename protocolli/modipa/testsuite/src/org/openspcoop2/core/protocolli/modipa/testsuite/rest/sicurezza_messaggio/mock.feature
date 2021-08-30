@@ -26,7 +26,7 @@ Background:
     * configure responseHeaders = confHeaders
 
 
-Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trustore') || isTest('connettivita-base-truststore-ca') || isTest('disabled-security-on-action') || isTest('enabled-security-on-action') || isTest('riferimento-x509-x5u-x5t') || isTest('riferimento-x509-x5u-x5t-client2') || isTest('riferimento-x509-x5t-x5u') || isTest('riferimento-x509-x5cx5t-x5cx5t') || isTest('manomissione-payload-risposta') || isTest('low-ttl-erogazione') || isTest('manomissione-token-risposta') || isTest('connettivita-base-idar02') || isTest('riutilizzo-token') || isTest('manomissione-token-risposta-idar03') || isTest('manomissione-token-risposta-idar0302') || isTest('manomissione-payload-risposta-idar0302')
+Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trustore') || isTest('connettivita-base-truststore-ca') || isTest('disabled-security-on-action') || isTest('enabled-security-on-action') || isTest('riferimento-x509-x5u-x5t') || isTest('riferimento-x509-x5u-x5t-client2') || isTest('riferimento-x509-x5t-x5u') || isTest('riferimento-x509-x5cx5t-x5cx5t') || isTest('manomissione-payload-risposta') || isTest('low-ttl-erogazione') || isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || isTest('manomissione-token-risposta') || isTest('connettivita-base-idar02') || isTest('riutilizzo-token') || isTest('manomissione-token-risposta-idar03') || isTest('manomissione-token-risposta-idar0302') || isTest('manomissione-payload-risposta-idar0302')
     
     # Controllo che al server non siano arrivate le informazioni di sicurezza
     * match requestHeaders['Authorization'] == '#notpresent'

@@ -74,9 +74,21 @@ public class Costanti {
     public static final String TYPE_MAP_BUSTA_PROPERTY = "java.util.Map<String, String>";
     public static final String TYPE_MAP_BUSTA_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
     
-    public static final String MAP_CONFIG_PROPERTY = "config";
-    public static final String TYPE_MAP_CONFIG_PROPERTY = "java.util.Map<String, String>";
-    public static final String TYPE_MAP_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    public static final String MAP_API_IMPL_CONFIG_PROPERTY = "config";
+    public static final String TYPE_MAP_API_IMPL_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_API_IMPL_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_APPLICATIVO_CONFIG_PROPERTY = "clientApplicationConfig";
+    public static final String TYPE_MAP_APPLICATIVO_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_APPLICATIVO_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY = "clientOrganizationConfig";
+    public static final String TYPE_MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY = "providerOrganizationConfig";
+    public static final String TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
     
     // Per ora messi solamente nelle trasformazioni, valutare se poi metterli anche nel connettore
     public final static String MAP_ELEMENT_URL_REGEXP = "urlRegExp";
