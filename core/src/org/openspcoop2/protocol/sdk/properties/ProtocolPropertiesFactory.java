@@ -33,10 +33,10 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 public class ProtocolPropertiesFactory {
 
 	public static BaseConsoleItem newTitleItem(String id, String label) throws ProtocolException{
-		return new BaseConsoleItem(id, label, ConsoleItemType.TITLE);
+		return new TitleConsoleItem(id, label);
 	}
 	public static BaseConsoleItem newSubTitleItem(String id, String label) throws ProtocolException{
-		return new BaseConsoleItem(id, label, ConsoleItemType.SUBTITLE);
+		return new SubtitleConsoleItem(id, label);
 	}
 	public static BaseConsoleItem newNoteItem(String id, String label) throws ProtocolException{
 		return new BaseConsoleItem(id, label, ConsoleItemType.NOTE);

@@ -36,6 +36,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 
 	private T defaultValue;
+	private boolean useDefaultValueForCloseableSection = false;
 	private boolean reloadOnChange;
 	private boolean required;
 	private String regexpr;
@@ -126,5 +127,12 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	}
 	public void setLabelRight(String labelRight) {
 		this.labelRight = labelRight;
+	}
+	
+	public boolean isUseDefaultValueForCloseableSection() {
+		return this.useDefaultValueForCloseableSection;
+	}
+	public void setUseDefaultValueForCloseableSection(boolean useDefaultValueForCloseableSection) {
+		this.useDefaultValueForCloseableSection = useDefaultValueForCloseableSection;
 	}
 }

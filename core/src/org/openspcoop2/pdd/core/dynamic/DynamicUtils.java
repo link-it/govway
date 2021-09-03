@@ -404,8 +404,8 @@ public class DynamicUtils {
 	
 	
 	// DYNAMIC MAP
-	// Mappa che non contiene 'response' field
 	
+	// Mappa che non contiene 'response' field
 	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Logger log, 
 			boolean bufferMessage_readOnly) throws DynamicException {
 		return buildDynamicMap(msg, context, null, log, 
@@ -413,6 +413,23 @@ public class DynamicUtils {
 	}
 	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
 			boolean bufferMessage_readOnly) throws DynamicException {
+		return _buildDynamicMap(msg, context, busta, log, 
+				bufferMessage_readOnly, 
+				null);
+	}
+	
+	// Mappa che contiene 'response' field
+	public static Map<String, Object> buildDynamicMapResponse(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
+			boolean bufferMessage_readOnly,
+			Map<String, Object>  dynamicMapRequest) throws DynamicException {
+		return _buildDynamicMap(msg, context, busta, log, 
+				bufferMessage_readOnly, 
+				dynamicMapRequest);
+	}
+	
+	private static Map<String, Object> _buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log, 
+			boolean bufferMessage_readOnly, 
+			Map<String, Object>  dynamicMapRequest) throws DynamicException {
 		
 		/* Costruisco dynamic Map */
 		
@@ -425,6 +442,17 @@ public class DynamicUtils {
 		String urlInvocazione = dInfo.getUrl();
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
+		
+		if(dynamicMapRequest!=null) {
+			fillDynamicMapResponse(log, dynamicMap, dynamicMapRequest, context,
+					msg,
+					messageContent,
+					busta, 
+					parametriTrasporto,
+					errorHandler); 
+			return dynamicMap;
+		}
+	
 		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, context, urlInvocazione,
 				msg,
 				messageContent,
@@ -433,8 +461,8 @@ public class DynamicUtils {
 				parametriUrl,
 				parametriForm,
 				errorHandler);
-		
 		return dynamicMap;
+
 	}
 	
 	

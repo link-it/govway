@@ -34,7 +34,7 @@ public class BaseConsoleItem {
 	private String id; // non modificabile
 	private String label;
 	private ConsoleItemType type;
-	
+		
 	protected BaseConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		if(id==null){
 			throw new ProtocolException("Id undefined");
@@ -68,4 +68,5 @@ public class BaseConsoleItem {
 		}
 		this.type = type;
 	}
+	
 }

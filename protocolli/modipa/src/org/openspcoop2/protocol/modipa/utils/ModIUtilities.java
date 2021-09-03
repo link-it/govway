@@ -651,4 +651,21 @@ public class ModIUtilities {
 			busta.addProperty(pName, hdrValue);
 		}
 	}
+	
+	private final static String DYNAMIC_MAP_REQUEST = "MODI_DYNAMIC_MAP_REQUEST";
+	public static void saveDynamicMapRequest(Context context, Map<String, Object> map){
+		if(context!=null && map!=null) {
+			context.addObject(DYNAMIC_MAP_REQUEST, map);
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> removeDynamicMapRequest(Context context){
+		if(context!=null) {
+			Object o = context.removeObject(DYNAMIC_MAP_REQUEST);
+			if(o!=null && o instanceof Map<?, ?>) {
+				return (Map<String, Object>) o;
+			}
+		}
+		return null;
+	}
 }

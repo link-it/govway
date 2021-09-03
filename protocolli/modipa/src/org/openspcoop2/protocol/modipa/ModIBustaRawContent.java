@@ -38,8 +38,12 @@ public class ModIBustaRawContent extends BustaRawContent<AbstractModISecurityTok
 	public ModIBustaRawContent(AbstractModISecurityToken<?> token) {
 		super(token);
 	}
-	public ModIBustaRawContent(String token) {
-		super(new ModISecurityRestToken(token));
+	public ModIBustaRawContent(String headerName, String token) {
+		super(new ModISecurityRestToken(headerName, token));
+	}
+	public ModIBustaRawContent(String tokenAuthorization, String tokenIntegrityHeaderName, String tokenIntegrity) {
+		super(new ModISecurityRestToken(tokenAuthorization, 
+				tokenIntegrityHeaderName, tokenIntegrity));
 	}
 	public ModIBustaRawContent(SOAPEnvelope token) {
 		super(new ModISecuritySoapToken(token));

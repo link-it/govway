@@ -704,6 +704,10 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		}
 	}
 	@Override
+	public Map<String, List<String>> getForceTransportHeaders(){
+		return this.forceTransportHeaders!=null ? new HashMap<String, List<String>>(this.forceTransportHeaders) : null; // viene ritornata una immagine clonata. Per aggiungere un valore usare metodo force
+	}
+	@Override
 	public void forceUrlProperty(String name, String value) {
 		TransportUtils.setParameter(this.forceUrlProperties,name, value); // deve sovrascrivere l'eventuale esistente
 	}
@@ -715,6 +719,10 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				TransportUtils.addParameter(this.forceUrlProperties, name, value);	
 			}
 		}
+	}
+	@Override
+	public Map<String, List<String>> getForceUrlProperties(){
+		return this.forceUrlProperties!=null ? new HashMap<String, List<String>>(this.forceUrlProperties) : null; // viene ritornata una immagine clonata. Per aggiungere un valore usare metodo force
 	}
 	@Override
 	public OpenSPCoop2MessageProperties getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException{

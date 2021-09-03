@@ -25,6 +25,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,6 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
-import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -58,6 +58,7 @@ import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -402,7 +403,9 @@ public class ModIImbustamentoRest {
 	}
 	
 	public String addToken(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
-			Busta busta, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest) throws Exception {
+			Busta busta, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
+			Long now, String jti, boolean headerDuplicati,
+			Map<String, Object> dynamicMap) throws Exception {
 		
 		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
@@ -411,16 +414,13 @@ public class ModIImbustamentoRest {
 		/*
 		 * == realizzo token ==
 		 */
-		
-		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
-		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessage_readOnly);
-				
+						
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		
 		ObjectNode payloadToken = jsonUtils.newObjectNode();
 		
 		// add iat, nbf, exp
-		long nowMs = DateManager.getTimeMillis();
+		long nowMs = now!=null ? now.longValue() : DateManager.getTimeMillis();
 		long nowSeconds = nowMs/1000;
 		Date nowDateUsatoPerProprietaTraccia = new Date((nowSeconds*1000)); // e' inutile che traccio i millisecondi, tanto poi nel token non viaggiano
 		
@@ -435,26 +435,45 @@ public class ModIImbustamentoRest {
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
 		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, DateUtils.getSimpleDateFormatMs().format(expiredDateUsatoPerProprietaTraccia));
 		
-		if(busta.getID()!=null) {
-			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, busta.getID());
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, busta.getID());
+		if(jti!=null) {
+			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, jti);
+			if(headerDuplicati && (busta==null || !jti.equals(busta.getID()))) {
+				if(integrita) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_ID, jti);
+				}
+				else {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUTHORIZATION_ID, jti);
+				}
+			}
+			else {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID, jti);
+			}
 		}
 		
 		if(securityConfig.getAudience()!=null) {
 			String audience = securityConfig.getAudience();
-			if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
-				try {
-					audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
-							audience, dynamicMap, context);
-				}catch(Exception e) {
-					this.log.error(e.getMessage(),e);
-					ProtocolException pe = new ProtocolException(e.getMessage());
-					pe.setInteroperabilityError(true);
-					throw pe;
+			//if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
+			// sulla richiesta direttamente come valore dinamico, sulla risposta come claims
+			try {
+				audience = ModIUtilities.getDynamicValue(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, 
+						audience, dynamicMap, context);
+			}catch(Exception e) {
+				this.log.error(e.getMessage(),e);
+				ProtocolException pe = new ProtocolException(e.getMessage());
+				pe.setInteroperabilityError(true);
+				throw pe;
+			}
+			//}
+			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);
+			if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, audience);
+			}
+			else {
+				String audAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+				if(!audience.equals(audAuthorization)) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE, audience);
 				}
 			}
-			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, audience);
 		}
 		
 		if(securityConfig.getClientId()!=null &&
@@ -578,28 +597,48 @@ public class ModIImbustamentoRest {
 			}
 		}
 		
+		Map<String, String> claimsCustom = new HashMap<String, String>();
+		if(securityConfig.getMultipleHeaderClaims()!=null && !securityConfig.getMultipleHeaderClaims().isEmpty()) {
+			for (Object oKeyP : securityConfig.getMultipleHeaderClaims().keySet()) {
+				if(oKeyP!=null && oKeyP instanceof String) {
+					String key = (String) oKeyP;
+					String value = securityConfig.getMultipleHeaderClaims().getProperty(key);
+					claimsCustom.put(key, value);
+				}
+			}
+		}
 		if(securityConfig.getClaims()!=null && !securityConfig.getClaims().isEmpty()) {
 			for (Object oKeyP : securityConfig.getClaims().keySet()) {
 				if(oKeyP!=null && oKeyP instanceof String) {
 					String key = (String) oKeyP;
 					String value = securityConfig.getClaims().getProperty(key);
-					try {
-						value = ModIUtilities.getDynamicValue(CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL+" - "+key, 
-								value, dynamicMap, context);
-					}catch(Exception e) {
-						this.log.error(e.getMessage(),e);
-						ProtocolException pe = new ProtocolException(e.getMessage());
-						pe.setInteroperabilityError(true);
-						throw pe;
-					}
-					if(value!=null) {
-						payloadToken.put(key, value);
-						// Non lo aggiungo alla traccia per adesso
-						//busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLAIM_PREFIX+key, value);
+					if(!claimsCustom.containsKey(key)) {
+						claimsCustom.put(key, value);
 					}
 				}
 			}
 		}
+		if(!claimsCustom.isEmpty()) {
+			for (String key : claimsCustom.keySet()) {
+				String value =  claimsCustom.get(key);
+				try {
+					value = ModIUtilities.getDynamicValue(CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL+" - "+key, 
+							value, dynamicMap, context);
+				}catch(Exception e) {
+					this.log.error(e.getMessage(),e);
+					ProtocolException pe = new ProtocolException(e.getMessage());
+					pe.setInteroperabilityError(true);
+					throw pe;
+				}
+				if(value!=null) {
+					payloadToken.put(key, value);
+					// Non lo aggiungo alla traccia per adesso
+					//busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLAIM_PREFIX+key, value);
+				}
+			}
+		}
+		
+				
 		
 		if(integrita) {
 			
@@ -621,6 +660,8 @@ public class ModIImbustamentoRest {
 			if(securityConfig.getHttpHeaders()!=null && !securityConfig.getHttpHeaders().isEmpty()) {
 				
 				ArrayNode signedHeaders = jsonUtils.newArrayNode();
+				
+				Map<String, List<String>> mapForceTransportHeaders = msg.getForceTransportHeaders();
 				
 				for (String httpHeader : securityConfig.getHttpHeaders()) {
 					
@@ -651,17 +692,33 @@ public class ModIImbustamentoRest {
 						else if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && msg.getTransportResponseContext()!=null) {
 							values = msg.getTransportResponseContext().getHeaderValues(httpHeader);
 						}
+						
+						// guardo anche eventuali header aggiunti tramite trasformazioni e da precedente chiamata di questo metodo (Authorization)
+						// Se presenti sovrascrivono gli header iniziali(metodo forward usato nei connettori)
+						if(mapForceTransportHeaders!=null && !mapForceTransportHeaders.isEmpty()) {
+							List<String> v = TransportUtils.getRawObject(mapForceTransportHeaders, httpHeader);
+							if(v!=null && !v.isEmpty()) {
+								values = v;
+							}
+						}
+						
 						if(values!=null && !values.isEmpty()) {
 							hdrName = httpHeader;
 							hdrValues.addAll(values);
 						}
+						
 					}
 					if(hdrName!=null) {
 						for (String hdrValue : hdrValues) {
 							httpHeaderNode = jsonUtils.newObjectNode();
 							String hdrNameLowerCase = hdrName.toLowerCase(); // uso come nome dell'header tutto minuscolo come indicato nella specifica, tra gli esempi
 							httpHeaderNode.put(hdrNameLowerCase, hdrValue); 
-							ModIUtilities.addHeaderProperty(busta, hdrNameLowerCase, hdrValue);
+							if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(hdrNameLowerCase) && headerDuplicati) {
+								ModIUtilities.addHeaderProperty(busta, hdrNameLowerCase, HttpConstants.AUTHORIZATION_PREFIX_BEARER +"...TOKEN...");	
+							}
+							else {
+								ModIUtilities.addHeaderProperty(busta, hdrNameLowerCase, hdrValue);
+							}
 							signedHeaders.add(httpHeaderNode);	
 						}
 					}

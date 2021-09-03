@@ -3,6 +3,7 @@ Feature: Testing Sicurezza Messaggio ModiPA IDAR0302 (Unicità messaggio)
 Background:
     * def basic = read('classpath:utils/basic-auth.js')
     * def check_traccia = read('check-tracce/check-traccia.feature')
+    * def check_traccia_info_utente = read('check-tracce/check-traccia-info-utente.feature')
     * def decode_token = read('classpath:utils/decode-token.js')
 
     * def result = callonce read('classpath:utils/jmx-enable-error-disclosure.feature')
@@ -256,3 +257,63 @@ And match header Authorization == '#notpresent'
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta })
+
+
+@doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato
+Scenario: Sicurezza che prevede token in cui sono stati ridefiniti dei claims, viene usata la cornice di sicurezza e un header Authorization viene firmato dentro del header Agid-JWT-Signature
+
+* def url_invocazione = govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0302HeaderDuplicatiCorniceSicurezzaCustomClaim/v1"
+
+Given url url_invocazione
+And path 'test0302conCorniceSicurezza'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+And param userIP = '10.112.32.21'
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
+* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
+* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+
+* def request_digest = get client_integrity_token $.payload.signed_headers..digest
+* def response_digest = get server_integrity_token $.payload.signed_headers..digest
+
+* def request_jti_integrity = get client_integrity_token $.payload.jti
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' },
+    { name: 'ProfiloSicurezzaMessaggio-CorniceSicurezza-Ente', value: 'customIssSoggettoFruitore' },
+    { name: 'ProfiloSicurezzaMessaggio-CorniceSicurezza-User', value: 'ApplicativoBlockingIDA01ExampleClient2Integrity' },
+    { name: 'ProfiloSicurezzaMessaggio-CorniceSicurezza-UserIP', value: '10.112.32.21' }
+])
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-authorization', value: '#string' },
+    { name: 'ProfiloSicurezzaMessaggio-IntegrityAudience', value: 'customAud' }
+])
+"""
+
+* eval server_integrity_token.payload.aud = 'customAudAuthorization'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_info_utente ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_info_utente ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })

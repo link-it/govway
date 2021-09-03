@@ -20,6 +20,8 @@
 
 package org.openspcoop2.protocol.modipa.builder;
 
+import java.util.Map;
+
 import javax.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -36,6 +38,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.ModIBustaRawContent;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -54,6 +57,8 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.slf4j.Logger;
 
 /**
@@ -252,8 +257,18 @@ public class ModIImbustamento {
 					boolean fruizione = MessageRole.REQUEST.equals(messageRole);
 					
 					String headerTokenRest = null;
+					String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
+					Boolean multipleHeaderAuthorizationConfig = null;
 					if(rest) {
 						headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione);
+						if(headerTokenRest.contains(" ")) {
+							String [] tmp = headerTokenRest.split(" ");
+							if(tmp!=null && tmp.length==2 && tmp[0]!=null && tmp[1]!=null) {
+								headerTokenRest=tmp[0];
+								headerTokenRestIntegrity=tmp[1];
+								multipleHeaderAuthorizationConfig = true;
+							}
+						}
 					}
 					
 					boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
@@ -276,7 +291,8 @@ public class ModIImbustamento {
 					ModIKeystoreConfig keystoreConfig = null;
 					ModISecurityConfig securityConfig = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
 							rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
-							busta, bustaRichiesta);
+							busta, bustaRichiesta, 
+							multipleHeaderAuthorizationConfig);
 					
 					if(MessageRole.REQUEST.equals(messageRole)) {
 					
@@ -289,12 +305,75 @@ public class ModIImbustamento {
 						
 					}
 					
-					if(rest) {
-						String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest);
-						protocolMessage.setBustaRawContent(new ModIBustaRawContent(token));
+					boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
+					Map<String, Object> dynamicMap = null;
+					Map<String, Object> dynamicMapRequest = null;
+					if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
+						dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(context);
+					}
+					if(dynamicMapRequest!=null) {
+						dynamicMap = DynamicUtils.buildDynamicMapResponse(msg, context, busta, this.log, bufferMessage_readOnly, dynamicMapRequest);
 					}
 					else {
-						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest, signAttachments);
+						dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log, bufferMessage_readOnly);
+						ModIUtilities.saveDynamicMapRequest(context, dynamicMap);
+					}
+					
+					if(rest) {
+						if(headerTokenRestIntegrity==null) {
+							String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
+									securityMessageProfile, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
+									null, busta.getID(), false,
+									dynamicMap);
+							protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, token));
+						}
+						else {
+							long now = DateManager.getTimeMillis();
+							
+							String jtiAuthorization = busta.getID();
+							String jtiIntegrity = busta.getID();
+							if(!securityConfig.isMultipleHeaderUseSameJti()) {
+								try{
+									if(securityConfig.isMultipleHeaderUseJtiAuthorizationAsIdMessaggio()) {
+										jtiIntegrity = UniqueIdentifierManager.newUniqueIdentifier().getAsString();
+									}else {
+										jtiAuthorization = UniqueIdentifierManager.newUniqueIdentifier().getAsString();
+									}
+								}catch(Exception e){
+									throw new ProtocolException(e.getMessage());
+								}
+							}
+							
+							// Authorization
+							String securityMessageProfileAuthorization = null;
+							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile)) {
+								securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01; 
+							}
+							else {
+								securityMessageProfileAuthorization = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02; 
+							}
+							String tokenAuthorization = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
+									securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
+									now, jtiAuthorization, true,
+									dynamicMap);
+							
+							// Integrity
+							ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
+									rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
+									busta, bustaRichiesta, 
+									false);
+							String tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
+									securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
+									now, jtiIntegrity, true,
+									dynamicMap);
+							protocolMessage.setBustaRawContent(new ModIBustaRawContent(tokenAuthorization, headerTokenRestIntegrity, tokenIntegrity));
+							
+						}
+					}
+					else {
+						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, 
+								securityMessageProfile, corniceSicurezza, ruoloMessaggio, includiRequestDigest, signAttachments,
+								dynamicMap);
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(env));
 					}
 					

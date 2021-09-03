@@ -2,6 +2,6 @@
     "type": "https://govway.org/handling-errors/502/InteroperabilityInvalidResponse.html",
     "title": "InteroperabilityInvalidResponse",
     "status": 502,
-    "detail": "[GOVWAY-703] Header HTTP 'Digest' non presente\n[GOVWAY-1355] Header HTTP 'digest', dichiarato tra gli header firmati, non trovato\n",
+    "detail": "Token contenente un claim 'aud' non valido",
     "govway_id": "#uuid"
 }

@@ -198,6 +198,24 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 						}
 					}
 				}
+				if(rest) { 
+					Object audienceIntegrityAttesoObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK);
+					if(audienceIntegrityAttesoObject!=null) {
+						String audienceIntegrityAtteso = (String) audienceIntegrityAttesoObject;
+						String audienceIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_AUDIENCE);
+						if(audienceIntegrity==null) {
+							// significa che l'audience tra i due token ricevuto e' identico
+							audienceIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE);
+						}
+						String prefix = "[Header '"+this.modiProperties.getRestSecurityTokenHeaderModI()+"'] ";
+						if(!audienceIntegrityAtteso.equals(audienceIntegrity)) {
+							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+									isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+										CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+									prefix+"Token contenente un claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"' non valido"));
+						}
+					}
+				}
 				
 				if(isRichiesta) {
 					

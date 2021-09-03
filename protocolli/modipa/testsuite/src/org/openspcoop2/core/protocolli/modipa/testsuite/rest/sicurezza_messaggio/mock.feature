@@ -26,7 +26,23 @@ Background:
     * configure responseHeaders = confHeaders
 
 
-Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trustore') || isTest('connettivita-base-truststore-ca') || isTest('disabled-security-on-action') || isTest('enabled-security-on-action') || isTest('riferimento-x509-x5u-x5t') || isTest('riferimento-x509-x5u-x5t-client2') || isTest('riferimento-x509-x5t-x5u') || isTest('riferimento-x509-x5cx5t-x5cx5t') || isTest('manomissione-payload-risposta') || isTest('low-ttl-erogazione') || isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || isTest('manomissione-token-risposta') || isTest('connettivita-base-idar02') || isTest('riutilizzo-token') || isTest('manomissione-token-risposta-idar03') || isTest('manomissione-token-risposta-idar0302') || isTest('manomissione-payload-risposta-idar0302')
+Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trustore') || isTest('connettivita-base-truststore-ca') || 
+	isTest('disabled-security-on-action') || isTest('enabled-security-on-action') || 
+	isTest('riferimento-x509-x5u-x5t') || isTest('riferimento-x509-x5u-x5t-client2') || isTest('riferimento-x509-x5t-x5u') || isTest('riferimento-x509-x5cx5t-x5cx5t') || 
+	isTest('manomissione-payload-risposta') || isTest('doppi-header-manomissione-payload-risposta') || isTest('doppi-header-assenza-header-digest-risposta') || 
+	isTest('doppi-header-assenza-header-authorization-risposta') || isTest('doppi-header-assenza-header-agid-jwt-signature-risposta') || 
+	isTest('doppi-header-audience-risposta-authorization-non-valida-rispetto-client') || isTest('doppi-header-audience-risposta-agid-jwt-signature-non-valida-rispetto-client') || 
+	isTest('doppi-header-audience-risposta-differente-audience-valida-rispetto-client') ||
+	isTest('doppi-header-audience-risposta-differente-audience-non-valida-rispetto-client') ||
+	isTest('doppi-header-audience-risposta-valore-statico') || isTest('doppi-header-audience-risposta-valore-statico-non-valido') ||
+	isTest('doppi-header-audience-risposta-diversi-valori-statici') || isTest('doppi-header-audience-risposta-diversi-valori-statici-authorization-non-valido') || isTest('doppi-header-audience-risposta-diversi-valori-statici-agid-jwt-signature-non-valido') ||
+  isTest('doppi-header-audience-richiesta-stesso-valore') ||
+  isTest('doppi-header-audience-richiesta-differente-valore') ||
+	isTest('low-ttl-erogazione') || isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || 
+	isTest('manomissione-token-risposta') || 
+	isTest('connettivita-base-idar02') || isTest('riutilizzo-token') || 
+	isTest('manomissione-token-risposta-idar03') || isTest('manomissione-token-risposta-idar0302') || isTest('manomissione-payload-risposta-idar0302') || 
+	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato')
     
     # Controllo che al server non siano arrivate le informazioni di sicurezza
     * match requestHeaders['Authorization'] == '#notpresent'
@@ -221,7 +237,14 @@ Scenario: isTest('idar03-token-azione-puntuale-default') || isTest('idar03-token
     })
     """
 
+Scenario: isTest('doppi-header-idar03') || isTest('doppi-header-differenti-id-authorization') || isTest('doppi-header-differenti-id-agid-jwt-signature')
 
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+    * def responseHeaders = { IDAR03TestHeader: "TestHeaderResponse" }
+    
 
 
 ##########################################

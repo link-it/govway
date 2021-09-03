@@ -23,31 +23,16 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 
 /**
- * BooleanConsoleItem
+ * SubtitleConsoleItem
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BooleanConsoleItem extends AbstractConsoleItem<Boolean> {
+public class SubtitleConsoleItem extends AbstractTitleConsoleItem {
 
-	// serve per gestire i 3 stati null, false e true
-	// Tale opzione non e' utilizzabile se il default di una checkbox e' true ed e' abilitato il reload 
-	private boolean convertFalseAsNull = true; // lascio il default attuale
-	public void setConvertFalseAsNull(boolean convertFalseAsNull) {
-		this.convertFalseAsNull = convertFalseAsNull;
-	}
-	public boolean isConvertFalseAsNull() {
-		if(ConsoleItemType.CHECKBOX.equals(this.getType()) && this.getDefaultValue()!=null && this.getDefaultValue() && this.isReloadOnChange()) {
-			return false;
-		}
-		else {
-			return this.convertFalseAsNull;
-		}
-	}
-
-	protected BooleanConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
-		super(id, label, type);
+	protected SubtitleConsoleItem(String id, String label) throws ProtocolException{
+		super(id, label, ConsoleItemType.SUBTITLE);
 	}
 
 }

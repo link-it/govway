@@ -31,10 +31,12 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
@@ -183,6 +185,16 @@ public class AbstractModIValidazioneSintatticaCommons {
 				busta.setMittente(idSoggettoMittente.getNome());
 				busta.setServizioApplicativoFruitore(idServizioApplicativo.getNome());
 				
+				try {
+					if(!this.context.containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE)) {
+						RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(this.state);
+						Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoMittente, null);
+						Map<String, String> configProperties = registroServiziManager.getProprietaConfigurazione(soggetto);
+			            if (configProperties != null && !configProperties.isEmpty()) {
+			            	this.context.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+						}	
+					}
+				}catch(Throwable t) {}
 				try {
 					ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo);
 					Map<String, String> configProperties = configurazionePdDManager.getProprietaConfigurazione(sa);

@@ -83,6 +83,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
+import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
@@ -766,11 +767,16 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 			ConsoleConfiguration configuration = new ConsoleConfiguration();
 				
+			boolean rest = ServiceBinding.REST.equals(api.getServiceBinding());
 			boolean digest = isProfiloSicurezzaMessaggioConIntegrita(api, portType);
 			boolean corniceSicurezza = isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
+			boolean headerDuplicati = false;
+			if(rest) {
+				headerDuplicati = isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
+			}
 			
-			addSicurezzaMessaggio(configuration, ServiceBinding.REST.equals(api.getServiceBinding()), fruizioni, true, casoSpecialeModificaNomeFruizione, digest, corniceSicurezza);
-			addSicurezzaMessaggio(configuration, ServiceBinding.REST.equals(api.getServiceBinding()), fruizioni, false, casoSpecialeModificaNomeFruizione, digest, corniceSicurezza);
+			addSicurezzaMessaggio(configuration, rest, fruizioni, true, casoSpecialeModificaNomeFruizione, digest, corniceSicurezza, headerDuplicati);
+			addSicurezzaMessaggio(configuration, rest, fruizioni, false, casoSpecialeModificaNomeFruizione, digest, corniceSicurezza, headerDuplicati);
 			
 			return configuration;
 			
@@ -818,10 +824,15 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		// Identificazione se è richiesta la sicurezza
 		if(isSicurezzaMessaggioRequired(api, portType)) {
 		
+			boolean rest = ServiceBinding.REST.equals(api.getServiceBinding());
 			boolean corniceSicurezza = isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
+			boolean headerDuplicati = false;
+			if(rest) {
+				headerDuplicati = isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
+			}
 			
-			this.updateSicurezzaMessaggio(consoleConfiguration, properties, ServiceBinding.REST.equals(api.getServiceBinding()), fruizioni, true, casoSpecialeModificaNomeFruizione, corniceSicurezza, consoleHelper);
-			this.updateSicurezzaMessaggio(consoleConfiguration, properties, ServiceBinding.REST.equals(api.getServiceBinding()), fruizioni, false, casoSpecialeModificaNomeFruizione, corniceSicurezza, consoleHelper);	
+			this.updateSicurezzaMessaggio(consoleConfiguration, properties, rest, fruizioni, true, casoSpecialeModificaNomeFruizione, corniceSicurezza, headerDuplicati, consoleHelper);
+			this.updateSicurezzaMessaggio(consoleConfiguration, properties, rest, fruizioni, false, casoSpecialeModificaNomeFruizione, corniceSicurezza, headerDuplicati, consoleHelper);	
 			
 		}
 		
@@ -929,53 +940,83 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				}
 			}
 			
+			boolean rest = ServiceBinding.REST.equals(api.getServiceBinding());
+			boolean digest = isProfiloSicurezzaMessaggioConIntegrita(api, portType);
+			boolean corniceSicurezza = isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
+			boolean headerDuplicati = false;
+			if(rest) {
+				headerDuplicati = isProfiloSicurezzaMessaggioConHeaderDuplicati(api, portType);
+			}
+			boolean request = fruizioni;
+						
 			// Claims
-			String idProperty = (fruizioni ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_RISPOSTA_ID);
-			StringProperty profiloSicurezzaMessaggioRestJwtClaimsItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProperty);
-			if(profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue()!=null) {
-				Properties claims = PropertiesUtilities.convertTextToProperties(profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue());
-				boolean digest = isProfiloSicurezzaMessaggioConIntegrita(api, portType);
-				boolean corniceSicurezza = isProfiloSicurezzaMessaggioCorniceSicurezza(api, portType);
-				boolean request = fruizioni;
-				List<String> denyClaims = null;
-				String claimNameClientId = null;
-				try {
-					denyClaims = this.modiProperties.getUsedRestSecurityClaims(request, digest, corniceSicurezza);
-					claimNameClientId = this.modiProperties.getRestSecurityTokenClaimsClientIdHeader();
-				}catch(Exception e) {
-					throw new ProtocolException(e.getMessage(),e);
-				}
-				if(claims!=null && !claims.isEmpty()) {
-					for (Object oClaim : claims.keySet()) {
-						if(oClaim !=null && oClaim instanceof String) {
-							String claim = (String) oClaim;
-							String value = claims.getProperty(claim);
-							
-							if(value!=null &&  DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(value.trim())) {
-								if(claim.equalsIgnoreCase(claimNameClientId) || 
-										(claim.equalsIgnoreCase(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER) && !corniceSicurezza) ||
-										(claim.equalsIgnoreCase(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT) && !corniceSicurezza)
-									) {
-									continue;
-								}
-								else {
-									throw new ProtocolException("Keyword '"+DynamicHelperCostanti.NOT_GENERATE+"' non utilizzabile nel claim '"+claim+"', indicato nel campo "+ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL+"");
-								}
-							}
-							if(denyClaims.contains(claim) || denyClaims.contains(claim.toLowerCase())) {
-								throw new ProtocolException("Il claim '"+claim+"', indicato nel campo "+ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL+", non può essere configurato");
-							}
-							if(value==null || StringUtils.isEmpty(value)) {
-								throw new ProtocolException("Claim '"+claim+"', indicato nel campo "+ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL+", non valorizzato");
-							}
-						}
-					}
+			if(rest) {
+				String idProperty = (fruizioni ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_RISPOSTA_ID);
+				StringProperty profiloSicurezzaMessaggioRestJwtClaimsItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProperty);
+				if(profiloSicurezzaMessaggioRestJwtClaimsItemValue!=null && profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue()!=null) {
+					Properties claims = PropertiesUtilities.convertTextToProperties(profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue());
+					checkClaims(claims, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL, request, digest, corniceSicurezza);
 				}
 			}
 		
+			// Header Duplicati
+			if(rest && headerDuplicati) {
+				String idProperty = (fruizioni ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RISPOSTA_ID);
+				StringProperty profiloSicurezzaMessaggioRestJwtAuthorizationClaimsItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProperty);
+				if(profiloSicurezzaMessaggioRestJwtAuthorizationClaimsItemValue!=null && profiloSicurezzaMessaggioRestJwtAuthorizationClaimsItemValue.getValue()!=null) {
+					Properties claims = PropertiesUtilities.convertTextToProperties(profiloSicurezzaMessaggioRestJwtAuthorizationClaimsItemValue.getValue());
+					checkClaims(claims, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_LABEL, request, digest, corniceSicurezza);
+				}
+				
+				idProperty = (fruizioni ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RISPOSTA_ID);
+				StringProperty profiloSicurezzaMessaggioRestJwtModiClaimsItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProperty);
+				if(profiloSicurezzaMessaggioRestJwtModiClaimsItemValue!=null && profiloSicurezzaMessaggioRestJwtModiClaimsItemValue.getValue()!=null) {
+					Properties claims = PropertiesUtilities.convertTextToProperties(profiloSicurezzaMessaggioRestJwtModiClaimsItemValue.getValue());
+					checkClaims(claims, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_LABEL.
+							replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, this.modiProperties.getRestSecurityTokenHeaderModI()), 
+							request, digest, corniceSicurezza);
+				}
+			}
 		}
 		
 		return true;
+	}
+	
+	private void checkClaims(Properties claims, String elemento, boolean request, boolean digest, boolean corniceSicurezza) throws ProtocolException {
+		List<String> denyClaims = null;
+		String claimNameClientId = null;
+		try {
+			denyClaims = this.modiProperties.getUsedRestSecurityClaims(request, digest, corniceSicurezza);
+			claimNameClientId = this.modiProperties.getRestSecurityTokenClaimsClientIdHeader();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		if(claims!=null && !claims.isEmpty()) {
+			for (Object oClaim : claims.keySet()) {
+				if(oClaim !=null && oClaim instanceof String) {
+					String claim = (String) oClaim;
+					String value = claims.getProperty(claim);
+					
+					if(value!=null &&  DynamicHelperCostanti.NOT_GENERATE.equalsIgnoreCase(value.trim())) {
+						if(claim.equalsIgnoreCase(claimNameClientId) || 
+								(claim.equalsIgnoreCase(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER) && !corniceSicurezza) ||
+								(claim.equalsIgnoreCase(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT) && !corniceSicurezza)
+							) {
+							continue;
+						}
+						else {
+							throw new ProtocolException("Keyword '"+DynamicHelperCostanti.NOT_GENERATE+"' non utilizzabile nel claim '"+claim+"', indicato nel campo "+elemento+"");
+						}
+					}
+					if(denyClaims.contains(claim) || denyClaims.contains(claim.toLowerCase())) {
+						throw new ProtocolException("Il claim '"+claim+"', indicato nel campo "+elemento+", non può essere configurato");
+					}
+					if(value==null || StringUtils.isEmpty(value)) {
+						throw new ProtocolException("Claim '"+claim+"', indicato nel campo "+elemento+", non valorizzato");
+					}
+				}
+			}
+		}
 	}
 	
 	private boolean isMascheraGestioneFruizioneOrErogazione(IConsoleHelper consoleHelper) {
@@ -1769,12 +1810,17 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					ConsoleItemType.SELECT,
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID, 
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL);
-			profiloSicurezzaMessaggioHeaderItem.addLabelValue(this.modiProperties.getRestSecurityTokenHeaderModI(),
+			profiloSicurezzaMessaggioHeaderItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA.
+					replace(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA, this.modiProperties.getRestSecurityTokenHeaderModI()),
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA);
 			profiloSicurezzaMessaggioHeaderItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION,
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION);
 			if(isProfiloSicurezza03(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DEFAULT_VALUE)) {
 				profiloSicurezzaMessaggioHeaderItem.setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_IDAM03_DEFAULT_VALUE);
+				
+				profiloSicurezzaMessaggioHeaderItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_MODIPA.
+						replace(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA, this.modiProperties.getRestSecurityTokenHeaderModI()),
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA);
 			}
 			else if(isProfiloSicurezza01(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DEFAULT_VALUE) || isProfiloSicurezza02(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DEFAULT_VALUE)) {
 				profiloSicurezzaMessaggioHeaderItem.setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_NOT_IDAM03_DEFAULT_VALUE);
@@ -2072,6 +2118,10 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						profiloSicurezzaMessaggioHeaderItemValue.setValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_IDAM03_DEFAULT_VALUE);
 					}
 					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_IDAM03_DEFAULT_VALUE);
+					
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_MODIPA.
+							replace(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA, this.modiProperties.getRestSecurityTokenHeaderModI()),
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA);
 				}
 				else if(isSicurezza01 || isSicurezza02) {
 					if(profiloSicurezzaMessaggioHeaderItemValue!=null &&
@@ -2080,6 +2130,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						profiloSicurezzaMessaggioHeaderItemValue.setValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_NOT_IDAM03_DEFAULT_VALUE);
 					}
 					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_NOT_IDAM03_DEFAULT_VALUE);
+					
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).removeLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_MODIPA.
+							replace(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA, this.modiProperties.getRestSecurityTokenHeaderModI()));
 				}
 			}
 			else {
@@ -2416,6 +2469,17 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 		return false;
 	}
+	private boolean isProfiloSicurezzaMessaggioConHeaderDuplicati(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = _getPropertySicurezzaMessaggio(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID, api, portType, false);
+		if(tmp!=null && !tmp.isEmpty()) {
+			for (String profiloSicurezzaMessaggio : tmp) {
+				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(profiloSicurezzaMessaggio)) {
+					return true;
+				}		
+			}
+		}
+		return false;
+	}
 	private List<String> _getPropertySicurezzaMessaggio(String propertyName, AccordoServizioParteComune api, String portType, boolean booleanValue) {
 		
 		List<String> apiValues = new ArrayList<String>();
@@ -2509,7 +2573,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	}
 	
 	public void addSicurezzaMessaggio(ConsoleConfiguration configuration, boolean rest, boolean fruizione, boolean request, 
-			boolean casoSpecialeModificaNomeFruizione, boolean digest, boolean corniceSicurezza) throws ProtocolException {
+			boolean casoSpecialeModificaNomeFruizione, boolean digest, boolean corniceSicurezza, boolean headerDuplicati) throws ProtocolException {
 		
 		boolean requiredValue = casoSpecialeModificaNomeFruizione ? false : true;
 		
@@ -2601,6 +2665,17 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			profiloSicurezzaMessaggioAudienceItem.setNote(fruizione ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_FRUIZIONE_NOTE :
 				ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_EROGAZIONE_NOTE);
 			profiloSicurezzaMessaggioAudienceItem.setRows(2);
+			if(fruizione) {
+				ConsoleItemInfo info = new ConsoleItemInfo(rest ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_REST_LABEL :  ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_SOAP_LABEL);
+				info.setHeaderBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_INFO);
+				if(rest) {
+					info.setListBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE_INFO_VALORI_REQUEST);
+				}
+				else {
+					info.setListBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_AUDIENCE_INFO_VALORI_REQUEST);
+				}
+				profiloSicurezzaMessaggioAudienceItem.setInfo(info);
+			}
 			configuration.addConsoleItem(profiloSicurezzaMessaggioAudienceItem);
 		}
 		else {
@@ -2612,7 +2687,25 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						rest ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_REST_LABEL :  ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_SOAP_LABEL);
 				profiloSicurezzaMessaggioAudienceItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_FRUIZIONE_NOTE);
 				profiloSicurezzaMessaggioAudienceItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_DEFAULT);
+				profiloSicurezzaMessaggioAudienceItem.setReloadOnChange(true);
 				configuration.addConsoleItem(profiloSicurezzaMessaggioAudienceItem);
+				
+				StringConsoleItem audValueItem = (StringConsoleItem) 
+						ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+						ConsoleItemType.TEXT_AREA,
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_VALORE_ID, 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_VALORE_LABEL);
+				audValueItem.setRows(2);
+				ConsoleItemInfo info = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_LABEL);
+				info.setHeaderBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_INFO);
+				if(rest) {
+					info.setListBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE_INFO_VALORI_RESPONSE);
+				}
+				else {
+					info.setListBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_AUDIENCE_INFO_VALORI_RESPONSE);
+				}
+				audValueItem.setInfo(info);
+				configuration.addConsoleItem(audValueItem);
 			}
 		}
 		
@@ -2638,7 +2731,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
-			info.setListBody(DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_VALORI);
+			info.setListBody(request ? DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_VALORI_REQUEST :
+				DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_VALORI_RESPONSE);
 			profiloSicurezzaMessaggioRestJwtClaimsItem.setInfo(info);
 			profiloSicurezzaMessaggioRestJwtClaimsItem.setRows(2);
 			configuration.addConsoleItem(profiloSicurezzaMessaggioRestJwtClaimsItem);
@@ -2729,6 +2823,209 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				profiloSicurezzaMessaggioCorniceIPUserItem.setType(ConsoleItemType.HIDDEN);
 			}
 			configuration.addConsoleItem(profiloSicurezzaMessaggioCorniceIPUserItem);
+		}
+		
+		
+		
+		// Header Duplicati
+		if(rest && headerDuplicati && 
+				( 
+						(request && fruizione)
+						||
+						(!request && !fruizione)
+				)
+			) {
+			
+			SubtitleConsoleItem subtitleItem = (SubtitleConsoleItem) ProtocolPropertiesFactory.newSubTitleItem(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_GENERAZIONE_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_LABEL.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, this.modiProperties.getRestSecurityTokenHeaderModI())); 
+			subtitleItem.setCloseable(true);
+			subtitleItem.setLastItemId(request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RICHIESTA_ID : 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RISPOSTA_ID);
+			configuration.addConsoleItem(subtitleItem);
+						
+			StringConsoleItem jtiItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_RICHIESTA_ID : 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_RISPOSTA_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_LABEL);
+			((StringConsoleItem)jtiItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_LABEL_SAME,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_VALUE_SAME);
+			((StringConsoleItem)jtiItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_LABEL_DIFFERENT,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_VALUE_DIFFERENT);
+			jtiItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_VALUE_DEFAULT);
+			jtiItem.setUseDefaultValueForCloseableSection(true);
+			jtiItem.setReloadOnChange(true);
+			configuration.addConsoleItem(jtiItem);
+			
+			StringConsoleItem jtiAsIdMessaggioItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_RICHIESTA_ID : 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_RISPOSTA_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_LABEL);
+			((StringConsoleItem)jtiAsIdMessaggioItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_LABEL_AUTHORIZATION,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_VALUE_AUTHORIZATION);
+			((StringConsoleItem)jtiAsIdMessaggioItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_LABEL_MODI.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, this.modiProperties.getRestSecurityTokenHeaderModI()),
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_VALUE_MODI);
+			jtiAsIdMessaggioItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_VALUE_DEFAULT);
+			if(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_VALUE_DEFAULT.equals(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_VALUE_SAME)) {
+				jtiAsIdMessaggioItem.setType(ConsoleItemType.HIDDEN);
+			}
+			else {
+				jtiAsIdMessaggioItem.setUseDefaultValueForCloseableSection(true);
+			}
+			configuration.addConsoleItem(jtiAsIdMessaggioItem);
+			
+			if((request && fruizione)) {
+				StringConsoleItem audItem = (StringConsoleItem) 
+						ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+						ConsoleItemType.SELECT,
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_RICHIESTA_ID, 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_LABEL);
+				((StringConsoleItem)audItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_LABEL_SAME,
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_SAME);
+				((StringConsoleItem)audItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_LABEL_DIFFERENT,
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT);
+				audItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DEFAULT);
+				audItem.setUseDefaultValueForCloseableSection(true);
+				audItem.setReloadOnChange(true);
+				configuration.addConsoleItem(audItem);
+				
+				StringConsoleItem audValueItem = (StringConsoleItem) 
+						ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+						ConsoleItemType.TEXT_AREA,
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_RICHIESTA_ID, 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_LABEL);
+				audValueItem.setRows(2);
+				if(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DEFAULT.equals(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_SAME)) {
+					audValueItem.setType(ConsoleItemType.HIDDEN);
+				}
+				else {
+					audValueItem.setRequired(true);
+				}
+				configuration.addConsoleItem(audValueItem);
+			}
+			
+			StringConsoleItem authorizationClaimsItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.TEXT_AREA,
+					(request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RICHIESTA_ID : 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RISPOSTA_ID), 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_LABEL);
+			authorizationClaimsItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_NOTE);
+			ConsoleItemInfo infoAuthorization = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_LABEL);
+			try {
+				infoAuthorization.setHeaderBody(DynamicHelperCostanti.getLABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO(request, corniceSicurezza, 
+						this.modiProperties.getUsedRestSecurityClaims(request, digest, corniceSicurezza)));
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			infoAuthorization.setListBody(request ? DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_VALORI_REQUEST :
+				DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_VALORI_RESPONSE);
+			authorizationClaimsItem.setInfo(infoAuthorization);
+			authorizationClaimsItem.setRows(2);
+			authorizationClaimsItem.setDefaultValue("");
+			authorizationClaimsItem.setUseDefaultValueForCloseableSection(true);
+			configuration.addConsoleItem(authorizationClaimsItem);
+			
+			StringConsoleItem modiClaimsItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.TEXT_AREA,
+					(request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RICHIESTA_ID : 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RISPOSTA_ID), 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_LABEL.
+						replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, this.modiProperties.getRestSecurityTokenHeaderModI()));
+			modiClaimsItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_NOTE);
+			ConsoleItemInfo infoModi = new ConsoleItemInfo(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_LABEL.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, this.modiProperties.getRestSecurityTokenHeaderModI()));
+			try {
+				infoModi.setHeaderBody(DynamicHelperCostanti.getLABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO(request, corniceSicurezza, 
+						this.modiProperties.getUsedRestSecurityClaims(request, digest, corniceSicurezza)));
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			infoModi.setListBody(request ? DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_VALORI_REQUEST :
+				DynamicHelperCostanti.LABEL_PARAMETRO_MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_JWT_CLAIMS_INFO_VALORI_RESPONSE);
+			modiClaimsItem.setInfo(infoModi);
+			modiClaimsItem.setRows(2);
+			modiClaimsItem.setDefaultValue("");
+			modiClaimsItem.setUseDefaultValueForCloseableSection(true);
+			configuration.addConsoleItem(modiClaimsItem);
+			
+			// NOTA: se si aggiunge un elemento a questo posizione, riconfigurare setLastItemId nel subsection item
+		}
+		
+		// Header Duplicati
+		if(rest && headerDuplicati && 
+				( 
+						(!request && fruizione)
+						||
+						(request && !fruizione)
+				)
+			) {
+						
+			SubtitleConsoleItem subtitleItem = (SubtitleConsoleItem) ProtocolPropertiesFactory.newSubTitleItem(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_VALIDAZIONE_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_LABEL.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, this.modiProperties.getRestSecurityTokenHeaderModI()));
+			subtitleItem.setCloseable(true);
+			if(request) {
+				subtitleItem.setLastItemId(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_RICHIESTA_ID);
+			}
+			else {
+				subtitleItem.setLastItemId(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_RISPOSTA_ID);
+			}
+			configuration.addConsoleItem(subtitleItem);
+			
+			StringConsoleItem jtiItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_RICHIESTA_ID : 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_RISPOSTA_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_LABEL);
+			((StringConsoleItem)jtiItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_LABEL_AUTHORIZATION,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION);
+			((StringConsoleItem)jtiItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_LABEL_MODI.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_SUBSECTION_TEMPLATE_HEADER_AGID, this.modiProperties.getRestSecurityTokenHeaderModI()),
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_MODI);
+			jtiItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_DEFAULT);
+			jtiItem.setUseDefaultValueForCloseableSection(true);
+			configuration.addConsoleItem(jtiItem);
+			
+			StringConsoleItem audItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_RICHIESTA_ID :
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_RISPOSTA_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_LABEL);
+			((StringConsoleItem)audItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_LABEL_SAME,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_SAME);
+			((StringConsoleItem)audItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_LABEL_DIFFERENT,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT);
+			audItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DEFAULT);
+			audItem.setUseDefaultValueForCloseableSection(true);
+			audItem.setReloadOnChange(true);
+			configuration.addConsoleItem(audItem);
+			
+			StringConsoleItem audValueItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.TEXT_AREA,
+					request ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_RICHIESTA_ID :
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_RISPOSTA_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_LABEL);
+			audValueItem.setRows(2);
+			if(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DEFAULT.equals(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_SAME)) {
+				audValueItem.setType(ConsoleItemType.HIDDEN);
+			}
+			else {
+				audValueItem.setRequired(true);
+			}
+			configuration.addConsoleItem(audValueItem);
+			
+			// NOTA: se si aggiunge un elemento a questo posizione, riconfigurare setLastItemId nel subsection item
+			
 		}
 		
 		
@@ -3075,10 +3372,31 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	
 	private void updateSicurezzaMessaggio(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, 
 			boolean rest, boolean fruizione, boolean request, boolean casoSpecialeModificaNomeFruizione,
-			boolean corniceSicurezza,
+			boolean corniceSicurezza, boolean headerDuplicati,
 			IConsoleHelper consoleHelper) throws ProtocolException {
 		
 		boolean requiredValue = casoSpecialeModificaNomeFruizione ? false : true;
+		
+		if(fruizione && !request) {
+			
+			String idPropertyAud = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_ID;
+			String idPropertyAudValue = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_VALORE_ID;
+			
+			BooleanProperty profiloSicurezzaMessaggioRestAudItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyAud);
+			StringProperty profiloSicurezzaMessaggioRestAudValueItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyAudValue);
+			AbstractConsoleItem<?> profiloSicurezzaMessaggioRestAudValueItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idPropertyAudValue);
+			if(profiloSicurezzaMessaggioRestAudValueItem!=null) {
+				if(profiloSicurezzaMessaggioRestAudItemValue!=null && profiloSicurezzaMessaggioRestAudItemValue.getValue()!=null && profiloSicurezzaMessaggioRestAudItemValue.getValue()) {
+					profiloSicurezzaMessaggioRestAudValueItem.setType(ConsoleItemType.TEXT_AREA);
+				}
+				else {
+					profiloSicurezzaMessaggioRestAudValueItem.setType(ConsoleItemType.HIDDEN);
+					profiloSicurezzaMessaggioRestAudValueItemValue.setValue(null);
+				}
+			}
+
+		}
 		
 		boolean x5url = false;
 		if(rest) {
@@ -3224,7 +3542,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				StringProperty profiloSicurezzaMessaggioRestJwtClaimsItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProperty);
 				AbstractConsoleItem<?> profiloSicurezzaMessaggioRestJwtClaimsItem = 	
 						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idProperty);
-				if(profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue()!=null) {
+				if(profiloSicurezzaMessaggioRestJwtClaimsItemValue!=null && profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue()!=null && 
+						profiloSicurezzaMessaggioRestJwtClaimsItem!=null) {
 					String [] tmp = profiloSicurezzaMessaggioRestJwtClaimsItemValue.getValue().split("\n");
 					if(tmp.length>2) {
 						((StringConsoleItem)profiloSicurezzaMessaggioRestJwtClaimsItem).setRows((tmp.length>10) ? 10 : tmp.length);
@@ -3233,6 +3552,130 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						((StringConsoleItem)profiloSicurezzaMessaggioRestJwtClaimsItem).setRows(2);
 					}
 				}
+			}
+			
+			
+			// Header Duplicati
+			if( headerDuplicati && 
+					( 
+							(request && fruizione)
+							||
+							(!request && !fruizione)
+					)
+				) {
+			
+				String idPropertyJti = ((request && fruizione) ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_RISPOSTA_ID);
+				String idPropertyJtiAsIdMessaggio = ((request && fruizione) ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_RISPOSTA_ID);
+				
+				StringProperty profiloSicurezzaMessaggioRestJtiItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyJti);
+				StringProperty profiloSicurezzaMessaggioRestJtiAsIdMessaggioItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyJtiAsIdMessaggio);
+				AbstractConsoleItem<?> profiloSicurezzaMessaggioRestJtiAsIdMessaggioItem = 	
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idPropertyJtiAsIdMessaggio);
+				if(profiloSicurezzaMessaggioRestJtiAsIdMessaggioItem!=null) {
+					if(profiloSicurezzaMessaggioRestJtiItemValue!=null && ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_VALUE_DIFFERENT.equals(profiloSicurezzaMessaggioRestJtiItemValue.getValue())) {
+						profiloSicurezzaMessaggioRestJtiAsIdMessaggioItem.setType(ConsoleItemType.SELECT);
+						if(profiloSicurezzaMessaggioRestJtiAsIdMessaggioItemValue==null || profiloSicurezzaMessaggioRestJtiAsIdMessaggioItemValue.getValue()==null) {
+							profiloSicurezzaMessaggioRestJtiAsIdMessaggioItemValue.setValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_VALUE_DEFAULT);
+						}
+					}
+					else {
+						profiloSicurezzaMessaggioRestJtiAsIdMessaggioItem.setType(ConsoleItemType.HIDDEN);
+						profiloSicurezzaMessaggioRestJtiAsIdMessaggioItemValue.setValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JTI_AS_ID_MESSAGGIO_VALUE_DEFAULT);
+					}
+				}
+				
+				
+				String idPropertyClaimsAuthorization = ((request && fruizione) ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_AUTHORIZATION_RISPOSTA_ID);
+				StringProperty profiloSicurezzaMessaggioRestJwtClaimsAuthorizationItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyClaimsAuthorization);
+				AbstractConsoleItem<?> profiloSicurezzaMessaggioRestJwtClaimsAuthorizationItem = 	
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idPropertyClaimsAuthorization);
+				if(profiloSicurezzaMessaggioRestJwtClaimsAuthorizationItemValue!=null && profiloSicurezzaMessaggioRestJwtClaimsAuthorizationItemValue.getValue()!=null && 
+						profiloSicurezzaMessaggioRestJwtClaimsAuthorizationItem!=null) {
+					String [] tmp = profiloSicurezzaMessaggioRestJwtClaimsAuthorizationItemValue.getValue().split("\n");
+					if(tmp.length>2) {
+						((StringConsoleItem)profiloSicurezzaMessaggioRestJwtClaimsAuthorizationItem).setRows((tmp.length>10) ? 10 : tmp.length);
+					}
+					else {
+						((StringConsoleItem)profiloSicurezzaMessaggioRestJwtClaimsAuthorizationItem).setRows(2);
+					}
+				}
+				
+				String idPropertyClaimsModi = ((request && fruizione) ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RICHIESTA_ID : ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_JWT_CLAIMS_MODI_RISPOSTA_ID);
+				StringProperty profiloSicurezzaMessaggioRestJwtClaimsModiItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyClaimsModi);
+				AbstractConsoleItem<?> profiloSicurezzaMessaggioRestJwtClaimsModiItem = 	
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idPropertyClaimsModi);
+				if(profiloSicurezzaMessaggioRestJwtClaimsModiItemValue!=null && profiloSicurezzaMessaggioRestJwtClaimsModiItemValue.getValue()!=null && 
+						profiloSicurezzaMessaggioRestJwtClaimsModiItem!=null) {
+					String [] tmp = profiloSicurezzaMessaggioRestJwtClaimsModiItemValue.getValue().split("\n");
+					if(tmp.length>2) {
+						((StringConsoleItem)profiloSicurezzaMessaggioRestJwtClaimsModiItem).setRows((tmp.length>10) ? 10 : tmp.length);
+					}
+					else {
+						((StringConsoleItem)profiloSicurezzaMessaggioRestJwtClaimsModiItem).setRows(2);
+					}
+				}
+			}
+			
+			if( headerDuplicati && request ) {
+					
+				String idPropertyAud = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_RICHIESTA_ID;
+				String idPropertyAudValue = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_RICHIESTA_ID;
+				
+				StringProperty profiloSicurezzaMessaggioRestAudItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyAud);
+				StringProperty profiloSicurezzaMessaggioRestAudValueItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyAudValue);
+				AbstractConsoleItem<?> profiloSicurezzaMessaggioRestAudValueItem = 	
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idPropertyAudValue);
+				if(profiloSicurezzaMessaggioRestAudValueItem!=null) {
+					if(profiloSicurezzaMessaggioRestAudItemValue!=null && ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT.equals(profiloSicurezzaMessaggioRestAudItemValue.getValue())) {
+						profiloSicurezzaMessaggioRestAudValueItem.setType(ConsoleItemType.TEXT_AREA);
+						profiloSicurezzaMessaggioRestAudValueItem.setRequired(true);
+					}
+					else {
+						profiloSicurezzaMessaggioRestAudValueItem.setType(ConsoleItemType.HIDDEN);
+						profiloSicurezzaMessaggioRestAudValueItemValue.setValue(null);
+						profiloSicurezzaMessaggioRestAudValueItem.setRequired(false);
+					}
+				}
+				
+			}
+			
+			if( headerDuplicati && !request && fruizione ) {
+				
+				String idPropertyAudVerifica = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_ID;				
+				BooleanProperty profiloSicurezzaMessaggioRestAudVerificaItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyAudVerifica);
+				boolean verificaAbilitata = profiloSicurezzaMessaggioRestAudVerificaItemValue!=null && profiloSicurezzaMessaggioRestAudVerificaItemValue.getValue()!=null && profiloSicurezzaMessaggioRestAudVerificaItemValue.getValue(); 
+				
+				String idPropertyAud = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_RISPOSTA_ID;
+				String idPropertyAudValue = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_INTEGRITY_RISPOSTA_ID;
+				
+				StringProperty profiloSicurezzaMessaggioRestAudItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyAud);
+				AbstractConsoleItem<?> profiloSicurezzaMessaggioRestAudItem = 	
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), profiloSicurezzaMessaggioRestAudItemValue);
+				if(profiloSicurezzaMessaggioRestAudItem!=null) {
+					if(verificaAbilitata) {
+						profiloSicurezzaMessaggioRestAudItem.setType(ConsoleItemType.SELECT);
+					}
+					else {
+						profiloSicurezzaMessaggioRestAudItem.setType(ConsoleItemType.HIDDEN);
+						profiloSicurezzaMessaggioRestAudItemValue.setValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DEFAULT);
+					}
+				}
+				
+				StringProperty profiloSicurezzaMessaggioRestAudValueItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idPropertyAudValue);
+				AbstractConsoleItem<?> profiloSicurezzaMessaggioRestAudValueItem = 	
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idPropertyAudValue);
+				if(profiloSicurezzaMessaggioRestAudValueItem!=null) {
+					if(verificaAbilitata && profiloSicurezzaMessaggioRestAudItemValue!=null && ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT.equals(profiloSicurezzaMessaggioRestAudItemValue.getValue())) {
+						profiloSicurezzaMessaggioRestAudValueItem.setType(ConsoleItemType.TEXT_AREA);
+						profiloSicurezzaMessaggioRestAudValueItem.setRequired(true);
+					}
+					else {
+						profiloSicurezzaMessaggioRestAudValueItem.setType(ConsoleItemType.HIDDEN);
+						profiloSicurezzaMessaggioRestAudValueItemValue.setValue(null);
+						profiloSicurezzaMessaggioRestAudValueItem.setRequired(false);
+					}
+				}
+				
 			}
 			
 		}

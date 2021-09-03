@@ -373,6 +373,9 @@ public class ModIPropertiesUtils {
 			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION.equals(securityMessageProfileHeader)) {
 				return HttpConstants.AUTHORIZATION;
 			}
+			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(securityMessageProfileHeader)) {
+				return HttpConstants.AUTHORIZATION + " " +ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
+			}
 			else {
 				// caso che non dovrebbe capitare
 				return HttpConstants.AUTHORIZATION;

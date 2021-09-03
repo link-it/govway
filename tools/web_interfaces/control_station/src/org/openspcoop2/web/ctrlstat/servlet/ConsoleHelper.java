@@ -219,6 +219,8 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
+import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.TitleConsoleItem;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -1423,7 +1425,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					case BOOLEAN:
 						String bvS = this.getParameter(item.getId());
 						Boolean booleanValue = ServletUtils.isCheckBoxEnabled(bvS);
-						BooleanProperty booleanProperty = ProtocolPropertiesFactory.newProperty(item.getId(), booleanValue ? booleanValue : null);
+						Boolean falseValue = null;
+						if(item instanceof BooleanConsoleItem) {
+							BooleanConsoleItem b = (BooleanConsoleItem) item;
+							if(!b.isConvertFalseAsNull()) {
+								falseValue = false;
+							}
+						}
+						BooleanProperty booleanProperty = ProtocolPropertiesFactory.newProperty(item.getId(), booleanValue ? booleanValue : falseValue);
 						if(primoAccessoAdd) {
 							booleanProperty.setValue(((BooleanConsoleItem) item).getDefaultValue());
 						}
@@ -3719,6 +3728,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	public Vector<DataElement> addProtocolPropertiesToDatiConfig(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties, List<org.openspcoop2.core.config.ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
+	
+		String titleId = null;
+		String endTitleId = null;
+		
+		String subtitleId = null;
+		String endSubtitleId = null;
+		
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
 			// imposto nel default value il valore attuale.
@@ -3729,10 +3745,29 @@ public class ConsoleHelper implements IConsoleHelper {
 				defaultItemValue = itemConsole.getDefaultValue();
 			}
 			ProtocolPropertiesUtils.setDefaultValue(item, property); 
-
+			
 			org.openspcoop2.core.config.ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyConfig(item.getId(), listaProtocolPropertiesDaDB); 
 			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,this,item, defaultItemValue,
 					consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			
+			if(ConsoleItemType.TITLE.equals(item.getType()) && item instanceof TitleConsoleItem) {
+				TitleConsoleItem titleItem = (TitleConsoleItem) item;
+				titleId = titleItem.getId();
+				endTitleId = titleItem.getLastItemId();
+			}
+			else if(ConsoleItemType.SUBTITLE.equals(item.getType()) && item instanceof SubtitleConsoleItem) {
+				SubtitleConsoleItem subItem = (SubtitleConsoleItem) item;
+				subtitleId = subItem.getId();
+				endSubtitleId = subItem.getLastItemId();
+			}
+			else {
+				if(endTitleId!=null && endTitleId.equals(item.getId())) {
+					this.impostaAperturaTitle(dati, titleId);
+				}
+				else if(endSubtitleId!=null && endSubtitleId.equals(item.getId())) {
+					this.impostaAperturaSubTitle(dati, subtitleId);
+				}
+			}
 		}
 
 		// Imposto il flag per indicare che ho caricato la configurazione
@@ -19155,14 +19190,22 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName) throws Exception{
-		this.impostaAperturaTitle(dati, titleName, null, this.getPostBackElementName());
+		this.impostaAperturaTitle(dati, titleName, DataElementType.TITLE, null, this.getPostBackElementName());
 	}
 	
 	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
-		this.impostaAperturaTitle(dati, titleName, visualizzaSottosezioneAperta, this.getPostBackElementName());
+		this.impostaAperturaTitle(dati, titleName, DataElementType.TITLE, visualizzaSottosezioneAperta, this.getPostBackElementName());
 	}
 	
-	public void impostaAperturaTitle(Vector<DataElement> dati, String titleName, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
+	public void impostaAperturaSubTitle(Vector<DataElement> dati, String titleName) throws Exception{
+		this.impostaAperturaTitle(dati, titleName, DataElementType.SUBTITLE, null, this.getPostBackElementName());
+	}
+	
+	public void impostaAperturaSubTitle(Vector<DataElement> dati, String titleName, boolean visualizzaSottosezioneAperta) throws Exception{
+		this.impostaAperturaTitle(dati, titleName, DataElementType.SUBTITLE, visualizzaSottosezioneAperta, this.getPostBackElementName());
+	}
+	
+	private void impostaAperturaTitle(Vector<DataElement> dati, String titleName, DataElementType titleType, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
 		if(dati != null) {
 			int idxSubtitle = -1;
 			for (int i = 0; i < dati.size(); i++) {
@@ -19180,7 +19223,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					for (int i = idxSubtitle + 1; i < dati.size(); i++) {
 						DataElement de = dati.get(i);
-						if(de.getType().equals("title")) {
+						if(de.getType().equals(titleType.toString())) {
 							// ho trovato un'altra sezione mi fermo
 							break;
 						} else {

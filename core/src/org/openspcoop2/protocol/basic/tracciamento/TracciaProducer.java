@@ -406,7 +406,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 					String columnExtV = "";
 					String valueExtV = "";
 					if(v.length()>limit) {
-						columnExtV = ", "+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_EXT_VALUE;
+						columnExtV = CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_EXT_VALUE+", ";
 						valueExtV = ", ?";
 					}
 					

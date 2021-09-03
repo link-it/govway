@@ -23,31 +23,34 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 
 /**
- * BooleanConsoleItem
+ * AbstractTitleConsoleItem
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BooleanConsoleItem extends AbstractConsoleItem<Boolean> {
+public abstract class AbstractTitleConsoleItem extends BaseConsoleItem {
 
-	// serve per gestire i 3 stati null, false e true
-	// Tale opzione non e' utilizzabile se il default di una checkbox e' true ed e' abilitato il reload 
-	private boolean convertFalseAsNull = true; // lascio il default attuale
-	public void setConvertFalseAsNull(boolean convertFalseAsNull) {
-		this.convertFalseAsNull = convertFalseAsNull;
-	}
-	public boolean isConvertFalseAsNull() {
-		if(ConsoleItemType.CHECKBOX.equals(this.getType()) && this.getDefaultValue()!=null && this.getDefaultValue() && this.isReloadOnChange()) {
-			return false;
-		}
-		else {
-			return this.convertFalseAsNull;
-		}
-	}
+	private boolean closeable = false;
+	private String lastItemId;
 
-	protected BooleanConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
+	protected AbstractTitleConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		super(id, label, type);
 	}
 
+	public boolean isCloseable() {
+		return this.closeable;
+	}
+
+	public void setCloseable(boolean closeable) {
+		this.closeable = closeable;
+	}
+
+	public String getLastItemId() {
+		return this.lastItemId;
+	}
+
+	public void setLastItemId(String lastItemId) {
+		this.lastItemId = lastItemId;
+	}
 }
