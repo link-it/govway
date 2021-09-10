@@ -9,10 +9,6 @@ Background:
     * def isTest =
     """
     function(id) {
-    		karate.log('AAAAAAAAAAAAAAAAA check ['+id+']')
-    		karate.log('AAAAAAAAAAAAAAAAA requestHeaders ['+requestHeaders+']')
-     		karate.log('AAAAAAAAAAAAAAAAA requestHeaders ['+requestHeaders['GovWay-TestSuite-Test-ID']+']')
-     		karate.log('AAAAAAAAAAAAAAAAA check2 ['+id+'] con ['+requestHeaders['GovWay-TestSuite-Test-ID'][0])
         return karate.get("requestHeaders['GovWay-TestSuite-Test-Id'][0]") == id ||
                karate.get("requestHeaders['GovWay-TestSuite-Test-ID'][0]") == id ||
                karate.get("requestHeaders['govway-testsuite-test-id'][0]") == id
