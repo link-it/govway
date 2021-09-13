@@ -1,3 +1,10 @@
+2021-09-13  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto bug OP-1255
+	La configurazione delle proprietà 'org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.minutes' e 'org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.minutes'
+	con valori superiori alle 3 settimane venivano ignorati.
+
 2021-08-30  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

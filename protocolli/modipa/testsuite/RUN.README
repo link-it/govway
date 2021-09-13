@@ -29,6 +29,12 @@ Prerequisiti:
 	c) Configurazione della JVM dell'A.S. in modo che utilizzi il truststore config_https/jks/erogatore.jks
 	   Indicazioni descritte per JBoss in config_https/configurazioneTrustStoreJBOSS.txt
 
++ Su tomcat 9 è necessario aggiungere il parametro maxHttpHeaderSize="65536" sul connector con porta 8080 nel file TOMCAT_DIR/conf/server.xml. Ad esempio:
+
+    <Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" allowTrace="true" maxHttpHeaderSize="65536" />
+
 + Nel file /etc/govway/govway_local.properties abilitare le seguenti proprietà:
 	org.openspcoop2.pdd.check.readJMXResources.enabled=true
 	org.openspcoop2.pdd.check.readJMXResources.username=admin

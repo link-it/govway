@@ -1210,8 +1210,8 @@ public class ModIProperties {
 	}
 	
 	private static Boolean getRestSecurityTokenClaimsIatTimeCheck_milliseconds_read = null;
-	private static Integer getRestSecurityTokenClaimsIatTimeCheck_milliseconds = null;
-	public Integer getRestSecurityTokenClaimsIatTimeCheck_milliseconds() throws Exception{
+	private static Long getRestSecurityTokenClaimsIatTimeCheck_milliseconds = null;
+	public Long getRestSecurityTokenClaimsIatTimeCheck_milliseconds() throws Exception{
 
 		if(ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds_read==null){
 			
@@ -1221,8 +1221,19 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds = Integer.valueOf(value); // minuti
-					ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds = ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds * 60 * 1000;
+					long tmp = Long.valueOf(value); // minuti
+					if(tmp>0) {
+						long maxLongValue = (((Long.MAX_VALUE)/60000l));
+						if(tmp>maxLongValue) {
+							this.log.warn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+						}
+						else {
+							ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds = tmp * 60 * 1000;
+						}
+					}
+					else {
+						this.log.warn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+					}
 				}
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà '"+name+"' non impostata, errore:"+e.getMessage(),e);
@@ -2111,8 +2122,8 @@ public class ModIProperties {
 	}
 	
 	private static Boolean getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds_read = null;
-	private static Integer getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = null;
-	public Integer getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds() throws Exception{
+	private static Long getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = null;
+	public Long getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds() throws Exception{
 
 		if(ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds_read==null){
 			
@@ -2122,8 +2133,19 @@ public class ModIProperties {
 
 				if (value != null){
 					value = value.trim();
-					ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = Integer.valueOf(value); // minuti
-					ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds * 60 * 1000;
+					long tmp = Long.valueOf(value); // minuti
+					if(tmp>0) {
+						long maxLongValue = (((Long.MAX_VALUE)/60000l));
+						if(tmp>maxLongValue) {
+							this.log.warn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+						}
+						else {
+							ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds = tmp * 60 * 1000;
+						}
+					}
+					else {
+						this.log.warn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+					}
 				}
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà '"+name+"' non impostata, errore:"+e.getMessage(),e);

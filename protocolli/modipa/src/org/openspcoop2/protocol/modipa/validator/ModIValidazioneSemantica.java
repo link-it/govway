@@ -158,7 +158,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	   				 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
 	   				 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
 					 **/
-					Integer old = null;
+					Long old = null;
 					if(rest) {
 						old = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
 					}
@@ -166,8 +166,9 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 						old = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds();
 					}
 					if(old!=null) {
-						Date oldMax = new Date((DateManager.getTimeMillis() - old.intValue()));
+						Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
 						if(dateIat.before(oldMax)) {
+							this.log.error("Token creato da troppo tempo (data creazione: '"+iat+"' minima data consentita: '"+DateUtils.getSimpleDateFormatMs().format(oldMax)+"' configurazione ms: '"+old.longValue()+"')");
 							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
 									"Token creato da troppo tempo (data creazione: '"+iat+"')"));
 						}

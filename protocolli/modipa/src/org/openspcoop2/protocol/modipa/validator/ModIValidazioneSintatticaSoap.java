@@ -348,7 +348,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			
 			//  ** Timestamp **
-			Integer timeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds(); // viene usato per vedere la data di creazione quanto si discosta da adesso
+			Long timeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds(); // viene usato per vedere la data di creazione quanto si discosta da adesso
 			boolean set_TimeToLive = false;
 			if(timeToLive!=null) {
 				// Non imposto il valore qua, ma inseriro un valoro alto (3650 giorni) in modo che la libreria non effettui il controllo, che invece avviene nella validazione semantica
