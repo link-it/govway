@@ -74,6 +74,9 @@ public class ModICostanti {
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF = "ProfiloSicurezzaMessaggio-NotBefore";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT = "ProfiloSicurezzaMessaggio-IssuedAt";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP = "ProfiloSicurezzaMessaggio-Expiration";
+    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF = "ProfiloSicurezzaMessaggio-IntegrityNotBefore";
+    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT = "ProfiloSicurezzaMessaggio-IntegrityIssuedAt";
+    public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP = "ProfiloSicurezzaMessaggio-IntegrityExpiration";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID = "ProfiloSicurezzaMessaggio-MessageId";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_RELATES_TO = "ProfiloSicurezzaMessaggio-RelatesTo";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST = "ProfiloSicurezzaMessaggio-Digest";
@@ -97,6 +100,7 @@ public class ModICostanti {
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER = "ProfiloSicurezzaMessaggio-CorniceSicurezza-User";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP = "ProfiloSicurezzaMessaggio-CorniceSicurezza-UserIP";
         
+    public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK = "IAT_TTL_CHECK";
     public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK = "AUDIENCE_CHECK";
     public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK = "AUDIENCE_INTEGRITY_CHECK";
     public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN = "BUILD_SECURITY_REQUEST_TOKEN";
@@ -264,6 +268,12 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RICHIESTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_INCLUDE_SIGNATURE_TOKEN = "modipaSecurityMessageSoapRequestX509CertIncludeSignatureToken";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SOAP_RISPOSTA_RIFERIMENTO_X509_BINARY_SECURITY_TOKEN_INCLUDE_SIGNATURE_TOKEN = "modipaSecurityMessageSoapResponseX509CertIncludeSignatureToken";
         
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT = "modipaSecurityMessageRequestIatMode";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT = "modipaSecurityMessageResponseIatMode";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT_SECONDS = "modipaSecurityMessageRequestIatTtl";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT_SECONDS = "modipaSecurityMessageResponseIatTtl";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_EXPIRED = "modipaSecurityMessageRequestExp";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_EXPIRED = "modipaSecurityMessageResponseExp";
     

@@ -384,6 +384,32 @@ And match response == read('error-bodies/ttl-scaduto-in-response.json')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
 
+@low-iat-ttl-fruizione
+Scenario: L'elemento Created del token della fruizione (richiesta) è troppo vecchio per l'erogazione la quale si arrabbia
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'low-iat-ttl-fruizione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 400
+
+
+@low-iat-ttl-erogazione
+Scenario: L'elemento Created del token dell'erogazione (risposta) è troppo vecchio per la fruizione la quale si arrabbia
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'low-iat-ttl-erogazione'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+And match response == read('error-bodies/iat-scaduto-in-response.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
 @applicativo-non-autorizzato
 Scenario: Viene utilizzato l'identificativo di un applicativo non autorizzato dalla erogazione
 

@@ -425,15 +425,42 @@ public class ModIImbustamentoRest {
 		Date nowDateUsatoPerProprietaTraccia = new Date((nowSeconds*1000)); // e' inutile che traccio i millisecondi, tanto poi nel token non viaggiano
 		
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
-		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia));
+		String iatValue = DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia);
+		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, iatValue);
+		}
+		else {
+			String iatAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT);
+			if(!iatValue.equals(iatAuthorization)) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT, iatValue);
+			}
+		}
 		
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE, nowSeconds);
-		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia));
+		String nbfValue = DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia);
+		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, nbfValue);
+		}
+		else {
+			String nbfAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF);
+			if(!nbfValue.equals(nbfAuthorization)) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF, nbfValue);
+			}
+		}
 		
 		long expired = nowSeconds+securityConfig.getTtlSeconds();
 		Date expiredDateUsatoPerProprietaTraccia = new Date(expired*1000);
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
-		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, DateUtils.getSimpleDateFormatMs().format(expiredDateUsatoPerProprietaTraccia));
+		String expValue = DateUtils.getSimpleDateFormatMs().format(expiredDateUsatoPerProprietaTraccia);
+		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, expValue);
+		}
+		else {
+			String expAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
+			if(!expValue.equals(expAuthorization)) {
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP, nbfValue);
+			}
+		}
 		
 		if(jti!=null) {
 			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, jti);

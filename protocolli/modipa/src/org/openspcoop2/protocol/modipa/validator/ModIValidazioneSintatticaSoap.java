@@ -349,8 +349,14 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			
 			//  ** Timestamp **
 			Long timeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds(); // viene usato per vedere la data di creazione quanto si discosta da adesso
+			if(securityConfig.getCheckTtlIatMilliseconds()!=null) {
+				timeToLive = securityConfig.getCheckTtlIatMilliseconds();
+			}
 			boolean set_TimeToLive = false;
 			if(timeToLive!=null) {
+				if(msg!=null) {
+					msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK, timeToLive);
+				}
 				// Non imposto il valore qua, ma inseriro un valoro alto (3650 giorni) in modo che la libreria non effettui il controllo, che invece avviene nella validazione semantica
 				// In modo da uniformare l'errore rispetto anche a REST
 				/*

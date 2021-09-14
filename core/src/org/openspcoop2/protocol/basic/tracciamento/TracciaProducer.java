@@ -400,9 +400,27 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 				}
 				for (int i = 0; i < propertiesNames.length; i++) {
 	
-					int limit = 2800; // TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value) la somma di name e value deve essere minore di 3072 bytes per mysql
-					
 					String v = busta.getProperty(propertiesNames[i]);
+										
+					int limit = 2800; // TRACCE_EXT_SEARCH ON tracce_ext_protocol_info (name,value) la somma di name e value deve essere minore di 3072 bytes per mysql
+					if(TipiDatabase.POSTGRESQL.equals(this.tipoDatabase)) {
+						// The maximum length for a value in a B-tree index, which includes primary keys, is one third of the size of a buffer page, by default floor(8192/3) = 2730 bytes
+						// Altrimenti si ha un errore del genere:
+						// Caused by: org.postgresql.util.PSQLException: ERROR: index row size 2864 exceeds maximum 2712 for index "tracce_ext_search"
+						//  Hint: Values larger than 1/3 of a buffer page cannot be indexed.
+						//  Consider a function index of an MD5 hash of the value, or use full text indexing.
+						int sum = 20; // si parte da 20, la dimensione dell'id della join
+						if(propertiesNames[i]!=null) {
+							sum = sum + propertiesNames[i].length();
+						}
+						if(v!=null) {
+							sum = sum + v.length();
+						}
+						if(sum>2711) {
+							limit = (2711 - 20) - propertiesNames[i].length();
+						}
+					}
+					
 					String columnExtV = "";
 					String valueExtV = "";
 					if(v.length()>limit) {

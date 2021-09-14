@@ -288,6 +288,23 @@ Scenario: isTest('low-ttl-erogazione')
 
     * java.lang.Thread.sleep(2000)
 
+Scenario: isTest('low-iat-ttl-fruizione')
+
+    # Lo iat accettato nell'erogazione e' fino a 3 secondi
+    * java.lang.Thread.sleep(5000)
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01LowIAT/v1')
+    * match responseStatus == 500
+    * match response == read('classpath:test/soap/sicurezza-messaggio/error-bodies/iat-scaduto-in-request.xml')
+    * match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+    
+Scenario: isTest('low-iat-ttl-erogazione')
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS01LowIAT/v1')
+    * match responseStatus == 200
+
+    # Lo iat accettato nella fruizione e' fino a 3 secondi
+    * java.lang.Thread.sleep(5000)
 
 Scenario: isTest('applicativo-non-autorizzato')
 

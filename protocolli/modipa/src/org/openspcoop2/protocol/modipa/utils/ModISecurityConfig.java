@@ -81,6 +81,7 @@ public class ModISecurityConfig {
 	private boolean useSingleCertificate = true;
 	private boolean includeSignatureToken = false;
 	private int ttl;
+	private Long checkTtlIatMs;
 	private String audience;
 	private boolean checkAudience;
 	private String clientId;
@@ -612,6 +613,33 @@ public class ModISecurityConfig {
 		
 		try {
 		
+			/* TTL */
+			
+			if(fruizione) {
+				if(!request) {
+					boolean greatherThanZero = true;
+					String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT);
+					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode)) {
+						Long l = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_IAT_SECONDS, greatherThanZero);
+						if(l!=null && l.longValue()>0) {
+							this.checkTtlIatMs = l.longValue() * 1000; // trasformo in ms
+						}
+					}
+				}
+			}
+			else {
+				if(request) {
+					boolean greatherThanZero = true;
+					String mode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT);
+					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(mode)) {
+						Long l = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(this._listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT_SECONDS, greatherThanZero);
+						if(l!=null && l.longValue()>0) {
+							this.checkTtlIatMs = l.longValue() * 1000; // trasformo in ms
+						}
+					}
+				}
+			}
+			
 			if(rest) {
 				
 				if(this.multipleHeaderAuthorizationConfig!=null) {
@@ -953,6 +981,10 @@ public class ModISecurityConfig {
 		return this.ttl;
 	}
 
+	public Long getCheckTtlIatMilliseconds() {
+		return this.checkTtlIatMs;
+	}
+	
 	public String getAudience() {
 		return this.audience;
 	}

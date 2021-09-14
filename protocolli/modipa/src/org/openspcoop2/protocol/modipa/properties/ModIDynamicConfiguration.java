@@ -78,6 +78,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ConsoleItemInfo;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.protocol.sdk.properties.NumberConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.NumberProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
@@ -2626,6 +2627,57 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		}
 
 		
+		
+		// Created Ttl Time
+
+		String idProfiloSicurezzaMessaggioIatTtlItem = null;
+		String idProfiloSicurezzaMessaggioIatTtlSecondsItem = null;
+		if(fruizione && !request) {
+			idProfiloSicurezzaMessaggioIatTtlItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_RISPOSTA_ID;
+			idProfiloSicurezzaMessaggioIatTtlSecondsItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_RISPOSTA_ID;
+		}
+		else if(!fruizione && request) {
+			idProfiloSicurezzaMessaggioIatTtlItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_RICHIESTA_ID;
+			idProfiloSicurezzaMessaggioIatTtlSecondsItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_RICHIESTA_ID;
+		}
+		if(idProfiloSicurezzaMessaggioIatTtlItem!=null && idProfiloSicurezzaMessaggioIatTtlSecondsItem!=null) {
+			
+			boolean modeIsDefault = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_DEFAULT_VALUE.equals(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_VALUE_DEFAULT);
+			String labelModeItem = modeIsDefault ?
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_LABEL_VALORE_DEFAULT : 
+						ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_LABEL_VALORE_RIDEFINITO;
+			
+			StringConsoleItem modeItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					idProfiloSicurezzaMessaggioIatTtlItem, 
+					labelModeItem);
+			((StringConsoleItem)modeItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_LABEL_DEFAULT,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_VALUE_DEFAULT);
+			((StringConsoleItem)modeItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_LABEL_RIDEFINISCI,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_VALUE_RIDEFINISCI);
+			modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_DEFAULT_VALUE);
+			modeItem.setReloadOnChange(true);
+			configuration.addConsoleItem(modeItem);
+			
+			NumberConsoleItem secondsItem = (NumberConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.NUMBER,
+					ConsoleItemType.NUMBER,
+					idProfiloSicurezzaMessaggioIatTtlSecondsItem,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_LABEL);
+			secondsItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_NOTE);
+			secondsItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_DEFAULT_VALUE);
+			secondsItem.setRequired(requiredValue);
+			secondsItem.setMin(1);
+			if(modeIsDefault) {
+				secondsItem.setRequired(false);
+				secondsItem.setType(ConsoleItemType.HIDDEN);
+			}
+			configuration.addConsoleItem(secondsItem);
+		}
+		
+		
+		
 		// Expiration Time
 
 		String idProfiloSicurezzaMessaggioExpItem = null;
@@ -3396,6 +3448,55 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				}
 			}
 
+		}
+		
+		// Created Ttl Time
+
+		String idProfiloSicurezzaMessaggioIatTtlItem = null;
+		String idProfiloSicurezzaMessaggioIatTtlSecondsItem = null;
+		if(fruizione && !request) {
+			idProfiloSicurezzaMessaggioIatTtlItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_RISPOSTA_ID;
+			idProfiloSicurezzaMessaggioIatTtlSecondsItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_RISPOSTA_ID;
+		}
+		else if(!fruizione && request) {
+			idProfiloSicurezzaMessaggioIatTtlItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_RICHIESTA_ID;
+			idProfiloSicurezzaMessaggioIatTtlSecondsItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_RICHIESTA_ID;
+		}
+		if(idProfiloSicurezzaMessaggioIatTtlItem!=null && idProfiloSicurezzaMessaggioIatTtlSecondsItem!=null) {
+			
+			AbstractConsoleItem<?> modeItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idProfiloSicurezzaMessaggioIatTtlItem);
+			StringProperty modeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProfiloSicurezzaMessaggioIatTtlItem);
+			boolean modeIsDefault = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_DEFAULT_VALUE.equals(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_VALUE_DEFAULT);
+			if(modeItemValue!=null && modeItemValue.getValue()!=null) {
+				modeIsDefault = modeItemValue.getValue().equals(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_VALUE_DEFAULT);
+			}
+			
+			if(modeItem!=null) {
+				modeItem.setLabel(modeIsDefault ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_LABEL_VALORE_DEFAULT :
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_LABEL_VALORE_RIDEFINITO);
+			}
+			
+			AbstractConsoleItem<?> secondsItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idProfiloSicurezzaMessaggioIatTtlSecondsItem);
+			NumberProperty secondsItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProfiloSicurezzaMessaggioIatTtlSecondsItem);
+			if(secondsItem!=null) {
+				if(modeIsDefault) {
+					secondsItem.setRequired(false);
+					secondsItem.setType(ConsoleItemType.HIDDEN);
+					if(secondsItemValue!=null) {
+						secondsItemValue.setValue(null);
+					}
+				}
+				else {
+					secondsItem.setRequired(requiredValue);
+					secondsItem.setType(ConsoleItemType.NUMBER);
+					if(secondsItemValue!=null && secondsItemValue.getValue()==null) {
+						secondsItemValue.setValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_IAT_SECONDS_DEFAULT_VALUE);
+					}
+				}
+			}
+			
 		}
 		
 		boolean x5url = false;

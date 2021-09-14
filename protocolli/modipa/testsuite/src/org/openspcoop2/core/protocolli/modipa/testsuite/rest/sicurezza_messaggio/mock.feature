@@ -38,11 +38,14 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('doppi-header-audience-risposta-diversi-valori-statici') || isTest('doppi-header-audience-risposta-diversi-valori-statici-authorization-non-valido') || isTest('doppi-header-audience-risposta-diversi-valori-statici-agid-jwt-signature-non-valido') ||
   isTest('doppi-header-audience-richiesta-stesso-valore') ||
   isTest('doppi-header-audience-richiesta-differente-valore') ||
-	isTest('low-ttl-erogazione') || isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || 
+	isTest('low-ttl-erogazione') || isTest('low-iat-ttl-erogazione') || 
+	isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || 
 	isTest('manomissione-token-risposta') || 
 	isTest('connettivita-base-idar02') || isTest('riutilizzo-token') || 
 	isTest('manomissione-token-risposta-idar03') || isTest('manomissione-token-risposta-idar0302') || isTest('manomissione-payload-risposta-idar0302') || 
-	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato')
+	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato') ||
+	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato-richiesta') ||
+	isTest('doppi-header-token-date-differenti-richiesta')
     
     # Controllo che al server non siano arrivate le informazioni di sicurezza
     * match requestHeaders['Authorization'] == '#notpresent'

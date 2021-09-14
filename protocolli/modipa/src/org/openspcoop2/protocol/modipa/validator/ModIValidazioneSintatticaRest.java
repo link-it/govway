@@ -478,6 +478,15 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		X509Certificate x509 = null;
 		try {
 		
+			//  ** Timestamp **
+			Long timeToLive = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
+			if(securityConfig.getCheckTtlIatMilliseconds()!=null) {
+				timeToLive = securityConfig.getCheckTtlIatMilliseconds();
+			}
+			if(timeToLive!=null && msg!=null) {
+				msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK, timeToLive);
+			}
+			
 			MessageSecurityReceiver_jose joseSignature = new MessageSecurityReceiver_jose();
 			MessageSecurityContextParameters messageSecurityContextParameters = new MessageSecurityContextParameters();
 			MessageSecurityContext messageSecurityContext = new MessageSecurityContext_impl(messageSecurityContextParameters);
@@ -668,7 +677,16 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_VALIDA, 
 							prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT+"' non valido: "+e.getMessage(),e));
 				}
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, DateUtils.getSimpleDateFormatMs().format(iatDate));
+				String iatValue = DateUtils.getSimpleDateFormatMs().format(iatDate);
+				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, iatValue);
+				}
+				else {
+					String iatAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT);
+					if(!iatValue.equals(iatAuthorization)) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT, iatValue);
+					}
+				}
 			}
 			else {
 				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_PRESENTE, 
@@ -688,7 +706,16 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SCADENZA_NON_VALIDA, 
 							prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED+"' non valido: "+e.getMessage(),e));
 				}
-				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, DateUtils.getSimpleDateFormatMs().format(expDate));
+				String expValue = DateUtils.getSimpleDateFormatMs().format(expDate);
+				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, expValue);
+				}
+				else {
+					String expAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
+					if(!expValue.equals(expAuthorization)) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP, expValue);
+					}
+				}
 			}
 			else {
 				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SCADENZA_NON_PRESENTE, 
@@ -705,7 +732,16 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SCADENZA_NON_VALIDA, 
 								prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE+"' non valido: "+e.getMessage(),e));
 					}
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, DateUtils.getSimpleDateFormatMs().format(nbfDate));
+					String nbfValue = DateUtils.getSimpleDateFormatMs().format(nbfDate);
+					if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, nbfValue);
+					}
+					else {
+						String nbfAuthorization = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF);
+						if(!nbfValue.equals(nbfAuthorization)) {
+							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF, nbfValue);
+						}
+					}
 				}
 			}
 			
@@ -983,7 +1019,12 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 									String hdrName = (String) fieldNames.next();
 									try {
 										String hdrValue = toString(oNode.get(hdrName));
-										ModIUtilities.addHeaderProperty(busta, hdrName, hdrValue);
+										if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(hdrName) && headerDuplicati) {
+											ModIUtilities.addHeaderProperty(busta, hdrName, HttpConstants.AUTHORIZATION_PREFIX_BEARER +"...TOKEN...");	
+										}
+										else {
+											ModIUtilities.addHeaderProperty(busta, hdrName, hdrValue);
+										}
 										TransportUtils.addHeader(headerHttpAttesi, hdrName, hdrValue);
 									}catch(Exception e) {
 										throw new Exception("array["+i+"] possiede header '"+hdrName+"' con un valore non valido: "+e.getMessage(),e);

@@ -260,7 +260,7 @@ And match header Authorization == '#notpresent'
 
 
 @doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato
-Scenario: Sicurezza che prevede token in cui sono stati ridefiniti dei claims, viene usata la cornice di sicurezza e un header Authorization viene firmato dentro del header Agid-JWT-Signature
+Scenario: Sicurezza che prevede token in cui sono stati ridefiniti dei claims, viene usata la cornice di sicurezza e un header Authorization viene firmato dentro del header Agid-JWT-Signature (solo nella risposta)
 
 * def url_invocazione = govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0302HeaderDuplicatiCorniceSicurezzaCustomClaim/v1"
 
@@ -317,3 +317,23 @@ And match header Authorization == '#notpresent'
 * def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
 * call check_traccia_info_utente ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient2, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
 * call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+
+
+@doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato-richiesta
+Scenario: Sicurezza che prevede token in cui sono stati ridefiniti dei claims, viene usata la cornice di sicurezza e un header Authorization viene firmato dentro del header Agid-JWT-Signature
+# La configurazione della fruizione "punta" direttamente verso l'erogazione poiche' altrimenti al server 'proxy' di karate non arrivano gli header, probabilmente perche' si supera una qualche dimensione massima
+# I controlli nelle tracce vengono comunque fatte, anche se solo sulla risposta, nel test precedente
+
+* def url_invocazione = govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0302HeaderDuplicatiCorniceSicurezzaCustomClaimFirmaAuthorizationRichiesta/v1"
+
+Given url url_invocazione
+And path 'test0302conCorniceSicurezza'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato-richiesta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient2', password: 'ApplicativoBlockingIDA01ExampleClient2' })
+And param userIP = '10.112.32.21'
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'

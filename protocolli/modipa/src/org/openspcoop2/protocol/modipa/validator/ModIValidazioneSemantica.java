@@ -119,60 +119,36 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 				Date now = DateManager.getDate();
 				
+				String prefixIntegrity = "[Header '"+this.modiProperties.getRestSecurityTokenHeaderModI()+"'] ";
+				
 				String exp = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
 				if(exp!=null) {
-					Date dateExp = DateUtils.getSimpleDateFormatMs().parse(exp);
-					/*
-					 *   The "exp" (expiration time) claim identifies the expiration time on
-	   				 *   or after which the JWT MUST NOT be accepted for processing.  The
-	   				 *   processing of the "exp" claim requires that the current date/time
-	   				 *   MUST be before the expiration date/time listed in the "exp" claim.
-					 **/
-					if(!now.before(dateExp)){
-						this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
-								"Token scaduto in data '"+exp+"'"));
-					}
+					checkExp(exp, now, "");
+				}
+				
+				String expIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP);
+				if(expIntegrity!=null) {
+					checkExp(expIntegrity, now, prefixIntegrity);
 				}
 				
 				String nbf = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF);
 				if(nbf!=null) {
-					Date dateNbf = DateUtils.getSimpleDateFormatMs().parse(nbf);
-					/*
-					 *   The "nbf" (not before) claim identifies the time before which the JWT
-					 *   MUST NOT be accepted for processing.  The processing of the "nbf"
-					 *   claim requires that the current date/time MUST be after or equal to
-					 *   the not-before date/time listed in the "nbf" claim. 
-					 **/
-					if(!dateNbf.before(now)){
-						this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
-								"Token non utilizzabile prima della data '"+nbf+"'"));
-					}
+					checkNbf(nbf, now, "");
+				}
+				
+				String nbfIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_NBF);
+				if(nbfIntegrity!=null) {
+					checkNbf(nbfIntegrity, now, prefixIntegrity);
 				}
 				
 				String iat = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT);
 				if(iat!=null) {
-					Date dateIat = DateUtils.getSimpleDateFormatMs().parse(iat);
-					/*
-					 *   The "iat" (issued at) claim identifies the time at which the JWT was
-	   				 *   issued.  This claim can be used to determine the age of the JWT.
-	   				 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
-	   				 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
-					 **/
-					Long old = null;
-					if(rest) {
-						old = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
-					}
-					else {
-						old = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds();
-					}
-					if(old!=null) {
-						Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
-						if(dateIat.before(oldMax)) {
-							this.log.error("Token creato da troppo tempo (data creazione: '"+iat+"' minima data consentita: '"+DateUtils.getSimpleDateFormatMs().format(oldMax)+"' configurazione ms: '"+old.longValue()+"')");
-							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
-									"Token creato da troppo tempo (data creazione: '"+iat+"')"));
-						}
-					}
+					checkIat(iat, msg, rest, "");
+				}
+				
+				String iatIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_IAT);
+				if(iatIntegrity!=null) {
+					checkIat(iatIntegrity, msg, rest, prefixIntegrity);
 				}
 				
 				String audience = busta.getProperty(rest ? 
@@ -267,5 +243,75 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			return;
 		}
 	}
+
+	private void checkExp(String exp, Date now, String prefix) throws Exception {
+		if(prefix==null) {
+			prefix="";
+		}
+		Date dateExp = DateUtils.getSimpleDateFormatMs().parse(exp);
+		/*
+		 *   The "exp" (expiration time) claim identifies the expiration time on
+			 *   or after which the JWT MUST NOT be accepted for processing.  The
+			 *   processing of the "exp" claim requires that the current date/time
+			 *   MUST be before the expiration date/time listed in the "exp" claim.
+		 **/
+		if(!now.before(dateExp)){
+			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
+					prefix+"Token scaduto in data '"+exp+"'"));
+		}
+	}
 	
+	private void checkNbf(String nbf, Date now, String prefix) throws Exception {
+		if(prefix==null) {
+			prefix="";
+		}
+		Date dateNbf = DateUtils.getSimpleDateFormatMs().parse(nbf);
+		/*
+		 *   The "nbf" (not before) claim identifies the time before which the JWT
+		 *   MUST NOT be accepted for processing.  The processing of the "nbf"
+		 *   claim requires that the current date/time MUST be after or equal to
+		 *   the not-before date/time listed in the "nbf" claim. 
+		 **/
+		if(!dateNbf.before(now)){
+			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
+					prefix+"Token non utilizzabile prima della data '"+nbf+"'"));
+		}
+	}
+	
+	private void checkIat(String iat, OpenSPCoop2Message msg, boolean rest, String prefix) throws Exception {
+		if(prefix==null) {
+			prefix="";
+		}
+		Date dateIat = DateUtils.getSimpleDateFormatMs().parse(iat);
+		/*
+		 *   The "iat" (issued at) claim identifies the time at which the JWT was
+			 *   issued.  This claim can be used to determine the age of the JWT.
+			 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
+			 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
+		 **/
+		Long old = null;
+		Object iatObject = null;
+		if(msg!=null) {
+			iatObject = msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK);
+		}
+		if(iatObject!=null && iatObject instanceof Long) {
+			old = (Long) iatObject;
+		}
+		if(old==null) {
+			if(rest) {
+				old = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
+			}
+			else {
+				old = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds();
+			}
+		}
+		if(old!=null) {
+			Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
+			if(dateIat.before(oldMax)) {
+				this.log.error(prefix+"Token creato da troppo tempo (data creazione: '"+iat+"' minima data consentita: '"+DateUtils.getSimpleDateFormatMs().format(oldMax)+"' configurazione ms: '"+old.longValue()+"')");
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
+						prefix+"Token creato da troppo tempo (data creazione: '"+iat+"')"));
+			}
+		}
+	}
 }
