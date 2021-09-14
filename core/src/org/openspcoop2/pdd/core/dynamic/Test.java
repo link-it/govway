@@ -21,20 +21,27 @@
 package org.openspcoop2.pdd.core.dynamic;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -142,7 +149,26 @@ public class Test {
 			"		</soapenv:Body>\n"+
 			"</soapenv:Envelope>\n";
 	
+	private static final String CONFIG = "<openspcoop2 xmlns=\"http://www.openspcoop2.org/core/config\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openspcoop2.org/core/config config.xsd\">\n"+
+			"	<soggetto tipo=\"proxy\" nome=\"MinisteroFruitore\" />\n"+
+			"   <configurazione> \n"+
+			"          <accesso-registro>\n"+
+			"               <registro nome=\"registroXML\" tipo=\"xml\" location=\"registroServizi.xml\" />\n"+
+			"          </accesso-registro>\n"+
+			"          <inoltro-buste-non-riscontrate cadenza=\"60\" />\n"+
+			"          <messaggi-diagnostici severita-log4j=\"infoIntegration\" severita=\"infoIntegration\" />\n"+
+			"          <system-properties>\n"+
+			"          		<system-property nome=\"systemP1\" valore=\"systemV1\"/>\n"+
+			"          		<system-property nome=\"systemP2\" valore=\"systemV2\"/>\n"+
+			"          </system-properties>\n"+
+			"     </configurazione>\n"+
+			"</openspcoop2>";
+	
 	public static void main(String [] args) throws Exception{
+		
+		File fTmpConfig = File.createTempFile("configTest", ".xml"); 
+		File fTmpOp2Properties = File.createTempFile("govway", ".properties"); 
+		try {
 		
 		boolean forceDollaro = true;
 		String prefix = "$";
@@ -161,7 +187,17 @@ public class Test {
 		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P1", "Valore1URL");
 		TransportUtils.addParameter(connettoreMsg.getPropertiesUrlBased(),"P2", "Valore2URL");
 		
+		FileSystemUtilities.writeFile(fTmpOp2Properties.getAbsolutePath(), "org.openspcoop2.pdd.confDirectory=/tmp\norg.openspcoop2.pdd.server=web".getBytes());
+		OpenSPCoop2Properties.initialize(null, fTmpOp2Properties.getAbsolutePath());
+		PddProperties.initialize(fTmpOp2Properties.getAbsolutePath(), null);
 		
+		AccessoConfigurazionePdD config = new AccessoConfigurazionePdD();
+		config.setTipo("xml");
+		config.setLocation(fTmpConfig.getAbsolutePath());
+		FileSystemUtilities.writeFile(fTmpConfig.getAbsolutePath(), CONFIG.getBytes());
+		DriverConfigurazioneXML.disableBuildXsdValidator();
+		ConfigurazionePdDReader.initialize(config, log, log, null, null, true, false, false, false, null);
+						
 		PdDContext pddContext = new PdDContext();
 		pddContext.addObject("TEST1", "VALORE DI ESEMPIO");
 		
@@ -674,6 +710,44 @@ public class Test {
 		expected = expr.replace("${transaction:id}", idTransazione);
 		if(!expected.equals(value)) {
 			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+
+		expr = prefix + "{system:systemP1}";
+		DynamicUtils.validate("testSystem", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testSystem", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("testSystem: "+value+"\n\n");
+		expected = "systemV1";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		System.setProperty("pCustomJava1", "v1java");
+		System.setProperty("pCustomJava2", "v2java");
+		expr = prefix + "{java:pCustomJava1}";
+		DynamicUtils.validate("testJava", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testJava", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("testJava: "+value+"\n\n");
+		expected = "v1java";
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		expr = prefix + "{env:HOSTNAME}";
+		DynamicUtils.validate("testEnv", expr, forceDollaro, true);
+		value = DynamicUtils.convertDynamicPropertyValue("testEnv", expr, dynamicMap, pddContext, forceDollaro);
+		System.out.println("testEnv: "+value+"\n\n");
+		expected = System.getenv("HOSTNAME");
+		if(!expected.equals(value)) {
+			throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+		}
+		
+		}finally {
+			if(fTmpConfig!=null) {
+				fTmpConfig.delete();
+			}
+			if(fTmpOp2Properties!=null) {
+				fTmpOp2Properties.delete();
+			}
 		}
 	}
 	

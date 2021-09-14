@@ -103,6 +103,27 @@ public class Costanti {
     public final static String MAP_ELEMENT_JSON_PATH_PREFIX = "{"+MAP_ELEMENT_JSON_PATH+":";
     public final static String TYPE_MAP_ELEMENT_JSON_PATH = org.openspcoop2.pdd.core.dynamic.PatternExtractor.class.getName();
     
+    public final static String MAP_SYSTEM_PROPERTY = "system";
+    public final static String MAP_SYSTEM_PROPERTY_PREFIX = "{"+MAP_SYSTEM_PROPERTY+":";
+    public static String TYPE_SYSTEM_PROPERTY = org.openspcoop2.pdd.core.dynamic.SystemPropertiesReader.class.getName();
+    static {
+    	TYPE_SYSTEM_PROPERTY = org.openspcoop2.pdd.core.dynamic.PropertiesReader.class.getName(); // uniformo con lo stesso reader
+    }
+    
+    public final static String MAP_ENV_PROPERTY = "env";
+    public final static String MAP_ENV_PROPERTY_PREFIX = "{"+MAP_ENV_PROPERTY+":";
+    public static String TYPE_ENV_PROPERTY = org.openspcoop2.pdd.core.dynamic.EnvironmentPropertiesReader.class.getName();
+    static {
+    	TYPE_ENV_PROPERTY = org.openspcoop2.pdd.core.dynamic.PropertiesReader.class.getName(); // uniformo con lo stesso reader
+    }
+    
+    public final static String MAP_JAVA_PROPERTY = "java";
+    public final static String MAP_JAVA_PROPERTY_PREFIX = "{"+MAP_JAVA_PROPERTY+":";
+    public static String TYPE_JAVA_PROPERTY = org.openspcoop2.pdd.core.dynamic.JavaPropertiesReader.class.getName();
+    static {
+    	TYPE_JAVA_PROPERTY = org.openspcoop2.pdd.core.dynamic.PropertiesReader.class.getName(); // uniformo con lo stesso reader
+    }
+    
     public final static String MAP_REQUEST = "request";
     public final static String MAP_RESPONSE = "response";
     public final static String TYPE_MAP_MESSAGE = org.openspcoop2.pdd.core.dynamic.ContentExtractor.class.getName();

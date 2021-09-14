@@ -27,6 +27,9 @@ Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway,
 - ${clientApplicationConfig:NAME}: valore della proprietà configurata nell'applicativo fruitore che possiede il nome 'NAME'
 - ${clientOrganizationConfig:NAME}: valore della proprietà configurata nel soggetto fruitore che possiede il nome 'NAME'
 - ${providerOrganizationConfig:NAME}: valore della proprietà configurata nel soggetto erogatore che possiede il nome 'NAME'
+- ${system:NAME}: valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
+- ${env:NAME}: valore associato alla variabile di sistema con nome 'NAME'
+- ${java:NAME}: valore associato alla variabile java con nome 'NAME'
 
 Di seguito alcuni esempi:
 

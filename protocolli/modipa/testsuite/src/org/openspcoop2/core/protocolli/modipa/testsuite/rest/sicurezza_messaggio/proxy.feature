@@ -3136,7 +3136,10 @@ Scenario: isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authoriza
             custom_erogatore_authorization: 'exampleErogatorePCustomAuthorization',
             custom_applicativo_authorization: 'exampleClient2PCustomAuthorization',
             custom_hdr_authorization: 'doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmatoAuthorization',
-            custom_json_authorization: 'RGFuJ3MgVG9vbHMgYXJlIGNvb2whAuthorization'
+            custom_json_authorization: 'RGFuJ3MgVG9vbHMgYXJlIGNvb2whAuthorization',
+            custom_env: 'EnvValue1', 
+            custom_system: 'SystemValue1',  
+            custom_java: 'JavaValue1'
         }
     })
     """
@@ -3165,6 +3168,9 @@ Scenario: isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authoriza
             custom_applicativo_integrity: 'exampleClient2PCustomIntegrity',
             custom_hdr_integrity: 'doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmatoIntegrity',
             custom_json_integrity: 'RGFuJ3MgVG9vbHMgYXJlIGNvb2whIntegrity',
+            custom_env: 'EnvValue1', 
+            custom_system: 'SystemValue1',  
+            custom_java: 'JavaValue1', 
             signed_headers: [
                 { digest: requestHeaders.Digest[0] },
                 { 'content-type': 'application\/json; charset=UTF-8' }
@@ -3206,7 +3212,13 @@ Scenario: isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authoriza
             custom_applicativo_authorization: 'exampleClient2PCustomAuthorization',
             custom_hdr_request_authorization: 'doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmatoAuthorization',
             custom_hdr_response_authorization: 'doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmatoAuthorization',
-            custom_json_authorization: 'Risultato CAuthorization'
+            custom_json_authorization: 'Risultato CAuthorization',
+            custom_env: 'EnvValue1', 
+            custom_system: 'SystemValue1',  
+            custom_java: 'JavaValue1',
+            custom_env_authorization: 'EnvValue1Authorization', 
+            custom_system_authorization: 'SystemValue1Authorization',  
+            custom_java_authorization: 'JavaValue1Authorization'
         }
     })
     """
@@ -3241,6 +3253,12 @@ Scenario: isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authoriza
             custom_hdr_request_integrity: 'doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmatoIntegrity',
             custom_hdr_response_integrity: 'doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmatoIntegrity',
             custom_json_integrity: 'Risultato CIntegrity',
+            custom_env: 'EnvValue1', 
+            custom_system: 'SystemValue1',  
+            custom_java: 'JavaValue1',
+            custom_env_integrity: 'EnvValue1Integrity', 
+            custom_system_integrity: 'SystemValue1Integrity',  
+            custom_java_integrity: 'JavaValue1Integrity',
             signed_headers: [
                 { digest: responseHeaders.Digest[0] },
                 { 'content-type': 'application\/json' },

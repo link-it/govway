@@ -191,6 +191,9 @@ public class OpenSPCoop2Properties {
 	 * 
 	 */
 	public OpenSPCoop2Properties(Properties localProperties) throws Exception{
+		this(localProperties, "/govway.properties");
+	}
+	public OpenSPCoop2Properties(Properties localProperties, String path) throws Exception{
 
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -200,14 +203,20 @@ public class OpenSPCoop2Properties {
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
-		try{  
-			properties = OpenSPCoop2Properties.class.getResourceAsStream("/govway.properties");
+		try{ 
+			properties = OpenSPCoop2Properties.class.getResourceAsStream(path);
 			if(properties==null){
-				throw new Exception("File '/govway.properties' not found");
+				File f = new File(path);
+				if(f.exists()) {
+					properties = new FileInputStream(f);
+				}
+				else {
+					throw new Exception("File '"+path+"' not found");
+				}
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'govway.properties': \n\n"+e.getMessage(),e);
+			this.log.error("Riscontrato errore durante la lettura del file '"+path+"': \n\n"+e.getMessage(),e);
 			throw new Exception("OpenSPCoopProperties initialize error: "+e.getMessage(),e);
 		}finally{
 		    try{
@@ -225,9 +234,17 @@ public class OpenSPCoop2Properties {
 	 * 
 	 */
 	public static boolean initialize(Properties localProperties){
-
 		try {
 			OpenSPCoop2Properties.openspcoopProperties = new OpenSPCoop2Properties(localProperties);	
+			return true;
+		}
+		catch(Exception e) {
+			return false;
+		}
+	}
+	public static boolean initialize(Properties localProperties, String path){
+		try {
+			OpenSPCoop2Properties.openspcoopProperties = new OpenSPCoop2Properties(localProperties, path);	
 			return true;
 		}
 		catch(Exception e) {

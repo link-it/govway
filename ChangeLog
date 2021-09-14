@@ -11,6 +11,7 @@
 	Aggiunta funzionalità OP-1252
 	Sono state aggiunte le seguenti funzionalità:
 	- Aggiunta la possibiltà di accedere alle proprietà definite negli applicativi e nei soggetti all'interno della risoluzione dei criteri dinamici utilizzabili nell funzionalità quali trasformazioni, autorizzazione etc...
+	  Nelle medesime funzionalità è inoltre adesso possibile accedere alle proprietà indicate nella configurazione generale di GovWay, alle variabili di sistema e alle proprietà della jvm.
 	- Altri claims, oltre a quelli standard, possono essere aggiunti al payload JWT definendoli nel campo 'Claims' tra i criteri di configurazione 'ModI' della richiesta, in una fruizione, o della risposta, in una erogazione. 
 	  Tramite questa funzionalità è possibile sovrascriveranno i valori assegnati dal prodotto ai claims standard quali 'iss', 'sub', 'client_id'. È inoltre possibile disabilitarne la generazione.
 	- Su API REST aggiunta la possibilità di generare contemporaneamente i token negli header 'Authorization' e 'Agid-JWT-Signature'. 

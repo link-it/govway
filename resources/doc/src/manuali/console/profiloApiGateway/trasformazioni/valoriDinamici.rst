@@ -22,6 +22,9 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   *clientApplicationConfig:NAME* : accesso alle proprietà configurate nell'applicativo fruitore; il valore 'NAME' indica la proprietà desiderata
 -   *clientOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto fruitore; il valore 'NAME' indica la proprietà desiderata
 -   *providerOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto erogatore; il valore 'NAME' indica la proprietà desiderata
+-   *system:NAME* : valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
+-   *env:NAME* : valore associato alla variabile di sistema con nome 'NAME'
+-   *java:NAME* : valore associato alla variabile java con nome 'NAME'
 
 Per le risposte sono inoltre disponibili anche le seguenti risorse:
 
@@ -51,6 +54,9 @@ La sintassi per accedere le proprietà dinamiche sopraelencate è differente in 
 - ${clientApplicationConfig:NAME}
 - ${clientOrganizationConfig:NAME}
 - ${providerOrganizationConfig:NAME}
+- ${system:NAME}
+- ${env:NAME}
+- ${java:NAME}
 
 Nei casi in cui il testo della trasformazione è interpretato da framework esterni (quali Freemarker o Velocity) le proprietà vengono rese disponibili da Govway inizializzando una mappa contenente i valori come oggetti. In questo caso le chiavi della mappa sono le seguenti (tra parentesi sono indicati i tipi di dato corrispondenti):
 
@@ -71,6 +77,9 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - clientApplicationConfig (java.util.Map<String, String>)
 - clientOrganizationConfig (java.util.Map<String, String>)
 - providerOrganizationConfig (java.util.Map<String, String>)
+- system (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
+- env (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
+- java (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
 
 Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i seguenti ulteriori oggetti:
  

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.trasformazioni;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -28,11 +29,16 @@ import java.util.Map;
 
 import javax.xml.soap.AttachmentPart;
 
+import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.ContentExtractor;
 import org.openspcoop2.pdd.core.dynamic.Costanti;
@@ -52,6 +58,7 @@ import org.openspcoop2.utils.io.CompressorUtilities;
 import org.openspcoop2.utils.io.Entry;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -137,6 +144,19 @@ public class Test {
 	private static final String CONFIG3_APPLICATIVO_VALORE = "ConfigAppValore3";
 	private static final String CONFIG4_APPLICATIVO = "ConfigApp4";
 	private static final String CONFIG4_APPLICATIVO_VALORE = "ConfigAppValore4";
+	
+	private static final String SYSTEM_CONFIG1 = "System1";
+	private static final String SYSTEM_CONFIG1_VALORE = "SystemValore1";
+	private static final String SYSTEM_CONFIG2 = "System2";
+	private static final String SYSTEM_CONFIG2_VALORE = "SystemValore2";
+	
+	private static final String JAVA_CONFIG1 = "Java1";
+	private static final String JAVA_CONFIG1_VALORE = "JavaValore1";
+	private static final String JAVA_CONFIG2 = "Java2";
+	private static final String JAVA_CONFIG2_VALORE = "JavaValore2";
+	
+	private static final String ENV_CONFIG1 = "HOSTNAME";
+	private static final String ENV_CONFIG1_VALORE = System.getenv(ENV_CONFIG1);
 	
 	private static final String PDDCONTEXT_1 = "PDDCONTEXT_1";
 	private static final String PDDCONTEXT_1_VALORE = "PDDCONTEXT_Valore1";
@@ -244,7 +264,10 @@ public class Test {
 			"\""+CONFIG1+"\": \"${config:"+CONFIG1+"}\",\n"+
 			"\""+CONFIG1_APPLICATIVO+"\": \"${clientApplicationConfig:"+CONFIG1_APPLICATIVO+"}\",\n"+
 			"\""+CONFIG1_SOGGETTO_FRUITORE+"\": \"${clientOrganizationConfig:"+CONFIG1_SOGGETTO_FRUITORE+"}\",\n"+
-			"\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig:"+CONFIG1_SOGGETTO_EROGATORE+"}\",\n";
+			"\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig:"+CONFIG1_SOGGETTO_EROGATORE+"}\",\n"+
+			"\""+SYSTEM_CONFIG1+"\": \"${system:"+SYSTEM_CONFIG1+"}\",\n"+
+			"\""+ENV_CONFIG1+"\": \"${env:"+ENV_CONFIG1+"}\",\n"+
+			"\""+JAVA_CONFIG1+"\": \"${java:"+JAVA_CONFIG1+"}\",\n";
 	private static final String JSON_TEMPLATE_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse:yyyyMMdd_HHmmssSSS}\",\n"+
 			"\""+HEADER1_RISPOSTA+"\": \"${headerResponse:"+HEADER1_RISPOSTA+"}\",\n"+
@@ -279,7 +302,10 @@ public class Test {
 			"<"+CONFIG1+">"+"${config:"+CONFIG1+"}"+"</"+CONFIG1+">\n"+
 			"<"+CONFIG1_APPLICATIVO+">"+"${clientapplicationconfig:"+CONFIG1_APPLICATIVO+"}"+"</"+CONFIG1_APPLICATIVO+">\n"+
 			"<"+CONFIG1_SOGGETTO_FRUITORE+">"+"${clientorganizationconfig:"+CONFIG1_SOGGETTO_FRUITORE+"}"+"</"+CONFIG1_SOGGETTO_FRUITORE+">\n"+
-			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig:"+CONFIG1_SOGGETTO_EROGATORE+"}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n";
+			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig:"+CONFIG1_SOGGETTO_EROGATORE+"}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
+			"<"+SYSTEM_CONFIG1+">"+"${system:"+SYSTEM_CONFIG1+"}"+"</"+SYSTEM_CONFIG1+">\n"+
+			"<"+ENV_CONFIG1+">"+"${env:"+ENV_CONFIG1+"}"+"</"+ENV_CONFIG1+">\n"+
+			"<"+JAVA_CONFIG1+">"+"${java:"+JAVA_CONFIG1+"}"+"</"+JAVA_CONFIG1+">\n";
 	private static final String XML_TEMPLATE_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse:yyyyMMdd_HHmmssSSS}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"${headerResponse:"+HEADER1_RISPOSTA+"}"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -330,7 +356,10 @@ public class Test {
             "\""+CONFIG1+"\": \"${config[\""+CONFIG1+"\"]}\",\n"+
             "\""+CONFIG1_APPLICATIVO+"\": \"${clientApplicationConfig[\""+CONFIG1_APPLICATIVO+"\"]}\",\n"+
             "\""+CONFIG1_SOGGETTO_FRUITORE+"\": \"${clientOrganizationConfig[\""+CONFIG1_SOGGETTO_FRUITORE+"\"]}\",\n"+
-            "\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}\",\n";
+            "\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}\",\n"+
+            "\""+SYSTEM_CONFIG1+"\": \"${system.read(\""+SYSTEM_CONFIG1+"\")}\",\n"+
+            "\""+ENV_CONFIG1+"\": \"${env.read(\""+ENV_CONFIG1+"\")}\",\n"+
+            "\""+JAVA_CONFIG1+"\": \"${java.read(\""+JAVA_CONFIG1+"\")}\",\n";
 	private static final String JSON_TEMPLATE_FREEMARKER_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}\",\n"+
 			"\""+HEADER1_RISPOSTA+"\": \"<#if headerResponse[\""+HEADER1_RISPOSTA+"\"]??>${headerResponse[\""+HEADER1_RISPOSTA+"\"]}<#else>${headerResponse[\""+HEADER1_RISPOSTA+"\"?lower_case]}</#if>\",\n"+
@@ -397,7 +426,10 @@ public class Test {
 			"<"+CONFIG1+">"+"${config[\""+CONFIG1+"\"]}"+"</"+CONFIG1+">\n"+
 			"<"+CONFIG1_APPLICATIVO+">"+"${clientapplicationconfig[\""+CONFIG1_APPLICATIVO+"\"]}"+"</"+CONFIG1_APPLICATIVO+">\n"+
 			"<"+CONFIG1_SOGGETTO_FRUITORE+">"+"${clientorganizationconfig[\""+CONFIG1_SOGGETTO_FRUITORE+"\"]}"+"</"+CONFIG1_SOGGETTO_FRUITORE+">\n"+
-			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n";
+			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
+			"<"+SYSTEM_CONFIG1+">"+"${system.read(\""+SYSTEM_CONFIG1+"\")}"+"</"+SYSTEM_CONFIG1+">\n"+
+			"<"+ENV_CONFIG1+">"+"${env.read(\""+ENV_CONFIG1+"\")}"+"</"+ENV_CONFIG1+">\n"+
+			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n";	
 	private static final String XML_TEMPLATE_FREEMARKER_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse?string('dd.MM.yyyy HH:mm:ss')}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"<#if headerResponse[\""+HEADER1_RISPOSTA+"\"]??>${headerResponse[\""+HEADER1_RISPOSTA+"\"]}<#else>${headerResponse[\""+HEADER1_RISPOSTA+"\"?lower_case]}</#if>"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -480,7 +512,10 @@ public class Test {
             "\""+CONFIG1+"\": \"${config[\""+CONFIG1+"\"]}\",\n"+
             "\""+CONFIG1_APPLICATIVO+"\": \"${clientApplicationConfig[\""+CONFIG1_APPLICATIVO+"\"]}\",\n"+
             "\""+CONFIG1_SOGGETTO_FRUITORE+"\": \"${clientOrganizationConfig[\""+CONFIG1_SOGGETTO_FRUITORE+"\"]}\",\n"+
-            "\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}\",\n";
+            "\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}\",\n"+
+            "\""+SYSTEM_CONFIG1+"\": \"${system.read(\""+SYSTEM_CONFIG1+"\")}\",\n"+
+			"\""+ENV_CONFIG1+"\": \"${env.read(\""+ENV_CONFIG1+"\")}\",\n"+
+			"\""+JAVA_CONFIG1+"\": \"${java.read(\""+JAVA_CONFIG1+"\")}\",\n";
 	private static final String JSON_TEMPLATE_VELOCITY_BODY_RESPONSE = 	   
 			"\""+DATA_RISPOSTA+"\": \"${dateResponse}\",\n"+
 			"\""+HEADER1_RISPOSTA+"\": \"#if ($headerResponse[\""+HEADER1_RISPOSTA+"\"])${headerResponse[\""+HEADER1_RISPOSTA+"\"]}#else#set($tmp = \""+HEADER1_RISPOSTA_CASE_INSENTIVE+"\")${headerResponse[$tmp.toLowerCase()]}#end\",\n"+
@@ -546,7 +581,10 @@ public class Test {
 			"<"+CONFIG1+">"+"${config[\""+CONFIG1+"\"]}"+"</"+CONFIG1+">\n"+
 			"<"+CONFIG1_APPLICATIVO+">"+"${clientapplicationconfig[\""+CONFIG1_APPLICATIVO+"\"]}"+"</"+CONFIG1_APPLICATIVO+">\n"+
 			"<"+CONFIG1_SOGGETTO_FRUITORE+">"+"${clientorganizationconfig[\""+CONFIG1_SOGGETTO_FRUITORE+"\"]}"+"</"+CONFIG1_SOGGETTO_FRUITORE+">\n"+
-			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n";
+			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
+			"<"+SYSTEM_CONFIG1+">"+"${system.read(\""+SYSTEM_CONFIG1+"\")}"+"</"+SYSTEM_CONFIG1+">\n"+
+			"<"+ENV_CONFIG1+">"+"${env.read(\""+ENV_CONFIG1+"\")}"+"</"+ENV_CONFIG1+">\n"+
+			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n";
 	private static final String XML_TEMPLATE_VELOCITY_BODY_RESPONSE =
 			"<"+DATA_RISPOSTA+">"+"${dateResponse}"+"</"+DATA_RISPOSTA+">\n"+
 			"<"+HEADER1_RISPOSTA+">"+"#if ($headerResponse[\""+HEADER1_RISPOSTA+"\"])${headerResponse[\""+HEADER1_RISPOSTA+"\"]}#else#set($tmp = \""+HEADER1_RISPOSTA_CASE_INSENTIVE+"\")${headerResponse[$tmp.toLowerCase()]}#end"+"</"+HEADER1_RISPOSTA+">\n"+
@@ -696,10 +734,27 @@ public class Test {
 			COMPRESS_SOAP_TEMPLATE_REQUEST+"\n"+
 			COMPRESS_ENTRY_NAME3+"="+COMPRESS_ENTRY_NAME3_VALORE_STATICO;
 	
-	
+	private static final String CONFIG = "<openspcoop2 xmlns=\"http://www.openspcoop2.org/core/config\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openspcoop2.org/core/config config.xsd\">\n"+
+			"	<soggetto tipo=\"proxy\" nome=\"MinisteroFruitore\" />\n"+
+			"   <configurazione> \n"+
+			"          <accesso-registro>\n"+
+			"               <registro nome=\"registroXML\" tipo=\"xml\" location=\"registroServizi.xml\" />\n"+
+			"          </accesso-registro>\n"+
+			"          <inoltro-buste-non-riscontrate cadenza=\"60\" />\n"+
+			"          <messaggi-diagnostici severita-log4j=\"infoIntegration\" severita=\"infoIntegration\" />\n"+
+			"          <system-properties>\n"+
+			"          		<system-property nome=\""+SYSTEM_CONFIG1+"\" valore=\""+SYSTEM_CONFIG1_VALORE+"\"/>\n"+
+			"          		<system-property nome=\""+SYSTEM_CONFIG2+"\" valore=\""+SYSTEM_CONFIG2_VALORE+"\"/>\n"+
+			"          </system-properties>\n"+
+			"     </configurazione>\n"+
+			"</openspcoop2>";
 	
 	
 	public static void main(String [] args) throws Exception{
+		
+		File fTmpConfig = File.createTempFile("configTest", ".xml"); 
+		File fTmpOp2Properties = File.createTempFile("govway", ".properties"); 
+		try {
 		
 		TipoTrasformazione tipoTest = null;
 		if(args!=null && args.length>0) {
@@ -782,6 +837,20 @@ public class Test {
 		pddContext.addObject(PDDCONTEXT_2, PDDCONTEXT_2_VALORE);
 		pddContext.addObject(PDDCONTEXT_3, PDDCONTEXT_3_VALORE);
 		pddContext.addObject(PDDCONTEXT_4, PDDCONTEXT_4_VALORE);
+		
+		FileSystemUtilities.writeFile(fTmpOp2Properties.getAbsolutePath(), "org.openspcoop2.pdd.confDirectory=/tmp\norg.openspcoop2.pdd.server=web".getBytes());
+		OpenSPCoop2Properties.initialize(null, fTmpOp2Properties.getAbsolutePath());
+		PddProperties.initialize(fTmpOp2Properties.getAbsolutePath(), null);
+		
+		AccessoConfigurazionePdD configPdD = new AccessoConfigurazionePdD();
+		configPdD.setTipo("xml");
+		configPdD.setLocation(fTmpConfig.getAbsolutePath());
+		FileSystemUtilities.writeFile(fTmpConfig.getAbsolutePath(), CONFIG.getBytes());
+		DriverConfigurazioneXML.disableBuildXsdValidator();
+		ConfigurazionePdDReader.initialize(configPdD, log, log, null, null, true, false, false, false, null);
+		
+		System.setProperty(JAVA_CONFIG1, JAVA_CONFIG1_VALORE);
+		System.setProperty(JAVA_CONFIG2, JAVA_CONFIG2_VALORE);
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
@@ -1050,7 +1119,15 @@ public class Test {
 					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
 			
 		}
-		
+	
+		}finally {
+			if(fTmpConfig!=null) {
+				fTmpConfig.delete();
+			}
+			if(fTmpOp2Properties!=null) {
+				fTmpOp2Properties.delete();
+			}
+		}
 	}
 	
 	private static void test(Logger log, OpenSPCoop2MessageFactory messageFactory, TipoTrasformazione tipoTest, String prefix,
@@ -1485,6 +1562,27 @@ public class Test {
 		if(!contenuto.contains(CONFIG1_SOGGETTO_EROGATORE_VALORE)) {
 			throw new Exception("Valore '"+CONFIG1_SOGGETTO_EROGATORE_VALORE+"' per field '"+CONFIG1_SOGGETTO_EROGATORE+"' non trovato");
 		}	
+		
+		if(!contenuto.contains(SYSTEM_CONFIG1)) {
+			throw new Exception("Configurazione '"+SYSTEM_CONFIG1+"' non trovata");
+		}
+		if(!contenuto.contains(SYSTEM_CONFIG1_VALORE)) {
+			throw new Exception("Valore '"+SYSTEM_CONFIG1_VALORE+"' per field '"+SYSTEM_CONFIG1+"' non trovato");
+		}
+		
+		if(!contenuto.contains(JAVA_CONFIG1)) {
+			throw new Exception("Configurazione '"+JAVA_CONFIG1+"' non trovata");
+		}
+		if(!contenuto.contains(JAVA_CONFIG1_VALORE)) {
+			throw new Exception("Valore '"+JAVA_CONFIG1_VALORE+"' per field '"+JAVA_CONFIG1+"' non trovato");
+		}
+		
+		if(!contenuto.contains(ENV_CONFIG1)) {
+			throw new Exception("Configurazione '"+ENV_CONFIG1+"' non trovata");
+		}
+		if(!contenuto.contains(ENV_CONFIG1_VALORE)) {
+			throw new Exception("Valore '"+ENV_CONFIG1_VALORE+"' per field '"+ENV_CONFIG1+"' non trovato");
+		}
 
 	}
 	

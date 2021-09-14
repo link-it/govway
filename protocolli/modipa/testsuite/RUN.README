@@ -7,6 +7,18 @@ Prerequisiti:
     update configurazione set multitenant_stato='abilitato', multitenant_fruizioni='escludiSoggettoFruitore', multitenant_erogazioni='escludiSoggettoErogatore';
   NOTA:!!!una volta impostato riavviare l'application server!!!
 
++ Creare le proprieta di sistema, accedendo alla sezione 'Configurazione -> Generale -> Proprietà di Sistema':
+  - nome: SystemProperty1 valore: SystemValue1
+  - nome: JavaProperty1 valore: JavaValue1
+  Il comando sql per crearle è:
+    INSERT INTO pdd_sys_props (nome,valore) VALUES ('SystemProperty1','SystemValue1');
+    INSERT INTO pdd_sys_props (nome,valore) VALUES ('JavaProperty1','JavaValue1');
+  NOTA:!!!una volta impostato riavviare l'application server!!!
+
++ Aggiungere la variabile di ambiene 'EnvProperty1' con valore 'EnvValue1'
+  Per farlo aggiungere in standalone.conf (wildfly) o setenv.sh (tomcat) l'istruzione:
+	export EnvProperty1=EnvValue1
+
 + Configurare l'ambiente di esecuzione dei test:
 
 	- Configurare il file di properties delle classi junit in <src/testsuite.properties>
