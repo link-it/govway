@@ -31,6 +31,9 @@
 	- Sulla singola erogazione (configurazione 'ModI' della richiesta) o sulla fruizione (configurazione 'Modi' della risposta) è adesso possibile configurate un intervallo temporale (in secondi) 
 	  per cui i token creati precedentemente all'intervallo indicato verranno rifiutati. 
 	  La nuova opzione consente di sovrascrivere la configurazione di default in cui i token vengono rifiutati se sono stati creati da più di 5 minuti.
+	- Nelle tracce, per default, adesso il prodotto non salva più i token di sicurezza scambiati. 
+	  È possibile ripristinare il precedente salvataggio abilitando la proprietà 'org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneToken.enabled' 
+	  all'interno del file 'modipa_local.properties' presente nella directory di configurazione.
 
 2021-08-26  Andrea Poli <apoli@link.it>
 

@@ -456,7 +456,15 @@ public class Tracciamento {
 				
 				// Traccia
 				Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
-				traccia.setBustaAsRawContent(busta);
+				boolean saveHeader = true;
+				try {
+					saveHeader = (this.protocolFactory==null || this.protocolFactory.createProtocolConfiguration().isAbilitatoSalvataggioHeaderProtocolloTracce());
+				}catch(Throwable e) {
+					this.logError("Comprensione opzione 'salvataggio header protocollo tracce' fallita: "+e.getMessage(), new Exception(e));
+				}
+				if(saveHeader) {
+					traccia.setBustaAsRawContent(busta);
+				}
 				
 				try{
 					
@@ -750,7 +758,15 @@ public class Tracciamento {
 				
 				// Traccia
 				Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
-				traccia.setBustaAsRawContent(busta);
+				boolean saveHeader = true;
+				try {
+					saveHeader = (this.protocolFactory==null || this.protocolFactory.createProtocolConfiguration().isAbilitatoSalvataggioHeaderProtocolloTracce());
+				}catch(Throwable e) {
+					this.logError("Comprensione opzione 'salvataggio header protocollo tracce' fallita: "+e.getMessage(), new Exception(e));
+				}
+				if(saveHeader) {
+					traccia.setBustaAsRawContent(busta);
+				}
 				
 				try{
 				

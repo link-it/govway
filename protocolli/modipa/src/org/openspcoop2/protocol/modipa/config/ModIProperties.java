@@ -927,6 +927,33 @@ public class ModIProperties {
 		return ModIProperties.isGenerazioneTracce;
 	}
 	
+    private static Boolean isGenerazioneTracce_registraToken = null;
+	public Boolean isGenerazioneTracce_registraToken(){
+		if(ModIProperties.isGenerazioneTracce_registraToken==null){
+			
+			Boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.modipa.generazioneTracce.registrazioneToken.enabled";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					ModIProperties.isGenerazioneTracce_registraToken = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprietà '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					ModIProperties.isGenerazioneTracce_registraToken = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.debug("Proprietà '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				ModIProperties.isGenerazioneTracce_registraToken = defaultValue;
+			}
+		}
+
+		return ModIProperties.isGenerazioneTracce_registraToken;
+	}
+	
 	
 	
 	
