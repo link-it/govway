@@ -100,6 +100,10 @@ Per creare una tag version:
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 
-18. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
+18. Sistemare docker-compose.yml e database presente anche in resources/scenari/scenari_oauth_client_credentials/scenari_oauth_client_credentials.zip
+    Sistemare anche il database utilizzando le medesime istruzioni del punto precedente.
+    Come test di verifica usare i comandi descritti in: https://github.com/teamdigitale/api-gateway-tools/blob/master/gateways/govway/DOCKER.md
 
-19. (PVersion) Creazione versione tag
+19. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
+
+20. (PVersion) Creazione versione tag
