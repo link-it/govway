@@ -42,5 +42,13 @@ public class StringConsoleItem extends AbstractConsoleItem<String> {
 	public void setRows(Integer rows) {
 		this.rows = rows;
 	}
-
+	
+	@Override
+	protected String cloneValue(String value) throws ProtocolException {
+		try {
+			return new String(value);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
 }

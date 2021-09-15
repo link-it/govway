@@ -1,3 +1,9 @@
+2021-09-15  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Per migliorare l'usabilità delle console è stato aggiunto il criterio di espandere o richiudere le sezioni all'interno delle configurazione dei specifici Profili di Interoperabilità.
+	La funzionalità è stata attivata per le subsection 'Informazioni Utente' e 'Contemporaneità Token Authorization e Agid-JWT-Signature' presenti nella configurazione ModI delle erogazioni o delle fruizioni.
+
 2021-09-13  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
@@ -61,7 +67,7 @@
 	- Sulla console di monitoraggio, nello storico delle transazioni, dopo aver effettuato una ricerca e aver presentato i risultati viene adesso fornita la possibilità di effettuare una nuova ricerca, 
 	con i medesimi criteri, senza dover riaprire il filtro attraverso un pulsante di refresh posto accanto alla lente che consente di riaprire il filtro di ricerca.
 	- Sulla console di gestione, nei filtri di ricerca, è adesso possibbile espandere o richiudere i criteri di ricerca relative alle sotto-sezioni. 
-	  Il criterio di espandere o richiedere le sezioni è inoltra stata riportata nella maschera di configurazione relativa al Controllo degli Accessi di una erogazione o fruizione di API.
+	  Il criterio di espandere o richiudere le sezioni è inoltra stata riportata nella maschera di configurazione relativa al Controllo degli Accessi di una erogazione o fruizione di API.
 	
 2021-08-02  Andrea Poli <apoli@link.it>
 

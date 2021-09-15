@@ -2795,8 +2795,11 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		if(corniceSicurezza && fruizione && request) {
 			
-			configuration.addConsoleItem(ProtocolPropertiesFactory.newSubTitleItem(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_RICHIESTA_ID, 
-					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_RICHIESTA_LABEL));
+			SubtitleConsoleItem subtitleItem = (SubtitleConsoleItem) ProtocolPropertiesFactory.newSubTitleItem(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_RICHIESTA_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_RICHIESTA_LABEL);
+			subtitleItem.setCloseable(true);
+			subtitleItem.setLastItemId(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_ID);
+			configuration.addConsoleItem(subtitleItem);
 		
 			StringConsoleItem modeCodiceEnteItem = (StringConsoleItem) 
 					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
@@ -2808,6 +2811,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			((StringConsoleItem)modeCodiceEnteItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_MODE_LABEL_RIDEFINISCI,
 					ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
 			modeCodiceEnteItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE_DEFAULT_VALUE);
+			modeCodiceEnteItem.setUseDefaultValueForCloseableSection(true);
 			modeCodiceEnteItem.setReloadOnChange(true);
 			configuration.addConsoleItem(modeCodiceEnteItem);
 			
@@ -2834,6 +2838,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			((StringConsoleItem)modeUserItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_MODE_LABEL_RIDEFINISCI,
 					ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
 			modeUserItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE_DEFAULT_VALUE);
+			modeUserItem.setUseDefaultValueForCloseableSection(true);
 			modeUserItem.setReloadOnChange(true);
 			configuration.addConsoleItem(modeUserItem);
 			
@@ -2860,6 +2865,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			((StringConsoleItem)modeIPUserItem).addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_MODE_LABEL_RIDEFINISCI,
 					ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
 			modeIPUserItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE_DEFAULT_VALUE);
+			modeIPUserItem.setUseDefaultValueForCloseableSection(true);
 			modeIPUserItem.setReloadOnChange(true);
 			configuration.addConsoleItem(modeIPUserItem);
 			
@@ -2875,6 +2881,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				profiloSicurezzaMessaggioCorniceIPUserItem.setType(ConsoleItemType.HIDDEN);
 			}
 			configuration.addConsoleItem(profiloSicurezzaMessaggioCorniceIPUserItem);
+			
+			// NOTA: se si aggiunge un elemento a questo posizione, riconfigurare setLastItemId nel subsection item
 		}
 		
 		

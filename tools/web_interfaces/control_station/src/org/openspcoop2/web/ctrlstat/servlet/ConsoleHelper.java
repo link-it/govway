@@ -3696,6 +3696,13 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	public Vector<DataElement> addProtocolPropertiesToDatiRegistry(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
+		
+		String titleId = null;
+		String endTitleId = null;
+		
+		String subtitleId = null;
+		String endSubtitleId = null;
+		
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
 			// imposto nel default value il valore attuale.
@@ -3710,6 +3717,29 @@ public class ConsoleHelper implements IConsoleHelper {
 			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolPropertyRegistry(item.getId(), listaProtocolPropertiesDaDB); 
 			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,this,item, defaultItemValue,
 					consoleOperationType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+			
+			if(ConsoleItemType.TITLE.equals(item.getType()) && item instanceof TitleConsoleItem) {
+				TitleConsoleItem titleItem = (TitleConsoleItem) item;
+				if(titleItem.isCloseable()) {
+					titleId = titleItem.getId();
+					endTitleId = titleItem.getLastItemId();
+				}
+			}
+			else if(ConsoleItemType.SUBTITLE.equals(item.getType()) && item instanceof SubtitleConsoleItem) {
+				SubtitleConsoleItem subItem = (SubtitleConsoleItem) item;
+				if(subItem.isCloseable()) {
+					subtitleId = subItem.getId();
+					endSubtitleId = subItem.getLastItemId();
+				}
+			}
+			else {
+				if(endTitleId!=null && endTitleId.equals(item.getId())) {
+					this.impostaAperturaTitle(dati, titleId);
+				}
+				else if(endSubtitleId!=null && endSubtitleId.equals(item.getId())) {
+					this.impostaAperturaSubTitle(dati, subtitleId);
+				}
+			}
 		}
 
 		// Imposto il flag per indicare che ho caricato la configurazione
@@ -3752,13 +3782,17 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			if(ConsoleItemType.TITLE.equals(item.getType()) && item instanceof TitleConsoleItem) {
 				TitleConsoleItem titleItem = (TitleConsoleItem) item;
-				titleId = titleItem.getId();
-				endTitleId = titleItem.getLastItemId();
+				if(titleItem.isCloseable()) {
+					titleId = titleItem.getId();
+					endTitleId = titleItem.getLastItemId();
+				}
 			}
 			else if(ConsoleItemType.SUBTITLE.equals(item.getType()) && item instanceof SubtitleConsoleItem) {
 				SubtitleConsoleItem subItem = (SubtitleConsoleItem) item;
-				subtitleId = subItem.getId();
-				endSubtitleId = subItem.getLastItemId();
+				if(subItem.isCloseable()) {
+					subtitleId = subItem.getId();
+					endSubtitleId = subItem.getLastItemId();
+				}
 			}
 			else {
 				if(endTitleId!=null && endTitleId.equals(item.getId())) {

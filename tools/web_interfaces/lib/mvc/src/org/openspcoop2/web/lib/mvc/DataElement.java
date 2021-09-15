@@ -244,6 +244,10 @@ public class DataElement {
 		if(DataElementType.TITLE.toString().equals(s)) {
 			this.statoSottosezione = STATO_APERTURA_SEZIONI.DISABILITATO;
 		}
+		// Subtitle per default non sono chiudibili dall'utente
+		if(DataElementType.SUBTITLE.toString().equals(s)) {
+			this.statoSottosezione = STATO_APERTURA_SEZIONI.DISABILITATO;
+		}
 	}
 	public String getType() {
 		return DataElement.checkNull(this.type);

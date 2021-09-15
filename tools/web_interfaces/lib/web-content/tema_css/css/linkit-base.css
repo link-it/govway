@@ -48,6 +48,10 @@ fieldset {
     padding-right: 0px;
 }
 
+.subtitle span > a.navigatorAnchorClosable {
+	font-size: 16px;
+}
+
 span.navigatorAnchorClosable{
 	vertical-align: middle;
 }
@@ -1387,6 +1391,10 @@ div.intervalInnerDiv label {
 
 .subtitleOpen {
 	padding: 20px 20px 4px 5px;
+}
+
+.subtitleBox {
+	padding: 4px 0px 0px 0px;
 }
 
 .subtitle span{

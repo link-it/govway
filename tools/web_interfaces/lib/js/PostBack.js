@@ -143,6 +143,10 @@ function scrollToPostBackElement(destElement) {
 			var elemPosiz = elem.closest('div.prop').prevAll('div.subtitle').find('span > a.navigatorAnchor');
 			
 			if(elemPosiz.length == 0) {
+				elemPosiz = elem.closest('div.prop').parent().prev().find('span > a.navigatorAnchor');
+			}
+			
+			if(elemPosiz.length == 0) {
 				elemPosiz = elem.closest("fieldset").find('legend > a.navigatorAnchor');
 			}
 			

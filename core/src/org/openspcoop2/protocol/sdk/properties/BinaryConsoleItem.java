@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk.properties;
 
+import java.io.ByteArrayOutputStream;
+
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 
@@ -85,5 +87,18 @@ public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
 
 	public void setNoteUpdate(String noteUpdate) {
 		this.noteUpdate = noteUpdate;
+	}
+	
+	@Override
+	protected byte[] cloneValue(byte[] value) throws ProtocolException {
+		try {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			bout.write(value);
+			bout.flush();
+			bout.close();
+			return bout.toByteArray();
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 	}
 }

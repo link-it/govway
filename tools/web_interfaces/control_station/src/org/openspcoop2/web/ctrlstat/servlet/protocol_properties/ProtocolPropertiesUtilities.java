@@ -287,8 +287,8 @@ public class ProtocolPropertiesUtilities {
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come un "+type);
 		}
 		
-		if(item.isUseDefaultValueForCloseableSection() && item.getDefaultValue()!=null && item.getDefaultValue() instanceof String) {
-			String s = (String) item.getDefaultValue();
+		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
+			String s = (String) item.getDefaultValueForCloseableSection();
 			de.setValoreDefault(s);
 		}		
 
@@ -487,8 +487,8 @@ public class ProtocolPropertiesUtilities {
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una CheckBox");
 		}
 		
-		if(item.isUseDefaultValueForCloseableSection() && item.getDefaultValue()!=null && item.getDefaultValue() instanceof Boolean) {
-			boolean b = (Boolean) item.getDefaultValue();
+		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof Boolean) {
+			boolean b = (Boolean) item.getDefaultValueForCloseableSection();
 			de.setValoreDefaultCheckbox(b);
 		}
 
@@ -608,8 +608,8 @@ public class ProtocolPropertiesUtilities {
 		de.setValues(values);
 		de.setLabels(labels); 
 
-		if(item.isUseDefaultValueForCloseableSection() && item.getDefaultValue()!=null && item.getDefaultValue() instanceof String) {
-			String s = (String) item.getDefaultValue();
+		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
+			String s = (String) item.getDefaultValueForCloseableSection();
 			de.setValoreDefaultSelect(s);
 		}
 		
@@ -665,8 +665,8 @@ public class ProtocolPropertiesUtilities {
 		de.setValues(values);
 		de.setLabels(labels); 
 		
-		if(item.isUseDefaultValueForCloseableSection() && item.getDefaultValue()!=null && item.getDefaultValue() instanceof String) {
-			String s = (String) item.getDefaultValue();
+		if(item.getDefaultValueForCloseableSection()!=null && item.getDefaultValueForCloseableSection() instanceof String) {
+			String s = (String) item.getDefaultValueForCloseableSection();
 			de.setValoreDefaultMultiSelect(new String [] {s});
 		}
 		

@@ -49,5 +49,13 @@ public class BooleanConsoleItem extends AbstractConsoleItem<Boolean> {
 	protected BooleanConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
 		super(id, label, type);
 	}
-
+	
+	@Override
+	protected Boolean cloneValue(Boolean value) throws ProtocolException {
+		try {
+			return Boolean.valueOf(value.booleanValue());
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
 }

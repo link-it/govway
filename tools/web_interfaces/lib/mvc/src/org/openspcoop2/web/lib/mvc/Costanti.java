@@ -257,6 +257,10 @@ public class Costanti {
 	
 	public final static String TOOLTIP_VISUALIZZA_FILTRI_RICERCA = "Visualizza Filtri di Ricerca";
 	public final static String TOOLTIP_NASCONDI_FILTRI_RICERCA = "Nascondi Filtri di Ricerca";
+	public final static String TOOLTIP_VISUALIZZA_FIELDSET = "Visualizza Sezione";
+	public final static String TOOLTIP_NASCONDI_FIELDSET = "Nascondi Sezione";
+	public final static String TOOLTIP_VISUALIZZA_SUBTITLE = "Visualizza Sezione";
+	public final static String TOOLTIP_NASCONDI_SUBTITLE = "Nascondi Sezione";
 	public final static String TOOLTIP_ICONA_COPIA = "Copia {0}";
 	
 	public final static String TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "Visualizza Sezione";
@@ -264,6 +268,10 @@ public class Costanti {
 	
 	public final static String ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA = "expand_more";
 	public final static String ICON_NASCONDI_SEZIONE_FILTRI_RICERCA = "expand_less";
+	public final static String ICON_VISUALIZZA__FIELDSET = "expand_more";
+	public final static String ICON_NASCONDI__FIELDSET = "expand_less";
+	public final static String ICON_VISUALIZZA_SUBTITLE = "expand_more";
+	public final static String ICON_NASCONDI_SUBTITLE = "expand_less";
 	
 	public final static String INFO_BUTTON_ICON = "&#xE88E;";
 	public final static String INFO_BUTTON_ICON_WHITE = "&#xE88F;";

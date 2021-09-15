@@ -169,6 +169,7 @@ if(elementsRequiredEnabled){
 String classSpanNoEdit="spanNoEdit";
 String classDivNoEdit="divNoEdit";
 boolean fieldsetOpen = false;
+boolean subtitleOpen = false;
 for (int i = 0; i < dati.size(); i++) {
 	DataElement de = (DataElement) dati.elementAt(i);
   
@@ -196,7 +197,7 @@ for (int i = 0; i < dati.size(); i++) {
     			String cssClassLegend = "";
     			String cssClassFieldset = "";
     			if(gestioneAperturaFieldset) {
-    				titoloComandoApertura = " title=\""+ Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA +"\"";
+    				titoloComandoApertura = " title=\""+ Costanti.TOOLTIP_VISUALIZZA_FIELDSET +"\"";
     				cssClassTitle = "navigatorAnchorClosable";
     				cssClassLegend = "navigatorAnchorClosable";
     				
@@ -241,15 +242,15 @@ for (int i = 0; i < dati.size(); i++) {
 							      		
 							      		if(subtitle_<%= deName  %>_aperto){
 						      				$("#<%= titleDivId  %>").show();
-						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 						      			} else {
 						      				$("#<%= titleDivId  %>").hide();
-						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+						      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+						      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+						      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 						      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 						      			}
 							      		
@@ -258,16 +259,16 @@ for (int i = 0; i < dati.size(); i++) {
 							      			
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
-							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
-							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
 							      		});
@@ -277,16 +278,16 @@ for (int i = 0; i < dati.size(); i++) {
 							      			
 							      			if(subtitle_<%= deName  %>_aperto){
 							      				$("#<%= titleDivId  %>").show();
-							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
 							      				inizializzaSelectSezione('<%= titleDivId  %>');
 							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
 							      			} else {
 							      				$("#<%= titleDivId  %>").hide();
-							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
+							      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
+							      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA__FIELDSET%>');
+							      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
 							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
 							      			}
 							      		});
@@ -301,11 +302,137 @@ for (int i = 0; i < dati.size(); i++) {
     			}
     		} else { // else title
     			if (type.equals("subtitle")){
+    				
+    				// gestion apertura e chiusura.
+        			STATO_APERTURA_SEZIONI statoAperturaSezione = de.getStatoSottosezione();
+        			boolean gestioneAperturaSubTitle = !STATO_APERTURA_SEZIONI.DISABILITATO.equals(statoAperturaSezione);
+    				
+    				String subtitleDeId = deName + "__id";
+    				
+    				String cssClassDivElementi = "subtitleBox";
+    				String cssClassTitle = "navigatorAnchor";
+        			String titoloComandoApertura = "";
+        			String cssClassSubtitle = "";
+        			if(gestioneAperturaSubTitle) {
+        				titoloComandoApertura = " title=\""+ Costanti.TOOLTIP_VISUALIZZA_SUBTITLE +"\"";
+        				cssClassTitle = "navigatorAnchorClosable";
+        				
+        				cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleCollapsed";
+        				if(de.isVisualizzaSezioneAperta()){
+        					cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleOpen";
+        				}
+        			}
+        			
+    				// se c'e' un altro field set aperto viene chiuso
+        			if(subtitleOpen){
+        				%>
+        				</div>
+            			<%
+            			subtitleOpen = false;
+        			}
+					
     				%>
-        			<div class="subtitle <%= labelStyleClass %>">
-        				<span class="subtitle"><a name="<%=rowName %>" class="navigatorAnchor"><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
-        			</div>
-        			<%
+    				<div class="<%= cssClassSubtitle %>" id="<%= deName  %>__divEsterno">
+    				
+	    				<%
+						if(gestioneAperturaSubTitle){
+	  						%>
+	    				<span class="subtitleGroup">
+	       					<span class="subtitleAnchor">
+	       						<i class="material-icons md-16" id="<%= deName  %>__icon" style="" title="<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>"><%= Costanti.ICON_VISUALIZZA_SUBTITLE%></i>
+	       					</span>
+	       					<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>"><%=deLabel %></a>
+	       				</span>
+	       				<%
+							} else {
+						%>
+	        			<div class="subtitle <%= labelStyleClass %>">
+	        				<span class="subtitle"><a name="<%=rowName %>"  class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
+	        			</div>
+	        			<%
+							}
+						%>
+						<%
+							if(gestioneAperturaSubTitle){
+						%>
+	        			<script type="text/javascript">
+	       					$(document).ready(function() {
+							<%
+								boolean sub = de.isVisualizzaSezioneAperta();
+				      		%>
+				      		var subtitle_<%= deName  %>_aperto = <%=sub %>; 
+				      		
+				      		if(subtitle_<%= deName  %>_aperto){
+			      				$("#<%= subtitleDeId  %>").show();
+			      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
+			      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
+			      			} else {
+			      				$("#<%= subtitleDeId  %>").hide();
+			      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+			      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
+			      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
+			      			}
+				      		
+				      		$("#<%= deName  %>__anchor").click(function(){
+				      			subtitle_<%= deName  %>_aperto = !subtitle_<%= deName  %>_aperto;
+				      			
+				      			if(subtitle_<%= deName  %>_aperto){
+				      				$("#<%= subtitleDeId  %>").show();
+				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
+				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
+				      				inizializzaSelectSezione('<%= subtitleDeId  %>');
+				      			} else {
+				      				$("#<%= subtitleDeId  %>").hide();
+				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
+				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
+				      			}
+				      		});
+				      		
+				      		$("#<%= deName  %>__icon").click(function(){
+				      			subtitle_<%= deName  %>_aperto = !subtitle_<%= deName  %>_aperto;
+				      			
+				      			if(subtitle_<%= deName  %>_aperto){
+				      				$("#<%= subtitleDeId  %>").show();
+				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
+				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
+				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
+				      				inizializzaSelectSezione('<%= subtitleDeId  %>');
+				      			} else {
+				      				$("#<%= subtitleDeId  %>").hide();
+				      				$("#<%= deName  %>__anchor").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").text('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__icon").attr('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
+				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
+				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
+				      			}
+				      		});
+	    										});
+	       				</script>
+       				<%
+						}
+					%>
+       			</div>
+       			<%
+       			
+	       			if(!subtitleOpen){
+	   	    			%>
+	   	    				<div id="<%= subtitleDeId  %>" class="<%=cssClassDivElementi %>">
+	   	    			<%
+	   	    			subtitleOpen = true;
+	       			}
         		} else { // else subtitle
 	    			if (type.equals("note")){
 	    				String noteValue = !de.getValue().equals("") ? de.getValue() : "&nbsp;";
@@ -1019,6 +1146,11 @@ for (int i = 0; i < dati.size(); i++) {
     	} // end else hidden
 	} // for
 
+	if(subtitleOpen){ // se c'e' un subtitle aperto ed ho finito gli elementi devo chiudere
+		%>
+		</div>
+		<%
+	}
 	if(fieldsetOpen){ // se c'e' un fieldset aperto ed ho finito gli elementi devo chiudere
 		%>
 			</div>

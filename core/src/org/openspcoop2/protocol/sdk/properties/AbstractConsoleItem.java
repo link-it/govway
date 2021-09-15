@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 
 	private T defaultValue;
-	private boolean useDefaultValueForCloseableSection = false;
+	private T defaultValueForCloseableSection; // il default value viene modificato, questo rimane impostato al valore iniziale
 	private boolean reloadOnChange;
 	private boolean required;
 	private String regexpr;
@@ -129,10 +129,16 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 		this.labelRight = labelRight;
 	}
 	
-	public boolean isUseDefaultValueForCloseableSection() {
-		return this.useDefaultValueForCloseableSection;
+	public void setUseDefaultValueForCloseableSection(boolean useDefaultValueForCloseableSection) throws ProtocolException {
+		if(this.defaultValue==null) {
+			throw new ProtocolException("Default value undefined");
+		}
+		this.defaultValueForCloseableSection = cloneValue(this.defaultValue);
 	}
-	public void setUseDefaultValueForCloseableSection(boolean useDefaultValueForCloseableSection) {
-		this.useDefaultValueForCloseableSection = useDefaultValueForCloseableSection;
+	
+	protected abstract T cloneValue(T value) throws ProtocolException;
+	
+	public T getDefaultValueForCloseableSection() {
+		return this.defaultValueForCloseableSection;
 	}
 }
