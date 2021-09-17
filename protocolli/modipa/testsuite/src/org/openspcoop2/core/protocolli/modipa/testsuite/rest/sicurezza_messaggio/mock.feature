@@ -240,7 +240,10 @@ Scenario: isTest('idar03-token-azione-puntuale-default') || isTest('idar03-token
     })
     """
 
-Scenario: isTest('doppi-header-idar03') || isTest('doppi-header-differenti-id-authorization') || isTest('doppi-header-differenti-id-agid-jwt-signature')
+Scenario: isTest('doppi-header-idar03') || isTest('doppi-header-differenti-id-authorization') || isTest('doppi-header-differenti-id-agid-jwt-signature') ||
+	isTest('doppi-header-solo-integrity-risposta') || 
+	isTest('doppi-header-authorization-richiesta-integrity-risposta') ||
+	isTest('doppi-header-solo-authorization-richiesta')
 
     * match requestHeaders['Authorization'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
@@ -248,7 +251,14 @@ Scenario: isTest('doppi-header-idar03') || isTest('doppi-header-differenti-id-au
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
     * def responseHeaders = { IDAR03TestHeader: "TestHeaderResponse" }
     
+Scenario: isTest('doppi-header-solo-authorization-richiesta-risposta') ||
+	isTest('doppi-header-solo-authorization-richiesta-delete')
 
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * def responseStatus = 204
+    * def responseHeaders = { IDAR03TestHeader: "TestHeaderResponse" }
+    
 
 ##########################################
 #                IDAR0302                #

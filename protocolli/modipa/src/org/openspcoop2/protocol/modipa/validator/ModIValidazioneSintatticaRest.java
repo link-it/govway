@@ -369,7 +369,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
-			boolean buildSecurityTokenInRequest, boolean headerDuplicati,
+			boolean buildSecurityTokenInRequest, boolean headerDuplicati, boolean securityHeaderObbligatorio,
 			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws Exception {
 		
 		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
@@ -394,7 +394,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		}
 		
 		
-		boolean attesoSecurityHeader = true;
+		boolean attesoSecurityHeader = securityHeaderObbligatorio;
 		if(!request) {
 			if(msg.isFault()) {
 				attesoSecurityHeader = false;

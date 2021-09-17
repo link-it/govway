@@ -712,23 +712,7 @@ public class ModIImbustamentoRest {
 						}
 					}
 					else {
-						List<String> values = null;
-						if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) && msg.getTransportRequestContext()!=null) {
-							values = msg.getTransportRequestContext().getHeaderValues(httpHeader);
-						}
-						else if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && msg.getTransportResponseContext()!=null) {
-							values = msg.getTransportResponseContext().getHeaderValues(httpHeader);
-						}
-						
-						// guardo anche eventuali header aggiunti tramite trasformazioni e da precedente chiamata di questo metodo (Authorization)
-						// Se presenti sovrascrivono gli header iniziali(metodo forward usato nei connettori)
-						if(mapForceTransportHeaders!=null && !mapForceTransportHeaders.isEmpty()) {
-							List<String> v = TransportUtils.getRawObject(mapForceTransportHeaders, httpHeader);
-							if(v!=null && !v.isEmpty()) {
-								values = v;
-							}
-						}
-						
+						List<String> values = getHeaderValues(ruoloMessaggio, msg, mapForceTransportHeaders, httpHeader);
 						if(values!=null && !values.isEmpty()) {
 							hdrName = httpHeader;
 							hdrValues.addAll(values);
@@ -877,4 +861,24 @@ public class ModIImbustamentoRest {
 		return bout.toString();
 	}
 	
+	public static List<String> getHeaderValues(RuoloMessaggio ruoloMessaggio, OpenSPCoop2Message msg, Map<String, List<String>> mapForceTransportHeaders, String httpHeader){
+		List<String> values = null;
+		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio) && msg.getTransportRequestContext()!=null) {
+			values = msg.getTransportRequestContext().getHeaderValues(httpHeader);
+		}
+		else if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && msg.getTransportResponseContext()!=null) {
+			values = msg.getTransportResponseContext().getHeaderValues(httpHeader);
+		}
+		
+		// guardo anche eventuali header aggiunti tramite trasformazioni e da precedente chiamata di questo metodo (Authorization)
+		// Se presenti sovrascrivono gli header iniziali(metodo forward usato nei connettori)
+		if(mapForceTransportHeaders!=null && !mapForceTransportHeaders.isEmpty()) {
+			List<String> v = TransportUtils.getRawObject(mapForceTransportHeaders, httpHeader);
+			if(v!=null && !v.isEmpty()) {
+				values = v;
+			}
+		}
+		
+		return values;
+	}
 }

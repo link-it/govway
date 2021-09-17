@@ -302,7 +302,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
 						Boolean multipleHeaderAuthorizationConfig = null;
 						if(rest) {
-							headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione);
+							headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, request);
 							if(headerTokenRest.contains(" ")) {
 								String [] tmp = headerTokenRest.split(" ");
 								if(tmp!=null && tmp.length==2 && tmp[0]!=null && tmp[1]!=null) {
@@ -365,11 +365,14 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						Map<String, Object> dynamicMap = new HashMap<String, Object>();
 						
 						if(rest) {
+							boolean headerDuplicati = true;
+							boolean securityHeaderObbligatorio = true;
+							
 							if(headerTokenRestIntegrity==null) {
 								
 								String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-										buildSecurityTokenInRequest, false,
+										buildSecurityTokenInRequest, !headerDuplicati, securityHeaderObbligatorio,
 										dynamicMap, datiRichiesta);
 								
 								if(token!=null) {
@@ -405,7 +408,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								}
 								String tokenAuthorization = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-										buildSecurityTokenInRequest, true,
+										buildSecurityTokenInRequest, headerDuplicati, securityHeaderObbligatorio,
 										dynamicMap, datiRichiesta);
 								
 								String audAuthorization = null;
@@ -430,12 +433,14 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								}
 								
 								// Integrity
+								// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
+								boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
 								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, this.protocolFactory, this.state, idSoggettoMittente, 
 										aspc, asps, sa, rest, fruizione, request,
 										false);
 								String tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
-										buildSecurityTokenInRequest, true,
+										buildSecurityTokenInRequest, headerDuplicati, securityHeaderIntegrityObbligatorio,
 										null, null); // gia' inizializzato sopra
 								
 								if(tokenIntegrity!=null) {
@@ -462,8 +467,13 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								// Finalizzo
 								
 								if(tokenAuthorization!=null && tokenIntegrity!=null) {
-
 									rawContent = new ModIBustaRawContent(tokenAuthorization, headerTokenRestIntegrity, tokenIntegrity);
+								}
+								else if(tokenAuthorization!=null) {
+									rawContent = new ModIBustaRawContent(headerTokenRest, tokenAuthorization);
+								}
+								else if(tokenIntegrity!=null) {
+									rawContent = new ModIBustaRawContent(headerTokenRestIntegrity, tokenIntegrity);
 								}
 								
 							}

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.modipa.builder;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.soap.SOAPEnvelope;
@@ -59,6 +60,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
 /**
@@ -260,7 +262,7 @@ public class ModIImbustamento {
 					String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
 					Boolean multipleHeaderAuthorizationConfig = null;
 					if(rest) {
-						headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione);
+						headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, isRichiesta);
 						if(headerTokenRest.contains(" ")) {
 							String [] tmp = headerTokenRest.split(" ");
 							if(tmp!=null && tmp.length==2 && tmp[0]!=null && tmp[1]!=null) {
@@ -358,16 +360,44 @@ public class ModIImbustamento {
 									dynamicMap);
 							
 							// Integrity
-							ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
-									rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
-									busta, bustaRichiesta, 
-									false);
-							String tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
-									securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-									now, jtiIntegrity, true,
-									dynamicMap);
-							protocolMessage.setBustaRawContent(new ModIBustaRawContent(tokenAuthorization, headerTokenRestIntegrity, tokenIntegrity));
+							// !! Nel caso di 2 header, quello integrity viene prodotto solo se c'è un payload o uno degli header indicati da firmare.
+							boolean addIntegrity = false;
+							boolean signedHeaders = false;
+							if(securityConfig.getHttpHeaders()!=null && !securityConfig.getHttpHeaders().isEmpty()) {
+								Map<String, List<String>> mapForceTransportHeaders = msg.getForceTransportHeaders();
+								for (String httpHeader : securityConfig.getHttpHeaders()) {
+									if(httpHeader.toLowerCase().equals(HttpConstants.DIGEST.toLowerCase())) {
+										continue; // se non c'è payload non ha senso, altrimenti entrera' nell'opzione hasContent
+									}
+									List<String> values = ModIImbustamentoRest.getHeaderValues(ruoloMessaggio, msg, mapForceTransportHeaders, httpHeader);
+									if(values!=null && !values.isEmpty()) {
+										signedHeaders = true;
+										break;
+									}
+								}
+							}
+							if(msg.castAsRest().hasContent() || signedHeaders) {
+								addIntegrity = true;
+							}
+							String tokenIntegrity = null;
+							if(addIntegrity) {
+								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
+										rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
+										busta, bustaRichiesta, 
+										false);
+								tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
+										securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
+										now, jtiIntegrity, true,
+										dynamicMap);
+							}
 							
+							if(tokenIntegrity!=null) {
+								protocolMessage.setBustaRawContent(new ModIBustaRawContent(tokenAuthorization, headerTokenRestIntegrity, tokenIntegrity));
+							}
+							else {
+								protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, tokenAuthorization));
+							}
+														
 						}
 					}
 					else {

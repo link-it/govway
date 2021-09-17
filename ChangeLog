@@ -20,10 +20,11 @@
 	  Nelle medesime funzionalità è inoltre adesso possibile accedere alle proprietà indicate nella configurazione generale di GovWay, alle variabili di sistema e alle proprietà della jvm.
 	- Altri claims, oltre a quelli standard, possono essere aggiunti al payload JWT definendoli nel campo 'Claims' tra i criteri di configurazione 'ModI' della richiesta, in una fruizione, o della risposta, in una erogazione. 
 	  Tramite questa funzionalità è possibile sovrascriveranno i valori assegnati dal prodotto ai claims standard quali 'iss', 'sub', 'client_id'. È inoltre possibile disabilitarne la generazione.
-	- Su API REST aggiunta la possibilità di generare contemporaneamente i token negli header 'Authorization' e 'Agid-JWT-Signature'. 
+	- Su API REST aggiunta la possibilità di generare contemporaneamente i token negli header 'Authorization' e 'Agid-JWT-Signature' (solamente nella richiesta o in entrambi i flussi). 
+	  La generazione contemporanea dei 2 header nella richiesta e del solo header 'Agid-JWT-Signature' nella risposta diventa il default proposto con un pattern di sicurezza 'Integrity'.
 	  La funzionalità permette di configurare i seguenti aspetti in fase di generazione:
 	  . generazione dei claim 'jti' e 'aud' identici o differenti nei 2 header
-	  . possibilità di personalizzare ulteriori claim (compresi 'sub' e 'iss') anche solo in uno dei due header
+	  . possibilità di personalizzare ulteriori claim (compresi 'sub' e 'iss' e 'client_id') anche solo in uno dei due header
 	  La fase di validazione consente invece:
 	  . configurare da quale header estrarre l'identificativo 'jti' utilizzato per filtrare le richieste duplicate
 	  . indicare un audience atteso differente

@@ -21,6 +21,170 @@ Background:
 		"""
 
 
+# Metto i test che non prevedono un payload nella richiesta (GET/DELETE) in cima perchè se eseguito dopo falliscono, per via di qualche bug di karate, se viene eseguita tutta la feature complessiva
+# FIX BUG KARATE
+
+@doppi-header-authorization-richiesta-integrity-risposta
+Scenario: Test con presenza dell'header Authorization nella richiesta e Agid-JWT-Signature nella risposta
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1"
+And path 'letturaSoloIntegrityRisposta'
+And request null
+And header GovWay-TestSuite-Test-ID = 'doppi-header-authorization-richiesta-integrity-risposta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method get
+Then status 200
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+
+* def response_digest = get server_integrity_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+
+@doppi-header-solo-authorization-richiesta
+Scenario: Test con presenza dell'header Authorization e dell'header Agid-JWT-Signature solo nella richiesta
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1"
+And path 'lettura'
+And request null
+And header GovWay-TestSuite-Test-ID = 'doppi-header-solo-authorization-richiesta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method get
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
+* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+
+* def response_digest = get server_integrity_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+
+
+@doppi-header-solo-authorization-richiesta-risposta
+Scenario: Test con presenza solo dell'header Authorization nella richiesta e nella risposta poichè si tratta di una DELETE
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1"
+And path 'eliminazione'
+And request null
+And header GovWay-TestSuite-Test-ID = 'doppi-header-solo-authorization-richiesta-risposta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method DELETE
+Then status 204
+And match response == ''
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Server-Integrity-Token == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
+
+* def other_checks_richiesta = 
+"""
+"""
+
+* def other_checks_risposta = 
+"""
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+
+
+@doppi-header-solo-authorization-richiesta-delete
+Scenario: Test con presenza solo dell'header Authorization nella richiesta poichè si tratta di una DELETE
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1"
+And path 'soloAuthorizationRichiesta'
+And request null
+And header GovWay-TestSuite-Test-ID = 'doppi-header-solo-authorization-richiesta-delete'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method DELETE
+Then status 204
+And match response == ''
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Client-Integrity-Token == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Server-Integrity-Token == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+
+* def other_checks_richiesta = 
+"""
+"""
+
+* def other_checks_risposta = 
+"""
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+# FINE FIX BUG KARATE
+
+
+
+
 @connettivita-base
 Scenario: Test connettività base
 
@@ -788,7 +952,7 @@ When method post
 Then status 200
 And match response == read('response.json')
 And match header Authorization == '#notpresent'
-
+And match header Agid-JWT-Signature == '#notpresent'
 
 * def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
 * def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
@@ -921,6 +1085,7 @@ Then status 502
 And match response == read('error-bodies/assenza-header-agid-jwt-signature-risposta.json')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
+
 @doppi-header-audience-risposta-authorization-non-valida-rispetto-client
 Scenario: L'erogatore genera un audience, nel token Authorization, differente da quello atteso e registrato sul client (atteso id identico nei due header)
 
@@ -972,6 +1137,57 @@ And match response == read('error-bodies/aud-token-agid-jwt-signature-risposta-n
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_traccia(tid,'Risposta') 
 * match result contains deep other_checks_risposta
+
+
+
+@doppi-header-solo-integrity-risposta
+Scenario: Test con presenza sia dell'header Authorization che Agid-JWT-Signature nella richiesta e solo Agid-JWT-Signature nella risposta
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03HeaderDuplicati/v1"
+And path 'soloIntegrityRisposta'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'doppi-header-solo-integrity-risposta'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header GovWay-TestSuite-GovWay-Server-Authorization-Token == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
+* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+
+* def request_digest = get client_integrity_token $.payload.signed_headers..digest
+* def response_digest = get server_integrity_token $.payload.signed_headers..digest
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' }
+])
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
+
 
 @doppi-header-audience-risposta-differente-audience-valida-rispetto-client
 Scenario: L'erogatore genera un audience, nel token Agid-JWT-Signature, differente da quello presente nel token Authorization (sono attesi due valori differenti, nell'authorization quello del client)
