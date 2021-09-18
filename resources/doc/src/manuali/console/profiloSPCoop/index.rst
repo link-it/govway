@@ -15,6 +15,6 @@ descritte tali differenze.
     :maxdepth: 2
 
     configurazione
-    profiliAsincroni
+    profiliAsincroni/index
     wsdl
     profiliGestione

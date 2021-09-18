@@ -214,7 +214,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		if(portaApplicativa.getGestioneToken() == null)
 			portaApplicativa.setGestioneToken(new GestioneToken());
 		
-		if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
+		if(gestioneToken!=null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			portaApplicativa.getGestioneToken().setPolicy(gestioneTokenPolicy);
 			if(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale)) {
 				portaApplicativa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.ABILITATO);

@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -54,8 +55,10 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -74,6 +77,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -267,6 +271,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
+			PddCore pddCore = new PddCore(saCore);
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			InvocazionePorta invocazionePorta = sa.getInvocazionePorta();
 			RispostaAsincrona ra = sa.getRispostaAsincrona();
@@ -315,6 +320,23 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
+			if(!saHelper.isModalitaCompleta()) {
+				IDSoggetto idSoggettoProprietario = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
+				Soggetto soggettoProprietario = soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
+				String dominio = pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
+			
+				List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
+				Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
+				parametersServletSAChange.add(pIdSA);
+				Parameter pIdSoggettoSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"");
+				parametersServletSAChange.add(pIdSoggettoSA);
+				if(dominio != null) {
+					Parameter pDominio = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio);
+					parametersServletSAChange.add(pDominio);
+				}
+				
+				lstParm.add(new Parameter(sa.getNome(), ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()])));
+			}
 			
 			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
 			
@@ -351,6 +373,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			}
 			else {
 				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI+nomeservizioApplicativo;
+				if(saHelper.isModalitaCompleta()==false) {
+					labelPerPorta = ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA;
+				}
 			}
 			
 			if(accessoDaListaAPS) {

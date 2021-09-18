@@ -4508,7 +4508,12 @@ public class RicezioneBuste {
 		RichiestaApplicativa richiestaApplicativa = null;
 		if(idPA!=null) {
 			richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore,
-					idModuloInAttesa,identitaPdD,idPA); 
+					idModuloInAttesa,identitaPdD,idPA);
+			if(idServizio!=null && idServizio.getAzione()!=null && 
+					idPA!=null && idPA.getIdentificativiErogazione()!=null && idPA.getIdentificativiErogazione().getIdServizio()!=null &&
+					idPA.getIdentificativiErogazione().getIdServizio().getAzione()==null) {
+				idPA.getIdentificativiErogazione().getIdServizio().setAzione(idServizio.getAzione());
+			}
 		}
 		else {
 			// Scenario Asincrono Simmetrico - Risposta

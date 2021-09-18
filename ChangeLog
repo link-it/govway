@@ -1,3 +1,10 @@
+2021-09-18  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSPCoop]
+	Durante il restyling grafico delle liste accessibili dal menù principale relativo agli Applicativi, realizzato con il rilascio della versione 3.3.3, 
+	è venuta meno la possibilità di configurare i connettori relativi alla 'Risposta Asincrona' richiesti dai profili asincroni.
+	La problematica è stata risolta.
+
 2021-09-15  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
