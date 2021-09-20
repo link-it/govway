@@ -21,7 +21,7 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
         :maxdepth: 2
 
 	applicabilita
-	header
+	header/index
 	claims
 	header_soap
 	sbustamento

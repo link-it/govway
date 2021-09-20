@@ -18,7 +18,7 @@ Altri claims possono essere aggiunti al payload JWT definendoli nel campo 'Claim
 .. note::
       Non è consentito indicare i claims 'iat, nbf, exp, jti'. In una richiesta non è inoltre consentito indicare ne il claim 'aud' ne il claim 'client_id' (quest'ultimo prevede un caso eccezionale con il valore ${notGenerate} descritto in seguito). In una risposta, invece, non è consentito indicare il claim 'request_digest'. 
 
-Di seguito vengono forniti i valori di default inseriti da GovWay nel payload jwt per quanto concerne i claims che individuano gli attori, differenziando tra il token di richiesta generato da una fruizione e il token di risposta generato da una erogazione:
+Di seguito vengono forniti i valori di default inseriti da GovWay nel payload jwt per quanto concerne i claims che individuano gli attori, differenziando tra il token di richiesta generato da una fruizione e il token di risposta generato da una erogazione. Per ogni claim viene anche indicato come modificare il valore di default associato.
 
 - 'aud': indica a chi è riferito il security token
 

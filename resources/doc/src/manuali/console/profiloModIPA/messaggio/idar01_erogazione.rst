@@ -21,7 +21,7 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
     + Audience: valore del campo Audience atteso nel token di sicurezza della richiesta.
 
    .. figure:: ../../_figure_console/modipa_erogazione_richiesta.png
-    :scale: 50%
+    :scale: 70%
     :name: erogazione_richiesta_fig
 
     Dati per la configurazione della sicurezza messaggio sulla richiesta di una erogazione
@@ -36,7 +36,7 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
     + Time to Live (secondi): validità temporale del token prodotto.
 
    .. figure:: ../../_figure_console/modipa_erogazione_risposta.png
-    :scale: 50%
+    :scale: 70%
     :name: erogazione_risposta_fig
 
     Dati per la configurazione della sicurezza messaggio sulla risposta di una erogazione
@@ -57,7 +57,7 @@ Nel contesto dei pattern di sicurezza messaggio è possibile registrare anche gl
 Per abilitare quanto al punto 1 è sufficiente la sola registrazione degli applicativi esterni coinvolti (:numref:`applicativo_esterno_fig`).
 
    .. figure:: ../../_figure_console/modipa_applicativo_esterno.png
-    :scale: 50%
+    :scale: 70%
     :name: applicativo_esterno_fig
 
     Registrazione di un applicativo esterno
@@ -67,7 +67,7 @@ Dopo aver indicato il dominio "Esterno" per l'applicativo, sarà necessario sele
 La registrazione dell'applicativo esterno comprende anche la sezione con i dati relativi alla sicurezza messaggio (:numref:`applicativo_esterno_upload_fig`).
 
    .. figure:: ../../_figure_console/modipa_applicativo_esterno_upload.png
-    :scale: 50%
+    :scale: 70%
     :name: applicativo_esterno_upload_fig
 
     Dati ModI relativi ad un applicativo esterno con upload del certificato
@@ -99,7 +99,7 @@ I dati da fornire sono:
 Per abilitare le funzionalità di autorizzazione dei singoli applicativi (punto 2 del precedente elenco) si deve procedere alla configurazione della sezione "Controllo Accessi" relativa all'erogazione. Quando attiva la sicurezza messaggio, questa sezione conterrà il form "Autorizzazione ModI" (:numref:`erogazione_secMessaggio_fig`). Qui è possibile specificare un elenco di applicativi (esterni) autorizzati, ad accedere all'erogazione, tra quelli identificati nella fase di verifica del relativo certificato. Gli applicativi esterni saranno selezionabili tra quelli censiti nella sezione "Applicativi" (:numref:`erogazione_secMessaggio_fig`).
 
    .. figure:: ../../_figure_console/modipa_erogazione_secMessaggio.png
-    :scale: 40%
+    :scale: 60%
     :name: erogazione_secMessaggio_fig
 
     Autorizzazione di singoli applicativi per l'accesso all'erogazione
