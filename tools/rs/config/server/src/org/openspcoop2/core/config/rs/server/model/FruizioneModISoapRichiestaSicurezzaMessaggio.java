@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,6 +33,9 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
   
   @Schema(description = "")
   private ModISicurezzaMessaggioSoapFormaCanonicaXml formaCanonicaXml = null;
+  
+  @Schema(description = "")
+  private List<String> headerSoapFirmare = null;
   
   @Schema(description = "")
   private ModISicurezzaMessaggioSoapRiferimentoX509 riferimentoX509 = null;
@@ -91,6 +95,30 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
 
   public FruizioneModISoapRichiestaSicurezzaMessaggio formaCanonicaXml(ModISicurezzaMessaggioSoapFormaCanonicaXml formaCanonicaXml) {
     this.formaCanonicaXml = formaCanonicaXml;
+    return this;
+  }
+
+ /**
+   * Get headerSoapFirmare
+   * @return headerSoapFirmare
+  **/
+  @JsonProperty("header_soap_firmare")
+  @Valid
+  public List<String> getHeaderSoapFirmare() {
+    return this.headerSoapFirmare;
+  }
+
+  public void setHeaderSoapFirmare(List<String> headerSoapFirmare) {
+    this.headerSoapFirmare = headerSoapFirmare;
+  }
+
+  public FruizioneModISoapRichiestaSicurezzaMessaggio headerSoapFirmare(List<String> headerSoapFirmare) {
+    this.headerSoapFirmare = headerSoapFirmare;
+    return this;
+  }
+
+  public FruizioneModISoapRichiestaSicurezzaMessaggio addHeaderSoapFirmareItem(String headerSoapFirmareItem) {
+    this.headerSoapFirmare.add(headerSoapFirmareItem);
     return this;
   }
 
@@ -254,6 +282,7 @@ public class FruizioneModISoapRichiestaSicurezzaMessaggio  {
     
     sb.append("    algoritmo: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.algoritmo)).append("\n");
     sb.append("    formaCanonicaXml: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.formaCanonicaXml)).append("\n");
+    sb.append("    headerSoapFirmare: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.headerSoapFirmare)).append("\n");
     sb.append("    riferimentoX509: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    certificateChain: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.certificateChain)).append("\n");
     sb.append("    includiSignatureToken: ").append(FruizioneModISoapRichiestaSicurezzaMessaggio.toIndentedString(this.includiSignatureToken)).append("\n");

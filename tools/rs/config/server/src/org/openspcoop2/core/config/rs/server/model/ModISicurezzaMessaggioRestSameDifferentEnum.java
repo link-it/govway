@@ -23,17 +23,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Gets or Sets ModISicurezzaMessaggioRestHeaderEnum
+ * Gets or Sets ModISicurezzaMessaggioRestSameDifferentEnum
  */
-public enum ModISicurezzaMessaggioRestHeaderEnum {
-AGID("agid"),
-  BEARER("bearer"),
-  AGID_BEARER_REQUEST("agid+bearer-request"),
-  AGID_BEARER("agid+bearer");
+public enum ModISicurezzaMessaggioRestSameDifferentEnum {
+SAME("same"),
+  DIFFERENT("different");
 
   private String value;
 
-  ModISicurezzaMessaggioRestHeaderEnum(String value) {
+  ModISicurezzaMessaggioRestSameDifferentEnum(String value) {
     this.value = value;
   }
 
@@ -44,8 +42,8 @@ AGID("agid"),
   }
 
   @JsonCreator
-  public static ModISicurezzaMessaggioRestHeaderEnum fromValue(String text) {
-    for (ModISicurezzaMessaggioRestHeaderEnum b : ModISicurezzaMessaggioRestHeaderEnum.values()) {
+  public static ModISicurezzaMessaggioRestSameDifferentEnum fromValue(String text) {
+    for (ModISicurezzaMessaggioRestSameDifferentEnum b : ModISicurezzaMessaggioRestSameDifferentEnum.values()) {
       if (String.valueOf(b.value).equals(text)) {
         return b;
       }

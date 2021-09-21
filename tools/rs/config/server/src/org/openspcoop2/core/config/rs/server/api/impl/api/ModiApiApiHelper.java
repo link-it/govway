@@ -397,6 +397,10 @@ public class ModiApiApiHelper {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID;
 		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.BEARER;
+		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA)) {
+			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID_BEARER_REQUEST;
+		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE)) {
+			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID_BEARER;
 		}
 		sicurezzaMessaggio.setRestHeader(restHeader);
 
@@ -836,10 +840,15 @@ public class ModiApiApiHelper {
 
 			String headerHTTPREST = "";
 			switch(sicurezzaMessaggio.getRestHeader()) {
-			case AGID: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA;
-			break;
-			case BEARER: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION;
-			break;}
+				case AGID: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA;
+				break;
+				case BEARER: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION;
+				break;
+				case AGID_BEARER_REQUEST: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA;
+				break;
+				case AGID_BEARER: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE;
+				break;
+			}
 
 
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, headerHTTPREST);

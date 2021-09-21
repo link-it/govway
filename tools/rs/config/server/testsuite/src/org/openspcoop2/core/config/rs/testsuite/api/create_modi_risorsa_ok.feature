@@ -36,8 +36,8 @@ function(x,  nome, api_modi_risorsa_crud){
 }
 """
 
-@CreateRisorsa204_modi
-Scenario Outline: Api Create Risorsa 204 con profilo ModI <nome-test>
+@CreateRisorsa204_modi_patternInternazione
+Scenario Outline: Api Create Risorsa 204 con profilo ModI <nome-test> (verifica pattern interazione)
 	* def api_rest = read('api_modi_rest.json')
 	* eval randomize(api_rest, ["nome"])
 	* def api_modi_risorsa_crud = read('api_modi_rest_risorsa_non_bloccante_push_richiesta.json')
@@ -89,6 +89,8 @@ Examples:
 | api_modi_rest_a01_custom_ric_disabilitato_ris_abilitato.json |
 | api_modi_rest_a01_qualsiasi_agid.json |
 | api_modi_rest_a01_qualsiasi_bearer.json |
+| api_modi_rest_a01_qualsiasi_agid_bearer.json |
+| api_modi_rest_a01_qualsiasi_agid_bearer_in_response.json |
 | api_modi_rest_a01_richiesta_agid.json |
 | api_modi_rest_a01_richiesta_bearer.json |
 | api_modi_rest_a01_risposta_agid.json |

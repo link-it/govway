@@ -2484,7 +2484,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		List<String> tmp = _getPropertySicurezzaMessaggio(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID, api, portType, false);
 		if(tmp!=null && !tmp.isEmpty()) {
 			for (String profiloSicurezzaMessaggio : tmp) {
-				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(profiloSicurezzaMessaggio)) {
+				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(profiloSicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggio)) {
 					return true;
 				}		
 			}

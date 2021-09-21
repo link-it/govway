@@ -8887,10 +8887,12 @@ components:
           example: false
           default: false
         token_claims:
-          maxLength: 4000
-          type: "string"
-          description: "Indicare per riga i claims richiesti (nome=valore); è possibile\
-            \ elencare differenti valori ammissibili separandoli con la virgola"
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
       additionalProperties: false
     APIImplAutorizzazioneXACMLView:
       required:
@@ -9235,6 +9237,9 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        time_to_live:
+          type: "integer"
+          format: "int32"
         wsa_to:
           maxLength: 4000
           type: "string"
@@ -9252,6 +9257,11 @@ components:
       properties:
         algoritmo:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma"
+        header_soap_firmare:
+          type: "array"
+          items:
+            maxLength: 200
+            type: "string"
         forma_canonica_xml:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml"
         riferimento_x509:
@@ -9326,7 +9336,25 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        time_to_live:
+          type: "integer"
+          format: "int32"
         audience:
+          maxLength: 4000
+          type: "string"
+        contemporaneita:
+          $ref: "#/components/schemas/ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita"
+    ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
+      required:
+      - "audience"
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum"
+        audience:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        audience_atteso:
           maxLength: 4000
           type: "string"
     ErogazioneModIRestRisposta:
@@ -9375,6 +9403,38 @@ components:
           type: "integer"
           format: "int32"
           default: 300
+        claims:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
+        contemporaneita:
+          $ref: "#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita"
+    ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita:
+      required:
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        usa_come_id_messaggio:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum"
+        claims_bearer:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
+        claims_agid:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
     FruizioneModI:
       required:
       - "modi"
@@ -9416,6 +9476,11 @@ components:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma"
         forma_canonica_xml:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml"
+        header_soap_firmare:
+          type: "array"
+          items:
+            maxLength: 200
+            type: "string"
         riferimento_x509:
           $ref: "#/components/schemas/ModISicurezzaMessaggioSoapRiferimentoX509"
         certificate_chain:
@@ -9467,9 +9532,15 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        time_to_live:
+          type: "integer"
+          format: "int32"
         verifica_wsa_to:
           type: "boolean"
           default: true
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
     FruizioneModIRest:
       required:
       - "protocollo"
@@ -9523,6 +9594,44 @@ components:
           $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
         informazioni_utente_indirizzo_ip:
           $ref: "#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente"
+        claims:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
+        contemporaneita:
+          $ref: "#/components/schemas/FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita"
+    FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
+      required:
+      - "audience"
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        usa_come_id_messaggio:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum"
+        audience:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
+        claims_bearer:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
+        claims_agid:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
     FruizioneModIRestRisposta:
       required:
       - "sicurezza_messaggio"
@@ -9563,9 +9672,30 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ModITrustStoreDefault"
           - $ref: "#/components/schemas/ModITrustStoreRidefinito"
+        time_to_live:
+          type: "integer"
+          format: "int32"
         verifica_audience:
           type: "boolean"
           default: true
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
+        contemporaneita:
+          $ref: "#/components/schemas/FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita"
+    FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita:
+      required:
+      - "audience"
+      - "identificativo"
+      type: "object"
+      properties:
+        identificativo:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum"
+        audience:
+          $ref: "#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum"
+        audience_atteso:
+          maxLength: 4000
+          type: "string"
     ModIApplicativoEsterno:
       required:
       - "dominio"
@@ -10873,6 +11003,20 @@ components:
       enum:
       - "agid"
       - "bearer"
+      - "agid+bearer-request"
+      - "agid+bearer"
+    ModISicurezzaMessaggioRestTokenChoiseEnum:
+      type: "string"
+      default: "agid"
+      enum:
+      - "agid"
+      - "bearer"
+    ModISicurezzaMessaggioRestSameDifferentEnum:
+      type: "string"
+      default: "same"
+      enum:
+      - "same"
+      - "different"
     ModISicurezzaMessaggioApplicabilitaEnum:
       type: "string"
       default: "qualsiasi"

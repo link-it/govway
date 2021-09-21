@@ -49,7 +49,16 @@ public class FruizioneModIRestRispostaSicurezzaMessaggio  {
   private OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststoreSsl truststoreSsl = null;
   
   @Schema(description = "")
+  private Integer timeToLive = null;
+  
+  @Schema(description = "")
   private Boolean verificaAudience = true;
+  
+  @Schema(description = "")
+  private String audienceAtteso = null;
+  
+  @Schema(description = "")
+  private FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita contemporaneita = null;
  /**
    * Get riferimentoX509
    * @return riferimentoX509
@@ -133,6 +142,25 @@ public class FruizioneModIRestRispostaSicurezzaMessaggio  {
   }
 
  /**
+   * Get timeToLive
+   * @return timeToLive
+  **/
+  @JsonProperty("time_to_live")
+  @Valid
+  public Integer getTimeToLive() {
+    return this.timeToLive;
+  }
+
+  public void setTimeToLive(Integer timeToLive) {
+    this.timeToLive = timeToLive;
+  }
+
+  public FruizioneModIRestRispostaSicurezzaMessaggio timeToLive(Integer timeToLive) {
+    this.timeToLive = timeToLive;
+    return this;
+  }
+
+ /**
    * Get verificaAudience
    * @return verificaAudience
   **/
@@ -151,6 +179,44 @@ public class FruizioneModIRestRispostaSicurezzaMessaggio  {
     return this;
   }
 
+ /**
+   * Get audienceAtteso
+   * @return audienceAtteso
+  **/
+  @JsonProperty("audience_atteso")
+  @Valid
+ @Size(max=4000)  public String getAudienceAtteso() {
+    return this.audienceAtteso;
+  }
+
+  public void setAudienceAtteso(String audienceAtteso) {
+    this.audienceAtteso = audienceAtteso;
+  }
+
+  public FruizioneModIRestRispostaSicurezzaMessaggio audienceAtteso(String audienceAtteso) {
+    this.audienceAtteso = audienceAtteso;
+    return this;
+  }
+
+ /**
+   * Get contemporaneita
+   * @return contemporaneita
+  **/
+  @JsonProperty("contemporaneita")
+  @Valid
+  public FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita getContemporaneita() {
+    return this.contemporaneita;
+  }
+
+  public void setContemporaneita(FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita contemporaneita) {
+    this.contemporaneita = contemporaneita;
+  }
+
+  public FruizioneModIRestRispostaSicurezzaMessaggio contemporaneita(FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita contemporaneita) {
+    this.contemporaneita = contemporaneita;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -161,7 +227,10 @@ public class FruizioneModIRestRispostaSicurezzaMessaggio  {
     sb.append("    riferimentoX509Risposta: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.riferimentoX509Risposta)).append("\n");
     sb.append("    truststore: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.truststore)).append("\n");
     sb.append("    truststoreSsl: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.truststoreSsl)).append("\n");
+    sb.append("    timeToLive: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    verificaAudience: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.verificaAudience)).append("\n");
+    sb.append("    audienceAtteso: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.audienceAtteso)).append("\n");
+    sb.append("    contemporaneita: ").append(FruizioneModIRestRispostaSicurezzaMessaggio.toIndentedString(this.contemporaneita)).append("\n");
     sb.append("}");
     return sb.toString();
   }

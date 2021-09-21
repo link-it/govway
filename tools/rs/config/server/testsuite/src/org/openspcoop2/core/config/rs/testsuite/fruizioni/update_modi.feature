@@ -13,6 +13,10 @@ Background:
 * eval randomize(api_petstore_rest, ["nome"])
 * eval api_petstore_rest.referente = soggettoDefault
 
+* def api_petstore_rest_contemporaneita = read('api_modi_rest_contemporaneita.json')
+* eval randomize(api_petstore_rest_contemporaneita, ["nome"])
+* eval api_petstore_rest_contemporaneita.referente = soggettoDefault
+
 * def getExpectedSOAP =
 """
 function(modi) {
@@ -79,6 +83,7 @@ Scenario Outline: Fruizioni Aggiornamento Petstore SOAP <nome>
 
 Examples:
 |nome|
+|fruizione_modi_soap_header_firmare.json|
 |fruizione_modi_soap_algoritmo_DSA-SHA-256.json|
 |fruizione_modi_soap_algoritmo_ECDSA-SHA-256.json|
 |fruizione_modi_soap_algoritmo_ECDSA-SHA-384.json|
@@ -101,6 +106,9 @@ Examples:
 |fruizione_modi_soap_iu_userid.json|
 |fruizione_modi_soap_iu_indirizzo_ip.json|
 |fruizione_modi_soap_risposta_truststore_ridefinito.json|
+|fruizione_modi_soap_ttl_risposta.json|
+|fruizione_modi_soap_wsato_verifica_risposta.json|
+|fruizione_modi_soap_wsato_verifica_risposta_disabilitata.json|
 
 @UpdatePetstore_modi_REST_fruizioni
 Scenario Outline: Fruizioni Aggiornamento Petstore REST <nome>
@@ -134,6 +142,7 @@ Scenario Outline: Fruizioni Aggiornamento Petstore REST <nome>
 
 Examples:
 |nome|
+|fruizione_modi_rest_claims.json|
 |fruizione_modi_rest_algoritmo_ES256.json|
 |fruizione_modi_rest_algoritmo_ES384.json|
 |fruizione_modi_rest_algoritmo_ES512.json|
@@ -147,6 +156,46 @@ Examples:
 |fruizione_modi_rest_iu_codice_ente.json|
 |fruizione_modi_rest_iu_userid.json|
 |fruizione_modi_rest_iu_indirizzo_ip.json|
+|fruizione_modi_rest_ttl_risposta.json|
+|fruizione_modi_rest_audience_verifica_risposta.json|
+|fruizione_modi_rest_audience_verifica_risposta_disabilitata.json|
+
+
+@UpdatePetstore_modi_REST_fruizioni_contemporaneita
+Scenario Outline: Fruizioni Aggiornamento Petstore REST <nome> con configurazione contemporanea dei 2 header AGID
+
+		* def erogatore = read('soggetto_erogatore.json')
+		* eval randomize (erogatore, ["nome", "credenziali.username"])
+		
+		* def fruizione_petstore = read('fruizione_modi_rest.json')
+		* eval fruizione_petstore.api_nome = api_petstore_rest_contemporaneita.nome
+		* eval fruizione_petstore.fruizione_nome = api_petstore_rest_contemporaneita.nome
+		* eval fruizione_petstore.api_versione = api_petstore_rest_contemporaneita.versione
+		* eval fruizione_petstore.erogatore = erogatore.nome
+		* eval fruizione_petstore.api_referente = api_petstore_rest_contemporaneita.referente
+
+		* def petstore_key = fruizione_petstore.erogatore + '/' + fruizione_petstore.fruizione_nome + '/' + fruizione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api_petstore_rest_contemporaneita.nome + '/' + api_petstore_rest_contemporaneita.versione
+
+		* def fruizione_petstore_update = read('<nome>')
+
+		* call create ({ resourcePath: 'api', body: api_petstore_rest_contemporaneita, query_params: query_param_profilo_modi })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+    * call put ( { resourcePath: 'fruizioni/'+petstore_key+'/modi', body: {modi: fruizione_petstore_update.modi}, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+		* def expected = getExpectedRest(fruizione_petstore_update.modi)
+    * match response.modi == expected
+    * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+
+Examples:
+|nome|
+|fruizione_modi_rest_contemporaneita_default.json|
+|fruizione_modi_rest_contemporaneita_diversoDefault.json|
+
 
 @UpdateFruizione_400_modi
 Scenario Outline: Fruizioni Aggiornamento modi 400 <nome>

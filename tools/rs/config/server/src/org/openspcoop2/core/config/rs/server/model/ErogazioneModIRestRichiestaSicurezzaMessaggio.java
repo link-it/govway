@@ -47,7 +47,13 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
   private OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl truststoreSsl = null;
   
   @Schema(description = "")
+  private Integer timeToLive = null;
+  
+  @Schema(description = "")
   private String audience = null;
+  
+  @Schema(description = "")
+  private ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita contemporaneita = null;
  /**
    * Get riferimentoX509
    * @return riferimentoX509
@@ -113,6 +119,25 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
   }
 
  /**
+   * Get timeToLive
+   * @return timeToLive
+  **/
+  @JsonProperty("time_to_live")
+  @Valid
+  public Integer getTimeToLive() {
+    return this.timeToLive;
+  }
+
+  public void setTimeToLive(Integer timeToLive) {
+    this.timeToLive = timeToLive;
+  }
+
+  public ErogazioneModIRestRichiestaSicurezzaMessaggio timeToLive(Integer timeToLive) {
+    this.timeToLive = timeToLive;
+    return this;
+  }
+
+ /**
    * Get audience
    * @return audience
   **/
@@ -131,6 +156,25 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
     return this;
   }
 
+ /**
+   * Get contemporaneita
+   * @return contemporaneita
+  **/
+  @JsonProperty("contemporaneita")
+  @Valid
+  public ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita getContemporaneita() {
+    return this.contemporaneita;
+  }
+
+  public void setContemporaneita(ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita contemporaneita) {
+    this.contemporaneita = contemporaneita;
+  }
+
+  public ErogazioneModIRestRichiestaSicurezzaMessaggio contemporaneita(ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita contemporaneita) {
+    this.contemporaneita = contemporaneita;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -140,7 +184,9 @@ public class ErogazioneModIRestRichiestaSicurezzaMessaggio  {
     sb.append("    riferimentoX509: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.riferimentoX509)).append("\n");
     sb.append("    truststore: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.truststore)).append("\n");
     sb.append("    truststoreSsl: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.truststoreSsl)).append("\n");
+    sb.append("    timeToLive: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    audience: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.audience)).append("\n");
+    sb.append("    contemporaneita: ").append(ErogazioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.contemporaneita)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -101,6 +101,8 @@ Examples:
 | api_modi_rest_a01_custom_ric_disabilitato_ris_abilitato.json |
 | api_modi_rest_a01_qualsiasi_agid.json |
 | api_modi_rest_a01_qualsiasi_bearer.json |
+| api_modi_rest_a01_qualsiasi_agid_bearer.json |
+| api_modi_rest_a01_qualsiasi_agid_bearer_in_response.json |
 | api_modi_rest_a01_richiesta_agid.json |
 | api_modi_rest_a01_richiesta_bearer.json |
 | api_modi_rest_a01_risposta_agid.json |

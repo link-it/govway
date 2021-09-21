@@ -18,6 +18,7 @@
 				"truststore": {
 					"modalita": "default"
 				},
+				"time_to_live": 67952,
 				"audience": "me"
 			}
 		},

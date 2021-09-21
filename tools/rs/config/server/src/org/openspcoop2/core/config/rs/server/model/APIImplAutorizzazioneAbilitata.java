@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -51,11 +52,11 @@ public class APIImplAutorizzazioneAbilitata  implements OneOfControlloAccessiAut
   @Schema(example = "false", required = true, description = "")
   private Boolean token = false;
   
-  @Schema(description = "Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola")
+  @Schema(description = "Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola")
  /**
-   * Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola  
+   * Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola  
   **/
-  private String tokenClaims = null;
+  private List<String> tokenClaims = null;
  /**
    * Get tipo
    * @return tipo
@@ -215,21 +216,26 @@ public class APIImplAutorizzazioneAbilitata  implements OneOfControlloAccessiAut
   }
 
  /**
-   * Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+   * Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
    * @return tokenClaims
   **/
   @JsonProperty("token_claims")
   @Valid
- @Size(max=4000)  public String getTokenClaims() {
+  public List<String> getTokenClaims() {
     return this.tokenClaims;
   }
 
-  public void setTokenClaims(String tokenClaims) {
+  public void setTokenClaims(List<String> tokenClaims) {
     this.tokenClaims = tokenClaims;
   }
 
-  public APIImplAutorizzazioneAbilitata tokenClaims(String tokenClaims) {
+  public APIImplAutorizzazioneAbilitata tokenClaims(List<String> tokenClaims) {
     this.tokenClaims = tokenClaims;
+    return this;
+  }
+
+  public APIImplAutorizzazioneAbilitata addTokenClaimsItem(String tokenClaimsItem) {
+    this.tokenClaims.add(tokenClaimsItem);
     return this;
   }
 

@@ -242,6 +242,24 @@ public class ErogazioniApiHelper {
 				registryReader, configRegistryReader, oldIdAps);
 
 	}
+	
+	public static void updateConsoleConfiguration(ErogazioniEnv env, AccordoServizioParteSpecifica asps,
+			ConsoleConfiguration consoleConf, ProtocolProperties prop) throws Exception {
+    	IDServizio oldIdAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
+		oldIdAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+		oldIdAps.setPortType(asps.getPortType());
+
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		env.requestWrapper.overrideParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM, Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE);
+		
+		consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(consoleConf, ConsoleOperationType.CHANGE, env.apsHelper, prop,
+				registryReader, configRegistryReader, oldIdAps);
+
+	}
 
 	public static ConsoleConfiguration getConsoleConfiguration(ErogazioniEnv env, IDFruizione id) throws Exception {
 		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
@@ -253,6 +271,21 @@ public class ErogazioniApiHelper {
 
 		return consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType.ADD, env.apsHelper, registryReader, configRegistryReader, id);
 	}
+	
+	public static void updateConsoleConfiguration(ErogazioniEnv env, IDFruizione id,
+			ConsoleConfiguration consoleConf, ProtocolProperties prop) throws Exception {
+    	
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		env.requestWrapper.overrideParameter(Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM, Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE);
+		
+		consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConf, ConsoleOperationType.CHANGE, env.apsHelper, prop,
+				registryReader, configRegistryReader, id);
+
+	}
 
 
 	public static ProtocolProperties getProtocolProperties(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
@@ -261,6 +294,10 @@ public class ErogazioniApiHelper {
 		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
 		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, asps.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
 		
+		// update della configurazione
+		// non sembra servire
+		//updateConsoleConfiguration(env, asps, consoleConf, prop);
+		
 		return prop;
 	}
 	public static ProtocolProperties getProtocolProperties(IDFruizione id, Fruitore f, ErogazioniEnv env) throws Exception {
@@ -268,6 +305,10 @@ public class ErogazioniApiHelper {
 
 		ProtocolProperties prop = env.apsHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
 		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, f.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		
+		// update della configurazione 
+		// non sembra servire
+		//updateConsoleConfiguration(env, id, consoleConf, prop);
 		
 		return prop;
 	}
@@ -3868,7 +3909,10 @@ public class ErogazioniApiHelper {
 			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRichiedente());
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRuoli());
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isScope());
-			final String autorizzazione_tokenOptions = authzAbilitata.getTokenClaims();
+			String autorizzazione_tokenOptions = null;
+			if(authzAbilitata.getTokenClaims()!=null && !authzAbilitata.getTokenClaims().isEmpty()) {
+				autorizzazione_tokenOptions = String.join("\n", authzAbilitata.getTokenClaims());
+			}
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
 			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
 			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
@@ -3991,7 +4035,10 @@ public class ErogazioniApiHelper {
 			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRichiedente());
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRuoli());
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isScope());
-			final String autorizzazione_tokenOptions = authzAbilitata.getTokenClaims();
+			String autorizzazione_tokenOptions = null;
+			if(authzAbilitata.getTokenClaims()!=null && !authzAbilitata.getTokenClaims().isEmpty()) {
+				autorizzazione_tokenOptions = String.join("\n", authzAbilitata.getTokenClaims());
+			}
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
 			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
 			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
@@ -4137,7 +4184,18 @@ public class ErogazioniApiHelper {
 			authzAbilitata.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pa.getScope().getMatch().getValue() )));
 			
 			authzAbilitata.setToken( (pa.getGestioneToken()!=null && pa.getGestioneToken().getOptions() != null) ? true : false);
-			authzAbilitata.setTokenClaims( evalnull( () -> pa.getGestioneToken().getOptions() ));
+			
+			if(pa.getGestioneToken()!=null) {
+				String pString = pa.getGestioneToken().getOptions();
+				if(pString!=null) {
+					List<String> proprieta = new ArrayList<>();
+					String[] psplit = pString.split("\n");
+					for(String pr: psplit) {
+						proprieta.add(pr);
+					}
+					authzAbilitata.setTokenClaims(proprieta);
+				}
+			}
 			
 			break;
 		}
@@ -4203,8 +4261,19 @@ public class ErogazioniApiHelper {
 			authzAbilitata.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pd.getScope().getMatch().getValue() )));
 			
 			authzAbilitata.setToken( (pd.getGestioneToken()!=null && pd.getGestioneToken().getOptions() != null) ? true : false);
-			authzAbilitata.setTokenClaims( evalnull( () -> pd.getGestioneToken().getOptions() ));
-
+			
+			if(pd.getGestioneToken()!=null) {
+				String pString = pd.getGestioneToken().getOptions();
+				if(pString!=null) {
+					List<String> proprieta = new ArrayList<>();
+					String[] psplit = pString.split("\n");
+					for(String pr: psplit) {
+						proprieta.add(pr);
+					}
+					authzAbilitata.setTokenClaims(proprieta);
+				}
+			}
+				
 			break;
 		}
 		case XACML_POLICY: {

@@ -1095,9 +1095,11 @@ components:
           default: false
           example: false
         token_claims:
-          description: Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
-          type: string
-          maxLength: 4000
+          description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000
       additionalProperties: false
 
     APIImplAutorizzazioneXACMLView:
@@ -1448,6 +1450,9 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
         wsa_to:
           type: string
           maxLength: 4000
@@ -1465,6 +1470,11 @@ components:
       properties:
         algoritmo:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma'
+        header_soap_firmare:
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000 
         forma_canonica_xml:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml'
         riferimento_x509:
@@ -1541,9 +1551,27 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
         audience:
           type: string
           maxLength: 4000
+        contemporaneita:
+           $ref: '#/components/schemas/ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita'
+    ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
+      type: object      
+      required:
+        - identificativo
+        - audience
+      properties:
+        identificativo:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum'
+        audience:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        audience_atteso:
+           type: string
+           maxLength: 4000      
     ErogazioneModIRestRisposta:
       type: object      
       required:
@@ -1590,6 +1618,35 @@ components:
           type: integer
           format: int32
           default: 300
+        claims:
+          description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000
+        contemporaneita:
+           $ref: '#/components/schemas/ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita'
+    ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita:
+      type: object      
+      required:
+        - identificativo
+      properties:
+        identificativo:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        usa_come_id_messaggio:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum'
+        claims_bearer:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000 
+        claims_agid:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000 
 
     # ModI Fruizione
     FruizioneModI:
@@ -1635,6 +1692,11 @@ components:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapAlgoritmoFirma'
         forma_canonica_xml:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapFormaCanonicaXml'
+        header_soap_firmare:
+          type: array
+          items:
+            type: string
+            maxLength: 200 # lista di header arriva a 4000 
         riferimento_x509:
           $ref: '#/components/schemas/ModISicurezzaMessaggioSoapRiferimentoX509'
         certificate_chain:
@@ -1686,9 +1748,15 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
         verifica_wsa_to:
           type: boolean
           default: true
+        audience_atteso:
+           type: string
+           maxLength: 4000
 
     # ModI Fruizione REST
     FruizioneModIRest:
@@ -1744,6 +1812,41 @@ components:
           $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
         informazioni_utente_indirizzo_ip:
           $ref: '#/components/schemas/FruizioneModISoapRichiestaInformazioneUtente'
+        claims:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000
+        contemporaneita:
+           $ref: '#/components/schemas/FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita'
+    FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita:
+      type: object      
+      required:
+        - identificativo
+        - audience
+      properties:
+        identificativo:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        usa_come_id_messaggio:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum'
+        audience:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        audience_atteso:
+           type: string
+           maxLength: 4000
+        claims_bearer:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000 
+        claims_agid:
+           description: Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+           type: array
+           items:
+             type: string
+             maxLength: 200 # lista di header arriva a 4000
     FruizioneModIRestRisposta:
       type: object      
       required:
@@ -1784,9 +1887,30 @@ components:
             mapping:
               'default': '#/components/schemas/ModITrustStoreDefault'
               'ridefinito': '#/components/schemas/ModITrustStoreRidefinito'
+        time_to_live:
+          type: integer
+          format: int32
         verifica_audience:
           type: boolean
           default: true
+        audience_atteso:
+           type: string
+           maxLength: 4000
+        contemporaneita:
+           $ref: '#/components/schemas/FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita'
+    FruizioneModIRestRispostaSicurezzaMessaggioContemporaneita:
+      type: object      
+      required:
+        - identificativo
+        - audience
+      properties:
+        identificativo:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestTokenChoiseEnum'
+        audience:
+           $ref: '#/components/schemas/ModISicurezzaMessaggioRestSameDifferentEnum'
+        audience_atteso:
+           type: string
+           maxLength: 4000 
 
     # ModI Applicativo
 
@@ -2982,7 +3106,15 @@ components:
       enum: ['disabilitato', 'auth01', 'auth02', 'integrity01-auth01', 'integrity01-auth02']
     ModISicurezzaMessaggioRestHeaderEnum:
       type: string
-      enum: ['agid', 'bearer']
+      enum: ['agid', 'bearer', 'agid+bearer-request', 'agid+bearer' ]
+    ModISicurezzaMessaggioRestTokenChoiseEnum:
+      type: string
+      enum: ['agid', 'bearer' ]
+      default: agid
+    ModISicurezzaMessaggioRestSameDifferentEnum:
+      type: string
+      enum: ['same', 'different' ]
+      default: same
     ModISicurezzaMessaggioApplicabilitaEnum:
       type: string
       enum: ['richiesta', 'risposta', 'qualsiasi', 'custom']

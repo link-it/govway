@@ -6,24 +6,23 @@
 		"tipo": "https",
 		"opzionale": false
 	},
-	"api_nome": "PetStore",
-	"api_soap_servizio": "EsempioServizioComposto",
+	"api_nome": "ServizioSOAPConPiuAzione",
+	"fruizione_nome": "ServizioSOAPConPiuAzione",
 	"api_versione": 1,
+	"api_soap_servizio": "EsempioServizioComposto",
 	"modi": {
 		"protocollo": "soap",
 		"richiesta": {
 			"sicurezza_messaggio": {
-				"truststore": {
-					"modalita": "default"
-				},
 				"wsa_to": "me"
 			}
 		},
 		"risposta": {
 			"sicurezza_messaggio": {
-				"keystore": {
+				"truststore": {
 					"modalita": "default"
-				}
+				},
+				"time_to_live": 27389
 			}
 		}
 	}

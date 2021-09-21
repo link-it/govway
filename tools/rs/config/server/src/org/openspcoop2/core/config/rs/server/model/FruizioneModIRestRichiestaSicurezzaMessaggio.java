@@ -55,6 +55,15 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   
   @Schema(description = "")
   private FruizioneModISoapRichiestaInformazioneUtente informazioniUtenteIndirizzoIp = null;
+  
+  @Schema(description = "Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola")
+ /**
+   * Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola  
+  **/
+  private List<String> claims = null;
+  
+  @Schema(description = "")
+  private FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita contemporaneita = null;
  /**
    * Get algoritmo
    * @return algoritmo
@@ -237,6 +246,49 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
     return this;
   }
 
+ /**
+   * Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+   * @return claims
+  **/
+  @JsonProperty("claims")
+  @Valid
+  public List<String> getClaims() {
+    return this.claims;
+  }
+
+  public void setClaims(List<String> claims) {
+    this.claims = claims;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio claims(List<String> claims) {
+    this.claims = claims;
+    return this;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio addClaimsItem(String claimsItem) {
+    this.claims.add(claimsItem);
+    return this;
+  }
+
+ /**
+   * Get contemporaneita
+   * @return contemporaneita
+  **/
+  @JsonProperty("contemporaneita")
+  @Valid
+  public FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita getContemporaneita() {
+    return this.contemporaneita;
+  }
+
+  public void setContemporaneita(FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita contemporaneita) {
+    this.contemporaneita = contemporaneita;
+  }
+
+  public FruizioneModIRestRichiestaSicurezzaMessaggio contemporaneita(FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita contemporaneita) {
+    this.contemporaneita = contemporaneita;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -252,6 +304,8 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
     sb.append("    informazioniUtenteCodiceEnte: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteCodiceEnte)).append("\n");
     sb.append("    informazioniUtenteUserid: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteUserid)).append("\n");
     sb.append("    informazioniUtenteIndirizzoIp: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.informazioniUtenteIndirizzoIp)).append("\n");
+    sb.append("    claims: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.claims)).append("\n");
+    sb.append("    contemporaneita: ").append(FruizioneModIRestRichiestaSicurezzaMessaggio.toIndentedString(this.contemporaneita)).append("\n");
     sb.append("}");
     return sb.toString();
   }

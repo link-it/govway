@@ -35,7 +35,13 @@ public class FruizioneModISoapRispostaSicurezzaMessaggio  {
   private OneOfFruizioneModISoapRispostaSicurezzaMessaggioTruststore truststore = null;
   
   @Schema(description = "")
+  private Integer timeToLive = null;
+  
+  @Schema(description = "")
   private Boolean verificaWsaTo = true;
+  
+  @Schema(description = "")
+  private String audienceAtteso = null;
  /**
    * Get truststore
    * @return truststore
@@ -53,6 +59,25 @@ public class FruizioneModISoapRispostaSicurezzaMessaggio  {
 
   public FruizioneModISoapRispostaSicurezzaMessaggio truststore(OneOfFruizioneModISoapRispostaSicurezzaMessaggioTruststore truststore) {
     this.truststore = truststore;
+    return this;
+  }
+
+ /**
+   * Get timeToLive
+   * @return timeToLive
+  **/
+  @JsonProperty("time_to_live")
+  @Valid
+  public Integer getTimeToLive() {
+    return this.timeToLive;
+  }
+
+  public void setTimeToLive(Integer timeToLive) {
+    this.timeToLive = timeToLive;
+  }
+
+  public FruizioneModISoapRispostaSicurezzaMessaggio timeToLive(Integer timeToLive) {
+    this.timeToLive = timeToLive;
     return this;
   }
 
@@ -75,6 +100,25 @@ public class FruizioneModISoapRispostaSicurezzaMessaggio  {
     return this;
   }
 
+ /**
+   * Get audienceAtteso
+   * @return audienceAtteso
+  **/
+  @JsonProperty("audience_atteso")
+  @Valid
+ @Size(max=4000)  public String getAudienceAtteso() {
+    return this.audienceAtteso;
+  }
+
+  public void setAudienceAtteso(String audienceAtteso) {
+    this.audienceAtteso = audienceAtteso;
+  }
+
+  public FruizioneModISoapRispostaSicurezzaMessaggio audienceAtteso(String audienceAtteso) {
+    this.audienceAtteso = audienceAtteso;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -82,7 +126,9 @@ public class FruizioneModISoapRispostaSicurezzaMessaggio  {
     sb.append("class FruizioneModISoapRispostaSicurezzaMessaggio {\n");
     
     sb.append("    truststore: ").append(FruizioneModISoapRispostaSicurezzaMessaggio.toIndentedString(this.truststore)).append("\n");
+    sb.append("    timeToLive: ").append(FruizioneModISoapRispostaSicurezzaMessaggio.toIndentedString(this.timeToLive)).append("\n");
     sb.append("    verificaWsaTo: ").append(FruizioneModISoapRispostaSicurezzaMessaggio.toIndentedString(this.verificaWsaTo)).append("\n");
+    sb.append("    audienceAtteso: ").append(FruizioneModISoapRispostaSicurezzaMessaggio.toIndentedString(this.audienceAtteso)).append("\n");
     sb.append("}");
     return sb.toString();
   }

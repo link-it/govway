@@ -13,6 +13,10 @@ Background:
 * eval randomize(api_petstore_rest, ["nome"])
 * eval api_petstore_rest.referente = soggettoDefault
 
+* def api_petstore_rest_contemporaneita = read('api_modi_rest_contemporaneita.json')
+* eval randomize(api_petstore_rest_contemporaneita, ["nome"])
+* eval api_petstore_rest_contemporaneita.referente = soggettoDefault
+
 * def getExpectedSOAP =
 """
 function(modi) {
@@ -63,7 +67,8 @@ Scenario Outline: Erogazioni Creazione Petstore 204 SOAP <nome>
 Examples:
 |nome|
 |erogazione_modi_soap.json|
-|erogazione_modi_soap_wsa.json|
+|erogazione_modi_soap_wsa_ttl.json|
+|erogazione_modi_soap_header_firmare.json|
 |erogazione_modi_soap_truststore_ridefinito.json|
 |erogazione_modi_soap_keystore_ridefinito_file.json|
 |erogazione_modi_soap_keystore_ridefinito_path.json|
@@ -108,7 +113,7 @@ Scenario Outline: Erogazioni Creazione Petstore 204 REST <nome>
 Examples:
 |nome|
 |erogazione_modi_rest.json|
-|erogazione_modi_rest_audience.json|
+|erogazione_modi_rest_audience_ttl.json|
 |erogazione_modi_rest_algoritmo_ES256.json|
 |erogazione_modi_rest_algoritmo_ES384.json|
 |erogazione_modi_rest_algoritmo_ES512.json|
@@ -123,6 +128,33 @@ Examples:
 |erogazione_modi_rest_rif_multipli.json|
 |erogazione_modi_rest_truststore_ridefinito.json|
 |erogazione_modi_rest_ttl.json|
+|erogazione_modi_rest_claims.json|
+
+
+@CreatePetstore204_modi_REST_contemporaneita
+Scenario Outline: Erogazioni Creazione Petstore 204 REST <nome> con configurazione contemporanea dei 2 header AGID
+
+		* def erogazione_petstore = read('<nome>')
+		* eval erogazione_petstore.erogazione_nome = api_petstore_rest_contemporaneita.nome
+		* eval erogazione_petstore.api_nome = api_petstore_rest_contemporaneita.nome
+		* eval erogazione_petstore.api_versione = api_petstore_rest_contemporaneita.versione
+		
+		* def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
+		* def api_petstore_path = 'api/' + api_petstore_rest_contemporaneita.nome + '/' + api_petstore_rest_contemporaneita.versione
+
+    * call create ({ resourcePath: 'api', body: api_petstore_rest_contemporaneita, query_params: query_param_profilo_modi })
+    * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+		* def expected = getExpectedRest(erogazione_petstore.modi)
+    * match response.modi == expected
+    * call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
+    * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+
+Examples:
+|nome|
+|erogazione_modi_rest_contemporaneita_default.json|
+|erogazione_modi_rest_contemporaneita_diverso_default.json|
 
 @CreatePetstore400_modi
 Scenario Outline: Erogazioni Creazione Petstore 400 <nome>
@@ -150,3 +182,5 @@ Examples:
 |erogazione_modi_rest_no_x5u.json|api_modi_rest.json|Specificare URL X5U con riferimento x509 [x5u]|
 |erogazione_modi_rest.json|api_modi_rest_no_sicurezza.json|Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata|
 |erogazione_modi_soap.json|api_modi_soap_no_sicurezza.json|Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata|
+|erogazione_modi_rest_contemporaneita_default.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la richiesta|
+|erogazione_modi_rest_contemporaneita_soloRisposta.json|api_modi_rest.json|L\'API implementata non risulta configurata per gestire la contemporaneità dei token AGID che servirebbe alle opzioni indicate per la risposta|
